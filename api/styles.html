@@ -315,14 +315,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>This is how we can add styles or representations of our molecular data, so we can actually see something.</p>
-<div id="ab25db80" class="cell" data-execution_count="1">
+<div id="fab0d0c3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mn.register()</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mn.assets.install()</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>can <span class="op">=</span> mn.Canvas()</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>can.resolution <span class="op">=</span> (<span class="dv">860</span>, <span class="dv">540</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="ea22e2e7" class="cell" data-execution_count="2">
+<div id="8668c6fe" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    mn.Molecule.fetch(<span class="st">"8H1B"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">"cartoon"</span>, material <span class="op">=</span> mn.material.AmbientOcclusion())</span>
@@ -336,12 +336,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>can.frame_object(mol)</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:149.06M (Peak 159.18M) | Time:00:00.31 | Rendering 1 / 64 samples
-Fra:1 Mem:149.15M (Peak 159.18M) | Time:00:00.50 | Rendering 25 / 64 samples
-Fra:1 Mem:149.15M (Peak 159.18M) | Time:00:00.60 | Rendering 50 / 64 samples
-Fra:1 Mem:149.15M (Peak 159.18M) | Time:00:00.66 | Rendering 64 / 64 samples
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmp1gyzvlww/snapshot.png'
-Time: 00:00.78 (Saving: 00:00.09)
+<pre><code>Fra:1 Mem:149.15M (Peak 159.26M) | Time:00:00.31 | Rendering 1 / 64 samples
+Fra:1 Mem:149.23M (Peak 159.26M) | Time:00:00.52 | Rendering 25 / 64 samples
+Fra:1 Mem:149.23M (Peak 159.26M) | Time:00:00.64 | Rendering 50 / 64 samples
+Fra:1 Mem:149.23M (Peak 159.26M) | Time:00:00.71 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpagonrvf4/snapshot.png'
+Time: 00:00.82 (Saving: 00:00.08)
 </code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -352,16 +352,16 @@ Time: 00:00.78 (Saving: 00:00.09)
 </div>
 </div>
 </div>
-<div id="972afe91" class="cell" data-execution_count="3">
+<div id="78f64ddf" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">0</span>].remove()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:103.59M (Peak 116.23M) | Time:00:00.09 | Rendering 1 / 64 samples
-Fra:1 Mem:103.53M (Peak 116.23M) | Time:00:00.20 | Rendering 25 / 64 samples
-Fra:1 Mem:103.59M (Peak 116.23M) | Time:00:00.32 | Rendering 50 / 64 samples
-Fra:1 Mem:103.53M (Peak 116.23M) | Time:00:00.39 | Rendering 64 / 64 samples
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpyiotgstg/snapshot.png'
-Time: 00:00.43 (Saving: 00:00.02)
+<pre><code>Fra:1 Mem:103.62M (Peak 116.25M) | Time:00:00.09 | Rendering 1 / 64 samples
+Fra:1 Mem:103.56M (Peak 116.25M) | Time:00:00.23 | Rendering 25 / 64 samples
+Fra:1 Mem:103.62M (Peak 116.25M) | Time:00:00.38 | Rendering 50 / 64 samples
+Fra:1 Mem:103.56M (Peak 116.25M) | Time:00:00.45 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpsq9q9_we/snapshot.png'
+Time: 00:00.50 (Saving: 00:00.03)
 </code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -372,23 +372,23 @@ Time: 00:00.43 (Saving: 00:00.02)
 </div>
 </div>
 </div>
-<div id="5d6edf18" class="cell" data-execution_count="4">
+<div id="469b7dc7" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    mol</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">'ribbon'</span>, selection<span class="op">=</span><span class="st">"is_peptide"</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">'surface'</span>, selection<span class="op">=</span><span class="st">"is_nucleic"</span>)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].peptide_backbone_radius <span class="op">=</span> <span class="fl">1.5</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].backbone_radius <span class="op">=</span> <span class="fl">1.5</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].quality <span class="op">=</span> <span class="dv">5</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">1</span>].material <span class="op">=</span> mn.material.AmbientOcclusion()</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:170.39M (Peak 195.70M) | Time:00:00.18 | Rendering 1 / 64 samples
-Fra:1 Mem:170.39M (Peak 195.70M) | Time:00:00.32 | Rendering 25 / 64 samples
-Fra:1 Mem:170.45M (Peak 195.70M) | Time:00:00.44 | Rendering 50 / 64 samples
-Fra:1 Mem:170.39M (Peak 195.70M) | Time:00:00.51 | Rendering 64 / 64 samples
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpbj1ttgou/snapshot.png'
-Time: 00:00.55 (Saving: 00:00.03)
+<pre><code>Fra:1 Mem:170.56M (Peak 195.87M) | Time:00:00.18 | Rendering 1 / 64 samples
+Fra:1 Mem:170.56M (Peak 195.87M) | Time:00:00.32 | Rendering 25 / 64 samples
+Fra:1 Mem:170.62M (Peak 195.87M) | Time:00:00.44 | Rendering 50 / 64 samples
+Fra:1 Mem:170.56M (Peak 195.87M) | Time:00:00.51 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpeekn4xbu/snapshot.png'
+Time: 00:00.57 (Saving: 00:00.03)
 </code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -399,7 +399,7 @@ Time: 00:00.55 (Saving: 00:00.03)
 </div>
 </div>
 </div>
-<div id="acd16778" class="cell" data-execution_count="5">
+<div id="c76f7ceb" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> bpy</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>can.scene_reset()</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
@@ -413,55 +413,55 @@ Time: 00:00.55 (Saving: 00:00.03)
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>can.engine <span class="op">=</span> mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>)</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:107.75M (Peak 131.12M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Synchronizing object | 9EYM
-Fra:1 Mem:131.23M (Peak 156.72M) | Time:00:00.05 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Initializing
-Fra:1 Mem:104.40M (Peak 156.72M) | Time:00:00.05 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
-Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.07 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Waiting for render to start
-Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.07 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
-Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.12 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
-Fra:1 Mem:96.95M (Peak 156.72M) | Time:00:00.12 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
-Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Procedurals
-Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Background
-Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Camera
-Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes Flags
-Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects
-Fra:1 Mem:97.04M (Peak 156.72M) | Time:00:00.12 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
-Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
-Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Particle Systems
-Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
-Fra:1 Mem:97.05M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Meshes
-Fra:1 Mem:100.18M (Peak 156.72M) | Time:00:00.12 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Mesh | Computing attributes
-Fra:1 Mem:111.50M (Peak 156.72M) | Time:00:00.13 | Mem:8.54M, Peak:8.54M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
-Fra:1 Mem:100.18M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Building BVH
-Fra:1 Mem:100.19M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH triangles and strands
-Fra:1 Mem:100.19M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH nodes
-Fra:1 Mem:100.19M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Building
-Fra:1 Mem:100.20M (Peak 156.72M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Building BVH
-Fra:1 Mem:112.05M (Peak 156.72M) | Time:00:00.20 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Packing BVH triangles and strands
-Fra:1 Mem:112.84M (Peak 156.72M) | Time:00:00.20 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Packing BVH nodes
-Fra:1 Mem:112.44M (Peak 156.72M) | Time:00:00.21 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
-Fra:1 Mem:106.32M (Peak 156.72M) | Time:00:00.21 | Mem:25.81M, Peak:25.81M | Scene, ViewLayer | Updating Mesh | Computing normals
-Fra:1 Mem:114.66M (Peak 156.72M) | Time:00:00.21 | Mem:25.81M, Peak:25.81M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
-Fra:1 Mem:106.32M (Peak 156.72M) | Time:00:00.21 | Mem:34.22M, Peak:34.22M | Scene, ViewLayer | Updating Objects Flags
-Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.23M, Peak:34.23M | Scene, ViewLayer | Updating Primitive Offsets
-Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Images
-Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Camera Volume
-Fra:1 Mem:106.30M (Peak 156.72M) | Time:00:00.21 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:106.22M (Peak 156.72M) | Time:00:00.21 | Mem:34.33M, Peak:34.33M | Scene, ViewLayer | Updating Lights
-Fra:1 Mem:106.22M (Peak 156.72M) | Time:00:00.21 | Mem:34.33M, Peak:34.33M | Scene, ViewLayer | Updating Lights | Importance map
-Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.41 | Mem:98.40M, Peak:258.35M | Scene, ViewLayer | Updating Lights | Computing tree
-Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:123.06M, Peak:258.35M | Scene, ViewLayer | Updating Integrator
-Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Film
-Fra:1 Mem:106.30M (Peak 362.22M) | Time:00:00.49 | Mem:123.97M, Peak:258.35M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Baking
-Fra:1 Mem:106.21M (Peak 362.22M) | Time:00:00.49 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Device | Writing constant memory
-Fra:1 Mem:106.24M (Peak 362.22M) | Time:00:00.50 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
-Fra:1 Mem:106.24M (Peak 362.22M) | Time:00:00.51 | Mem:2908.07M, Peak:2908.07M | Scene, ViewLayer | Sample 0/32 (Using optimized kernels)
-Fra:1 Mem:106.24M (Peak 362.22M) | Time:00:00.86 | Remaining:00:10.73 | Mem:3058.38M, Peak:3058.38M | Scene, ViewLayer | Sample 1/32 (Using optimized kernels)
-Fra:1 Mem:169.52M (Peak 362.22M) | Time:00:04.10 | Mem:3058.40M, Peak:3105.87M | Scene, ViewLayer | Sample 32/32 (Using optimized kernels)
-Fra:1 Mem:169.52M (Peak 362.22M) | Time:00:04.10 | Mem:3058.40M, Peak:3105.87M | Scene, ViewLayer | Finished
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpw66egs_0/snapshot.png'
-Time: 00:04.26 (Saving: 00:00.11)
+<pre><code>Fra:1 Mem:138.17M (Peak 180.20M) | Time:00:00.03 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Synchronizing object | 9EYM
+Fra:1 Mem:161.64M (Peak 180.20M) | Time:00:00.04 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Initializing
+Fra:1 Mem:119.99M (Peak 180.20M) | Time:00:00.05 | Mem:0.02M, Peak:0.02M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
+Fra:1 Mem:112.28M (Peak 180.20M) | Time:00:00.06 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:112.28M (Peak 180.20M) | Time:00:00.06 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:112.28M (Peak 180.20M) | Time:00:00.11 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:112.28M (Peak 180.20M) | Time:00:00.11 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:112.36M (Peak 180.20M) | Time:00:00.11 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:112.36M (Peak 180.20M) | Time:00:00.11 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:112.36M (Peak 180.20M) | Time:00:00.11 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:112.36M (Peak 180.20M) | Time:00:00.11 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:112.36M (Peak 180.20M) | Time:00:00.11 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:112.36M (Peak 180.20M) | Time:00:00.11 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:112.37M (Peak 180.20M) | Time:00:00.11 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:112.37M (Peak 180.20M) | Time:00:00.11 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:112.37M (Peak 180.20M) | Time:00:00.11 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:112.37M (Peak 180.20M) | Time:00:00.11 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:115.51M (Peak 180.20M) | Time:00:00.11 | Mem:8.43M, Peak:8.43M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:126.83M (Peak 180.20M) | Time:00:00.11 | Mem:8.54M, Peak:8.54M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:115.51M (Peak 180.20M) | Time:00:00.18 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Building BVH
+Fra:1 Mem:115.51M (Peak 180.20M) | Time:00:00.18 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH triangles and strands
+Fra:1 Mem:115.51M (Peak 180.20M) | Time:00:00.18 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Geometry BVH Mesh 1/1 | Packing BVH nodes
+Fra:1 Mem:115.51M (Peak 180.20M) | Time:00:00.18 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:115.52M (Peak 180.20M) | Time:00:00.18 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:127.38M (Peak 180.20M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Packing BVH triangles and strands
+Fra:1 Mem:128.17M (Peak 180.20M) | Time:00:00.19 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Packing BVH nodes
+Fra:1 Mem:127.76M (Peak 180.20M) | Time:00:00.20 | Mem:19.65M, Peak:19.65M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:121.64M (Peak 180.20M) | Time:00:00.20 | Mem:25.81M, Peak:25.81M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:129.99M (Peak 180.20M) | Time:00:00.20 | Mem:25.81M, Peak:25.81M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:121.64M (Peak 180.20M) | Time:00:00.20 | Mem:34.22M, Peak:34.22M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:121.63M (Peak 180.20M) | Time:00:00.20 | Mem:34.23M, Peak:34.23M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:121.63M (Peak 180.20M) | Time:00:00.20 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:121.63M (Peak 180.20M) | Time:00:00.20 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:121.63M (Peak 180.20M) | Time:00:00.20 | Mem:34.24M, Peak:34.24M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:121.55M (Peak 180.20M) | Time:00:00.20 | Mem:34.33M, Peak:34.33M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:121.55M (Peak 180.20M) | Time:00:00.20 | Mem:34.33M, Peak:34.33M | Scene, ViewLayer | Updating Lights | Importance map
+Fra:1 Mem:121.54M (Peak 377.55M) | Time:00:00.42 | Mem:98.40M, Peak:258.35M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:121.54M (Peak 377.55M) | Time:00:00.51 | Mem:123.06M, Peak:258.35M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:121.54M (Peak 377.55M) | Time:00:00.51 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:121.62M (Peak 377.55M) | Time:00:00.51 | Mem:123.97M, Peak:258.35M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:121.54M (Peak 377.55M) | Time:00:00.51 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:121.54M (Peak 377.55M) | Time:00:00.51 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:121.56M (Peak 377.55M) | Time:00:00.52 | Mem:124.06M, Peak:258.35M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:1 Mem:121.56M (Peak 377.55M) | Time:00:00.53 | Mem:2908.07M, Peak:2908.07M | Scene, ViewLayer | Sample 0/32 (Using optimized kernels)
+Fra:1 Mem:121.57M (Peak 377.55M) | Time:00:01.10 | Remaining:00:17.71 | Mem:3058.38M, Peak:3058.38M | Scene, ViewLayer | Sample 1/32 (Using optimized kernels)
+Fra:1 Mem:184.85M (Peak 377.55M) | Time:00:04.39 | Mem:3058.40M, Peak:3105.87M | Scene, ViewLayer | Sample 32/32 (Using optimized kernels)
+Fra:1 Mem:184.85M (Peak 377.55M) | Time:00:04.39 | Mem:3058.40M, Peak:3105.87M | Scene, ViewLayer | Finished
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmphxvm6ous/snapshot.png'
+Time: 00:04.56 (Saving: 00:00.12)
 </code></pre>
 </div>
 <div class="cell-output cell-output-display">

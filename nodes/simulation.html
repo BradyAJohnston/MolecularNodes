@@ -257,6 +257,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <ul class="collapse">
   <li><a href="#simulate-curve" id="toc-simulate-curve" class="nav-link" data-scroll-target="#simulate-curve">Simulate Curve</a></li>
   <li><a href="#simulate-elastic-network" id="toc-simulate-elastic-network" class="nav-link" data-scroll-target="#simulate-elastic-network">Simulate Elastic Network</a></li>
+  <li><a href="#simulate-on-faces" id="toc-simulate-on-faces" class="nav-link" data-scroll-target="#simulate-on-faces">Simulate on Faces</a></li>
+  <li><a href="#build-elastic-network" id="toc-build-elastic-network" class="nav-link" data-scroll-target="#build-elastic-network">Build Elastic Network</a></li>
+  <li><a href="#is-backbone-edge" id="toc-is-backbone-edge" class="nav-link" data-scroll-target="#is-backbone-edge">Is Backbone Edge</a></li>
   <li><a href="#force-brownian" id="toc-force-brownian" class="nav-link" data-scroll-target="#force-brownian">Force Brownian</a></li>
   <li><a href="#force-mesh-collide" id="toc-force-mesh-collide" class="nav-link" data-scroll-target="#force-mesh-collide">Force Mesh Collide</a></li>
   <li><a href="#force-gravity" id="toc-force-gravity" class="nav-link" data-scroll-target="#force-gravity">Force Gravity</a></li>
@@ -265,10 +268,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#xpbd-solve-curve" id="toc-xpbd-solve-curve" class="nav-link" data-scroll-target="#xpbd-solve-curve">XPBD Solve Curve</a></li>
   <li><a href="#xpbd-solve-edges" id="toc-xpbd-solve-edges" class="nav-link" data-scroll-target="#xpbd-solve-edges">XPBD Solve Edges</a></li>
   <li><a href="#xpbd-solve-points" id="toc-xpbd-solve-points" class="nav-link" data-scroll-target="#xpbd-solve-points">XPBD Solve Points</a></li>
+  <li><a href="#xpbd-solve-points-for-curve" id="toc-xpbd-solve-points-for-curve" class="nav-link" data-scroll-target="#xpbd-solve-points-for-curve">XPBD Solve Points for Curve</a></li>
   <li><a href="#xpbd-solve-on-faces" id="toc-xpbd-solve-on-faces" class="nav-link" data-scroll-target="#xpbd-solve-on-faces">XPBD Solve on Faces</a></li>
   <li><a href="#xpbd-solve-hook" id="toc-xpbd-solve-hook" class="nav-link" data-scroll-target="#xpbd-solve-hook">XPBD Solve Hook</a></li>
   <li><a href="#constraint-distance" id="toc-constraint-distance" class="nav-link" data-scroll-target="#constraint-distance">Constraint Distance</a></li>
-  <li><a href="#is-backbone-edge" id="toc-is-backbone-edge" class="nav-link" data-scroll-target="#is-backbone-edge">Is Backbone Edge</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -323,32 +326,32 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td>Geometry containing curve to simulate</td>
 </tr>
 <tr class="even">
 <td><code class="custom-bool">Selection</code></td>
 <td style="text-align: center;">True</td>
-<td></td>
+<td>Which points to simulate on the curve</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-int">Substeps</code></td>
 <td style="text-align: center;">5</td>
-<td></td>
+<td>Number of substeps to simulate for each frame of the animation (higher is slower but more accurate)</td>
 </tr>
 <tr class="even">
 <td><code class="custom-vector">Force</code></td>
 <td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
+<td>Additional forces to be applied to the simulation</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-float">Drag</code></td>
 <td style="text-align: center;">1.0</td>
-<td></td>
+<td>Drag force for how quickly velocity should dissipate in the simulation. 0 is no drag and higher values dissipate quicker.</td>
 </tr>
 <tr class="even">
 <td><code class="custom-float">Point Radius</code></td>
 <td style="text-align: center;">0.04</td>
-<td></td>
+<td>Radius for each point which is used for calculating collisions between points</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-float">Point alpha</code></td>
@@ -391,16 +394,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Hook Pin</code></td>
-<td style="text-align: center;">0.01</td>
-<td>Distance under which the hook will become a Pin</td>
-</tr>
-<tr class="even">
 <td><code class="custom-bool">Pin Selection</code></td>
 <td style="text-align: center;">False</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-vector">Pin Target</code></td>
 <td style="text-align: center;"><code class="custom-input">Position</code></td>
 <td></td>
@@ -449,7 +447,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
+<td><code class="custom-geometry">Mesh</code></td>
 <td style="text-align: center;"><em>None</em></td>
 <td></td>
 </tr>
@@ -527,8 +525,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="force-brownian" class="level2">
-<h2 class="anchored" data-anchor-id="force-brownian">Force Brownian</h2>
+<section id="simulate-on-faces" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-on-faces">Simulate on Faces</h2>
 <section id="outputs-2" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
 <table class="caption-top table">
@@ -545,7 +543,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td style="text-align: right;"><code class="custom-vector">Force</code></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
 </tr>
 </tbody>
 </table>
@@ -567,26 +565,81 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-vector">Add</code></td>
+<td><code class="custom-geometry">Points</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Substeps</code></td>
+<td style="text-align: center;">5</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Force</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Drag</code></td>
+<td style="text-align: center;">0.1</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-geometry">Faces</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Particle Radius</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Particle alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Hook Selection</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">Hook Target</code></td>
 <td style="text-align: center;">[0.0, 0.0, 0.0]</td>
 <td></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Small</code></td>
-<td style="text-align: center;">0.2</td>
+<td><code class="custom-float">Hook Decay</code></td>
+<td style="text-align: center;">2.0</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Large</code></td>
-<td style="text-align: center;">0.1</td>
+<td><code class="custom-bool">Pin Selection</code></td>
+<td style="text-align: center;">False</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">Pin Target</code></td>
+<td style="text-align: center;"><code class="custom-input">Position</code></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="force-mesh-collide" class="level2">
-<h2 class="anchored" data-anchor-id="force-mesh-collide">Force Mesh Collide</h2>
+<section id="build-elastic-network" class="level2">
+<h2 class="anchored" data-anchor-id="build-elastic-network">Build Elastic Network</h2>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
@@ -602,8 +655,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">Force</code></td>
+<td>The generated elastic network. Edges are formed between atoms within the cutoff distance for use as constraints in a simulation</td>
+<td style="text-align: right;"><code class="custom-geometry">Mesh</code></td>
 </tr>
 </tbody>
 </table>
@@ -625,33 +678,62 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-vector">Add</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
+<td><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td>Atomic mesh which inculdes vertices and edges to generate an elastic network on</td>
 </tr>
 <tr class="even">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td>Atoms which aren’t selected will not be included in the final output mesh</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-menu">Geometry Bounds</code></td>
-<td style="text-align: center;">Original</td>
-<td></td>
+<td><code class="custom-menu">Menu</code></td>
+<td style="text-align: center;">Alpha Carbon</td>
+<td>Output a network between just alpha carbons, or one that includes all atoms</td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Collision Distance</code></td>
-<td style="text-align: center;">0.1</td>
-<td></td>
+<td><code class="custom-float">Alpha Carbon</code></td>
+<td style="text-align: center;">4.0</td>
+<td>Scale the distance for edge creation between just alpha carbon atoms, ignoring all other atoms.</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">All Atom</code></td>
+<td style="text-align: center;">2.0</td>
+<td>Scale the distance for edge creation, looking for all selected atoms</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="force-gravity" class="level2">
-<h2 class="anchored" data-anchor-id="force-gravity">Force Gravity</h2>
+<section id="is-backbone-edge" class="level2">
+<h2 class="anchored" data-anchor-id="is-backbone-edge">Is Backbone Edge</h2>
 <section id="outputs-4" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-bool">Is Backbone Edge</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="force-brownian" class="level2">
+<h2 class="anchored" data-anchor-id="force-brownian">Force Brownian</h2>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -693,6 +775,127 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td></td>
 </tr>
 <tr class="even">
+<td><code class="custom-float">Small</code></td>
+<td style="text-align: center;">0.1</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Large</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="force-mesh-collide" class="level2">
+<h2 class="anchored" data-anchor-id="force-mesh-collide">Force Mesh Collide</h2>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">Force</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Add</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-menu">Geometry Bounds</code></td>
+<td style="text-align: center;">Original</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Collision Distance</code></td>
+<td style="text-align: center;">0.1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="force-gravity" class="level2">
+<h2 class="anchored" data-anchor-id="force-gravity">Force Gravity</h2>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">Force</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">Add</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
 <td><code class="custom-vector">Gravity</code></td>
 <td style="text-align: center;">[0.0, 0.0, -9.8]</td>
 <td></td>
@@ -703,8 +906,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="xpbd-init" class="level2">
 <h2 class="anchored" data-anchor-id="xpbd-init">XPBD Init</h2>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -724,8 +927,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -771,8 +974,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="xpbd-finalise" class="level2">
 <h2 class="anchored" data-anchor-id="xpbd-finalise">XPBD Finalise</h2>
-<section id="outputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -792,8 +995,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<section id="inputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -829,8 +1032,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="xpbd-solve-curve" class="level2">
 <h2 class="anchored" data-anchor-id="xpbd-solve-curve">XPBD Solve Curve</h2>
-<section id="outputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<section id="outputs-10" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -850,8 +1053,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<section id="inputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -907,144 +1110,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="xpbd-solve-edges" class="level2">
 <h2 class="anchored" data-anchor-id="xpbd-solve-edges">XPBD Solve Edges</h2>
-<section id="outputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Distance</code></td>
-<td style="text-align: center;">0.27</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">alpha</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">deltaT</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="xpbd-solve-points" class="level2">
-<h2 class="anchored" data-anchor-id="xpbd-solve-points">XPBD Solve Points</h2>
-<section id="outputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Radius</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">alpha</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">deltaT</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="xpbd-solve-on-faces" class="level2">
-<h2 class="anchored" data-anchor-id="xpbd-solve-on-faces">XPBD Solve on Faces</h2>
-<section id="outputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
+<section id="outputs-11" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1091,8 +1158,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-geometry">Faces</code></td>
-<td style="text-align: center;"><em>None</em></td>
+<td><code class="custom-float">Distance</code></td>
+<td style="text-align: center;">0.27</td>
 <td></td>
 </tr>
 <tr class="even">
@@ -1109,10 +1176,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="xpbd-solve-hook" class="level2">
-<h2 class="anchored" data-anchor-id="xpbd-solve-hook">XPBD Solve Hook</h2>
-<section id="outputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
+<section id="xpbd-solve-points" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-points">XPBD Solve Points</h2>
+<section id="outputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1134,6 +1201,210 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="inputs-11" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Radius</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-points-for-curve" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-points-for-curve">XPBD Solve Points for Curve</h2>
+<section id="outputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-12" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Radius</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-on-faces" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-on-faces">XPBD Solve on Faces</h2>
+<section id="outputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-13" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Selection</code></td>
+<td style="text-align: center;">True</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-geometry">Faces</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">deltaT</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="xpbd-solve-hook" class="level2">
+<h2 class="anchored" data-anchor-id="xpbd-solve-hook">XPBD Solve Hook</h2>
+<section id="outputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-14" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1179,8 +1450,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="constraint-distance" class="level2">
 <h2 class="anchored" data-anchor-id="constraint-distance">Constraint Distance</h2>
-<section id="outputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
+<section id="outputs-16" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -1204,8 +1475,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
+<section id="inputs-15" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -1254,30 +1525,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-float">deltaT</code></td>
 <td style="text-align: center;">0.0</td>
 <td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-backbone-edge" class="level2">
-<h2 class="anchored" data-anchor-id="is-backbone-edge">Is Backbone Edge</h2>
-<section id="outputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Is Backbone Edge</code></td>
 </tr>
 </tbody>
 </table>

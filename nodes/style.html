@@ -553,59 +553,49 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Peptide Backbone Radius</code></td>
+<td><code class="custom-float">Backbone Smoothing</code></td>
+<td style="text-align: center;">0.5</td>
+<td>Smoothen the sheet ribbons such as beta-sheets</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">Backbone Threshold</code></td>
+<td style="text-align: center;">4.5</td>
+<td>Distance (Angstroms) over which subsequent CA points are treated as a new chain</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">Backbone Radius</code></td>
 <td style="text-align: center;">1.6</td>
 <td></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-float">Peptide Smoothing</code></td>
-<td style="text-align: center;">0.5</td>
-<td>Smoothen the sheet ribbons such as beta-sheets</td>
-</tr>
-<tr class="even">
 <td><code class="custom-menu">Backbone Shape</code></td>
 <td style="text-align: center;">Cylinder</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-float">Backbone Radius</code></td>
 <td style="text-align: center;">2.0</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code class="custom-geometry">Base Geometry</code></td>
 <td style="text-align: center;"><em>None</em></td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-vector">Base Scale</code></td>
 <td style="text-align: center;">[2.5, 0.5, 7.0]</td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code class="custom-int">Base Resolution</code></td>
 <td style="text-align: center;">4</td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code class="custom-bool">Base Realize</code></td>
 <td style="text-align: center;">False</td>
 <td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Color Blur</code></td>
-<td style="text-align: center;">True</td>
-<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Shade Smooth</code></td>
-<td style="text-align: center;">True</td>
-<td>Apply smooth shading to the created geometry</td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;">None</td>
-<td>Material to apply to the resulting geometry</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-bool">UV Map</code></td>
@@ -616,6 +606,21 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-menu">U Component</code></td>
 <td style="text-align: center;">Factor</td>
 <td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-bool">Color Blur</code></td>
+<td style="text-align: center;">True</td>
+<td>Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Shade Smooth</code></td>
+<td style="text-align: center;">True</td>
+<td>Apply smooth shading to the created geometry</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-material">Material</code></td>
+<td style="text-align: center;">None</td>
+<td>Material to apply to the resulting geometry</td>
 </tr>
 </tbody>
 </table>

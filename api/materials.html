@@ -314,7 +314,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>We can progrommatically access the properties of the materials like this:</p>
-<div id="bd499663" class="cell" data-execution_count="1">
+<div id="bf86efb9" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mn.register()</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mn.assets.install()</span>
@@ -322,17 +322,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>can.scene_reset()</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>can.resolution <span class="op">=</span> (<span class="dv">860</span>, <span class="dv">540</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="0e6705e8" class="cell" data-execution_count="2">
+<div id="8d5489ad" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>).add_style(<span class="st">"surface"</span>, material <span class="op">=</span> mn.material.AmbientOcclusion())</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>can.frame_object(mol)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:104.19M (Peak 115.37M) | Time:00:00.31 | Rendering 1 / 64 samples
-Fra:1 Mem:104.28M (Peak 115.37M) | Time:00:00.44 | Rendering 25 / 64 samples
-Fra:1 Mem:104.28M (Peak 115.37M) | Time:00:00.52 | Rendering 50 / 64 samples
-Fra:1 Mem:104.28M (Peak 115.37M) | Time:00:00.57 | Rendering 64 / 64 samples
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpw19hbbuh/snapshot.png'
-Time: 00:00.67 (Saving: 00:00.08)
+<pre><code>Fra:1 Mem:104.19M (Peak 115.36M) | Time:00:00.30 | Rendering 1 / 64 samples
+Fra:1 Mem:104.27M (Peak 115.36M) | Time:00:00.49 | Rendering 25 / 64 samples
+Fra:1 Mem:104.27M (Peak 115.36M) | Time:00:00.65 | Rendering 50 / 64 samples
+Fra:1 Mem:104.27M (Peak 115.36M) | Time:00:00.74 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpxnf8zfu7/snapshot.png'
+Time: 00:00.85 (Saving: 00:00.08)
 </code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -343,15 +343,15 @@ Time: 00:00.67 (Saving: 00:00.08)
 </div>
 </div>
 </div>
-<div id="b15496b9" class="cell" data-execution_count="3">
+<div id="43a95869" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">0</span>].material.ambient_occlusion_distance <span class="op">=</span> <span class="fl">0.1</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:104.35M (Peak 121.18M) | Time:00:00.09 | Rendering 1 / 64 samples
-Fra:1 Mem:104.29M (Peak 121.18M) | Time:00:00.21 | Rendering 25 / 64 samples
-Fra:1 Mem:104.35M (Peak 121.18M) | Time:00:00.32 | Rendering 50 / 64 samples
-Fra:1 Mem:104.29M (Peak 121.18M) | Time:00:00.40 | Rendering 64 / 64 samples
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmp5d0xrvrh/snapshot.png'
+<pre><code>Fra:1 Mem:104.34M (Peak 121.18M) | Time:00:00.10 | Rendering 1 / 64 samples
+Fra:1 Mem:104.28M (Peak 121.18M) | Time:00:00.21 | Rendering 25 / 64 samples
+Fra:1 Mem:104.34M (Peak 121.18M) | Time:00:00.33 | Rendering 50 / 64 samples
+Fra:1 Mem:104.28M (Peak 121.18M) | Time:00:00.40 | Rendering 64 / 64 samples
+Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpuhq6pnz2/snapshot.png'
 Time: 00:00.45 (Saving: 00:00.03)
 </code></pre>
 </div>
@@ -363,7 +363,7 @@ Time: 00:00.45 (Saving: 00:00.03)
 </div>
 </div>
 </div>
-<div id="0895ddb9" class="cell" data-execution_count="4">
+<div id="a57317cf" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[x <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">dir</span>(mn.material.AmbientOcclusion()) <span class="cf">if</span> <span class="kw">not</span> x.startswith(<span class="st">"_"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>['ambient_occlusion_color',
