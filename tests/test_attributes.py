@@ -33,3 +33,13 @@ def test_uv_map(snapshot_custom):
     mol.styles[0].quality = 1
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[:1000]
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]
+
+
+def test_bond_attributes(snapshot_custom):
+    mol = mn.Molecule.fetch("1bna", cache=data_dir, format="bcif").add_style(
+        "ball_and_stick"
+    )
+    mol.styles[0].sphere_geometry = "mesh"
+
+    for attr in mol.list_attributes(evaluate=True, drop_hidden=True):
+        assert snapshot_custom == mol.named_attribute(attr, evaluate=True)
