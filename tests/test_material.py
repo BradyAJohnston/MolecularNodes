@@ -21,6 +21,15 @@ def test_setting_material():
         s.material.mix_a
 
 
+def test_setting_material_in_apply():
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon", material = mn.material.AmbientOcclusion())
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon", material = mn.material.Default())
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon", material = mn.material.FlatOutline())
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon", material = mn.material.Squishy())
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon", material = mn.material.TransparentOutline())
+
+
+
 def test_generic_material():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     s = mol.styles[0]
