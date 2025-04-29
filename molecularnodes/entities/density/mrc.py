@@ -31,10 +31,12 @@ class MRC(Density):
 
         Parameters
         ----------
-        file : str
-            Path to the MRC file.
         name : str, optional
-            If not None, renames the object with the new name.
+            If not empty, renames the object with the new name. Default is "NewDensity".
+        style : str, optional
+            The style of the density object. Default is "density_surface".
+        setup_nodes : bool, optional
+            Whether to create starting node tree. Default is True.
 
         Returns
         -------
