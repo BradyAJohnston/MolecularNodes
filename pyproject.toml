@@ -9,7 +9,7 @@ dependencies = [
     "biotite>=1.1",
     "mrcfile",
     "starfile",
-    "yaml"
+    "PyYaml"
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11"
