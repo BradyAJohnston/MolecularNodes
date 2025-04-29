@@ -1,0 +1,66 @@
+## GFP Code From Prettymol Ported to MN
+
+Note: WIP. Still some issues to work out
+
+
+```python
+%load_ext autoreload
+%autoreload 2
+
+import bpy
+import molecularnodes as mn
+# from  molecularnodes.blender.materials import MaterialCreator
+from molecularnodes.scene.base import Canvas
+
+
+def clear_scene():
+    bpy.context.view_layer.update()
+    bpy.ops.outliner.orphans_purge(do_recursive=True)
+
+    for mesh in bpy.data.meshes:
+        bpy.data.meshes.remove(mesh)
+    for material in bpy.data.materials:
+        bpy.data.materials.remove(material)
+    # for obj in bpy.data.objects:
+    #     bpy.data.objects.remove(obj)
+        bpy.context.view_layer.update()
+
+
+mn.register()
+
+#gfp_mat = MaterialCreator.green_glow().blenderize()
+structure = mn.Molecule.fetch("1EMA")
+
+# select AA
+structure.select.is_amino_acid().store_selection("Protein")
+structure.add_style("cartoon", selection="Protein")
+assert structure.bob.named_attribute("Protein").sum() == 1771
+
+# select Chromophore
+structure.select.res_name("CRO").store_selection("GFP")
+# structure.add_style("sphere", selection="GFP", material = gfp_mat)
+structure.add_style("sphere", selection="GFP")
+assert structure.bob.named_attribute("GFP").sum() == 22
+
+
+# get residues
+resids = list(set(structure.bob.named_attribute("res_id").tolist()))
+
+can = Canvas(resolution=(640, 480))
+
+
+BASE_PNG = "pngs/gfptest3"
+
+# for i in range(len(resids)) :
+#     if i % 10 == 0:
+#     # if i ==4:
+#     #     break
+#         clear_scene()
+#         structure = mn.Molecule.fetch("1EMA")
+#         structure.select.is_amino_acid().res_id(resids[:i]).store_selection("Protein")
+#         structure.add_style("cartoon", selection="Protein")
+#         structure.select.res_name("CRO").store_selection("GFP")
+#         structure.add_style("sphere", selection="GFP")
+#         can.snapshot(f"{BASE_PNG}_{i}")
+
+```
