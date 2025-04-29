@@ -198,6 +198,11 @@ class Canvas:
         -------
         Canvas
             Returns self for method chaining.
+
+        See also
+        --------
+        `Blender Documentation - Glare Node <https://docs.blender.org/manual/en/latest/compositing/node_types/filter/glare.html>`_
+
         """
         scene = bpy.context.scene
         if not scene.use_nodes:
