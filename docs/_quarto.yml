@@ -12,19 +12,17 @@ website:
   page-navigation: true
   navbar:
     left:
-      # - file: installation.qmd
-      #   text: Installation
-      - file: tutorials/
+      - href: tutorials/
         text: Tutorials
       - text: Nodes
         href: nodes/
-      - file: attributes.qmd
+      - href: attributes.qmd
         text: Documentation
       - text: API
         href: api/
-      - file: examples/
+      - href: examples/
         text: Examples
-      - file: citations/
+      - href: citations/
         text: Citations
     tools:
       - icon: github
@@ -55,6 +53,8 @@ website:
         - tutorials/selections.qmd
         - tutorials/trajectories.qmd
         - tutorials/cryoem.qmd
+        - tutorials/simulation.qmd
+
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
