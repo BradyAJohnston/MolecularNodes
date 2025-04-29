@@ -1,9 +1,4 @@
----
-
----
-
-submenus:
-- name: style
+style:
   title: Style
   items:
   - label: Spheres
@@ -73,7 +68,8 @@ submenus:
       Quickly switch between several different pre-made preset styles. Best used when using MolecularNodes via scripts,
       ensuring all atoms are displayed using a combination of cartoons and atoms.
     videos: https://imgur.com/gCQRWBk.mp4
-- name: select
+
+select:
   title: Select
   items:
   - name: Separate Atoms
@@ -259,7 +255,8 @@ submenus:
       for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures that
       entire residues are shown.
     videos: https://imgur.com/QmvDZn2
-- name: color
+
+color:
   title: Color
   description: >-
     Customise the colors of the structure using these nodes. The color for atoms are always set before using the `Style`
@@ -413,7 +410,8 @@ submenus:
     description: >-
       Offset the lightness and chroma of an OKLab color. It is first converted to LCh color space, then the lightness
       and chroma are offset, then converted back to OKLab color space.
-- name: attributes
+
+attributes:
   title: Attributes
   items:
   - name: Chain ID
@@ -476,7 +474,8 @@ submenus:
     description: >-
       Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA points
       are greater than threshold
-- name: topology
+
+topology:
   title: Topology
   items:
   - label: DSSP
@@ -611,7 +610,8 @@ submenus:
       complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with
       doing calculations for planar molecules.
     videos: https://imgur.com/fZ6srIS
-- name: curves
+
+curves:
   title: Curves
   items:
   - name: Curve Vectors
@@ -655,7 +655,8 @@ submenus:
     description: >-
       `Curve to Mesh` but with the potential for a custom profile, with fields for custom rotations and scaling along
       the curve while generating the geometry
-- name: simulation
+
+simulation:
   title: Simulation
   items:
   - name: Simulate Curve
@@ -679,7 +680,8 @@ submenus:
   - name: XPBD Solve Hook
   - type: break
   - name: Constraint Distance
-- name: geometry
+
+geometry:
   title: Geometry
   items:
   - name: Split to Centred Instances
@@ -722,7 +724,8 @@ submenus:
   - type: break
   - name: Visualize Points
   - name: Visualize Angle
-- name: fields
+
+fields:
   title: Fields
   description: >-
     For working with and manipulating fields. Evaluating at specific indices, offsetting, fallback values and picking
@@ -856,7 +859,8 @@ submenus:
     description: >-
       Mask a run of boolean values. Potentially trim the start or ending values and specifying a minimum length under
       which they are considered false
-- name: ensemble
+
+ensemble:
   title: Ensemble
   items:
   - label: Biological Assembly
@@ -888,7 +892,8 @@ submenus:
   - name: Rotation cisTEM
     description: >-
       A rotation calculated from relevant columns of a cisTEM .star file
-- name: DNA
+
+DNA:
   title: DNA
   items:
   - label: Double Helix
@@ -917,7 +922,8 @@ submenus:
     name: MN_dna_style_ball_and_stick
     description: >-
       Style the DNA bases with ball and stick representation
-- name: animate
+
+animate:
   title: Animate
   items:
   - label: Animate Frames
@@ -998,7 +1004,8 @@ submenus:
       noise being applied. Using the `chain_id` results in the same noise being generated for each atom in each chain,
       but different between chains.
     videos: https://imgur.com/GNQcIlx
-- name: utils
+
+utils:
   title: Utilities
   items:
   - label: Curve Resample
@@ -1114,7 +1121,8 @@ submenus:
       Point Mask node is used, this index is then on a per-group basis, so each point in the group points to just the
       group's corresponding point.
     videos: https://imgur.com/AykNvDz
-- name: density
+
+density:
   title: Density
   items:
   - label: Style Surface
