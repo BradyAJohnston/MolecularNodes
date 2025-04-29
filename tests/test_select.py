@@ -1,6 +1,7 @@
 import databpy
 import numpy as np
 import pytest
+import molecularnodes as mn
 from molecularnodes.nodes import nodes
 
 
@@ -40,3 +41,17 @@ def test_select_multiple_residues(selection):
     vertices_count = len(bob.evaluate().data.vertices)
     assert vertices_count == len(selection[1])
     assert (bob.named_attribute("res_id", evaluate=True) == selection[1]).all()
+
+
+def test_gfp_selection():
+    structure = mn.Molecule.fetch("1EMA")
+
+    # select AA and create a named selection
+    structure.select.is_amino_acid().store_selection("Protein")
+    structure.add_style("cartoon", selection="Protein")
+    assert structure.bob.named_attribute("Protein").sum() == 1771
+
+    # select Chromophore and create a named selection
+    structure.select.res_name("CRO").store_selection("GFP")
+    structure.add_style("sphere", selection="GFP")
+    assert structure.bob.named_attribute("GFP").sum() == 22
