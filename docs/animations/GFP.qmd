@@ -1,0 +1,179 @@
+---
+title: GFP Animation
+jupyter: blender
+---
+
+
+- load 1gfl
+- load 1ema
+- note: molmonth: https://pdb101.rcsb.org/motm/42
+- 1kys: Blue-FP
+- GFP Review Paper: https://www.annualreviews.org/content/journals/10.1146/annurev.biochem.67.1.509
+- 1EMA Annotations: https://www.rcsb.org/3d-sequence/1EMA?assemblyId=1
+- RESI 65 = CRO = Chromophore
+
+```text
+In just three years, the green fluorescent protein (GFP) from the jellyfish Aequorea victoria has vaulted from obscurity to become one of the most widely studied and exploited proteins in biochemistry and cell biology. Its amazing ability to generate a highly visible, efficiently emitting internal fluorophore is both intrinsically fascinating and tremendously valuable. High-resolution crystal structures of GFP offer unprecedented opportunities to understand and manipulate the relation between protein structure and spectroscopic function. GFP has become well established as a marker of gene expression and protein targeting in intact cells and organisms. Mutagenesis and engineering of GFP into chimeric proteins are opening new vistas in physiological indicators, biosensors, and photochemical memories.
+```
+
+
+```{python}
+%load_ext autoreload
+%autoreload 2
+
+import math
+import os
+import time
+from math import radians
+#import blendersynth as bsyn
+#from prettymol import draw, load_pdb
+#from prettymol import StructureSelector, Repltools, MaterialCreator, StyleCreator, LightingCreator
+import molecularnodes as mn
+from biotite.structure import rotate_about_axis, orient_principal_components
+
+# Load and process structure
+structure = mn.Molecule.fetch("1EMA")
+#structure = orient_principal_components(structure, order = (1,2,0))
+polymer = StructureSelector(structure).amino_acids().get_selection()
+chromo = StructureSelector(structure).resname("CRO").get_selection()
+
+
+sun = LightingCreator.sun_light().update_properties(energy=6)
+rt = Repltools()
+rt.lighting_set_light(sun)
+rt.view_set_axis(distance=1.0)
+
+bsyn.render.set_cycles_samples(10)
+bsyn.render.set_transparent()
+
+draw(
+    structure,
+    StyleCreator.ribbon().update_properties(radius=1, quality=2, shade_smooth=False),
+    MaterialCreator.new())
+
+draw(
+    chromo,
+    StyleCreator.spheres(),
+    MaterialCreator.green_glow())
+
+rt.view_set_axis(distance=1)
+# rt.view_save("gfp_gold_interior.png", width=800, height=800)
+# rt.view_save("gfp_greenglow_interior.png", width=800, height=800)
+```
+
+## Generate Growing Backbone
+
+- grow the backbone
+- rotate one degree per frame
+
+
+```{python}
+#| scrolled: true
+structure = load_pdb("1EMA")
+polymer = StructureSelector(structure).amino_acids().get_selection()
+structure.get_annotation_categories()
+resids = list(set(polymer.get_annotation('res_id').tolist()))
+
+print(len(resids), resids)
+BASE_PNG = "pngs/gfptest3"
+
+for i in range(len(resids)) :
+    if i % 2 == 0:
+    # if i ==4:
+    #     break
+        rt.scene_clear()
+        structure = load_pdb("1EMA")
+        structure = orient_principal_components(structure, order = (1,2,0))
+
+        sel = StructureSelector(structure)
+        sel2 = sel.resids( resids[:i]).get_selection()
+
+        obj_structure = draw(
+            sel2,
+            StyleCreator.ribbon().update_properties(radius=1, quality=2, shade_smooth=False),
+            MaterialCreator.new()
+        )
+
+        mat_structure = obj_structure.data.materials
+        mesh1 = bsyn.Mesh(obj_structure, class_id = 0)
+        mesh1.rotate_by([0,0, radians(i)])
+
+        rt.view_set_axis(distance=1)
+        rt.view_save(filename = f"{BASE_PNG}/gfptest_{i:03d}", width=800, height=800)
+
+```
+
+## Create the Surface and Glowing Chromophore
+
+- start at same rotation we left off
+- add a surface and a glowing component
+
+```{python}
+#| scrolled: true
+structure = load_pdb("1EMA")
+structure.get_annotation_categories()
+resids = list(set(structure.get_annotation('res_id').tolist()))
+
+BASE_PNG = "pngs/gfptest3"
+base_rotation = 224
+
+for i in range(320) :
+    # if i == 10:
+    #     break
+    if i % 2 == 0:
+        frame = base_rotation + i
+        rt.scene_clear()
+        structure = load_pdb("1EMA")
+        structure = orient_principal_components(structure, order = (1,2,0))
+        polymer = StructureSelector(structure).amino_acids().get_selection()
+        chromo = StructureSelector(structure).resname("CRO").get_selection()
+
+        # ribbon
+        obj_structure = draw(
+            polymer,
+            StyleCreator.ribbon().update_properties(radius=1, quality=2, shade_smooth=False),
+            MaterialCreator.new()
+        )
+
+        mat_structure = obj_structure.data.materials
+        mesh1 = bsyn.Mesh(obj_structure, class_id = 0)
+        mesh1.rotate_by([0,0, radians(frame)])
+
+        # Surface
+        obj_surface = draw(
+            polymer,
+            StyleCreator.surface(),
+            MaterialCreator.glass().update_properties(alpha=0.2) # glass?
+        )
+
+        mat_surface = obj_surface.data.materials
+        mesh2 = bsyn.Mesh(obj_surface, class_id = 0)
+        mesh2.rotate_by([0,0, radians(frame)])
+
+        # Chromophore
+        # intensity =  5 + 3 * math.sin(i)
+        intensity =  5 + round(3 * math.sin(i),2)
+        obj_chromo = draw(
+            chromo,
+            StyleCreator.spheres(),
+            MaterialCreator.green_glow().update_properties(emission_strength=intensity)
+        )
+
+        mat_chromo = obj_chromo.data.materials
+        mesh3 = bsyn.Mesh(obj_chromo, class_id = 0)
+        mesh3.rotate_by([0,0, radians(frame)])
+
+        # time.sleep(1)
+        rt.view_set_axis(distance=1)
+        rt.view_save(filename = f"{BASE_PNG}/gfptest_{frame:03d}", width=800, height=800)
+        # rt.view_render()
+```
+
+```{python}
+! magick -delay 0 \
+  -loop 0  \
+  -dispose background \
+  -background none \
+  -dispose previous \
+  pngs/gfptest3/*.png gfp_grow4.gif
+```
