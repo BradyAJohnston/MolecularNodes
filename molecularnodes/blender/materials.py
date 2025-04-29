@@ -6,26 +6,21 @@ from typing import List, Tuple, Union
 __all__ = ['Material', 'MaterialCreator']
 
 
-
 @dataclass(frozen=True)
-class StyleBase:
-    def get_by_key(self, original_key: str):
-        for f in fields(self):
-            if f.metadata.get('key') == original_key:
-                return getattr(self, f.name)
-        return None
-
-    def update_properties(self, **changes):
-        return replace(self, **changes)
-
-
-
-@dataclass(frozen=True)
-class Material(StyleBase):
+class Material():
     """Provides all material properties available to a Blender BSDF Material.
 
-    See the Blender documentation for full details:
+    For full details on Blender material properties, see the Blender documentation:
     https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/principled.html
+
+    Material instances store all properties for Blender's Principled BSDF shader node.
+    Typically created using MaterialCreator's factory methods or the Material.update_properties() method.
+
+    Examples:
+        >>> # Create a basic material
+        >>> mat = Material()
+        >>> # Update properties of an existing material
+        >>> transparent_mat = mat.update_properties(alpha=0.5)
     """
     base_color: Tuple[float, float, float, float] = field(default=(0.8, 0.8, 0.8, 0.05), metadata={"key": "Base Color"})
     metallic: float = field(default=0.0, metadata={"key": "Metallic"})
@@ -59,7 +54,28 @@ class Material(StyleBase):
     thin_film_thickness: float = field(default=0.0, metadata={"key": "Thin Film Thickness"})
     thin_film_ior: float = field(default=1.3, metadata={"key": "Thin Film IOR"})
 
+    def get_by_key(self, original_key: str):
+        for f in fields(self):
+            if f.metadata.get('key') == original_key:
+                return getattr(self, f.name)
+        return None
+
+    def update_properties(self, **changes):
+        return replace(self, **changes)
+
     def blenderize(self, name=None) -> bpy.types.Material:
+        """Convert this Material to a Blender material.
+
+         Args:
+             name (str, optional): Name for the Blender material. Defaults to a generated unique name.
+
+         Returns:
+             bpy.types.Material: The created or retrieved Blender material
+
+         Examples:
+             >>> glass_mat = MaterialCreator.glass()
+             >>> blender_material = glass_mat.blenderize("MyGlassMaterial")
+        """
         if name is None:
             name = f"material_{id(self)}"
 
@@ -76,8 +92,21 @@ class Material(StyleBase):
             return mat
 
 
-
 class MaterialCreator():
+    """Factory class that provides pre-configured material presets.
+
+    This class contains static methods to create various material presets for use
+    in Blender. Each method returns a Material instance configured with specific
+    properties to achieve common material effects.
+
+    Examples:
+        >>> # Create a glass material
+        >>> glass_material = MaterialCreator.glass()
+        >>> # Create a metal material and apply it to an object in Blender
+        >>> metal_material = MaterialCreator.metallic()
+        >>> blender_mat = metal_material.blenderize("MetalMaterial")
+        >>> my_object.data.materials.append(blender_mat)
+    """
     def __init__(self):
         pass
 
