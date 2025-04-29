@@ -47,7 +47,7 @@ The add-on runs on the [Geometry Nodes](https://docs.blender.org/manual/en/lates
 
 ## Getting Started
 
-To get started, checkout the [installation page](#installation) for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as [intro to blender](tutorials/00_interface.md), [basics of downloading](tutorials/01_importing.qmd) from the PDB or how to [customise selections](tutorials/02_selections.md).
+To get started, checkout the [installation page](#installation) for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as [intro to blender](tutorials/interface.qmd), [basics of downloading](tutorials/importing.qmd) from the PDB or how to [customise selections](tutorials/selections.qmd).
 
 There are some _outdated_ tutorials on YouTube about how to use the add-on also. MN has been developed further and improved since these videos, but the general workflow remains the same.
 

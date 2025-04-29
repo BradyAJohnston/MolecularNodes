@@ -1,0 +1,8 @@
+---
+title: "Simulations in Molecular Nodes"
+author: Brady Johnston
+---
+
+Inside of Geometry Nodes, we can run simulations using the **Simulation Zone**.
+In the most simple form, a simulation is just doing something with data from a previous iteration of the data.
+The easiest example of this is moving the positions of some points, building on top of the previous positions of the point from earlier time points. 

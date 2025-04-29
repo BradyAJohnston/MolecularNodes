@@ -50,11 +50,11 @@ website:
       contents:
         - tutorials/index.qmd
         - tutorials/installation.qmd
-        - tutorials/00_interface.md
-        - tutorials/01_importing.qmd
-        - tutorials/02_selections.md
-        - tutorials/03_molecular_dynamics.md
-        - tutorials/04_cryoem.qmd
+        - tutorials/interface.qmd
+        - tutorials/importing.qmd
+        - tutorials/selections.qmd
+        - tutorials/trajectories.qmd
+        - tutorials/cryoem.qmd
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."

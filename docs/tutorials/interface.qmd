@@ -1,5 +1,7 @@
 ---
 title: Blender's Interface
+alasses:
+  - "00_interface.html"
 ---
 
 Blender has a _very_ overwhelming interface. There is no getting around this. Blender can do _practically anything_, and it is sometimes hard to do simple things.
