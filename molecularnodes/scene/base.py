@@ -34,6 +34,7 @@ class Canvas:
             self.scene_reset(template=template)
         self.engine = engine
         self.resolution = resolution
+        self.setup_compositing()
 
     @property
     def scene(self) -> bpy.types.Scene:
@@ -175,6 +176,24 @@ class Canvas:
             bpy.ops.wm.read_homefile(app_template=template)
         if engine:
             self.engine = engine
+
+    def setup_compositing(self):
+        scene = bpy.context.scene
+        if not scene.use_nodes:
+            scene.use_nodes = True
+
+        node_tree = scene.node_tree
+        glare_node = node_tree.nodes.new('CompositorNodeGlare')
+        render_layers = node_tree.nodes['Render Layers']
+        composite = node_tree.nodes['Composite']
+        glare_node.location = (render_layers.location.x + 300, render_layers.location.y)
+
+        # bloom_types =  ['BLOOM', 'GHOSTS', 'STREAKS', 'FOG_GLOW', 'SIMPLE_STAR']
+        glare_node.glare_type = "BLOOM"
+
+        node_tree.links.new(render_layers.outputs['Image'], glare_node.inputs['Image'])
+        node_tree.links.new(glare_node.outputs['Image'], composite.inputs['Image'])
+        return self
 
     def snapshot(self, path: str | Path | None = None) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
