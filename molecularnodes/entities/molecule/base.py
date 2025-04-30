@@ -307,7 +307,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         selection: "str | MoleculeSelector | None" = None,
         assembly: bool = False,
         material: bpy.types.Material | str | None = None,
-        **kwargs,
     ):
         """
         Add a visual style to the molecule.
@@ -382,7 +381,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             selection=selection,
             material=material,
             frames=self.frames,
-            **kwargs,
         )
 
         if assembly:

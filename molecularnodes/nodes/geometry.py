@@ -83,7 +83,6 @@ def add_style_branch(
     selection: str | None = None,
     material: bpy.types.Material | str | None = None,
     frames: bpy.types.Collection | str | None = None,
-    **kwargs,
 ) -> None:
     """
     Add a style branch to the tree.
@@ -138,28 +137,7 @@ def add_style_branch(
 
     arrange_tree(tree)
 
-    # Override default styles here.
-    if style_name in STYLE_DATA.keys():
-        apply_style(node_style, style_name, kwargs)
-    else:
-        raise ValueError(f"Style Name {style_name} is not found in the STYLE_DATA")
 
-
-# not sure is something like this exists already...
-def apply_style(style_node, style_name, kwargs):
-    "iterate over style node. if there is a matching kw-key then override it with the kw-val"
-    style_specific_args = STYLE_DATA[style_name]
-    for input in style_node.inputs:
-        if input.type != "GEOMETRY":
-            for args in style_specific_args:
-                name = args["name"]
-                blendername = args["blendername"]
-                input_type = args["type"]
-                default = args["default"]
-                if input.name == blendername:
-                    # potentially check type match here
-                    if new_value := kwargs.get(name):
-                        input.default_value = new_value
 
 
 def get_final_style_nodes(
