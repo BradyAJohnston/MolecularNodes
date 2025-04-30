@@ -8,6 +8,8 @@ __all__ = [
     "StyleSpheres",
     "StyleSticks",
     "StyleSurface",
+    "StyleClass",
+    "StyleBase",
 ]
 
 StyleClass = Union[
@@ -26,9 +28,29 @@ PortDataList = List[PortDataEntry]
 
 
 class StyleBase:
-    # Base class for styles. Subclasses will define their own portdata attribute.
     portdata: PortDataList = []
 
+
+# current implemented representations
+styles_mapping = {
+    "preset_1": "Style Preset 1",
+    "preset_2": "Style Preset 2",
+    "preset_3": "Style Preset 3",
+    "preset_4": "Style Preset 4",
+    "atoms": "Style Spheres",
+    "spheres": "Style Spheres",
+    "vdw": "Style Spheres",
+    "sphere": "Style Spheres",
+    "cartoon": "Style Cartoon",
+    "sticks": "Style Sticks",
+    "ribbon": "Style Ribbon",
+    "surface": "Style Surface",
+    "ball_and_stick": "Style Ball and Stick",
+    "ball+stick": "Style Ball and Stick",
+    "oxdna": "MN_oxdna_style_ribbon",
+    "density_surface": "Style Density Surface",
+    "density_wire": "Style Density Wire",
+}
 
 class StyleBallandStick(StyleBase):
     # fmt: off
@@ -42,6 +64,7 @@ class StyleBallandStick(StyleBase):
         { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
+    self.style="ball_and_stick"
     # fmt: on
 
     def __init__(
@@ -81,6 +104,7 @@ class StyleCartoon(StyleBase):
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
     # fmt: on
+    self.style="cartoon"
 
     def __init__(
         self,
@@ -110,39 +134,24 @@ class StyleCartoon(StyleBase):
 
 
 class StyleRibbon(StyleBase):
+    # fmt: off
     portdata: PortDataList = [
         {"name": "quality", "blendername": "Quality", "type": int, "default": 3},
         {"name": "radius", "blendername": "Radius", "type": float, "default": 1.6},
-        {
-            "name": "smoothing",
-            "blendername": "Smoothing",
-            "type": float,
-            "default": 0.6,
-        },
-        {
-            "name": "color_blur",
-            "blendername": "Color Blur",
-            "type": bool,
-            "default": False,
-        },
-        {
-            "name": "shade_smooth",
-            "blendername": "Shade Smooth",
-            "type": bool,
-            "default": False,
-        },
+        {"name": "smoothing", "blendername": "Smoothing", "type": float, "default": 0.6},
+        {"name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False},
+        {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False},
     ]
-
+    # fmt: on
+    style = "ribbon"
     def __init__(
         self,
-        style: str = "ribbon",
         quality: int = 3,
         radius: float = 1.6,
         smoothing: float = 0.6,
         color_blur: bool = False,
         shade_smooth: bool = False,
     ):
-        self.style = style
         self.quality = quality
         self.radius = radius
         self.smoothing = smoothing
@@ -159,16 +168,16 @@ class StyleSpheres(StyleBase):
         {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False},
         # fmt: on
     ]
+    style = "spheres"
+
     def __init__(
         self,
-        style: str = "sphere",
         as_mesh: bool = True,
         radii: float = 0.8,
         subdivisions: int = 2,
         shade_smooth: bool = False,
     ):
-        self.style = style
-        self.as_mesh = as_mes
+        self.as_mesh = as_mesh
         self.radii = radii
         self.subdivisions = subdivisions
         self.shade_smooth = shade_smooth
@@ -182,17 +191,15 @@ class StyleSticks(StyleBase):
         { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False }
     ]
+    style = "sticks"
     # fmt: on
-
     def __init__(
         self,
-        style: str = "sticks",
         quality: int = 2,
         radius: float = 0.2,
         color_blur: bool = False,
         shade_smooth: bool = False,
     ):
-        self.style = style
         self.quality = quality
         self.radius = radius
         self.color_blur = color_blur
@@ -214,10 +221,10 @@ class StyleSurface(StyleBase):
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
     # fmt: on
+    style = "surface"
 
     def __init__(
         self,
-        style: str = "surface",
         quality: int = 3,
         separate: bool = True,
         attribute: str = "chain_id",
@@ -229,7 +236,6 @@ class StyleSurface(StyleBase):
         blur: int = 2,
         shade_smooth: bool = True,
     ):
-        self.style = style
         self.quality = quality
         self.separate = separate
         self.attribute = attribute

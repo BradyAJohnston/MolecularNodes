@@ -17,6 +17,16 @@ from ...nodes.geometry import (
     add_style_branch,
     style_interfaces_from_tree,
 )
+from ...nodes.styles import (
+    StyleBallandStick,
+    StyleCartoon,
+    StyleRibbon,
+    StyleSpheres,
+    StyleSticks,
+    StyleSurface,
+    StyleClass,
+    StyleBase,
+)
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections
@@ -307,7 +317,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: bpy.types.GeometryNodeTree | str = "spheres",
+        style: StyleBase | str = "spheres",
         color: str | None = "common",
         selection: "str | MoleculeSelector | None" = None,
         assembly: bool = False,
