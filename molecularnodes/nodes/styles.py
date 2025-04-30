@@ -50,7 +50,6 @@ class StyleBallandStick(StyleBase):
     ]
 
     # Quality 2
-    # Selection True
     # Sphere Geometry Instance
     # Sphere Radii 0.30000001192092896
     # Bond Split False
@@ -99,6 +98,23 @@ class StyleCartoon(StyleBase):
     ]
     # fmt: on
     style="cartoon"
+
+    # Quality 2
+    # Peptide DSSP False
+    # Peptide Cylinders False
+    # Peptide Arrows True
+    # Peptide Rounded False
+    # Peptide Thickness 0.6000000238418579
+    # Peptide Width 2.200000047683716
+    # Peptide Loop Radius 0.30000001192092896
+    # Peptide Smoothing 0.5
+    # Backbone Shape Cylinder
+    # Backbone Radius 2.0
+    # Base Shape Rectangle
+    # Base Realize False
+    # Color Blur True
+    # Shade Smooth True
+
 
     def __init__(
         self,
@@ -182,22 +198,28 @@ class StyleSpheres(StyleBase):
         # fmt: off
         {"name": "geometry", "blendername": "Sphere Geometry", "type": bool, "default": "Point"},
         {"name": "radii", "blendername": "Sphere Radii", "type": float, "default": 0.8},
-        {"name": "subdivisions", "blendername": "Sphere Subdivisions", "type": int, "default": 2},
+        {"name": "sphere_subdivisions", "blendername": "Sphere Subdivisions", "type": int, "default": 2},
         {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False},
         # fmt: on
     ]
     style = "spheres"
 
+
+    # Sphere Geometry Point
+    # Sphere Radii 0.800000011920929
+    # Sphere Subdivisions 2
+    # Shade Smooth True
+
     def __init__(
         self,
-        as_mesh: bool = True,
+        geometry: str = "Point",  # make enum
         radii: float = 0.8,
-        subdivisions: int = 2,
+        sphere_subdivisions: int = 2,
         shade_smooth: bool = False,
     ):
-        self.as_mesh = as_mesh
+        self.geometry = geometry
         self.radii = radii
-        self.subdivisions = subdivisions
+        self.sphere_subdivisions = sphere_subdivisions
         self.shade_smooth = shade_smooth
 
 
@@ -210,6 +232,12 @@ class StyleSticks(StyleBase):
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False }
     ]
     style = "sticks"
+
+    # Quality 3
+    # Radius 0.20000000298023224
+    # Color Blur False
+    # Shade Smooth True
+
     # fmt: on
     def __init__(
         self,
@@ -241,6 +269,15 @@ class StyleSurface(StyleBase):
     # fmt: on
     style = "surface"
 
+    # Quality 3
+    # Scale Radii 1.5
+    # Probe Size 1.0
+    # Relaxation Steps 10
+    # Separate By chain_id
+    # Group ID 0
+    # Color Source Alpha Carbon
+    # Color Blur 2
+    # Shade Smooth True
     def __init__(
         self,
         quality: int = 3,
