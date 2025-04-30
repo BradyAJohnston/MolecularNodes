@@ -6,7 +6,6 @@ from ..assets import MN_DATA_FILE
 from .interface import TreeInterface, check_linked, remove_linked, socket
 
 
-
 MATERIAL_NAMES = [
     "MN Default",
     "MN Flat Outline",
@@ -19,6 +18,7 @@ MATERIAL_NAMES = [
 def append_material(name: str) -> bpy.types.Material:
     "Append a material from the MN_DATA_FILE."
     return append_from_blend(name, str(MN_DATA_FILE))
+
 
 def add_all_materials() -> None:
     "Append all pre-defined materials from the MN_DATA_FILE."
@@ -156,7 +156,6 @@ def getset_material(socket: bpy.types.NodeSocketMaterial):
     return property(getter, setter)
 
 
-
 class MaterialConstructor(MaterialTreeInterface):
     def __init__(self, material_name: str, **kwargs):
         super().__init__(append_material(material_name))
@@ -193,30 +192,28 @@ class TransparentOutline(MaterialConstructor):
         super().__init__("MN Transparent Outline", **kwargs)
 
 
-
-class MN_Materials():
+class MN_Materials:
     """
     Note: if this is a nice route we could add fns that will create MN_materials here and remove them from the blend file.
 
     Materials:
     - AmbientOcclusion
     - Default  ( tried to replicate the defaults below )
-    - FlatOutline
+    - FlatOutlineq
     - Squishy
     - TransparentOutline
 
     """
 
-
     @staticmethod
     def glass() -> bpy.types.Material:
         return create_material(
-            name="MN_Glass", # Add a descriptive name
+            name="MN_Glass",  # Add a descriptive name
             base_color=(0.8, 0.9, 1.0, 0.2),
             transmission_weight=0.95,
             roughness=0.0,
             ior=1.45,
-            specular_ior_level=0.6 # Note: Renamed to "Specular IOR" in create_material
+            specular_ior_level=0.6,  # Note: Renamed to "Specular IOR" in create_material
         )
 
     @staticmethod
@@ -227,7 +224,7 @@ class MN_Materials():
             metallic=1.0,
             roughness=0.3,
             anisotropic=0.8,
-            anisotropic_rotation=0.5
+            anisotropic_rotation=0.5,
         )
 
     @staticmethod
@@ -238,7 +235,7 @@ class MN_Materials():
             emission_strength=5.0,
             emission_color=(0.0, 1.0, 0.0, 1.0),
             metallic=0.0,
-            roughness=0.2
+            roughness=0.2,
         )
 
     @staticmethod
@@ -249,7 +246,7 @@ class MN_Materials():
             emission_strength=2.0,
             emission_color=(0.2, 0.6, 1.0, 1.0),
             transmission_weight=0.8,
-            thin_film_thickness=1000
+            thin_film_thickness=1000,
         )
 
     @staticmethod
@@ -261,7 +258,7 @@ class MN_Materials():
             transmission_weight=0.5,
             thin_film_thickness=1200,
             thin_film_ior=1.5,
-            coat_weight=1.0
+            coat_weight=1.0,
         )
 
     @staticmethod
@@ -272,7 +269,7 @@ class MN_Materials():
             metallic=1.0,
             roughness=0.1,
             specular_ior_level=0.9,
-            coat_weight=1.0
+            coat_weight=1.0,
         )
 
     @staticmethod
@@ -283,7 +280,7 @@ class MN_Materials():
             emission_strength=5.0,
             emission_color=(0.0, 1.0, 0.8, 1.0),
             metallic=0.8,
-            roughness=0.1
+            roughness=0.1,
         )
 
     @staticmethod
@@ -299,7 +296,7 @@ class MN_Materials():
             roughness=0.15,
             coat_weight=1.0,
             coat_ior=2.0,
-            thin_film_thickness=500
+            thin_film_thickness=500,
         )
 
     @staticmethod
@@ -310,7 +307,7 @@ class MN_Materials():
             subsurface_weight=1.0,
             subsurface_radius=(1.0, 0.2, 0.1),
             subsurface_scale=0.5,
-            emission_strength=0.3
+            emission_strength=0.3,
         )
 
     @staticmethod
@@ -322,7 +319,7 @@ class MN_Materials():
             roughness=1.0,
             specular_ior_level=0.0,
             diffuse_roughness=1.0,
-            coat_weight=0.2
+            coat_weight=0.2,
         )
 
     @staticmethod
@@ -333,7 +330,7 @@ class MN_Materials():
             sheen_weight=1.0,
             sheen_roughness=0.3,
             sheen_tint=(1.0, 0.8, 0.9, 1.0),
-            roughness=0.8
+            roughness=0.8,
         )
 
     @staticmethod
@@ -350,7 +347,7 @@ class MN_Materials():
             coat_weight=0.1,
             coat_roughness=0.3,
             sheen_weight=0.1,
-            sheen_roughness=0.3
+            sheen_roughness=0.3,
         )
 
 
@@ -386,7 +383,7 @@ def create_material(
     emission_color: Tuple[float, float, float, float] = (0.0, 0.0, 0.0, 1.0),
     emission_strength: float = 0.0,
     thin_film_thickness: float = 0.0,
-    thin_film_ior: float = 1.3
+    thin_film_ior: float = 1.3,
 ) -> bpy.types.Material:
     """Create a Blender material from provided shader properties."""
 
