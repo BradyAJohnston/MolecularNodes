@@ -24,7 +24,6 @@ from ...nodes.styles import (
     StyleSpheres,
     StyleSticks,
     StyleSurface,
-    StyleClass,
     StyleBase,
 )
 from ..base import EntityType, MolecularEntity
