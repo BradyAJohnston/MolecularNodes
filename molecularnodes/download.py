@@ -155,7 +155,7 @@ class StructureDownloader:
             If the requested format is not supported.
         """
         if format not in ["pdb", "cif", "bcif"]:
-            ValueError(
+            raise ValueError(
                 f"Format {format} not currently supported from AlphaFold databse."
             )
 
