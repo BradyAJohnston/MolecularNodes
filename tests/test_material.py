@@ -58,6 +58,10 @@ def test_setting_material_in_apply_custom():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon", material=new_mat)
     assert mol is not None
 
+def test_material_creator():
+    pearl_mat = mn.material.MN_Materials.pearl()
+    assert isinstance(pearl_mat, bpy.types.Material)
+
 
 def test_generic_material():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
