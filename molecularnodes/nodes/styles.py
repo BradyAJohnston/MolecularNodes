@@ -175,29 +175,25 @@ class StyleRibbon(StyleBase):
         self.uv_map = uv_map
         self.u_component_factor = u_component_factor
 
+
+
 class StyleSpheres(StyleBase):
+    # fmt: off
     portdata: PortDataList = [
-        # fmt: off
-        {"name": "geometry", "blendername": "Sphere Geometry", "type": bool, "default": "Point"},
-        {"name": "radii", "blendername": "Sphere Radii", "type": float, "default": 0.8},
+        {"name": "geometry", "blendername": "Sphere Geometry", "type": str, "default": "Point"},
+        {"name": "radii", "blendername": "Sphere Radii", "type": float, "default": 0.800000011920929},
         {"name": "sphere_subdivisions", "blendername": "Sphere Subdivisions", "type": int, "default": 2},
-        {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False},
-        # fmt: on
+        {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True},
     ]
+    # fmt: on
     style = "spheres"
-
-
-    # Sphere Geometry Point
-    # Sphere Radii 0.800000011920929
-    # Sphere Subdivisions 2
-    # Shade Smooth True
 
     def __init__(
         self,
         geometry: str = "Point",  # make enum
-        radii: float = 0.8,
+        radii: float = 0.800000011920929,
         sphere_subdivisions: int = 2,
-        shade_smooth: bool = False,
+        shade_smooth: bool = True,
     ):
         self.geometry = geometry
         self.radii = radii
@@ -208,25 +204,20 @@ class StyleSpheres(StyleBase):
 class StyleSticks(StyleBase):
     # fmt: off
     portdata: PortDataList = [
-        { "name": "quality", "blendername": "Quality", "type": int, "default": 2 },
-        { "name": "radius", "blendername": "Radius", "type": float, "default": 0.2 },
+        { "name": "quality", "blendername": "Quality", "type": int, "default": 3 },
+        { "name": "radius", "blendername": "Radius", "type": float, "default": 0.20000000298023224 },
         { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
-        { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False }
+        { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
+    # fmt: on
     style = "sticks"
 
-    # Quality 3
-    # Radius 0.20000000298023224
-    # Color Blur False
-    # Shade Smooth True
-
-    # fmt: on
     def __init__(
         self,
-        quality: int = 2,
-        radius: float = 0.2,
+        quality: int = 3,
+        radius: float = 0.20000000298023224,
         color_blur: bool = False,
-        shade_smooth: bool = False,
+        shade_smooth: bool = True,
     ):
         self.quality = quality
         self.radius = radius
@@ -238,48 +229,36 @@ class StyleSurface(StyleBase):
     # fmt: off
     portdata: PortDataList = [
         { "name": "quality", "blendername": "Quality", "type": int, "default": 3 },
-        { "name": "separate", "blendername": "Separate", "type": bool, "default": True },
-        { "name": "attribute", "blendername": "Attribute", "type": str, "default": "chain_id" },
         { "name": "scale_radii", "blendername": "Scale Radii", "type": float, "default": 1.5 },
         { "name": "probe_size", "blendername": "Probe Size", "type": float, "default": 1.0 },
-        { "name": "triangulate", "blendername": "Triangulate", "type": bool, "default": False },
         { "name": "relaxation_steps", "blendername": "Relaxation Steps", "type": int, "default": 10 },
-        { "name": "by_ca", "blendername": "by CA", "type": bool, "default": False },
-        { "name": "blur", "blendername": "Blur", "type": int, "default": 2 },
+        { "name": "separate", "blendername": "Separate By", "type": str, "default": "chain_id" },
+        { "name": "group_id", "blendername": "Group ID", "type": int, "default": 0 },
+        { "name": "color_source", "blendername": "Color Source", "type": str, "default": "Alpha Carbon" },
+        { "name": "blur", "blendername": "Color Blur", "type": int, "default": 2 },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
     # fmt: on
     style = "surface"
 
-    # Quality 3
-    # Scale Radii 1.5
-    # Probe Size 1.0
-    # Relaxation Steps 10
-    # Separate By chain_id
-    # Group ID 0
-    # Color Source Alpha Carbon
-    # Color Blur 2
-    # Shade Smooth True
     def __init__(
         self,
         quality: int = 3,
-        separate: bool = True,
-        attribute: str = "chain_id",
         scale_radii: float = 1.5,
         probe_size: float = 1.0,
-        triangulate: bool = False,
         relaxation_steps: int = 10,
-        by_ca: bool = False,
+        separate: str = "chain_id",
+        group_id: int = 0,
+        color_source: str = "Alpha Carbon",
         blur: int = 2,
         shade_smooth: bool = True,
     ):
         self.quality = quality
-        self.separate = separate
-        self.attribute = attribute
         self.scale_radii = scale_radii
         self.probe_size = probe_size
-        self.triangulate = triangulate
         self.relaxation_steps = relaxation_steps
-        self.by_ca = by_ca
+        self.separate = separate
+        self.group_id = group_id
+        self.color_source = color_source
         self.blur = blur
         self.shade_smooth = shade_smooth
