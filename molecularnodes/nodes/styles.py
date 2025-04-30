@@ -40,39 +40,27 @@ class StyleBallandStick(StyleBase):
     # fmt: off
     portdata: PortDataList = [
         { "name": "quality", "blendername": "Quality", "type": int, "default": 2 },
-        { "name": "as_mesh", "blendername": "As Mesh", "type": bool, "default": True },
-        { "name": "sphere_radii", "blendername": "Sphere Radii", "type": float, "default": 0.3 },
+        { "name": "sphere_radii", "blendername": "Sphere Radii", "type": float, "default": 0.30000001192092896 },
         { "name": "bond_split", "blendername": "Bond Split", "type": bool, "default": False },
-        { "name": "bond_find", "blendername": "Bond Find", "type": bool, "default": True },
-        { "name": "bond_radius", "blendername": "Bond Radius", "type": float, "default": 0.3 },
+        { "name": "bond_find", "blendername": "Bond Find", "type": bool, "default": False },
+        { "name": "bond_radius", "blendername": "Bond Radius", "type": float, "default": 0.30000001192092896 },
         { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
-
-    # Quality 2
-    # Sphere Geometry Instance
-    # Sphere Radii 0.30000001192092896
-    # Bond Split False
-    # Bond Find False
-    # Bond Radius 0.30000001192092896
-    # Color Blur False
-    # Shade Smooth True
     style="ball_and_stick"
     # fmt: on
 
     def __init__(
         self,
         quality: int = 2,
-        as_mesh: bool = True,
         sphere_radii: float = 0.3,
         bond_split: bool = False,
-        bond_find: bool = True,
+        bond_find: bool = False,
         bond_radius: float = 0.3,
         color_blur: bool = False,
         shade_smooth: bool = True,
     ):
         self.quality = quality
-        self.as_mesh = as_mesh
         self.sphere_radii = sphere_radii
         self.bond_split = bond_split
         self.bond_find = bond_find
@@ -85,36 +73,23 @@ class StyleCartoon(StyleBase):
     # fmt: off
     portdata: PortDataList = [
         { "name": "quality", "blendername": "Quality", "type": int, "default": 2 },
-        { "name": "dssp", "blendername": "DSSP", "type": bool, "default": False },
-        { "name": "cylinders", "blendername": "Cylinders", "type": bool, "default": False },
-        { "name": "arrows", "blendername": "Arrows", "type": bool, "default": True },
-        { "name": "rounded", "blendername": "Rounded", "type": bool, "default": False },
-        { "name": "thickness", "blendername": "Thickness", "type": float, "default": 0.6 },
-        { "name": "width", "blendername": "Width", "type": float, "default": 2.2 },
-        { "name": "loop_radius", "blendername": "Loop Radius", "type": float, "default": 0.3 },
-        { "name": "smoothing", "blendername": "Smoothing", "type": float, "default": 0.5 },
-        { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
+        { "name": "dssp", "blendername": "Peptide DSSP", "type": bool, "default": False },
+        { "name": "cylinders", "blendername": "Peptide Cylinders", "type": bool, "default": False },
+        { "name": "arrows", "blendername": "Peptide Arrows", "type": bool, "default": True },
+        { "name": "rounded", "blendername": "Peptide Rounded", "type": bool, "default": False },
+        { "name": "thickness", "blendername": "Peptide Thickness", "type": float, "default": 0.6000000238418579 },
+        { "name": "width", "blendername": "Peptide Width", "type": float, "default": 2.200000047683716 },
+        { "name": "loop_radius", "blendername": "Peptide Loop Radius", "type": float, "default": 0.30000001192092896 },
+        { "name": "smoothing", "blendername": "Peptide Smoothing", "type": float, "default": 0.5 },
+        { "name": "backbone_shape", "blendername": "Backbone Shape", "type": str, "default": "Cylinder" },
+        { "name": "backbone_radius", "blendername": "Backbone Radius", "type": float, "default": 2.0 },
+        { "name": "base_shape", "blendername": "Base Shape", "type": str, "default": "Rectangle" },
+        { "name": "base_realize", "blendername": "Base Realize", "type": bool, "default": False },
+        { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": True },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
     # fmt: on
     style="cartoon"
-
-    # Quality 2
-    # Peptide DSSP False
-    # Peptide Cylinders False
-    # Peptide Arrows True
-    # Peptide Rounded False
-    # Peptide Thickness 0.6000000238418579
-    # Peptide Width 2.200000047683716
-    # Peptide Loop Radius 0.30000001192092896
-    # Peptide Smoothing 0.5
-    # Backbone Shape Cylinder
-    # Backbone Radius 2.0
-    # Base Shape Rectangle
-    # Base Realize False
-    # Color Blur True
-    # Shade Smooth True
-
 
     def __init__(
         self,
@@ -123,11 +98,15 @@ class StyleCartoon(StyleBase):
         cylinders: bool = False,
         arrows: bool = True,
         rounded: bool = False,
-        thickness: float = 0.6,
-        width: float = 2.2,
-        loop_radius: float = 0.3,
+        thickness: float = 0.6000000238418579,
+        width: float = 2.200000047683716,
+        loop_radius: float = 0.30000001192092896,
         smoothing: float = 0.5,
-        color_blur: bool = False,
+        backbone_shape: str = "Cylinder",
+        backbone_radius: float = 2.0,
+        base_shape: str = "Rectangle",
+        base_realize: bool = False,
+        color_blur: bool = True,
         shade_smooth: bool = True,
     ):
         self.quality = quality
@@ -139,9 +118,12 @@ class StyleCartoon(StyleBase):
         self.width = width
         self.loop_radius = loop_radius
         self.smoothing = smoothing
+        self.backbone_shape = backbone_shape
+        self.backbone_radius = backbone_radius
+        self.base_shape = base_shape
+        self.base_realize = base_realize
         self.color_blur = color_blur
         self.shade_smooth = shade_smooth
-
 
 class StyleRibbon(StyleBase):
     # fmt: off
