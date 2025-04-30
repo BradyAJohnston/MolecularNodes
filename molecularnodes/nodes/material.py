@@ -1,5 +1,5 @@
 import bpy
-from types import Tuple
+from typing import Tuple
 from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
 from ..assets import MN_DATA_FILE
@@ -195,6 +195,18 @@ class TransparentOutline(MaterialConstructor):
 
 
 class MN_Materials():
+    """
+    Note: if this is a nice route we could add fns that will create MN_materials here and remove them from the blend file.
+
+    Materials:
+    - AmbientOcclusion
+    - Default  ( tried to replicate the defaults below )
+    - FlatOutline
+    - Squishy
+    - TransparentOutline
+
+    """
+
 
     @staticmethod
     def glass() -> bpy.types.Material:
