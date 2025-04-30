@@ -1,5 +1,6 @@
 from dataclasses import dataclass, replace, field, fields
 from typing import List, Tuple, Union, Any, Dict
+from bpy.types import GeometryNodeGroup
 
 __all__ = [
     "StyleBallandStick",
@@ -8,18 +9,9 @@ __all__ = [
     "StyleSpheres",
     "StyleSticks",
     "StyleSurface",
-    "StyleClass",
     "StyleBase",
 ]
 
-StyleClass = Union[
-    "StyleBallandStick",
-    "StyleCartoon",
-    "StyleRibbon",
-    "StyleSpheres",
-    "StyleSticks",
-    "StyleSurface",
-]
 
 # Define the type for a single port data entry for clarity
 PortDataEntry = Dict[str, Any]
@@ -29,28 +21,15 @@ PortDataList = List[PortDataEntry]
 
 class StyleBase:
     portdata: PortDataList = []
+    def update_style_node(self, node_style: GeometryNodeGroup):
+        for input in node_style.inputs:
+            if input.type != "GEOMETRY":
+                for arg in self.portdata:
+                    name = arg['name']
+                    blendername = arg.get('blendername', name)  # Use name if blendername not
+                    if input.name == blendername:
+                        input.default_value = getattr(self, name)
 
-
-# current implemented representations
-styles_mapping = {
-    "preset_1": "Style Preset 1",
-    "preset_2": "Style Preset 2",
-    "preset_3": "Style Preset 3",
-    "preset_4": "Style Preset 4",
-    "atoms": "Style Spheres",
-    "spheres": "Style Spheres",
-    "vdw": "Style Spheres",
-    "sphere": "Style Spheres",
-    "cartoon": "Style Cartoon",
-    "sticks": "Style Sticks",
-    "ribbon": "Style Ribbon",
-    "surface": "Style Surface",
-    "ball_and_stick": "Style Ball and Stick",
-    "ball+stick": "Style Ball and Stick",
-    "oxdna": "MN_oxdna_style_ribbon",
-    "density_surface": "Style Density Surface",
-    "density_wire": "Style Density Wire",
-}
 
 class StyleBallandStick(StyleBase):
     # fmt: off
@@ -64,7 +43,7 @@ class StyleBallandStick(StyleBase):
         { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
-    self.style="ball_and_stick"
+    style="ball_and_stick"
     # fmt: on
 
     def __init__(
@@ -104,7 +83,7 @@ class StyleCartoon(StyleBase):
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
     # fmt: on
-    self.style="cartoon"
+    style="cartoon"
 
     def __init__(
         self,
