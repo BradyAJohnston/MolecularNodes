@@ -24,11 +24,16 @@ class StyleBase:
     def update_style_node(self, node_style: GeometryNodeGroup):
         for input in node_style.inputs:
             if input.type != "GEOMETRY":
+                print(input.name, input.default_value,)
                 for arg in self.portdata:
+                    # print(arg)
                     name = arg['name']
                     blendername = arg.get('blendername', name)  # Use name if blendername not
                     if input.name == blendername:
+                        #print(f"setting! Val : {getattr(self, name)}")
+                        #print(f"Initial Val : {input.default_value}")
                         input.default_value = getattr(self, name)
+                        #print(f"AfterSetting Val : {input.default_value}")
 
 
 class StyleBallandStick(StyleBase):
@@ -43,6 +48,16 @@ class StyleBallandStick(StyleBase):
         { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
     ]
+
+    # Quality 2
+    # Selection True
+    # Sphere Geometry Instance
+    # Sphere Radii 0.30000001192092896
+    # Bond Split False
+    # Bond Find False
+    # Bond Radius 0.30000001192092896
+    # Color Blur False
+    # Shade Smooth True
     style="ball_and_stick"
     # fmt: on
 
@@ -120,7 +135,16 @@ class StyleRibbon(StyleBase):
         {"name": "smoothing", "blendername": "Smoothing", "type": float, "default": 0.6},
         {"name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False},
         {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False},
+        {"name": "backbone_smoothing", "blendername": "Backbone Smoothing", "type": float, "default": 0.5},
+        {"name": "backbone_threshold", "blendername": "Backbone Threshold", "type": float, "default": 4.5},
+        {"name": "backbone_radius", "blendername": "Backbone Radius", "type": float, "default": 1.6},
+        {"name": "backbone_shape", "blendername": "Backbone Shape", "type": str, "default": "Cylinder"},
+        {"name": "base_resolution", "blendername": "Base Resolution", "type": int, "default": 4},
+        {"name": "base_realize", "blendername": "Base Realize", "type": bool, "default": False},
+        {"name": "uv_map", "blendername": "UV Map", "type": bool, "default": False},
+        {"name": "u_component_factor", "blendername": "U Component Factor", "type": float, "default": None},
     ]
+
     # fmt: on
     style = "ribbon"
     def __init__(
@@ -130,13 +154,28 @@ class StyleRibbon(StyleBase):
         smoothing: float = 0.6,
         color_blur: bool = False,
         shade_smooth: bool = False,
+        backbone_smoothing: float = 0.5,
+        backbone_threshold: float = 4.5,
+        backbone_radius: float = 1.6,
+        backbone_shape: str = "Cylinder",
+        base_resolution: int = 4,
+        base_realize: bool = False,
+        uv_map: bool = False,
+        u_component_factor=None,
     ):
         self.quality = quality
         self.radius = radius
         self.smoothing = smoothing
         self.color_blur = color_blur
         self.shade_smooth = shade_smooth
-
+        self.backbone_smoothing = backbone_smoothing
+        self.backbone_threshold = backbone_threshold
+        self.backbone_radius = backbone_radius
+        self.backbone_shape = backbone_shape
+        self.base_resolution = base_resolution
+        self.base_realize = base_realize
+        self.uv_map = uv_map
+        self.u_component_factor = u_component_factor
 
 class StyleSpheres(StyleBase):
     portdata: PortDataList = [

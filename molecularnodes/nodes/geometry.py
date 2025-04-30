@@ -100,7 +100,7 @@ def add_style_branch(
         style_name = nodes.styles_mapping[style]
         nodes.append(style_name)
     elif isinstance(style, StyleBase):
-        style_name = style.style
+        style_name = nodes.styles_mapping[style.style]
         nodes.append(style_name)
     elif isinstance(style, bpy.types.GeometryNodeTree):
         style_name = style.name
