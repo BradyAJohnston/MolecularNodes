@@ -13,46 +13,49 @@ __all__ = [
 ]
 
 
-# Define the type for a single port data entry for clarity
 PortDataEntry = Dict[str, Any]
-# Define the type for the list of port data entries
 PortDataList = List[PortDataEntry]
-
 
 class StyleBase:
     portdata: PortDataList = []
+
     def update_style_node(self, node_style: GeometryNodeGroup):
         for input in node_style.inputs:
             if input.type != "GEOMETRY":
-                print(input.name, input.default_value,)
+                print(
+                    input.name,
+                    input.default_value,
+                )
                 for arg in self.portdata:
                     # print(arg)
-                    name = arg['name']
-                    blendername = arg.get('blendername', name)  # Use name if blendername not
+                    name = arg["name"]
+                    blendername = arg.get(
+                        "blendername", name
+                    )  # Use name if blendername not
                     if input.name == blendername:
-                        #print(f"setting! Val : {getattr(self, name)}")
-                        #print(f"Initial Val : {input.default_value}")
+                        # print(f"setting! Val : {getattr(self, name)}")
+                        # print(f"Initial Val : {input.default_value}")
                         input.default_value = getattr(self, name)
-                        #print(f"AfterSetting Val : {input.default_value}")
+                        # print(f"AfterSetting Val : {input.default_value}")
 
 
 class StyleBallandStick(StyleBase):
-    # fmt: off
+    style = "ball_and_stick"
     portdata: PortDataList = [
-        { "name": "quality", "blendername": "Quality", "type": int, "default": 2 },
-        { "name": "sphere_radii", "blendername": "Sphere Radii", "type": float, "default": 0.30000001192092896 },
-        { "name": "bond_split", "blendername": "Bond Split", "type": bool, "default": False },
-        { "name": "bond_find", "blendername": "Bond Find", "type": bool, "default": False },
-        { "name": "bond_radius", "blendername": "Bond Radius", "type": float, "default": 0.30000001192092896 },
-        { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
-        { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
+        {"name": "quality", "blendername": "Quality"},
+        {"name": "geometry", "blendername": "Sphere Geometry"},
+        {"name": "sphere_radii", "blendername": "Sphere Radii"},
+        {"name": "bond_split", "blendername": "Bond Split"},
+        {"name": "bond_find", "blendername": "Bond Find"},
+        {"name": "bond_radius", "blendername": "Bond Radius"},
+        {"name": "color_blur", "blendername": "Color Blur"},
+        {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
-    style="ball_and_stick"
-    # fmt: on
 
     def __init__(
         self,
         quality: int = 2,
+        geometry: str = "Instance", # enum
         sphere_radii: float = 0.3,
         bond_split: bool = False,
         bond_find: bool = False,
@@ -61,6 +64,7 @@ class StyleBallandStick(StyleBase):
         shade_smooth: bool = True,
     ):
         self.quality = quality
+        self.geometry = geometry
         self.sphere_radii = sphere_radii
         self.bond_split = bond_split
         self.bond_find = bond_find
@@ -70,26 +74,24 @@ class StyleBallandStick(StyleBase):
 
 
 class StyleCartoon(StyleBase):
-    # fmt: off
+    style = "cartoon"
     portdata: PortDataList = [
-        { "name": "quality", "blendername": "Quality", "type": int, "default": 2 },
-        { "name": "dssp", "blendername": "Peptide DSSP", "type": bool, "default": False },
-        { "name": "cylinders", "blendername": "Peptide Cylinders", "type": bool, "default": False },
-        { "name": "arrows", "blendername": "Peptide Arrows", "type": bool, "default": True },
-        { "name": "rounded", "blendername": "Peptide Rounded", "type": bool, "default": False },
-        { "name": "thickness", "blendername": "Peptide Thickness", "type": float, "default": 0.6000000238418579 },
-        { "name": "width", "blendername": "Peptide Width", "type": float, "default": 2.200000047683716 },
-        { "name": "loop_radius", "blendername": "Peptide Loop Radius", "type": float, "default": 0.30000001192092896 },
-        { "name": "smoothing", "blendername": "Peptide Smoothing", "type": float, "default": 0.5 },
-        { "name": "backbone_shape", "blendername": "Backbone Shape", "type": str, "default": "Cylinder" },
-        { "name": "backbone_radius", "blendername": "Backbone Radius", "type": float, "default": 2.0 },
-        { "name": "base_shape", "blendername": "Base Shape", "type": str, "default": "Rectangle" },
-        { "name": "base_realize", "blendername": "Base Realize", "type": bool, "default": False },
-        { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": True },
-        { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
+        { "name": "quality", "blendername": "Quality" },
+        { "name": "dssp", "blendername": "Peptide DSSP" },
+        { "name": "cylinders", "blendername": "Peptide Cylinders" },
+        { "name": "arrows", "blendername": "Peptide Arrows" },
+        { "name": "rounded", "blendername": "Peptide Rounded" },
+        { "name": "thickness", "blendername": "Peptide Thickness" },
+        { "name": "width", "blendername": "Peptide Width" },
+        { "name": "loop_radius", "blendername": "Peptide Loop Radius" },
+        { "name": "smoothing", "blendername": "Peptide Smoothing" },
+        { "name": "backbone_shape", "blendername": "Backbone Shape" },
+        { "name": "backbone_radius", "blendername": "Backbone Radius" },
+        { "name": "base_shape", "blendername": "Base Shape" },
+        { "name": "base_realize", "blendername": "Base Realize" },
+        { "name": "color_blur", "blendername": "Color Blur" },
+        { "name": "shade_smooth", "blendername": "Shade Smooth" }
     ]
-    # fmt: on
-    style="cartoon"
 
     def __init__(
         self,
@@ -98,13 +100,13 @@ class StyleCartoon(StyleBase):
         cylinders: bool = False,
         arrows: bool = True,
         rounded: bool = False,
-        thickness: float = 0.6000000238418579,
-        width: float = 2.200000047683716,
-        loop_radius: float = 0.30000001192092896,
+        thickness: float = 0.6,
+        width: float = 2.2,
+        loop_radius: float = 0.3,
         smoothing: float = 0.5,
-        backbone_shape: str = "Cylinder",
+        backbone_shape: str = "Cylinder", # enum?
         backbone_radius: float = 2.0,
-        base_shape: str = "Rectangle",
+        base_shape: str = "Rectangle", # enum?
         base_realize: bool = False,
         color_blur: bool = True,
         shade_smooth: bool = True,
@@ -125,26 +127,25 @@ class StyleCartoon(StyleBase):
         self.color_blur = color_blur
         self.shade_smooth = shade_smooth
 
+
 class StyleRibbon(StyleBase):
-    # fmt: off
+    style = "ribbon"
     portdata: PortDataList = [
-        {"name": "quality", "blendername": "Quality", "type": int, "default": 3},
-        {"name": "radius", "blendername": "Radius", "type": float, "default": 1.6},
-        {"name": "smoothing", "blendername": "Smoothing", "type": float, "default": 0.6},
-        {"name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False},
-        {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False},
-        {"name": "backbone_smoothing", "blendername": "Backbone Smoothing", "type": float, "default": 0.5},
-        {"name": "backbone_threshold", "blendername": "Backbone Threshold", "type": float, "default": 4.5},
-        {"name": "backbone_radius", "blendername": "Backbone Radius", "type": float, "default": 1.6},
-        {"name": "backbone_shape", "blendername": "Backbone Shape", "type": str, "default": "Cylinder"},
-        {"name": "base_resolution", "blendername": "Base Resolution", "type": int, "default": 4},
-        {"name": "base_realize", "blendername": "Base Realize", "type": bool, "default": False},
-        {"name": "uv_map", "blendername": "UV Map", "type": bool, "default": False},
-        {"name": "u_component_factor", "blendername": "U Component Factor", "type": float, "default": None},
+        {"name": "quality", "blendername": "Quality"},
+        {"name": "radius", "blendername": "Radius"},
+        {"name": "smoothing", "blendername": "Smoothing"},
+        {"name": "color_blur", "blendername": "Color Blur"},
+        {"name": "shade_smooth", "blendername": "Shade Smooth"},
+        {"name": "backbone_smoothing", "blendername": "Backbone Smoothing"},
+        {"name": "backbone_threshold", "blendername": "Backbone Threshold"},
+        {"name": "backbone_radius", "blendername": "Backbone Radius"},
+        {"name": "backbone_shape", "blendername": "Backbone Shape"},
+        {"name": "base_resolution", "blendername": "Base Resolution"},
+        {"name": "base_realize", "blendername": "Base Realize"},
+        {"name": "uv_map", "blendername": "UV Map"},
+        {"name": "u_component_factor", "blendername": "U Component Factor"},
     ]
 
-    # fmt: on
-    style = "ribbon"
     def __init__(
         self,
         quality: int = 3,
@@ -169,29 +170,26 @@ class StyleRibbon(StyleBase):
         self.backbone_smoothing = backbone_smoothing
         self.backbone_threshold = backbone_threshold
         self.backbone_radius = backbone_radius
-        self.backbone_shape = backbone_shape
+        self.backbone_shape = backbone_shape  # enum?
         self.base_resolution = base_resolution
         self.base_realize = base_realize
         self.uv_map = uv_map
         self.u_component_factor = u_component_factor
 
 
-
 class StyleSpheres(StyleBase):
-    # fmt: off
-    portdata: PortDataList = [
-        {"name": "geometry", "blendername": "Sphere Geometry", "type": str, "default": "Point"},
-        {"name": "radii", "blendername": "Sphere Radii", "type": float, "default": 0.800000011920929},
-        {"name": "sphere_subdivisions", "blendername": "Sphere Subdivisions", "type": int, "default": 2},
-        {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True},
-    ]
-    # fmt: on
     style = "spheres"
+    portdata: PortDataList = [
+        {"name": "geometry", "blendername": "Sphere Geometry"},
+        {"name": "radii", "blendername": "Sphere Radii"},
+        {"name": "sphere_subdivisions", "blendername": "Sphere Subdivisions"},
+        {"name": "shade_smooth", "blendername": "Shade Smooth"},
+    ]
 
     def __init__(
         self,
-        geometry: str = "Point",  # make enum
-        radii: float = 0.800000011920929,
+        geometry: str = "Point",  # enum: "Point" (Point Cloud), "Instances" (Instances of a mesh Icosphere), or "Mesh" (realised Mesh)
+        radii: float = 0.8,
         sphere_subdivisions: int = 2,
         shade_smooth: bool = True,
     ):
@@ -202,15 +200,13 @@ class StyleSpheres(StyleBase):
 
 
 class StyleSticks(StyleBase):
-    # fmt: off
-    portdata: PortDataList = [
-        { "name": "quality", "blendername": "Quality", "type": int, "default": 3 },
-        { "name": "radius", "blendername": "Radius", "type": float, "default": 0.20000000298023224 },
-        { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
-        { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
-    ]
-    # fmt: on
     style = "sticks"
+    portdata: PortDataList = [
+        { "name": "quality", "blendername": "Quality" },
+        { "name": "radius", "blendername": "Radius" },
+        { "name": "color_blur", "blendername": "Color Blur" },
+        { "name": "shade_smooth", "blendername": "Shade Smooth" }
+    ]
 
     def __init__(
         self,
@@ -226,20 +222,18 @@ class StyleSticks(StyleBase):
 
 
 class StyleSurface(StyleBase):
-    # fmt: off
-    portdata: PortDataList = [
-        { "name": "quality", "blendername": "Quality", "type": int, "default": 3 },
-        { "name": "scale_radii", "blendername": "Scale Radii", "type": float, "default": 1.5 },
-        { "name": "probe_size", "blendername": "Probe Size", "type": float, "default": 1.0 },
-        { "name": "relaxation_steps", "blendername": "Relaxation Steps", "type": int, "default": 10 },
-        { "name": "separate", "blendername": "Separate By", "type": str, "default": "chain_id" },
-        { "name": "group_id", "blendername": "Group ID", "type": int, "default": 0 },
-        { "name": "color_source", "blendername": "Color Source", "type": str, "default": "Alpha Carbon" },
-        { "name": "blur", "blendername": "Color Blur", "type": int, "default": 2 },
-        { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": True }
-    ]
-    # fmt: on
     style = "surface"
+    portdata: PortDataList = [
+        { "name": "quality", "blendername": "Quality" },
+        { "name": "scale_radii", "blendername": "Scale Radii" },
+        { "name": "probe_size", "blendername": "Probe Size" },
+        { "name": "relaxation_steps", "blendername": "Relaxation Steps" },
+        { "name": "separate", "blendername": "Separate By" },
+        { "name": "group_id", "blendername": "Group ID" },
+        { "name": "color_source", "blendername": "Color Source" },
+        { "name": "blur", "blendername": "Color Blur" },
+        { "name": "shade_smooth", "blendername": "Shade Smooth" }
+    ]
 
     def __init__(
         self,
@@ -247,9 +241,9 @@ class StyleSurface(StyleBase):
         scale_radii: float = 1.5,
         probe_size: float = 1.0,
         relaxation_steps: int = 10,
-        separate: str = "chain_id",
+        separate: str = "chain_id",   # enum?
         group_id: int = 0,
-        color_source: str = "Alpha Carbon",
+        color_source: str = "Alpha Carbon", # enum?
         blur: int = 2,
         shade_smooth: bool = True,
     ):
