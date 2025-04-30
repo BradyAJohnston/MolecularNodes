@@ -83,7 +83,7 @@ def add_style_branch(
     selection: str | None = None,
     material: bpy.types.Material | str | None = None,
     frames: bpy.types.Collection | str | None = None,
-    **kwargs
+    **kwargs,
 ) -> None:
     """
     Add a style branch to the tree.
@@ -152,15 +152,14 @@ def apply_style(style_node, style_name, kwargs):
     for input in style_node.inputs:
         if input.type != "GEOMETRY":
             for args in style_specific_args:
-                name = args['name']
-                blendername = args['blendername']
-                input_type = args['type']
-                default = args['default']
+                name = args["name"]
+                blendername = args["blendername"]
+                input_type = args["type"]
+                default = args["default"]
                 if input.name == blendername:
                     # potentially check type match here
-                     if new_value := kwargs.get(name):
+                    if new_value := kwargs.get(name):
                         input.default_value = new_value
-
 
 
 def get_final_style_nodes(
