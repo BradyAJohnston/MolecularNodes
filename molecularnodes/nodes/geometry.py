@@ -144,10 +144,6 @@ def add_style_branch(
         style.update_style_node(node_style)
 
 
-
-
-
-
 def get_final_style_nodes(
     tree: bpy.types.GeometryNodeTree,
 ) -> List[bpy.types.Node | None]:
