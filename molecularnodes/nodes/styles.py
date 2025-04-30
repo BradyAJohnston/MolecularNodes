@@ -1,6 +1,15 @@
 from dataclasses import dataclass, replace, field, fields
 from typing import List, Tuple, Union, Any, Dict
 
+__all__ = [
+    "StyleBallandStick",
+    "StyleCartoon",
+    "StyleRibbon",
+    "StyleSpheres",
+    "StyleSticks",
+    "StyleSurface",
+]
+
 StyleClass = Union[
     "StyleBallandStick",
     "StyleCartoon",
@@ -144,28 +153,12 @@ class StyleRibbon(StyleBase):
 class StyleSpheres(StyleBase):
     portdata: PortDataList = [
         # fmt: off
-        {
-            "name": "geometry",
-            "blendername": "Sphere Geometry",
-            "type": bool,
-            "default": "Point",
-        },
+        {"name": "geometry", "blendername": "Sphere Geometry", "type": bool, "default": "Point"},
         {"name": "radii", "blendername": "Sphere Radii", "type": float, "default": 0.8},
-        {
-            "name": "subdivisions",
-            "blendername": "Sphere Subdivisions",
-            "type": int,
-            "default": 2,
-        },
-        {
-            "name": "shade_smooth",
-            "blendername": "Shade Smooth",
-            "type": bool,
-            "default": False,
-        },
+        {"name": "subdivisions", "blendername": "Sphere Subdivisions", "type": int, "default": 2},
+        {"name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False},
         # fmt: on
     ]
-
     def __init__(
         self,
         style: str = "sphere",
@@ -175,7 +168,7 @@ class StyleSpheres(StyleBase):
         shade_smooth: bool = False,
     ):
         self.style = style
-        self.as_mesh = as_mesh  # This corresponds to a geometry option, but the portdata has a different key "geometry"
+        self.as_mesh = as_mes
         self.radii = radii
         self.subdivisions = subdivisions
         self.shade_smooth = shade_smooth
