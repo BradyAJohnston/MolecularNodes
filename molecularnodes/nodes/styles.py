@@ -41,7 +41,7 @@ STYLE_DATA = {
         { "name": "color_blur", "blendername": "Color Blur", "type": bool, "default": False },
         { "name": "shade_smooth", "blendername": "Shade Smooth", "type": bool, "default": False }
     ],
-    "Style Sruface": [
+    "Style Surface": [
         { "name": "quality", "blendername": "Quality", "type": int, "default": 3 },
         { "name": "separate", "blendername": "Separate", "type": bool, "default": True },
         { "name": "attribute", "blendername": "Attribute", "type": str, "default": "chain_id" },
