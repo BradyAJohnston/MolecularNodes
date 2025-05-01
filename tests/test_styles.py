@@ -27,9 +27,7 @@ def assess_node_equivalency(name, style):
     blender_inputs = [
         [input.name, input.default_value]
         for input in style_node.inputs
-            if input.type != "GEOMETRY" and
-            input.name not in DONT_COMPARE
-
+        if input.type != "GEOMETRY" and input.name not in DONT_COMPARE
     ]
     blender_names = set(name for [name, _] in blender_inputs)
 
