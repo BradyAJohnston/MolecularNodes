@@ -13,9 +13,6 @@ function to parity between the nodetrees and the class representations.
 
 from typing import List, Tuple, Union, Any, Dict
 from bpy.types import GeometryNodeGroup
-# from .nodes import styles_mapping
-# import databpy import db
-# from databpy.nodes import (append_from_blend)
 
 __all__ = [
     "StyleBallandStick",
@@ -27,10 +24,8 @@ __all__ = [
     "StyleBase",
 ]
 
-
 PortDataEntry = Dict[str, Any]
 PortDataList = List[PortDataEntry]
-
 
 class StyleBase:
     style: str
@@ -139,8 +134,6 @@ class StyleRibbon(StyleBase):
     style = "ribbon"
     portdata: PortDataList = [
         {"name": "quality", "blendername": "Quality"},
-        # {"name": "radius", "blendername": "Radius"},
-        # {"name": "smoothing", "blendername": "Smoothing"},
         {"name": "color_blur", "blendername": "Color Blur"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
         {"name": "backbone_smoothing", "blendername": "Backbone Smoothing"},
@@ -152,14 +145,11 @@ class StyleRibbon(StyleBase):
         {"name": "base_realize", "blendername": "Base Realize"},
         {"name": "uv_map", "blendername": "UV Map"},
         {"name": "u_component", "blendername": "U Component"},
-        # {"name": "u_component_factor", "blendername": "U Component Factor"},
     ]
 
     def __init__(
         self,
         quality: int = 3,
-        # radius: float = 1.6,
-        # smoothing: float = 0.6,
         color_blur: bool = False,
         shade_smooth: bool = False,
         backbone_smoothing: float = 0.5,
@@ -174,8 +164,6 @@ class StyleRibbon(StyleBase):
         # u_component_factor=None,
     ):
         self.quality = quality
-        # self.radius = radius
-        # self.smoothing = smoothing
         self.color_blur = color_blur
         self.shade_smooth = shade_smooth
         self.backbone_smoothing = backbone_smoothing
@@ -187,7 +175,6 @@ class StyleRibbon(StyleBase):
         self.base_realize = base_realize
         self.uv_map = uv_map
         self.u_component = u_component
-        # self.u_component_factor = u_component_factor
 
 
 class StyleSpheres(StyleBase):

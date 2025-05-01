@@ -15,16 +15,19 @@ from molecularnodes.nodes.styles import (
 
 DONT_COMPARE = {"Atoms", "Selection", "Material"}
 
-
 def assess_node_equivalency(name, style):
+    """
+    1. Loads Node from MN file vie classic route
+    2. Directly loads class
+    3. Compares the fields and defualts for each
+    """
+
     # get the names and default values of the blender style ndoes
     mol = mn.Molecule.fetch("4ozs").add_style(name)
 
     style_node = get_style_node(mol.object)
-    print(name)
-    for input in style_node.inputs:
-        print(input.name, input.type)
-
+    # for input in style_node.inputs:
+    #     print(input.name, input.type)
     blender_inputs = [
         [input.name, input.default_value]
         for input in style_node.inputs
@@ -35,6 +38,7 @@ def assess_node_equivalency(name, style):
     # get the style class name
     style_class = style()
     style_class_bnames = set(sc.get("blendername") for sc in style_class.portdata)
+
 
     # check names bidirectionally
     for bname in blender_names:
@@ -51,11 +55,8 @@ def assess_node_equivalency(name, style):
             if pdata.get("blendername") == bname:
                 local_name = pdata.get("name")
                 local_val = getattr(style_class, local_name)
-
-                print(f"Local Val of {local_name} is {local_val}")
                 # floats come from C++ and are artificially long
                 if isinstance(bvalue, float):
-                    print(f"Local Val of {local_name} is {local_val}")
                     assert math.isclose(bvalue, local_val, rel_tol=0.1, abs_tol=0.1), (
                         f"( Checking Floats ) In style {name}, field {local_name}: Values {bvalue} and {local_val} are not equivalent"
                     )
@@ -75,7 +76,7 @@ def test_styles():
     assess_node_equivalency("ball+stick", StyleBallandStick)
     assess_node_equivalency("cartoon", StyleCartoon)
     # note backbone radius of ribbon seems to switch between 1.6 and 2.0
-    #assess_node_equivalency("ribbon", StyleRibbon)
+    # assess_node_equivalency("ribbon", StyleRibbon)
     assess_node_equivalency("spheres", StyleSpheres)
     assess_node_equivalency("sticks", StyleSticks)
     assess_node_equivalency("surface", StyleSurface)
