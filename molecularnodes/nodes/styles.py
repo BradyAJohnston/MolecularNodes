@@ -1,4 +1,16 @@
-from dataclasses import dataclass, replace, field, fields
+"""
+Style Classes
+
+MolecularNodes uses Geometry Nodes to define molecule representations within blender. However,
+it is desireable to make these nodes accessible for scripting. The classes defined in this file
+provide a way to script against the GeometryNode nodetrees. When invoked on a style these classes
+will simply override the base styles.
+
+Because the nodetrees in the MN_data_file_{version}.blend are the source of truth, we add
+function to parity between the nodetrees and the class representations.
+
+"""
+
 from typing import List, Tuple, Union, Any, Dict
 from bpy.types import GeometryNodeGroup
 
@@ -20,24 +32,15 @@ PortDataList = List[PortDataEntry]
 class StyleBase:
     portdata: PortDataList = []
 
+
     def update_style_node(self, node_style: GeometryNodeGroup):
         for input in node_style.inputs:
             if input.type != "GEOMETRY":
-                print(
-                    input.name,
-                    input.default_value,
-                )
                 for arg in self.portdata:
-                    # print(arg)
                     name = arg["name"]
-                    blendername = arg.get(
-                        "blendername", name
-                    )  # Use name if blendername not
+                    blendername = arg.get("blendername")
                     if input.name == blendername:
-                        # print(f"setting! Val : {getattr(self, name)}")
-                        # print(f"Initial Val : {input.default_value}")
                         input.default_value = getattr(self, name)
-                        # print(f"AfterSetting Val : {input.default_value}")
 
 
 class StyleBallandStick(StyleBase):
