@@ -139,8 +139,8 @@ class StyleRibbon(StyleBase):
     style = "ribbon"
     portdata: PortDataList = [
         {"name": "quality", "blendername": "Quality"},
-        {"name": "radius", "blendername": "Radius"},
-        {"name": "smoothing", "blendername": "Smoothing"},
+        # {"name": "radius", "blendername": "Radius"},
+        # {"name": "smoothing", "blendername": "Smoothing"},
         {"name": "color_blur", "blendername": "Color Blur"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
         {"name": "backbone_smoothing", "blendername": "Backbone Smoothing"},
@@ -152,42 +152,42 @@ class StyleRibbon(StyleBase):
         {"name": "base_realize", "blendername": "Base Realize"},
         {"name": "uv_map", "blendername": "UV Map"},
         {"name": "u_component", "blendername": "U Component"},
-        {"name": "u_component_factor", "blendername": "U Component Factor"},
+        # {"name": "u_component_factor", "blendername": "U Component Factor"},
     ]
 
     def __init__(
         self,
         quality: int = 3,
-        radius: float = 1.6,
-        smoothing: float = 0.6,
+        # radius: float = 1.6,
+        # smoothing: float = 0.6,
         color_blur: bool = False,
         shade_smooth: bool = False,
         backbone_smoothing: float = 0.5,
         backbone_threshold: float = 4.5,
         base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0),
-        backbone_radius: float = 1.6,
-        # backbone_shape: str = "Cylinder",
+        backbone_radius: float = 2.0,
+        backbone_shape: str = "Cylinder",
         base_resolution: int = 4,
         base_realize: bool = False,
         uv_map: bool = False,
         u_component=None,
-        u_component_factor=None,
+        # u_component_factor=None,
     ):
         self.quality = quality
-        self.radius = radius
-        self.smoothing = smoothing
+        # self.radius = radius
+        # self.smoothing = smoothing
         self.color_blur = color_blur
         self.shade_smooth = shade_smooth
         self.backbone_smoothing = backbone_smoothing
         self.backbone_threshold = backbone_threshold
         self.backbone_radius = backbone_radius
-        # self.backbone_shape = backbone_shape  # enum?
+        self.backbone_shape = backbone_shape  # enum?
         self.base_scale = base_scale
         self.base_resolution = base_resolution
         self.base_realize = base_realize
         self.uv_map = uv_map
         self.u_component = u_component
-        self.u_component_factor = u_component_factor
+        # self.u_component_factor = u_component_factor
 
 
 class StyleSpheres(StyleBase):
