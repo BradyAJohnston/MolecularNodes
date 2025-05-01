@@ -13,6 +13,9 @@ function to parity between the nodetrees and the class representations.
 
 from typing import List, Tuple, Union, Any, Dict
 from bpy.types import GeometryNodeGroup
+# from .nodes import styles_mapping
+# import databpy import db
+# from databpy.nodes import (append_from_blend)
 
 __all__ = [
     "StyleBallandStick",
@@ -30,8 +33,8 @@ PortDataList = List[PortDataEntry]
 
 
 class StyleBase:
+    style: str
     portdata: PortDataList = []
-
 
     def update_style_node(self, node_style: GeometryNodeGroup):
         for input in node_style.inputs:
@@ -144,9 +147,11 @@ class StyleRibbon(StyleBase):
         {"name": "backbone_threshold", "blendername": "Backbone Threshold"},
         {"name": "backbone_radius", "blendername": "Backbone Radius"},
         {"name": "backbone_shape", "blendername": "Backbone Shape"},
+        {"name": "base_scale", "blendername": "Base Scale"},
         {"name": "base_resolution", "blendername": "Base Resolution"},
         {"name": "base_realize", "blendername": "Base Realize"},
         {"name": "uv_map", "blendername": "UV Map"},
+        {"name": "u_component", "blendername": "U Component"},
         {"name": "u_component_factor", "blendername": "U Component Factor"},
     ]
 
@@ -159,11 +164,13 @@ class StyleRibbon(StyleBase):
         shade_smooth: bool = False,
         backbone_smoothing: float = 0.5,
         backbone_threshold: float = 4.5,
+        base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0),
         backbone_radius: float = 1.6,
-        backbone_shape: str = "Cylinder",
+        # backbone_shape: str = "Cylinder",
         base_resolution: int = 4,
         base_realize: bool = False,
         uv_map: bool = False,
+        u_component=None,
         u_component_factor=None,
     ):
         self.quality = quality
@@ -174,10 +181,12 @@ class StyleRibbon(StyleBase):
         self.backbone_smoothing = backbone_smoothing
         self.backbone_threshold = backbone_threshold
         self.backbone_radius = backbone_radius
-        self.backbone_shape = backbone_shape  # enum?
+        # self.backbone_shape = backbone_shape  # enum?
+        self.base_scale = base_scale
         self.base_resolution = base_resolution
         self.base_realize = base_realize
         self.uv_map = uv_map
+        self.u_component = u_component
         self.u_component_factor = u_component_factor
 
 
