@@ -14,6 +14,7 @@ website:
     left:
       # - file: installation.qmd
       #   text: Installation
+      - quick_reference.qmd
       - file: tutorials/
         text: Tutorials
       - text: Nodes
