@@ -599,7 +599,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         density.load(
-            file_path=path_resolve(scene.mn.import_density_file),
+            file_path=path_resolve(scene.mn.import_density),
             invert=scene.mn.import_density_invert,
             setup_nodes=scene.mn.import_node_setup,
             style=scene.mn.import_density_style,
