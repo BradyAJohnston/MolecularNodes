@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import bpy
 import databpy
 import mrcfile
@@ -16,11 +17,17 @@ class MRC(Density):
     that can be written as `.vdb` files and the imported into Blender as volumetric objects.
     """
 
-    def __init__(self, file_path, center=False, invert=False, overwrite=False):
+    def __init__(
+        self,
+        file_path: str | Path,
+        center: bool = False,
+        invert: bool = False,
+        overwrite: bool = False,
+    ):
         super().__init__(file_path=file_path)
-        self.grid = self.map_to_grid(self.file_path, center=center)
+        self.grid = self.map_to_grid(str(self.file_path), center=center)
         self.file_vdb = self.map_to_vdb(
-            self.file_path, center=center, invert=invert, overwrite=overwrite
+            str(self.file_path), center=center, invert=invert, overwrite=overwrite
         )
 
     def create_object(

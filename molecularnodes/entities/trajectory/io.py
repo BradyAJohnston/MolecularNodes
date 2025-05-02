@@ -7,7 +7,6 @@ __author__ = "Brady Johnston"
 
 from pathlib import Path
 import MDAnalysis as mda
-from ... import blender as bl
 from . import oxdna
 from .base import Trajectory
 
@@ -18,9 +17,6 @@ def load(
     name: str = "NewTrajectory",
     style: str | None = "spheres",
 ):
-    top = bl.path_resolve(top)
-    traj = bl.path_resolve(traj)
-
     universe = mda.Universe(top, traj)
     trajectory = Trajectory(universe=universe)
     trajectory.create_object(name=name, style=style)
