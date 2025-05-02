@@ -1,6 +1,6 @@
 from abc import ABCMeta
-import bpy
 from enum import Enum
+import bpy
 from databpy import (
     BlenderObject,
 )
@@ -23,13 +23,14 @@ class MolecularEntity(
         super().__init__(obj=None)
         self._entity_type: EntityType
         self._register_with_session()
+        self._world_scale = 0.01
 
     @property
     def bob(self) -> BlenderObject:
         return BlenderObject(self.object)
 
     @property
-    def node_group(self) -> bpy.types.NodeGroup:
+    def node_group(self) -> bpy.types.GeometryNodeTree:
         return self.object.modifiers["MolecularNodes"].node_group
 
     @property

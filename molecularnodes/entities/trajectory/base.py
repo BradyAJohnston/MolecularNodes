@@ -1,23 +1,19 @@
-from typing import Dict, Callable
-
+from typing import Callable, Dict
 import bpy
+import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
-from math import floor, remainder
-
-from enum import Enum
-
 from ...assets import data
-from ..base import MolecularEntity, EntityType
-from ...blender import coll, nodes, path_resolve
-import databpy
+from ...blender import coll, path_resolve
+from ...nodes import nodes
 from ...utils import (
     correct_periodic_positions,
+    fraction,
     frame_mapper,
     frames_to_average,
-    fraction,
 )
+from ..base import EntityType, MolecularEntity
 from .selections import Selection
 
 
@@ -81,20 +77,9 @@ class Trajectory(MolecularEntity):
             trajectory=self, atomgroup=atomgroup, name=name
         )
 
-        obj = self.object
-        obj.mn_trajectory_selections.add()
-        sel = obj.mn_trajectory_selections[-1]
-
-        if not atomgroup.__class__.__name__ == "UpdatingAtomGroup":
-            sel.immutable = True
-        sel.name = selection.name
-        sel.selection_str = selection.selection_str
-        sel.updating = selection.updating
-        sel.periodic = selection.periodic
-
         self.selections[selection.name] = selection
-        selection.set_selection()
-        return sel
+        self.set_boolean(selection.to_mask(), name=selection.name)
+        return selection
 
     @property
     def is_orthorhombic(self):
@@ -135,10 +120,11 @@ class Trajectory(MolecularEntity):
             return self.atoms.elements
 
         try:
+            default_guesser = mda.guesser.default_guesser.DefaultGuesser(None)
             guessed_elements = [
                 x
                 if x in data.elements.keys()
-                else mda.topology.guessers.guess_atom_element(x)
+                else default_guesser.guess_atom_element(x)
                 for x in self.atoms.names
             ]
             return np.array(guessed_elements)
@@ -412,10 +398,12 @@ class Trajectory(MolecularEntity):
 
     def save_filepaths_on_object(self) -> None:
         obj = self.object
-        obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
-        obj.mn.filepath_trajectory = str(
-            path_resolve(self.universe.trajectory.filename)
-        )
+        if self.universe.filename is not None:
+            obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
+        if self.universe.trajectory.filename is not None:
+            obj.mn.filepath_trajectory = str(
+                path_resolve(self.universe.trajectory.filename)
+            )
 
     def reset_playback(self) -> None:
         "Set the playback settings to their default values"
@@ -471,6 +459,7 @@ class Trajectory(MolecularEntity):
             self.object["atom_type_unique"] = self.atom_type_unique
 
         self.object.mn.entity_type = self._entity_type.value
+        self.object.mn.n_frames = self.n_frames
         self.save_filepaths_on_object()
         bpy.context.view_layer.objects.active = self.object
 
@@ -547,7 +536,7 @@ class Trajectory(MolecularEntity):
 
     def _frame_range(self, frame: int):
         "Get the trajectory frame numbers over which we will average values"
-        return frames_to_average(frame, self.average)
+        return frames_to_average(frame, self.n_frames, average=self.average)
 
     def _cache_ordered(self) -> np.ndarray:
         "Return the cached frames as a 3D array, in chronological order"
@@ -587,7 +576,6 @@ class Trajectory(MolecularEntity):
         Update the positions, selections and calculations for this trajectory, based on
         frame number of the current scene, not the frame number of the Universe
         """
-        self._frame = self.frame_mapper(frame)
         self._update_positions(frame)
         self._update_selections()
         self._update_calculations()
@@ -605,7 +593,11 @@ class Trajectory(MolecularEntity):
         # if we should be looking ahead by 1 for interpolating, ensure we are caching 1
         # frame ahead so when the frame changes we already have it stored and aren't
         # double dipping
-        if len(frames_to_cache) == 1 and cache_ahead:
+        if (
+            len(frames_to_cache) == 1
+            and frames_to_cache[0] != (self.n_frames - 1)
+            and cache_ahead
+        ):
             frames_to_cache = np.array(
                 (frames_to_cache[0], frames_to_cache[0] + 1), dtype=int
             )
@@ -636,10 +628,25 @@ class Trajectory(MolecularEntity):
         The function that will be called when the frame changes.
         It will update the positions and selections of the atoms in the scene.
         """
+        if not self.update_with_scene:
+            # get the current positions for the original frame and set
+            # those on the object
+            self.position = self._position_at_frame(frame)
+            return
+
+        # the rest of the code below is when update_with_scene is enabled
         # get the two frames of the trajectory to potentially access data from
         # uframe_current, uframe_next = [self.frame_mapper(x) for x in (frame, frame + 1)]
         uframe_current = self.frame_mapper(frame)
         uframe_next = uframe_current + 1
+        last_frame = self.n_frames - 1
+        if uframe_current >= last_frame:
+            uframe_current = last_frame
+            uframe_next = uframe_current
+        # update the frame_hidden property for the UI
+        # TODO: changing a bpy.prop here could lead to a
+        #   `AttributeError: Writing to ID classes in this context is not allowed:` error
+        self._frame = uframe_current
 
         if self.subframes > 0 and self.interpolate:
             # if we are adding subframes and interpolating, then we get the positions

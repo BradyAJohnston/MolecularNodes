@@ -33,7 +33,7 @@ See examples, tutorials and video projects that use Molecular Nodes in the [docu
 
 ## Installation
 
-Molecular Nodes can be installed from within Blender in versions >=4.2, by using the _Get Extensions_ menu. More details can be found on the [installation page](https://bradyajohnston.github.io/MolecularNodes/installation.html) of the documentation.
+Molecular Nodes can be installed from within Blender in versions >=4.2, by using the _Get Extensions_ menu. More details can be found on the [installation page](https://bradyajohnston.github.io/MolecularNodes/tutorials/installation.html) of the documentation.
 
 ## Getting Started
 

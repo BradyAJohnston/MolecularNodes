@@ -1,30 +1,33 @@
 import io
-import time
 import warnings
 from abc import ABCMeta
 from pathlib import Path
-from typing import Optional, Tuple, Union
-import json
-
+from typing import Callable, List
 import biotite.structure as struc
 import bpy
-import numpy as np
-import numpy.typing as npt
-from biotite import InvalidFileError
-
-from ...assets import data
-
-from ... import blender as bl
-from ...blender.material import MaterialTreeInterface
-from ... import color, utils
-from databpy import AttributeDomains, AttributeTypes
 import databpy
-from ..base import MolecularEntity, EntityType
+import numpy as np
+from biotite import InvalidFileError
+from biotite.structure import AtomArray, AtomArrayStack
+from ... import blender as bl
+from ... import download, utils
+from ...nodes import nodes
+from ...nodes.geometry import (
+    GeometryNodeInterFace,
+    add_style_branch,
+    style_interfaces_from_tree,
+)
+from ..base import EntityType, MolecularEntity
+from ..utilities import create_object
+from . import pdb, pdbx, sdf, selections
+from .reader import ReaderBase
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
     """
-    Abstract base class for representing a molecule.
+    Primary Molecular Nodes class that coordinates the conversion of structural bioinformatic data
+    into raw Blender data.  Most notable the conversion of atoms and bonds into a collection
+    of vertices and lines.
 
     It associates the atomic data (the array) with the created 3D model inside of Blender
     (the object). If multiple conformations are imported, then a `frames` collection
@@ -35,40 +38,222 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     Attributes
     ----------
-    file_path : str
-        The file path to the file which stores the atomic coordinates.
-    file : Any
-        The opened file.
     object : bpy.types.Object
         The Blender object representing the molecule.
     frames : bpy.types.Collection
         The Blender collection which holds the objects making up the frames to animate.
-    array: np.ndarray:
+    array: AtomArray | AtomArrayStack:
         The numpy array which stores the atomic coordinates and associated attributes.
-    entity_ids : np.ndarray
-        The entity IDs of the molecule.
-    chain_ids : np.ndarray
-        The chain IDs of the molecule.
+    select: MoleculeSelector
+        A selector object that provides methods for creating atom selections based on various
+        criteria such as atom name, residue type, chain ID, etc. These selections can be used
+        with the `add_style` method to apply visual styles to specific parts of the molecule.
     """
 
-    def __init__(self, file_path: Union[str, Path, io.BytesIO]):
+    def __init__(
+        self,
+        array: AtomArray | AtomArrayStack,
+        reader: ReaderBase | None = None,
+    ):
         """
         Initialize the Molecule object.
 
         Parameters
         ----------
-        file_path : Union[str, Path, io.BytesIO]
-            The file path to the file which stores the atomic coordinates.
+        array : AtomArray | AtomArrayStack
+            The atom array or atom array stack containing the molecular data.
+        reader : ReaderBase | None, optional
+            The reader used to load the molecular data, by default None.
         """
-        super().__init__()
-        self._parse_filepath(file_path=file_path)
-        self.file: str
-        self.array: np.ndarray
-        self._frames_collection: str | None
+        self._frames_collection: str | None = None
+        self._code: str | None = None
         self._entity_type = EntityType.MOLECULE
+        self._reader: ReaderBase | None = reader
+        super().__init__()
+        self.array = array
+        self.select = MoleculeSelector(self)
+
+    def create_object(self, name: str = "NewObject"):
+        """
+        Create a 3D model of the molecule, with one vertex for each atom.
+        """
+        self.object = create_object(
+            array=self.array,
+            name=name,
+            collection=bl.coll.mn(),
+        )
+        if self._reader is not None:
+            self._store_object_custom_properties(self.object, self._reader)
+        self._setup_frames_collection()
+        self._setup_modifiers()
+
+    def _setup_modifiers(self):
+        """
+        Create the modifiers for the molecule.
+        """
+        self.object.modifiers.new("MolecularNodes", "NODES")
+        tree = nodes.new_tree(  # type: ignore
+            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True
+        )
+        self.object.modifiers[0].node_group = tree  # type: ignore
+
+    @classmethod
+    def load(cls, file_path: str | Path, name: str | None = None):
+        """
+        Load a molecule from a file.
+
+        Parameters
+        ----------
+        file_path : str | Path
+            Path to the molecular structure file.
+        name : str | None, optional
+            Name to assign to the created molecule object. If None, the file's stem
+            (filename without extension) will be used as the name. Default is None.
+
+        Returns
+        -------
+        Molecule
+            A new Molecule instance created from the loaded file data.
+
+        Notes
+        -----
+        This method automatically filters out solvent molecules from the structure.
+        Future versions may make this behavior optional.
+        """
+        reader = cls._read(file_path)
+        if not name:
+            name = Path(file_path).stem
+        mol = cls(reader.array, reader=reader)
+
+        # TODO: currently filtering out solvent, will make optional in another PR
+        if isinstance(mol.array, AtomArrayStack):
+            mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
+        else:
+            mol.array = mol.array[~struc.filter_solvent(mol.array)]
+
+        mol.create_object(name=name)
+        mol._reader = reader
+
+        try:
+            mol._assemblies = reader._assemblies()
+        except InvalidFileError:
+            mol._assemblies = ""
+
+        return mol
 
     @property
-    def frames(self) -> bpy.types.Collection:
+    def code(self) -> str | None:
+        """
+        Get the code for the molecule.
+        """
+        return self._code
+
+    @staticmethod
+    def _read(
+        file_path: str | Path | io.BytesIO,
+        # del_solvent: bool = False,
+        # del_hydrogen: bool = False,
+    ) -> ReaderBase:
+        """
+        Initially open the file, ready to extract the required data.
+
+        Parameters
+        ----------
+        file_path : Union[Path, io.BytesIO]
+            The file path to the file which stores the atomic coordinates.
+        """
+        if isinstance(file_path, io.BytesIO):
+            reader = pdbx.PDBXReader(file_path)
+        else:
+            if isinstance(file_path, str):
+                file_path = Path(file_path)
+
+            match file_path.suffix:
+                case ".cif":
+                    reader = pdbx.PDBXReader(file_path)
+                case ".bcif":
+                    reader = pdbx.PDBXReader(file_path)
+                case ".pdb":
+                    reader = pdb.PDBReader(file_path)
+                case ".sdf":
+                    reader = sdf.SDFReader(file_path)
+                case ".mol":
+                    reader = sdf.SDFReader(file_path)
+                case _:
+                    raise InvalidFileError("The file format is not supported.")
+
+        return reader
+
+    @classmethod
+    def fetch(
+        cls,
+        code: str,
+        format=".bcif",
+        centre: str | None = None,
+        cache: Path | str | None = download.CACHE_DIR,
+        database: str = "rcsb",
+    ):
+        """
+        Fetch a molecule from the RCSB database.
+
+        Parameters
+        ----------
+        code : str
+            The PDB ID code of the molecule to fetch.
+        format : str, optional
+            The file format to download. Default is ".bcif".
+        centre : str | None, optional
+            Method to use for centering the molecule. Options are "centroid" (geometric center)
+            or "mass" (center of mass). If None, no centering is performed. Default is None.
+        cache : str, optional
+            Path to cache directory. If None, no caching is performed.
+        database : str, optional
+            The database to fetch from. Default is "rcsb".
+
+        Returns
+        -------
+        Molecule
+            A new Molecule instance created from the downloaded data.
+        """
+        file_path = download.StructureDownloader(cache=cache).download(
+            code=code, format=format, database=database
+        )
+        mol = cls.load(file_path, name=code)
+        mol.object.mn["entity_type"] = "molecule"
+        mol._code = code
+
+        return mol
+
+    def centre_molecule(self, method: str | None = "centroid"):
+        """
+        Offset positions to centre the atoms and vertices over either the geometric centroid
+        or the centre of mass.
+        """
+        if method is None or method == "":
+            return self
+
+        adjustment = self.centroid(weight=method)
+        self.position -= adjustment
+        self.array.coord -= adjustment
+        return self
+
+    def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
+        if weight == "centroid" or weight == "":
+            return super().centroid()
+
+        return super().centroid(weight)
+
+    @property
+    def tree(self) -> bpy.types.GeometryNodeTree:
+        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
+        if mod is None:
+            raise ValueError(
+                f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
+            )
+        return mod.node_group  # type: ignore
+
+    @property
+    def frames(self) -> bpy.types.Collection | None:
         """
         Get the collection of frames for the molecule.
 
@@ -78,7 +263,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The collection of frames for the molecule.
         """
         if self._frames_collection is None:
-            raise ValueError("No frames collection has been set for this molecule.")
+            return None
 
         return bpy.data.collections[self._frames_collection]
 
@@ -100,52 +285,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         self._frames_collection = value.name
 
-    @classmethod
-    def _read(self, file_path: Union[Path, io.BytesIO]):
-        """
-        Initially open the file, ready to extract the required data.
-
-        Parameters
-        ----------
-        file_path : Union[Path, io.BytesIO]
-            The file path to the file which stores the atomic coordinates.
-        """
-        pass
-
-    def _parse_filepath(self, file_path: Union[Path, str, io.BytesIO]) -> None:
-        """
-        If this is an actual file resolve the path - if a bytes IO resolve this as well.
-
-        Parameters
-        ----------
-        file_path : Union[Path, str, io.BytesIO]
-            The file path to the file which stores the atomic coordinates.
-        """
-        if isinstance(file_path, io.BytesIO):
-            self.file = self._read(file_path=file_path)
-        elif isinstance(file_path, io.StringIO):
-            self.file = self._read(file_path=file_path)
-        else:
-            self.file_path = bl.path_resolve(file_path)
-            self.file = self._read(self.file_path)
-
-    def __len__(self) -> int:
-        """
-        Get the number of atoms in the molecule.
-
-        Returns
-        -------
-        int
-            The number of atoms in the molecule.
-        """
-        if hasattr(self, "object"):
-            if self.object:
-                return len(self.object.data.vertices)
-        if self.array:
-            return len(self.array)
-        else:
-            return 0
-
     @property
     def n_models(self):
         """
@@ -161,166 +300,117 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         else:
             return self.array.shape[0]
 
-    @property
-    def tree(self) -> bpy.types.GeometryNodeTree:
-        return self.object.modifiers["MolecularNodes"].node_group
-
-    @property
-    def material(self) -> bpy.types.Material:
-        return bl.nodes.style_node(self.tree).inputs["Material"]
-
-    @material.setter
-    def material(self, value: bpy.types.Material):
-        if isinstance(value, bpy.types.Material):
-            bl.nodes.style_node(self.tree).inputs["Material"].default_value = value
-        elif isinstance(value, MaterialTreeInterface):
-            bl.nodes.style_node(self.tree).inputs["Material"].default_value = value.tree
-        else:
-            raise TypeError(
-                "The material must be a bpy.types.Material or MaterialTreeInterface, not {}".format(
-                    type(value)
-                )
-            )
-
-    @property
-    def style(self) -> str:
-        """
-        Get the style of the molecule.
-        """
-        return bl.nodes.style_node(self.tree).name.removeprefix("Style").strip().lower()
-
-    @style.setter
-    def style(self, value: str):
-        """
-        Set the style of the molecule.
-        """
-        bl.nodes.swap(bl.nodes.style_node(self.tree), bl.nodes.styles_mapping[value])
-
-    @property
-    def chain_ids(self) -> Optional[list]:
-        """
-        Get the unique chain IDs of the molecule.
-
-        Returns
-        -------
-        Optional[list]
-            The unique chain IDs of the molecule, or None if not available.
-        """
-        if self.array:
-            if hasattr(self.array, "chain_id"):
-                return np.unique(self.array.chain_id).tolist()
-
-        return None
-
-    def create_object(
+    def add_style(
         self,
-        name: str = "NewMolecule",
-        style: str | None = "spheres",
-        selection: np.ndarray | None = None,
-        build_assembly=False,
-        centre: str | None = "",
-        del_solvent: bool = True,
-        del_hydrogen: bool = False,
-        collection=None,
-        verbose: bool = False,
-        color: Optional[str] = "common",
-    ) -> bpy.types.Object:
+        style: bpy.types.GeometryNodeTree | str = "spheres",
+        color: str | None = "common",
+        selection: "str | MoleculeSelector | None" = None,
+        assembly: bool = False,
+        material: bpy.types.Material | str | None = None,
+    ):
         """
-        Create a 3D model of the molecule inside of Blender.
-
-        Creates a 3D model with one vertex per atom, and one edge per bond. Each vertex
-        is given attributes which correspond to the atomic data such as `atomic_number` for
-        the element and `res_name` for the residue name that the atom is associated with.
-
-        If multiple conformations of the structure are detected, the collection attribute
-        is also created which will store an object for each conformation, so that the
-        object can interpolate between those conformations.
+        Add a visual style to the molecule.
 
         Parameters
         ----------
-        name : str, optional
-            The name of the model. Default is 'NewMolecule'.
-        style : str, optional
-            The style of the model. Default is 'spheres'.
-        selection : np.ndarray, optional
-            The selection of atoms to include in the model. Default is None.
-        build_assembly : bool, optional
-            Whether to build the biological assembly. Default is False.
-        centre : str, optional
-            Denote method used to determine center of structure. Default is '',
-            resulting in no translational motion being removed. Accepted values
-            are `centroid` or `mass`. Any other value will result in default
-            behavior.
-        del_solvent : bool, optional
-            Whether to delete solvent molecules. Default is True.
-        del_hydrogen: bool, optional
-            Whether to delete hydrogen atoms. Default is False.
-        collection : str, optional
-            The collection to add the model to. Default is None.
-        verbose : bool, optional
-            Whether to print verbose output. Default is False.
-        color : Optional[str], optional
-            The color scheme to use for the model. Default is 'common'.
+        style : bpy.types.GeometryNodeTree | str, optional
+            The style to apply to the molecule. Can be a GeometryNodeTree or a string
+            identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
+            Default is "spheres".
+
+        color : str | None, optional
+            The coloring scheme to apply. Can be "common" (element-based coloring),
+            "chain", "residue", or other supported schemes. If None, no coloring
+            is applied. Default is "common".
+
+        selection : str | MoleculeSelector | None, optional
+            Apply the style only to atoms matching this selection. Can be:
+            - A string referring to an existing boolean attribute on the molecule
+            - A MoleculeSelector object defining a selection criteria
+            - None to apply to all atoms (default)
+
+        assembly : bool, optional
+            If True, set up the style to work with biological assemblies.
+            Default is False.
+
+        material : bpy.types.Material | str | None, optional
+            The material to apply to the styled atoms. Can be a Blender Material object,
+            a string with a material name, or None to use default materials. Default is None.
 
         Returns
         -------
-        bpy.types.Object
-            The created 3D model, as an object in the 3D scene.
+        Molecule
+            Returns self for method chaining.
+
+        Notes
+        -----
+        If a MoleculeSelector is provided, it will be evaluated and stored as a new
+        named attribute on the molecule with an automatically generated name (sel_N).
         """
-        is_stack = isinstance(self.array, struc.AtomArrayStack)
+        if style is None:
+            return self
 
-        if isinstance(selection, np.ndarray):
-            array = self.array[selection]
-        else:
-            array = self.array
-
-        # remove the solvent from the structure if requested
-        if del_solvent:
-            mask = np.invert(struc.filter_solvent(array))
-            if is_stack:
-                array = array[:, mask]
-            else:
-                array = array[mask]
-
-        if del_hydrogen:
-            mask = array.element != "H"
-            if is_stack:
-                array = array[:, mask]
-            else:
-                array = array[mask]
-
-        obj, frames = _create_object(
-            array=array,
-            name=name,
-            centre=centre if centre and not build_assembly else "",
-            collection=collection,
-            verbose=verbose,
-        )
-
-        if style and style != "":
-            bl.nodes.create_starting_node_tree(
-                object=obj, coll_frames=frames, style=style, color=color
+        if isinstance(selection, str) and selection not in self.list_attributes(
+            drop_hidden=False
+        ):
+            warnings.warn(
+                f"Named Attribute: '{selection}' does not exist. Style will be added but nothing will be displayed unless that attribute is created.",
+                category=UserWarning,
             )
 
-        try:
-            obj["entity_ids"] = self.entity_ids
-        except AttributeError:
-            obj["entity_ids"] = None
+        if isinstance(selection, MoleculeSelector):
+            name = "sel_0"
+            i = 0
+            while name in self.list_attributes():
+                name = f"sel_{i}"
+                i += 1
 
-        try:
-            obj.mn.biological_assemblies = json.dumps(self.assemblies())
-        except InvalidFileError:
-            obj.mn.biological_assemblies = ""
+            self.store_named_attribute(
+                selection.evaluate_on_array(self.array),
+                name=name,
+                atype=databpy.AttributeTypes.BOOLEAN,
+                domain=databpy.AttributeDomains.POINT,
+            )
 
-        if build_assembly and style:
-            bl.nodes.assembly_insert(obj)
+            selection = name
 
-        # attach the model bpy.Object to the molecule object
-        self.object = obj
-        # same with the collection of bpy Objects for frames
-        self.frames = frames
+        add_style_branch(
+            tree=self.tree,
+            style=style,
+            color=color,
+            selection=selection,
+            material=material,
+            frames=self.frames,
+        )
 
-        return obj
+        if assembly:
+            nodes.assembly_initialise(self.object)
+            nodes.assembly_insert(self.object)
+
+        return self
+
+    def _setup_frames_collection(self):
+        if self.n_models > 1:
+            self.frames = bl.coll.frames(self.name)
+            for i, array in enumerate(self.array):
+                databpy.create_object(
+                    vertices=array.coord * self._world_scale,  # type: ignore
+                    name="{}_frame_{}".format(self.name, str(i)),
+                    collection=self.frames,
+                )
+
+    @property
+    def styles(self) -> List[GeometryNodeInterFace]:
+        """
+        Get the styles in the tree.
+        """
+        return style_interfaces_from_tree(self.tree)
+
+    @staticmethod
+    def _store_object_custom_properties(obj, reader: ReaderBase):
+        obj["entity_ids"] = reader.entity_ids()
+        obj["chain_ids"] = reader.chain_ids()
+        obj.mn.biological_assemblies = reader.assemblies(as_json_string=True)
 
     def assemblies(self, as_array=False):
         """
@@ -338,7 +428,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             transformation matrices, or None if no assemblies are available.
         """
         try:
-            assemblies_info = self._assemblies()
+            if self._reader is None:
+                raise InvalidFileError
+            assemblies_info = self._reader._assemblies()
         except InvalidFileError:
             return None
 
@@ -359,408 +451,531 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return f"<Molecule object: {self.name}>"
 
 
-def _create_object(
-    array,
-    name=None,
-    centre="",
-    collection=None,
-    world_scale=0.01,
-    color_plddt: bool = False,
-    verbose=False,
-) -> Tuple[bpy.types.Object, bpy.types.Collection]:
-    import biotite.structure as struc
+class MoleculeSelector:
+    """
+    A helper to create selections for Molecules and AtomArrays.
 
-    frames = None
-    is_stack = isinstance(array, struc.AtomArrayStack)
+    The selection (self.mask) is not computed or returned until the `evaluate_on_array`
+    method is called. Until then methods are stored for later evaluation.
 
-    try:
-        mass = np.array(
-            [
-                data.elements.get(x, {}).get("standard_mass", 0.0)
-                for x in np.char.title(array.element)
-            ]
-        )
-        array.set_annotation("mass", mass)
-    except AttributeError as e:
-        print(e)
+    Parameters
+    ----------
+    mol : Molecule
+        The molecule object to select from.
 
-    def centre_array(atom_array, centre):
-        if centre == "centroid":
-            atom_array.coord -= databpy.centre(atom_array.coord)
-        elif centre == "mass":
-            atom_array.coord -= databpy.centre(atom_array.coord, weight=atom_array.mass)
+    Attributes
+    ----------
+    mol : Molecule
+        The molecule object to select from.
+    mask : ndarray or None
+        Boolean array for the selection on the most recently evaluated array.
+    pending_selections : list
+        List of selection operations to be applied once `evaluate_on_array` is called.
+    """
 
-    if centre in ["mass", "centroid"]:
-        if is_stack:
-            for atom_array in array:
-                centre_array(atom_array, centre)
-        else:
-            centre_array(atom_array, centre)
+    def __init__(self, mol: Molecule | None = None):
+        self.mol = mol
+        self.mask: np.ndarray | None = None
+        self.pending_selections: list[Callable] = []
 
-    if is_stack:
-        if array.stack_depth() > 1:
-            frames = array
-        array = array[0]
-
-    if not collection:
-        collection = bl.coll.mn()
-
-    bonds_array = []
-    bond_idx = []
-
-    if array.bonds:
-        bonds_array = array.bonds.as_array()
-        bond_idx = bonds_array[:, [0, 1]]
-        # the .copy(order = 'C') is to fix a weird ordering issue with the resulting array
-        bond_types = bonds_array[:, 2].copy(order="C")
-
-    # creating the blender object and meshes and everything
-    bob = databpy.create_bob(
-        name=name,
-        collection=collection,
-        vertices=array.coord * world_scale,
-        edges=bond_idx,
-    )
-
-    # Add information about the bond types to the model on the edge domain
-    # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
-    # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
-    # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
-    if array.bonds:
-        bob.store_named_attribute(
-            data=bond_types,
-            name="bond_type",
-            atype=AttributeTypes.INT,
-            domain=AttributeDomains.EDGE,
-        )
-
-    # The attributes for the model are initially defined as single-use functions. This allows
-    # for a loop that attempts to add each attibute by calling the function. Only during this
-    # loop will the call fail if the attribute isn't accessible, and the warning is reported
-    # there rather than setting up a try: except: for each individual attribute which makes
-    # some really messy code.
-
-    # I still don't like this as an implementation, and welcome any cleaner approaches that
-    # anybody might have.
-
-    def att_atomic_number():
-        atomic_number = np.array(
-            [
-                data.elements.get(x, {"atomic_number": -1}).get("atomic_number")
-                for x in np.char.title(array.element)
-            ]
-        )
-        return atomic_number
-
-    def att_atom_id():
-        return array.atom_id
-
-    def att_pdb_model_num():
-        return array.pdb_model_num
-
-    def att_res_id():
-        return array.res_id
-
-    def att_res_name():
-        other_res = []
-        counter = 0
-        id_counter = -1
-        res_names = array.res_name
-        res_ids = array.res_id
-        res_nums = []
-
-        for name in res_names:
-            res_num = data.residues.get(name, {"res_name_num": -1}).get("res_name_num")
-
-            if res_num == 9999:
-                if (
-                    res_names[counter - 1] != name
-                    or res_ids[counter] != res_ids[counter - 1]
-                ):
-                    id_counter += 1
-
-                unique_res_name = str(id_counter + 100) + "_" + str(name)
-                other_res.append(unique_res_name)
-
-                num = (
-                    np.where(np.isin(np.unique(other_res), unique_res_name))[0][0] + 100
-                )
-                res_nums.append(num)
-            else:
-                res_nums.append(res_num)
-            counter += 1
-
-        bob.object["ligands"] = np.unique(other_res)
-        return np.array(res_nums)
-
-    def att_chain_id():
-        if isinstance(array.chain_id[0], int):
-            return array.chain_id
-        else:
-            return np.unique(array.chain_id, return_inverse=True)[1]
-
-    def att_entity_id():
-        return array.entity_id
-
-    def att_b_factor():
-        return array.b_factor
-
-    def att_occupancy():
-        return array.occupancy
-
-    def att_vdw_radii():
-        vdw_radii = np.array(
-            list(
-                map(
-                    # divide by 100 to convert from picometres to angstroms which is
-                    # what all of coordinates are in
-                    lambda x: data.elements.get(x, {}).get("vdw_radii", 100.0) / 100,
-                    np.char.title(array.element),
-                )
-            )
-        )
-        return vdw_radii * world_scale
-
-    def att_mass():
-        return array.mass
-
-    def att_atom_name():
-        atom_name = np.array(
-            list(map(lambda x: data.atom_names.get(x, -1), array.atom_name))
-        )
-
-        return atom_name
-
-    def att_lipophobicity():
-        lipo = np.array(
-            list(
-                map(
-                    lambda x, y: data.lipophobicity.get(x, {"0": 0}).get(y, 0),
-                    array.res_name,
-                    array.atom_name,
-                )
-            )
-        )
-
-        return lipo
-
-    def att_charge():
-        charge = np.array(
-            list(
-                map(
-                    lambda x, y: data.atom_charge.get(x, {"0": 0}).get(y, 0),
-                    array.res_name,
-                    array.atom_name,
-                )
-            )
-        )
-        return charge
-
-    def att_color():
-        if color_plddt:
-            return color.plddt(array.b_factor)
-        else:
-            return color.color_chains(att_atomic_number(), att_chain_id())
-
-    def att_is_alpha():
-        return np.isin(array.atom_name, "CA")
-
-    def att_is_solvent():
-        return struc.filter_solvent(array)
-
-    def att_is_backbone():
+    def _update_mask(self, operation):
         """
-        Get the atoms that appear in peptide backbone or nucleic acid phosphate backbones.
-        Filter differs from the Biotite's `struc.filter_peptide_backbone()` in that this
-        includes the peptide backbone oxygen atom, which biotite excludes. Additionally
-        this selection also includes all of the atoms from the ribose in nucleic acids,
-        and the other phosphate oxygens.
+        Add a selection operation to the pending list.
+
+        Parameters
+        ----------
+        operation : callable
+            Selection operation to add
+
+        Returns
+        -------
+        self : Selector
+            Returns self for method chaining
         """
-        backbone_atom_names = [
-            "N",
-            "C",
-            "CA",
-            "H",  # backbone hydrogen off N
-            "HA",  # backbone hydrogen off CA
-            "O",  # peptide backbone atoms
-            "P",
-            "O5'",
-            "C5'",
-            "C4'",
-            "C3'",
-            "O3'",  # 'continuous' nucleic backbone atoms
-            "O1P",
-            "OP1",
-            "O2P",
-            "OP2",  # alternative names for phosphate O's
-            "O4'",
-            "C1'",
-            "C2'",
-            "O2'",  # remaining ribose atoms
-        ]
+        self.pending_selections.append(operation)
+        return self
 
-        return np.logical_and(
-            np.isin(array.atom_name, backbone_atom_names),
-            np.logical_not(struc.filter_solvent(array)),
+    def reset(self):
+        """
+        Reset all pending selections and the mask
+
+        Returns
+        -------
+        self : Selector
+            Returns self for method chaining
+        """
+        self.pending_selections = []
+        self.mask = None
+        return self
+
+    def store_selection(self, name: str) -> None:
+        """
+        Evaluate and store the current selection as a named attribute on the Molecule
+
+        Parameters
+        ----------
+        name : str
+            The name to store the selection under.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If no selection has been made.
+        """
+        if self.mol is None:
+            raise ValueError("No Molecule associated with this selector")
+        if self.mask is None or len(self.pending_selections) > 0:
+            self.evaluate_on_array(self.mol.array)
+
+        if self.mask is None:
+            raise ValueError("No selection made.")
+
+        self.mol.store_named_attribute(self.mask, name)
+        return None
+
+    def evaluate_on_array(self, array: AtomArray | AtomArrayStack) -> np.ndarray:
+        """Evaluate this selection on the AtomArray.
+
+        Parameters
+        ----------
+        array : AtomArray or AtomArrayStack
+            The atomic structure to evaluate the selection on.
+
+        Returns
+        -------
+        ndarray
+            Boolean mask array indicating which atoms match the selection criteria.
+
+        Notes
+        -----
+        All of the selection operations that have been staged for this Selector are
+        evaluated and combined with a logical AND, using the AtomArray as input.
+        """
+        if isinstance(array, AtomArrayStack):
+            array = array[0]  # type: ignore
+
+        self.mask = np.ones(array.array_length(), dtype=bool)
+        if not self.pending_selections:
+            return self.mask
+
+        for operation in self.pending_selections:
+            self.mask &= operation(array)
+        return self.mask  # type: ignore
+
+    def atom_name(self, atom_name: str | list[str] | tuple[str, ...] | np.ndarray):
+        """Select atoms by their name.
+
+        Parameters
+        ----------
+        atom_name : str or list of str or tuple of str or ndarray
+            The atom name(s) to select.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(
+            lambda arr: selections.select_atom_names(arr, atom_name)
         )
 
-    def att_is_nucleic() -> npt.NDArray[np.bool_]:
-        return struc.filter_nucleotides(array)
+    def is_amino_acid(self):
+        """Select amino acid residues.
 
-    def att_is_peptide() -> npt.NDArray[np.bool_]:
-        aa = struc.filter_amino_acids(array)
-        con_aa = struc.filter_canonical_amino_acids(array)
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_amino_acids)
 
-        return aa | con_aa
+    def is_canonical_amino_acid(self):
+        """Select canonical amino acid residues.
 
-    def att_is_side_chain() -> npt.NDArray[np.bool_]:
-        not_backbone = np.logical_not(att_is_backbone())
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_canonical_amino_acids)
 
-        return np.logical_and(
-            not_backbone, np.logical_or(att_is_nucleic(), att_is_peptide())
+    def is_canonical_nucleotide(self):
+        """Select canonical nucleotide residues.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_canonical_nucleotides)
+
+    def is_carbohydrate(self):
+        """Select carbohydrate residues.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_carbohydrates)
+
+    def chain_id(self, chain_id: str | list[str] | tuple[str, ...] | np.ndarray):
+        """Select atoms by chain identifier.
+
+        Parameters
+        ----------
+        chain_id : list of str or tuple of str or ndarray
+            The chain identifier(s) to select.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: selections.select_chain_id(arr, chain_id))
+
+    def element(self, element: list[str] | tuple[str, ...] | np.ndarray):
+        """Select atoms by element symbol.
+
+        Parameters
+        ----------
+        element : list of str or tuple of str or ndarray
+            The element symbol(s) to select.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: selections.select_element(arr, element))
+
+    def is_hetero(self):
+        """Select hetero atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_hetero)
+
+    def is_ligand(self):
+        """Select ligand atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_ligand)
+
+    def linear_bond_continuity(self):
+        """Select atoms with linear bond continuity.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_linear_bond_continuity)
+
+    def is_monoatomic_ion(self):
+        """Select monoatomic ions.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_monoatomic_ions)
+
+    def is_nucleotide(self):
+        """Select nucleotide residues.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_nucleotides)
+
+    def is_peptide_backbone(self):
+        """Select peptide backbone atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_peptide_backbone)
+
+    def is_phosphate_backbone(self):
+        """Select phosphate backbone atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_phosphate_backbone)
+
+    def is_backbone(self):
+        """Select backbone atoms for peptide and nucleotide."""
+        return self._update_mask(selections.select_backbone)
+
+    def is_peptide(self):
+        return self._update_mask(selections.select_peptide)
+
+    def is_side_chain(self):
+        return self._update_mask(selections.select_side_chain)
+
+    def is_polymer(self):
+        """Select polymer atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_polymer)
+
+    def res_id(self, num):
+        """Select atoms by residue ID.
+
+        Parameters
+        ----------
+        num : int or list of int
+            The residue ID(s) to select.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: selections.select_res_id(arr, num))
+
+    def res_name(self, res_name):
+        """Select atoms by residue name.
+
+        Parameters
+        ----------
+        res_name : str or list of str
+            The residue name(s) to select.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: selections.select_res_name(arr, res_name))
+
+    def is_solvent(self):
+        """Select solvent atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(selections.select_solvent)
+
+    def not_amino_acids(self):
+        """Select non-amino acid residues.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_amino_acids(arr))
+
+    def not_atom_names(self, atomname):
+        """Select atoms not matching the specified atom names.
+
+        Parameters
+        ----------
+        atomname : str or list of str
+            The atom name(s) to exclude.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(
+            lambda arr: ~selections.select_atom_names(arr, atomname)
         )
 
-    def att_is_hetero():
-        return array.hetero
+    def not_canonical_amino_acids(self):
+        """Select non-canonical amino acid residues.
 
-    def att_is_carb() -> npt.NDArray[np.bool_]:
-        return struc.filter_carbohydrates(array)
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(
+            lambda arr: ~selections.select_canonical_amino_acids(arr)
+        )
 
-    def att_sec_struct():
-        return array.sec_struct
+    def not_canonical_nucleotides(self):
+        """Select non-canonical nucleotide residues.
 
-    # these are all of the attributes that will be added to the structure
-    # TODO add capcity for selection of particular attributes to include / not include to potentially
-    # boost performance, unsure if actually a good idea of not. Need to do some testing.
-    attributes = (
-        {"name": "res_id", "value": att_res_id, "type": "INT", "domain": "POINT"},
-        {"name": "res_name", "value": att_res_name, "type": "INT", "domain": "POINT"},
-        {
-            "name": "atomic_number",
-            "value": att_atomic_number,
-            "type": "INT",
-            "domain": "POINT",
-        },
-        {"name": "b_factor", "value": att_b_factor, "type": "FLOAT", "domain": "POINT"},
-        {
-            "name": "occupancy",
-            "value": att_occupancy,
-            "type": "FLOAT",
-            "domain": "POINT",
-        },
-        {
-            "name": "vdw_radii",
-            "value": att_vdw_radii,
-            "type": "FLOAT",
-            "domain": "POINT",
-        },
-        {"name": "mass", "value": att_mass, "type": "FLOAT", "domain": "POINT"},
-        {"name": "chain_id", "value": att_chain_id, "type": "INT", "domain": "POINT"},
-        {
-            "name": "pdb_model_num",
-            "value": att_pdb_model_num,
-            "type": "INT",
-            "domain": "POINT",
-        },
-        {"name": "entity_id", "value": att_entity_id, "type": "INT", "domain": "POINT"},
-        {"name": "atom_id", "value": att_atom_id, "type": "INT", "domain": "POINT"},
-        {"name": "atom_name", "value": att_atom_name, "type": "INT", "domain": "POINT"},
-        {
-            "name": "lipophobicity",
-            "value": att_lipophobicity,
-            "type": "FLOAT",
-            "domain": "POINT",
-        },
-        {"name": "charge", "value": att_charge, "type": "FLOAT", "domain": "POINT"},
-        {"name": "Color", "value": att_color, "type": "FLOAT_COLOR", "domain": "POINT"},
-        {
-            "name": "is_backbone",
-            "value": att_is_backbone,
-            "type": "BOOLEAN",
-            "domain": "POINT",
-        },
-        {
-            "name": "is_side_chain",
-            "value": att_is_side_chain,
-            "type": "BOOLEAN",
-            "domain": "POINT",
-        },
-        {
-            "name": "is_alpha_carbon",
-            "value": att_is_alpha,
-            "type": "BOOLEAN",
-            "domain": "POINT",
-        },
-        {
-            "name": "is_solvent",
-            "value": att_is_solvent,
-            "type": "BOOLEAN",
-            "domain": "POINT",
-        },
-        {
-            "name": "is_nucleic",
-            "value": att_is_nucleic,
-            "type": "BOOLEAN",
-            "domain": "POINT",
-        },
-        {
-            "name": "is_peptide",
-            "value": att_is_peptide,
-            "type": "BOOLEAN",
-            "domain": "POINT",
-        },
-        {
-            "name": "is_hetero",
-            "value": att_is_hetero,
-            "type": "BOOLEAN",
-            "domain": "POINT",
-        },
-        {"name": "is_carb", "value": att_is_carb, "type": "BOOLEAN", "domain": "POINT"},
-        {
-            "name": "sec_struct",
-            "value": att_sec_struct,
-            "type": "INT",
-            "domain": "POINT",
-        },
-    )
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(
+            lambda arr: ~selections.select_canonical_nucleotides(arr)
+        )
 
-    # assign the attributes to the object
-    for att in attributes:
-        if verbose:
-            start = time.process_time()
-        try:
-            bob.store_named_attribute(
-                data=att["value"](),
-                name=att["name"],
-                atype=att["type"],
-                domain=att["domain"],
-            )
-            if verbose:
-                print(f'Added {att["name"]} after {time.process_time() - start} s')
-        except Exception as e:
-            if verbose:
-                print(e)
-                warnings.warn(f"Unable to add attribute: {att['name']}")
-                print(
-                    f'Failed adding {att["name"]} after {time.process_time() - start} s'
-                )
+    def not_carbohydrates(self):
+        """Select non-carbohydrate residues.
 
-    coll_frames = None
-    if frames:
-        coll_frames = bl.coll.frames(bob.name)
-        for i, frame in enumerate(frames):
-            frame = databpy.create_object(
-                name=bob.name + "_frame_" + str(i),
-                collection=coll_frames,
-                vertices=frame.coord * world_scale,
-            )
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_carbohydrates(arr))
 
-    # add custom properties to the actual blender object, such as number of chains, biological assemblies etc
-    # currently biological assemblies can be problematic to holding off on doing that
-    try:
-        bob.object["chain_ids"] = list(np.unique(array.chain_id))
-    except AttributeError:
-        bob.object["chain_ids"] = None
-        warnings.warn("No chain information detected.")
+    def not_chain_id(self, chain_id):
+        """Select atoms not in the specified chains.
 
-    return bob.object, coll_frames
+        Parameters
+        ----------
+        chain_id : str or list of str
+            The chain identifier(s) to exclude.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_chain_id(arr, chain_id))
+
+    def not_element(self, element):
+        """Select atoms not matching the specified elements.
+
+        Parameters
+        ----------
+        element : str or list of str
+            The element symbol(s) to exclude.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_element(arr, element))
+
+    def not_hetero(self):
+        """Select non-hetero atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_hetero(arr))
+
+    def not_monoatomic_ions(self):
+        """Select non-monoatomic ion atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_monoatomic_ions(arr))
+
+    def not_peptide(self):
+        return self._update_mask(lambda arr: ~selections.select_peptide(arr))
+
+    def not_side_chain(self):
+        return self._update_mask(lambda arr: ~selections.select_side_chain(arr))
+
+    def not_nucleotides(self):
+        """Select non-nucleotide residues.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_nucleotides(arr))
+
+    def not_peptide_backbone(self):
+        """Select non-peptide backbone atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_peptide_backbone(arr))
+
+    def not_phosphate_backbone(self):
+        """Select non-phosphate backbone atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_phosphate_backbone(arr))
+
+    def not_polymer(self):
+        """Select non-polymer atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_polymer(arr))
+
+    def not_res_id(self, num):
+        """Select atoms not matching the specified residue IDs.
+
+        Parameters
+        ----------
+        num : int or list of int
+            The residue ID(s) to exclude.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_res_id(arr, num))
+
+    def not_res_name(self, res_name):
+        """Select atoms not matching the specified residue names.
+
+        Parameters
+        ----------
+        res_name : str or list of str
+            The residue name(s) to exclude.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_res_name(arr, res_name))
+
+    def not_solvent(self):
+        """Select non-solvent atoms.
+
+        Returns
+        -------
+        Selector
+            Returns self for method chaining.
+        """
+        return self._update_mask(lambda arr: ~selections.select_solvent(arr))

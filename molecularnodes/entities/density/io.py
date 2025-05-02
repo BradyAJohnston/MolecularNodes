@@ -3,7 +3,7 @@ from .mrc import MRC
 
 
 def load(
-    file_path: str,
+    file_path: str | Path,
     name: str = "NewDensity",
     invert: bool = False,
     setup_nodes: bool = True,

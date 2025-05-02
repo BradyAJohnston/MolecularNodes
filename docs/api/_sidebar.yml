@@ -1,0 +1,25 @@
+website:
+  sidebar:
+  - collapse-level: 3
+    contents:
+    - href: api/index.qmd
+      text: Introduction
+    - api/styles.qmd
+    - api/materials.qmd
+    - text: '---'
+    - contents:
+      - api/reference/index.qmd
+      - contents:
+        - api/reference/entities.Molecule.qmd
+        - api/reference/entities.MoleculeSelector.qmd
+        - api/reference/entities.Trajectory.qmd
+        - api/reference/entities.Ensemble.qmd
+        - api/reference/entities.OXDNA.qmd
+        section: Entity
+      - contents:
+        - api/reference/Canvas.qmd
+        section: Scene
+      section: Reference
+    id: api/reference
+    search: true
+  - id: dummy-sidebar

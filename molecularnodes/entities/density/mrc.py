@@ -1,11 +1,12 @@
-from .base import Density
-
-import mrcfile
-from ...blender import coll, nodes
-import databpy
-import bpy
-import numpy as np
 import os
+from pathlib import Path
+import bpy
+import databpy
+import mrcfile
+import numpy as np
+from ...blender import coll
+from ...nodes import nodes
+from .base import Density
 
 
 class MRC(Density):
@@ -16,11 +17,17 @@ class MRC(Density):
     that can be written as `.vdb` files and the imported into Blender as volumetric objects.
     """
 
-    def __init__(self, file_path, center=False, invert=False, overwrite=False):
+    def __init__(
+        self,
+        file_path: str | Path,
+        center: bool = False,
+        invert: bool = False,
+        overwrite: bool = False,
+    ):
         super().__init__(file_path=file_path)
-        self.grid = self.map_to_grid(self.file_path, center=center)
+        self.grid = self.map_to_grid(str(self.file_path), center=center)
         self.file_vdb = self.map_to_vdb(
-            self.file_path, center=center, invert=invert, overwrite=overwrite
+            str(self.file_path), center=center, invert=invert, overwrite=overwrite
         )
 
     def create_object(
@@ -31,10 +38,12 @@ class MRC(Density):
 
         Parameters
         ----------
-        file : str
-            Path to the MRC file.
         name : str, optional
-            If not None, renames the object with the new name.
+            If not empty, renames the object with the new name. Default is "NewDensity".
+        style : str, optional
+            The style of the density object. Default is "density_surface".
+        setup_nodes : bool, optional
+            Whether to create starting node tree. Default is True.
 
         Returns
         -------
@@ -97,7 +106,7 @@ class MRC(Density):
         str
             The path to the converted .vdb file.
         """
-        import pyopenvdb as vdb
+        import openvdb as vdb
 
         file_path = self.path_to_vdb(file, center=center, invert=invert)
 
@@ -118,13 +127,16 @@ class MRC(Density):
         # Read in the MRC file and convert it to a pyopenvdb grid
         grid = self.map_to_grid(file=file, invert=invert, center=center)
 
-        grid.transform.scale(np.array((1, 1, 1)) * world_scale * grid["MN_voxel_size"])
+        print(f"{dir(grid.transform)}")
+        grid.transform.preScale(
+            np.array((1, 1, 1)) * world_scale * grid["MN_voxel_size"]
+        )
 
         if center:
             offset = -np.array(grid["MN_box_size"]) * 0.5
             offset *= grid["MN_voxel_size"] * world_scale
             print("transforming")
-            grid.transform.translate(offset)
+            grid.transform.postTranslate(offset)
 
         if os.path.exists(file_path):
             os.remove(file_path)
@@ -159,7 +171,7 @@ class MRC(Density):
             A pyopenvdb FloatGrid object containing the density data.
         """
 
-        import pyopenvdb as vdb
+        import openvdb as vdb
 
         volume = mrcfile.read(file)
 

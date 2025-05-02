@@ -1,30 +1,12 @@
+import databpy
 import numpy as np
 import molecularnodes as mn
 from molecularnodes.blender import mesh
-import databpy
-from databpy import BlenderObject
-from databpy.object import LinkedObjectError
 from .constants import data_dir
-import bpy
-import pytest
-
-
-def test_bob():
-    mol = mn.entities.fetch("8H1B", cache_dir=data_dir)
-    assert isinstance(mol, BlenderObject)
-    with pytest.raises(NotImplementedError):
-        mol.set_frame(10)
-
-    with pytest.raises(ValueError):
-        mol.frames
-
-    mol2 = mn.entities.fetch("1NMR", cache_dir=data_dir)
-    assert isinstance(mol2.frames, bpy.types.Collection)
-    assert mol2.name == "1NMR"
 
 
 def test_set_position():
-    mol = mn.entities.fetch("8FAT", cache_dir=data_dir)
+    mol = mn.Molecule.fetch("8FAT", cache=data_dir)
     pos_a = mol.position
     mol.position += 10
     pos_b = mol.position

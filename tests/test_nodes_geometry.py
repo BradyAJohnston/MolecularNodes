@@ -1,15 +1,12 @@
-import numpy as np
-
-import molecularnodes as mn
-from molecularnodes.blender import nodes
 import databpy
-
+import numpy as np
+import molecularnodes as mn
+from molecularnodes.nodes import nodes
 from .constants import data_dir
-import pytest
 
 
 def test_centre_on_selection():
-    mol = mn.entities.fetch("1cd3", cache_dir=data_dir, style=None)
+    mol = mn.Molecule.fetch("1cd3", cache=data_dir)
 
     group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
     link = group.links.new
@@ -42,21 +39,21 @@ def test_atoms_to_ca_splines(snapshot):
     This test is for if the chains are still connected as continuous, even though they are
     separate by a larger distance
     """
-    mol = mn.entities.fetch("1HQM", style=None)
+    mol = mn.Molecule.fetch("1HQM")
 
     group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
     link = group.links.new
 
-    node_atcas = nodes.add_custom(group, ".Atoms to CA Splines")
+    node_atcac = nodes.add_custom(group, "Atoms to CA Curves")
     node_ctm = group.nodes.new("GeometryNodeCurveToMesh")
 
-    link(group.nodes["Group Input"].outputs[0], node_atcas.inputs[0])
-    link(node_atcas.outputs[0], node_ctm.inputs[0])
+    link(group.nodes["Group Input"].outputs[0], node_atcac.inputs[0])
+    link(node_atcac.outputs[0], node_ctm.inputs[0])
     link(node_ctm.outputs[0], group.nodes["Group Output"].inputs[0])
 
     pos_pre = mol.named_attribute("position", evaluate=True)
 
-    node_atcas.inputs["Threshold (A)"].default_value = 200
+    node_atcac.inputs["Threshold"].default_value = 200
 
     pos_post = mol.named_attribute("position", evaluate=True)
 

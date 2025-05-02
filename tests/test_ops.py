@@ -1,49 +1,66 @@
+import itertools
 import bpy
-import pytest
 import numpy as np
-import molecularnodes as mn
-
+import pytest
 from databpy import ObjectTracker
-
+import molecularnodes as mn
+from .constants import codes, data_dir
 from .utils import NumpySnapshotExtension
-from .constants import data_dir, codes, attributes
 
 
 @pytest.mark.parametrize("code", codes)
-def test_op_api_cartoon(
-    snapshot_custom: NumpySnapshotExtension, code, style="ribbon", format="bcif"
-):
+def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
     scene = bpy.context.scene
+    style = "ribbon"
+    format = "cif"
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_fetch(code=code, file_format=format, style=style)
         mol1 = scene.MNSession.match(o.latest())
 
-    mol2 = mn.entities.fetch(code, style=style, format=format, cache_dir=data_dir)
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_fetch(
+            code=f"pdb_{code.rjust(8, '0')}", file_format=format, style=style
+        )
+        mol2 = scene.MNSession.match(o.latest())
 
-    # objects being imported via each method should have identical snapshots
-    for mol in [mol1, mol2]:
-        for name in attributes:
-            try:
-                assert snapshot_custom == mol.named_attribute(
-                    "position", evaluate=False
-                )
-            except AttributeError as e:
-                assert snapshot_custom == str(e)
+    mol3 = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    mol3.add_style(style=style)
+
+    for test1, test2 in itertools.combinations([mol1, mol2, mol3], 2):
+        np.testing.assert_allclose(test1.position, test2.position)
+
+
+def test_op_fetch_alphafold(tmpdir):
+    scene = bpy.context.scene
+    style = "ribbon"
+
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_fetch(
+            code="Q7Z434",
+            style=style,
+            cache_dir=str(tmpdir),
+            database="alphafold",
+        )
+        mol = scene.MNSession.match(o.latest())
+
+    assert mol.name == "Q7Z434"
 
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
     session = bpy.context.scene.MNSession
-    path = str(mn.download.download(code=code, format=file_format, cache=data_dir))
+    path = mn.download.StructureDownloader(cache=data_dir).download(
+        code=code, format=file_format
+    )
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=path, node_setup=False)
+        bpy.ops.mn.import_local(filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=path, centre=True, centre_type="centroid")
+        bpy.ops.mn.import_local(filepath=str(path), centre=True, centre_type="centroid")
         mol_cent = session.match(o.latest())
 
     assert snapshot_custom == mol.position
@@ -88,7 +105,7 @@ def test_op_residues_selection_custom():
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
 
-    with ObjectTracker() as o:
+    with ObjectTracker():
         bpy.ops.mn.import_trajectory(
             topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
         )

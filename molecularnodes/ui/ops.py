@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import bpy
 import databpy
 import MDAnalysis as mda
@@ -11,10 +10,11 @@ from bpy.props import (
     StringProperty,
 )
 from bpy.types import Context, Operator
-
-from ..blender import nodes
+from .. import entities
+from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
-from ..entities import density, ensemble, molecule, trajectory
+from ..entities import Molecule, density, ensemble, trajectory
+from ..nodes import nodes
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -86,7 +86,7 @@ class MN_OT_Assembly_Bio(Operator):
     inset_node: BoolProperty(default=False)  # type: ignore
 
     @classmethod
-    def poll(self, context):
+    def poll(cls, context):
         # this just checks to see that there is some biological assembly information that
         # is associated with the object / molecule. If there isn't then the assembly
         # operator will be greyed out and unable to be executed
@@ -97,6 +97,10 @@ class MN_OT_Assembly_Bio(Operator):
 
     def execute(self, context):
         obj = context.active_object
+        if not isinstance(obj, bpy.types.Object):
+            self.report({"ERROR"}, "No active object")
+            return {"CANCELLED"}
+
         with databpy.nodes.DuplicatePrevention():
             try:
                 if self.inset_node:
@@ -342,14 +346,9 @@ class MN_OT_Import_Molecule(Import_Molecule):
 
         for file in self.files:
             try:
-                mol = molecule.parse(Path(self.directory).joinpath(file.name))
-                mol.create_object(
-                    name=file.name,
-                    centre=self.centre,
-                    style=style,
-                    del_solvent=self.del_solvent,
-                    build_assembly=self.assembly,
-                )
+                Molecule.load(
+                    Path(self.directory, file.name), name=file.name
+                ).add_style(style, assembly=self.assembly)
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
@@ -387,14 +386,13 @@ DOWNLOAD_FORMATS = (
 class MN_OT_Import_Fetch(bpy.types.Operator):
     bl_idname = "mn.import_fetch"
     bl_label = "Fetch"
-    bl_description = "Download and open a structure from the Protein Data Bank"
+    bl_description = "Download and open a structure from the PDB"
     bl_options = {"REGISTER", "UNDO"}
 
     code: StringProperty(  # type: ignore
         name="PDB",
         description="The 4-character PDB code to download",
         options={"TEXTEDIT_UPDATE"},
-        maxlen=4,
     )
     file_format: EnumProperty(  # type: ignore
         name="Format",
@@ -421,7 +419,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
     cache_dir: StringProperty(  # type: ignore
         name="Cache Directory",
         description="Where to store the structures downloaded from the Protein Data Bank",
-        default=CACHE_DIR,
+        default=str(CACHE_DIR),
         subtype="DIR_PATH",
     )
     del_solvent: BoolProperty(  # type: ignore
@@ -475,23 +473,22 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         ),
     )
 
-    # def invoke(self, context, event):
-
-    #     context.window_manager.invoke_props_dialog(self)
-    #     return {"RUNNING_MODAL"}
-
     def execute(self, context):
         try:
-            mol = molecule.fetch(
-                code=self.code,
-                centre=self.centre_type if self.centre else None,
-                del_solvent=self.del_solvent,
-                del_hydrogen=self.del_hydrogen,
-                style=self.style if self.node_setup else None,
-                cache_dir=self.cache_dir,
-                build_assembly=self.assembly,
-                format=self.file_format,
+            mol = (
+                entities.Molecule.fetch(
+                    code=self.code,
+                    cache=self.cache_dir,
+                    format=self.file_format,
+                    database=self.database,
+                )
+                .add_style(
+                    style=self.style if self.node_setup else None,  # type: ignore
+                    assembly=self.assembly,
+                )
+                .centre_molecule(self.centre_type if self.centre else None)
             )
+
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
             if self.file_format == "pdb":
@@ -501,8 +498,13 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                 )
             return {"CANCELLED"}
 
-        bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{self.code}' as {mol.name}")
+        message = f"Downloaded {self.code} as {mol.name}"
+        try:
+            bpy.context.view_layer.objects.active = mol.object  # type: ignore
+        except RuntimeError:
+            message += " - MolecularNodes collection is disabled"
+
+        self.report({"INFO"}, message=message)
 
         return {"FINISHED"}
 
@@ -520,22 +522,23 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     )
 
     def execute(self, context):
-        mol = molecule.parse(self.filepath)
-        mol.create_object(
-            name=Path(self.filepath).stem,
-            style=self.style if self.node_setup else None,
-            build_assembly=self.assembly,
-            centre=self.centre_type if self.centre else None,
-            del_solvent=self.del_solvent,
+        mol = (
+            Molecule.load(path_resolve(self.filepath))
+            .centre_molecule(self.centre_type if self.centre else None)
+            .add_style(
+                style=self.style if self.node_setup else None,  # type: ignore
+                assembly=self.assembly,
+            )
         )
 
-        # return the good news!
-        bpy.context.view_layer.objects.active = mol.object
-        self.report({"INFO"}, message=f"Imported '{self.filepath}' as {mol.name}")
-        return {"FINISHED"}
+        message = f"Imported '{self.filepath}' as {mol.name}"
+        try:
+            bpy.context.view_layer.objects.active = mol.object  # type: ignore
+        except RuntimeError:
+            message += " - MolecularNodes collection is disabled"
 
-    def invoke(self, context, event):
-        return self.execute(context)
+        self.report({"INFO"}, message=message)
+        return {"FINISHED"}
 
 
 class ImportEnsemble(bpy.types.Operator):
@@ -566,7 +569,7 @@ class MN_OT_Import_Star_File(ImportEnsemble):
 
     def execute(self, context):
         ensemble.load_starfile(
-            file_path=self.filepath,
+            file_path=path_resolve(self.filepath),
             node_setup=self.node_setup,
         )
         return {"FINISHED"}
@@ -580,7 +583,7 @@ class MN_OT_Import_Cell_Pack(ImportEnsemble):
 
     def execute(self, context):
         ensemble.load_cellpack(
-            file_path=self.filepath,
+            file_path=path_resolve(self.filepath),
             name=Path(self.filepath).name,
             node_setup=self.node_setup,
         )
@@ -596,7 +599,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         density.load(
-            file_path=scene.mn.import_density,
+            file_path=path_resolve(scene.mn.import_density),
             invert=scene.mn.import_density_invert,
             setup_nodes=scene.mn.import_node_setup,
             style=scene.mn.import_density_style,
@@ -652,8 +655,8 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
-        topo = obj.mn.filepath_topology
-        traj = obj.mn.filepath_trajectory
+        topo = path_resolve(obj.mn.filepath_topology)
+        traj = path_resolve(obj.mn.filepath_trajectory)
 
         if "oxdna" in obj.mn.entity_type:
             uni = mda.Universe(
@@ -710,8 +713,8 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         traj = trajectory.load(
-            top=self.topology,
-            traj=self.trajectory,
+            top=path_resolve(self.topology),
+            traj=path_resolve(self.trajectory),
             name=self.name,
             style=self.style if self.setup_nodes else None,
         )
@@ -738,7 +741,11 @@ class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
     bl_idname = "mn.import_oxdna"
 
     def execute(self, context):
-        trajectory.load_oxdna(top=self.topology, traj=self.trajectory, name=self.name)
+        trajectory.load_oxdna(
+            top=path_resolve(self.topology),
+            traj=path_resolve(self.trajectory),
+            name=self.name,
+        )
         return {"FINISHED"}
 
 

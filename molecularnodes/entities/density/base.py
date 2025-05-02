@@ -1,12 +1,11 @@
-from abc import ABCMeta
 import os
-import numpy as np
-import bpy
-from typing import Union
+from abc import ABCMeta
 from pathlib import Path
-from ..base import MolecularEntity, EntityType
-from ... import blender as bl
+from typing import Union
 import databpy
+import numpy as np
+from ... import blender as bl
+from ..base import EntityType, MolecularEntity
 
 
 class Density(MolecularEntity, metaclass=ABCMeta):
@@ -35,6 +34,10 @@ class Density(MolecularEntity, metaclass=ABCMeta):
         ----------
         file : str
             The path of the original file.
+        center : bool, default=False
+            If True, the density will be centered at the origin.
+        invert : bool, default=False
+            If True, the density values will be inverted.
 
         Returns
         -------

@@ -1,14 +1,13 @@
-import bpy
+import itertools
 import os
-import pytest
-import molecularnodes as mn
+import bpy
 import databpy
-
 import MDAnalysis as mda
 import numpy as np
+import pytest
+import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
-import itertools
 
 
 class TestTrajectory:
@@ -211,6 +210,25 @@ class TestTrajectory:
         # and will no longer match with what came earlier
         sel.updating = False
         assert not (sel_2 != traj.named_attribute("custom_sel_1")).all()
+
+    def test_selection_from_atomgroup(
+        self,
+        universe,
+    ):
+        ca_ag = universe.select_atoms("name CA")
+        around_protein = universe.select_atoms("around 3.5 protein", updating=True)
+        traj = mn.entities.Trajectory(universe)
+        traj.create_object()
+        bpy.context.scene.frame_set(0)
+        traj.add_selection_from_atomgroup(atomgroup=ca_ag, name="ca")
+        traj.add_selection_from_atomgroup(
+            atomgroup=around_protein, name="around_protein"
+        )
+        bpy.context.scene.frame_set(2)
+        sel_1 = traj.named_attribute("around_protein")
+        bpy.context.scene.frame_set(4)
+        sel_2 = traj.named_attribute("around_protein")
+        assert not np.allclose(sel_1, sel_2)
 
     def test_save_persistance(
         self,

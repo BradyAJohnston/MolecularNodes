@@ -1,12 +1,11 @@
+import itertools
 import bpy
+import databpy as db
 import numpy as np
 import pytest
-import itertools
 import molecularnodes as mn
-import databpy as db
-from .constants import data_dir, codes, attributes
+from .constants import attributes, codes, data_dir
 from .utils import NumpySnapshotExtension
-
 
 STYLES_TO_TEST = [
     "preset_1",
@@ -24,20 +23,12 @@ CENTRE_METHODS_TO_TEST = ["", "centroid", "mass"]
     "assembly, code, style", itertools.product([False], codes, STYLES_TO_TEST)
 )
 def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style):
-    # have to test a subset of styles with the biological assembly.
-    # testing some of the heavier styles run out of memory and fail on github actions
-    if assembly:
-        styles = ["cartoon", "surface", "ribbon"]
-
-    mol = mn.entities.fetch(
-        code, style=style, build_assembly=assembly, cache_dir=data_dir
+    mol = mn.Molecule.fetch(code, cache=data_dir).add_style(
+        style=style, assembly=assembly
     )
-    node = mn.blender.nodes.get_style_node(mol.object)
+    if style == "spheres":
+        mol.styles[0].sphere_geometry = "Mesh"
 
-    if "Sphere As Mesh" in node.inputs.keys():
-        node.inputs["Sphere As Mesh"].default_value = True
-
-    mn.blender.nodes.realize_instances(mol.object)
     for att in attributes:
         try:
             assert snapshot_custom == mol.named_attribute(
@@ -51,11 +42,9 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
     "code, format", itertools.product(codes, ["bcif", "cif", "pdb"])
 )
 def test_download_format(code, format):
-    mol = mn.entities.fetch(code, format=format, style=None, cache_dir=data_dir)
+    mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
     with db.ObjectTracker() as o:
-        bpy.ops.mn.import_fetch(
-            code=code, file_format=format, cache_dir=str(data_dir)
-        )
+        bpy.ops.mn.import_fetch(code=code, file_format=format, cache_dir=str(data_dir))
         mol2 = bpy.context.scene.MNSession.match(o.latest())
 
     assert np.allclose(mol.position, mol2.position)
@@ -63,7 +52,7 @@ def test_download_format(code, format):
 
 @pytest.mark.parametrize("code", codes)
 def test_style_positions(snapshot_custom: NumpySnapshotExtension, code):
-    mol = mn.entities.fetch(code, style=None, cache_dir=data_dir)
+    mol = mn.Molecule.fetch(code, cache=data_dir)
     assert snapshot_custom == mol.position
 
 
@@ -74,7 +63,7 @@ def test_centring(snapshot_custom: NumpySnapshotExtension, code, centre_method):
     """fetch a pdb structure using code and translate the model using the
     centre_method. Check the CoG and CoM values against the snapshot file.
     """
-    mol = mn.entities.fetch(code, centre=centre_method, cache_dir=data_dir)
+    mol = mn.Molecule.fetch(code, cache=data_dir).centre_molecule(centre_method)
     CoG = mol.centroid()
     CoM = mol.centroid(weight="mass")
 
@@ -95,7 +84,7 @@ def test_centring_different(code):
     positions are in fact different.
     """
     mols = [
-        mn.entities.fetch(code, centre=method, cache_dir=data_dir)
+        mn.Molecule.fetch(code, cache=data_dir).centre_molecule(method)
         for method in CENTRE_METHODS_TO_TEST
     ]
     for mol1, mol2 in itertools.combinations(mols, 2):
@@ -108,28 +97,21 @@ def test_centring_different(code):
         )
 
 
-# THESE TEST FUNCTIONS ARE NOT RUN
 def test_local_pdb(snapshot_custom):
-    molecules = [
-        mn.entities.load_local(data_dir / f"1l58.{ext}", style="spheres")
-        for ext in ("cif", "pdb")
-    ]
-    molecules.append(mn.entities.fetch("1l58", format="bcif"))
+    molecules = [mn.Molecule.load(data_dir / f"1l58.{ext}") for ext in ("cif", "pdb")]
+    molecules.append(mn.Molecule.fetch("1l58", format="bcif"))
     for mol in molecules:
         assert snapshot_custom == mol.named_attribute("position")
 
 
 def test_pdb_no_bonds(snapshot):
-    mol = mn.entities.load_local(data_dir / "no_bonds.pdb", style=None)
+    mol = mn.Molecule.load(data_dir / "no_bonds.pdb")
     assert len(mol.object.data.edges) == 0
     assert snapshot == mol.position
 
 
-@pytest.mark.parametrize("del_hydrogen", [True, False])
-def test_rcsb_nmr(snapshot_custom, del_hydrogen):
-    mol = mn.entities.fetch(
-        "2M6Q", style="cartoon", cache_dir=data_dir, del_hydrogen=del_hydrogen
-    )
+def test_rcsb_nmr(snapshot_custom):
+    mol = mn.Molecule.fetch("2M6Q", cache=data_dir).add_style(style="cartoon")
     assert len(mol.frames.objects) == 10
     assert mol.node_group.nodes["Animate Value"].inputs["Value Max"].default_value == 9
     assert snapshot_custom == mol.named_attribute("position")
@@ -139,19 +121,19 @@ def test_rcsb_nmr(snapshot_custom, del_hydrogen):
     bpy.context.scene.frame_set(100)
     pos_2 = mol.named_attribute("position", evaluate=True)
     bpy.context.scene.frame_set(1)
-    assert (pos_1 != pos_2).all()
+    assert not np.allclose(pos_1, pos_2)
 
 
 def test_load_small_mol(snapshot_custom):
-    mol = mn.entities.load_local(data_dir / "ASN.cif")
+    mol = mn.Molecule.load(data_dir / "ASN.cif")
     for att in ["position", "bond_type"]:
         assert snapshot_custom == mol.named_attribute(att).tolist()
 
 
 def test_rcsb_cache(snapshot_custom):
-    from pathlib import Path
-    import tempfile
     import os
+    import tempfile
+    from pathlib import Path
 
     # we want to make sure cached files are freshly downloaded, but
     # we don't want to delete our entire real cache
@@ -160,9 +142,9 @@ def test_rcsb_cache(snapshot_custom):
         test_cache = Path(data_dir)
 
         # Run the test
-        mol1 = mn.entities.fetch("6BQN", style="cartoon", cache_dir=test_cache)
+        mol1 = mn.Molecule.fetch("6BQN", cache=test_cache)
         file = os.path.join(test_cache, "6BQN.bcif")
         assert os.path.exists(file)
 
-        mol2 = mn.entities.fetch("6BQN", style="cartoon", cache_dir=test_cache)
+        mol2 = mn.Molecule.fetch("6BQN", cache=test_cache)
         assert np.allclose(mol1.position, mol2.position)

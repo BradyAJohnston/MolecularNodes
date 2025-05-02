@@ -1,10 +1,10 @@
-import molecularnodes as mn
-import pytest
-import bpy
-from pathlib import Path
-from .constants import data_dir
 import gzip
 import shutil
+from pathlib import Path
+import pytest
+import molecularnodes as mn
+from molecularnodes.nodes import nodes
+from .constants import data_dir
 
 cellpack_dir = data_dir / "cellpack/petworld"
 
@@ -29,7 +29,7 @@ def maybe_unzip(file):
 def test_load_petworld(file):
     file_path = maybe_unzip(data_dir / "cellpack" / file)
 
-    ens = mn.entities.ensemble.load_cellpack(
+    _ens = mn.entities.ensemble.load_cellpack(
         file_path=file_path,
         name="CellPack",
         node_setup=False,
@@ -39,20 +39,17 @@ def test_load_petworld(file):
 
 @pytest.mark.parametrize("format", ["bcif", "cif"])
 def test_load_cellpack(snapshot, format):
-    name = f"Cellpack_{format}"
     file_path = data_dir / f"cellpack/square1.{format}"
 
-    ens = mn.entities.ensemble.load_cellpack(
-        file_path, name=name, node_setup=False, fraction=0.1
-    )
+    ens = mn.entities.ensemble.load_cellpack(file_path, node_setup=False, fraction=0.1)
 
-    assert ens.name == name
+    assert ens.name == Path(file_path).name
     assert snapshot == str(ens.object["chain_ids"])
     obj_names = [obj.name for obj in ens.instance_collection.objects]
     assert snapshot == "\n".join(obj_names)
 
     ens.node_group.nodes["Ensemble Instance"].inputs["As Points"].default_value = False
-    mn.blender.nodes.realize_instances(ens.object)
+    nodes.realize_instances(ens.object)
     for attribute in ens.list_attributes():
         assert snapshot == ens.named_attribute(attribute)
 
@@ -60,4 +57,4 @@ def test_load_cellpack(snapshot, format):
     assert snapshot == pos_eval.shape
     assert snapshot == pos_eval
 
-    obj = ens.object
+    _obj = ens.object

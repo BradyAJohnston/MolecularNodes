@@ -1,5 +1,5 @@
-import molecularnodes as mn
 import bpy
+import molecularnodes as mn
 
 
 def test_template():

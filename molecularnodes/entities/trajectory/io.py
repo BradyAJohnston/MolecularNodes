@@ -5,12 +5,10 @@ Importing molecular dynamics trajectories and associated files.
 __name__ = "MolecularNodes.trajectory"
 __author__ = "Brady Johnston"
 
-import MDAnalysis as mda
-
 from pathlib import Path
-from ... import blender as bl
-from .base import Trajectory
+import MDAnalysis as mda
 from . import oxdna
+from .base import Trajectory
 
 
 def load(
@@ -19,9 +17,6 @@ def load(
     name: str = "NewTrajectory",
     style: str | None = "spheres",
 ):
-    top = bl.path_resolve(top)
-    traj = bl.path_resolve(traj)
-
     universe = mda.Universe(top, traj)
     trajectory = Trajectory(universe=universe)
     trajectory.create_object(name=name, style=style)

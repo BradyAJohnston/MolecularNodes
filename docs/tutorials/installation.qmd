@@ -1,5 +1,7 @@
 ---
 title: "Installation"
+aliases: 
+  - ../installation.html
 ---
 
 ::: callout-warning
@@ -11,7 +13,7 @@ For Blender 4.2, we no longer have to download anything externally. Molecular No
 
 Molecular Nodes is an add-on for the 3D animation program Blender. It runs inside of Blender, so the first step for installation is to [download and install](https://www.blender.org/download/) the latest version of blender.
 
-![The download page of Blender.](images/installation/download-blender.png){align="center" width="800px"}
+![The download page of Blender.](../images/installation/download-blender.png){align="center" width="800px"}
 
 
 ## Installing the Addon
@@ -20,15 +22,15 @@ Follow the screenshots below to install the add-on. These steps should be the sa
 
 Open the preferences window.
 
-![](images/installation/preferences.png)
+![](../images/installation/preferences.png)
 
 Select the `Get Extensions` panel and search for `Molecular Nodes`.
 
-![](images/installation/search_install.png)
+![](../images/installation/search_install.png)
 
 Clicking the `Install` button will download and install the add-on. The download is ~100 MB so may take some minutes depending on internet connection.
 
-![](images/installation/download.mp4)
+![](../images/installation/download.mp4)
 
 ### That's it! 
 
@@ -42,7 +44,7 @@ THis adds it as an option on the startup splash screen, or when starting a new f
 
 ## Start Importing Structures!
 
-Molecular nodes should be fully installed. See the [Getting Started](tutorials/01_importing.qmd) page on how to start importing into Blender!
+Molecular nodes should be fully installed. See the [Getting Started](01_importing.qmd) page on how to start importing into Blender!
 
 ## Troubleshooting
 

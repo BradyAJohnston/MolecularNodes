@@ -10,7 +10,7 @@ class Item:
 
     @classmethod
     def menu(
-        self, layout: bpy.types.UILayout, context: bpy.types.Context = None
+        cls, layout: bpy.types.UILayout, context: bpy.types.Context = None
     ) -> None:
         pass
 
@@ -97,6 +97,7 @@ class CustomItem(Item):
         property_id: str,
         description: str,
         videos: str = None,
+        type: str = None,
     ) -> None:
         super().__init__()
         self.label = label

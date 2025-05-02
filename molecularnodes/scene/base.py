@@ -1,7 +1,9 @@
-import bpy
-from ..entities import Molecule
+import os
 import tempfile
 from pathlib import Path
+import bpy
+from ..entities import Molecule
+from .engines import EEVEE, Cycles
 
 try:
     from IPython.display import Image, display
@@ -9,6 +11,8 @@ except ImportError:
     Image = None
     display = None
 IS_EEVEE_NEXT = bpy.app.version[0] == 4 and bpy.app.version[1] >= 2
+IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
+IS_SELF_HOSTED = os.getenv("RUNNER_ENVIRONMENT") == "self-hosted"
 
 
 class Canvas:
@@ -19,9 +23,17 @@ class Canvas:
     render engine, samples, FPS, and frame ranges.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        template: str | None = "Molecular Nodes",
+        engine: EEVEE | Cycles | str = "EEVEE",
+        resolution=(1280, 720),
+    ) -> None:
         """Initialize the Canvas object."""
-        pass
+        if template:
+            self.scene_reset(template=template)
+        self.engine = engine
+        self.resolution = resolution
 
     @property
     def scene(self) -> bpy.types.Scene:
@@ -55,110 +67,21 @@ class Canvas:
         self.scene.render.resolution_y = value[1]
 
     @property
-    def render_engine(self) -> str:
-        """
-        The current render engine for the scene.
+    def engine(self) -> Cycles | EEVEE:
+        return self._engine
 
-        Returns
-        -------
-        str
-            The name of the current render engine.
-            Possible values are:
-            - 'BLENDER_EEVEE': Eevee real-time render engine
-            - 'CYCLES': Cycles path tracing render engine
-            - 'BLENDER_WORKBENCH': Workbench render engine
-        """
-        return self.scene.render.engine
+    @engine.setter
+    def engine(self, value: Cycles | EEVEE | str) -> None:
+        if isinstance(value, str) and value.upper() == "CYCLES":
+            self._engine = Cycles()
+        elif isinstance(value, str) and value.upper() in [
+            "EEVEE",
+            "BLENDER_EEVEE_NEXT",
+        ]:
+            self._engine = EEVEE()
 
-    @render_engine.setter
-    def render_engine(self, value: str) -> None:
-        """
-        Set the render engine.
-
-        Parameters
-        ----------
-        value : str
-            The name of the render engine to set.
-            Possible values are:
-            - 'BLENDER_EEVEE': Eevee real-time render engine
-            - 'CYCLES': Cycles path tracing render engine
-            - 'BLENDER_WORKBENCH': Workbench render engine
-        """
-
-        if value == "EEVEE":
-            if IS_EEVEE_NEXT:
-                value = "BLENDER_EEVEE_NEXT"
-            else:
-                value = "BLENDER_EEVEE"
-
-        if value == "WORKBENCH":
-            value = "BLENDER_WORKBENCH"
-        self.scene.render.engine = value  # type: ignore
-
-    @property
-    def samples_cycles(self) -> int:
-        """
-        Get the number of samples for Cycles render engine.
-
-        Returns
-        -------
-        int
-            The number of samples for Cycles.
-        """
-        return self.scene.cycles.samples
-
-    @samples_cycles.setter
-    def samples_cycles(self, value: int) -> None:
-        """
-        Set the number of samples for Cycles render engine.
-
-        Parameters
-        ----------
-        value : int
-            The number of samples to set for Cycles.
-        """
-        self.scene.cycles.samples = value
-
-    @property
-    def samples_eevee(self) -> int:
-        """
-        Get the number of samples for Eevee render engine.
-
-        Returns
-        -------
-        int
-            The number of samples for Eevee.
-        """
-        return self.scene.eevee.taa_render_samples
-
-    @samples_eevee.setter
-    def samples_eevee(self, value: int) -> None:
-        """
-        Set the number of samples for Eevee render engine.
-
-        Parameters
-        ----------
-        value : int
-            The number of samples to set for Eevee.
-        """
-        self.scene.eevee.taa_render_samples = value
-
-    @property
-    def cycles_device(self) -> str:
-        """
-        Get the Cycles device type.
-        """
-        return self.scene.cycles.device
-
-    @cycles_device.setter
-    def cycles_device(self, value: str) -> None:
-        """
-        Set the Cycles device type.
-        """
-        value = value.upper()
-        if value not in ["CPU", "GPU"]:
-            raise ValueError("Invalid device type. Must be 'CPU' or 'GPU'.")
-        self.scene.cycles.device = value
+        else:
+            self._engine = value
 
     @property
     def fps(self) -> float:
@@ -243,14 +166,23 @@ class Canvas:
         for o in prev_sel:
             o.select_set(True)
 
-    def scene_reset(self) -> None:
-        bpy.ops.wm.read_homefile(app_template="Molecular Nodes")
+    def scene_reset(
+        self,
+        template: str | None = "Molecular Nodes",
+        engine: Cycles | EEVEE | str = "EEVEE",
+    ) -> None:
+        if template:
+            bpy.ops.wm.read_homefile(app_template=template)
+        if engine:
+            self.engine = engine
 
     def snapshot(self, path: str | Path | None = None) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = Path(tmpdir) / "snapshot.png"
+
             bpy.context.scene.render.filepath = str(tmp_path)
             bpy.ops.render.render(write_still=True, animation=False)
+
             if display and Image:
                 display(Image(tmp_path))
             else:
