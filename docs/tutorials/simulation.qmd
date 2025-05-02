@@ -3,32 +3,49 @@ title: "Simulations"
 subtitle: "Running simple simulations using Molecular Nodes"
 author: Brady Johnston
 date: "20250409"
+toc-depth: 3
+# toc: true
+# toc-location: body
 ---
+
+![[9I2R](https://rcsb.org/structure/9I2R) Simulated with the elastic network created from alpha carbons and some gentle brownian motion.](https://imgur.com/NCIYxg0.mp4){autoplay=true loop=true muted=true #fig-larger-structure}
 
 Inside of Geometry Nodes, we can run simulations using the **Simulation Zone**.
 In the most simple form, a simulation is just doing something with data from a previous iteration of the data.
 The easiest example of this is moving the positions of some points, building on top of the previous positions of the point from earlier time points. 
 
-### Molecular Nodes
+### What is a simulation?
 
 The approach taken in Molecular Nodes is include several "lower-level" nodes that can run simulations in a more generic way. Simulations are still to be considered experimental in MN, so the nodes and methods may change in the future.
 
 
-### Simulate Elastic Network
+## Simulate Elastic Network
+
+![With the right settings, we can emulate structural dynamics quite convincingly. [2TPR](https://rcsb.org/structure/2TPR) is an NMR structure with a small ordered and small intrinsically disordered region.](https://imgur.com/rFEEPf1.mp4){#fig-disordered autoplay=true loop=true muted=true}
 
 This node simulates the edges of a mesh. It's intended for simulating an elastic network, but any mesh that is passed in will be simulated. By default the starting length of the edges be used as the rest length and the simulation will attempt to keep the edges at that length.
 
 In the below examble, we create an elastic network between the alpha carbons of a protein structure, then use the node to simulate the network. This can then be styled using the **Style Ribbon** node, which only requires the alpha carbons of a structure to work.
 
-![](https://imgur.com/pIWUHf9.png)
+Changing the `Alpha Carbon::Float` value for the **Build Elastic Network** node increases the search distance. More edges are created leading to more structural stability, but also more computational cost.
 
-### Simulate Curve
+![](https://imgur.com/kKUotlO.mp4)
+
+#### All-atom Simulation
+
+We can create an elastic network that includes all atoms by selecting the `All Atom::Menu` enum for the **Build Elastic Network** node. The `Alpha Carbon::Float` input will still be used for building a network between the alpha carbons for overall structure stability, but the `All Atom::Float` input will be used for building a shorter-range network between all atoms. 
+
+We can't just use the **Style Ball and Stick** node because the edges are now between all of the atoms. Instead, we can sample the positions from the resulting simulation using the **Sample Position** node update the positions of our starting atoms using the **Set Position** node. Then we can style accordingly.
+
+![](https://imgur.com/qpoWQsa.mp4)
+
+## Simulate Curve
 
 This is the simplest simulation nodes, which simulates any _Curve_ geometry that it is given, attempting to maintain the length between points of the curve and also handling point collisions.
 
 The simplest inputs for this simulation are `Points::Int` which indicate how many points on the curve before and after this current point to check when trying to maintain length, and also the `Straightness::Float` which is a value between 0 and 1 that determines how straight the curve should be.
 
-### Simulate on Faces
+## Simulate on Faces
 
 This node simulates points with collisions, while also ensuring they remain attached to the faces of a mesh. It's intended for simulating membranes or something similar, where points need to collide side to side, but you can input and shape mesh and it will ensure the points stay attached to it.
 
