@@ -34,8 +34,7 @@ jobs:
       
       - name: Render Docs
         run: |
-          source .venv/scripts/activate
-          quarto render docs
+          uv run quarto render docs
   
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}

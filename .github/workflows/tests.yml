@@ -57,11 +57,9 @@ jobs:
                 uv pip install bpy==${{ matrix.version }}
             - name: Run Tests "not density"
               run: |
-                source .venv/scripts/activate
-                python -m pytest -n auto -k "not density"
+                uv run pytest -n auto -k "not density"
                 
-                - name: Run Tests "density"
-                run: |
-                source .venv/scripts/activate
-                python -m pytest -k density
+            - name: Run Tests "density"
+              run: |
+                uv run pytest -k density
       
