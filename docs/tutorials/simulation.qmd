@@ -8,7 +8,7 @@ toc-depth: 3
 # toc-location: body
 ---
 
-![[9I2R](https://rcsb.org/structure/9I2R) Simulated with the elastic network created from alpha carbons and some gentle brownian motion.](https://imgur.com/NCIYxg0.mp4){autoplay=true loop=true muted=true #fig-larger-structure}
+![{{< pdb 9I2R hover=false >}} Simulated with the elastic network created from alpha carbons and some gentle brownian motion.](https://imgur.com/NCIYxg0.mp4){autoplay=true loop=true muted=true #fig-larger-structure}
 
 Inside of Geometry Nodes, we can run simulations using the **Simulation Zone**.
 In the most simple form, a simulation is just doing something with data from a previous iteration of the data.
@@ -21,7 +21,7 @@ The approach taken in Molecular Nodes is include several "lower-level" nodes tha
 
 ## Simulate Elastic Network
 
-![With the right settings, we can emulate structural dynamics quite convincingly. [2TPR](https://rcsb.org/structure/2TPR) is an NMR structure with a small ordered and small intrinsically disordered region.](https://imgur.com/rFEEPf1.mp4){#fig-disordered autoplay=true loop=true muted=true}
+![With the right settings, we can emulate structural dynamics quite convincingly. {{< pdb 2TPR >}} is an NMR structure with a small ordered and small intrinsically disordered region.](https://imgur.com/rFEEPf1.mp4){#fig-disordered autoplay=true loop=true muted=true}
 
 This node simulates the edges of a mesh. It's intended for simulating an elastic network, but any mesh that is passed in will be simulated. By default the starting length of the edges be used as the rest length and the simulation will attempt to keep the edges at that length.
 

@@ -2,9 +2,11 @@ project:
   type: website
   output-dir: _build
 
+# lightbox: true
 filters:
 - filters.lua
 - quarto
+- quarto-pdb
 
 website:
   title: "Molecular Nodes"
