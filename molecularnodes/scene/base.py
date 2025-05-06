@@ -34,6 +34,7 @@ class Canvas:
             self.scene_reset(template=template)
         self.engine = engine
         self.resolution = resolution
+        self.setup_compositing()
 
     @property
     def scene(self) -> bpy.types.Scene:
@@ -175,6 +176,49 @@ class Canvas:
             bpy.ops.wm.read_homefile(app_template=template)
         if engine:
             self.engine = engine
+
+    def setup_compositing(self, glare_type="BLOOM"):
+        """
+        Set up the compositing nodes for post-processing effects.
+
+        This method creates a glare/bloom effect in the compositing pipeline by adding
+        a Glare node between the Render Layers and Composite nodes.
+
+        Parameters
+        ----------
+        glare_type : str, optional
+            The type of glare effect to apply. Valid options are:
+            - 'BLOOM': Adds bloom/glow to bright areas (default)
+            - 'GHOSTS': Creates ghost/lens flare artifacts
+            - 'STREAKS': Adds directional streaks from bright points
+            - 'FOG_GLOW': Creates a soft foggy glow effect
+            - 'SIMPLE_STAR': Creates a simple star pattern from bright points
+
+        Returns
+        -------
+        Canvas
+            Returns self for method chaining.
+
+        See also
+        --------
+        `Blender Documentation - Glare Node <https://docs.blender.org/manual/en/latest/compositing/node_types/filter/glare.html>`_
+
+        """
+        scene = bpy.context.scene
+        if not scene.use_nodes:
+            scene.use_nodes = True
+
+        node_tree = scene.node_tree
+        glare_node = node_tree.nodes.new('CompositorNodeGlare')
+        render_layers = node_tree.nodes['Render Layers']
+        composite = node_tree.nodes['Composite']
+        glare_node.location = (render_layers.location.x + 300, render_layers.location.y)
+
+        glare_node.glare_type = glare_type
+
+        node_tree.links.new(render_layers.outputs['Image'], glare_node.inputs['Image'])
+        node_tree.links.new(glare_node.outputs['Image'], composite.inputs['Image'])
+        return self
 
     def snapshot(self, path: str | Path | None = None) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
