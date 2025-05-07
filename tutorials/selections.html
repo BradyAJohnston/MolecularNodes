@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Brady Johnston">
 
-<title>About – Molecular Nodes</title>
+<title>Selections – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,26 +21,63 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-29d953ea36098eb32a2fa61aeae49570.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../tutorials/trajectories.html" rel="next">
+<link href="../tutorials/importing.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-29d953ea36098eb32a2fa61aeae49570.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -80,14 +118,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Molecular Nodes</span>
     </a>
   </div>
@@ -98,27 +136,27 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./tutorials/"> 
+    <a class="nav-link" href="../tutorials/"> 
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./nodes/"> 
+    <a class="nav-link" href="../nodes/"> 
 <span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./attributes.html"> 
+    <a class="nav-link" href="../attributes.html"> 
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./api/"> 
+    <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./examples/"> 
+    <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./citations/"> 
+    <a class="nav-link" href="../citations/"> 
 <span class="menu-text">Citations</span></a>
   </li>  
 </ul>
@@ -130,24 +168,107 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/selections.html">Selections</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorials</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender’s Interface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/importing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Fetch from the PDB</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/selections.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Selections</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectories</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/cryoem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CryoEM Maps</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#a-simple-example" id="toc-a-simple-example" class="nav-link active" data-scroll-target="#a-simple-example">A Simple Example</a></li>
+  <li><a href="#different-styles-combined" id="toc-different-styles-combined" class="nav-link" data-scroll-target="#different-styles-combined">Different Styles Combined</a></li>
+  <li><a href="#combining-selections" id="toc-combining-selections" class="nav-link" data-scroll-target="#combining-selections">Combining Selections</a></li>
+  <li><a href="#more-examples" id="toc-more-examples" class="nav-link" data-scroll-target="#more-examples">More Examples</a></li>
+  <li><a href="#open-a-local-file" id="toc-open-a-local-file" class="nav-link" data-scroll-target="#open-a-local-file">Open a Local File</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">About</h1>
+<h1 class="title">Selections</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Brady Johnston </p>
+          </div>
+  </div>
     
   
     
@@ -158,60 +279,52 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </header>
 
 
-<p><img src="images/logo.png" align="right" style="height:250px;"></p>
-<p><img src="https://github.com/bradyajohnston/molecularnodes/actions/workflows/docs.yml/badge.svg" class="img-fluid" alt="Documentation Building"> <img src="https://github.com/bradyajohnston/molecularnodes/actions/workflows/tests.yml/badge.svg" class="img-fluid" alt="Running Tests"> <a href="https://codecov.io/gh/BradyAJohnston/MolecularNodes"><img src="https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU" class="img-fluid" alt="codecov"></a></p>
-<p><a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"></a> <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" alt="Repo total downloads count." style="height:20px"></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" alt="Badge displaying count of GitHub stars." style="height:20px"></a></p>
-<p><a href="https://pypi.org/project/biotite"><img src="https://img.shields.io/badge/powered%20by-Biotite-orange.svg" alt="Badge showing usage of MDAnalysis as a python package powering the add-on" style="height:20px"></a> <a href="https://pypi.org/project/MDAnalysis"><img src="https://img.shields.io/badge/powered%20by-MDAnalysis-orange.svg" alt="Badge showing usage of biotite as a python package powering the add-on" style="height:20px"></a></p>
-<p><a href="https://patreon.com/bradyajohnston"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbradyajohnston%26type%3Dpatrons&amp;style=for-the-badge" alt="Support me on Patreon with ongoing donations" style="height:35px"></a></p>
-<p><a href="https://buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Support me by buying a couple of coffees as a one-off donation" style="height:35px"></a></p>
-<p><a href="https://discord.gg/fvw6vT3vY9"><img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&amp;logo=discord&amp;logoColor=white" alt="Join the scientific visualisation in Blender discord." style="height:35px"></a></p>
-<p>Molecular Nodes (MN) is an addon for the 3D modelling &amp; animation program <a href="https://blender.org">Blender</a>. MN enables easy import of molecular data such as <code>.pdb</code> &amp; <code>.mmCIF</code>, along with a variety of molecular dynamics trajectories and topologies from a variety of simulation sources. Other data formats including electron microscopy (EM) <code>.map</code>, EM tomography files such as <code>.map</code> and <code>.star</code>, with the potential to support more data formats as well.</p>
-<p>See the talk below at the 2022 Blender conference for an overview of the add-on it’s capabilities.</p>
-<div class="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/adhTmwYwOiA?si=em6xRime7HZ8L44T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
-</iframe>
+<p>Selections power every part of Molecular Visualisation. You are probably used to using selections via manually pointing and clicking with your mouse, or typing long strings of complex selection algebra.</p>
+<section id="a-simple-example" class="level2">
+<h2 class="anchored" data-anchor-id="a-simple-example">A Simple Example</h2>
+<p>To create a selection of residues ALA, CYS and TRP, only inside of chain A, you would use the following code inside of PyMol:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>select my_selection, chain A <span class="kw">and</span> (resn ALA<span class="op">+</span>CYS<span class="op">+</span>TRP)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Inside of Molecular Nodes, you combine different <em>selection</em> nodes. The outputs of these are are a <em>boolean</em> <code>True / False</code> for each atom. The logical test being performed depends on the node. To recreate the selection above, we can use the <code>Select Chain</code> and <code>Select Res Name</code> nodes.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/02_selections_example.png" class="img-fluid figure-img"></p>
+<figcaption>Replicating the same selection in Molecular Nodes</figcaption>
+</figure>
 </div>
-<p>Molecular Nodes provides the translation layer that allows importing of molecular data formats, while Blender provides the industry-leading animation and rendering tools to create visually stunning molecular graphics with ease.</p>
-<p>The add-on runs on the <a href="https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/introduction.html">Geometry Nodes</a> procedural modelling and animation system inside of Blender, which gives the add-on speed and robustness with minimal user input required.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Procedural Animations</th>
-<th>Different Stylings</th>
-<th>MD Trajectories</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/index/mn-cartoon-example.gif" class="img-fluid" width="400"></td>
-<td><img src="images/index/mn-md-example-spike.gif" class="img-fluid"></td>
-<td><img src="images/index/mn-md-example.gif" class="img-fluid"></td>
-</tr>
-<tr class="even">
-<td>EM Density maps</td>
-<td><code>.star</code> mapbacks</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><img src="images/index/mn-example-em.gif" class="img-fluid"></td>
-<td><video src="images/index/mn-example-starfile.mp4" class="img-fluid" controls=""><a href="images/index/mn-example-starfile.mp4">Video</a></video></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<section id="getting-started" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
-<p>To get started, checkout the <a href="#installation">installation page</a> for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as <a href="./tutorials/interface.html">intro to blender</a>, <a href="./tutorials/importing.html">basics of downloading</a> from the PDB or how to <a href="./tutorials/selections.html">customise selections</a>.</p>
-<p>There are some <em>outdated</em> tutorials on YouTube about how to use the add-on also. MN has been developed further and improved since these videos, but the general workflow remains the same.</p>
-<div class="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CvmFaRVmZRU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
-</iframe>
+<p>This might initially seem quite verbose. The good thing however is that these selections can always be updated and tweaked. They can even be created procedurally based on the values of other selections or animations.</p>
+<p>In the example video below we are using the selection to apply the <code>Atoms</code> style. We can change the residues and chains that are selected by ticking and unticking the boxes. Each of these selections also take a <em>field</em> input, so they can use the output of other selection nodes. The selections from the two nodes are being combined with the <code>Boolean Math</code> node set to <code>And</code>. Other boolean math operations are also available.</p>
+<p><video src="https://imgur.com/bo55ms2.mp4" class="img-fluid" controls=""><a href="https://imgur.com/bo55ms2.mp4">Video</a></video></p>
+</section>
+<section id="different-styles-combined" class="level2">
+<h2 class="anchored" data-anchor-id="different-styles-combined">Different Styles Combined</h2>
+<p>In this example, we apply the <code>Surface</code> style to one chain, and the <code>Atoms</code> style to another chain. We can join the two styles together with the <code>Join Geometry</code> node.</p>
+<p><video src="https://imgur.com/d2Gj2Sh.mp4" class="img-fluid" controls=""><a href="https://imgur.com/d2Gj2Sh.mp4">Video</a></video></p>
+</section>
+<section id="combining-selections" class="level2">
+<h2 class="anchored" data-anchor-id="combining-selections">Combining Selections</h2>
+<p>Selections can be combined not just through <code>Boolean Math</code> nodes, but also by connecting the output from one node to the input of another selection. In this example we are selecting two chains for applying the <code>Atoms</code> style to.</p>
+<p>The selection of <code>Chain A</code> we then control though the <code>Cube</code> selection node. The addition of this node creates a new object called <code>Empty_Cube</code> which we can transform by Grabbing, Rotating and Scaling to change what is inside of the cube. The style is then applied to the updated selection, which varies for <code>Cahin A</code> but not for <code>Chain F</code>.</p>
+<p><video src="https://imgur.com/toPse4T.mp4" class="img-fluid" controls=""><a href="https://imgur.com/toPse4T.mp4">Video</a></video></p>
+</section>
+<section id="more-examples" class="level2">
+<h2 class="anchored" data-anchor-id="more-examples">More Examples</h2>
+<p>You can use these dynamic selections for any kind of boolean input. It can be used to select the atoms to apply a style to or even to change different aspects of that style itself. In this example, we first choose the atoms to apply the style to; then instead, we change whether or not we use cylinders for the cartoon style.</p>
+<p><video src="https://imgur.com/XoqrhX5.mp4" class="img-fluid" controls=""><a href="https://imgur.com/XoqrhX5.mp4">Video</a></video></p>
+<p>Selecting based on the <code class="custom-attribute">entity_id</code>, to reveal the rotary axel of the protein complex underneath.</p>
+<p><video src="https://imgur.com/aUpiFYe.mp4" class="img-fluid" controls=""><a href="https://imgur.com/aUpiFYe.mp4">Video</a></video></p>
+</section>
+<section id="open-a-local-file" class="level2">
+<h2 class="anchored" data-anchor-id="open-a-local-file">Open a Local File</h2>
+<p>To open a <code>.pdb</code>, <code>.mmCIF</code>, <code>.pdbx</code> or other similar files, use the <kbd>Local File</kbd> tab.</p>
+<p>You can set the name for the molecule, which will become the object’s name once imported. Use the folder icon to select the file you would like to import.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/panel-local.png" class="img-fluid figure-img"></p>
+<figcaption>The ‘Local File’ tab.</figcaption>
+</figure>
 </div>
+<p>The ‘Default Style’ was changed to ‘Cartoon’, but no other default import options were changed. The Default Cube was deleted with <kbd>X</kbd> as the protein was imported <em>inside</em> of the cube.</p>
+<p><img src="images/down-example-local.png" class="img-fluid"></p>
 
 
 </section>
@@ -616,6 +729,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     }
   });
   </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../tutorials/importing.html" class="pagination-link" aria-label="Fetch from the PDB">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Fetch from the PDB</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../tutorials/trajectories.html" class="pagination-link" aria-label="Trajectories">
+        <span class="nav-page-text">Trajectories</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

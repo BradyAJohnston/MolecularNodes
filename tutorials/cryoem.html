@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Brady Johnston">
 
-<title>About – Molecular Nodes</title>
+<title>CryoEM Maps – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,23 +24,25 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-29d953ea36098eb32a2fa61aeae49570.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../tutorials/simulation.html" rel="next">
+<link href="../tutorials/trajectories.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-29d953ea36098eb32a2fa61aeae49570.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -80,14 +83,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Molecular Nodes</span>
     </a>
   </div>
@@ -98,27 +101,27 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./tutorials/"> 
+    <a class="nav-link" href="../tutorials/"> 
 <span class="menu-text">Tutorials</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./nodes/"> 
+    <a class="nav-link" href="../nodes/"> 
 <span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./attributes.html"> 
+    <a class="nav-link" href="../attributes.html"> 
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./api/"> 
+    <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./examples/"> 
+    <a class="nav-link" href="../examples/"> 
 <span class="menu-text">Examples</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./citations/"> 
+    <a class="nav-link" href="../citations/"> 
 <span class="menu-text">Citations</span></a>
   </li>  
 </ul>
@@ -130,24 +133,107 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/cryoem.html">CryoEM Maps</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorials</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Installation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender’s Interface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/importing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Fetch from the PDB</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/selections.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Selections</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectories</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/cryoem.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">CryoEM Maps</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#importing-panel" id="toc-importing-panel" class="nav-link active" data-scroll-target="#importing-panel">Importing Panel</a></li>
+  <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data">Example Data</a></li>
+  <li><a href="#importing" id="toc-importing" class="nav-link" data-scroll-target="#importing">Importing</a></li>
+  <li><a href="#importing-structure" id="toc-importing-structure" class="nav-link" data-scroll-target="#importing-structure">Importing Structure</a></li>
+  <li><a href="#sampling-colors" id="toc-sampling-colors" class="nav-link" data-scroll-target="#sampling-colors">Sampling Colors</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">About</h1>
+<h1 class="title">CryoEM Maps</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Brady Johnston </p>
+          </div>
+  </div>
     
   
     
@@ -158,60 +244,58 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </header>
 
 
-<p><img src="images/logo.png" align="right" style="height:250px;"></p>
-<p><img src="https://github.com/bradyajohnston/molecularnodes/actions/workflows/docs.yml/badge.svg" class="img-fluid" alt="Documentation Building"> <img src="https://github.com/bradyajohnston/molecularnodes/actions/workflows/tests.yml/badge.svg" class="img-fluid" alt="Running Tests"> <a href="https://codecov.io/gh/BradyAJohnston/MolecularNodes"><img src="https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU" class="img-fluid" alt="codecov"></a></p>
-<p><a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"></a> <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" alt="Repo total downloads count." style="height:20px"></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" alt="Badge displaying count of GitHub stars." style="height:20px"></a></p>
-<p><a href="https://pypi.org/project/biotite"><img src="https://img.shields.io/badge/powered%20by-Biotite-orange.svg" alt="Badge showing usage of MDAnalysis as a python package powering the add-on" style="height:20px"></a> <a href="https://pypi.org/project/MDAnalysis"><img src="https://img.shields.io/badge/powered%20by-MDAnalysis-orange.svg" alt="Badge showing usage of biotite as a python package powering the add-on" style="height:20px"></a></p>
-<p><a href="https://patreon.com/bradyajohnston"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.vercel.app%2Fapi%3Fusername%3Dbradyajohnston%26type%3Dpatrons&amp;style=for-the-badge" alt="Support me on Patreon with ongoing donations" style="height:35px"></a></p>
-<p><a href="https://buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&amp;logo=buy-me-a-coffee&amp;logoColor=black" alt="Support me by buying a couple of coffees as a one-off donation" style="height:35px"></a></p>
-<p><a href="https://discord.gg/fvw6vT3vY9"><img src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&amp;logo=discord&amp;logoColor=white" alt="Join the scientific visualisation in Blender discord." style="height:35px"></a></p>
-<p>Molecular Nodes (MN) is an addon for the 3D modelling &amp; animation program <a href="https://blender.org">Blender</a>. MN enables easy import of molecular data such as <code>.pdb</code> &amp; <code>.mmCIF</code>, along with a variety of molecular dynamics trajectories and topologies from a variety of simulation sources. Other data formats including electron microscopy (EM) <code>.map</code>, EM tomography files such as <code>.map</code> and <code>.star</code>, with the potential to support more data formats as well.</p>
-<p>See the talk below at the 2022 Blender conference for an overview of the add-on it’s capabilities.</p>
-<div class="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/adhTmwYwOiA?si=em6xRime7HZ8L44T" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen="">
-</iframe>
+<p><img src="https://imgur.com/4W1dxyJ.png" class="img-fluid"></p>
+<p>We can import CryoEM maps, which are imported into Blender as a ‘volume’ object. As Blender is designed to work with data for movies and TV shows, this is implemented in a way to emulate smoke or gas. We aren’t looking to annimate these volumes, but when we import the volume we can create a surface based on a cutoff for the density, the same as you do with ChimeraX.</p>
+<section id="importing-panel" class="level2">
+<h2 class="anchored" data-anchor-id="importing-panel">Importing Panel</h2>
+<p><img src="https://imgur.com/EcrtE3N.png" class="img-fluid"></p>
+<ul>
+<li><p><strong>Name</strong> The name that will be given to the newly created object inside of Blender.</p></li>
+<li><p><strong>File</strong> The <code>.map</code> or <code>.map.gz</code> file to be imported to Blender.</p></li>
+<li><p><strong>Style</strong> The initial style to apply to the volume object when imported into Blender.</p></li>
+<li><p><strong>Invert Data</strong> Whether to invert the data when importing (usually used for CryoET data)</p></li>
+<li><p><strong>Centre Density</strong> Translates the data so that the world origin is in the middle, rather than the corner of the density.</p></li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<p>Molecular Nodes provides the translation layer that allows importing of molecular data formats, while Blender provides the industry-leading animation and rendering tools to create visually stunning molecular graphics with ease.</p>
-<p>The add-on runs on the <a href="https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/introduction.html">Geometry Nodes</a> procedural modelling and animation system inside of Blender, which gives the add-on speed and robustness with minimal user input required.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Procedural Animations</th>
-<th>Different Stylings</th>
-<th>MD Trajectories</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><img src="images/index/mn-cartoon-example.gif" class="img-fluid" width="400"></td>
-<td><img src="images/index/mn-md-example-spike.gif" class="img-fluid"></td>
-<td><img src="images/index/mn-md-example.gif" class="img-fluid"></td>
-</tr>
-<tr class="even">
-<td>EM Density maps</td>
-<td><code>.star</code> mapbacks</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><img src="images/index/mn-example-em.gif" class="img-fluid"></td>
-<td><video src="images/index/mn-example-starfile.mp4" class="img-fluid" controls=""><a href="images/index/mn-example-starfile.mp4">Video</a></video></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<section id="getting-started" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
-<p>To get started, checkout the <a href="#installation">installation page</a> for detailed instructions on how to install the add-on. Next check out some of the tutorials, such as <a href="./tutorials/interface.html">intro to blender</a>, <a href="./tutorials/importing.html">basics of downloading</a> from the PDB or how to <a href="./tutorials/selections.html">customise selections</a>.</p>
-<p>There are some <em>outdated</em> tutorials on YouTube about how to use the add-on also. MN has been developed further and improved since these videos, but the general workflow remains the same.</p>
-<div class="center">
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CvmFaRVmZRU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
-</iframe>
+<div class="callout-title-container flex-fill">
+Warning
 </div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Blender <em>currently</em> can’t directly import the <code>.map</code> files. Instead we convert the file to a <code>.vdb</code> volume file, then import that to Blender. This intermediate file will be saved next to the <code>.map</code> file. If you move or delete this intermediate file, then it will break the volume inside of Blender, so be careful moving files around after import.</p>
+</div>
+</div>
+</section>
+<section id="example-data" class="level2">
+<h2 class="anchored" data-anchor-id="example-data">Example Data</h2>
+<p>As an example, we are going to use the structure and the map correlating to <code>8E3Z</code> as an example. You can import the structure using the PDB import in Molecular Nodes, and the map you can download from the <a href="https://www.ebi.ac.uk/emdb/EMD-27874">EMDB page</a>. Ensure you download the <code>.map.gz</code> file.</p>
+</section>
+<section id="importing" class="level2">
+<h2 class="anchored" data-anchor-id="importing">Importing</h2>
+<p>Select the file and import to Blender.</p>
+<p>There should be a surface that has appeared, which has a goemetry nodes modifier with a single node applied.</p>
+<p><img src="https://imgur.com/ABiq2rI.png" class="img-fluid"></p>
+<p>You can adjust the threshold which is the cutoff at which Blender will create a surface mesh.</p>
+</section>
+<section id="importing-structure" class="level2">
+<h2 class="anchored" data-anchor-id="importing-structure">Importing Structure</h2>
+<p>When we import a structure, both the density and the structure should align perfectly, as long as neither were imported with the ‘centre’ option selected.</p>
+<p>We can import the structure <code>8E3Z</code> via the PDB tab with <code>Ribbon</code> styling, and see how it overlaps with the surface from the density.</p>
+<p><img src="https://imgur.com/oPv556p.png" class="img-fluid"></p>
+</section>
+<section id="sampling-colors" class="level2">
+<h2 class="anchored" data-anchor-id="sampling-colors">Sampling Colors</h2>
+<p>Currently all of the colors on the mesh are uniform. There is the field input <code class="custom-attribute">Color</code>, so we can <em>sample</em> the color from the atoms of a structure, and use that information to color the surface.</p>
+<p>We will use the <code>Sample Nearest Attribute</code> node from the <code>Molecular Nodes -&gt; Density</code> menu. This node will take the atoms of a structure and can transfer the information from that structure onto the surface created for that volume.</p>
+<p>The structure which we have currently imported however isn’t showing the atoms - it is displaying the ribbon style. We can duplicate the structure with <kbd>Shift</kbd> + <kbd>D</kbd> in the 3D viewport, and change the node group used so that it displays the atoms rather than applying a style.</p>
+<p><video src="https://imgur.com/6nyPZRw.mp4" class="img-fluid" controls=""><a href="https://imgur.com/6nyPZRw.mp4">Video</a></video></p>
+<p>In the demo video, we duplicate the object. When duplicating, both objects are using the same node tree, so we then also duplicate the node tree. Now we can remove the style from the new node tree, and use this object to sample colors for our surface. The original structure object remains unchanged and still contains a node tree which applies the ribbon style.</p>
+<p>If you want to change the colors which are applied to the surface, we change the node tree of the object which contains the atoms. Changing thesse nodes will change the colors that are applied, and thus change the colors which are sampled to the surface for coloring.</p>
+<p><video src="https://imgur.com/eUslUNV.mp4" class="img-fluid" controls=""><a href="https://imgur.com/eUslUNV.mp4">Video</a></video></p>
 
 
 </section>
@@ -616,6 +700,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     }
   });
   </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../tutorials/trajectories.html" class="pagination-link" aria-label="Trajectories">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Trajectories</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../tutorials/simulation.html" class="pagination-link" aria-label="Simulation">
+        <span class="nav-page-text">Simulation</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
