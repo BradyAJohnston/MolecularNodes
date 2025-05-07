@@ -1,6 +1,8 @@
 ---
 title: Selections
 author: Brady Johnston
+aliases:
+  - "02_selections.html"
 ---
 
 Selections power every part of Molecular Visualisation.

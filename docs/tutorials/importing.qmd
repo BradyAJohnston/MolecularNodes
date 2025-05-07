@@ -1,6 +1,8 @@
 ---
 title: Fetch from the PDB
 fig-align: center
+aliases:
+  - "01_importing.html"
 ---
 
 Molecules, simulations and other file formats can all be imported via the `Molecular Nodes` subpanel. This panel can be found under the `Scene Properties` panel. This is the small cone and spheres icon on the right. This contains all of the different options for importing molecular data currently available inside of Molecular Nodes.

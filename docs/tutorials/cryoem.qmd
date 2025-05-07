@@ -1,6 +1,9 @@
 ---
 title: CryoEM Maps
 author: Brady Johnston
+aliases:
+  - "04_cryoem.html"
+
 ---
 
 ![](https://imgur.com/4W1dxyJ)
