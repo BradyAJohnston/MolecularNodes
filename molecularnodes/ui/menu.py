@@ -97,6 +97,7 @@ class CustomItem(Item):
         property_id: str,
         description: str,
         videos: str = None,
+        type: str = None,
     ) -> None:
         super().__init__()
         self.label = label

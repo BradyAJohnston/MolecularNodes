@@ -34,6 +34,10 @@ class Density(MolecularEntity, metaclass=ABCMeta):
         ----------
         file : str
             The path of the original file.
+        center : bool, default=False
+            If True, the density will be centered at the origin.
+        invert : bool, default=False
+            If True, the density values will be inverted.
 
         Returns
         -------
