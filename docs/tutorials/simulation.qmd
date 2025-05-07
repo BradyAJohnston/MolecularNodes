@@ -1,11 +1,9 @@
 ---
-title: "Simulations"
+title: "Simulation"
 subtitle: "Running simple simulations using Molecular Nodes"
 author: Brady Johnston
 date: "20250409"
 toc-depth: 3
-# toc: true
-# toc-location: body
 ---
 
 ![{{< pdb 9I2R hover=false >}} Simulated with the elastic network created from alpha carbons and some gentle brownian motion.](https://imgur.com/NCIYxg0.mp4){autoplay=true loop=true muted=true #fig-larger-structure}
@@ -16,7 +14,12 @@ The easiest example of this is moving the positions of some points, building on 
 
 ### What is a simulation?
 
-The approach taken in Molecular Nodes is include several "lower-level" nodes that can run simulations in a more generic way. Simulations are still to be considered experimental in MN, so the nodes and methods may change in the future.
+The approach taken in Molecular Nodes is to include several "lower-level" nodes that can run simulations in a more generic way. Simulations are still to be considered experimental, and the nodes will likely change in the future.
+
+As simulations are improved more generally inside of Geometry Nodes, these nodes will also be updated and improved.
+
+Because the nodes are likely to change in the future the documenation is not exhaustive, but these examples should be enough to get you started and explain some of how the system works.
+
 
 
 ## Simulate Elastic Network
@@ -37,13 +40,23 @@ We can create an elastic network that includes all atoms by selecting the `All A
 
 We can't just use the **Style Ball and Stick** node because the edges are now between all of the atoms. Instead, we can sample the positions from the resulting simulation using the **Sample Position** node update the positions of our starting atoms using the **Set Position** node. Then we can style accordingly.
 
-![](https://imgur.com/qpoWQsa.mp4)
+![](https://imgur.com/ZcjIzzQ.png)
+
+![](https://imgur.com/v9lav5I.mp4)
+
 
 ## Simulate Curve
 
 This is the simplest simulation nodes, which simulates any _Curve_ geometry that it is given, attempting to maintain the length between points of the curve and also handling point collisions.
 
 The simplest inputs for this simulation are `Points::Int` which indicate how many points on the curve before and after this current point to check when trying to maintain length, and also the `Straightness::Float` which is a value between 0 and 1 that determines how straight the curve should be.
+
+![](https://imgur.com/Uiy3fEO.mp4)
+
+![](https://imgur.com/qpoWQsa.mp4)
+
+![](https://imgur.com/0975uoT.mp4)
+
 
 ## Simulate on Faces
 
@@ -52,3 +65,38 @@ This node simulates points with collisions, while also ensuring they remain atta
 ![](https://imgur.com/RnrAKHE.mp4)
 
 ![](https://imgur.com/sinnXcW.png)
+
+## Node Inputs
+
+### `Substeps::Int`
+
+The number of substeps that are simulated for each frame that Blender advances. Usually the higher this number the more accurate the simulation is, but this currently isn't always the case.
+
+### `Simulation::Menu`
+
+#### `Force::Vector`
+
+Forces used inside of the simulation are input here as a field that is evaluated on the `Point::Geometry` domain.
+
+#### `Drag::Float`
+
+The drag value is a multiplier for the velocity of the point. The higher the drag value, the more the point will slow down. Useful to take the energy out of an otherwise unstable simulation.
+
+#### `Alpha::Float`
+
+A value for how _rigid_ the constraint is. The higher the value, the looser the constraint. `0::Float` will try to perfectly maintain the constraint. Even _very small_ values such as `0.001::Float` will lead to a more relaxed constraint. Relaxing constraints can help with simulation stability.
+
+## Forces
+
+Forces inside of the simulation are a `Vector::Vector` field that is evaluated on the `Point::Geometry` domain. You can chain multiple forces together by using a **Vector Math** node to just add the outputs, or by puting the `Force::Vector` output of one node into the `Add::Vector` input of the next node in the chain.
+
+
+![You can chain multiple force nodes together to build up a more complex simulation.](https://imgur.com/Tw4Akxt.png){#fig-forces}
+
+## Hook & Pin
+
+Sometimes we don't want points to be simulated, and instead we want to manually specify their positions. This is done via the `Hook::Menu` and `Pin::Menu` inputs. `Pin::Menu` will stop the point from simulating at all and ensure that the points is always exactly at the `Target::Vector` input. This will default to whatever the current position of the point is inside of the simulation when `Selection::Bool` is set to true. To get an updating position, you can use the **Sample Position** node to sample the position of a point in the simulation and then use that as the `Target::Vector` input.
+
+For the `Hook::Menu` inputs, it will move the point to the `Target::Vector` over a certain amount of time, essentially exerting a force but one that is more stable. The higher the `Decay::Float` value the quicker the rate of movement.
+
+![The inputs for hooking & pinning points in a simulation](https://imgur.com/DR8Z02K.png){#fig-hook-pin}
