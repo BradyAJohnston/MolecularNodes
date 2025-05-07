@@ -6,7 +6,7 @@ date: "20250409"
 toc-depth: 3
 ---
 
-![{{< pdb 9I2R hover=false >}} Simulated with the elastic network created from alpha carbons and some gentle brownian motion.](https://imgur.com/NCIYxg0.mp4){autoplay=true loop=true muted=true #fig-larger-structure}
+![{{< pdb 9I2R >}} Simulated with the elastic network created from alpha carbons and some gentle brownian motion.](https://imgur.com/NCIYxg0.mp4){autoplay=true loop=true muted=true #fig-larger-structure}
 
 Inside of Geometry Nodes, we can run simulations using the **Simulation Zone**.
 In the most simple form, a simulation is just doing something with data from a previous iteration of the data.
