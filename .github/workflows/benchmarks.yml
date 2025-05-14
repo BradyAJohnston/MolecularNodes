@@ -1,0 +1,33 @@
+name: benchmarks
+
+on:
+  push:
+    branches: "*"
+  pull_request:
+    branches: main
+
+jobs:
+  benchmark_base_branch:
+    name: Continuous Benchmarking with Bencher
+    permissions:
+      checks: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bencherdev/bencher@main
+      - name: Track base branch benchmarks with Bencher
+        run: |
+          bencher run \
+          --project b2d261aa-233e-4d2d-84fc-0d05c2ac7c90 \
+          --token '${{ secrets.BENCHER_API_TOKEN }}' \
+          --branch main \
+          --testbed ubuntu-latest \
+          --threshold-measure latency \
+          --threshold-test t_test \
+          --threshold-max-sample-size 64 \
+          --threshold-upper-boundary 0.99 \
+          --thresholds-reset \
+          --err \
+          --adapter json \
+          --github-actions '${{ secrets.GITHUB_TOKEN }}' \
+          bencher mock
