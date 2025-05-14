@@ -24,11 +24,13 @@ jobs:
           uv pip install -e .
       - uses: bencherdev/bencher@main
       - name: Track base branch benchmarks with Bencher
+        env:
+            BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
         run: |
           bencher run \
           --project molecularnodes \
           --token '${{ secrets.BENCHER_API_TOKEN }}' \
-          --branch ${{ github.base_ref }} \
+          --branch ${{ env.BRANCH_NAME }} \
           --testbed ${{ runner.os }}-${{ runner.name }} \
           --threshold-measure latency \
           --threshold-test t_test \
