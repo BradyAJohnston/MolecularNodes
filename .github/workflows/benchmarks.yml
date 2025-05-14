@@ -28,14 +28,15 @@ jobs:
           bencher run \
           --project molecularnodes \
           --token '${{ secrets.BENCHER_API_TOKEN }}' \
-          --branch main \
-          --testbed ubuntu-latest \
+          --branch ${{ github.base_ref }} \
+          --testbed ${{ runner.os }}-${{ runner.name }} \
           --threshold-measure latency \
           --threshold-test t_test \
           --threshold-max-sample-size 64 \
           --threshold-upper-boundary 0.99 \
           --thresholds-reset \
           --err \
-          --adapter json \
+          --adapter python_pytest \
           --github-actions '${{ secrets.GITHUB_TOKEN }}' \
-          uv run bencher run --file results.json "pytest --benchmark-json results.json benchmarks"
+          --file results.json \
+          "pytest --benchmark-json results.json benchmarks"
