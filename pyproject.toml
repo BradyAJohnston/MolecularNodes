@@ -23,7 +23,7 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 bpy = ["bpy>=4.4"]
 jupyter = ["jupyter", "IPython"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython"]
-test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist"]
+test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist", "pytest-benchmark"]
 docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython", "jupyter-cache"]
 
 [build-system]
