@@ -40,4 +40,4 @@ jobs:
           --err \
           --adapter python_pytest \
           --file results.json \
-          "pytest --benchmark-json results.json benchmarks"
+          "uv run pytest --benchmark-json results.json benchmarks"
