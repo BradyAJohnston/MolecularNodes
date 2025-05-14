@@ -30,8 +30,7 @@ jobs:
           bencher run \
           --project molecularnodes \
           --token '${{ secrets.BENCHER_API_TOKEN }}' \
-          --branch ${{ env.BRANCH_NAME }} \
-          --testbed '${{ runner.os }}-${{ runner.name }}' \
+          --testbed '${{ runner.os }}-GHA' \
           --threshold-measure latency \
           --threshold-test t_test \
           --threshold-max-sample-size 64 \
