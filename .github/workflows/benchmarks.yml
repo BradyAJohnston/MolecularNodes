@@ -38,4 +38,4 @@ jobs:
           --err \
           --adapter json \
           --github-actions '${{ secrets.GITHUB_TOKEN }}' \
-          uv run bencher run --adapter python_pytest --file results.json "pytest --benchmark-json results.json benchmarks"
+          uv run bencher run --file results.json "pytest --benchmark-json results.json benchmarks"
