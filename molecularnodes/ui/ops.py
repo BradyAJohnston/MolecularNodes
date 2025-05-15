@@ -293,9 +293,9 @@ class Import_Molecule(bpy.types.Operator):
             ),
         ),
     )
-    del_solvent: BoolProperty(  # type: ignore
+    remove_solvent: BoolProperty(  # type: ignore
         default=True,
-        name="Delete Solvent",
+        name="Remove Solvent",
         description="Remove solvent atoms from the structure on import",
     )
     assembly: BoolProperty(  # type: ignore
@@ -313,7 +313,7 @@ class Import_Molecule(bpy.types.Operator):
         col.enabled = self.node_setup
         # row = layout.row()
         layout.prop(self, "centre")
-        layout.prop(self, "del_solvent")
+        layout.prop(self, "remove_solvent")
         layout.prop(self, "assembly")
 
         return layout
@@ -322,6 +322,7 @@ class Import_Molecule(bpy.types.Operator):
 class MN_OT_Import_Molecule(Import_Molecule):
     bl_idname = "mn.import_molecule"
     bl_label = "Import a Molecule"
+    bl_options = {"REGISTER", "UNDO"}
 
     directory: StringProperty(  # type: ignore
         subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
@@ -347,7 +348,9 @@ class MN_OT_Import_Molecule(Import_Molecule):
         for file in self.files:
             try:
                 Molecule.load(
-                    Path(self.directory, file.name), name=file.name
+                    Path(self.directory, file.name),
+                    name=file.name,
+                    remove_solvent=self.remove_solvent,
                 ).add_style(style, assembly=self.assembly)
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
@@ -422,7 +425,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         default=str(CACHE_DIR),
         subtype="DIR_PATH",
     )
-    del_solvent: BoolProperty(  # type: ignore
+    remove_solvent: BoolProperty(  # type: ignore
         name="Remove Solvent",
         description="Delete the solvent from the structure on import",
         default=True,
@@ -480,6 +483,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                     code=self.code,
                     cache=self.cache_dir,
                     format=self.file_format,
+                    remove_solvent=self.remove_solvent,
                     database=self.database,
                 )
                 .add_style(
@@ -523,7 +527,10 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
 
     def execute(self, context):
         mol = (
-            Molecule.load(path_resolve(self.filepath))
+            Molecule.load(
+                file_path=path_resolve(self.filepath),
+                remove_solvent=self.remove_solvent,
+            )
             .centre_molecule(self.centre_type if self.centre else None)
             .add_style(
                 style=self.style if self.node_setup else None,  # type: ignore

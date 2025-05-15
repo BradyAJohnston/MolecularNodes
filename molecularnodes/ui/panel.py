@@ -21,6 +21,7 @@ def panel_wwpdb(layout, scene):
     op.database = "wwpdb"  # type: ignore
     op.file_format = scene.mn.import_format_wwpdb  # type: ignore
     op.node_setup = scene.mn.import_node_setup  # type: ignore
+    op.remove_solvent = scene.mn.import_remove_solvent  # type: ignore
     op.assembly = scene.mn.import_build_assembly  # type: ignore
     op.style = scene.mn.import_style  # type: ignore
     op.centre = scene.mn.import_centre  # type: ignore
@@ -52,7 +53,7 @@ def panel_wwpdb(layout, scene):
 
     grid = options.grid_flow()
     grid.prop(scene.mn, "import_build_assembly")
-    grid.prop(scene.mn, "import_del_solvent")
+    grid.prop(scene.mn, "import_remove_solvent")
     grid.prop(scene.mn, "import_del_hydrogen")
 
 
@@ -118,6 +119,7 @@ def panel_local(layout, scene):
     op.assembly = scene.mn.import_build_assembly
     op.style = scene.mn.import_style
     op.centre = scene.mn.import_centre
+    op.remove_solvent = scene.mn.import_remove_solvent
     op.centre_type = scene.mn.import_centre_type
     layout.separator()
 
@@ -141,7 +143,7 @@ def panel_local(layout, scene):
 
     grid = options.grid_flow()
     grid.prop(scene.mn, "import_build_assembly")
-    grid.prop(scene.mn, "import_del_solvent", icon_value=0)
+    grid.prop(scene.mn, "import_remove_solvent", icon_value=0)
     grid.prop(scene.mn, "import_del_hydrogen", icon_value=0)
 
 
