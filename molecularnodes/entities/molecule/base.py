@@ -98,38 +98,40 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.object.modifiers[0].node_group = tree  # type: ignore
 
     @classmethod
-    def load(cls, file_path: str | Path, name: str | None = None):
+    def load(
+        cls, file_path: str | Path, name: str | None = None, remove_solvent: bool = True
+    ) -> "Molecule":
         """
         Load a molecule from a file.
 
         Parameters
         ----------
-        file_path : str | Path
-            Path to the molecular structure file.
-        name : str | None, optional
-            Name to assign to the created molecule object. If None, the file's stem
-            (filename without extension) will be used as the name. Default is None.
+        file_path : str or Path
+            The path to the file containing molecular data
+        name : str or None, optional
+            The name to give the molecule object. If None, uses the filename stem
+        remove_solvent : bool, optional
+            Whether to remove solvent molecules from the structure, default True
 
         Returns
         -------
-        Molecule
-            A new Molecule instance created from the loaded file data.
+        mol : Molecule
+            The loaded molecule object with associated data and 3D representation
 
         Notes
         -----
-        This method automatically filters out solvent molecules from the structure.
-        Future versions may make this behavior optional.
+        Supports various file formats including .cif, .bcif, .pdb, .sdf, and .mol
         """
         reader = cls._read(file_path)
         if not name:
             name = Path(file_path).stem
         mol = cls(reader.array, reader=reader)
 
-        # TODO: currently filtering out solvent, will make optional in another PR
-        if isinstance(mol.array, AtomArrayStack):
-            mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
-        else:
-            mol.array = mol.array[~struc.filter_solvent(mol.array)]
+        if remove_solvent:
+            if isinstance(mol.array, AtomArrayStack):
+                mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
+            else:
+                mol.array = mol.array[~struc.filter_solvent(mol.array)]
 
         mol.create_object(name=name)
         mol._reader = reader
@@ -151,7 +153,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     @staticmethod
     def _read(
         file_path: str | Path | io.BytesIO,
-        # del_solvent: bool = False,
+        # remove_solvent: bool = False,
         # del_hydrogen: bool = False,
     ) -> ReaderBase:
         """
@@ -190,6 +192,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         code: str,
         format=".bcif",
         centre: str | None = None,
+        remove_solvent: bool = True,
         cache: Path | str | None = download.CACHE_DIR,
         database: str = "rcsb",
     ):
@@ -207,6 +210,8 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             or "mass" (center of mass). If None, no centering is performed. Default is None.
         cache : str, optional
             Path to cache directory. If None, no caching is performed.
+        remove_solvent : bool, optional
+            Whether to remove solvent from the molecule. Default is True.
         database : str, optional
             The database to fetch from. Default is "rcsb".
 
@@ -218,7 +223,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         file_path = download.StructureDownloader(cache=cache).download(
             code=code, format=format, database=database
         )
-        mol = cls.load(file_path, name=code)
+        mol = cls.load(file_path, name=code, remove_solvent=remove_solvent)
         mol.object.mn["entity_type"] = "molecule"
         mol._code = code
 
