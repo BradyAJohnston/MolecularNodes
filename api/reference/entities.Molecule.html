@@ -548,17 +548,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    code,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">'.bcif'</span>,</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    centre<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    cache<span class="op">=</span>download.CACHE_DIR,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">'rcsb'</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    remove_solvent<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    cache<span class="op">=</span>download.CACHE_DIR,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">'rcsb'</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Fetch a molecule from the RCSB database.</p>
 <section id="parameters-2" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 4%">
-<col style="width: 6%">
-<col style="width: 78%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 76%">
 <col style="width: 10%">
 </colgroup>
 <thead>
@@ -595,6 +596,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code>download.CACHE_DIR</code></td>
 </tr>
 <tr class="odd">
+<td>remove_solvent</td>
+<td>bool</td>
+<td>Whether to remove solvent from the molecule. Default is True.</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="even">
 <td>database</td>
 <td>str</td>
 <td>The database to fetch from. Default is “rcsb”.</td>
@@ -630,16 +637,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.entities.Molecule.load" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.Molecule.load">load</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>entities.Molecule.load(file_path, name<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>entities.Molecule.load(file_path, name<span class="op">=</span><span class="va">None</span>, remove_solvent<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Load a molecule from a file.</p>
 <section id="parameters-3" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 6%">
-<col style="width: 7%">
-<col style="width: 80%">
-<col style="width: 6%">
+<col style="width: 14%">
+<col style="width: 11%">
+<col style="width: 63%">
+<col style="width: 10%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -652,15 +659,21 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>file_path</td>
-<td>str | Path</td>
-<td>Path to the molecular structure file.</td>
+<td>str or Path</td>
+<td>The path to the file containing molecular data</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>name</td>
-<td>str | None</td>
-<td>Name to assign to the created molecule object. If None, the file’s stem (filename without extension) will be used as the name. Default is None.</td>
+<td>str or None</td>
+<td>The name to give the molecule object. If None, uses the filename stem</td>
 <td><code class="custom-object">None</code></td>
+</tr>
+<tr class="odd">
+<td>remove_solvent</td>
+<td>bool</td>
+<td>Whether to remove solvent molecules from the structure, default True</td>
+<td><code class="custom-bool">True</code></td>
 </tr>
 </tbody>
 </table>
@@ -669,9 +682,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-3">Returns</h4>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 12%">
-<col style="width: 76%">
+<col style="width: 8%">
+<col style="width: 11%">
+<col style="width: 79%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -682,16 +695,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
+<td>mol</td>
 <td>Molecule</td>
-<td>A new Molecule instance created from the loaded file data.</td>
+<td>The loaded molecule object with associated data and 3D representation</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="notes-1" class="level4 doc-section doc-section-notes">
 <h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes-1">Notes</h4>
-<p>This method automatically filters out solvent molecules from the structure. Future versions may make this behavior optional.</p>
+<p>Supports various file formats including .cif, .bcif, .pdb, .sdf, and .mol</p>
 
 
 </section>
