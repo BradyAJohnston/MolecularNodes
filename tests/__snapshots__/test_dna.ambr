@@ -78,8 +78,8 @@
 # name: TestOXDNAReading.test_comparing_topologies[top_new].3
   list([
     42,
-    -1,
-    -1,
+    43,
+    43,
     42,
     41,
     42,
@@ -154,7 +154,7 @@
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].3
   list([
     42,
-    -1,
+    43,
     -1,
     42,
     41,
@@ -248,8 +248,8 @@
     42,
     41,
     42,
-    -1,
-    -1,
+    43,
+    43,
     42,
     41,
     42,
