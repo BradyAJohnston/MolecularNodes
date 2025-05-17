@@ -11,8 +11,11 @@ function to parity between the nodetrees and the class representations.
 
 """
 
-from typing import List, Tuple, Union, Any, Dict
+from typing import List, Tuple, Union, Any, Dict, ClassVar, Optional
 from bpy.types import GeometryNodeGroup
+from dataclasses import dataclass
+
+
 
 __all__ = [
     "StyleBallandStick",
@@ -24,12 +27,12 @@ __all__ = [
     "StyleBase",
 ]
 
-SocketDataMapping = Dict[str, Any]
-SocketInfo = List[SocketDataMapping]
+class SocketInfo(List[Dict[str, str]]):
+    pass
 
 class StyleBase:
-    style: str
-    portdata: SocketInfo = []
+    style: ClassVar[str]
+    portdata: ClassVar[List[Dict[str, str]]]
 
     def update_style_node(self, node_style: GeometryNodeGroup):
         for input in node_style.inputs:
@@ -40,10 +43,33 @@ class StyleBase:
                     if input.name == blendername:
                         input.default_value = getattr(self, name)
 
+    def get_blender_name(self, prop_name: str) -> str:
+        """Get the Blender name for a given property name."""
+        for port in self.portdata:
+            if port["name"] == prop_name:
+                return port["blendername"]
+        return prop_name  # Return the original name if not found
 
+    @classmethod
+    def get_name_mapping(cls) -> Dict[str, str]:
+        """Returns a dictionary mapping property names to Blender names."""
+        return {port["name"]: port["blendername"] for port in cls.portdata}
+
+
+@dataclass
 class StyleBallandStick(StyleBase):
-    style = "ball_and_stick"
-    portdata: SocketInfo = [
+    quality: int = 2
+    geometry: str = "Instance"  # enum
+    sphere_radii: float = 0.3
+    bond_split: bool = False
+    bond_find: bool = False
+    bond_radius: float = 0.3
+    color_blur: bool = False
+    shade_smooth: bool = True
+
+    # Class variables
+    style: ClassVar[str] = "ball_and_stick"
+    portdata: ClassVar[List[Dict[str, str]]] = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "geometry", "blendername": "Sphere Geometry"},
         {"name": "sphere_radii", "blendername": "Sphere Radii"},
@@ -54,30 +80,28 @@ class StyleBallandStick(StyleBase):
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
 
-    def __init__(
-        self,
-        quality: int = 2,
-        geometry: str = "Instance",  # enum
-        sphere_radii: float = 0.3,
-        bond_split: bool = False,
-        bond_find: bool = False,
-        bond_radius: float = 0.3,
-        color_blur: bool = False,
-        shade_smooth: bool = True,
-    ):
-        self.quality = quality
-        self.geometry = geometry
-        self.sphere_radii = sphere_radii
-        self.bond_split = bond_split
-        self.bond_find = bond_find
-        self.bond_radius = bond_radius
-        self.color_blur = color_blur
-        self.shade_smooth = shade_smooth
 
-
+@dataclass
 class StyleCartoon(StyleBase):
-    style = "cartoon"
-    portdata: SocketInfo = [
+    quality: int = 2
+    dssp: bool = False
+    cylinders: bool = False
+    arrows: bool = True
+    rounded: bool = False
+    thickness: float = 0.6
+    width: float = 2.2
+    loop_radius: float = 0.3
+    smoothing: float = 0.5
+    backbone_shape: str = "Cylinder"  # enum
+    backbone_radius: float = 2.0
+    base_shape: str = "Rectangle"  # enum
+    base_realize: bool = False
+    color_blur: bool = True
+    shade_smooth: bool = True
+
+    # Class variables
+    style: ClassVar[str] = "cartoon"
+    portdata: ClassVar[List[Dict[str, str]]] = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "dssp", "blendername": "Peptide DSSP"},
         {"name": "cylinders", "blendername": "Peptide Cylinders"},
@@ -95,44 +119,24 @@ class StyleCartoon(StyleBase):
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
 
-    def __init__(
-        self,
-        quality: int = 2,
-        dssp: bool = False,
-        cylinders: bool = False,
-        arrows: bool = True,
-        rounded: bool = False,
-        thickness: float = 0.6,
-        width: float = 2.2,
-        loop_radius: float = 0.3,
-        smoothing: float = 0.5,
-        backbone_shape: str = "Cylinder",  # enum?
-        backbone_radius: float = 2.0,
-        base_shape: str = "Rectangle",  # enum?
-        base_realize: bool = False,
-        color_blur: bool = True,
-        shade_smooth: bool = True,
-    ):
-        self.quality = quality
-        self.dssp = dssp
-        self.cylinders = cylinders
-        self.arrows = arrows
-        self.rounded = rounded
-        self.thickness = thickness
-        self.width = width
-        self.loop_radius = loop_radius
-        self.smoothing = smoothing
-        self.backbone_shape = backbone_shape
-        self.backbone_radius = backbone_radius
-        self.base_shape = base_shape
-        self.base_realize = base_realize
-        self.color_blur = color_blur
-        self.shade_smooth = shade_smooth
-
-
+@dataclass
 class StyleRibbon(StyleBase):
-    style = "ribbon"
-    portdata: SocketInfo = [
+    quality: int = 3
+    color_blur: bool = False
+    shade_smooth: bool = False
+    backbone_smoothing: float = 0.5
+    backbone_threshold: float = 4.5
+    base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0)
+    backbone_radius: float = 2.0
+    backbone_shape: str = "Cylinder"
+    base_resolution: int = 4
+    base_realize: bool = False
+    uv_map: bool = False
+    u_component: Optional[Any] = None  # Using Any as generic type
+
+    # Class variables
+    style: ClassVar[str] = "ribbon"
+    portdata: ClassVar[List[Dict[str, str]]] = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "color_blur", "blendername": "Color Blur"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
@@ -147,83 +151,53 @@ class StyleRibbon(StyleBase):
         {"name": "u_component", "blendername": "U Component"},
     ]
 
-    def __init__(
-        self,
-        quality: int = 3,
-        color_blur: bool = False,
-        shade_smooth: bool = False,
-        backbone_smoothing: float = 0.5,
-        backbone_threshold: float = 4.5,
-        base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0),
-        backbone_radius: float = 2.0,
-        backbone_shape: str = "Cylinder",
-        base_resolution: int = 4,
-        base_realize: bool = False,
-        uv_map: bool = False,
-        u_component=None,
-        # u_component_factor=None,
-    ):
-        self.quality = quality
-        self.color_blur = color_blur
-        self.shade_smooth = shade_smooth
-        self.backbone_smoothing = backbone_smoothing
-        self.backbone_threshold = backbone_threshold
-        self.backbone_radius = backbone_radius
-        self.backbone_shape = backbone_shape  # enum?
-        self.base_scale = base_scale
-        self.base_resolution = base_resolution
-        self.base_realize = base_realize
-        self.uv_map = uv_map
-        self.u_component = u_component
-
-
+@dataclass
 class StyleSpheres(StyleBase):
-    style = "spheres"
-    portdata: SocketInfo = [
+    geometry: str = "Point"  # enum: "Point" (Point Cloud), "Instances" (Instances of a mesh Icosphere), or "Mesh" (realised Mesh)
+    radii: float = 0.8
+    sphere_subdivisions: int = 2
+    shade_smooth: bool = True
+
+    # Class variables
+    style: ClassVar[str] = "spheres"
+    portdata: ClassVar[List[Dict[str, str]]] = [
         {"name": "geometry", "blendername": "Sphere Geometry"},
         {"name": "radii", "blendername": "Sphere Radii"},
         {"name": "sphere_subdivisions", "blendername": "Sphere Subdivisions"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
 
-    def __init__(
-        self,
-        geometry: str = "Point",  # enum: "Point" (Point Cloud), "Instances" (Instances of a mesh Icosphere), or "Mesh" (realised Mesh)
-        radii: float = 0.8,
-        sphere_subdivisions: int = 2,
-        shade_smooth: bool = True,
-    ):
-        self.geometry = geometry
-        self.radii = radii
-        self.sphere_subdivisions = sphere_subdivisions
-        self.shade_smooth = shade_smooth
-
-
+@dataclass
 class StyleSticks(StyleBase):
-    style = "sticks"
-    portdata: SocketInfo = [
+    quality: int = 3
+    radius: float = 0.20000000298023224
+    color_blur: bool = False
+    shade_smooth: bool = True
+
+    # Class variables
+    style: ClassVar[str] = "sticks"
+    portdata: ClassVar[List[Dict[str, str]]] = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "radius", "blendername": "Radius"},
         {"name": "color_blur", "blendername": "Color Blur"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
 
-    def __init__(
-        self,
-        quality: int = 3,
-        radius: float = 0.20000000298023224,
-        color_blur: bool = False,
-        shade_smooth: bool = True,
-    ):
-        self.quality = quality
-        self.radius = radius
-        self.color_blur = color_blur
-        self.shade_smooth = shade_smooth
-
-
+@dataclass
 class StyleSurface(StyleBase):
-    style = "surface"
-    portdata: SocketInfo = [
+    quality: int = 3
+    scale_radii: float = 1.5
+    probe_size: float = 1.0
+    relaxation_steps: int = 10
+    separate: str = "chain_id"  # enum
+    group_id: int = 0
+    color_source: str = "Alpha Carbon"  # enum
+    blur: int = 2
+    shade_smooth: bool = True
+
+    # Class variables
+    style: ClassVar[str] = "surface"
+    portdata: ClassVar[List[Dict[str, str]]] = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "scale_radii", "blendername": "Scale Radii"},
         {"name": "probe_size", "blendername": "Probe Size"},
@@ -234,25 +208,3 @@ class StyleSurface(StyleBase):
         {"name": "blur", "blendername": "Color Blur"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
-
-    def __init__(
-        self,
-        quality: int = 3,
-        scale_radii: float = 1.5,
-        probe_size: float = 1.0,
-        relaxation_steps: int = 10,
-        separate: str = "chain_id",  # enum?
-        group_id: int = 0,
-        color_source: str = "Alpha Carbon",  # enum?
-        blur: int = 2,
-        shade_smooth: bool = True,
-    ):
-        self.quality = quality
-        self.scale_radii = scale_radii
-        self.probe_size = probe_size
-        self.relaxation_steps = relaxation_steps
-        self.separate = separate
-        self.group_id = group_id
-        self.color_source = color_source
-        self.blur = blur
-        self.shade_smooth = shade_smooth
