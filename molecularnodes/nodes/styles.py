@@ -24,12 +24,12 @@ __all__ = [
     "StyleBase",
 ]
 
-PortDataEntry = Dict[str, Any]
-PortDataList = List[PortDataEntry]
+SocketDataMapping = Dict[str, Any]
+SocketInfo = List[SocketDataMapping]
 
 class StyleBase:
     style: str
-    portdata: PortDataList = []
+    portdata: SocketInfo = []
 
     def update_style_node(self, node_style: GeometryNodeGroup):
         for input in node_style.inputs:
@@ -43,7 +43,7 @@ class StyleBase:
 
 class StyleBallandStick(StyleBase):
     style = "ball_and_stick"
-    portdata: PortDataList = [
+    portdata: SocketInfo = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "geometry", "blendername": "Sphere Geometry"},
         {"name": "sphere_radii", "blendername": "Sphere Radii"},
@@ -77,7 +77,7 @@ class StyleBallandStick(StyleBase):
 
 class StyleCartoon(StyleBase):
     style = "cartoon"
-    portdata: PortDataList = [
+    portdata: SocketInfo = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "dssp", "blendername": "Peptide DSSP"},
         {"name": "cylinders", "blendername": "Peptide Cylinders"},
@@ -132,7 +132,7 @@ class StyleCartoon(StyleBase):
 
 class StyleRibbon(StyleBase):
     style = "ribbon"
-    portdata: PortDataList = [
+    portdata: SocketInfo = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "color_blur", "blendername": "Color Blur"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
@@ -179,7 +179,7 @@ class StyleRibbon(StyleBase):
 
 class StyleSpheres(StyleBase):
     style = "spheres"
-    portdata: PortDataList = [
+    portdata: SocketInfo = [
         {"name": "geometry", "blendername": "Sphere Geometry"},
         {"name": "radii", "blendername": "Sphere Radii"},
         {"name": "sphere_subdivisions", "blendername": "Sphere Subdivisions"},
@@ -201,7 +201,7 @@ class StyleSpheres(StyleBase):
 
 class StyleSticks(StyleBase):
     style = "sticks"
-    portdata: PortDataList = [
+    portdata: SocketInfo = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "radius", "blendername": "Radius"},
         {"name": "color_blur", "blendername": "Color Blur"},
@@ -223,7 +223,7 @@ class StyleSticks(StyleBase):
 
 class StyleSurface(StyleBase):
     style = "surface"
-    portdata: PortDataList = [
+    portdata: SocketInfo = [
         {"name": "quality", "blendername": "Quality"},
         {"name": "scale_radii", "blendername": "Scale Radii"},
         {"name": "probe_size", "blendername": "Probe Size"},
