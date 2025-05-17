@@ -11,10 +11,9 @@ function to parity between the nodetrees and the class representations.
 
 """
 
-from typing import List, Tuple, Union, Any, Dict, ClassVar, Optional
-from bpy.types import GeometryNodeGroup
 from dataclasses import dataclass
-
+from typing import Any, ClassVar, Dict, List, Optional, Tuple
+from bpy.types import GeometryNodeGroup
 
 __all__ = [
     "StyleBallandStick",
