@@ -308,7 +308,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: StyleBase | str = "spheres",
+        style: StyleBase | bpy.types.GeometryNodeTree | str = "spheres",
         color: str | None = "common",
         selection: "str | MoleculeSelector | None" = None,
         assembly: bool = False,
@@ -319,7 +319,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         Parameters
         ----------
-        style : bpy.types.GeometryNodeTree | str, optional
+        style : StyleBase| bpy.types.GeometryNodeTree | str, optional
             The style to apply to the molecule. Can be a GeometryNodeTree or a string
             identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
             Default is "spheres".
