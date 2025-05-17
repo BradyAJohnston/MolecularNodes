@@ -25,8 +25,10 @@ __all__ = [
     "StyleBase",
 ]
 
+
 class SocketInfo(List[Dict[str, str]]):
     pass
+
 
 class StyleBase:
     style: ClassVar[str]
@@ -117,6 +119,7 @@ class StyleCartoon(StyleBase):
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
 
+
 @dataclass
 class StyleRibbon(StyleBase):
     quality: int = 3
@@ -149,6 +152,7 @@ class StyleRibbon(StyleBase):
         {"name": "u_component", "blendername": "U Component"},
     ]
 
+
 @dataclass
 class StyleSpheres(StyleBase):
     geometry: str = "Point"  # enum: "Point" (Point Cloud), "Instances" (Instances of a mesh Icosphere), or "Mesh" (realised Mesh)
@@ -165,6 +169,7 @@ class StyleSpheres(StyleBase):
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
 
+
 @dataclass
 class StyleSticks(StyleBase):
     quality: int = 3
@@ -180,6 +185,7 @@ class StyleSticks(StyleBase):
         {"name": "color_blur", "blendername": "Color Blur"},
         {"name": "shade_smooth", "blendername": "Shade Smooth"},
     ]
+
 
 @dataclass
 class StyleSurface(StyleBase):

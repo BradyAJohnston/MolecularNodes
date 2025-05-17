@@ -15,6 +15,7 @@ from molecularnodes.nodes.styles import (
 
 DONT_COMPARE = {"Atoms", "Selection", "Material"}
 
+
 def assess_node_equivalency(name, style):
     """
     1. Loads Node from MN file vie classic route
@@ -38,7 +39,6 @@ def assess_node_equivalency(name, style):
     # get the style class name
     style_class = style()
     style_class_bnames = set(sc.get("blendername") for sc in style_class.portdata)
-
 
     # check names bidirectionally
     for bname in blender_names:
