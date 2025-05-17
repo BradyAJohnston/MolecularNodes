@@ -1,4 +1,3 @@
-# import bpy
 import random
 import bpy
 import numpy as np
