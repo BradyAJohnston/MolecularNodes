@@ -1,10 +1,9 @@
-import bpy
 from typing import Tuple
+import bpy
 from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
 from ..assets import MN_DATA_FILE
 from .interface import TreeInterface, check_linked, remove_linked, socket
-
 
 MATERIAL_NAMES = [
     "MN Default",
@@ -114,7 +113,7 @@ def assign_material(
             mat=new_material,
         )
     except KeyError:
-        return f"Material input not found on node."
+        return "Material input not found on node."
 
 
 def dynamic_material_interface(material: bpy.types.Material) -> MaterialTreeInterface:
