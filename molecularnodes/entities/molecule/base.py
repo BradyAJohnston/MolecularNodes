@@ -17,15 +17,7 @@ from ...nodes.geometry import (
     add_style_branch,
     style_interfaces_from_tree,
 )
-from ...nodes.styles import (
-    StyleBallandStick,
-    StyleCartoon,
-    StyleRibbon,
-    StyleSpheres,
-    StyleSticks,
-    StyleSurface,
-    StyleBase,
-)
+from ...nodes.styles import StyleBase
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections

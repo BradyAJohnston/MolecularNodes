@@ -16,7 +16,6 @@ from bpy.types import GeometryNodeGroup
 from dataclasses import dataclass
 
 
-
 __all__ = [
     "StyleBallandStick",
     "StyleCartoon",
@@ -170,7 +169,7 @@ class StyleSpheres(StyleBase):
 @dataclass
 class StyleSticks(StyleBase):
     quality: int = 3
-    radius: float = 0.20000000298023224
+    radius: float = 0.2
     color_blur: bool = False
     shade_smooth: bool = True
 
