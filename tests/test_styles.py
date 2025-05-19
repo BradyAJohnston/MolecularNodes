@@ -17,17 +17,15 @@ DONT_COMPARE = {"Atoms", "Selection", "Material"}
 
 def assess_node_equivalency(name, style):
     """
-    1. Loads Node from MN file vie classic route
+    1. Loads Node from MN file via classic route
     2. Directly loads class
-    3. Compares the fields and defualts for each
+    3. Compares the fields and defaults for each
     """
 
     # get the names and default values of the blender style ndoes
     mol = mn.Molecule.fetch("4ozs").add_style(name)
 
     style_node = get_style_node(mol.object)
-    # for input in style_node.inputs:
-    #     print(input.name, input.type)
     blender_inputs = [
         [input.name, input.default_value]
         for input in style_node.inputs
@@ -37,8 +35,7 @@ def assess_node_equivalency(name, style):
 
     # get the style class name
     style_class = style()
-    style_class_bnames = set(sc.get("blendername") for sc in style_class.portdata)
-
+    style_class_bnames = set(sc.blendername for sc in style_class.portdata)
 
     # check names bidirectionally
     for bname in blender_names:
@@ -52,8 +49,8 @@ def assess_node_equivalency(name, style):
 
     for [bname, bvalue] in blender_inputs:
         for pdata in style_class.portdata:
-            if pdata.get("blendername") == bname:
-                local_name = pdata.get("name")
+            if pdata.blendername == bname:
+                local_name = pdata.name
                 local_val = getattr(style_class, local_name)
                 # floats come from C++ and are artificially long
                 if isinstance(bvalue, float):
