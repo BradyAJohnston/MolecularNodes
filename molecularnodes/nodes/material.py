@@ -191,7 +191,7 @@ class TransparentOutline(MaterialConstructor):
         super().__init__("MN Transparent Outline", **kwargs)
 
 
-class MN_Materials:
+class Material:
     """
     Note: if this is a nice route we could add fns that will create MN_materials here and remove them from the blend file.
 
@@ -207,7 +207,7 @@ class MN_Materials:
     @staticmethod
     def glass() -> bpy.types.Material:
         return create_material(
-            name="MN_Glass",  # Add a descriptive name
+            name="MN Glass",  # Add a descriptive name
             base_color=(0.8, 0.9, 1.0, 0.2),
             transmission_weight=0.95,
             roughness=0.0,
@@ -218,7 +218,7 @@ class MN_Materials:
     @staticmethod
     def gold() -> bpy.types.Material:
         return create_material(
-            name="MN_Gold",
+            name="MN Gold",
             base_color=(1.0, 0.8, 0.2, 1.0),
             metallic=1.0,
             roughness=0.3,
@@ -229,7 +229,7 @@ class MN_Materials:
     @staticmethod
     def green_glow() -> bpy.types.Material:
         return create_material(
-            name="MN_GreenGlow",
+            name="MN GreenGlow",
             base_color=(0.0, 1.0, 0.0, 1.0),
             emission_strength=5.0,
             emission_color=(0.0, 1.0, 0.0, 1.0),
@@ -240,7 +240,7 @@ class MN_Materials:
     @staticmethod
     def holo() -> bpy.types.Material:
         return create_material(
-            name="MN_Holo",
+            name="MN Holo",
             base_color=(0.2, 0.6, 1.0, 0.3),
             emission_strength=2.0,
             emission_color=(0.2, 0.6, 1.0, 1.0),
@@ -251,7 +251,7 @@ class MN_Materials:
     @staticmethod
     def iridescent() -> bpy.types.Material:
         return create_material(
-            name="MN_Iridescent",
+            name="MN Iridescent",
             base_color=(0.8, 0.8, 0.8, 0.3),
             metallic=0.8,
             transmission_weight=0.5,
@@ -263,7 +263,7 @@ class MN_Materials:
     @staticmethod
     def metallic() -> bpy.types.Material:
         return create_material(
-            name="MN_Metallic",
+            name="MN Metallic",
             base_color=(0.7, 0.7, 0.7, 1.0),
             metallic=1.0,
             roughness=0.1,
@@ -274,7 +274,7 @@ class MN_Materials:
     @staticmethod
     def neon() -> bpy.types.Material:
         return create_material(
-            name="MN_Neon",
+            name="MN Neon",
             base_color=(0.0, 1.0, 0.8, 1.0),
             emission_strength=5.0,
             emission_color=(0.0, 1.0, 0.8, 1.0),
@@ -284,12 +284,12 @@ class MN_Materials:
 
     @staticmethod
     def new() -> bpy.types.Material:
-        return create_material(name="MN_Default_02")
+        return create_material(name="MN Default 02")
 
     @staticmethod
     def pearl() -> bpy.types.Material:
         return create_material(
-            name="MN_Pearl",
+            name="MN Pearl",
             base_color=(0.9, 0.9, 0.9, 1.0),
             metallic=0.7,
             roughness=0.15,
@@ -301,7 +301,7 @@ class MN_Materials:
     @staticmethod
     def subsurface() -> bpy.types.Material:
         return create_material(
-            name="MN_Subsurface",
+            name="MN Subsurface",
             base_color=(1.0, 0.4, 0.4, 1.0),
             subsurface_weight=1.0,
             subsurface_radius=(1.0, 0.2, 0.1),
@@ -312,7 +312,7 @@ class MN_Materials:
     @staticmethod
     def toon() -> bpy.types.Material:
         return create_material(
-            name="MN_Toon",
+            name="MN Toon",
             base_color=(0.2, 0.6, 1.0, 1.0),
             metallic=0,
             roughness=1.0,
@@ -324,7 +324,7 @@ class MN_Materials:
     @staticmethod
     def velvet() -> bpy.types.Material:
         return create_material(
-            name="MN_Velvet",
+            name="MN Velvet",
             base_color=(0.5, 0.0, 0.2, 1.0),
             sheen_weight=1.0,
             sheen_roughness=0.3,
@@ -335,7 +335,7 @@ class MN_Materials:
     @staticmethod
     def waxy() -> bpy.types.Material:
         return create_material(
-            name="MN_Waxy",
+            name="MN Waxy",
             base_color=(0.9, 0.87, 0.82, 1.0),
             subsurface_weight=0.3,
             subsurface_radius=(0.5, 0.4, 0.3),
@@ -351,7 +351,7 @@ class MN_Materials:
 
 
 def create_material(
-    name: str = None,
+    name: str = "",
     base_color: Tuple[float, float, float, float] = (0.8, 0.8, 0.8, 0.05),
     metallic: float = 0.0,
     roughness: float = 0.2,
