@@ -39,8 +39,10 @@ class Socket:
         name: The name of the attribute in the Style class
         blendername: The corresponding name of the input socket in the Blender node
     """
+
     name: str
     blendername: Optional[str] = None
+
 
 SocketInfo = List[Socket]
 

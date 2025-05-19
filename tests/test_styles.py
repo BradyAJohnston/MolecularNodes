@@ -15,6 +15,7 @@ from molecularnodes.nodes.styles import (
 
 DONT_COMPARE = {"Atoms", "Selection", "Material"}
 
+
 def assess_node_equivalency(name, style):
     """
     1. Loads Node from MN file via classic route
