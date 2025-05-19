@@ -60,7 +60,7 @@ def test_setting_material_in_apply_custom():
 
 
 def test_material_creator():
-    pearl_mat = mn.material.Materials.pearl()
+    pearl_mat = mn.material.Material.pearl()
     assert isinstance(pearl_mat, bpy.types.Material)
 
 
