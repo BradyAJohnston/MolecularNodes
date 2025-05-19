@@ -49,7 +49,7 @@ SocketInfo = List[Socket]
 
 class StyleBase:
     style: str
-    portdata: SocketInfo = []
+    socketdata: SocketInfo = []
 
     def update_style_node(self, node_style: GeometryNodeGroup):
         """Update the Blender node inputs with values from this style's attributes.
@@ -59,14 +59,14 @@ class StyleBase:
         """
         for input in node_style.inputs:
             if input.type != "GEOMETRY":
-                for arg in self.portdata:
+                for arg in self.socketdata:
                     if input.name == arg.blendername:
                         input.default_value = getattr(self, arg.name)
 
 
 class StyleBallandStick(StyleBase):
     style = "ball_and_stick"
-    portdata: SocketInfo = [
+    socketdata: SocketInfo = [
         Socket(name="quality", blendername="Quality"),
         Socket(name="geometry", blendername="Sphere Geometry"),
         Socket(name="sphere_radii", blendername="Sphere Radii"),
@@ -100,7 +100,7 @@ class StyleBallandStick(StyleBase):
 
 class StyleCartoon(StyleBase):
     style = "cartoon"
-    portdata: SocketInfo = [
+    socketdata: SocketInfo = [
         Socket(name="quality", blendername="Quality"),
         Socket(name="dssp", blendername="Peptide DSSP"),
         Socket(name="cylinders", blendername="Peptide Cylinders"),
@@ -155,7 +155,7 @@ class StyleCartoon(StyleBase):
 
 class StyleRibbon(StyleBase):
     style = "ribbon"
-    portdata: SocketInfo = [
+    socketdata: SocketInfo = [
         Socket(name="quality", blendername="Quality"),
         Socket(name="color_blur", blendername="Color Blur"),
         Socket(name="shade_smooth", blendername="Shade Smooth"),
@@ -202,7 +202,7 @@ class StyleRibbon(StyleBase):
 
 class StyleSpheres(StyleBase):
     style = "spheres"
-    portdata: SocketInfo = [
+    socketdata: SocketInfo = [
         Socket(name="geometry", blendername="Sphere Geometry"),
         Socket(name="radii", blendername="Sphere Radii"),
         Socket(name="sphere_subdivisions", blendername="Sphere Subdivisions"),
@@ -224,7 +224,7 @@ class StyleSpheres(StyleBase):
 
 class StyleSticks(StyleBase):
     style = "sticks"
-    portdata: SocketInfo = [
+    socketdata: SocketInfo = [
         Socket(name="quality", blendername="Quality"),
         Socket(name="radius", blendername="Radius"),
         Socket(name="color_blur", blendername="Color Blur"),
@@ -234,7 +234,7 @@ class StyleSticks(StyleBase):
     def __init__(
         self,
         quality: int = 3,
-        radius: float = 0.20000000298023224,
+        radius: float = 0.2,
         color_blur: bool = False,
         shade_smooth: bool = True,
     ):
@@ -246,7 +246,7 @@ class StyleSticks(StyleBase):
 
 class StyleSurface(StyleBase):
     style = "surface"
-    portdata: SocketInfo = [
+    socketdata: SocketInfo = [
         Socket(name="quality", blendername="Quality"),
         Socket(name="scale_radii", blendername="Scale Radii"),
         Socket(name="probe_size", blendername="Probe Size"),

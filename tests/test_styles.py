@@ -33,7 +33,7 @@ def assess_node_equivalency(name, style):
 
     # get the style class name
     style_class = style()
-    style_class_bnames = set(sc.blendername for sc in style_class.portdata)
+    style_class_bnames = set(sc.blendername for sc in style_class.socketdata)
 
     # check names bidirectionally
     for bname in blender_names:
@@ -46,7 +46,7 @@ def assess_node_equivalency(name, style):
         )
 
     for [bname, bvalue] in blender_inputs:
-        for pdata in style_class.portdata:
+        for pdata in style_class.socketdata:
             if pdata.blendername == bname:
                 local_name = pdata.name
                 local_val = getattr(style_class, local_name)
