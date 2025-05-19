@@ -1,17 +1,14 @@
-import bpy
 import math
-import numpy as np
+import bpy
 import molecularnodes as mn
 from molecularnodes.nodes.nodes import get_style_node
 from molecularnodes.nodes.styles import (
     StyleBallandStick,
     StyleCartoon,
-    StyleRibbon,
     StyleSpheres,
     StyleSticks,
     StyleSurface,
 )
-
 
 DONT_COMPARE = {"Atoms", "Selection", "Material"}
 

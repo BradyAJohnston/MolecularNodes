@@ -18,12 +18,6 @@ from ...nodes.geometry import (
     style_interfaces_from_tree,
 )
 from ...nodes.styles import (
-    StyleBallandStick,
-    StyleCartoon,
-    StyleRibbon,
-    StyleSpheres,
-    StyleSticks,
-    StyleSurface,
     StyleBase,
 )
 from ..base import EntityType, MolecularEntity
