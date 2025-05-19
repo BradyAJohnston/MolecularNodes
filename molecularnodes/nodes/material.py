@@ -35,8 +35,10 @@ class MaterialTreeInterface(TreeInterface):
             material = bpy.data.materials[material]
         elif isinstance(material, Material):
             material = material
+        elif isinstance(material, bpy.types.Material): # note this is equivalent class to the above.
+            material = material
         else:
-            raise ValueError("Material must be a string or a Material object")
+            raise ValueError(f"Material must be a string or a Material object. Found {type(material)}")
 
         self.material: Material = material
         self.tree: ShaderNodeTree = self.material.node_tree  # type: ignore
