@@ -351,7 +351,7 @@ class Material:
 
 
 def create_material(
-    name: str = "",
+    name: str | None = None,
     base_color: Tuple[float, float, float, float] = (0.8, 0.8, 0.8, 0.05),
     metallic: float = 0.0,
     roughness: float = 0.2,
