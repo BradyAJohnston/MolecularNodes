@@ -9,9 +9,15 @@ will simply override the base styles.
 Because the nodetrees in the MN_data_file_{version}.blend are the source of truth, we add
 function to parity between the nodetrees and the class representations.
 
+Each style uses a Socket dataclass to define the mapping between class attributes and
+Blender node inputs, making it easier to maintain and extend the styles. The Socket
+dataclass establishes a clear relationship between Python attribute names and the corresponding
+Blender node input socket names, providing type safety and better IDE support than the
+previous dictionary-based approach.
 """
 
-from typing import List, Tuple, Union, Any, Dict
+from dataclasses import dataclass
+from typing import List, Tuple, Optional
 from bpy.types import GeometryNodeGroup
 
 __all__ = [
@@ -24,34 +30,49 @@ __all__ = [
     "StyleBase",
 ]
 
-SocketDataMapping = Dict[str, Any]
-SocketInfo = List[SocketDataMapping]
+
+@dataclass
+class Socket:
+    """Represents a mapping between a class attribute and a Blender node input socket.
+
+    Attributes:
+        name: The name of the attribute in the Style class
+        blendername: The corresponding name of the input socket in the Blender node
+    """
+    name: str
+    blendername: Optional[str] = None
+
+SocketInfo = List[Socket]
+
 
 class StyleBase:
     style: str
     portdata: SocketInfo = []
 
     def update_style_node(self, node_style: GeometryNodeGroup):
+        """Update the Blender node inputs with values from this style's attributes.
+
+        Args:
+            node_style: The Blender GeometryNodeGroup to update
+        """
         for input in node_style.inputs:
             if input.type != "GEOMETRY":
                 for arg in self.portdata:
-                    name = arg["name"]
-                    blendername = arg.get("blendername")
-                    if input.name == blendername:
-                        input.default_value = getattr(self, name)
+                    if input.name == arg.blendername:
+                        input.default_value = getattr(self, arg.name)
 
 
 class StyleBallandStick(StyleBase):
     style = "ball_and_stick"
     portdata: SocketInfo = [
-        {"name": "quality", "blendername": "Quality"},
-        {"name": "geometry", "blendername": "Sphere Geometry"},
-        {"name": "sphere_radii", "blendername": "Sphere Radii"},
-        {"name": "bond_split", "blendername": "Bond Split"},
-        {"name": "bond_find", "blendername": "Bond Find"},
-        {"name": "bond_radius", "blendername": "Bond Radius"},
-        {"name": "color_blur", "blendername": "Color Blur"},
-        {"name": "shade_smooth", "blendername": "Shade Smooth"},
+        Socket(name="quality", blendername="Quality"),
+        Socket(name="geometry", blendername="Sphere Geometry"),
+        Socket(name="sphere_radii", blendername="Sphere Radii"),
+        Socket(name="bond_split", blendername="Bond Split"),
+        Socket(name="bond_find", blendername="Bond Find"),
+        Socket(name="bond_radius", blendername="Bond Radius"),
+        Socket(name="color_blur", blendername="Color Blur"),
+        Socket(name="shade_smooth", blendername="Shade Smooth"),
     ]
 
     def __init__(
@@ -78,21 +99,21 @@ class StyleBallandStick(StyleBase):
 class StyleCartoon(StyleBase):
     style = "cartoon"
     portdata: SocketInfo = [
-        {"name": "quality", "blendername": "Quality"},
-        {"name": "dssp", "blendername": "Peptide DSSP"},
-        {"name": "cylinders", "blendername": "Peptide Cylinders"},
-        {"name": "arrows", "blendername": "Peptide Arrows"},
-        {"name": "rounded", "blendername": "Peptide Rounded"},
-        {"name": "thickness", "blendername": "Peptide Thickness"},
-        {"name": "width", "blendername": "Peptide Width"},
-        {"name": "loop_radius", "blendername": "Peptide Loop Radius"},
-        {"name": "smoothing", "blendername": "Peptide Smoothing"},
-        {"name": "backbone_shape", "blendername": "Backbone Shape"},
-        {"name": "backbone_radius", "blendername": "Backbone Radius"},
-        {"name": "base_shape", "blendername": "Base Shape"},
-        {"name": "base_realize", "blendername": "Base Realize"},
-        {"name": "color_blur", "blendername": "Color Blur"},
-        {"name": "shade_smooth", "blendername": "Shade Smooth"},
+        Socket(name="quality", blendername="Quality"),
+        Socket(name="dssp", blendername="Peptide DSSP"),
+        Socket(name="cylinders", blendername="Peptide Cylinders"),
+        Socket(name="arrows", blendername="Peptide Arrows"),
+        Socket(name="rounded", blendername="Peptide Rounded"),
+        Socket(name="thickness", blendername="Peptide Thickness"),
+        Socket(name="width", blendername="Peptide Width"),
+        Socket(name="loop_radius", blendername="Peptide Loop Radius"),
+        Socket(name="smoothing", blendername="Peptide Smoothing"),
+        Socket(name="backbone_shape", blendername="Backbone Shape"),
+        Socket(name="backbone_radius", blendername="Backbone Radius"),
+        Socket(name="base_shape", blendername="Base Shape"),
+        Socket(name="base_realize", blendername="Base Realize"),
+        Socket(name="color_blur", blendername="Color Blur"),
+        Socket(name="shade_smooth", blendername="Shade Smooth"),
     ]
 
     def __init__(
@@ -133,18 +154,18 @@ class StyleCartoon(StyleBase):
 class StyleRibbon(StyleBase):
     style = "ribbon"
     portdata: SocketInfo = [
-        {"name": "quality", "blendername": "Quality"},
-        {"name": "color_blur", "blendername": "Color Blur"},
-        {"name": "shade_smooth", "blendername": "Shade Smooth"},
-        {"name": "backbone_smoothing", "blendername": "Backbone Smoothing"},
-        {"name": "backbone_threshold", "blendername": "Backbone Threshold"},
-        {"name": "backbone_radius", "blendername": "Backbone Radius"},
-        {"name": "backbone_shape", "blendername": "Backbone Shape"},
-        {"name": "base_scale", "blendername": "Base Scale"},
-        {"name": "base_resolution", "blendername": "Base Resolution"},
-        {"name": "base_realize", "blendername": "Base Realize"},
-        {"name": "uv_map", "blendername": "UV Map"},
-        {"name": "u_component", "blendername": "U Component"},
+        Socket(name="quality", blendername="Quality"),
+        Socket(name="color_blur", blendername="Color Blur"),
+        Socket(name="shade_smooth", blendername="Shade Smooth"),
+        Socket(name="backbone_smoothing", blendername="Backbone Smoothing"),
+        Socket(name="backbone_threshold", blendername="Backbone Threshold"),
+        Socket(name="backbone_radius", blendername="Backbone Radius"),
+        Socket(name="backbone_shape", blendername="Backbone Shape"),
+        Socket(name="base_scale", blendername="Base Scale"),
+        Socket(name="base_resolution", blendername="Base Resolution"),
+        Socket(name="base_realize", blendername="Base Realize"),
+        Socket(name="uv_map", blendername="UV Map"),
+        Socket(name="u_component", blendername="U Component"),
     ]
 
     def __init__(
@@ -180,10 +201,10 @@ class StyleRibbon(StyleBase):
 class StyleSpheres(StyleBase):
     style = "spheres"
     portdata: SocketInfo = [
-        {"name": "geometry", "blendername": "Sphere Geometry"},
-        {"name": "radii", "blendername": "Sphere Radii"},
-        {"name": "sphere_subdivisions", "blendername": "Sphere Subdivisions"},
-        {"name": "shade_smooth", "blendername": "Shade Smooth"},
+        Socket(name="geometry", blendername="Sphere Geometry"),
+        Socket(name="radii", blendername="Sphere Radii"),
+        Socket(name="sphere_subdivisions", blendername="Sphere Subdivisions"),
+        Socket(name="shade_smooth", blendername="Shade Smooth"),
     ]
 
     def __init__(
@@ -202,10 +223,10 @@ class StyleSpheres(StyleBase):
 class StyleSticks(StyleBase):
     style = "sticks"
     portdata: SocketInfo = [
-        {"name": "quality", "blendername": "Quality"},
-        {"name": "radius", "blendername": "Radius"},
-        {"name": "color_blur", "blendername": "Color Blur"},
-        {"name": "shade_smooth", "blendername": "Shade Smooth"},
+        Socket(name="quality", blendername="Quality"),
+        Socket(name="radius", blendername="Radius"),
+        Socket(name="color_blur", blendername="Color Blur"),
+        Socket(name="shade_smooth", blendername="Shade Smooth"),
     ]
 
     def __init__(
@@ -224,15 +245,15 @@ class StyleSticks(StyleBase):
 class StyleSurface(StyleBase):
     style = "surface"
     portdata: SocketInfo = [
-        {"name": "quality", "blendername": "Quality"},
-        {"name": "scale_radii", "blendername": "Scale Radii"},
-        {"name": "probe_size", "blendername": "Probe Size"},
-        {"name": "relaxation_steps", "blendername": "Relaxation Steps"},
-        {"name": "separate", "blendername": "Separate By"},
-        {"name": "group_id", "blendername": "Group ID"},
-        {"name": "color_source", "blendername": "Color Source"},
-        {"name": "blur", "blendername": "Color Blur"},
-        {"name": "shade_smooth", "blendername": "Shade Smooth"},
+        Socket(name="quality", blendername="Quality"),
+        Socket(name="scale_radii", blendername="Scale Radii"),
+        Socket(name="probe_size", blendername="Probe Size"),
+        Socket(name="relaxation_steps", blendername="Relaxation Steps"),
+        Socket(name="separate", blendername="Separate By"),
+        Socket(name="group_id", blendername="Group ID"),
+        Socket(name="color_source", blendername="Color Source"),
+        Socket(name="blur", blendername="Color Blur"),
+        Socket(name="shade_smooth", blendername="Shade Smooth"),
     ]
 
     def __init__(
