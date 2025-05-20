@@ -71,7 +71,7 @@ for code, style, material in zip(codes, styles, materials):
         canvas.scene_reset(engine=mn.scene.Cycles(samples=32))
         mol = mn.Molecule.fetch(code)
         canvas.frame_object(mol)
-        mol.add_style(style)
+        mol.add_style(style, material=material)
         canvas.snapshot()
 
 ```
