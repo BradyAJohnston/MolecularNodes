@@ -4,25 +4,71 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## \[UNRELEASED\]
+
+## \[[4.4.2](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v4.4.2)\] - 2025-05-16
 
 ### Added
 
--   Support for importing `.star` files from RELION and cisTEM files for instancing of structures from EM tomography datasets ([#196](https://github.com/BradyAJohnston/MolecularNodes/pull/196))
-    -   Adds `starfile` and `eulerangles` as dependencies
-    -   Creates another tab for the MolecularNodes input panel called `Starfile`
--   Adds `MOL_style_cartoon` for cartoon representations of proteins ([*#199*](https://github.com/BradyAJohnston/MolecularNodes/pull/199)). Currently supports:
-    -   Beta sheets with & without arrow heads
-    -   Alpha-helices as cylinders or as arrows
--   Adds `MOL_utils_dssp` for detection of secondary structure.
+-   Move node definitions to .yml
+-   Testing for User-Defined Materials
+-   Update tutorial documentation
+-   Update citations.yml
 
 ### Fixed
 
--   Improved secondary structure import when downloading structure from the PDB as a `mmtf` file which includes assigned secondary structure.
+-   Resolve relative filepaths when importing via GUI
+-   Activate uv venv before running GHA
+-   Update data.py source
+-   Fix option to remove solvent
+-   Fix oxDNA: add resname T to RNA for oxDNA parsing
+-   Docstring lint pass
 
--   Improved some calculations for surface style, \~2x speedup
+## \[[4.4.1](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v4.4.1)\] - 2025-04-28
 
--   Added another row of buttons for the panel to avoid the buttons being squished
+### Fixed
+
+-   Fixed UI fetching from AlphaFold
+-   Improved defaults for simulation nodes
+-   Ensure correct attribute propagation onto bond geometry
+-   Version bumps for Blender and MN
+
+## \[[4.4.0](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v4.4.0)\] - 2025-04-26
+
+### Added
+
+-   Updated for Blender 4.4 with improved node functionality
+-   New experimental simulation nodes
+-   Performance improvements and API overhaul
+-   Added `ures_id` attribute
+-   Added Dihedral Nodes
+-   UV Map for Ribbon and "Is Hydrogen" node group
+-   Improved API for render engines
+
+### Fixed
+
+-   Multiple API and under-the-hood improvements
+-   Fixed cache location
+-   Fixed frame mapping
+-   Fixed selection from AtomGroup after refactoring
+-   Multiple documentation and link fixes
+-   Improved error handling and imports
+
+## \[[4.2.12](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v4.2.12)\] - 2025-02-15
+
+### Added
+
+-   Python API documentation
+-   Updated examples in readme
+-   Bumped Biotite to >= 1
+
+### Fixed
+
+-   Generalized update handler
+-   Fixed menu issue for node swap
+-   Fixed selection refactoring
+-   Cleaned up and moved properties to property groups
+-   Fixed add-on preferences
+-   Fixed several issues referenced in PRs #724 and #725
 
 ## \[[2.5.4](https://github.com/BradyAJohnston/MolecularNodes/releases/tag/v2.5.4)\] 2023-04-10
 
