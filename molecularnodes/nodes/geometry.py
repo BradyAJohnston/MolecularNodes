@@ -19,6 +19,7 @@ from .nodes import (
     insert_before,
     loc_between,
 )
+from .styles import StyleBase
 
 
 def insert_set_color(
@@ -77,7 +78,7 @@ def insert_animate_frames(
 
 def add_style_branch(
     tree: bpy.types.GeometryNodeTree,
-    style: str | bpy.types.GeometryNodeTree,
+    style: str | bpy.types.GeometryNodeTree | StyleBase,
     color: str | None = None,
     selection: str | None = None,
     material: bpy.types.Material | str | None = None,
@@ -97,6 +98,9 @@ def add_style_branch(
 
     if isinstance(style, str):
         style_name = nodes.styles_mapping[style]
+        nodes.append(style_name)
+    elif isinstance(style, StyleBase):
+        style_name = nodes.styles_mapping[style.style]
         nodes.append(style_name)
     elif isinstance(style, bpy.types.GeometryNodeTree):
         style_name = style.name
@@ -135,6 +139,9 @@ def add_style_branch(
         insert_animate_frames(node_style, frames)
 
     arrange_tree(tree)
+
+    if isinstance(style, StyleBase):
+        style.update_style_node(node_style)
 
 
 def get_final_style_nodes(
