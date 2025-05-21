@@ -1,24 +1,6 @@
-# Contributing to Molecular Nodes
-
-## Table of Contents
-- [Contributing to Molecular Nodes](#contributing-to-molecular-nodes)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-    - [Molecular Nodes Overview](#molecular-nodes-overview)
-  - [Getting Started](#getting-started)
-  - [Understanding Blender Add-ons](#understanding-blender-add-ons)
-    - [`bpy`](#bpy)
-    - [Creating a Basic Operator:](#creating-a-basic-operator)
-  - [Project Structure](#project-structure)
-    - [Import](#import)
-    - [Manipulation](#manipulation)
-  - [Coding Standards](#coding-standards)
-  - [Submitting Changes](#submitting-changes)
-  - [Testing](#testing)
-    - [Python Environments](#python-environments)
-    - [Running Tests](#running-tests)
-  - [Writing and Building Docs](#writing-and-building-docs)
-  - [Getting Help](#getting-help)
+---
+title: "Contributing"
+---
 
 ## Introduction
 Molecular Nodes is an add-on for the 3D modelling and animation program [Blender](https://blender.org). It enables import of structural biology data formats into Blender, and provides a suite of methods for interacting, animating and visualising this data.
@@ -50,7 +32,7 @@ blender -b -P build.py
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
 
 
-## Understanding Blender Add-ons
+## Blender Add-ons
 The general idea with add-ons is that they provide new functionality to Blender, usually by adding new panels with buttons that execute custom python code. Blender ships with it's own Python kernel inside, allowing for essentially any arbitrary Python code to be executed.
 
 Usually this is done through the creation of [`operators`](https://docs.blender.org/manual/en/latest/interface/operators.html). Think of operators as just Python code that is executed when a button is pressed inside of the GUI. All of the the buttons inside of Blender execute an operator when pressed, which then carries out the desired actions. The operators have support for taking into account the current state of the GUI, where the mouse is, what objects are available etc when executing the code.

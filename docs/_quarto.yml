@@ -48,6 +48,7 @@ website:
         - tutorials/interface.qmd
         - tutorials/importing.qmd
         - tutorials/selections.qmd
+        - tutorials/morphing.qmd
         - tutorials/trajectories.qmd
         - tutorials/cryoem.qmd
     - text: "---"
@@ -56,19 +57,10 @@ website:
         - reference/attributes.qmd
         - reference/data_table.qmd
         - reference/simulation.qmd
-
-
-  - id: tutorials
-    align: left
-    contents:
-    - tutorials/index.qmd
-    - tutorials/installation.qmd
-    - tutorials/interface.qmd
-    - tutorials/importing.qmd
-    - tutorials/selections.qmd
-    - tutorials/trajectories.qmd
-    - tutorials/cryoem.qmd
-    - tutorials/simulation.qmd
+    - text: "---"
+    - reference/contributing.qmd
+    - text: "---"
+    - reference/changelog.qmd
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
