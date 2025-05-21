@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-29d953ea36098eb32a2fa61aeae49570.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d54373584a95d5a94cf1f78d4c48419d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -316,7 +316,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>We can progrommatically access the properties of the materials like this:</p>
-<div id="1007e5a7" class="cell" data-execution_count="1">
+<div id="f09af452" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>mn.register()</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mn.assets.install()</span>
@@ -324,17 +324,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>can.scene_reset()</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>can.resolution <span class="op">=</span> (<span class="dv">860</span>, <span class="dv">540</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="58812667" class="cell" data-execution_count="2">
+<div id="c5916d72" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>).add_style(<span class="st">"surface"</span>, material <span class="op">=</span> mn.material.AmbientOcclusion())</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>can.frame_object(mol)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:104.19M (Peak 115.37M) | Time:00:00.29 | Rendering 1 / 64 samples
-Fra:1 Mem:104.27M (Peak 115.37M) | Time:00:00.45 | Rendering 25 / 64 samples
-Fra:1 Mem:104.27M (Peak 115.37M) | Time:00:00.55 | Rendering 50 / 64 samples
-Fra:1 Mem:104.27M (Peak 115.37M) | Time:00:00.60 | Rendering 64 / 64 samples
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmp468ah9le/snapshot.png'
-Time: 00:00.70 (Saving: 00:00.07)
+<pre><code>Fra:1 Mem:102.29M (Peak 119.06M) | Time:00:00.45 | Rendering 1 / 64 samples
+Fra:1 Mem:102.29M (Peak 119.06M) | Time:00:00.51 | Rendering 25 / 64 samples
+Fra:1 Mem:102.29M (Peak 119.06M) | Time:00:00.56 | Rendering 50 / 64 samples
+Fra:1 Mem:102.29M (Peak 119.06M) | Time:00:00.59 | Rendering 64 / 64 samples
+Saved: '/tmp/tmptit2vcsw/snapshot.png'
+Time: 00:00.71 (Saving: 00:00.10)
 </code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -345,16 +345,16 @@ Time: 00:00.70 (Saving: 00:00.07)
 </div>
 </div>
 </div>
-<div id="914e5b52" class="cell" data-execution_count="3">
+<div id="b29227db" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">0</span>].material.ambient_occlusion_distance <span class="op">=</span> <span class="fl">0.1</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>can.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:104.35M (Peak 121.18M) | Time:00:00.11 | Rendering 1 / 64 samples
-Fra:1 Mem:104.28M (Peak 121.18M) | Time:00:00.23 | Rendering 25 / 64 samples
-Fra:1 Mem:104.35M (Peak 121.18M) | Time:00:00.36 | Rendering 50 / 64 samples
-Fra:1 Mem:104.28M (Peak 121.18M) | Time:00:00.44 | Rendering 64 / 64 samples
-Saved: '/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/tmpc8_s65f8/snapshot.png'
-Time: 00:00.49 (Saving: 00:00.03)
+<pre><code>Fra:1 Mem:102.29M (Peak 119.14M) | Time:00:00.10 | Rendering 1 / 64 samples
+Fra:1 Mem:102.29M (Peak 119.14M) | Time:00:00.16 | Rendering 25 / 64 samples
+Fra:1 Mem:102.29M (Peak 119.14M) | Time:00:00.21 | Rendering 50 / 64 samples
+Fra:1 Mem:102.29M (Peak 119.14M) | Time:00:00.24 | Rendering 64 / 64 samples
+Saved: '/tmp/tmp45mjrbjj/snapshot.png'
+Time: 00:00.28 (Saving: 00:00.03)
 </code></pre>
 </div>
 <div class="cell-output cell-output-display">
@@ -365,7 +365,7 @@ Time: 00:00.49 (Saving: 00:00.03)
 </div>
 </div>
 </div>
-<div id="72e63cc3" class="cell" data-execution_count="4">
+<div id="6f22591a" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>[x <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">dir</span>(mn.material.AmbientOcclusion()) <span class="cf">if</span> <span class="kw">not</span> x.startswith(<span class="st">"_"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>['ambient_occlusion_color',
