@@ -1,0 +1,50 @@
+:::: {.grid .text-center .list}
+
+<% for (const item of items) { %>
+
+:::: {.g-col-12 .g-col-lg-6 .g-col-xl-4 <%= metadataAttrs(item) %>}
+
+:::: {.quarto-grid-item .card .h-100 .card-center .projects}
+
+```{=html}
+<div class="card-img-top">
+<a href="<%- item.path %>">
+  <img src="<%= item.image %>" class="thumbnail-image card-img" loading="lazy" alt="<%= item.title %>">
+</a>
+</div>
+```
+
+:::: {.card-body .post-contents}
+
+
+```{=html}
+<a class="quarto-grid-link" href="<%- item.path %>">
+  <h5 class="no-anchor card-title listing-title"><%= item.title %></h5>
+</a>
+```
+
+
+
+:::: {.card-text}
+:::: {.listing-description}
+<%= item.description %>
+:::
+
+
+
+:::
+
+:::
+
+:::: {.card-footer}
+<a href=<%= item.path %>>{{<fa solid link size="2x">}}</a>
+<a href=<%= item.doi %>>{{< ai doi size=2x >}}</a>
+:::
+
+:::
+
+:::
+
+<% } %>
+
+:::
