@@ -9,7 +9,7 @@ jupyter: python3
 
 Molecular Nodes is designed and created first and foremost as an add-on for Blender, so the API can at times seem a bit quirky and for the time being is not to be considered stable.
 
-Molecular Nodes is versioned to match Blender versions, so while we are currently up to "4.2.*", the  API should be not be consired to be that mature.
+Molecular Nodes is versioned to match Blender versions, so while we are currently up to "4.2.*", the  API should be not be considered to be that mature.
 :::
 
 This is how we can use the API.
