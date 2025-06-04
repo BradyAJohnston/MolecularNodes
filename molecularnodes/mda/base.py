@@ -6,8 +6,8 @@ import bpy
 import MDAnalysis as mda
 from MDAnalysis.core.groups import AtomGroup
 from ..session import get_session
-from .universes import Universe, Universes
 from . import utils
+from .universes import Universe, Universes
 
 
 class MDAVis:

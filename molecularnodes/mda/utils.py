@@ -55,7 +55,7 @@ def set_object_visibility(object: bpy.types.Object, visible: bool) -> None:
         # obj.hide_viewport = hide
         # icon incorrect, but causes blender bug for volumes with above
         object.hide_render = not visible
-    except:
+    except RuntimeError:
         # Keyframing object visibility can at times lead to:
         # RuntimeError: Object can't be hidden because it is not in View Layer 'ViewLayer'!
         pass

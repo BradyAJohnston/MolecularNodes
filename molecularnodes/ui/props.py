@@ -3,14 +3,14 @@ from bpy.props import (  # type: ignore
     BoolProperty,
     EnumProperty,
     IntProperty,
-    StringProperty,
     PointerProperty,
+    StringProperty,
 )
 from bpy.types import PropertyGroup  # type: ignore
 from ..handlers import _update_entities
+from ..mda.props import mdaObjectProperties, mdaSceneProperties
 from ..session import get_session
 from .style import STYLE_ITEMS
-from ..mda.props import mdaSceneProperties, mdaObjectProperties
 
 uuid_property = StringProperty(  # type: ignore
     name="UUID",

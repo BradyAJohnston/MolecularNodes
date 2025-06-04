@@ -1,6 +1,6 @@
 import bpy
-import pytest
 import MDAnalysis as mda
+import pytest
 from molecularnodes import MDAVis
 from .constants import data_dir
 

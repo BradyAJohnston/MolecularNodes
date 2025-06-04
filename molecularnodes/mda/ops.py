@@ -3,14 +3,13 @@ Blender operators
 """
 
 import bpy
-from bpy.props import (  # type: ignore
-    StringProperty,
-    EnumProperty,
-)
 import MDAnalysis as mda
-from ..ui.style import STYLE_ITEMS
+from bpy.props import (  # type: ignore
+    EnumProperty,
+    StringProperty,
+)
 from ..session import get_session
-from . import utils
+from ..ui.style import STYLE_ITEMS
 
 
 class MDA_OT_Add_Universe(bpy.types.Operator):

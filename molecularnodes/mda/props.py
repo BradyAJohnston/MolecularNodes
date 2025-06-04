@@ -4,11 +4,11 @@ Blender properties and associated callbacks
 
 import bpy
 from bpy.props import (  # type: ignore
-    IntProperty,
     BoolProperty,
-    StringProperty,
-    PointerProperty,
     CollectionProperty,
+    IntProperty,
+    PointerProperty,
+    StringProperty,
 )
 from . import utils
 
