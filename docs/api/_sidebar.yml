@@ -8,6 +8,9 @@ website:
     - api/materials.qmd
     - text: '---'
     - contents:
+      - api/mda/example_mda.qmd
+      section: MDAnalysis
+    - contents:
       - api/reference/index.qmd
       - contents:
         - api/reference/entities.Molecule.qmd
