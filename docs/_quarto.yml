@@ -55,6 +55,10 @@ website:
     - tutorials/trajectories.qmd
     - tutorials/cryoem.qmd
     - tutorials/simulation.qmd
+    - text: "---"
+    - section: "MDAnalysis"
+      contents:
+      - "mda/example_mda.qmd"
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -94,6 +98,7 @@ quartodoc:
       contents:
       - "{{ contents }}"
   # css: api/_styles-quartodoc.css
+
 
   sections:
   - title: Entity
