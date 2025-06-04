@@ -4,7 +4,7 @@ on:
     push:
       branches: ["main"]
     pull_request:
-      branches: ["main", "4.4"]
+      branches: ["*"]
     
 jobs:
     blender:
