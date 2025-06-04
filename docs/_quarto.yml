@@ -59,6 +59,7 @@ website:
     - section: "MDAnalysis"
       contents:
       - "mda/example_mda.qmd"
+      - "mda/basic-universe-management.ipynb"
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -114,3 +115,9 @@ quartodoc:
     desc: Control settings for the Blender scene through the `Canvas` object.
     contents:
     - Canvas
+
+  - title: MDAnalysis
+    desc: APIs for MDAnalysis visualization
+    contents:
+    - MDAVis
+    - mda.Universe

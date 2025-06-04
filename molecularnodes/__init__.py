@@ -1,6 +1,7 @@
 from . import assets, blender, color, download, nodes, session, ui
 from .assets import template
 from .entities import Molecule, Trajectory
+from .mda import MDAVis
 from .nodes import material
 from .ui.addon import register, unregister
 
@@ -24,4 +25,5 @@ __all__ = [
     "unregister",
     "download",
     "Canvas",
+    "MDAVis",
 ]

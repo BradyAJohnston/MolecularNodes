@@ -18,9 +18,13 @@ from .. import session
 from ..handlers import update_entities
 from ..utils import add_current_module_to_path
 from . import node_menu, ops, panel, pref, props
+from ..mda import props as mda_props, ops as mda_ops, ui as mda_ui
 
 all_classes = (
     panel.CLASSES
+    + mda_ops.CLASSES
+    + mda_props.CLASSES
+    + mda_ui.CLASSES
     + ops.CLASSES
     + props.CLASSES
     + pref.CLASSES

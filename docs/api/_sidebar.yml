@@ -8,9 +8,6 @@ website:
     - api/materials.qmd
     - text: '---'
     - contents:
-      - api/mda/example_mda.qmd
-      section: MDAnalysis
-    - contents:
       - api/reference/index.qmd
       - contents:
         - api/reference/entities.Molecule.qmd
@@ -22,6 +19,10 @@ website:
       - contents:
         - api/reference/Canvas.qmd
         section: Scene
+      - contents:
+        - api/reference/MDAVis.qmd
+        - api/reference/mda.Universe.qmd
+        section: MDAnalysis
       section: Reference
     id: api/reference
     search: true

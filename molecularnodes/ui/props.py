@@ -1,9 +1,16 @@
 import bpy
-from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
-from bpy.types import PropertyGroup
+from bpy.props import (  # type: ignore
+    BoolProperty,
+    EnumProperty,
+    IntProperty,
+    StringProperty,
+    PointerProperty,
+)
+from bpy.types import PropertyGroup  # type: ignore
 from ..handlers import _update_entities
 from ..session import get_session
 from .style import STYLE_ITEMS
+from ..mda.props import mdaSceneProperties, mdaObjectProperties
 
 uuid_property = StringProperty(  # type: ignore
     name="UUID",
@@ -24,6 +31,8 @@ def _set_frame(self, frame):
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    mda: PointerProperty(type=mdaSceneProperties)  # type: ignore
+
     import_del_hydrogen: BoolProperty(  # type: ignore
         name="Remove Hydrogens",
         description="Remove the hydrogens from a structure on import",
@@ -234,6 +243,8 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
+    mda: PointerProperty(type=mdaObjectProperties)  # type: ignore
+
     biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
         description="A list of biological assemblies to be created",
