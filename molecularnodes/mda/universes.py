@@ -73,16 +73,20 @@ class Universes:
     """
 
     def __init__(self, universes: dict) -> None:
-        self.universes = universes
+        self._universes = universes
 
     def __iter__(self):
         """To support iteration"""
-        return iter(self.universes.values())
+        return iter(self._universes.values())
+
+    def __len__(self):
+        """Number of universes"""
+        return len(self._universes)
 
     def __getitem__(self, key: str) -> Universe:
         """Return Universe object based on name"""
-        return next((u for u in self.universes.values() if u.name == key))
+        return next((u for u in self._universes.values() if u.name == key))
 
     def _ipython_key_completions_(self):
         """Return dynamic universe (object) names"""
-        return [u.name for u in self.universes.values()]
+        return [u.name for u in self._universes.values()]

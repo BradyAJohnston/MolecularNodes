@@ -53,6 +53,7 @@ def test_iterable_universes(mdavis, universe):
         ulist.append(u)
     assert vu1 in ulist
     assert vu2 in ulist
+    assert len(mdavis.universes) == 2
 
 
 def test_operators():
@@ -61,6 +62,9 @@ def test_operators():
     # add universe operator
     bpy.ops.mda.add_universe(topology=topo, trajectory=traj, name="u")
     assert "u" in bpy.data.objects
+    # frame selected universe
+    bpy.ops.mda.frame_selected_universe(index=0)
+    assert bpy.context.active_object == bpy.data.objects["u"]
     # delete universe operator
     bpy.ops.mda.delete_universe()
     assert "u" not in bpy.data.objects
