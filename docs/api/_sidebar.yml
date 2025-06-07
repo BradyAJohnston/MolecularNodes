@@ -21,7 +21,8 @@ website:
         section: Scene
       - contents:
         - api/reference/MDAVis.qmd
-        - api/reference/mda.Universe.qmd
+        - api/reference/mda.universes.UniverseManager.qmd
+        - api/reference/mda.universes.UniverseView.qmd
         section: MDAnalysis
       section: Reference
     id: api/reference

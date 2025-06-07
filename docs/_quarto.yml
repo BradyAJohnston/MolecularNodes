@@ -120,4 +120,5 @@ quartodoc:
     desc: APIs for MDAnalysis visualization
     contents:
     - MDAVis
-    - mda.Universe
+    - mda.universes.UniverseManager
+    - mda.universes.UniverseView

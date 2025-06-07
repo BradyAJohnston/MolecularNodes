@@ -49,7 +49,7 @@ class MDA_OT_Add_Universe(bpy.types.Operator):
     def execute(self, context):
         universe = mda.Universe(self.topology, self.trajectory)
         session = get_session()
-        session.MDAVis.add_universe(universe, self.style, self.name)
+        session.MDAVis.universes.add_universe(universe, self.style, self.name)
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -75,7 +75,7 @@ class MDA_OT_Delete_Universe(bpy.types.Operator):
         sprop = context.scene.mn.mda
         object_name = sprop.universes[sprop.active_index].object.name
         session = get_session()
-        session.MDAVis.delete_universe(object_name)
+        session.MDAVis.universes.delete_universe(object_name)
         return {"FINISHED"}
 
     def invoke(self, context, event):
