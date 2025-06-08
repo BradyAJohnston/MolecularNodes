@@ -12,15 +12,21 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_pre, load_post, save_post
-from bpy.props import CollectionProperty, PointerProperty
+from bpy.app.handlers import frame_change_pre, load_post, save_post  # type: ignore
+from bpy.props import CollectionProperty, PointerProperty  # type: ignore
 from .. import session
 from ..handlers import update_entities
+from ..mda import ops as mda_ops
+from ..mda import props as mda_props
+from ..mda import ui as mda_ui
 from ..utils import add_current_module_to_path
 from . import node_menu, ops, panel, pref, props
 
 all_classes = (
     panel.CLASSES
+    + mda_ops.CLASSES
+    + mda_props.CLASSES
+    + mda_ui.CLASSES
     + ops.CLASSES
     + props.CLASSES
     + pref.CLASSES
