@@ -22,6 +22,8 @@ class UniverseView:
         MN trajectory entity of the universe
     object: bpy.types.Object
         Corresponding Blender object
+    visible: bool
+        Property to set/get visibility of universe
 
     """
 
@@ -56,6 +58,22 @@ class UniverseView:
     def _key(self) -> str:
         """Internal unique key to lookup universes property collection"""
         return self.object.mn.mda.universe_key
+
+    def _universe_index(self) -> int:
+        sprop = bpy.context.scene.mn.mda
+        return sprop.universes.find(self._key)
+
+    @property
+    def visible(self) -> bool:
+        """Get universe visibility"""
+        sprop = bpy.context.scene.mn.mda
+        return sprop.universes[self._universe_index()].visible
+
+    @visible.setter
+    def visible(self, value: bool) -> None:
+        """Set universe visibility"""
+        sprop = bpy.context.scene.mn.mda
+        sprop.universes[self._universe_index()].visible = value
 
 
 class UniverseManager:
@@ -94,7 +112,7 @@ class UniverseManager:
         """Return dynamic universe (object) names"""
         return [u.name for u in self._universes.values()]
 
-    def add_universe(
+    def add(
         self,
         universe: mda.Universe | AtomGroup,
         style: str = "spheres",
@@ -120,11 +138,11 @@ class UniverseManager:
         print("Added universe", u.name)
         return u
 
-    def delete_universe(self, universe: UniverseView | str) -> None:
+    def delete(self, universe: UniverseView | str) -> None:
         """Delete a universe view"""
         if isinstance(universe, str):
             # lookup universe object based on name
-            u = self.get_universe(universe)
+            u = self.get(universe)
             if u is None:
                 return
             object = u.object
@@ -145,12 +163,12 @@ class UniverseManager:
         del self._universes[key]  # remove universe object from dict
         print("Deleted universe", object_name)
 
-    def clear_universes(self) -> None:
+    def clear(self) -> None:
         """Clear all universe views"""
         for u in self._universes.copy().values():
-            self.delete_universe(u)
+            self.delete(u)
 
-    def list_universes(self) -> None:
+    def list(self) -> None:
         """List all universe views"""
         if len(self._universes) == 0:
             print("No universes")
@@ -158,7 +176,7 @@ class UniverseManager:
         for u in self._universes.values():
             print(u.name, u.trajectory)
 
-    def get_universe(self, name: str) -> UniverseView | None:
+    def get(self, name: str) -> UniverseView | None:
         """Get universe view based on name"""
         if name not in bpy.data.objects:  # check name in blender objects
             print(name, "universe not found")
