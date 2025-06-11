@@ -2,6 +2,7 @@ import gzip
 import io
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 import requests
 
 CACHE_DIR = Path(Path.home(), "MolecularNodesCache").expanduser()
@@ -28,6 +29,71 @@ class StructureDownloader:
         self.cache = str(Path(cache).absolute()) if cache else None
         if self.cache and not os.path.isdir(self.cache):
             os.makedirs(self.cache)
+
+    @staticmethod
+    def is_valid_url(url):
+        try:
+            result = urlparse(url)
+            return bool(result.scheme and result.netloc)
+        except Exception:
+            return False
+
+    @staticmethod
+    def download_url(
+        url: str, format: str = "cif", cache: str | Path | None = CACHE_DIR
+    ) -> Path:
+        format = format.strip(".")
+        supported_formats = ["cif", "pdb", "bcif"]
+        if format not in supported_formats:
+            raise ValueError(f"File format '{format}' not in: {supported_formats=}")
+
+        _is_binary = format in ["bcif"]
+
+        # Extract filename from URL for caching
+        parsed_url = urlparse(url)
+        url_filename = os.path.basename(parsed_url.path)
+        if not url_filename or "." not in url_filename:
+            # Generate filename from URL hash if no clear filename
+            url_hash = str(hash(url))[-8:]  # Last 8 characters of hash
+            filename = f"url_{url_hash}.{format}"
+        else:
+            # Use the filename from URL but ensure correct extension
+            name, ext = os.path.splitext(url_filename)
+            filename = f"{name}.{format}"
+
+        cache_path = str(Path(cache).absolute()) if cache else None
+        if cache_path and not os.path.isdir(cache_path):
+            os.makedirs(cache_path)
+
+        if cache_path:
+            file = os.path.join(cache_path, filename)
+            if os.path.exists(file):
+                return Path(file)
+        else:
+            file = None
+
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+        except requests.HTTPError as e:
+            raise FileDownloadPDBError(str(e))
+
+        if _is_binary:
+            content = r.content
+            # Check if the content is gzipped
+            if content[:2] == b"\x1f\x8b":  # gzip magic number
+                content = gzip.decompress(content)
+        else:
+            content = r.text
+
+        if file:
+            mode = "wb+" if _is_binary else "w+"
+            with open(file, mode) as f:
+                f.write(content)
+            return Path(file)
+        else:
+            raise ValueError("URL download should go to Cache and return a Path")
+        return file
 
     def download(
         self,
@@ -64,6 +130,7 @@ class StructureDownloader:
         FileDownloadPDBError
             If there is an error downloading the file from the database.
         """
+
         code = code.strip()
         format = format.strip(".")
         supported_formats = ["cif", "pdb", "bcif"]

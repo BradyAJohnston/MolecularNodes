@@ -169,3 +169,31 @@ def test_alphafold_download(format: str, code: str, tmpdir) -> None:
 
     assert mol.array
     time.sleep(0.5)
+
+
+@pytest.mark.parametrize("format", ["cif", "pdb", "bcif"])
+def test_download_url_with_cache(tmpdir, format):
+    cache_dir = tmpdir.mkdir("cache")
+    downloader = StructureDownloader(cache=str(cache_dir))
+
+    # Use a real RCSB URL for testing
+    url = f"https://files.rcsb.org/download/4ozs.{format}"
+    if format == "bcif":
+        url = "https://models.rcsb.org/4ozs.bcif"
+
+    file = downloader.download_url(url, format=format)
+
+    assert isinstance(file, Path)
+    assert os.path.isfile(file)
+    # Check that filename contains the format extension
+    assert file.name.endswith(f".{format}")
+
+    if format == "bcif":
+        with open(file, "rb") as f:
+            content = f.read()
+        assert content.startswith(b"\x83\xa7")
+    else:
+        with open(file, "r") as f:
+            content = f.read()
+        assert content.startswith(_filestart(format))
+    time.sleep(0.5)

@@ -148,3 +148,24 @@ def test_rcsb_cache(snapshot_custom):
 
         mol2 = mn.Molecule.fetch("6BQN", cache=test_cache)
         assert np.allclose(mol1.position, mol2.position)
+
+
+def test_load_from_url(snapshot_custom):
+    """Test loading a molecule directly from a URL using mn.Molecule.load()"""
+    # Use a known stable URL for a small structure
+    url = "https://www.ebi.ac.uk/pdbe/entry-files/download/1lap_updated.cif"
+
+    mol = mn.Molecule.load(url)
+
+    # Verify the molecule was loaded successfully
+    assert mol.object is not None
+    assert len(mol.position) > 0
+
+    # Compare with fetched version to ensure consistency
+    mol_fetched = mn.Molecule.fetch("1LAP", cache=data_dir)
+
+    # The positions should be very similar (allowing for minor formatting differences)
+    assert np.allclose(mol.position, mol_fetched.position, rtol=1e-3)
+
+    # Test the snapshot for consistency
+    assert snapshot_custom == mol.named_attribute("position")

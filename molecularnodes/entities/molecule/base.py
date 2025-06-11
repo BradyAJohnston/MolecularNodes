@@ -11,6 +11,7 @@ from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
 from ... import blender as bl
 from ... import download, utils
+from ...download import StructureDownloader
 from ...nodes import nodes
 from ...nodes.geometry import (
     GeometryNodeInterFace,
@@ -110,7 +111,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Parameters
         ----------
         file_path : str or Path
-            The path to the file containing molecular data
+            The path to the file or URL containing molecular data
         name : str or None, optional
             The name to give the molecule object. If None, uses the filename stem
         remove_solvent : bool, optional
@@ -125,7 +126,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         -----
         Supports various file formats including .cif, .bcif, .pdb, .sdf, and .mol
         """
+
         reader = cls._read(file_path)
+
         if not name:
             name = Path(file_path).stem
         mol = cls(reader.array, reader=reader)
@@ -167,6 +170,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         file_path : Union[Path, io.BytesIO]
             The file path to the file which stores the atomic coordinates.
         """
+        if StructureDownloader.is_valid_url(file_path):
+            file_path = StructureDownloader.download_url(file_path)
+
         if isinstance(file_path, io.BytesIO):
             reader = pdbx.PDBXReader(file_path)
         else:
