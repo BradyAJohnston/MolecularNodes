@@ -61,25 +61,25 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].2
   list([
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
-    5.0,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
+    5,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].3
   list([
     42,
-    -1,
-    -1,
+    43,
+    43,
     42,
     41,
     42,
@@ -137,24 +137,24 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].2
   list([
-    8.0,
-    8.0,
-    8.0,
-    8.0,
-    8.0,
-    8.0,
-    9.0,
-    9.0,
-    9.0,
-    9.0,
-    9.0,
-    9.0,
+    8,
+    8,
+    8,
+    8,
+    8,
+    8,
+    9,
+    9,
+    9,
+    9,
+    9,
+    9,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].3
   list([
     42,
-    -1,
+    43,
     -1,
     42,
     41,
@@ -229,18 +229,18 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old].2
   list([
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    2.0,
-    2.0,
-    2.0,
-    2.0,
-    2.0,
-    2.0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
   ])
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old].3
@@ -248,8 +248,8 @@
     42,
     41,
     42,
-    -1,
-    -1,
+    43,
+    43,
     42,
     41,
     42,

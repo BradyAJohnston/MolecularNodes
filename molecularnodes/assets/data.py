@@ -772,6 +772,7 @@ residues = {
     "C": {"res_name_num": 41, "res_type": "unkown", "res_type_no": 1},
     "G": {"res_name_num": 42, "res_type": "unkown", "res_type_no": 1},
     "U": {"res_name_num": 43, "res_type": "unkown", "res_type_no": 1},
+    "T": {"res_name_num": 43, "res_type": "unkown", "res_type_no": 1},  # used by oxDNA import
     # need to add some sugars and such here as well
 }
 

@@ -1,4 +1,4 @@
-import databpy
+import databpy as db
 import numpy as np
 from MDAnalysis import Universe
 from MDAnalysis.coordinates.base import ReaderBase
@@ -9,8 +9,9 @@ from MDAnalysis.core.topologyattrs import (
     ChainIDs,
     Resids,
     Resnames,
-    # Resnums,
 )
+
+# Resnums,
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
@@ -400,7 +401,7 @@ class OXDNA(Trajectory):
         bpy.types.Object
             The created Blender object
         """
-        self.object = databpy.create_object(
+        self.object = db.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
@@ -413,18 +414,20 @@ class OXDNA(Trajectory):
                 att_name = "res_num"
             else:
                 att_name = name
-            self.store_named_attribute(getattr(self, att_name), name)
+            self.store_named_attribute(
+                getattr(self, att_name),
+                name,
+                atype=db.AttributeTypes.INT,
+            )
 
         self.store_named_attribute(
             data=color.color_chains_equidistant(self.chain_id),
             name="Color",
-            atype=databpy.AttributeTypes.FLOAT_COLOR,
+            atype=db.AttributeTypes.FLOAT_COLOR,
         )
 
         if style:
             nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
-
-        return self.object
 
     def set_frame(self, frame: int) -> None:
         super()._update_positions(frame)
@@ -437,7 +440,9 @@ class OXDNA(Trajectory):
         for name in self._att_names:
             try:
                 self.store_named_attribute(
-                    self.universe.trajectory.ts.data[name] * self.world_scale, name=name
+                    data=self.universe.trajectory.ts.data[name] * self.world_scale,
+                    name=name,
+                    atype=db.AttributeTypes.FLOAT_VECTOR,
                 )
             except KeyError as e:
                 print(e)

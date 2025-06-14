@@ -2,9 +2,11 @@ project:
   type: website
   output-dir: _build
 
+# lightbox: true
 filters:
-  - filters.lua
-  - quarto
+- filters.lua
+- quarto
+- quarto-pdb
 
 website:
   title: "Molecular Nodes"
@@ -12,49 +14,47 @@ website:
   page-navigation: true
   navbar:
     left:
-      # - file: installation.qmd
-      #   text: Installation
-      - file: tutorials/
-        text: Tutorials
-      - text: Nodes
-        href: nodes/
-      - file: attributes.qmd
-        text: Documentation
-      - text: API
-        href: api/
-      - file: examples/
-        text: Examples
-      - file: citations/
-        text: Citations
+    - href: tutorials/
+      text: Tutorials
+    - text: Nodes
+      href: nodes/
+    - href: attributes.qmd
+      text: Documentation
+    - text: API
+      href: api/
+    - href: examples/
+      text: Examples
+    - href: citations/
+      text: Citations
     tools:
-      - icon: github
-        href: https://github.com/BradyAJohnston/MolecularNodes
-      - icon: twitter
-        href: https://twitter.com/bradyajohnston
-      - icon: youtube
-        href: https://youtube.com/c/bradyjohnston
+    - icon: github
+      href: https://github.com/BradyAJohnston/MolecularNodes
+    - icon: twitter
+      href: https://twitter.com/bradyajohnston
+    - icon: youtube
+      href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-    - id: nodes
-      title: Nodes
-      contents: nodes/
+  - id: nodes
+    title: Nodes
+    contents: nodes/
 
-    - id: attributes
-      contents:
-        - attributes.qmd
-        - data_table.qmd
+  - id: attributes
+    contents:
+    - attributes.qmd
+    - data_table.qmd
 
-
-    - id: tutorials
-      align: left
-      contents:
-        - tutorials/index.qmd
-        - tutorials/installation.qmd
-        - tutorials/00_interface.md
-        - tutorials/01_importing.qmd
-        - tutorials/02_selections.md
-        - tutorials/03_molecular_dynamics.md
-        - tutorials/04_cryoem.qmd
+  - id: tutorials
+    align: left
+    contents:
+    - tutorials/index.qmd
+    - tutorials/installation.qmd
+    - tutorials/interface.qmd
+    - tutorials/importing.qmd
+    - tutorials/selections.qmd
+    - tutorials/trajectories.qmd
+    - tutorials/cryoem.qmd
+    - tutorials/simulation.qmd
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -62,10 +62,10 @@ website:
 
 format:
   html:
-    page-layout: full
+    # page-layout: full
     theme:
-      - darkly
-      - style.scss
+    - darkly
+    - style.scss
 
     toc: true
     toc-depth: 2
@@ -73,39 +73,39 @@ format:
       code: true
       text: true
 
-metadata-files: 
-  - api/_sidebar.yml
+metadata-files:
+- api/_sidebar.yml
 
 quartodoc:
   package: molecularnodes
   dir: api/reference
 
-  sidebar: 
+  sidebar:
     file: api/_sidebar.yml
     search: true
     collapse-level: 3
     contents:
-      - text: Introduction
-        href: api/index.qmd
-      - api/styles.qmd
-      - api/materials.qmd
-      - text: "---"
-      - section: "Reference"
-        contents:
-          - "{{ contents }}"
+    - text: Introduction
+      href: api/index.qmd
+    - api/styles.qmd
+    - api/materials.qmd
+    - text: "---"
+    - section: "Reference"
+      contents:
+      - "{{ contents }}"
   # css: api/_styles-quartodoc.css
 
   sections:
-    - title: Entity
-      desc: Importing and manipulating different molecular entities
-      contents:
-        - entities.Molecule
-        - entities.MoleculeSelector
-        - entities.Trajectory
-        - entities.Ensemble
-        - entities.OXDNA
+  - title: Entity
+    desc: Importing and manipulating different molecular entities
+    contents:
+    - entities.Molecule
+    - entities.MoleculeSelector
+    - entities.Trajectory
+    - entities.Ensemble
+    - entities.OXDNA
 
-    - title: Scene
-      desc: Control settings for the Blender scene through the `Canvas` object.
-      contents:
-        - Canvas
+  - title: Scene
+    desc: Control settings for the Blender scene through the `Canvas` object.
+    contents:
+    - Canvas

@@ -17,6 +17,9 @@ from ...nodes.geometry import (
     add_style_branch,
     style_interfaces_from_tree,
 )
+from ...nodes.styles import (
+    StyleBase,
+)
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections
@@ -38,14 +41,16 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     Attributes
     ----------
-    file_path : str
-        The file path to the file which stores the atomic coordinates.
     object : bpy.types.Object
         The Blender object representing the molecule.
     frames : bpy.types.Collection
         The Blender collection which holds the objects making up the frames to animate.
     array: AtomArray | AtomArrayStack:
         The numpy array which stores the atomic coordinates and associated attributes.
+    select: MoleculeSelector
+        A selector object that provides methods for creating atom selections based on various
+        criteria such as atom name, residue type, chain ID, etc. These selections can be used
+        with the `add_style` method to apply visual styles to specific parts of the molecule.
     """
 
     def __init__(
@@ -58,8 +63,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         Parameters
         ----------
-        file_path : Union[str, Path, io.BytesIO]
-            The file path to the file which stores the atomic coordinates.
+        array : AtomArray | AtomArrayStack
+            The atom array or atom array stack containing the molecular data.
+        reader : ReaderBase | None, optional
+            The reader used to load the molecular data, by default None.
         """
         self._frames_collection: str | None = None
         self._code: str | None = None
@@ -94,17 +101,40 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         self.object.modifiers[0].node_group = tree  # type: ignore
 
     @classmethod
-    def load(cls, file_path: str | Path, name: str | None = None):
+    def load(
+        cls, file_path: str | Path, name: str | None = None, remove_solvent: bool = True
+    ) -> "Molecule":
+        """
+        Load a molecule from a file.
+
+        Parameters
+        ----------
+        file_path : str or Path
+            The path to the file containing molecular data
+        name : str or None, optional
+            The name to give the molecule object. If None, uses the filename stem
+        remove_solvent : bool, optional
+            Whether to remove solvent molecules from the structure, default True
+
+        Returns
+        -------
+        mol : Molecule
+            The loaded molecule object with associated data and 3D representation
+
+        Notes
+        -----
+        Supports various file formats including .cif, .bcif, .pdb, .sdf, and .mol
+        """
         reader = cls._read(file_path)
         if not name:
             name = Path(file_path).stem
         mol = cls(reader.array, reader=reader)
 
-        # TODO: currently filtering out solvent, will make optional in another PR
-        if isinstance(mol.array, AtomArrayStack):
-            mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
-        else:
-            mol.array = mol.array[~struc.filter_solvent(mol.array)]
+        if remove_solvent:
+            if isinstance(mol.array, AtomArrayStack):
+                mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
+            else:
+                mol.array = mol.array[~struc.filter_solvent(mol.array)]
 
         mol.create_object(name=name)
         mol._reader = reader
@@ -126,7 +156,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     @staticmethod
     def _read(
         file_path: str | Path | io.BytesIO,
-        # del_solvent: bool = False,
+        # remove_solvent: bool = False,
         # del_hydrogen: bool = False,
     ) -> ReaderBase:
         """
@@ -165,6 +195,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         code: str,
         format=".bcif",
         centre: str | None = None,
+        remove_solvent: bool = True,
         cache: Path | str | None = download.CACHE_DIR,
         database: str = "rcsb",
     ):
@@ -177,8 +208,13 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The PDB ID code of the molecule to fetch.
         format : str, optional
             The file format to download. Default is ".bcif".
+        centre : str | None, optional
+            Method to use for centering the molecule. Options are "centroid" (geometric center)
+            or "mass" (center of mass). If None, no centering is performed. Default is None.
         cache : str, optional
             Path to cache directory. If None, no caching is performed.
+        remove_solvent : bool, optional
+            Whether to remove solvent from the molecule. Default is True.
         database : str, optional
             The database to fetch from. Default is "rcsb".
 
@@ -190,7 +226,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         file_path = download.StructureDownloader(cache=cache).download(
             code=code, format=format, database=database
         )
-        mol = cls.load(file_path, name=code)
+        mol = cls.load(file_path, name=code, remove_solvent=remove_solvent)
         mol.object.mn["entity_type"] = "molecule"
         mol._code = code
 
@@ -274,14 +310,50 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: bpy.types.GeometryNodeTree | str = "spheres",
+        style: StyleBase | str = "spheres",
         color: str | None = "common",
         selection: "str | MoleculeSelector | None" = None,
         assembly: bool = False,
         material: bpy.types.Material | str | None = None,
     ):
         """
-        Add a style to the molecule.
+        Add a visual style to the molecule.
+
+        Parameters
+        ----------
+        style : bpy.types.GeometryNodeTree | str, optional
+            The style to apply to the molecule. Can be a GeometryNodeTree or a string
+            identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
+            Default is "spheres".
+
+        color : str | None, optional
+            The coloring scheme to apply. Can be "common" (element-based coloring),
+            "chain", "residue", or other supported schemes. If None, no coloring
+            is applied. Default is "common".
+
+        selection : str | MoleculeSelector | None, optional
+            Apply the style only to atoms matching this selection. Can be:
+            - A string referring to an existing boolean attribute on the molecule
+            - A MoleculeSelector object defining a selection criteria
+            - None to apply to all atoms (default)
+
+        assembly : bool, optional
+            If True, set up the style to work with biological assemblies.
+            Default is False.
+
+        material : bpy.types.Material | str | None, optional
+            The material to apply to the styled atoms. Can be a Blender Material object,
+            a string with a material name, or None to use default materials. Default is None.
+
+        Returns
+        -------
+        Molecule
+            Returns self for method chaining.
+
+        Notes
+        -----
+        If a MoleculeSelector is provided, it will be evaluated and stored as a new
+        named attribute on the molecule with an automatically generated name (sel_N).
         """
         if style is None:
             return self
@@ -401,6 +473,8 @@ class MoleculeSelector:
 
     Attributes
     ----------
+    mol : Molecule
+        The molecule object to select from.
     mask : ndarray or None
         Boolean array for the selection on the most recently evaluated array.
     pending_selections : list

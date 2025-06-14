@@ -1,8 +1,11 @@
 ---
-title: Molecular Dynamics
+title: Trajectories
+subtitle: Importing Molecular Dynamics data
 author: Brady Johnston
 bibliography: references.bib
 fig-align: center
+aliases:
+  - "03_molecular_dynamics.html"
 ---
 
 ::: {#fig-md-example-render}
@@ -93,7 +96,7 @@ We also enabled `EEVEE` atoms to display in the EEVEE render engine.
 
 We can change the style of the imported trajectory, by adding a new style node.
 We can combine styles with the `Join Geometry`.
-For more details on adding styles, see the (importing)\[01_importing.qmd\] tutorial.
+For more details on adding styles, see the [importing](importing.qmd) tutorial.
 
 ![](https://imgur.com/nhau0r9.mp4)
 

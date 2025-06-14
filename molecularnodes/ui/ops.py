@@ -11,6 +11,7 @@ from bpy.props import (
 )
 from bpy.types import Context, Operator
 from .. import entities
+from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import Molecule, density, ensemble, trajectory
 from ..nodes import nodes
@@ -292,9 +293,9 @@ class Import_Molecule(bpy.types.Operator):
             ),
         ),
     )
-    del_solvent: BoolProperty(  # type: ignore
+    remove_solvent: BoolProperty(  # type: ignore
         default=True,
-        name="Delete Solvent",
+        name="Remove Solvent",
         description="Remove solvent atoms from the structure on import",
     )
     assembly: BoolProperty(  # type: ignore
@@ -312,7 +313,7 @@ class Import_Molecule(bpy.types.Operator):
         col.enabled = self.node_setup
         # row = layout.row()
         layout.prop(self, "centre")
-        layout.prop(self, "del_solvent")
+        layout.prop(self, "remove_solvent")
         layout.prop(self, "assembly")
 
         return layout
@@ -321,6 +322,7 @@ class Import_Molecule(bpy.types.Operator):
 class MN_OT_Import_Molecule(Import_Molecule):
     bl_idname = "mn.import_molecule"
     bl_label = "Import a Molecule"
+    bl_options = {"REGISTER", "UNDO"}
 
     directory: StringProperty(  # type: ignore
         subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
@@ -346,7 +348,9 @@ class MN_OT_Import_Molecule(Import_Molecule):
         for file in self.files:
             try:
                 Molecule.load(
-                    Path(self.directory, file.name), name=file.name
+                    Path(self.directory, file.name),
+                    name=file.name,
+                    remove_solvent=self.remove_solvent,
                 ).add_style(style, assembly=self.assembly)
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
@@ -421,7 +425,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         default=str(CACHE_DIR),
         subtype="DIR_PATH",
     )
-    del_solvent: BoolProperty(  # type: ignore
+    remove_solvent: BoolProperty(  # type: ignore
         name="Remove Solvent",
         description="Delete the solvent from the structure on import",
         default=True,
@@ -479,6 +483,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                     code=self.code,
                     cache=self.cache_dir,
                     format=self.file_format,
+                    remove_solvent=self.remove_solvent,
                     database=self.database,
                 )
                 .add_style(
@@ -522,7 +527,10 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
 
     def execute(self, context):
         mol = (
-            Molecule.load(self.filepath)
+            Molecule.load(
+                file_path=path_resolve(self.filepath),
+                remove_solvent=self.remove_solvent,
+            )
             .centre_molecule(self.centre_type if self.centre else None)
             .add_style(
                 style=self.style if self.node_setup else None,  # type: ignore
@@ -568,7 +576,7 @@ class MN_OT_Import_Star_File(ImportEnsemble):
 
     def execute(self, context):
         ensemble.load_starfile(
-            file_path=self.filepath,
+            file_path=path_resolve(self.filepath),
             node_setup=self.node_setup,
         )
         return {"FINISHED"}
@@ -582,7 +590,7 @@ class MN_OT_Import_Cell_Pack(ImportEnsemble):
 
     def execute(self, context):
         ensemble.load_cellpack(
-            file_path=self.filepath,
+            file_path=path_resolve(self.filepath),
             name=Path(self.filepath).name,
             node_setup=self.node_setup,
         )
@@ -598,7 +606,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
     def execute(self, context):
         scene = context.scene
         density.load(
-            file_path=scene.mn.import_density,
+            file_path=path_resolve(scene.mn.import_density),
             invert=scene.mn.import_density_invert,
             setup_nodes=scene.mn.import_node_setup,
             style=scene.mn.import_density_style,
@@ -654,8 +662,8 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
-        topo = obj.mn.filepath_topology
-        traj = obj.mn.filepath_trajectory
+        topo = path_resolve(obj.mn.filepath_topology)
+        traj = path_resolve(obj.mn.filepath_trajectory)
 
         if "oxdna" in obj.mn.entity_type:
             uni = mda.Universe(
@@ -712,8 +720,8 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         traj = trajectory.load(
-            top=self.topology,
-            traj=self.trajectory,
+            top=path_resolve(self.topology),
+            traj=path_resolve(self.trajectory),
             name=self.name,
             style=self.style if self.setup_nodes else None,
         )
@@ -740,7 +748,11 @@ class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
     bl_idname = "mn.import_oxdna"
 
     def execute(self, context):
-        trajectory.load_oxdna(top=self.topology, traj=self.trajectory, name=self.name)
+        trajectory.load_oxdna(
+            top=path_resolve(self.topology),
+            traj=path_resolve(self.trajectory),
+            name=self.name,
+        )
         return {"FINISHED"}
 
 

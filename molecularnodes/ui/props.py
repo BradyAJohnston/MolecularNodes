@@ -114,7 +114,7 @@ class MolecularNodesSceneProperties(PropertyGroup):
         default=False,
     )
 
-    import_del_solvent: BoolProperty(  # type: ignore
+    import_remove_solvent: BoolProperty(  # type: ignore
         name="Remove Solvent",
         description="Delete the solvent from the structure on import",
         default=True,
