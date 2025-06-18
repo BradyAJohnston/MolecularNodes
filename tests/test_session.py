@@ -1,4 +1,6 @@
 import bpy
+import MDAnalysis as mda
+import pytest
 import molecularnodes as mn
 from .constants import data_dir
 
@@ -23,3 +25,48 @@ def test_entity_registered():
     assert mol.uuid in session.entities
     assert isinstance(session.get(mol.uuid), mn.Molecule)
     assert len(session.entities) == 1
+
+
+@pytest.fixture()
+def session():
+    return mn.session.get_session()
+
+
+@pytest.fixture()
+def universe():
+    topo = data_dir / "md_ppr/box.gro"
+    traj = data_dir / "md_ppr/first_5_frames.xtc"
+    return mda.Universe(topo, traj)
+
+
+def test_add_trajectory(session, universe):
+    # add Universe as trajectory
+    session.add_trajectory(universe, name="u1")
+    assert "u1" in bpy.data.objects
+    # add AtomGroup as trajectory
+    ag = universe.select_atoms("name CA")
+    session.add_trajectory(ag, name="ag1")
+    assert "ag1" in bpy.data.objects
+
+
+def test_remove_trajectory(session, universe):
+    t1 = session.add_trajectory(universe, name="u1")
+    assert "u1" in bpy.data.objects
+    # remove by trajectory instance
+    session.remove_trajectory(t1)
+    assert "u1" not in bpy.data.objects
+    session.add_trajectory(universe, name="u2")
+    assert "u2" in bpy.data.objects
+    # remove by trajectory name
+    session.remove_trajectory("u2")
+    t3 = session.add_trajectory(universe, name="u3")
+    assert "u3" in bpy.data.objects
+    # remove trajectory from UI using operator
+    bpy.ops.mn.session_remove_item("EXEC_DEFAULT", uuid=t3.uuid)
+    assert "u3" not in bpy.data.objects
+
+
+def test_get_trajectory(session, universe):
+    t1 = session.add_trajectory(universe, name="u1")
+    t2 = session.get_trajectory("u1")
+    assert t1 == t2
