@@ -2,13 +2,16 @@ import os
 import pickle as pk
 from typing import Dict, Union
 import bpy
-from bpy.app.handlers import persistent
-from bpy.props import StringProperty
-from bpy.types import Context
+import MDAnalysis as mda
+from bpy.app.handlers import persistent  # type: ignore
+from bpy.props import StringProperty  # type: ignore
+from bpy.types import Context  # type: ignore
 from databpy.object import LinkedObjectError, get_from_uuid
+from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
 from .entities.ensemble.base import Ensemble
 from .entities.trajectory.base import Trajectory
+from .nodes.nodes import styles_mapping
 
 
 def trim(dictionary: dict):
@@ -74,7 +77,12 @@ class MNSession:
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
     def register_entity(self, item: Union[Molecule, Trajectory, Ensemble]) -> None:
+        """Add entity to the dictionary"""
         self.entities[item.uuid] = item
+
+    def remove_entity(self, uuid: str) -> None:
+        """Remove entity from the dictionary"""
+        del self.entities[uuid]
 
     def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
         return self.get(obj.uuid)
@@ -98,7 +106,7 @@ class MNSession:
             try:
                 _ = self.entities[uuid].name
             except LinkedObjectError:
-                del self.entities[uuid]
+                self.remove_entity(uuid)
 
     @property
     def n_items(self) -> int:
@@ -153,6 +161,110 @@ class MNSession:
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
         self.entities = {}
+
+    def remove(self, uuid: str) -> None:
+        """Remove an entity by uuid"""
+        if uuid not in self.entities:
+            raise ValueError(f"No entity with UUID '{uuid}'")
+        entity = self.entities[uuid]
+        bpy.data.objects.remove(entity.object, do_unlink=True)
+        self.remove_entity(uuid)
+
+    def add_trajectory(
+        self,
+        universe: mda.Universe | AtomGroup,
+        style: str | None = "vdw",
+        name: str = "NewUniverseObject",
+    ) -> Trajectory:
+        """
+        Add a new trajectory
+
+        Parameters
+        ----------
+        universe: mda.Universe | AtomGroup, required
+            MDAnalysis Universe or AtomGroup instance
+
+        style: str | None, optional
+            The style to apply to the Universe or AtomGroup.
+
+        name: str, optional
+            Name of the trajectory object in Blender
+
+        Returns
+        -------
+        Trajectory
+            The newly added Trajectory instance
+
+        """
+        if style is not None and style not in styles_mapping:
+            raise ValueError(
+                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
+            )
+        if isinstance(universe, AtomGroup):
+            trajectory = Trajectory(universe.universe)
+        else:
+            trajectory = Trajectory(universe)
+        trajectory.create_object(name=name, style=style)
+        if isinstance(universe, AtomGroup):
+            _selection = trajectory.add_selection_from_atomgroup(
+                universe, name="InitialAtomGroupSelection"
+            )
+            # TODO: Add style only from the AtomGroup selection
+            #       Will be fixed as part of style branch support for Trajectories
+        return trajectory
+
+    def get_trajectory(
+        self,
+        name: str,
+    ) -> Trajectory:
+        """
+        Get trajectory instance by name
+
+        Parameters
+        ----------
+        name: str, required
+            Name of the trajectory object
+
+        Returns
+        -------
+        Trajectory
+            A Trajectory instance
+
+        Raises
+        ------
+        ValueError if trajectory is not found
+
+        """
+        for v in self.entities.values():
+            if isinstance(v, Trajectory) and v.object.name == name:
+                return v
+        raise ValueError(f"No trajectory named '{name}'")
+
+    def remove_trajectory(
+        self,
+        trajectory: Trajectory | str,
+    ) -> None:
+        """
+        Remove an existing trajectory
+
+        Parameters
+        ----------
+        trajectory: Trajectory | str, required
+            A Trajectory instance or name of the trajectory
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError if trajectory name is not found
+
+        """
+        instance = trajectory
+        if isinstance(trajectory, str):
+            instance = self.get_trajectory(trajectory)
+        self.remove(instance.uuid)
 
 
 def get_session(context: Context | None = None) -> MNSession:

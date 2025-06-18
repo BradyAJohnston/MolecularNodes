@@ -110,6 +110,11 @@ quartodoc:
     - entities.Ensemble
     - entities.OXDNA
 
+  - title: Session
+    desc: Session object to control molecular entities
+    contents:
+    - session.MNSession
+
   - title: Scene
     desc: Control settings for the Blender scene through the `Canvas` object.
     contents:
