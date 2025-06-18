@@ -77,6 +77,7 @@ class Canvas:
         elif isinstance(value, str) and value.upper() in [
             "EEVEE",
             "BLENDER_EEVEE_NEXT",
+            "BLENDER_EEVEE",
         ]:
             self._engine = EEVEE()
 
