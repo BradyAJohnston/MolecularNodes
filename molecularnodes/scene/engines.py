@@ -16,7 +16,11 @@ class RenderEngine(ABC):
 
 class EEVEE(RenderEngine):
     def __init__(self, samples: int = 64):
-        self._name = "BLENDER_EEVEE_NEXT"
+        # TODO: remove this check when Blender 5.0 is the minimum version
+        if bpy.app.version >= (5, 0, 0):
+            self._name = "BLENDER_EEVEE"
+        else:
+            self._name = "BLENDER_EEVEE_NEXT"
         self.samples = samples
         self._enable_engine()
 
