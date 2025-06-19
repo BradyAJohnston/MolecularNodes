@@ -1,7 +1,6 @@
 import bpy
 from bpy.props import (  # type: ignore
     BoolProperty,
-    CollectionProperty,
     EnumProperty,
     IntProperty,
     StringProperty,
@@ -38,26 +37,32 @@ def _get_entity_visibility(self) -> bool:
 def _set_entity_visibility(self, visible: bool) -> None:
     """set callback for entity visibility property"""
     self["visible"] = visible
-    object = bpy.context.scene.MNSession.get(self.name).object
+    object = self.id_data
     set_object_visibility(object, self.visible)
 
 
-class EntityProperties(bpy.types.PropertyGroup):
-    # name property is implicit and is set to uuid for find lookups
-    # type value is one of EntityType enum
-    type: StringProperty(name="Entity Type", default="")  # type: ignore
-    visible: BoolProperty(
-        name="visible",
-        description="Visibility of the entity",
-        default=True,
-        get=_get_entity_visibility,
-        set=_set_entity_visibility,
-    )  # type: ignore
+def _entities_active_index_callback(self, context: bpy.context) -> None:
+    """update callback for entities active_index change"""
+    index = self.entities_active_index
+    if not (0 <= index < len(bpy.data.objects)):
+        return
+    active_object = context.active_object
+    entity_object = bpy.data.objects[index]
+    if active_object != entity_object:
+        # just setting view_layer.objects.active is not enough
+        bpy.ops.object.select_all(action="DESELECT")  # deselect all objects
+        context.view_layer.objects.active = entity_object  # make active object
+        bpy.context.view_layer.update()  # update view layer to reflect changes
+        if bpy.context.active_object:
+            bpy.context.active_object.select_set(True)  # set as selected object
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
-    entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
-    entities_active_index: IntProperty(default=-1)  # type: ignore
+    entities_active_index: IntProperty(
+        name="Active entity index",
+        default=-1,
+        update=_entities_active_index_callback,
+    )  # type: ignore
 
     import_del_hydrogen: BoolProperty(  # type: ignore
         name="Remove Hydrogens",
@@ -269,6 +274,14 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
+    visible: BoolProperty(
+        name="visible",
+        description="Visibility of the molecular entity",
+        default=True,
+        get=_get_entity_visibility,
+        set=_set_entity_visibility,
+    )  # type: ignore
+
     biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
         description="A list of biological assemblies to be created",
@@ -508,7 +521,6 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 
 CLASSES = [
-    EntityProperties,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly

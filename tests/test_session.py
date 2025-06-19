@@ -72,23 +72,11 @@ def test_get_trajectory(session, universe):
     assert t1 == t2
 
 
-def test_entity_blender_properties(session, universe):
-    props = bpy.context.scene.mn
-    assert len(props.entities) == 0
-    t1 = session.add_trajectory(universe, name="u1")
-    # test property addition
-    assert len(props.entities) == 1
-    entity = props.entities[0]
-    # test property indexing
-    assert entity.name == t1.uuid
-    # verify entity type
-    assert entity.type == "md"
-    # test visibility changes
+def test_entity_visibility(session, universe):
+    session.add_trajectory(universe, name="u1")
     # check initial visibility
-    assert entity.visible
+    props = bpy.data.objects["u1"].mn
+    assert props.visible
     assert bpy.data.objects["u1"].visible_get()
-    entity.visible = False
+    props.visible = False
     assert not bpy.data.objects["u1"].visible_get()
-    # test property removal
-    session.remove_trajectory("u1")
-    assert len(props.entities) == 0
