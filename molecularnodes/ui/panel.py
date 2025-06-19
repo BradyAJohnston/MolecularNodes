@@ -1,5 +1,6 @@
 import bpy
 from ..entities import trajectory
+from ..entities.base import EntityType
 from ..nodes import nodes
 from ..session import get_session
 from .pref import addon_preferences
@@ -543,4 +544,130 @@ class MN_PT_Scene(bpy.types.Panel):
         which_panel[scene.mn.panel_selection](layout, context)
 
 
-CLASSES = [MN_PT_Scene]
+class MN_UL_EntitiesList(bpy.types.UIList):
+    """
+    UIList of entities in Entities panel (Viewport)
+    """
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "WORLD"
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            name = str(index + 1) + ". "
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=name)
+            col = split.column()
+            session = context.scene.MNSession
+            entity = session.get(item.name)
+            col.prop(entity.object, "name", text="", emboss=False)
+            hide_icon = "HIDE_OFF" if item.visible else "HIDE_ON"
+            row.prop(
+                item,
+                "visible",
+                icon_only=True,
+                icon=hide_icon,
+            )
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+
+class MN_PT_Entities(bpy.types.Panel):
+    """
+    Panel to list MN Entities in Viewport
+    """
+
+    bl_idname = "MN_PT_Entities"
+    bl_label = "Entities"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    def draw(self, context):
+        layout = self.layout
+        props = context.scene.mn
+        row = layout.row()
+        row.template_list(
+            "MN_UL_EntitiesList",
+            "entities_list",
+            props,
+            "entities",
+            props,
+            "entities_active_index",
+            rows=3,
+        )
+        col = row.column()
+        add_row = col.row()
+        add_row.operator("mn.session_create_object", icon="ADD", text="")
+        add_row.enabled = False  # TODO: create object or create entity or remove?
+        remove_row = col.row()
+        remove_op = remove_row.operator(
+            "mn.session_remove_item", icon="REMOVE", text=""
+        )
+        if props.entities_active_index == -1:
+            remove_row.enabled = False
+        else:
+            remove_op.uuid = props.entities[props.entities_active_index].name
+
+
+class MN_PT_trajectory(bpy.types.Panel):
+    """
+    Panel for trajectory details
+    """
+
+    bl_idname = "MN_PT_trajectory"
+    bl_label = "Trajectory"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        return scene.MNSession.get(uuid).object.mn.entity_type == EntityType.MD.value
+
+    def draw(self, context):
+        layout = self.layout
+        # To enable the animatate dot next to property in UI
+        # layout.use_property_split = True
+        # layout.use_property_decorate = True
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[active_index].name
+        # Use the object corresponding to the entity
+        object = scene.MNSession.get(uuid).object
+        props = object.mn
+        row = layout.row()
+        label = "This trajectory has " + str(props.n_frames) + " frames"
+        row.label(text=label)
+        row = layout.row()
+        row.prop(props, "update_with_scene")
+        box = layout.box()
+        row = box.row()
+        row.prop(props, "frame")
+        box.enabled = not props.update_with_scene
+
+
+CLASSES = [
+    MN_PT_Scene,
+    MN_UL_EntitiesList,
+    MN_PT_Entities,
+    MN_PT_trajectory,
+]
