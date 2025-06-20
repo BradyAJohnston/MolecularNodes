@@ -1,4 +1,5 @@
 import bpy
+from databpy.object import LinkedObjectError
 from ..entities import trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
@@ -572,7 +573,9 @@ class MN_UL_EntitiesList(bpy.types.UIList):
             session = context.scene.MNSession
             entity = session.get(item.name)
             col.prop(entity.object, "name", text="", emboss=False)
-            hide_icon = "HIDE_OFF" if item.visible else "HIDE_ON"
+            # use the object viewport visibility to determine the icon
+            # we do not have direct callbacks for raw object visibility changes
+            hide_icon = "HIDE_OFF" if not entity.object.hide_get() else "HIDE_ON"
             row.prop(
                 item,
                 "visible",
@@ -582,6 +585,16 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, propname):
+        items = getattr(data, propname)
+        filtered = [self.bitflag_filter_item] * len(items)
+        for i, item in enumerate(items):
+            try:
+                _ = context.scene.MNSession.get(item.name).name
+            except (LinkedObjectError, AttributeError):
+                filtered[i] &= ~self.bitflag_filter_item
+        return filtered, []
 
 
 class MN_PT_Entities(bpy.types.Panel):
@@ -609,17 +622,17 @@ class MN_PT_Entities(bpy.types.Panel):
             rows=3,
         )
         col = row.column()
-        add_row = col.row()
-        add_row.operator("mn.session_create_object", icon="ADD", text="")
-        add_row.enabled = False  # TODO: create object or create entity or remove?
-        remove_row = col.row()
-        remove_op = remove_row.operator(
-            "mn.session_remove_item", icon="REMOVE", text=""
-        )
+        row = col.row()
+        row.operator("mn.session_prune", icon="FILE_REFRESH", text="")
+        row = col.row()
+        row.operator("mn.session_create_object", icon="ADD", text="")
+        row.enabled = False  # TODO: create object or create entity or remove?
+        row = col.row()
+        op = row.operator("mn.session_remove_item", icon="REMOVE", text="")
         if props.entities_active_index == -1:
-            remove_row.enabled = False
+            row.enabled = False
         else:
-            remove_op.uuid = props.entities[props.entities_active_index].name
+            op.uuid = props.entities[props.entities_active_index].name
 
 
 class MN_PT_trajectory(bpy.types.Panel):
@@ -641,7 +654,12 @@ class MN_PT_trajectory(bpy.types.Panel):
         if active_index == -1:
             return False
         uuid = scene.mn.entities[active_index].name
-        return scene.MNSession.get(uuid).object.mn.entity_type == EntityType.MD.value
+        try:
+            return (
+                scene.MNSession.get(uuid).object.mn.entity_type == EntityType.MD.value
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
 
     def draw(self, context):
         layout = self.layout

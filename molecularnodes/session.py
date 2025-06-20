@@ -126,11 +126,22 @@ class MNSession:
         """
         Remove any entities that no longer exist in Blender
         """
+        # remove any entities that don't have linked objects
         for uuid in list(self.entities):
             try:
                 _ = self.entities[uuid].name
             except LinkedObjectError:
                 self.remove_entity(uuid)
+        # remove any properties that don't exist in session
+        props = bpy.context.scene.mn
+        entities = props.entities
+        pruned = False
+        for i, entity in enumerate(entities):
+            if entity.name not in self.entities:
+                entities.remove(i)  # remove entity from collection
+                pruned = True
+        if pruned:
+            props.entities_active_index = len(entities) - 1
 
     @property
     def n_items(self) -> int:
@@ -378,4 +389,14 @@ class MN_OT_Session_Create_Object(bpy.types.Operator):
         return {"FINISHED"}
 
 
-CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object]
+class MN_OT_Session_Prune(bpy.types.Operator):
+    bl_idname = "mn.session_prune"
+    bl_label = "Session Prune"
+    bl_description = "Prune session entities by removing ones that no longer exist"
+
+    def execute(self, context: Context):
+        get_session().prune()
+        return {"FINISHED"}
+
+
+CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object, MN_OT_Session_Prune]
