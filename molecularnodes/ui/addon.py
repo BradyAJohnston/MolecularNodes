@@ -12,13 +12,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_pre, load_post, save_post  # type: ignore
-from bpy.props import CollectionProperty, PointerProperty  # type: ignore
+from bpy.app.handlers import frame_change_pre, load_post, save_post
+from bpy.props import CollectionProperty, PointerProperty
 from .. import session
-from ..blender.utils import (
-    register_msgbus_subscriptions,
-    unregister_msgbus_subscriptions,
-)
 from ..handlers import update_entities
 from ..utils import add_current_module_to_path
 from . import node_menu, ops, panel, pref, props
@@ -66,7 +62,6 @@ def register():
     bpy.types.Object.mn_trajectory_selections = CollectionProperty(  # type: ignore
         type=props.TrajectorySelectionItem  # type: ignore
     )
-    register_msgbus_subscriptions()
 
 
 def unregister():
@@ -84,7 +79,6 @@ def unregister():
     save_post.remove(session._pickle)
     load_post.remove(session._load)
     frame_change_pre.remove(update_entities)
-    unregister_msgbus_subscriptions()
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore

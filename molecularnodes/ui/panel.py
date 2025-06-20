@@ -564,10 +564,17 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            row.prop(item, "name", text="", emboss=False)
-            hide_icon = "HIDE_OFF" if item.mn.visible else "HIDE_ON"
+            name = str(index + 1) + ". "
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=name)
+            col = split.column()
+            session = context.scene.MNSession
+            entity = session.get(item.name)
+            col.prop(entity.object, "name", text="", emboss=False)
+            hide_icon = "HIDE_OFF" if item.visible else "HIDE_ON"
             row.prop(
-                item.mn,
+                item,
                 "visible",
                 icon_only=True,
                 icon=hide_icon,
@@ -575,21 +582,6 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
-
-    def filter_items(self, context, data, propname):
-        objects = getattr(data, propname)
-        helper_funcs = bpy.types.UI_UL_list
-        filtered = []
-        ordered = []
-        # filter only objects registered in MNSession
-        filtered = [self.bitflag_filter_item] * len(objects)
-        session = context.scene.MNSession
-        for i, object in enumerate(objects):
-            if object.uuid not in session.entities:
-                filtered[i] &= ~self.bitflag_filter_item
-        # order the list by name
-        ordered = helper_funcs.sort_items_by_name(objects, "name")
-        return filtered, ordered
 
 
 class MN_PT_Entities(bpy.types.Panel):
@@ -610,8 +602,8 @@ class MN_PT_Entities(bpy.types.Panel):
         row.template_list(
             "MN_UL_EntitiesList",
             "entities_list",
-            bpy.data,
-            "objects",
+            props,
+            "entities",
             props,
             "entities_active_index",
             rows=3,
@@ -624,13 +616,10 @@ class MN_PT_Entities(bpy.types.Panel):
         remove_op = remove_row.operator(
             "mn.session_remove_item", icon="REMOVE", text=""
         )
-        remove_row.enabled = False
-        index = props.entities_active_index
-        if 0 <= index < len(bpy.data.objects):
-            object = bpy.data.objects[index]
-            if object.uuid in context.scene.MNSession.entities:
-                remove_row.enabled = True
-                remove_op.uuid = object.uuid
+        if props.entities_active_index == -1:
+            remove_row.enabled = False
+        else:
+            remove_op.uuid = props.entities[props.entities_active_index].name
 
 
 class MN_PT_trajectory(bpy.types.Panel):
@@ -647,22 +636,23 @@ class MN_PT_trajectory(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         """Visible only if entity selected is a trajectory"""
-        index = context.scene.mn.entities_active_index
-        if 0 <= index < len(bpy.data.objects):
-            object = bpy.data.objects[index]
-            if (
-                object.uuid in context.scene.MNSession.entities
-                and object.mn.entity_type == EntityType.MD.value
-            ):
-                return True
-        return False
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        return scene.MNSession.get(uuid).object.mn.entity_type == EntityType.MD.value
 
     def draw(self, context):
         layout = self.layout
         # To enable the animatate dot next to property in UI
         # layout.use_property_split = True
         # layout.use_property_decorate = True
-        object = bpy.data.objects[context.scene.mn.entities_active_index]
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[active_index].name
+        # Use the object corresponding to the entity
+        object = scene.MNSession.get(uuid).object
         props = object.mn
         row = layout.row()
         label = "This trajectory has " + str(props.n_frames) + " frames"
