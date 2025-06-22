@@ -1,6 +1,14 @@
 import bpy
-from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
-from bpy.types import PropertyGroup
+from bpy.props import (  # type: ignore
+    BoolProperty,
+    CollectionProperty,
+    EnumProperty,
+    IntProperty,
+    StringProperty,
+)
+from bpy.types import PropertyGroup  # type: ignore
+from databpy.object import LinkedObjectError
+from ..blender.utils import set_object_visibility
 from ..handlers import _update_entities
 from ..session import get_session
 from .style import STYLE_ITEMS
@@ -23,7 +31,57 @@ def _set_frame(self, frame):
     _update_entities(self, bpy.context)
 
 
+def _get_entity_visibility(self) -> bool:
+    """get callback for entity visibility property"""
+    return self.get("visible", True)
+
+
+def _set_entity_visibility(self, visible: bool) -> None:
+    """set callback for entity visibility property"""
+    self["visible"] = visible
+    object = bpy.context.scene.MNSession.get(self.name).object
+    set_object_visibility(object, self.visible)
+
+
+def _entities_active_index_callback(self, context: bpy.context) -> None:
+    """update callback for entities active_index change"""
+    if self.entities_active_index == -1:
+        return
+    uuid = context.scene.mn.entities[self.entities_active_index].name
+    try:
+        # object might not yet be created during session entity registration
+        entity_object = context.scene.MNSession.get(uuid).object
+    except (LinkedObjectError, AttributeError):
+        return
+    # just setting view_layer.objects.active is not enough
+    bpy.ops.object.select_all(action="DESELECT")  # deselect all objects
+    context.view_layer.objects.active = entity_object  # make active object
+    bpy.context.view_layer.update()  # update view layer to reflect changes
+    if bpy.context.active_object:  # can be None for hidden objects
+        bpy.context.active_object.select_set(True)  # set as selected object
+
+
+class EntityProperties(bpy.types.PropertyGroup):
+    # name property is implicit and is set to uuid for find lookups
+    # type value is one of EntityType enum
+    type: StringProperty(name="Entity Type", default="")  # type: ignore
+    visible: BoolProperty(
+        name="visible",
+        description="Visibility of the entity",
+        default=True,
+        get=_get_entity_visibility,
+        set=_set_entity_visibility,
+    )  # type: ignore
+
+
 class MolecularNodesSceneProperties(PropertyGroup):
+    entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
+    entities_active_index: IntProperty(
+        name="Active entity index",
+        default=-1,
+        update=_entities_active_index_callback,
+    )  # type: ignore
+
     import_del_hydrogen: BoolProperty(  # type: ignore
         name="Remove Hydrogens",
         description="Remove the hydrogens from a structure on import",
@@ -473,6 +531,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 
 CLASSES = [
+    EntityProperties,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly

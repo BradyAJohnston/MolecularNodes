@@ -9,6 +9,7 @@ from bpy.types import Context  # type: ignore
 from databpy.object import LinkedObjectError, get_from_uuid
 from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
+from .entities.base import EntityType
 from .entities.ensemble.base import Ensemble
 from .entities.trajectory.base import Trajectory
 from .nodes.nodes import styles_mapping
@@ -79,10 +80,33 @@ class MNSession:
     def register_entity(self, item: Union[Molecule, Trajectory, Ensemble]) -> None:
         """Add entity to the dictionary"""
         self.entities[item.uuid] = item
+        # add entity to blender properties if it doesn't exist
+        props = bpy.context.scene.mn
+        entities = props.entities  # entities collection
+        if entities.find(item.uuid) == -1:
+            entity = entities.add()  # add new entity to collection
+            entity.name = item.uuid  # immutable name that allows find to get index
+            # EntityType is not available here in most cases as it is set after __init__
+            # In other cases, it is reset later like in case of MD_OXDNA
+            # So, use a simple check based on supported entity types here
+            if isinstance(item, Molecule):
+                entity.type = EntityType.MOLECULE.value
+            elif isinstance(item, Trajectory):
+                entity.type = EntityType.MD.value
+            elif isinstance(item, Ensemble):
+                entity.type = EntityType.ENSEMBLE.value
+            props.entities_active_index = len(entities) - 1
 
     def remove_entity(self, uuid: str) -> None:
         """Remove entity from the dictionary"""
         del self.entities[uuid]
+        # remove entity from blender properties
+        props = bpy.context.scene.mn
+        entities = props.entities
+        index = entities.find(uuid)
+        if index != -1:
+            entities.remove(index)  # remove entity from collection
+            props.entities_active_index = len(entities) - 1
 
     def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
         return self.get(obj.uuid)
@@ -102,11 +126,22 @@ class MNSession:
         """
         Remove any entities that no longer exist in Blender
         """
+        # remove any entities that don't have linked objects
         for uuid in list(self.entities):
             try:
                 _ = self.entities[uuid].name
             except LinkedObjectError:
                 self.remove_entity(uuid)
+        # remove any properties that don't exist in session
+        props = bpy.context.scene.mn
+        entities = props.entities
+        remove_indices = [
+            i for i, entity in enumerate(entities) if entity.name not in self.entities
+        ]
+        if remove_indices:
+            for i in remove_indices:
+                entities.remove(i)
+            props.entities_active_index = len(entities) - 1
 
     @property
     def n_items(self) -> int:
@@ -354,4 +389,14 @@ class MN_OT_Session_Create_Object(bpy.types.Operator):
         return {"FINISHED"}
 
 
-CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object]
+class MN_OT_Session_Prune(bpy.types.Operator):
+    bl_idname = "mn.session_prune"
+    bl_label = "Session Prune"
+    bl_description = "Prune session entities by removing ones that no longer exist"
+
+    def execute(self, context: Context):
+        get_session().prune()
+        return {"FINISHED"}
+
+
+CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object, MN_OT_Session_Prune]
