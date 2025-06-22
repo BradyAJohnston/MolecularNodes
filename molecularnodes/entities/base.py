@@ -1,8 +1,14 @@
 from abc import ABCMeta
 from enum import Enum
+from typing import List
 import bpy
 from databpy import (
     BlenderObject,
+)
+from ..nodes import nodes
+from ..nodes.geometry import (
+    GeometryNodeInterFace,
+    style_interfaces_from_tree,
 )
 
 
@@ -34,6 +40,22 @@ class MolecularEntity(
         return self.object.modifiers["MolecularNodes"].node_group
 
     @property
+    def tree(self) -> bpy.types.GeometryNodeTree:
+        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
+        if mod is None:
+            raise ValueError(
+                f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
+            )
+        return mod.node_group  # type: ignore
+
+    @property
+    def styles(self) -> List[GeometryNodeInterFace]:
+        """
+        Get the styles in the tree.
+        """
+        return style_interfaces_from_tree(self.tree)
+
+    @property
     def update_with_scene(self) -> bool:
         return self.object.mn.update_with_scene
 
@@ -59,3 +81,14 @@ class MolecularEntity(
             NotImplementedError: If the method is not implemented by a subclass.
         """
         raise NotImplementedError("Subclasses must implement this method")
+
+    def _setup_modifiers(self):
+        """
+        Create the modifiers for the molecule.
+        """
+        self.object.modifiers.new("MolecularNodes", "NODES")
+        # fallback=False => new tree all the time
+        tree = nodes.new_tree(  # type: ignore
+            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True, fallback=False
+        )
+        self.object.modifiers[0].node_group = tree  # type: ignore

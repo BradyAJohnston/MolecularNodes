@@ -3,6 +3,7 @@ from databpy.object import LinkedObjectError
 from ..entities import trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
+from ..nodes.geometry import get_final_style_nodes
 from ..session import get_session
 from .pref import addon_preferences
 from .utils import check_online_access_for_ui
@@ -683,9 +684,145 @@ class MN_PT_trajectory(bpy.types.Panel):
         box.enabled = not props.update_with_scene
 
 
+class MN_UL_StylesList(bpy.types.UIList):
+    """
+    UIList of styles for an entity
+    """
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "WORLD"
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            row.prop(item, "label", text="", emboss=False)
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, propname):
+        items = getattr(data, propname)
+        helper_funcs = bpy.types.UI_UL_list
+        filtered = []
+        # Filtering by name
+        if self.filter_name:
+            filtered = helper_funcs.filter_items_by_name(
+                self.filter_name,
+                self.bitflag_filter_item,
+                items,
+                "label",
+                reverse=False,
+            )
+        if not filtered:
+            filtered = [self.bitflag_filter_item] * len(items)
+        style_nodes = get_final_style_nodes(data)
+        ordered = [-1] * len(items)
+        for i, item in enumerate(items):
+            if item in style_nodes:
+                ordered[i] = style_nodes.index(item)
+            else:
+                filtered[i] &= ~self.bitflag_filter_item
+        index = len(style_nodes)
+        for i, item in enumerate(items):
+            if ordered[i] == -1:
+                ordered[i] = index
+                index += 1
+        return filtered, ordered
+
+
+class MN_PT_Styles(bpy.types.Panel):
+    """
+    Panel for styles
+    """
+
+    bl_idname = "MN_PT_styles"
+    bl_label = "Styles"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory or molecule"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MOLECULE.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        scene = context.scene
+        entities_active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[entities_active_index].name
+        entity = scene.MNSession.get(uuid)
+        node_group = entity.node_group
+        styles_active_index = entity.object.mn.styles_active_index
+        valid_selection = False
+        style_nodes = get_final_style_nodes(node_group)
+        if 0 <= styles_active_index < len(node_group.nodes):
+            if node_group.nodes[styles_active_index] in style_nodes:
+                valid_selection = True
+
+        layout = self.layout
+        row = layout.row()
+        row.template_list(
+            "MN_UL_StylesList",
+            "styles_list",
+            node_group,
+            "nodes",
+            entity.object.mn,
+            "styles_active_index",
+            rows=3,
+        )
+        col = row.column()
+        row = col.row()
+        op = row.operator("mn.add_style", icon="ADD", text="")
+        op.uuid = uuid
+        row = col.row()
+        op = row.operator("mn.remove_style", icon="REMOVE", text="")
+        if valid_selection:
+            op.uuid = uuid
+            op.style_node_index = styles_active_index
+        else:
+            row.enabled = False
+
+        if not valid_selection:
+            return
+
+        box = layout.box()
+        row = box.row()
+        style_node = node_group.nodes[styles_active_index]
+        for input in style_node.inputs:
+            if not hasattr(input, "default_value"):
+                continue
+            if input.name == "Selection":
+                continue
+            row = box.row()
+            row.prop(data=input, property="default_value", text=input.name)
+        row = box.row()
+
+
 CLASSES = [
     MN_PT_Scene,
     MN_UL_EntitiesList,
     MN_PT_Entities,
     MN_PT_trajectory,
+    MN_UL_StylesList,
+    MN_PT_Styles,
 ]

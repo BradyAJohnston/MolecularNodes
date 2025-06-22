@@ -292,6 +292,8 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
+    styles_active_index: IntProperty(default=-1)  # type: ignore
+
     biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
         description="A list of biological assemblies to be created",
