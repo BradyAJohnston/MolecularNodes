@@ -135,12 +135,12 @@ class MNSession:
         # remove any properties that don't exist in session
         props = bpy.context.scene.mn
         entities = props.entities
-        pruned = False
-        for i, entity in enumerate(entities):
-            if entity.name not in self.entities:
-                entities.remove(i)  # remove entity from collection
-                pruned = True
-        if pruned:
+        remove_indices = [
+            i for i, entity in enumerate(entities) if entity.name not in self.entities
+        ]
+        if remove_indices:
+            for i in remove_indices:
+                entities.remove(i)
             props.entities_active_index = len(entities) - 1
 
     @property
