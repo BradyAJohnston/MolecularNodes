@@ -566,10 +566,10 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            name = str(index + 1) + ". "
+            seqno = f"{index + 1}. "
             split = row.split(factor=0.1)
             col = split.column()
-            col.label(text=name)
+            col.label(text=seqno)
             col = split.column()
             session = context.scene.MNSession
             entity = session.get(item.name)
@@ -689,6 +689,8 @@ class MN_UL_StylesList(bpy.types.UIList):
     UIList of styles for an entity
     """
 
+    seqno = 1
+
     def draw_item(
         self,
         context,
@@ -704,7 +706,13 @@ class MN_UL_StylesList(bpy.types.UIList):
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            row.prop(item, "label", text="", emboss=False)
+            seqno = f"{self.seqno}. "
+            MN_UL_StylesList.seqno += 1
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=seqno)
+            col = split.column()
+            col.prop(item, "label", text="", emboss=False)
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
@@ -781,6 +789,7 @@ class MN_PT_Styles(bpy.types.Panel):
 
         layout = self.layout
         row = layout.row()
+        MN_UL_StylesList.seqno = 1
         row.template_list(
             "MN_UL_StylesList",
             "styles_list",
