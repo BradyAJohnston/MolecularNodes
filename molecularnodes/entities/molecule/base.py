@@ -15,6 +15,7 @@ from ...nodes import nodes
 from ...nodes.geometry import (
     add_style_branch,
 )
+from ...nodes.nodes import styles_mapping
 from ...nodes.styles import (
     StyleBase,
 )
@@ -333,6 +334,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Molecule
             Returns self for method chaining.
 
+        Raises
+        ------
+        ValueError
+            If an unsupported style string is passed
+
         Notes
         -----
         If a MoleculeSelector is provided, it will be evaluated and stored as a new
@@ -340,6 +346,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         if style is None:
             return self
+
+        if isinstance(style, str) and style not in styles_mapping:
+            raise ValueError(
+                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
+            )
 
         if isinstance(selection, str) and selection not in self.list_attributes(
             drop_hidden=False

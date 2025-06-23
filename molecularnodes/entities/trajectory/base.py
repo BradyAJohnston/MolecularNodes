@@ -10,6 +10,7 @@ from ...blender import coll, path_resolve
 from ...nodes.geometry import (
     add_style_branch,
 )
+from ...nodes.nodes import styles_mapping
 from ...nodes.styles import (
     StyleBase,
 )
@@ -732,6 +733,11 @@ class Trajectory(MolecularEntity):
         Trajectory
             Returns self for method chaining.
 
+        Raises
+        ------
+        ValueError
+            If an unsupported style string is passed
+
         Notes
         -----
         If a selection is provided, it will be evaluated and stored as a new
@@ -739,6 +745,11 @@ class Trajectory(MolecularEntity):
         """
         if style is None:
             return self
+
+        if isinstance(style, str) and style not in styles_mapping:
+            raise ValueError(
+                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
+            )
 
         if selection is not None:
             attribute_name = "sel_0"
