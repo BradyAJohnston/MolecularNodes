@@ -2,19 +2,21 @@ from pathlib import Path
 import bpy
 import databpy
 import MDAnalysis as mda
-from bpy.props import (
+from bpy.props import (  # type: ignore
     BoolProperty,
     CollectionProperty,
     EnumProperty,
     IntProperty,
     StringProperty,
 )
-from bpy.types import Context, Operator
+from bpy.types import Context, Operator  # type: ignore
 from .. import entities
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import Molecule, density, ensemble, trajectory
 from ..nodes import nodes
+from ..nodes.geometry import create_style_interface, get_final_style_nodes
+from ..session import get_session
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -756,6 +758,117 @@ class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
         return {"FINISHED"}
 
 
+class MN_OT_Add_Style(Operator):
+    """
+    Operator to add a new style to an entity
+    """
+
+    bl_idname = "mn.add_style"
+    bl_label = "Add Style"
+    bl_description = "Add new style to entity"
+
+    uuid: StringProperty()  # type: ignore
+
+    style: EnumProperty(  # type: ignore
+        name="Style",
+        default="spheres",
+        description="Style type",
+        items=STYLE_ITEMS,
+    )
+
+    use_uniform_color: BoolProperty(
+        name="Use uniform color",
+        description="Use uniform color for style",
+        default=False,
+    )  # type: ignore
+
+    uniform_color: bpy.props.FloatVectorProperty(
+        name="Uniform color",
+        description="Uniform color for style",
+        subtype="COLOR",
+        size=4,
+        default=(0.162, 0.624, 0.196, 1),
+        min=0.0,
+        max=1.0,
+    )  # type: ignore
+
+    color_scheme: StringProperty(
+        name="Coloring scheme",
+        description="Coloring scheme for style",
+        default="common",
+    )  # type: ignore
+
+    selection: StringProperty(
+        name="Selection",
+        description="Selection for which thisthe style applies",
+        default="",
+    )  # type: ignore
+
+    name: StringProperty(
+        name="Name",
+        description="Label for the style",
+        default="",
+    )  # type: ignore
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "style")
+        layout.prop(self, "use_uniform_color")
+        if self.use_uniform_color:
+            layout.prop(self, "uniform_color")
+        else:
+            layout.prop(self, "color_scheme")
+        layout.prop(self, "selection")
+        layout.prop(self, "name")
+        # Note: Materials cannot be passed into operators
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if self.use_uniform_color:
+            color = self.uniform_color
+        else:
+            color = self.color_scheme
+        entity.add_style(
+            style=self.style,
+            color=color,
+            selection=self.selection.strip() or None,
+            name=self.name.strip() or None,
+        )
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+
+class MN_OT_Remove_Style(Operator):
+    """
+    Operator to remove a style from an entity
+    """
+
+    bl_idname = "mn.remove_style"
+    bl_label = "Remove Style"
+    bl_description = "Remove style from entity"
+
+    uuid: StringProperty()  # type: ignore
+    style_node_index: IntProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        node_group = entity.node_group
+        style_node = node_group.nodes[self.style_node_index]
+        create_style_interface(style_node).remove()
+        # set the active index in UI to the last style
+        style_nodes = get_final_style_nodes(node_group)
+        if len(style_nodes) > 0:
+            entity.object.mn.styles_active_index = node_group.nodes.find(
+                style_nodes[-1].name
+            )
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_confirm(self, event, title="Remove Style?")
+
+
 CLASSES = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
@@ -773,4 +886,6 @@ CLASSES = [
     MN_OT_Import_Protein_Local,
     MN_OT_Import_Molecule,
     MN_FH_Import_Molecule,
+    MN_OT_Add_Style,
+    MN_OT_Remove_Style,
 ]

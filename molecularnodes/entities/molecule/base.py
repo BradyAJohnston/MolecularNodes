@@ -2,7 +2,7 @@ import io
 import warnings
 from abc import ABCMeta
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable
 import biotite.structure as struc
 import bpy
 import databpy
@@ -13,10 +13,9 @@ from ... import blender as bl
 from ... import download, utils
 from ...nodes import nodes
 from ...nodes.geometry import (
-    GeometryNodeInterFace,
     add_style_branch,
-    style_interfaces_from_tree,
 )
+from ...nodes.nodes import styles_mapping
 from ...nodes.styles import (
     StyleBase,
 )
@@ -89,16 +88,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
         self._setup_modifiers()
-
-    def _setup_modifiers(self):
-        """
-        Create the modifiers for the molecule.
-        """
-        self.object.modifiers.new("MolecularNodes", "NODES")
-        tree = nodes.new_tree(  # type: ignore
-            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True
-        )
-        self.object.modifiers[0].node_group = tree  # type: ignore
 
     @classmethod
     def load(
@@ -252,15 +241,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return super().centroid(weight)
 
     @property
-    def tree(self) -> bpy.types.GeometryNodeTree:
-        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
-        if mod is None:
-            raise ValueError(
-                f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
-            )
-        return mod.node_group  # type: ignore
-
-    @property
     def frames(self) -> bpy.types.Collection | None:
         """
         Get the collection of frames for the molecule.
@@ -315,6 +295,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         selection: "str | MoleculeSelector | None" = None,
         assembly: bool = False,
         material: bpy.types.Material | str | None = None,
+        name: str | None = None,
     ):
         """
         Add a visual style to the molecule.
@@ -345,10 +326,18 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The material to apply to the styled atoms. Can be a Blender Material object,
             a string with a material name, or None to use default materials. Default is None.
 
+        name: str, optional
+            The label for this style
+
         Returns
         -------
         Molecule
             Returns self for method chaining.
+
+        Raises
+        ------
+        ValueError
+            If an unsupported style string is passed
 
         Notes
         -----
@@ -357,6 +346,11 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         if style is None:
             return self
+
+        if isinstance(style, str) and style not in styles_mapping:
+            raise ValueError(
+                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
+            )
 
         if isinstance(selection, str) and selection not in self.list_attributes(
             drop_hidden=False
@@ -367,29 +361,33 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             )
 
         if isinstance(selection, MoleculeSelector):
-            name = "sel_0"
+            attribute_name = "sel_0"
             i = 0
-            while name in self.list_attributes():
-                name = f"sel_{i}"
+            while attribute_name in self.list_attributes():
+                attribute_name = f"sel_{i}"
                 i += 1
 
             self.store_named_attribute(
                 selection.evaluate_on_array(self.array),
-                name=name,
+                name=attribute_name,
                 atype=databpy.AttributeTypes.BOOLEAN,
                 domain=databpy.AttributeDomains.POINT,
             )
 
-            selection = name
+            selection = attribute_name
 
-        add_style_branch(
+        node_style = add_style_branch(
             tree=self.tree,
             style=style,
             color=color,
             selection=selection,
             material=material,
             frames=self.frames,
+            name=name,
         )
+
+        # set the active index for UI to the newly added style
+        self.object.mn.styles_active_index = self.tree.nodes.find(node_style.name)
 
         if assembly:
             nodes.assembly_initialise(self.object)
@@ -406,13 +404,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                     name="{}_frame_{}".format(self.name, str(i)),
                     collection=self.frames,
                 )
-
-    @property
-    def styles(self) -> List[GeometryNodeInterFace]:
-        """
-        Get the styles in the tree.
-        """
-        return style_interfaces_from_tree(self.tree)
 
     @staticmethod
     def _store_object_custom_properties(obj, reader: ReaderBase):

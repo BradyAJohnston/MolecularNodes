@@ -235,17 +235,13 @@ class MNSession:
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
             )
+        selection = None
         if isinstance(universe, AtomGroup):
-            trajectory = Trajectory(universe.universe)
+            trajectory = Trajectory(universe.universe)  # AtomGroup universe
+            selection = universe  # AtomGroup
         else:
             trajectory = Trajectory(universe)
-        trajectory.create_object(name=name, style=style)
-        if isinstance(universe, AtomGroup):
-            _selection = trajectory.add_selection_from_atomgroup(
-                universe, name="InitialAtomGroupSelection"
-            )
-            # TODO: Add style only from the AtomGroup selection
-            #       Will be fixed as part of style branch support for Trajectories
+        trajectory.create_object(name=name, style=style, selection=selection)
         return trajectory
 
     def get_trajectory(
