@@ -3,7 +3,11 @@ from databpy.object import LinkedObjectError
 from ..entities import trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
-from ..nodes.geometry import get_final_style_nodes
+from ..nodes.geometry import (
+    annotations_group_node_name,
+    get_annotation_nodes,
+    get_final_style_nodes,
+)
 from ..session import get_session
 from .pref import addon_preferences
 from .utils import check_online_access_for_ui
@@ -827,6 +831,187 @@ class MN_PT_Styles(bpy.types.Panel):
         row = box.row()
 
 
+class MN_UL_AnnotationsList(bpy.types.UIList):
+    """
+    UIList of annotations for an entity
+    """
+
+    seqno = 1
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "WORLD"
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            seqno = f"{self.seqno}. "
+            MN_UL_AnnotationsList.seqno += 1
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=seqno)
+            col = split.column()
+            col.prop(item, "label", text="", emboss=False)
+            visible = item.inputs["Visible"]
+            hide_icon = "HIDE_OFF" if visible.default_value else "HIDE_ON"
+            row.prop(visible, "default_value", icon_only=True, icon=hide_icon)
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
+        items = getattr(data, propname)
+        helper_funcs = bpy.types.UI_UL_list
+        filtered = []
+        # Filtering by name
+        if self.filter_name:
+            filtered = helper_funcs.filter_items_by_name(
+                self.filter_name,
+                self.bitflag_filter_item,
+                items,
+                "label",
+                reverse=False,
+            )
+        if not filtered:
+            filtered = [self.bitflag_filter_item] * len(items)
+        annotation_nodes = get_annotation_nodes(data)
+        ordered = [-1] * len(items)
+        for i, item in enumerate(items):
+            if item in annotation_nodes:
+                ordered[i] = annotation_nodes.index(item)
+            else:
+                filtered[i] &= ~self.bitflag_filter_item
+        index = len(annotation_nodes)
+        for i, item in enumerate(items):
+            if ordered[i] == -1:
+                ordered[i] = index
+                index += 1
+        return filtered, ordered
+
+
+class MN_PT_Annotations(bpy.types.Panel):
+    """
+    Panel for annotations
+    """
+
+    bl_idname = "MN_PT_annotations"
+    bl_label = "Annotations"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory or molecule"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MOLECULE.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        scene = context.scene
+        entities_active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[entities_active_index].name
+        entity = scene.MNSession.get(uuid)
+        data = None
+        valid_selection = False
+        if annotations_group_node_name in entity.node_group.nodes:
+            node_group = entity.node_group.nodes[annotations_group_node_name].node_tree
+            annotations_active_index = entity.object.mn.annotations_active_index
+            annotation_nodes = get_annotation_nodes(node_group)
+            if 0 <= annotations_active_index < len(node_group.nodes):
+                if node_group.nodes[annotations_active_index] in annotation_nodes:
+                    valid_selection = True
+            data = node_group
+
+        layout = self.layout
+        row = layout.row()
+        if data is not None:
+            annotations_group_node = entity.node_group.nodes[
+                annotations_group_node_name
+            ]
+            row.prop(
+                annotations_group_node.inputs["Visible"],
+                "default_value",
+                text="Visible",
+            )
+        row = layout.row()
+        MN_UL_AnnotationsList.seqno = 1
+        row.template_list(
+            "MN_UL_AnnotationsList",
+            "annotations_list",
+            data,
+            "nodes",
+            entity.object.mn,
+            "annotations_active_index",
+            rows=3,
+        )
+        col = row.column()
+        row = col.row()
+        op = row.operator("mn.add_annotation", icon="ADD", text="")
+        op.uuid = uuid
+        row = col.row()
+        op = row.operator("mn.remove_annotation", icon="REMOVE", text="")
+        if valid_selection:
+            op.uuid = uuid
+            op.annotation_node_index = annotations_active_index
+        else:
+            row.enabled = False
+
+        if not valid_selection:
+            return
+
+        box = layout.box()
+        row = box.row()
+
+        # Add all the annotation inputs at the top
+        annotation_node = node_group.nodes[annotations_active_index]
+        for input in annotation_node.inputs:
+            if not hasattr(input, "default_value"):
+                continue
+            if input.name in ("Visible", "uuid"):
+                continue
+            if input.name == "Text Color":
+                break
+            row = box.row()
+            row.prop(data=input, property="default_value", text=input.name)
+            if input.name == "Type":
+                row.enabled = False
+
+        # Add all the common annotation params within the 'Options' panel
+        header, panel = box.panel("annotation_options", default_closed=True)
+        header.label(text="Options")
+
+        if panel:
+            common_param = False
+            for input in annotation_node.inputs:
+                if not hasattr(input, "default_value"):
+                    continue
+                if input.name == "Text Color":
+                    common_param = True
+                if common_param:
+                    panel.prop(data=input, property="default_value", text=input.name)
+        row = box.row()
+
+
 CLASSES = [
     MN_PT_Scene,
     MN_UL_EntitiesList,
@@ -834,4 +1019,6 @@ CLASSES = [
     MN_PT_trajectory,
     MN_UL_StylesList,
     MN_PT_Styles,
+    MN_UL_AnnotationsList,
+    MN_PT_Annotations,
 ]

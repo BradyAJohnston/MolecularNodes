@@ -115,6 +115,15 @@ quartodoc:
     contents:
     - session.MNSession
 
+  - title: Annotations
+    desc: Annotations for molecular entitites
+    contents:
+    - annotations.base
+    - annotations.interface
+    - annotations.manager
+    - entities.trajectory.annotations
+    - entities.molecule.annotations
+
   - title: Scene
     desc: Control settings for the Blender scene through the `Canvas` object.
     contents:

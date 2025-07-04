@@ -15,6 +15,9 @@ from .material import (
 )
 from .nodes import (
     NODE_SPACING,
+    NODE_WIDTH,
+    annotation_node_name,
+    annotations_group_node_name,
     final_join,
     insert_before,
     loc_between,
@@ -239,3 +242,81 @@ def style_interfaces_from_tree(
     tree: bpy.types.GeometryNodeTree,
 ) -> list[GeometryNodeInterFace]:
     return [create_style_interface(node) for node in get_final_style_nodes(tree)]
+
+
+def add_annotation_node(
+    tree: bpy.types.GeometryNodeTree,
+    name: str | None = None,
+) -> bpy.types.GeometryNodeGroup:
+    """
+    Add an Annotation node to the Annotations Group node
+
+    Parameters
+    ----------
+    tree: bpy.types.GeometryNodeTree
+        The main node tree of the entity
+
+    name: str = None
+        Optional name for the annotation. This is set at the node label.
+        When not specified, it defaults to the node name assigned by Blender
+
+    Returns
+    -------
+    The newly added Annotation node in the 'Annotations Group' node
+
+    """
+    link = tree.links.new
+    input = nodes.get_input(tree)
+    node_join = final_join(tree)
+    # create a new Annotations Group node if it doesn't exist
+    if annotations_group_node_name not in tree.nodes:
+        current_min_y = min(node.location[1] for node in tree.nodes)
+        ypos = current_min_y - 200
+        xpos = loc_between(input, node_join, 0.75)[0]
+        nodes.append(annotations_group_node_name)
+        annotations_group = nodes.add_custom(
+            group=tree,
+            name=annotations_group_node_name,
+            location=[xpos, ypos],
+        )
+        # make the node tree independent (single user)
+        node_tree_copy = annotations_group.node_tree.copy()
+        annotations_group.node_tree = node_tree_copy
+        link(
+            annotations_group.outputs[0],
+            node_join.inputs[0],
+        )
+        arrange_tree(tree)
+    else:
+        annotations_group = tree.nodes[annotations_group_node_name]
+    # add Annotation node to Annotations Group node
+    nodes.append(annotation_node_name)
+    tree = annotations_group.node_tree
+    if not tree.nodes:
+        current_max_x = 0
+    else:
+        current_max_x = max(node.location[0] for node in tree.nodes)
+    # position horizontally next to the previous ones, not linked
+    xpos = current_max_x + NODE_WIDTH + 20
+    annotation_node = nodes.add_custom(
+        group=tree,
+        name=annotation_node_name,
+        location=[xpos, 0],
+    )
+    # make the node tree independent (single user)
+    node_tree_copy = annotation_node.node_tree.copy()
+    annotation_node.node_tree = node_tree_copy
+    if name is not None:
+        annotation_node.label = name
+    else:
+        annotation_node.label = annotation_node.name
+    return annotation_node
+
+
+def get_annotation_nodes(
+    tree: bpy.types.GeometryNodeTree,
+) -> List[bpy.types.Node | None]:
+    """
+    Get the annotation nodes in a node tree.
+    """
+    return [node for node in tree.nodes if node.name.startswith("Annotation")]

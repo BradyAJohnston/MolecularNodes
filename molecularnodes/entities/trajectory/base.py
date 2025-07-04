@@ -21,6 +21,7 @@ from ...utils import (
     frames_to_average,
 )
 from ..base import EntityType, MolecularEntity
+from .annotations import TrajectoryAnnotationManager
 from .selections import Selection
 
 
@@ -35,6 +36,7 @@ class Trajectory(MolecularEntity):
         self.cache: dict = {}
         self._entity_type = EntityType.MD
         self._updating_in_progress = False
+        self.annotations = TrajectoryAnnotationManager(self)
 
     def selection_from_ui(self, item):
         self.add_selection(
