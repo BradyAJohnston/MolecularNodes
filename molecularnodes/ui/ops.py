@@ -970,7 +970,7 @@ class MN_OT_Add_Annotation(Operator):
         # register the temporary operator with required inputs
         _register_temp_annotation_add_op(entity, self.type)
         # Invoke the temporary operator
-        eval("bpy.ops.mn.temp_annotation_add" + "('INVOKE_DEFAULT')")
+        bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")
         return {"FINISHED"}
 
     def invoke(self, context, event):
