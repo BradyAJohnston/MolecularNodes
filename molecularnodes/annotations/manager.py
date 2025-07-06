@@ -54,7 +54,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
     def __init__(self, entity):
         # Access to the entity to which this manager is attached
-        self.entity = entity
+        self._entity = entity
 
     def __iter__(self) -> iter:
         """To support iteration"""
@@ -75,7 +75,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 return self._interfaces[key]
             else:
                 raise ValueError(f"Invalid index {index} of {max} items")
-        return self.get_annotation(name)
+        return self.get(name)
 
     def _ipython_key_completions_(self) -> list[str]:
         """Return annotation names"""
@@ -136,14 +136,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         method_name = f"add_{annotation_class.annotation_type}"
         delattr(cls, method_name)
 
-    def get_annotation(self, name: str) -> AnnotationInterface:
+    def get(self, name: str) -> AnnotationInterface:
         """Get an annotation by name"""
         for instance in self._interfaces.values():
             if instance.name == name:
                 return instance
         raise ValueError(f"Annotation with name '{name}' not found")
 
-    def remove_annotation(self, annotation: str | AnnotationInterface) -> None:
+    def remove(self, annotation: str | AnnotationInterface) -> None:
         """
         Remove an annotation by name or instance
 
@@ -173,6 +173,25 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             instances.append(instance)
         for instance in instances:
             self._remove_annotation_instance(instance)
+
+    @property
+    def visible(self) -> bool:
+        entity_nodes = self._entity.node_group.nodes
+        if annotations_group_node_name in entity_nodes:
+            return (
+                entity_nodes[annotations_group_node_name]
+                .inputs["Visible"]
+                .default_value
+            )
+        return False
+
+    @visible.setter
+    def visible(self, value: bool) -> None:
+        entity_nodes = self._entity.node_group.nodes
+        if annotations_group_node_name in entity_nodes:
+            entity_nodes[annotations_group_node_name].inputs[
+                "Visible"
+            ].default_value = value
 
     @classmethod
     def _validate_annotation_class(cls, annotation_class: BaseAnnotation) -> None:
@@ -208,14 +227,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                     f"Unknown input {key}. Valid values are {py_annotations}"
                 )
         # create an annotations instance
-        annotation_instance = annotation_class(self.entity)
+        annotation_instance = annotation_class(self._entity)
         # add a new Annotations Geometry Node within the 'Annotations Group' node
         annotation_node = add_annotation_node(
-            self.entity.tree, name=kwargs.get("name", None)
+            self._entity.tree, name=kwargs.get("name", None)
         )
         # set the active index for UI to the newly added annotation
-        annotations_group_node = self.entity.tree.nodes[annotations_group_node_name]
-        self.entity.object.mn.annotations_active_index = (
+        annotations_group_node = self._entity.tree.nodes[annotations_group_node_name]
+        self._entity.object.mn.annotations_active_index = (
             annotations_group_node.node_tree.nodes.find(annotation_node.name)
         )
         # create a new dynamic interface class
@@ -287,14 +306,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """Actual method to remove annotation instance"""
         uuid = instance._uuid
         # remove corresponding annotations node
-        node_group = self.entity.node_group.nodes[annotations_group_node_name].node_tree
+        node_group = self._entity.node_group.nodes[annotations_group_node_name].node_tree
         annotation_node = node_group.nodes.get(instance._node_name)
         if annotation_node is not None:
             node_group.nodes.remove(annotation_node)
         # set the active index in UI to the last annotation
         annotation_nodes = get_annotation_nodes(node_group)
         if len(annotation_nodes) > 0:
-            self.entity.object.mn.annotations_active_index = node_group.nodes.find(
+            self._entity.object.mn.annotations_active_index = node_group.nodes.find(
                 annotation_nodes[-1].name
             )
         # remove from instances registry

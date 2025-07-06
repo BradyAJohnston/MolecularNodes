@@ -59,7 +59,7 @@ class TestAnnotations:
         # test index based access
         assert t1.annotations[0] == a1
         # test annotation get by name
-        ga1 = t1.annotations.get_annotation("Annotation")
+        ga1 = t1.annotations.get("Annotation")
         assert ga1 == a1
         # test annotation inputs in interface
         assert hasattr(a1, "selection")
@@ -77,10 +77,10 @@ class TestAnnotations:
         assert a2 in t1.annotations
         assert a3 in t1.annotations
         # remove annotation by name
-        t1.annotations.remove_annotation("A2")
+        t1.annotations.remove("A2")
         assert a2 not in t1.annotations
         # remove annotation by instance
-        t1.annotations.remove_annotation(a3)
+        t1.annotations.remove(a3)
         assert a3 not in t1.annotations
         # test clear annotations (remove all)
         assert len(t1.annotations) != 0
