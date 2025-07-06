@@ -306,7 +306,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """Actual method to remove annotation instance"""
         uuid = instance._uuid
         # remove corresponding annotations node
-        node_group = self._entity.node_group.nodes[annotations_group_node_name].node_tree
+        node_group = self._entity.node_group.nodes[
+            annotations_group_node_name
+        ].node_tree
         annotation_node = node_group.nodes.get(instance._node_name)
         if annotation_node is not None:
             node_group.nodes.remove(annotation_node)

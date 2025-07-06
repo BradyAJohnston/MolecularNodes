@@ -43,7 +43,7 @@ def _set_entity_visibility(self, visible: bool) -> None:
     set_object_visibility(object, self.visible)
 
 
-def _entities_active_index_callback(self, context: bpy.context) -> None: # type: ignore
+def _entities_active_index_callback(self, context: bpy.context) -> None:  # type: ignore
     """update callback for entities active_index change"""
     if self.entities_active_index == -1:
         return
