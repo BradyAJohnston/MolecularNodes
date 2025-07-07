@@ -208,6 +208,7 @@
    [ 3.5e-01 -1.7e-04  1.0e-01]]
 # ---
 # name: test_pdb_no_bonds
+  AttributeArray(name='position', object='no_bonds', mesh='no_bonds', domain=POINT, type=FLOAT_VECTOR, shape=(16, 3), dtype=float64)
   array([[ 0.01,  0.01,  0.01],
          [ 0.02,  0.02,  0.02],
          [ 0.03,  0.03,  0.03],

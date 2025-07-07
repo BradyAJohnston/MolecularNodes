@@ -3,6 +3,7 @@ import bpy
 import numpy as np
 import pytest
 from databpy import ObjectTracker
+import databpy as db
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
@@ -95,6 +96,8 @@ def test_density_operator(
     scene.mn.import_density_center = center
     with ObjectTracker() as o:
         bpy.ops.mn.import_density()
-        density = scene.MNSession.match(o.latest())
+        density: mn.entities.Density = scene.MNSession.match(o.latest())
 
-    assert snapshot_custom == density.position
+    assert snapshot_custom == db.named_attribute(
+        mn.blender.mesh.evaluate_using_mesh(density.object)
+    )
