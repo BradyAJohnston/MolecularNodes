@@ -562,6 +562,7 @@
    [1.3 0.4 0.6]]
 # ---
 # name: TestTrajectory.test_trajectory_update
+  AttributeArray(name='position', object='TestTrajectoryUpdate', mesh='TestTrajectoryUpdate', domain=POINT, type=FLOAT_VECTOR, shape=(10273, 3), dtype=float64)
   array([[0.39179999, 0.28980002, 0.48460001],
          [0.3928    , 0.28290004, 0.49179998],
          [0.38480002, 0.28730002, 0.47780001],
@@ -571,6 +572,7 @@
          [1.31230009, 0.36460003, 0.57550001]])
 # ---
 # name: TestTrajectory.test_trajectory_update.1
+  AttributeArray(name='position', object='TestTrajectoryUpdate', mesh='TestTrajectoryUpdate', domain=POINT, type=FLOAT_VECTOR, shape=(10273, 3), dtype=float64)
   array([[0.38730001, 0.27580002, 0.49330002],
          [0.38209999, 0.27069998, 0.48640001],
          [0.38300002, 0.28479999, 0.49490005],

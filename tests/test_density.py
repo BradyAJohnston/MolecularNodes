@@ -1,5 +1,6 @@
 import itertools
 import bpy
+import databpy as db
 import numpy as np
 import pytest
 from databpy import ObjectTracker
@@ -95,6 +96,8 @@ def test_density_operator(
     scene.mn.import_density_center = center
     with ObjectTracker() as o:
         bpy.ops.mn.import_density()
-        density = scene.MNSession.match(o.latest())
+        density: mn.entities.Density = scene.MNSession.match(o.latest())
 
-    assert snapshot_custom == density.position
+    assert snapshot_custom == db.named_attribute(
+        mn.blender.mesh.evaluate_using_mesh(density.object)
+    )
