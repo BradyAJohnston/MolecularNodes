@@ -1,9 +1,9 @@
 import itertools
 import bpy
+import databpy as db
 import numpy as np
 import pytest
 from databpy import ObjectTracker
-import databpy as db
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
