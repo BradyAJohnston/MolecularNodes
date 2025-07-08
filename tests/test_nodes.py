@@ -303,7 +303,7 @@ def test_topo_bonds():
 
 
 def test_is_modifier():
-    bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
+    bpy.ops.wm.open_mainfile(filepath=str(mn.assets.ASSET_FILE))
     for tree in bpy.data.node_groups:
         if tree.name == "Smooth by Angle":
             continue

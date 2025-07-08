@@ -4,7 +4,7 @@ from .template import install, uninstall
 
 ASSET_DIR = Path(__file__).resolve().parent
 ADDON_DIR = ASSET_DIR.parent
-MN_DATA_FILE = ASSET_DIR / "MN_data_file_4.4.blend"
+ASSET_FILE = ASSET_DIR / "asset_file.blend"
 
 
-__all__ = ["data", "install", "uninstall", "MN_DATA_FILE"]
+__all__ = ["data", "install", "uninstall", "ASSET_FILE"]

@@ -6,7 +6,7 @@ it is desireable to make these nodes accessible for scripting. The classes defin
 provide a way to script against the GeometryNode nodetrees. When invoked on a style these classes
 will simply override the base styles.
 
-Because the nodetrees in the MN_data_file_{version}.blend are the source of truth, we add
+Because the nodetrees in the asset_file.blend are the source of truth, we add
 function to parity between the nodetrees and the class representations.
 
 Each style uses a Socket dataclass to define the mapping between class attributes and

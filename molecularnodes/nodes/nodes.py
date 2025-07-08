@@ -11,7 +11,7 @@ from databpy.nodes import (
 )
 from mathutils import Vector
 from .. import color, utils
-from ..assets import MN_DATA_FILE
+from ..assets import ASSET_FILE
 from ..blender import mesh
 from .material import assign_material
 
@@ -215,7 +215,7 @@ def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
 
 def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
     "Append a GN node from the MN data file"
-    GN_TREES_PATH = MN_DATA_FILE / "NodeTree"
+    GN_TREES_PATH = ASSET_FILE / "NodeTree"
     return append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
 
 

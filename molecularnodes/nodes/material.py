@@ -2,7 +2,7 @@ from typing import Tuple
 import bpy
 from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
-from ..assets import MN_DATA_FILE
+from ..assets import ASSET_FILE
 from .interface import TreeInterface, check_linked, remove_linked, socket
 
 MATERIAL_NAMES = [
@@ -15,12 +15,12 @@ MATERIAL_NAMES = [
 
 
 def append_material(name: str) -> bpy.types.Material:
-    "Append a material from the MN_DATA_FILE."
-    return append_from_blend(name, str(MN_DATA_FILE))
+    "Append a material from the ASSET_FILE."
+    return append_from_blend(name, str(ASSET_FILE))
 
 
 def add_all_materials() -> None:
-    "Append all pre-defined materials from the MN_DATA_FILE."
+    "Append all pre-defined materials from the ASSET_FILE."
     for name in MATERIAL_NAMES:
         append_material(name)
 

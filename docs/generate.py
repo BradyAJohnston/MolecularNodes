@@ -6,7 +6,7 @@ import molecularnodes as mn
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
 
 # load the data file which contains all of the nodes to build docs for
-bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
+bpy.ops.wm.open_mainfile(filepath=str(mn.assets.ASSET_FILE))
 
 
 header = """---
