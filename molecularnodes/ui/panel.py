@@ -3,8 +3,8 @@ from ..entities import trajectory
 from ..nodes import nodes
 from ..session import get_session
 from .pref import addon_preferences
-from .utils import check_online_access_for_ui
 from .query import PDBStructureInfo
+from .utils import check_online_access_for_ui
 
 
 def panel_wwpdb(layout, scene):

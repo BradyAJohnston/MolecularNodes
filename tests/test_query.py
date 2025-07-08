@@ -107,13 +107,13 @@ class TestQueryPDBStructure:
             mock_get.return_value = mock_response
 
             # Test lowercase conversion
-            result = query_pdb_structure("4hhb")
+            query_pdb_structure("4hhb")
             mock_get.assert_called_with(
                 "https://data.rcsb.org/rest/v1/core/entry/4HHB", timeout=30
             )
 
             # Test whitespace stripping
-            result = query_pdb_structure(" 4HHB ")
+            query_pdb_structure(" 4HHB ")
             mock_get.assert_called_with(
                 "https://data.rcsb.org/rest/v1/core/entry/4HHB", timeout=30
             )
