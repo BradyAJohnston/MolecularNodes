@@ -68,14 +68,12 @@ class MolecularNodesSceneProperties(PropertyGroup):
     import_code_pdb: StringProperty(  # type: ignore
         name="PDB",
         description="The PDB code to download and import",
-        options={"TEXTEDIT_UPDATE"},
+        # options={"TEXTEDIT_UPDATE"},
         maxlen=4,
         update=_update_structure_display_info,
     )
 
-    import_display_info: StringProperty(  # type: ignore
-        name="Display Info", options={"TEXTEDIT_UPDATE"}
-    )
+    import_display_info: StringProperty()  # type: ignore
 
     is_updating: BoolProperty(  # type: ignore
         name="Updating",

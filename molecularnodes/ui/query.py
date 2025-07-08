@@ -225,46 +225,10 @@ def query_pdb_structure(entry_id: str, timeout: int = 30) -> PDBStructureInfo:
         raise PDBQueryError(f"Request failed: {e}")
 
 
-# Simple debouncing with timers
-_pending_queries = {}
-
-
-def _delayed_pdb_query():
-    """Timer function that executes after a delay"""
-    if not _pending_queries:
-        return None  # Stop timer
-
-    # Get the most recent query
-    code = list(_pending_queries.keys())[-1]
-    context = _pending_queries[code]
-
-    # Clear all pending queries
-    _pending_queries.clear()
-
-    # Perform the query
+def _update_structure_display_info(self, context):
+    code = context.scene.mn.import_code_pdb
     try:
         info = query_pdb_structure(code)
         context.scene.mn.import_display_info = info.to_json()
-    except (PDBQueryError, ValueError):
-        context.scene.mn.import_display_info = ""
-
-    return None  # Stop timer
-
-
-def _update_structure_display_info(self, context):
-    """Debounced update function"""
-    code = context.scene.mn.import_code_pdb
-
-    # Clear display info immediately
-    context.scene.mn.import_display_info = ""
-
-    # Skip if code is empty or too short
-    if not code or len(code.strip()) < 4:
-        return
-
-    # Store the query request
-    _pending_queries[code] = context
-
-    # Register timer with delay (debounce rapid typing)
-    if not bpy.app.timers.is_registered(_delayed_pdb_query):
-        bpy.app.timers.register(_delayed_pdb_query, first_interval=0.5)
+    except (PDBQueryError, ValueError) as e:
+        context.scene.mn.import_display_info = f"ERROR: {e}"
