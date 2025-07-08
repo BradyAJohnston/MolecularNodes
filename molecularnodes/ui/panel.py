@@ -37,12 +37,7 @@ def panel_wwpdb(layout, scene):
     layout.separator()
     if scene.mn.import_display_info != "":
         info = PDBStructureInfo.from_json(scene.mn.import_display_info)
-        layout.label(text=f"PDB: {info.entry_id.upper()}", icon="FILE_TEXT")
-        layout.label(text=f"Title: {info.title}")
-        if info.resolution:
-            layout.label(text=f"Resolution: {info.resolution} Å")
-        if info.experimental_method:
-            layout.label(text=f"Experimental Method: {info.experimental_method}")
+        info.as_layout(layout)
         layout.separator()
 
     layout.label(text="Options", icon="MODIFIER")

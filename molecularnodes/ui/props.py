@@ -3,7 +3,7 @@ from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 from bpy.types import PropertyGroup
 from ..handlers import _update_entities
 from ..session import get_session
-from .query import PDBQueryError, query_pdb_structure
+from .query import _update_structure_display_info
 from .style import STYLE_ITEMS
 
 uuid_property = StringProperty(  # type: ignore
@@ -11,15 +11,6 @@ uuid_property = StringProperty(  # type: ignore
     description="Unique ID for referencing the required objects in the MNSession",
     default="",
 )
-
-
-def _update_structure_display_info(self, context):
-    code = context.scene.mn.import_code_pdb
-    try:
-        info = query_pdb_structure(code)
-        context.scene.mn.import_display_info = info.to_json()
-    except (PDBQueryError, ValueError):
-        context.scene.mn.import_display_info = ""
 
 
 def _get_frame(self):
