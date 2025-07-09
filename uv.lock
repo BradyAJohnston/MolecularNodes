@@ -540,14 +540,14 @@ wheels = [
 
 [[package]]
 name = "databpy"
-version = "0.0.18"
+version = "0.0.20"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4a/08/704493bee35376a6efa005bb1de9e079208af7a59753f9466cff05dcd4d7/databpy-0.0.18.tar.gz", hash = "sha256:c76c84d4d4b1c4d03adac3a58dbb2f706ff4416fe286e5bad5e7cf6b7dced9c6", size = 35316 }
+sdist = { url = "https://files.pythonhosted.org/packages/7a/30/9a14083487b92ae2d05c0a1fe7fa12b581b83f283b897785c2782edbcb92/databpy-0.0.20.tar.gz", hash = "sha256:fded210ddb9597b0cbed7d49135b1bf169fb2575f6e47818dc7b590e990c804a", size = 44033 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/41/0cce60959a8593f41cd176fff9e4c2bb2eb1ca0a007a7cc08568418e36e4/databpy-0.0.18-py3-none-any.whl", hash = "sha256:115ce15201220f369f2f5f33023b84fddf61b3347ec808a1581c75deb9d68c13", size = 32416 },
+    { url = "https://files.pythonhosted.org/packages/28/d9/dc8168b72287f386c150a7d83bbdc13d7c02d20f4621eeb6aa7c7fcfdee7/databpy-0.0.20-py3-none-any.whl", hash = "sha256:eafb1d69ecf4c344b4c2c8153ebb028b6591586335bf5a911f20ddc942f83f01", size = 35856 },
 ]
 
 [[package]]
@@ -1472,7 +1472,7 @@ wheels = [
 
 [[package]]
 name = "molecularnodes"
-version = "4.4.2"
+version = "4.4.3"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
@@ -1520,7 +1520,7 @@ test = [
 requires-dist = [
     { name = "biotite", specifier = ">=1.1" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.4" },
-    { name = "databpy", specifier = ">=0.0.18" },
+    { name = "databpy", specifier = ">=0.0.20" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'docs'" },
