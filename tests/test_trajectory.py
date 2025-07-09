@@ -277,6 +277,12 @@ class TestTrajectory:
         # test add_trajectory with no style
         t1 = session.add_trajectory(universe, style=None)
         assert len(t1.tree.nodes) == 2
+        # test adding empty style
+        t1.add_style(style=None)
+        assert len(t1.tree.nodes) == 2
+        # test adding invalid style
+        with pytest.raises(ValueError):
+            t1.add_style(style="invalid")
         # test adding new style
         t1.add_style(style="cartoon")
         assert len(t1.tree.nodes) == 7
