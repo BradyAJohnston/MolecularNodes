@@ -2,35 +2,16 @@ import functools
 import inspect
 from abc import ABCMeta
 from uuid import uuid1
-from bpy.types import NodeTreeInterfacePanel
-from ..nodes.geometry import (
-    add_annotation_node,
-    annotations_group_node_name,
-    get_annotation_nodes,
-)
-from ..nodes.interface import create_node_property, socket
+import bpy
+from ..blender.utils import viewport_tag_redraw
 from .base import BaseAnnotation
 from .interface import AnnotationInterface
-
-# Annotation input type to Node input socket type mapping
-annotation_input_type_mapping = {
-    "bool": "NodeSocketBool",
-    "float": "NodeSocketFloat",
-    "int": "NodeSocketInt",
-    "str": "NodeSocketString",
-}
-
-
-def get_all_class_annotations(cls) -> dict:
-    """Get all the annotations from the class including base classes"""
-    all_annotations = {}
-    for base_cls in cls.mro():
-        if hasattr(base_cls, "__annotations__"):
-            current_annotations = inspect.get_annotations(base_cls, eval_str=True)
-            all_annotations.update(current_annotations)
-    if "interface" in all_annotations:
-        del all_annotations["interface"]
-    return all_annotations
+from .props import (
+    BaseAnnotationProperties,
+    create_annotation_type_inputs,
+    create_property_interface,
+)
+from .utils import get_all_class_annotations
 
 
 class BaseAnnotationManager(metaclass=ABCMeta):
@@ -117,7 +98,30 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             parameters.append(param)
         # Create method signature to match annotation class inputs
         method.func.__signature__ = inspect.Signature(parameters)
+        # Update annotation properties
+        cls._update_annotation_props(annotation_class)
         setattr(cls, method_name, method)
+
+    @classmethod
+    def _update_annotation_props(cls, annotation_class: BaseAnnotation):
+        """Update annotation properties attached to Object"""
+        AnnotationProperties = type(
+            "AnnotationProperties", (BaseAnnotationProperties,), {}
+        )
+        # Add each annotation type inputs as a pointer to a separate property group
+        for annotation_class in cls._classes.values():
+            annotation_type = annotation_class.annotation_type
+            AnnotationInputs = create_annotation_type_inputs(annotation_class)
+            bpy.utils.register_class(AnnotationInputs)
+            AnnotationProperties.__annotations__[annotation_type] = (
+                bpy.props.PointerProperty(type=AnnotationInputs)
+            )
+        # Re-register the new AnnotationProperties class
+        bpy.utils.register_class(AnnotationProperties)
+        # Re-assign the annotation properties to Object - old data is retained
+        bpy.types.Object.mn_annotations = bpy.props.CollectionProperty(
+            type=AnnotationProperties
+        )
 
     @classmethod
     def unregister(cls, annotation_class) -> None:
@@ -176,22 +180,13 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
     @property
     def visible(self) -> bool:
-        entity_nodes = self._entity.node_group.nodes
-        if annotations_group_node_name in entity_nodes:
-            return (
-                entity_nodes[annotations_group_node_name]
-                .inputs["Visible"]
-                .default_value
-            )
-        return False
+        """Visibility of all annotations - getter"""
+        return self._entity.object.mn.annotations_visible
 
     @visible.setter
     def visible(self, value: bool) -> None:
-        entity_nodes = self._entity.node_group.nodes
-        if annotations_group_node_name in entity_nodes:
-            entity_nodes[annotations_group_node_name].inputs[
-                "Visible"
-            ].default_value = value
+        """Visibility of all annotations - setter"""
+        self._entity.object.mn.annotations_visible = value
 
     @classmethod
     def _validate_annotation_class(cls, annotation_class: BaseAnnotation) -> None:
@@ -228,15 +223,6 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 )
         # create an annotations instance
         annotation_instance = annotation_class(self._entity)
-        # add a new Annotations Geometry Node within the 'Annotations Group' node
-        annotation_node = add_annotation_node(
-            self._entity.tree, name=kwargs.get("name", None)
-        )
-        # set the active index for UI to the newly added annotation
-        annotations_group_node = self._entity.tree.nodes[annotations_group_node_name]
-        self._entity.object.mn.annotations_active_index = (
-            annotations_group_node.node_tree.nodes.find(annotation_node.name)
-        )
         # create a new dynamic interface class
         inteface_class_name = f"{annotation_class.__name__}_interface"
         DynamicInterface = type(inteface_class_name, (AnnotationInterface,), {})
@@ -244,53 +230,57 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         uuid = str(uuid1())
         # add the new interface to the entity specific interfaces registry
         self._interfaces[uuid] = interface
-        # add the uuid and annotation node node as internal attributes
+        # create a new annotation property
+        object = self._entity.object
+        prop = object.mn_annotations.add()
+        # use the instance uuid as name for later lookups using find()
+        prop.name = uuid
+        prop.type = annotation_class.annotation_type
+        # set the annotations active index for GUI
+        object.mn.annotations_active_index = len(object.mn_annotations) - 1
+        # add the uuid as internal attribute
         # _uuid will be used to lookup this interface in the interfaces registry
-        # _node_name will be used to lookup annotation node using get() directly
         setattr(interface, "_uuid", uuid)
-        setattr(interface, "_node_name", annotation_node.name)
-        # add annotation type and uuid to node inputs
-        annotation_node.inputs["Type"].default_value = annotation_class.annotation_type
-        annotation_node.inputs["uuid"].default_value = uuid
-        # create and set annotation inputs as new node input sockets:
-        tree = annotation_node.node_tree
-        # all the annotation inputs will be added to the 'Inputs' panel in the node
-        parent = None
-        for item in tree.interface.items_tree:
-            if item.name == "Inputs" and isinstance(item, NodeTreeInterfacePanel):
-                parent = item
-        # iterate though all the annotation inputs and create input sockets
-        for key, value in py_annotations.items():
-            # name is a special case that points to the node label and not any input
-            if key == "name":
-                prop = create_node_property(annotation_node, "label")
-                setattr(interface.__class__, key, prop)
+        # set the annotation name and create property interface
+        value = kwargs.get("name", None)
+        if value is not None:
+            setattr(prop, "label", value)
+        else:
+            if object.mn.annotations_next_index:
+                prop.label = f"Annotation.{object.mn.annotations_next_index:03d}"
+            else:
+                prop.label = "Annotation"
+            object.mn.annotations_next_index += 1
+        prop_interface = create_property_interface(prop, "label")
+        setattr(interface.__class__, "name", prop_interface)
+        # iterate though all the annotation inputs, set passed values and
+        # create property interfaces
+        inputs = getattr(prop, prop.type, None)
+        if inputs is not None:
+            for key, value in py_annotations.items():
+                # name is a special case that is already added above
+                if key == "name":
+                    continue
+                # set the input value based on what is passed
+                # if input value is not passed, use the value from the annotation class
+                value = kwargs.get(key, None)
+                if value is None:
+                    value = getattr(annotation_class, key, None)
+                if value is not None:
+                    setattr(inputs, key, value)
+                prop_interface = create_property_interface(inputs, key)
+                setattr(interface.__class__, key, prop_interface)
+        # create property interfaces for the common annotation params
+        for item in prop.bl_rna.properties:
+            if not item.is_runtime:
                 continue
-            # use the socket type based on the annotation input type specified
-            socket_type = annotation_input_type_mapping.get(value.__name__, None)
-            if socket_type is not None:
-                tree.interface.new_socket(
-                    key,
-                    socket_type=socket_type,
-                    parent=parent,
-                )
-            # set the input value based on what is passed
-            # if input value is not passed, use the value from the annotation class
-            value = kwargs.get(key, None)
-            if value is None:
-                value = getattr(annotation_class, key, None)
-            if value is not None:
-                annotation_node.inputs[key].default_value = value
-        # all the node inputs are created at this point
-        # create the interface properties by iterating the node inputs
-        for input in annotation_node.inputs:
-            # disallow updation of the annotation type and uuid
-            if input.name in ("Type", "uuid"):
+            prop_path = item.identifier
+            if prop_path in ("name", "label", "type"):
                 continue
-            prop_name = input.name.lower().replace(" ", "_")
-            prop = socket(input)
-            # add the property to the dynamic interface class
-            setattr(interface.__class__, prop_name, prop)
+            if item.type == "POINTER":
+                continue
+            prop_interface = create_property_interface(prop, prop_path)
+            setattr(interface.__class__, prop_path, prop_interface)
         # set the interface attribute of the annotation instance so that
         # users can access the inputs and common params using this interface
         setattr(annotation_instance, "interface", interface)
@@ -299,25 +289,21 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             getattr(annotation_instance, "defaults")
         ):
             annotation_instance.defaults()
+        # tag redraw of viewport to refresh values in GUI
+        viewport_tag_redraw()
         # return the newly created dynamic annotation interface
         return interface
 
     def _remove_annotation_instance(self, instance) -> None:
         """Actual method to remove annotation instance"""
         uuid = instance._uuid
-        # remove corresponding annotations node
-        node_group = self._entity.node_group.nodes[
-            annotations_group_node_name
-        ].node_tree
-        annotation_node = node_group.nodes.get(instance._node_name)
-        if annotation_node is not None:
-            node_group.nodes.remove(annotation_node)
-        # set the active index in UI to the last annotation
-        annotation_nodes = get_annotation_nodes(node_group)
-        if len(annotation_nodes) > 0:
-            self._entity.object.mn.annotations_active_index = node_group.nodes.find(
-                annotation_nodes[-1].name
-            )
+        object = self._entity.object
+        index = object.mn_annotations.find(uuid)
+        if index != -1:
+            object.mn_annotations.remove(index)
+        object.mn.annotations_active_index = len(object.mn_annotations) - 1
+        # tag redraw of viewport to refresh values in GUI
+        viewport_tag_redraw()
         # remove from instances registry
         del self._interfaces[uuid]
 

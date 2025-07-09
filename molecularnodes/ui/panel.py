@@ -3,11 +3,7 @@ from databpy.object import LinkedObjectError
 from ..entities import trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
-from ..nodes.geometry import (
-    annotations_group_node_name,
-    get_annotation_nodes,
-    get_final_style_nodes,
-)
+from ..nodes.geometry import get_final_style_nodes
 from ..session import get_session
 from .pref import addon_preferences
 from .utils import check_online_access_for_ui
@@ -836,8 +832,6 @@ class MN_UL_AnnotationsList(bpy.types.UIList):
     UIList of annotations for an entity
     """
 
-    seqno = 1
-
     def draw_item(
         self,
         context,
@@ -853,16 +847,13 @@ class MN_UL_AnnotationsList(bpy.types.UIList):
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            seqno = f"{self.seqno}. "
-            MN_UL_AnnotationsList.seqno += 1
             split = row.split(factor=0.1)
             col = split.column()
-            col.label(text=seqno)
+            col.label(text=f"{index + 1}. ")
             col = split.column()
             col.prop(item, "label", text="", emboss=False)
-            visible = item.inputs["Visible"]
-            hide_icon = "HIDE_OFF" if visible.default_value else "HIDE_ON"
-            row.prop(visible, "default_value", icon_only=True, icon=hide_icon)
+            hide_icon = "HIDE_OFF" if item.visible else "HIDE_ON"
+            row.prop(item, "visible", icon_only=True, icon=hide_icon)
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
@@ -884,19 +875,7 @@ class MN_UL_AnnotationsList(bpy.types.UIList):
             )
         if not filtered:
             filtered = [self.bitflag_filter_item] * len(items)
-        annotation_nodes = get_annotation_nodes(data)
-        ordered = [-1] * len(items)
-        for i, item in enumerate(items):
-            if item in annotation_nodes:
-                ordered[i] = annotation_nodes.index(item)
-            else:
-                filtered[i] &= ~self.bitflag_filter_item
-        index = len(annotation_nodes)
-        for i, item in enumerate(items):
-            if ordered[i] == -1:
-                ordered[i] = index
-                index += 1
-        return filtered, ordered
+        return filtered, []
 
 
 class MN_PT_Annotations(bpy.types.Panel):
@@ -931,36 +910,22 @@ class MN_PT_Annotations(bpy.types.Panel):
         entities_active_index = scene.mn.entities_active_index
         uuid = scene.mn.entities[entities_active_index].name
         entity = scene.MNSession.get(uuid)
-        data = None
-        valid_selection = False
-        if annotations_group_node_name in entity.node_group.nodes:
-            node_group = entity.node_group.nodes[annotations_group_node_name].node_tree
-            annotations_active_index = entity.object.mn.annotations_active_index
-            annotation_nodes = get_annotation_nodes(node_group)
-            if 0 <= annotations_active_index < len(node_group.nodes):
-                if node_group.nodes[annotations_active_index] in annotation_nodes:
-                    valid_selection = True
-            data = node_group
+        object = entity.object
+        annotations_active_index = object.mn.annotations_active_index
+        valid_selection = annotations_active_index != -1
 
         layout = self.layout
         row = layout.row()
-        if data is not None:
-            annotations_group_node = entity.node_group.nodes[
-                annotations_group_node_name
-            ]
-            row.prop(
-                annotations_group_node.inputs["Visible"],
-                "default_value",
-                text="Visible",
-            )
+        row.prop(object.mn, "annotations_visible", text="Visible")
+
         row = layout.row()
         MN_UL_AnnotationsList.seqno = 1
         row.template_list(
             "MN_UL_AnnotationsList",
             "annotations_list",
-            data,
-            "nodes",
-            entity.object.mn,
+            object,
+            "mn_annotations",
+            object.mn,
             "annotations_active_index",
             rows=3,
         )
@@ -972,43 +937,39 @@ class MN_PT_Annotations(bpy.types.Panel):
         op = row.operator("mn.remove_annotation", icon="REMOVE", text="")
         if valid_selection:
             op.uuid = uuid
-            op.annotation_node_index = annotations_active_index
+            op.annotation_uuid = object.mn_annotations[annotations_active_index].name
         else:
             row.enabled = False
 
         if not valid_selection:
             return
 
+        item = object.mn_annotations[annotations_active_index]
+
         box = layout.box()
         row = box.row()
-
-        # Add all the annotation inputs at the top
-        annotation_node = node_group.nodes[annotations_active_index]
-        for input in annotation_node.inputs:
-            if not hasattr(input, "default_value"):
-                continue
-            if input.name in ("Visible", "uuid"):
-                continue
-            if input.name == "Text Color":
-                break
-            row = box.row()
-            row.prop(data=input, property="default_value", text=input.name)
-            if input.name == "Type":
-                row.enabled = False
+        row.prop(item, "type")
+        row.enabled = False
+        inputs = getattr(item, item.type, None)
+        if inputs is not None:
+            for prop_name in inputs.__annotations__.keys():
+                row = box.row()
+                row.prop(inputs, prop_name)
 
         # Add all the common annotation params within the 'Options' panel
         header, panel = box.panel("annotation_options", default_closed=True)
         header.label(text="Options")
 
         if panel:
-            common_param = False
-            for input in annotation_node.inputs:
-                if not hasattr(input, "default_value"):
+            for prop in item.bl_rna.properties:
+                if not prop.is_runtime:
                     continue
-                if input.name == "Text Color":
-                    common_param = True
-                if common_param:
-                    panel.prop(data=input, property="default_value", text=input.name)
+                if prop.identifier in ("label", "type", "visible"):
+                    continue
+                if prop.type == "POINTER":
+                    continue
+                panel.prop(item, prop.identifier)
+
         row = box.row()
 
 

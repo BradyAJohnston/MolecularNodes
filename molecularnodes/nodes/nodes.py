@@ -56,9 +56,6 @@ styles_mapping = {
     "density_wire": "Style Density Wire",
 }
 
-annotations_group_node_name = "Annotations Group"
-annotation_node_name = "Annotation"
-
 
 def inputs(node):
     items = {}

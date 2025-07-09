@@ -258,15 +258,3 @@ def option(node_name: str, input: str, type_: type[T]):
         setattr(self.tree.nodes[node_name], input, value)
 
     return property(getter, setter)
-
-
-def create_node_property(node, prop):
-    """Create a property to access node level attributes"""
-
-    def getter(self):
-        return getattr(node, prop)
-
-    def setter(self, value):
-        setattr(node, prop, value)
-
-    return property(getter, setter)

@@ -11,13 +11,12 @@ from bpy.props import (  # type: ignore
 )
 from bpy.types import Context, Operator  # type: ignore
 from .. import entities
-from ..annotations.manager import get_all_class_annotations
+from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import Molecule, density, ensemble, trajectory
 from ..nodes import nodes
 from ..nodes.geometry import (
-    annotations_group_node_name,
     create_style_interface,
     get_final_style_nodes,
 )
@@ -882,26 +881,8 @@ def _register_temp_annotation_add_op(entity, annotation_type):
     except UnboundLocalError:
         pass
 
-    # create dynamic properties corresponding to the annotation inputs
-    attributes = {"__annotations__": {}}
     annotation_class = entity.annotations._classes[annotation_type]
-    py_annotations = get_all_class_annotations(annotation_class)
-    for key, atype in py_annotations.items():
-        if key == "name":
-            continue
-        if atype.__name__ == "str":
-            prop = bpy.props.StringProperty(default=getattr(annotation_class, key, ""))
-        elif atype.__name__ == "bool":
-            prop = bpy.props.BoolProperty(default=getattr(annotation_class, key, False))
-        elif atype.__name__ == "int":
-            prop = bpy.props.IntProperty(default=getattr(annotation_class, key, 0))
-        elif atype.__name__ == "float":
-            prop = bpy.props.FloatProperty(default=getattr(annotation_class, key, 0.0))
-        else:
-            continue
-        attributes["__annotations__"][key] = prop
-
-    AnnotationInputs = type("AnnotationInputs", (bpy.types.PropertyGroup,), attributes)
+    AnnotationInputs = create_annotation_type_inputs(annotation_class)
     # register the annotation inputs PropertyGroup (multiple registers are fine)
     bpy.utils.register_class(AnnotationInputs)
 
@@ -936,6 +917,7 @@ def _register_temp_annotation_add_op(entity, annotation_type):
             return {"FINISHED"}
 
     bpy.utils.register_class(TempAnnotationAddOperator)
+    return AnnotationInputs
 
 
 class MN_OT_Add_Annotation(Operator):
@@ -968,9 +950,12 @@ class MN_OT_Add_Annotation(Operator):
         if self.type == "None":
             return {"CANCELLED"}
         # register the temporary operator with required inputs
-        _register_temp_annotation_add_op(entity, self.type)
-        # Invoke the temporary operator
-        bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")
+        annotation_inputs = _register_temp_annotation_add_op(entity, self.type)
+        # Invoke/Execute the temporary operator based on inputs present
+        if not annotation_inputs.__annotations__:
+            bpy.ops.mn.temp_annotation_add("EXEC_DEFAULT")
+        else:
+            bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -987,16 +972,11 @@ class MN_OT_Remove_Annotation(Operator):
     bl_description = "Remove annotation from entity"
 
     uuid: StringProperty()  # type: ignore
-    annotation_node_index: IntProperty()  # type: ignore
+    annotation_uuid: StringProperty()  # type: ignore
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
-        node_group = entity.node_group.nodes[annotations_group_node_name].node_tree
-        annotation_node = node_group.nodes[self.annotation_node_index]
-        # remove annotation based on the the instance uuid
-        entity.annotations._remove_annotation_by_uuid(
-            annotation_node.inputs["uuid"].default_value
-        )
+        entity.annotations._remove_annotation_by_uuid(self.annotation_uuid)
         return {"FINISHED"}
 
     def invoke(self, context, event):

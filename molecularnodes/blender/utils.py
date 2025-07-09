@@ -24,3 +24,11 @@ def set_object_visibility(object: bpy.types.Object, visible: bool) -> None:
         # Keyframing object visibility can at times lead to:
         # RuntimeError: Object can't be hidden because it is not in View Layer 'ViewLayer'!
         pass
+
+
+def viewport_tag_redraw() -> None:
+    """Tag all the viewport areas for a redraw"""
+    for window in bpy.context.window_manager.windows:
+        for area in window.screen.areas:
+            if area.type == "VIEW_3D":
+                area.tag_redraw()

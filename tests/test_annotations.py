@@ -93,32 +93,9 @@ class TestAnnotations:
         # add annotation operator
         bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=t1.uuid, type="atom_info")
         assert len(t1.annotations) == 1
+        a1 = t1.annotations[0]
         # remove annotation operator
         bpy.ops.mn.remove_annotation(
-            "EXEC_DEFAULT", uuid=t1.uuid, annotation_node_index=0
+            "EXEC_DEFAULT", uuid=t1.uuid, annotation_uuid=a1._uuid
         )
         assert len(t1.annotations) == 0
-
-    def test_annotation_nodes(self, universe, session):
-        t1 = session.add_trajectory(universe)
-        annotations_group_node_name = mn.nodes.nodes.annotations_group_node_name
-        # test no annotations group node
-        assert annotations_group_node_name not in t1.tree.nodes
-        a1 = t1.annotations.add_atom_info(selection="all")
-        # test annotations group exists
-        assert annotations_group_node_name in t1.tree.nodes
-        # test annotation node exists in annotations group
-        annotation_node = t1.tree.nodes[annotations_group_node_name].node_tree.nodes[
-            "Annotation"
-        ]
-        # test interface linked to node inputs
-        a1.visible = False
-        assert not a1.visible
-        assert a1.visible == annotation_node.inputs["Visible"].default_value
-        a1.visible = True
-        assert a1.visible
-        assert a1.visible == annotation_node.inputs["Visible"].default_value
-        # test node instance linked values
-        assert a1._uuid == annotation_node.inputs["uuid"].default_value
-        assert a1._node_name == annotation_node.name
-        assert a1.name == annotation_node.label

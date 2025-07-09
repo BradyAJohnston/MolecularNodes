@@ -294,6 +294,13 @@ class MolecularNodesSceneProperties(PropertyGroup):
 class MolecularNodesObjectProperties(PropertyGroup):
     styles_active_index: IntProperty(default=-1)  # type: ignore
     annotations_active_index: IntProperty(default=-1)  # type: ignore
+    annotations_next_index: IntProperty(default=0)  # type: ignore
+
+    annotations_visible: BoolProperty(  # type: ignore
+        name="Visible",
+        description="Visibility of all annotations",
+        default=True,
+    )
 
     biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
