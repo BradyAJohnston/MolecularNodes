@@ -20,6 +20,13 @@ website:
         - api/reference/session.MNSession.qmd
         section: Session
       - contents:
+        - api/reference/annotations.base.qmd
+        - api/reference/annotations.interface.qmd
+        - api/reference/annotations.manager.qmd
+        - api/reference/entities.trajectory.annotations.qmd
+        - api/reference/entities.molecule.annotations.qmd
+        section: Annotations
+      - contents:
         - api/reference/Canvas.qmd
         section: Scene
       section: Reference

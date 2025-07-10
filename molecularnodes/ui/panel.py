@@ -827,6 +827,152 @@ class MN_PT_Styles(bpy.types.Panel):
         row = box.row()
 
 
+class MN_UL_AnnotationsList(bpy.types.UIList):
+    """
+    UIList of annotations for an entity
+    """
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "WORLD"
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=f"{index + 1}. ")
+            col = split.column()
+            col.prop(item, "label", text="", emboss=False)
+            hide_icon = "HIDE_OFF" if item.visible else "HIDE_ON"
+            row.prop(item, "visible", icon_only=True, icon=hide_icon)
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
+        items = getattr(data, propname)
+        helper_funcs = bpy.types.UI_UL_list
+        filtered = []
+        # Filtering by name
+        if self.filter_name:
+            filtered = helper_funcs.filter_items_by_name(
+                self.filter_name,
+                self.bitflag_filter_item,
+                items,
+                "label",
+                reverse=False,
+            )
+        if not filtered:
+            filtered = [self.bitflag_filter_item] * len(items)
+        return filtered, []
+
+
+class MN_PT_Annotations(bpy.types.Panel):
+    """
+    Panel for annotations
+    """
+
+    bl_idname = "MN_PT_annotations"
+    bl_label = "Annotations"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory or molecule"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MOLECULE.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        scene = context.scene
+        entities_active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[entities_active_index].name
+        entity = scene.MNSession.get(uuid)
+        object = entity.object
+        annotations_active_index = object.mn.annotations_active_index
+        valid_selection = annotations_active_index != -1
+
+        layout = self.layout
+        row = layout.row()
+        row.prop(object.mn, "annotations_visible", text="Visible")
+
+        row = layout.row()
+        MN_UL_AnnotationsList.seqno = 1
+        row.template_list(
+            "MN_UL_AnnotationsList",
+            "annotations_list",
+            object,
+            "mn_annotations",
+            object.mn,
+            "annotations_active_index",
+            rows=3,
+        )
+        col = row.column()
+        row = col.row()
+        op = row.operator("mn.add_annotation", icon="ADD", text="")
+        op.uuid = uuid
+        row = col.row()
+        op = row.operator("mn.remove_annotation", icon="REMOVE", text="")
+        if valid_selection:
+            op.uuid = uuid
+            op.annotation_uuid = object.mn_annotations[annotations_active_index].name
+        else:
+            row.enabled = False
+
+        if not valid_selection:
+            return
+
+        item = object.mn_annotations[annotations_active_index]
+
+        box = layout.box()
+        row = box.row()
+        row.prop(item, "type")
+        row.enabled = False
+        inputs = getattr(item, item.type, None)
+        if inputs is not None:
+            for prop_name in inputs.__annotations__.keys():
+                row = box.row()
+                row.prop(inputs, prop_name)
+
+        # Add all the common annotation params within the 'Options' panel
+        header, panel = box.panel("annotation_options", default_closed=True)
+        header.label(text="Options")
+
+        if panel:
+            for prop in item.bl_rna.properties:
+                if not prop.is_runtime:
+                    continue
+                if prop.identifier in ("label", "type", "visible"):
+                    continue
+                if prop.type == "POINTER":
+                    continue
+                panel.prop(item, prop.identifier)
+
+        row = box.row()
+
+
 CLASSES = [
     MN_PT_Scene,
     MN_UL_EntitiesList,
@@ -834,4 +980,6 @@ CLASSES = [
     MN_PT_trajectory,
     MN_UL_StylesList,
     MN_PT_Styles,
+    MN_UL_AnnotationsList,
+    MN_PT_Annotations,
 ]

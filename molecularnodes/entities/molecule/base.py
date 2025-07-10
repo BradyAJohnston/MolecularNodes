@@ -22,6 +22,7 @@ from ...nodes.styles import (
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf, selections
+from .annotations import MoleculeAnnotationManager
 from .reader import ReaderBase
 
 
@@ -74,6 +75,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         super().__init__()
         self.array = array
         self.select = MoleculeSelector(self)
+        self.annotations = MoleculeAnnotationManager(self)
 
     def create_object(self, name: str = "NewObject"):
         """

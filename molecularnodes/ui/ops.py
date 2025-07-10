@@ -11,11 +11,15 @@ from bpy.props import (  # type: ignore
 )
 from bpy.types import Context, Operator  # type: ignore
 from .. import entities
+from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import Molecule, density, ensemble, trajectory
 from ..nodes import nodes
-from ..nodes.geometry import create_style_interface, get_final_style_nodes
+from ..nodes.geometry import (
+    create_style_interface,
+    get_final_style_nodes,
+)
 from ..session import get_session
 from . import node_info
 from .style import STYLE_ITEMS
@@ -869,6 +873,118 @@ class MN_OT_Remove_Style(Operator):
         return context.window_manager.invoke_confirm(self, event, title="Remove Style?")
 
 
+def _register_temp_annotation_add_op(entity, annotation_type):
+    """Register a temporary annotation add operator with custom input properties"""
+    try:
+        # unregister any previous class that exists
+        bpy.utils.unregister_class(TempAnnotationAddOperator)  # noqa: F821
+    except UnboundLocalError:
+        pass
+
+    annotation_class = entity.annotations._classes[annotation_type]
+    AnnotationInputs = create_annotation_type_inputs(annotation_class)
+    # register the annotation inputs PropertyGroup (multiple registers are fine)
+    bpy.utils.register_class(AnnotationInputs)
+
+    # Temporary annotation add operator
+    class TempAnnotationAddOperator(bpy.types.Operator):
+        bl_idname = "mn.temp_annotation_add"
+        bl_label = f"Add {annotation_type} annotation"
+        bl_description = f"Add {annotation_type} annotation"
+
+        props: bpy.props.PointerProperty(type=AnnotationInputs)  # type: ignore
+
+        def draw(self, context):
+            layout = self.layout
+            for key in self.props.__annotations__.keys():
+                layout.prop(self.props, key)
+
+        def invoke(self, context, event):
+            return context.window_manager.invoke_props_dialog(self)
+
+        def execute(self, context):
+            inputs = {}
+            for key in self.props.__annotations__.keys():
+                if key in self.props:
+                    inputs[key] = self.props[key]
+                else:
+                    if hasattr(annotation_class, key):
+                        inputs[key] = getattr(annotation_class, key)
+            # call the same method used by the APIs
+            method_name = f"add_{annotation_class.annotation_type}"
+            method = getattr(entity.annotations, method_name)
+            method(**inputs)
+            return {"FINISHED"}
+
+    bpy.utils.register_class(TempAnnotationAddOperator)
+    return AnnotationInputs
+
+
+class MN_OT_Add_Annotation(Operator):
+    """
+    Operator to add a new annotation to an entity
+    """
+
+    bl_idname = "mn.add_annotation"
+    bl_label = "Add annotation"
+    bl_description = "Add annotation to entity"
+
+    def get_annotation_types(self, context):
+        entity = get_session().get(self.uuid)
+        annotation_types = []
+        for type in entity.annotations._classes.keys():
+            annotation_types.append((type, type, f"Annotation of type {type}"))
+        if not annotation_types:
+            annotation_types = [("None", "None", "None")]
+        return annotation_types
+
+    uuid: StringProperty()  # type: ignore
+    type: EnumProperty(items=get_annotation_types)  # type: ignore
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "type")
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if self.type == "None":
+            return {"CANCELLED"}
+        # register the temporary operator with required inputs
+        annotation_inputs = _register_temp_annotation_add_op(entity, self.type)
+        # Invoke/Execute the temporary operator based on inputs present
+        if not annotation_inputs.__annotations__:
+            bpy.ops.mn.temp_annotation_add("EXEC_DEFAULT")
+        else:
+            bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+
+class MN_OT_Remove_Annotation(Operator):
+    """
+    Operator to remove an annotation from an entity
+    """
+
+    bl_idname = "mn.remove_annotation"
+    bl_label = "Remove annotation"
+    bl_description = "Remove annotation from entity"
+
+    uuid: StringProperty()  # type: ignore
+    annotation_uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        entity.annotations._remove_annotation_by_uuid(self.annotation_uuid)
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_confirm(
+            self, event, title="Remove Annotation?"
+        )
+
+
 CLASSES = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
@@ -888,4 +1004,6 @@ CLASSES = [
     MN_FH_Import_Molecule,
     MN_OT_Add_Style,
     MN_OT_Remove_Style,
+    MN_OT_Add_Annotation,
+    MN_OT_Remove_Annotation,
 ]

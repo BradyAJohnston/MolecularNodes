@@ -43,7 +43,7 @@ def _set_entity_visibility(self, visible: bool) -> None:
     set_object_visibility(object, self.visible)
 
 
-def _entities_active_index_callback(self, context: bpy.context) -> None:
+def _entities_active_index_callback(self, context: bpy.context) -> None:  # type: ignore
     """update callback for entities active_index change"""
     if self.entities_active_index == -1:
         return
@@ -293,6 +293,14 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 class MolecularNodesObjectProperties(PropertyGroup):
     styles_active_index: IntProperty(default=-1)  # type: ignore
+    annotations_active_index: IntProperty(default=-1)  # type: ignore
+    annotations_next_index: IntProperty(default=0)  # type: ignore
+
+    annotations_visible: BoolProperty(  # type: ignore
+        name="Visible",
+        description="Visibility of all annotations",
+        default=True,
+    )
 
     biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
