@@ -32,7 +32,6 @@ class StarFile(Ensemble):
         self.object = blender_object
         self.data = self._read()
         self._create_mn_columns()
-        bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
         return self
 
     @property
