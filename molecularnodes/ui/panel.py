@@ -952,7 +952,15 @@ class MN_PT_Annotations(bpy.types.Panel):
         row.enabled = False
         inputs = getattr(item, item.type, None)
         if inputs is not None:
+            if not inputs.valid_inputs:
+                col = layout.column()
+                box = col.box()
+                box.label(text="Invalid inputs", icon="ERROR")
+                box.alert = True
+
             for prop_name in inputs.__annotations__.keys():
+                if prop_name in ("uuid", "valid_inputs"):
+                    continue
                 row = box.row()
                 row.prop(inputs, prop_name)
 

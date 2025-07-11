@@ -72,6 +72,13 @@ class AtomInfo(TrajectoryAnnotation):
         # set the default color for this annotation to red
         params.text_color = (1, 0, 0, 1)
 
+    def validate(self) -> bool:
+        params = self.interface
+        universe = self.trajectory.universe
+        # check if selection phrase is valid - mda throws exception
+        _ag = universe.select_atoms(params.selection)
+        return True
+
     def draw(self) -> None:
         params = self.interface
         print(self.trajectory, params.selection, params.show_resid, params.show_segid)

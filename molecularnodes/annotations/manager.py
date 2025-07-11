@@ -14,6 +14,20 @@ from .props import (
 from .utils import get_all_class_annotations
 
 
+def _validate_annotation_update(self, context, prop_name):
+    """Update callback when annotation inputs change (both API and GUI)"""
+    session = context.scene.MNSession
+    entity = session.get(self.id_data.uuid)
+    interface = entity.annotations._interfaces.get(self.uuid)
+    try:
+        if not interface._instance.validate():
+            raise ValueError(f"Invalid input {prop_name}")
+    except Exception as exception:
+        self.valid_inputs = False
+        raise exception
+    self.valid_inputs = True
+
+
 class BaseAnnotationManager(metaclass=ABCMeta):
     """
     Base class for Annotation Manager
@@ -111,7 +125,15 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # Add each annotation type inputs as a pointer to a separate property group
         for annotation_class in cls._classes.values():
             annotation_type = annotation_class.annotation_type
-            AnnotationInputs = create_annotation_type_inputs(annotation_class)
+            update_callback = None
+            # Add an update callback for annotation input properties to validate
+            if hasattr(annotation_class, "validate") and callable(
+                getattr(annotation_class, "validate")
+            ):
+                update_callback = _validate_annotation_update
+            AnnotationInputs = create_annotation_type_inputs(
+                annotation_class, update_callback=update_callback
+            )
             bpy.utils.register_class(AnnotationInputs)
             AnnotationProperties.__annotations__[annotation_type] = (
                 bpy.props.PointerProperty(type=AnnotationInputs)
@@ -228,6 +250,28 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         inteface_class_name = f"{annotation_class.__name__}_interface"
         DynamicInterface = type(inteface_class_name, (AnnotationInterface,), {})
         interface = DynamicInterface(annotation_instance)
+        # set the interface attribute of the annotation instance so that
+        # users can access the inputs and common params using this interface
+        setattr(annotation_instance, "interface", interface)
+        # call the validate method in the annotation class if specified for
+        # any annotation specific custom validation
+        if hasattr(annotation_instance, "validate") and callable(
+            getattr(annotation_instance, "validate")
+        ):
+            # set the annotation inputs to interface for validation
+            for key, value in py_annotations.items():
+                # set the input value based on what is passed
+                # if input value is not passed, use the value from the annotation class
+                value = kwargs.get(key, None)
+                if value is None:
+                    value = getattr(annotation_class, key, None)
+                if value is not None:
+                    setattr(interface.__class__, key, value)
+            # validate
+            if not annotation_instance.validate():
+                raise ValueError("Invalid annotation inputs")
+        # only after all validations pass start doing real stuff like creating
+        # properties and adding to the interface list
         uuid = str(uuid1())
         # add the new interface to the entity specific interfaces registry
         self._interfaces[uuid] = interface
@@ -258,6 +302,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # create property interfaces
         inputs = getattr(prop, prop.type, None)
         if inputs is not None:
+            inputs.uuid = uuid  # add annotation uuid for lookup in update callback
             for key, value in py_annotations.items():
                 # name is a special case that is already added above
                 if key == "name":
@@ -282,9 +327,6 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 continue
             prop_interface = create_property_interface(prop, prop_path)
             setattr(interface.__class__, prop_path, prop_interface)
-        # set the interface attribute of the annotation instance so that
-        # users can access the inputs and common params using this interface
-        setattr(annotation_instance, "interface", interface)
         # call the defaults method in the annotation class if specified
         if hasattr(annotation_instance, "defaults") and callable(
             getattr(annotation_instance, "defaults")
