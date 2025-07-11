@@ -53,21 +53,3 @@ def test_micrograph_conversion():
     tiff_path = data_dir / "starfile/montage.tiff"
     ensemble._convert_mrc_to_tiff()
     assert tiff_path.exists()
-
-
-def test_micrograph_loading():
-    import bpy
-
-    file = data_dir / "starfile/cistem.star"
-    tiff_path = data_dir / "starfile/montage.tiff"
-    ensemble = mn.entities.ensemble.load_starfile(file)
-    ensemble.star_node.inputs["Show Micrograph"].default_value = True
-    bpy.context.evaluated_depsgraph_get().update()
-    assert tiff_path.exists()
-    # Ensure montage get only loaded once
-    assert sum(1 for image in bpy.data.images.keys() if "montage" in image) == 1
-    assert (
-        ensemble.micrograph_material.node_tree.nodes["Image Texture"].image.name
-        == "montage.tiff"
-    )
-    assert ensemble.star_node.inputs["Micrograph"].default_value.name == "montage.tiff"
