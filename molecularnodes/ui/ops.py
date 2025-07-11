@@ -922,6 +922,8 @@ def _register_temp_annotation_add_op(entity):
             return context.window_manager.invoke_props_dialog(self)
 
         def execute(self, context):
+            if self.props.type == "None":
+                return {"CANCELLED"}
             annotation_class = entity.annotations._classes[self.props.type]
             api_inputs = {}
             ui_inputs = getattr(self.props, self.props.type, None)
