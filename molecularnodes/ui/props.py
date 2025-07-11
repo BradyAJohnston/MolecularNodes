@@ -3,6 +3,7 @@ from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 from bpy.types import PropertyGroup
 from ..handlers import _update_entities
 from ..session import get_session
+from .query import _update_structure_display_info
 from .style import STYLE_ITEMS
 
 uuid_property = StringProperty(  # type: ignore
@@ -67,9 +68,12 @@ class MolecularNodesSceneProperties(PropertyGroup):
     import_code_pdb: StringProperty(  # type: ignore
         name="PDB",
         description="The PDB code to download and import",
-        options={"TEXTEDIT_UPDATE"},
+        # options={"TEXTEDIT_UPDATE"},
         maxlen=4,
+        update=_update_structure_display_info,
     )
+
+    import_display_info: StringProperty()  # type: ignore
 
     is_updating: BoolProperty(  # type: ignore
         name="Updating",

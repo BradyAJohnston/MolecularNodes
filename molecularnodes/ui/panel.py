@@ -3,6 +3,7 @@ from ..entities import trajectory
 from ..nodes import nodes
 from ..session import get_session
 from .pref import addon_preferences
+from .query import PDBStructureInfo
 from .utils import check_online_access_for_ui
 
 
@@ -34,6 +35,17 @@ def panel_wwpdb(layout, scene):
     layout.separator(factor=0.4)
 
     layout.separator()
+    if scene.mn.import_display_info != "":
+        if scene.mn.import_display_info.startswith("ERROR:"):
+            layout.label(
+                text=scene.mn.import_display_info,
+                icon="ERROR",
+            )
+            row.enabled = False
+        else:
+            info = PDBStructureInfo.from_json(scene.mn.import_display_info)
+            info.as_layout(layout)
+            layout.separator()
 
     layout.label(text="Options", icon="MODIFIER")
     options = layout.column(align=True)
