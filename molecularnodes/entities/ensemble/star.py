@@ -14,146 +14,6 @@ from ...nodes import nodes
 from .base import Ensemble
 
 
-class StarFile(Ensemble):
-    def __init__(self, file_path: Union[str, Path]) -> None:
-        super().__init__(file_path)
-        self.type: str = "starfile"
-        self.current_image: int = -1
-        self.data: Optional[DataFrame] = None
-        self.df: Optional[Union[RelionDataFrame, CistemDataFrame]] = None
-        self.object: Optional[bpy.types.Object] = None
-
-    @classmethod
-    def from_starfile(cls, file_path: Union[str, Path]) -> "StarFile":
-        self = cls(file_path)
-        self.data = self._read()
-        self.df = self._assign_df()
-        return self
-
-    @classmethod
-    def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
-        self = cls(blender_object["starfile_path"])
-        self.object = blender_object
-        self.data = self._read()
-        self._create_mn_columns()
-        return self
-
-    @property
-    def star_node(self) -> bpy.types.Node:
-        return nodes.get_star_node(self.object)
-
-    @property
-    def micrograph_material(self) -> bpy.types.Material:
-        return nodes.micrograph_material()
-
-    def _read(self) -> DataFrame:
-        star: DataFrame = list(
-            starfile.read(self.file_path, always_dict=True).values()
-        )[0]
-
-        if not isinstance(star, DataFrame):
-            raise ValueError("Problem opening starfile as dataframe")
-
-        for col in star.columns:
-            if star[col].dtype == "object":
-                star[col] = star[col].astype("category")
-        return star
-
-    @property
-    def n_images(self) -> int:
-        if isinstance(self.data, dict):
-            return len(self.data)
-        return 1
-
-    def _is_relion(self) -> bool:
-        return (
-            isinstance(self.data, dict)
-            and "particles" in self.data
-            and "optics" in self.data
-        ) or ("rlnAnglePsi" in self.data)
-
-    def _is_cistem(self) -> bool:
-        return "cisTEMAnglePsi" in self.data
-
-    def _assign_df(self) -> Union[RelionDataFrame, CistemDataFrame]:
-        if self._is_relion():
-            return RelionDataFrame(self.data)
-        elif self._is_cistem():
-            return CistemDataFrame(self.data)
-        else:
-            raise ValueError(
-                "File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported."
-            )
-
-    def _convert_mrc_to_tiff(self) -> Path:
-        if self._is_relion():
-            micrograph_path = self.object["rlnMicrographName_categories"][
-                self.star_node.inputs["Image"].default_value - 1
-            ]
-        elif self._is_cistem():
-            micrograph_path = self.object["cisTEMOriginalImageFilename_categories"][
-                self.star_node.inputs["Image"].default_value - 1
-            ].strip("'")
-        else:
-            raise ValueError("File is not a valid RELION>=3.1 or cisTEM STAR file")
-
-        micrograph_path = Path(micrograph_path)
-        if not micrograph_path.exists():
-            pot_micrograph_path = Path(self.file_path).parent / micrograph_path
-            if not pot_micrograph_path.exists():
-                if self._is_relion():
-                    pot_micrograph_path = (
-                        Path(self.file_path).parent.parent.parent / micrograph_path
-                    )
-                    if not pot_micrograph_path.exists():
-                        raise FileNotFoundError(
-                            f"Micrograph file {micrograph_path} not found"
-                        )
-                else:
-                    raise FileNotFoundError(
-                        f"Micrograph file {micrograph_path} not found"
-                    )
-            micrograph_path = pot_micrograph_path
-
-        tiff_path = Path(micrograph_path).with_suffix(".tiff")
-        if not tiff_path.exists():
-            with mrcfile.open(micrograph_path) as mrc:
-                micrograph_data = mrc.data.copy()
-
-            if micrograph_data.ndim == 3:
-                micrograph_data = np.sum(micrograph_data, axis=0)
-            micrograph_data = (micrograph_data - micrograph_data.min()) / (
-                micrograph_data.max() - micrograph_data.min()
-            )
-
-            if micrograph_data.dtype != np.float32:
-                micrograph_data = micrograph_data.astype(np.float32)
-
-            Image.fromarray(micrograph_data[::-1, :]).save(tiff_path)
-        return tiff_path
-
-    def create_object(
-        self,
-        name: str = "StarFileObject",
-        node_setup: bool = True,
-        world_scale: float = 0.01,
-        fraction: float = 1.0,
-        simplify: bool = True,
-    ) -> bpy.types.Object:
-        self.object = databpy.create_object(
-            self.df.coordinates_scaled * world_scale, collection=bl.coll.mn(), name=name
-        )
-        self.df.store_data_on_object(self.object)
-        self.object.mn["entity_type"] = "star"
-
-        if node_setup:
-            nodes.create_starting_nodes_starfile(self.object)
-
-        self.object["starfile_path"] = str(self.file_path)
-        bpy.app.handlers.depsgraph_update_post.append(self._update_micrograph_texture)
-        return self.object
-
-
 class EnsembleDataFrame:
     def __init__(self, data: DataFrame) -> None:
         self.data = data
@@ -281,3 +141,151 @@ class CistemDataFrame(EnsembleDataFrame):
         self.data["cisTEMZFromDefocus"] = (
             self.data["cisTEMZFromDefocus"] - self.data["cisTEMZFromDefocus"].median()
         )
+
+
+class StarFile(Ensemble):
+    object: Optional[bpy.types.Object]
+    data: Optional[DataFrame]
+    df: Optional[Union[RelionDataFrame, CistemDataFrame]]
+
+    def __init__(self, file_path: Union[str, Path]) -> None:
+        super().__init__(file_path)
+        self.type: str = "starfile"
+        self.current_image: int = -1
+
+    @classmethod
+    def from_starfile(cls, file_path: Union[str, Path]) -> "StarFile":
+        self = cls(file_path)
+        self.data = self._read()
+        self.df = self._assign_df()
+        return self
+
+    @classmethod
+    def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
+        self = cls(blender_object["starfile_path"])
+        self.object = blender_object
+        self.data = self._read()
+        return self
+
+    @property
+    def star_node(self) -> bpy.types.Node:
+        return nodes.get_star_node(self.object)
+
+    @property
+    def micrograph_material(self) -> bpy.types.Material:
+        return nodes.micrograph_material()
+
+    def _read(self) -> DataFrame:
+        star_dict: dict = starfile.read(self.file_path, always_dict=True)  # type: ignore
+        star: DataFrame = list(star_dict.values())[0]
+
+        if not isinstance(star, DataFrame):
+            raise ValueError("Problem opening starfile as dataframe")
+
+        for col in star.columns:
+            if star[col].dtype == "object":
+                star[col] = star[col].astype("category")
+        return star
+
+    @property
+    def n_images(self) -> int:
+        if isinstance(self.data, dict):
+            return len(self.data)
+        return 1
+
+    def _is_relion(self) -> bool:
+        return (
+            isinstance(self.data, dict)
+            and "particles" in self.data
+            and "optics" in self.data
+        ) or ("rlnAnglePsi" in self.data)  # type: ignore
+
+    def _is_cistem(self) -> bool:
+        return "cisTEMAnglePsi" in self.data  # type: ignore
+
+    def _assign_df(self) -> Union[RelionDataFrame, CistemDataFrame]:
+        if self.data is None:
+            raise ValueError("Data not loaded. Call from_starfile() first.")
+        if self._is_relion():
+            return RelionDataFrame(self.data)
+        elif self._is_cistem():
+            return CistemDataFrame(self.data)
+        else:
+            raise ValueError(
+                "File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported."
+            )
+
+    def _convert_mrc_to_tiff(self) -> Path:
+        if self.object is None:
+            raise ValueError("Object not set. Call from_blender_object() first.")
+
+        if self._is_relion():
+            micrograph_path = self.object["rlnMicrographName_categories"][
+                self.star_node.inputs["Image"].default_value - 1  # type: ignore
+            ]
+        elif self._is_cistem():
+            micrograph_path = self.object["cisTEMOriginalImageFilename_categories"][
+                self.star_node.inputs["Image"].default_value - 1  # type: ignore
+            ].strip("'")
+        else:
+            raise ValueError("File is not a valid RELION>=3.1 or cisTEM STAR file")
+
+        micrograph_path = Path(micrograph_path)
+        if not micrograph_path.exists():
+            pot_micrograph_path = Path(self.file_path).parent / micrograph_path
+            if not pot_micrograph_path.exists():
+                if self._is_relion():
+                    pot_micrograph_path = (
+                        Path(self.file_path).parent.parent.parent / micrograph_path
+                    )
+                    if not pot_micrograph_path.exists():
+                        raise FileNotFoundError(
+                            f"Micrograph file {micrograph_path} not found"
+                        )
+                else:
+                    raise FileNotFoundError(
+                        f"Micrograph file {micrograph_path} not found"
+                    )
+            micrograph_path = pot_micrograph_path
+
+        tiff_path = Path(micrograph_path).with_suffix(".tiff")
+        if not tiff_path.exists():
+            with mrcfile.open(micrograph_path) as mrc:
+                if mrc.data is None:
+                    raise ValueError(f"Micrograph file {micrograph_path} is empty")
+                micrograph_data = mrc.data.copy()
+
+            if micrograph_data.ndim == 3:
+                micrograph_data = np.sum(micrograph_data, axis=0)
+            micrograph_data = (micrograph_data - micrograph_data.min()) / (
+                micrograph_data.max() - micrograph_data.min()
+            )
+
+            if micrograph_data.dtype != np.float32:
+                micrograph_data = micrograph_data.astype(np.float32)
+
+            Image.fromarray(micrograph_data[::-1, :]).save(tiff_path)
+        return tiff_path
+
+    def create_object(
+        self,
+        name: str = "StarFileObject",
+        node_setup: bool = True,
+        world_scale: float = 0.01,
+        fraction: float = 1.0,
+        simplify: bool = True,
+    ) -> bpy.types.Object:
+        if self.df is None:
+            raise ValueError("DataFrame not assigned. Call from_starfile() first.")
+
+        self.object = databpy.create_object(
+            self.df.coordinates_scaled * world_scale, collection=bl.coll.mn(), name=name
+        )
+        self.df.store_data_on_object(self.object)
+        self.object.mn["entity_type"] = "star"  # type: ignore
+
+        if node_setup:
+            nodes.create_starting_nodes_starfile(self.object)
+
+        self.object["starfile_path"] = str(self.file_path)
+        return self.object
