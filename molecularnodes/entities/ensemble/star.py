@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Optional, Union
 import bpy
 import databpy
 import mrcfile
@@ -14,20 +15,23 @@ from .base import Ensemble
 
 
 class StarFile(Ensemble):
-    def __init__(self, file_path):
+    def __init__(self, file_path: Union[str, Path]) -> None:
         super().__init__(file_path)
-        self.type = "starfile"
-        self.current_image = -1
+        self.type: str = "starfile"
+        self.current_image: int = -1
+        self.data: Optional[DataFrame] = None
+        self.df: Optional[Union[RelionDataFrame, CistemDataFrame]] = None
+        self.object: Optional[bpy.types.Object] = None
 
     @classmethod
-    def from_starfile(cls, file_path):
+    def from_starfile(cls, file_path: Union[str, Path]) -> "StarFile":
         self = cls(file_path)
         self.data = self._read()
         self.df = self._assign_df()
         return self
 
     @classmethod
-    def from_blender_object(cls, blender_object):
+    def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
         self.data = self._read()
@@ -35,43 +39,43 @@ class StarFile(Ensemble):
         return self
 
     @property
-    def star_node(self):
+    def star_node(self) -> bpy.types.Node:
         return nodes.get_star_node(self.object)
 
     @property
-    def micrograph_material(self):
+    def micrograph_material(self) -> bpy.types.Material:
         return nodes.micrograph_material()
 
-    def _read(self):
+    def _read(self) -> DataFrame:
         star: DataFrame = list(
             starfile.read(self.file_path, always_dict=True).values()
         )[0]
 
         if not isinstance(star, DataFrame):
             raise ValueError("Problem opening starfile as dataframe")
-        # each column in pandas dataframe star, change to category if string
+
         for col in star.columns:
             if star[col].dtype == "object":
                 star[col] = star[col].astype("category")
         return star
 
     @property
-    def n_images(self):
+    def n_images(self) -> int:
         if isinstance(self.data, dict):
             return len(self.data)
         return 1
 
-    def _is_relion(self):
+    def _is_relion(self) -> bool:
         return (
             isinstance(self.data, dict)
             and "particles" in self.data
             and "optics" in self.data
         ) or ("rlnAnglePsi" in self.data)
 
-    def _is_cistem(self):
+    def _is_cistem(self) -> bool:
         return "cisTEMAnglePsi" in self.data
 
-    def _assign_df(self):
+    def _assign_df(self) -> Union[RelionDataFrame, CistemDataFrame]:
         if self._is_relion():
             return RelionDataFrame(self.data)
         elif self._is_cistem():
@@ -81,7 +85,7 @@ class StarFile(Ensemble):
                 "File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported."
             )
 
-    def _convert_mrc_to_tiff(self):
+    def _convert_mrc_to_tiff(self) -> Path:
         if self._is_relion():
             micrograph_path = self.object["rlnMicrographName_categories"][
                 self.star_node.inputs["Image"].default_value - 1
@@ -91,10 +95,10 @@ class StarFile(Ensemble):
                 self.star_node.inputs["Image"].default_value - 1
             ].strip("'")
         else:
-            return False
+            raise ValueError("File is not a valid RELION>=3.1 or cisTEM STAR file")
 
-        # This could be more elegant
-        if not Path(micrograph_path).exists():
+        micrograph_path = Path(micrograph_path)
+        if not micrograph_path.exists():
             pot_micrograph_path = Path(self.file_path).parent / micrograph_path
             if not pot_micrograph_path.exists():
                 if self._is_relion():
@@ -116,10 +120,8 @@ class StarFile(Ensemble):
             with mrcfile.open(micrograph_path) as mrc:
                 micrograph_data = mrc.data.copy()
 
-            # For 3D data sum over the z axis. Probalby would be nicer to load the data as a volume
             if micrograph_data.ndim == 3:
                 micrograph_data = np.sum(micrograph_data, axis=0)
-            # Normalize the data to 0-1
             micrograph_data = (micrograph_data - micrograph_data.min()) / (
                 micrograph_data.max() - micrograph_data.min()
             )
@@ -127,43 +129,17 @@ class StarFile(Ensemble):
             if micrograph_data.dtype != np.float32:
                 micrograph_data = micrograph_data.astype(np.float32)
 
-            # Need to invert in Y to generate the correct tiff
             Image.fromarray(micrograph_data[::-1, :]).save(tiff_path)
         return tiff_path
 
-    def _update_micrograph_texture(self, *_):
-        try:
-            show_micrograph = self.star_node.inputs["Show Micrograph"]
-            _ = self.object["mn"]
-        except ReferenceError:
-            bpy.app.handlers.depsgraph_update_post.remove(
-                self._update_micrograph_texture
-            )
-            return
-        if self.star_node.inputs["Image"].default_value == self.current_image:
-            return
-        else:
-            self.current_image = self.star_node.inputs["Image"].default_value
-        if not show_micrograph:
-            return
-        tiff_path = self._convert_mrc_to_tiff()
-        if tiff_path:
-            try:
-                image_obj = bpy.data.images[tiff_path.name]
-            except KeyError:
-                image_obj = bpy.data.images.load(str(tiff_path))
-            image_obj.colorspace_settings.name = "Non-Color"
-            self.micrograph_material.node_tree.nodes["Image Texture"].image = image_obj
-            self.star_node.inputs["Micrograph"].default_value = image_obj
-
     def create_object(
         self,
-        name="StarFileObject",
-        node_setup=True,
-        world_scale=0.01,
+        name: str = "StarFileObject",
+        node_setup: bool = True,
+        world_scale: float = 0.01,
         fraction: float = 1.0,
         simplify: bool = True,
-    ):
+    ) -> bpy.types.Object:
         self.object = databpy.create_object(
             self.df.coordinates_scaled * world_scale, collection=bl.coll.mn(), name=name
         )
@@ -179,18 +155,18 @@ class StarFile(Ensemble):
 
 
 class EnsembleDataFrame:
-    def __init__(self, data: DataFrame):
+    def __init__(self, data: DataFrame) -> None:
         self.data = data
-        self._coord_columns = ["x", "y", "z"]
-        self._rot_columns = ["Rot", "Tilt", "Psi"]
-        self._shift_column_names = [
+        self._coord_columns: List[str] = ["x", "y", "z"]
+        self._rot_columns: List[str] = ["Rot", "Tilt", "Psi"]
+        self._shift_column_names: List[str] = [
             "OriginXAngst",
             "OriginYAngst",
             "OriginZAngst",
         ]
 
     @property
-    def coordinates(self):
+    def coordinates(self) -> np.ndarray:
         coord = self.data[self._coord_columns].to_numpy()
 
         try:
@@ -208,16 +184,12 @@ class EnsembleDataFrame:
         return arr
 
     @property
-    def coordinates_scaled(self):
+    def coordinates_scaled(self) -> np.ndarray:
         return self.coordinates * self.scale
 
     def rotation_as_quaternion(self) -> np.ndarray:
-        """
-        Returns the rotations as a numpy array of quaternions.
-        """
         rot_tilt_psi_cols = self.data[self._rot_columns].to_numpy()
 
-        # require 'scalar_first=True' as blender is wxyz quaternions
         quaternions = np.array(
             [
                 Rotation.from_euler("ZYZ", row, degrees=True)
@@ -229,9 +201,6 @@ class EnsembleDataFrame:
         return quaternions
 
     def image_id_values(self) -> np.ndarray:
-        """
-        Returns the image ids as a numpy array.
-        """
         for name in [
             "rlnImageName",
             "rlnMicrographName",
@@ -245,10 +214,7 @@ class EnsembleDataFrame:
 
         return np.zeros(len(self.data), dtype=int)
 
-    def store_data_on_object(self, obj: bpy.types.Object):
-        """
-        Stores the data on the object.
-        """
+    def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
         bob.store_named_attribute(
             self.rotation_as_quaternion(),
@@ -272,9 +238,9 @@ class EnsembleDataFrame:
 
 
 class RelionDataFrame(EnsembleDataFrame):
-    def __init__(self, data: DataFrame):
+    def __init__(self, data: DataFrame) -> None:
         super().__init__(data)
-        self.type = "relion"
+        self.type: str = "relion"
         self._coord_columns = ["rlnCoordinateX", "rlnCoordinateY", "rlnCoordinateZ"]
         self._rot_columns = ["rlnAngleRot", "rlnAngleTilt", "rlnAnglePsi"]
         self._shift_column_names = [
@@ -284,7 +250,7 @@ class RelionDataFrame(EnsembleDataFrame):
         ]
 
     @property
-    def scale(self):
+    def scale(self) -> np.ndarray:
         if "rlnImagePixelSize" not in self.data:
             return super().scale
 
@@ -292,10 +258,10 @@ class RelionDataFrame(EnsembleDataFrame):
 
 
 class CistemDataFrame(EnsembleDataFrame):
-    def __init__(self, data: DataFrame):
+    def __init__(self, data: DataFrame) -> None:
         super().__init__(data)
         self._adjust_defocus()
-        self.type = "cistem"
+        self.type: str = "cistem"
         self._coord_columns = [
             "cisTEMOriginalXPosition",
             "cisTEMOriginalYPosition",
@@ -308,7 +274,7 @@ class CistemDataFrame(EnsembleDataFrame):
             "origin_z",
         ]
 
-    def _adjust_defocus(self):
+    def _adjust_defocus(self) -> None:
         self.data["cisTEMZFromDefocus"] = (
             self.data["cisTEMDefocus1"] + self.data["cisTEMDefocus2"]
         ) / 2
