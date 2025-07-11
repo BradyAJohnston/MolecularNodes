@@ -12,8 +12,16 @@ from .base import BaseAnnotation
 from .utils import get_all_class_annotations
 
 
+def _create_update_callback(func, prop_name):
+    """Create an update property callback function"""
+    if func is None:
+        return None
+    return lambda s, c: func(s, c, prop_name)
+
+
 def create_annotation_type_inputs(
     annotation_class: BaseAnnotation,
+    update_callback=None,
 ) -> bpy.types.PropertyGroup:
     """Create a dynamic PropertyGroup with annotation type inputs"""
     attributes = {"__annotations__": {}}
@@ -22,16 +30,32 @@ def create_annotation_type_inputs(
         if key == "name":
             continue
         if atype.__name__ == "str":
-            prop = StringProperty(default=getattr(annotation_class, key, ""))
+            prop = StringProperty(
+                default=getattr(annotation_class, key, ""),
+                update=_create_update_callback(update_callback, key),
+            )
         elif atype.__name__ == "bool":
-            prop = BoolProperty(default=getattr(annotation_class, key, False))
+            prop = BoolProperty(
+                default=getattr(annotation_class, key, False),
+                update=_create_update_callback(update_callback, key),
+            )
         elif atype.__name__ == "int":
-            prop = IntProperty(default=getattr(annotation_class, key, 0))
+            prop = IntProperty(
+                default=getattr(annotation_class, key, 0),
+                update=_create_update_callback(update_callback, key),
+            )
         elif atype.__name__ == "float":
-            prop = FloatProperty(default=getattr(annotation_class, key, 0.0))
+            prop = FloatProperty(
+                default=getattr(annotation_class, key, 0.0),
+                update=_create_update_callback(update_callback, key),
+            )
         else:
             continue
         attributes["__annotations__"][key] = prop
+    # add the uuid to the annotation for lookup during update callback
+    attributes["__annotations__"]["uuid"] = StringProperty()
+    # add a boolean to indicate if validations succeeded
+    attributes["__annotations__"]["valid_inputs"] = BoolProperty(default=True)
     AnnotationInputs = type("AnnotationInputs", (bpy.types.PropertyGroup,), attributes)
     return AnnotationInputs
 

@@ -12,7 +12,8 @@ class BaseAnnotation(metaclass=ABCMeta):
     manager and '__init__' to pass the entity to annotations.
 
     Entity annotations will have to implement the 'draw' method that specifies
-    how to display the annotations. An optional 'defaults' method can be provided
+    how to display the annotations An optional 'validate' method can be provided
+    to validate annotation inputs An optional 'defaults' method can be provided
     to set default values to the annotation.
 
     Attributes
@@ -26,6 +27,16 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     name: str = None
     interface: AnnotationInterface
+
+    def validate(self) -> bool:
+        """
+        Optional method to validate annotation inputs
+        This is called during annotation creation and any time the inputs change
+        either through the API or GUI. Can return False or raise an exception
+        when validation fails. Returns True when all validations succeed
+
+        """
+        return True
 
     def defaults(self) -> None:
         """

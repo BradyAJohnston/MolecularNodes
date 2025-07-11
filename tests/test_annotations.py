@@ -168,7 +168,8 @@ class TestAnnotations:
         t1 = session.add_trajectory(universe)
         assert len(t1.annotations) == 0
         # add annotation operator
-        bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=t1.uuid, type="atom_info")
+        # first annotation type due to no invoke - must have no required inputs
+        bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=t1.uuid)
         assert len(t1.annotations) == 1
         a1 = t1.annotations[0]
         # remove annotation operator
