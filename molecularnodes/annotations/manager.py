@@ -3,7 +3,7 @@ import inspect
 from abc import ABCMeta
 from uuid import uuid1
 import bpy
-from ..blender.utils import viewport_tag_redraw
+from ..blender.utils import get_viewport_region_from_context, viewport_tag_redraw
 from .base import BaseAnnotation
 from .interface import AnnotationInterface
 from .props import (
@@ -50,6 +50,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     def __init__(self, entity):
         # Access to the entity to which this manager is attached
         self._entity = entity
+        self._draw_handler = None
+        self._draw_handler_add()
 
     def __iter__(self) -> iter:
         """To support iteration"""
@@ -209,6 +211,10 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     def visible(self, value: bool) -> None:
         """Visibility of all annotations - setter"""
         self._entity.object.mn.annotations_visible = value
+        if value:
+            self._draw_handler_add()
+        else:
+            self._draw_handler_remove()
         viewport_tag_redraw()
 
     @classmethod
@@ -303,6 +309,10 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         inputs = getattr(prop, prop.type, None)
         if inputs is not None:
             inputs.uuid = uuid  # add annotation uuid for lookup in update callback
+            # link to the valid inputs property for use in draw handler
+            prop_interface = create_property_interface(inputs, "valid_inputs")
+            setattr(interface.__class__, "_valid_inputs", prop_interface)
+            # all annotation inputs as defined in class
             for key, value in py_annotations.items():
                 # name is a special case that is already added above
                 if key == "name":
@@ -355,3 +365,53 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         if uuid not in self._interfaces:
             raise ValueError(f"Instance for {uuid} not found")
         self._remove_annotation_instance(self._interfaces[uuid])
+
+    def _draw_handler_add(self):
+        if self._draw_handler is not None:
+            return
+        self._draw_handler = bpy.types.SpaceView3D.draw_handler_add(
+            self._draw_annotations_handler,
+            (bpy.context,),
+            "WINDOW",
+            "POST_PIXEL",
+        )
+        self._redraw()
+
+    def _draw_handler_remove(self):
+        if self._draw_handler is not None:
+            bpy.types.SpaceView3D.draw_handler_remove(self._draw_handler, "WINDOW")
+            self._redraw()
+            self._draw_handler = None
+
+    def _redraw(self):
+        if self._draw_handler is not None:
+            viewport_tag_redraw()
+
+    def _draw_annotations_handler(self, context):
+        if self._draw_handler is None:
+            return
+        # all annotations visibilty
+        if not self.visible:
+            return
+        # object visibility
+        if self._entity.object.hide_get():
+            return
+        region, rv3d = get_viewport_region_from_context(context)
+        # for viewport drawing, region and rv3d are required
+        if region is None or rv3d is None:
+            return
+        # iterate over all annotations
+        for interface in self._interfaces.values():
+            # annotation specific visibility
+            if not interface.visible:
+                continue
+            # annotations input validity
+            if not getattr(interface, "_valid_inputs", True):
+                continue
+            # set the viewport region
+            interface._instance._set_viewport_region(region, rv3d)
+            # handle exceptions to allow other annotations to be drawn
+            try:
+                interface._instance.draw()
+            except Exception:
+                pass
