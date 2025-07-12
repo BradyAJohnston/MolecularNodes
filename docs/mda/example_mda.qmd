@@ -1,0 +1,26 @@
+---
+title: "Example Scripting"
+description: "An example of using MDAnalysis with MolecularNodes."
+author: Brady Johnston
+---
+
+Here is some exampel code that uses MDAnalysis to load a trajectory and visualize it with MolecularNodes.
+
+```{python}
+import molecularnodes as mn
+import MDAnalysis as mda
+mn.register()
+can = mn.Canvas()
+```
+
+## Loading a Trajectory
+
+```{python}
+from pathlib import Path
+folder =  Path("../../") / "tests/data/md_ppr"
+u = mda.Universe(folder / "box.gro", folder / "first_5_frames.xtc")
+traj = mn.entities.Trajectory(u)
+traj.create_object()
+print(traj)
+```
+
