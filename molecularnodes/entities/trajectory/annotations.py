@@ -77,15 +77,13 @@ class AtomInfo(TrajectoryAnnotation):
         params = self.interface
         universe = self.trajectory.universe
         # check if selection phrase is valid - mda throws exception if invalid
-        _ag = universe.select_atoms(params.selection)
+        self.atom_group = universe.select_atoms(params.selection)
         return True
 
     def draw(self) -> None:
         params = self.interface
-        universe = self.trajectory.universe
-        atom_group = universe.select_atoms(params.selection)
         # iterate over each atom in the atom group
-        for atom in atom_group:
+        for atom in self.atom_group:
             text = atom.name
             if params.show_resid:
                 text += f"|res {atom.resid}, {atom.resname}"

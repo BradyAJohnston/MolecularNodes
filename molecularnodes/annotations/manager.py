@@ -400,6 +400,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # for viewport drawing, region and rv3d are required
         if region is None or rv3d is None:
             return
+        # iterate over all annotations
         for interface in self._interfaces.values():
             # annotation specific visibility
             if not interface.visible:
@@ -409,4 +410,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 continue
             # set the viewport region
             interface._instance._set_viewport_region(region, rv3d)
-            interface._instance.draw()
+            # handle exceptions to allow other annotations to be drawn
+            try:
+                interface._instance.draw()
+            except Exception:
+                pass
