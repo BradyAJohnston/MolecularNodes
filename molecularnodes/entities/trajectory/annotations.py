@@ -63,22 +63,32 @@ class AtomInfo(TrajectoryAnnotation):
     annotation_type = "atom_info"  # required annotation type
 
     # annotation inputs
-    selection: str = "protein"
+    selection: str = "name CA"
     show_resid: bool = False
     show_segid: bool = False
 
     def defaults(self) -> None:
         params = self.interface
-        # set the default color for this annotation to red
-        params.text_color = (1, 0, 0, 1)
+        # set the default text size and text color
+        params.text_size = 16
+        params.text_color = (1, 1, 1, 1)
 
     def validate(self) -> bool:
         params = self.interface
         universe = self.trajectory.universe
-        # check if selection phrase is valid - mda throws exception
+        # check if selection phrase is valid - mda throws exception if invalid
         _ag = universe.select_atoms(params.selection)
         return True
 
     def draw(self) -> None:
         params = self.interface
-        print(self.trajectory, params.selection, params.show_resid, params.show_segid)
+        universe = self.trajectory.universe
+        atom_group = universe.select_atoms(params.selection)
+        # iterate over each atom in the atom group
+        for atom in atom_group:
+            text = atom.name
+            if params.show_resid:
+                text += f"|res {atom.resid}, {atom.resname}"
+            if params.show_segid:
+                text += f"|seg {atom.segid}"
+            self.draw_text_3d(atom.position, text)

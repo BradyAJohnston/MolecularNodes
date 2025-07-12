@@ -875,11 +875,6 @@ class MN_OT_Remove_Style(Operator):
 
 def _register_temp_annotation_add_op(entity):
     """Register a temporary annotation add operator with custom input properties"""
-    try:
-        # unregister any previous class that exists
-        bpy.utils.unregister_class(TempAnnotationAddOperator)  # noqa: F821
-    except UnboundLocalError:
-        pass
 
     def get_annotation_types(self, context):
         annotation_types = []
@@ -889,16 +884,22 @@ def _register_temp_annotation_add_op(entity):
             annotation_types = [("None", "None", "None")]
         return annotation_types
 
+    registered_classes = []
+
+    def register(cls):
+        bpy.utils.register_class(cls)
+        registered_classes.append(cls)
+
     attributes = {"__annotations__": {}}
     attributes["__annotations__"]["type"] = EnumProperty(items=get_annotation_types)
     for cls in entity.annotations._classes.values():
         AnnotationTypeInputs = create_annotation_type_inputs(cls)
-        bpy.utils.register_class(AnnotationTypeInputs)
+        register(AnnotationTypeInputs)
         attributes["__annotations__"][cls.annotation_type] = bpy.props.PointerProperty(
             type=AnnotationTypeInputs
         )
     AnnotationProps = type("AnnotationProps", (bpy.types.PropertyGroup,), attributes)
-    bpy.utils.register_class(AnnotationProps)
+    register(AnnotationProps)
 
     # Temporary annotation add operator
     class TempAnnotationAddOperator(bpy.types.Operator):
@@ -940,7 +941,8 @@ def _register_temp_annotation_add_op(entity):
             method(**api_inputs)
             return {"FINISHED"}
 
-    bpy.utils.register_class(TempAnnotationAddOperator)
+    register(TempAnnotationAddOperator)
+    return registered_classes
 
 
 class MN_OT_Add_Annotation(Operator):
@@ -954,14 +956,22 @@ class MN_OT_Add_Annotation(Operator):
 
     uuid: StringProperty()  # type: ignore
 
+    _temp_classes = []
+
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "type")
 
     def execute(self, context: Context):
+        # unregister any temp classes from previous invocation
+        # verify in: bpy.types.Operator.__subclasses__() and
+        # bpy.types.PropertyGroup.__subclasses__()
+        for cls in MN_OT_Add_Annotation._temp_classes:
+            bpy.utils.unregister_class(cls)
         entity = get_session().get(self.uuid)
         # register the temporary operator with required type inputs
-        _register_temp_annotation_add_op(entity)
+        MN_OT_Add_Annotation._temp_classes = _register_temp_annotation_add_op(entity)
+        # invoke the temporary add operator
         bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")
         return {"FINISHED"}
 

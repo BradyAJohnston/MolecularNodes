@@ -32,3 +32,25 @@ def viewport_tag_redraw() -> None:
         for area in window.screen.areas:
             if area.type == "VIEW_3D":
                 area.tag_redraw()
+
+
+def get_viewport_region_from_context(context) -> tuple:
+    """Get the 3D viewport region and region data from context"""
+    region = context.region
+    rv3d = None
+    if not context.space_data.region_quadviews:
+        rv3d = context.space_data.region_3d
+    else:
+        # handle quadview case
+        if context.area.type != "VIEW_3D" or context.space_data.type != "VIEW_3D":
+            return (region, rv3d)
+        i = -1
+        for region in context.area.regions:
+            if region.type == "WINDOW":
+                i += 1
+                if context.region == region:
+                    break
+        else:
+            return (region, rv3d)
+        rv3d = context.space_data.region_quadviews[i]
+    return (region, rv3d)
