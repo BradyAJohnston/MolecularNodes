@@ -105,7 +105,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             nv = -Vector(pos_3d)
             nv.normalize()
             pointer_begin = pos_3d + (nv * params.pointer_length)
-            text_pos = pointer_begin + Vector((0, 0, 0.5))  # offset text a bit
+            text_pos = pointer_begin + (nv * 0.5)  # offset text a bit
             self.draw_line_3d(pointer_begin, pos_3d, v2_arrow=True)
 
         pos_2d = self._get_2d_point(text_pos)

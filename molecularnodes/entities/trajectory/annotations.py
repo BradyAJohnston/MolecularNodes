@@ -114,7 +114,7 @@ class COM(TrajectoryAnnotation):
 
     # annotation inputs
     selection: str = "protein"
-    text: str = "Protein|COM"
+    text: str = "COM"
 
     def defaults(self) -> None:
         params = self.interface
