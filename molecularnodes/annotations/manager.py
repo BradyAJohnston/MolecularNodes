@@ -93,9 +93,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         cls._classes[annotation_class.annotation_type] = annotation_class
         # Add method to Entity specific manager
         method_name = f"add_{annotation_class.annotation_type}"
-        method = functools.partialmethod(
-            cls._create_annotation_instance, annotation_class
-        )
+
+        # Add a dynamic wrapper to ensure custom signature is retained
+        def dynamic_wrapper(cls, annotation_class, **kwargs):
+            cls._create_annotation_instance(annotation_class, **kwargs)
+
+        method = functools.partialmethod(dynamic_wrapper, annotation_class)
         parameters = [
             inspect.Parameter("self", inspect.Parameter.POSITIONAL_ONLY),
             inspect.Parameter("annotation_class", inspect.Parameter.POSITIONAL_ONLY),
@@ -113,7 +116,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             )
             parameters.append(param)
         # Create method signature to match annotation class inputs
-        method.func.__signature__ = inspect.Signature(parameters)
+        method.func.__signature__ = inspect.Signature(
+            parameters, return_annotation=AnnotationInterface
+        )
         # Update annotation properties
         cls._update_annotation_props(annotation_class)
         setattr(cls, method_name, method)
