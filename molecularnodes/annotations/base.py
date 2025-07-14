@@ -134,7 +134,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         pos_x, pos_y = pos_2d
         new_x = pos_x * self.viewport_width
         new_y = pos_y * self.viewport_height
-        self._draw_text_2d((new_x, new_y), text)
+        self.draw_text_2d((new_x, new_y), text)
 
     def draw_text_2d(self, pos_2d: Vector, text: str) -> None:
         """
