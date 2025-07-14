@@ -96,7 +96,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
         # Add a dynamic wrapper to ensure custom signature is retained
         def dynamic_wrapper(cls, annotation_class, **kwargs):
-            cls._create_annotation_instance(annotation_class, **kwargs)
+            return cls._create_annotation_instance(annotation_class, **kwargs)
 
         method = functools.partialmethod(dynamic_wrapper, annotation_class)
         parameters = [
