@@ -23,6 +23,14 @@ class TestAnnotations:
         assert "atom_info" in manager._classes
         assert hasattr(manager, "add_atom_info")
         assert callable(getattr(manager, "add_atom_info"))
+        # com
+        assert "com" in manager._classes
+        assert hasattr(manager, "add_com")
+        assert callable(getattr(manager, "add_com"))
+        # com_distance
+        assert "com_distance" in manager._classes
+        assert hasattr(manager, "add_com_distance")
+        assert callable(getattr(manager, "add_com_distance"))
 
     def test_trajectory_annotations_registration(self, universe, session):
         manager = mn.entities.trajectory.TrajectoryAnnotationManager
@@ -177,3 +185,76 @@ class TestAnnotations:
             "EXEC_DEFAULT", uuid=t1.uuid, annotation_uuid=a1._uuid
         )
         assert len(t1.annotations) == 0
+
+    def test_trajectory_annotation_atom_info(self, universe, session):
+        t1 = session.add_trajectory(universe)
+        assert len(t1.annotations) == 0
+        # test defaults
+        t1.annotations.add_atom_info()
+        assert len(t1.annotations) == 1
+        t1.annotations.clear()
+        # test selection string
+        phrase = "all"
+        a1 = t1.annotations.add_atom_info(selection=phrase)
+        assert len(t1.annotations) == 1
+        assert phrase == a1.selection
+        t1.annotations.clear()
+        # test selection atom group
+        ag = universe.select_atoms("all")
+        a1 = t1.annotations.add_atom_info(selection=ag)
+        assert len(t1.annotations) == 1
+        assert ag == a1.selection
+        t1.annotations.clear()
+        # test invalid selection type (not str or AtomGroup)
+        with pytest.raises(ValueError):
+            t1.annotations.add_atom_info(selection=1)
+
+    def test_trajectory_annotation_com(self, universe, session):
+        t1 = session.add_trajectory(universe)
+        assert len(t1.annotations) == 0
+        # test defaults
+        t1.annotations.add_com()
+        assert len(t1.annotations) == 1
+        t1.annotations.clear()
+        # test selection string
+        phrase = "all"
+        a1 = t1.annotations.add_com(selection=phrase)
+        assert len(t1.annotations) == 1
+        assert phrase == a1.selection
+        t1.annotations.clear()
+        # test selection atom group
+        ag = universe.select_atoms("all")
+        a1 = t1.annotations.add_com(selection=ag)
+        assert len(t1.annotations) == 1
+        assert ag == a1.selection
+        t1.annotations.clear()
+        # test invalid selection type (not str or AtomGroup)
+        with pytest.raises(ValueError):
+            t1.annotations.add_com(selection=1)
+
+    def test_trajectory_annotation_com_distance(self, universe, session):
+        t1 = session.add_trajectory(universe)
+        assert len(t1.annotations) == 0
+        # test defaults
+        with pytest.raises(ValueError):
+            t1.annotations.add_com_distance()
+        assert len(t1.annotations) == 0
+        # test both required selections
+        with pytest.raises(ValueError):
+            t1.annotations.add_com_distance(selection1="all")
+        assert len(t1.annotations) == 0
+        # test selection strings
+        phrase1 = "all"
+        a1 = t1.annotations.add_com_distance(selection1=phrase1, selection2="protein")
+        assert len(t1.annotations) == 1
+        assert phrase1 == a1.selection1
+        t1.annotations.clear()
+        # test selection atom groups
+        ag1 = universe.select_atoms("all")
+        a1 = t1.annotations.add_com_distance(selection1=ag1, selection2="protein")
+        assert len(t1.annotations) == 1
+        assert ag1 == a1.selection1
+        t1.annotations.clear()
+        # test invalid selection type (not str or AtomGroup)
+        with pytest.raises(ValueError):
+            t1.annotations.add_com_distance(selection1=1, selection2=2)

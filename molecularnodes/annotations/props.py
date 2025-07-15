@@ -1,3 +1,4 @@
+import typing
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -9,7 +10,7 @@ from bpy.props import (
 )
 from ..blender.utils import viewport_tag_redraw
 from .base import BaseAnnotation
-from .utils import get_all_class_annotations
+from .utils import get_all_class_annotations, get_blender_supported_type
 
 
 def _create_update_callback(func, prop_name):
@@ -26,32 +27,33 @@ def create_annotation_type_inputs(
     """Create a dynamic PropertyGroup with annotation type inputs"""
     attributes = {"__annotations__": {}}
     py_annotations = get_all_class_annotations(annotation_class)
-    for key, atype in py_annotations.items():
-        if key == "name":
+    for attr, atype in py_annotations.items():
+        if attr == "name":
             continue
-        if atype.__name__ == "str":
+        stype = get_blender_supported_type(atype)
+        if stype is str:
             prop = StringProperty(
-                default=getattr(annotation_class, key, ""),
-                update=_create_update_callback(update_callback, key),
+                default=getattr(annotation_class, attr, ""),
+                update=_create_update_callback(update_callback, attr),
             )
-        elif atype.__name__ == "bool":
+        elif stype is bool:
             prop = BoolProperty(
-                default=getattr(annotation_class, key, False),
-                update=_create_update_callback(update_callback, key),
+                default=getattr(annotation_class, attr, False),
+                update=_create_update_callback(update_callback, attr),
             )
-        elif atype.__name__ == "int":
+        elif stype is int:
             prop = IntProperty(
-                default=getattr(annotation_class, key, 0),
-                update=_create_update_callback(update_callback, key),
+                default=getattr(annotation_class, attr, 0),
+                update=_create_update_callback(update_callback, attr),
             )
-        elif atype.__name__ == "float":
+        elif stype is float:
             prop = FloatProperty(
-                default=getattr(annotation_class, key, 0.0),
-                update=_create_update_callback(update_callback, key),
+                default=getattr(annotation_class, attr, 0.0),
+                update=_create_update_callback(update_callback, attr),
             )
         else:
             continue
-        attributes["__annotations__"][key] = prop
+        attributes["__annotations__"][attr] = prop
     # add the uuid to the annotation for lookup during update callback
     attributes["__annotations__"]["uuid"] = StringProperty()
     # add a boolean to indicate if validations succeeded
@@ -60,14 +62,34 @@ def create_annotation_type_inputs(
     return AnnotationInputs
 
 
-def create_property_interface(prop: bpy.types.bpy_struct, path: str) -> property:
+def create_property_interface(
+    prop: bpy.types.bpy_struct,
+    attr: str,
+    atype: typing.Any = None,
+    instance: BaseAnnotation = None,
+) -> property:
     """Create a property() interface for a blender property"""
 
+    nbattr = f"_{attr}"  # non blender property
+
     def getter(self):
-        return getattr(prop, path)
+        # return the non blender property if set
+        if hasattr(instance, nbattr):
+            return getattr(instance, nbattr)
+        return getattr(prop, attr)
 
     def setter(self, value):
-        setattr(prop, path, value)
+        if atype is not None and not isinstance(value, atype):
+            # not a supported blender type property
+            # set a non blender property and validate
+            setattr(instance, nbattr, value)
+            instance.validate()
+        else:
+            # blender property
+            setattr(prop, attr, value)
+            # clear any corresponding non blender property
+            if hasattr(instance, nbattr):
+                delattr(instance, nbattr)
         viewport_tag_redraw()
 
     return property(getter, setter, doc=getattr(prop, "description", None))
