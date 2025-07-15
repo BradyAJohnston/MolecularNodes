@@ -125,20 +125,16 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         max=360.0,
     )  # type: ignore
 
-    offset_x: FloatProperty(
+    offset_x: IntProperty(
         name="Offset X",
         description="Offset in X direction",
         default=0,
-        min=0.0,
-        max=1.0,
     )  # type: ignore
 
-    offset_y: FloatProperty(
+    offset_y: IntProperty(
         name="offset Y",
         description="Offset in Y direction",
         default=0,
-        min=0.0,
-        max=1.0,
     )  # type: ignore
 
     line_color: FloatVectorProperty(
