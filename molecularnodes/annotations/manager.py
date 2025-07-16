@@ -11,17 +11,22 @@ from .props import (
     create_annotation_type_inputs,
     create_property_interface,
 )
-from .utils import get_all_class_annotations
+from .utils import get_all_class_annotations, get_blender_supported_type
 
 
-def _validate_annotation_update(self, context, prop_name):
+def _validate_annotation_update(self, context, attr):
     """Update callback when annotation inputs change (both API and GUI)"""
     session = context.scene.MNSession
     entity = session.get(self.id_data.uuid)
     interface = entity.annotations._interfaces.get(self.uuid)
+    instance = interface._instance
+    # delete non blender attribute as blender attribute updated
+    nbattr = f"_{attr}"
+    if hasattr(instance, nbattr):
+        delattr(instance, nbattr)
     try:
-        if not interface._instance.validate():
-            raise ValueError(f"Invalid input {prop_name}")
+        if not instance.validate():
+            raise ValueError(f"Invalid input {attr}")
     except Exception as exception:
         self.valid_inputs = False
         raise exception
@@ -105,14 +110,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         ]
         # Add the annotation inputs as keyword params
         py_annotations = get_all_class_annotations(annotation_class)
-        for key, value in py_annotations.items():
+        for attr, atype in py_annotations.items():
             default = inspect.Parameter.empty
             # set the default if the param in annotation class is a class
             # attribute and not just an annotation
-            if hasattr(annotation_class, key):
-                default = getattr(annotation_class, key)
+            if hasattr(annotation_class, attr):
+                default = getattr(annotation_class, attr)
             param = inspect.Parameter(
-                key, inspect.Parameter.KEYWORD_ONLY, annotation=value, default=default
+                attr, inspect.Parameter.KEYWORD_ONLY, annotation=atype, default=default
             )
             parameters.append(param)
         # Create method signature to match annotation class inputs
@@ -247,13 +252,13 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """
         # validations for required and invalid inputs
         py_annotations = get_all_class_annotations(annotation_class)
-        for key, value in py_annotations.items():
-            if not hasattr(annotation_class, key) and key not in kwargs:
-                raise ValueError(f"{key} is a required parameter")
-        for key, value in kwargs.items():
-            if key not in py_annotations:
+        for attr in py_annotations.keys():
+            if not hasattr(annotation_class, attr) and attr not in kwargs:
+                raise ValueError(f"{attr} is a required parameter")
+        for attr in kwargs.keys():
+            if attr not in py_annotations:
                 raise ValueError(
-                    f"Unknown input {key}. Valid values are {py_annotations}"
+                    f"Unknown input {attr}. Valid values are {py_annotations}"
                 )
         # create an annotations instance
         annotation_instance = annotation_class(self._entity)
@@ -270,14 +275,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             getattr(annotation_instance, "validate")
         ):
             # set the annotation inputs to interface for validation
-            for key, value in py_annotations.items():
+            for attr in py_annotations.keys():
                 # set the input value based on what is passed
                 # if input value is not passed, use the value from the annotation class
-                value = kwargs.get(key, None)
+                value = kwargs.get(attr, None)
                 if value is None:
-                    value = getattr(annotation_class, key, None)
+                    value = getattr(annotation_class, attr, None)
                 if value is not None:
-                    setattr(interface.__class__, key, value)
+                    setattr(interface.__class__, attr, value)
             # validate
             if not annotation_instance.validate():
                 raise ValueError("Invalid annotation inputs")
@@ -318,19 +323,22 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             prop_interface = create_property_interface(inputs, "valid_inputs")
             setattr(interface.__class__, "_valid_inputs", prop_interface)
             # all annotation inputs as defined in class
-            for key, value in py_annotations.items():
+            for attr, atype in py_annotations.items():
                 # name is a special case that is already added above
-                if key == "name":
+                if attr == "name":
                     continue
+                stype = get_blender_supported_type(atype)
+                prop_interface = create_property_interface(
+                    inputs, attr, stype, annotation_instance
+                )
+                setattr(interface.__class__, attr, prop_interface)
                 # set the input value based on what is passed
                 # if input value is not passed, use the value from the annotation class
-                value = kwargs.get(key, None)
+                value = kwargs.get(attr, None)
                 if value is None:
-                    value = getattr(annotation_class, key, None)
+                    value = getattr(annotation_class, attr, None)
                 if value is not None:
-                    setattr(inputs, key, value)
-                prop_interface = create_property_interface(inputs, key)
-                setattr(interface.__class__, key, prop_interface)
+                    setattr(interface, attr, value)
         # create property interfaces for the common annotation params
         for item in prop.bl_rna.properties:
             if not item.is_runtime:

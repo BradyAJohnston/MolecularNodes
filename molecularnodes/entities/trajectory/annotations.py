@@ -1,3 +1,5 @@
+import typing
+from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
 
@@ -63,7 +65,7 @@ class AtomInfo(TrajectoryAnnotation):
     annotation_type = "atom_info"  # required annotation type
 
     # annotation inputs
-    selection: str = "name CA"
+    selection: str | AtomGroup = "name CA"
     show_resid: bool = False
     show_segid: bool = False
 
@@ -76,8 +78,14 @@ class AtomInfo(TrajectoryAnnotation):
     def validate(self) -> bool:
         params = self.interface
         universe = self.trajectory.universe
-        # check if selection phrase is valid - mda throws exception if invalid
-        self.atom_group = universe.select_atoms(params.selection)
+        if isinstance(params.selection, str):
+            # check if selection phrase is valid
+            # mda throws exception if invalid
+            self.atom_group = universe.select_atoms(params.selection)
+        elif isinstance(params.selection, AtomGroup):
+            self.atom_group = params.selection
+        else:
+            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection)}")
         return True
 
     def draw(self) -> None:
@@ -113,7 +121,7 @@ class COM(TrajectoryAnnotation):
     annotation_type = "com"  # required annotation type
 
     # annotation inputs
-    selection: str = "protein"
+    selection: typing.Union[str | AtomGroup] = "protein"
     text: str = "COM"
 
     def defaults(self) -> None:
@@ -123,9 +131,16 @@ class COM(TrajectoryAnnotation):
         params.arrow_size = 10
 
     def validate(self) -> bool:
+        params = self.interface
         universe = self.trajectory.universe
-        # check if selection phrase is valid - mda throws exception if invalid
-        self.atom_group = universe.select_atoms(self.interface.selection)
+        if isinstance(params.selection, str):
+            # check if selection phrase is valid
+            # mda throws exception if invalid
+            self.atom_group = universe.select_atoms(params.selection)
+        elif isinstance(params.selection, AtomGroup):
+            self.atom_group = params.selection
+        else:
+            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection)}")
         return True
 
     def draw(self) -> None:
@@ -158,17 +173,32 @@ class COMDistance(TrajectoryAnnotation):
     annotation_type = "com_distance"  # required annotation type
 
     # annotation inputs
-    selection1: str
-    selection2: str
+    selection1: str | AtomGroup
+    selection2: str | AtomGroup
     text1: str = "COM1"
     text2: str = "COM2"
 
     def validate(self) -> bool:
         params = self.interface
         universe = self.trajectory.universe
-        # check if selection phrases are valid - exception thrown if invalid
-        self.atom_group1 = universe.select_atoms(params.selection1)
-        self.atom_group2 = universe.select_atoms(params.selection2)
+        # check selection 1
+        if isinstance(params.selection1, str):
+            # check if selection phrase is valid
+            # mda throws exception if invalid
+            self.atom_group1 = universe.select_atoms(params.selection1)
+        elif isinstance(params.selection1, AtomGroup):
+            self.atom_group1 = params.selection1
+        else:
+            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection1)}")
+        # check selection 2
+        if isinstance(params.selection2, str):
+            # check if selection phrase is valid
+            # mda throws exception if invalid
+            self.atom_group2 = universe.select_atoms(params.selection2)
+        elif isinstance(params.selection2, AtomGroup):
+            self.atom_group2 = params.selection2
+        else:
+            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection2)}")
         return True
 
     def draw(self) -> None:

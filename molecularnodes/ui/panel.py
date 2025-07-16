@@ -945,12 +945,12 @@ class MN_PT_Annotations(bpy.types.Panel):
             return
 
         item = object.mn_annotations[annotations_active_index]
-
         box = layout.box()
         row = box.row()
         row.prop(item, "type")
         row.enabled = False
         inputs = getattr(item, item.type, None)
+        instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
             if not inputs.valid_inputs:
                 col = layout.column()
@@ -962,6 +962,10 @@ class MN_PT_Annotations(bpy.types.Panel):
                 if prop_name in ("uuid", "valid_inputs"):
                     continue
                 row = box.row()
+                if hasattr(instance, f"_{prop_name}"):
+                    # indicate use of non blender property in draw
+                    row.label(icon="ERROR")
+                    row.alert = True
                 row.prop(inputs, prop_name)
 
         # Add all the common annotation params within the 'Options' panel

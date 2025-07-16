@@ -54,7 +54,10 @@ class BaseAnnotation(metaclass=ABCMeta):
         Optional method to validate annotation inputs
         This is called during annotation creation and any time the inputs change
         either through the API or GUI. Can return False or raise an exception
-        when validation fails. Returns True when all validations succeed
+        when validation fails. Returns True when all validations succeed.
+
+        Note: This method gets called when any inputs change, so updating values
+        in here will lead to a recursive loop and should not be done.
 
         """
         return True
