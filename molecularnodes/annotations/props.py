@@ -147,6 +147,12 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         max=360.0,
     )  # type: ignore
 
+    text_depth: BoolProperty(
+        name="Text depth",
+        description="Adjust text size to show depth",
+        default=False,
+    )  # type: ignore
+
     offset_x: IntProperty(
         name="Offset X",
         description="Offset in X direction",

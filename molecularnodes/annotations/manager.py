@@ -3,6 +3,7 @@ import inspect
 from abc import ABCMeta
 from uuid import uuid1
 import bpy
+from mathutils import Vector
 from ..blender.utils import get_viewport_region_from_context, viewport_tag_redraw
 from .base import BaseAnnotation
 from .interface import AnnotationInterface
@@ -413,6 +414,22 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # for viewport drawing, region and rv3d are required
         if region is None or rv3d is None:
             return
+        # calculate the min and max viewport distance of the bounding box verts
+        # find bounding box verts
+        bb_verts = [co for co in bpy.data.objects[self._entity.object.name].bound_box]
+        # viewport distance of the bounding box verts
+        bb_verts_distances = []
+        for vert in bb_verts:
+            if rv3d.is_perspective:
+                # perspective
+                dist = (rv3d.view_matrix @ Vector(vert)).length
+            else:
+                # orthographic
+                dist = -(rv3d.view_matrix @ Vector(vert)).z
+            bb_verts_distances.append(dist)
+        # min and max
+        min_dist = min(bb_verts_distances)
+        max_dist = max(bb_verts_distances)
         # iterate over all annotations
         for interface in self._interfaces.values():
             # annotation specific visibility
@@ -422,7 +439,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             if not getattr(interface, "_valid_inputs", True):
                 continue
             # set the viewport region
-            interface._instance._set_viewport_region(region, rv3d)
+            interface._instance._set_viewport_region(region, rv3d, min_dist, max_dist)
             # handle exceptions to allow other annotations to be drawn
             try:
                 interface._instance.draw()
