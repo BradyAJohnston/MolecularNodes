@@ -980,7 +980,10 @@ class MN_PT_Annotations(bpy.types.Panel):
                     continue
                 if prop.type == "POINTER":
                     continue
-                panel.prop(item, prop.identifier)
+                row = panel.row()
+                row.prop(item, prop.identifier)
+                if prop.identifier == "text_falloff":
+                    row.enabled = item.text_depth
 
         row = box.row()
 

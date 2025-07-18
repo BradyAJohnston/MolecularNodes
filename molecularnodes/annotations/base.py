@@ -101,20 +101,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             Text to display. '|' as multi-line separator
 
         """
-        params = self.interface
-        text_pos = pos_3d
-        if params.pointer_length > 0:
-            # draw a pointer to the 3D position
-            nv = -Vector(pos_3d)
-            nv.normalize()
-            pointer_begin = pos_3d + (nv * params.pointer_length)
-            text_pos = pointer_begin + (nv * 0.5)  # offset text a bit
-            self.draw_line_3d(pointer_begin, pos_3d, v2_arrow=True)
-
-        pos_2d = self._get_2d_point(text_pos)
-        if pos_2d is None:
-            return
-        self.draw_text_2d(pos_2d, text)
+        self._draw_text(pos_3d, text, is3d=True)
 
     def draw_text_2d_norm(self, pos_2d: Vector, text: str) -> None:
         """
@@ -137,7 +124,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         pos_x, pos_y = pos_2d
         new_x = pos_x * self.viewport_width
         new_y = pos_y * self.viewport_height
-        self.draw_text_2d((new_x, new_y), text)
+        self._draw_text((new_x, new_y), text, is3d=False)
 
     def draw_text_2d(self, pos_2d: Vector, text: str) -> None:
         """
@@ -152,8 +139,28 @@ class BaseAnnotation(metaclass=ABCMeta):
             Text to display. '|' as multi-line separator
 
         """
-        if pos_2d is None:
+        self._draw_text(pos_2d, text, is3d=False)
+
+    def _draw_text(self, pos: Vector, text: str, is3d: bool = False) -> None:
+        """Internal: Draw text 3D or 2D"""
+        if pos is None:
             return
+        pos_2d = pos
+        if is3d:
+            text_pos = pos
+            params = self.interface
+            # check if pointer is required
+            if params.pointer_length > 0:
+                # draw a pointer to the 3D position
+                nv = -Vector(pos)
+                nv.normalize()
+                pointer_begin = pos + (nv * params.pointer_length)
+                text_pos = pointer_begin + (nv * 0.5)  # offset text a bit
+                self._draw_line(pointer_begin, pos, v2_arrow=True, is3d=True)
+            pos_2d = self._get_2d_point(text_pos)
+            if pos_2d is None:
+                return
+        # draw text at 2D position
         font_id = 0
         scale = 1
         right_alignment_gap = 12
@@ -163,8 +170,28 @@ class BaseAnnotation(metaclass=ABCMeta):
         pos_x += params.offset_x
         pos_y += params.offset_y
         rgba = params.text_color
+        text_size = params.text_size
+        # adjust the text size if depth enabled
+        if is3d and params.text_depth:
+            view_matrix = self._rv3d.view_matrix
+            if self._rv3d.is_perspective:  # perspective
+                dist = (view_matrix @ (Vector(pos) * self._world_scale)).length
+            else:  # orthographic
+                dist = -(view_matrix @ (Vector(pos) * self._world_scale)).z
+            # adjust distance range based on falloff factor
+            dist_range = self._dist_range * params.text_falloff
+            r_factor = 0  # reduction factor
+            if dist_range > 0:  # to avoid div by 0
+                offset = dist - self._min_dist
+                # clamp to within range
+                if offset < 0:
+                    offset = 0
+                elif offset > dist_range:
+                    offset = dist_range
+                r_factor = 1.0 - (offset / dist_range)
+            text_size *= r_factor
         # set the text size
-        blf.size(font_id, params.text_size)
+        blf.size(font_id, text_size)
         # height of one line - for use in multiline text
         _, max_th = blf.dimensions(font_id, "Tp")  # uses high/low letters
         # split lines
@@ -230,11 +257,9 @@ class BaseAnnotation(metaclass=ABCMeta):
             Whether to display an arrow at v2
 
         """
-        if v1 is None or v2 is None:
-            return
-        v1_2d = self._get_2d_point(v1)
-        v2_2d = self._get_2d_point(v2)
-        self.draw_line_2d(v1_2d, v2_2d, v1_text, v2_text, mid_text, v1_arrow, v2_arrow)
+        self._draw_line(
+            v1, v2, v1_text, v2_text, mid_text, v1_arrow, v2_arrow, is3d=True
+        )
 
     def draw_line_2d(
         self,
@@ -273,16 +298,9 @@ class BaseAnnotation(metaclass=ABCMeta):
             Whether to display an arrow at v2
 
         """
-        if v1 is None or v2 is None:
-            return
-        self._draw_arrow_line_2d(v1, v2, v1_arrow, v2_arrow)
-        if v1_text is not None:
-            self.draw_text_2d(v1, v1_text)
-        if v2_text is not None:
-            self.draw_text_2d(v2, v2_text)
-        if mid_text is not None:
-            mid = (v1 + v2) / 2
-            self.draw_text_2d(mid, mid_text)
+        self._draw_line(
+            v1, v2, v1_text, v2_text, mid_text, v1_arrow, v2_arrow, is3d=False
+        )
 
     def distance(self, v1: Vector, v2: Vector) -> float:
         """
@@ -303,28 +321,59 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         return (Vector(v2) - Vector(v1)).length
 
-    def _draw_arrow_line_2d(
+    def _draw_line(
+        self,
+        v1: Vector,
+        v2: Vector,
+        v1_text: str = None,
+        v2_text: str = None,
+        mid_text: str = None,
+        v1_arrow: bool = False,
+        v2_arrow: bool = False,
+        is3d: bool = False,
+    ) -> None:
+        """Internal: Draw line 3D or 2D"""
+        if v1 is None or v2 is None:
+            return
+        self._draw_arrow_line(v1, v2, v1_arrow, v2_arrow, is3d=is3d)
+        if v1_text is not None:
+            self._draw_text(v1, v1_text, is3d=is3d)
+        if v2_text is not None:
+            self._draw_text(v2, v2_text, is3d=is3d)
+        if mid_text is not None:
+            mid = (v1 + v2) / 2
+            self._draw_text(mid, mid_text, is3d=is3d)
+
+    def _draw_arrow_line(
         self,
         v1: Vector,
         v2: Vector,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
+        is3d: bool = False,
     ) -> None:
         """Internal: Draw a line between two 2D points with arrows"""
         if v1 is None or v2 is None:
             return
+        v1_2d = v1
+        v2_2d = v2
+        if is3d:
+            v1_2d = self._get_2d_point(v1)
+            v2_2d = self._get_2d_point(v2)
+            if v1_2d is None or v2_2d is None:
+                return
         # actual line
-        self._draw_line_2d(v1, v2)
+        self._draw_line_2d(v1_2d, v2_2d)
         if v1_arrow:
             # v1 arrow lines
-            va, vb = self._get_arrow_end_points(v1, v2)
-            self._draw_line_2d(v1, va)
-            self._draw_line_2d(v1, vb)
+            va, vb = self._get_arrow_end_points(v1_2d, v2_2d)
+            self._draw_line_2d(v1_2d, va)
+            self._draw_line_2d(v1_2d, vb)
         if v2_arrow:
             # v2 arrow lines
-            va, vb = self._get_arrow_end_points(v2, v1)
-            self._draw_line_2d(v2, va)
-            self._draw_line_2d(v2, vb)
+            va, vb = self._get_arrow_end_points(v2_2d, v1_2d)
+            self._draw_line_2d(v2_2d, va)
+            self._draw_line_2d(v2_2d, vb)
 
     def _get_arrow_end_points(self, v1, v2: Vector) -> tuple:
         """Internal: Get arrow end point positions"""
@@ -381,10 +430,15 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         region: bpy.types.Region | None,
         rv3d: bpy.types.RegionView3D | None,
+        min_dist: float,
+        max_dist: float,
     ) -> None:
         """Internal: Set the 3D viewport region and region data"""
         self._region = region
         self._rv3d = rv3d
+        self._min_dist = min_dist
+        self._max_dist = max_dist
+        self._dist_range = max_dist - min_dist
 
     def _get_2d_point(self, pos_3d: Vector) -> Vector | None:
         """Internal: Get the 2D point in region corresponding to 3D position"""
