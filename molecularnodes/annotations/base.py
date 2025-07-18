@@ -178,8 +178,17 @@ class BaseAnnotation(metaclass=ABCMeta):
                 dist = (view_matrix @ (Vector(pos) * self._world_scale)).length
             else:  # orthographic
                 dist = -(view_matrix @ (Vector(pos) * self._world_scale)).z
-            # reduction factor
-            r_factor = 1.0 - ((dist - self._min_dist) / self._dist_range)
+            # adjust distance range based on falloff factor
+            dist_range = self._dist_range * params.text_falloff
+            r_factor = 0  # reduction factor
+            if dist_range > 0:  # to avoid div by 0
+                offset = dist - self._min_dist
+                # clamp to within range
+                if offset < 0:
+                    offset = 0
+                elif offset > dist_range:
+                    offset = dist_range
+                r_factor = 1.0 - (offset / dist_range)
             text_size *= r_factor
         # set the text size
         blf.size(font_id, text_size)

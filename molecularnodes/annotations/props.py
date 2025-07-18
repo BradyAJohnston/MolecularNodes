@@ -148,9 +148,17 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
     )  # type: ignore
 
     text_depth: BoolProperty(
-        name="Text depth",
+        name="Text Depth",
         description="Adjust text size to show depth",
         default=False,
+    )  # type: ignore
+
+    text_falloff: FloatProperty(
+        name="Text Falloff",
+        description="Text size falloff factor",
+        default=1.0,
+        min=0.0,
+        max=1.0,
     )  # type: ignore
 
     offset_x: IntProperty(
