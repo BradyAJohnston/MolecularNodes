@@ -55,6 +55,10 @@ website:
     - tutorials/trajectories.qmd
     - tutorials/cryoem.qmd
     - tutorials/simulation.qmd
+    - text: "---"
+    - section: "MDAnalysis"
+      contents:
+      - "mda/example_mda.qmd"
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -95,6 +99,7 @@ quartodoc:
       - "{{ contents }}"
   # css: api/_styles-quartodoc.css
 
+
   sections:
   - title: Entity
     desc: Importing and manipulating different molecular entities
@@ -104,6 +109,20 @@ quartodoc:
     - entities.Trajectory
     - entities.Ensemble
     - entities.OXDNA
+
+  - title: Session
+    desc: Session object to control molecular entities
+    contents:
+    - session.MNSession
+
+  - title: Annotations
+    desc: Annotations for molecular entitites
+    contents:
+    - annotations.base
+    - annotations.interface
+    - annotations.manager
+    - entities.trajectory.annotations
+    - entities.molecule.annotations
 
   - title: Scene
     desc: Control settings for the Blender scene through the `Canvas` object.
