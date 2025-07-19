@@ -218,3 +218,75 @@ class COMDistance(TrajectoryAnnotation):
             v1_arrow=True,
             v2_arrow=True,
         )
+
+
+class CanonicalDihedrals(TrajectoryAnnotation):
+    """
+    Canonical Dihedrals of a given residue
+
+    Attributes
+    ----------
+    resid: int
+        The residue number
+
+    show_atom_names: bool
+        Whether or not to show the individual atom names in the residue
+
+    show_direction: bool
+        Whether or not to show the arc indicating the angle direction
+
+    """
+
+    annotation_type = "canonical_dihedrals"
+
+    resid: int
+    show_atom_names: bool = True
+    show_direction: bool = True
+
+    def defaults(self) -> None:
+        params = self.interface
+        params.arrow_size = 8
+
+    def validate(self) -> bool:
+        params = self.interface
+        universe = self.trajectory.universe
+        # verify residue in universe - raises exception if invalid
+        self.residue = universe.residues[params.resid - 1]
+        return True
+
+    def draw(self) -> None:
+        params = self.interface
+        r = self.residue
+        # *_selection() returns None if nothing found
+        selections = [
+            r.phi_selection(),
+            r.psi_selection(),
+            r.omega_selection(),
+            r.chi1_selection(),
+        ]
+        symbols = ["ϕ", "ψ", "ω", "χ1"]
+        # iterate over the canonical selections
+        for si in range(4):
+            if selections[si] is None:
+                continue
+            # iterate over the four atoms in the selection
+            for ai in range(4):
+                a1 = selections[si].atoms[ai]
+                if params.show_atom_names:
+                    self.draw_text_3d(a1.position, a1.name)
+                if ai == 3:
+                    continue
+                a2 = selections[si].atoms[ai + 1]
+                v1 = a1.position
+                v2 = a2.position
+                text = None
+                if ai == 1:
+                    text = f"{symbols[si]} = {selections[si].dihedral.value():1.2f} °"
+                    if params.show_direction:
+                        center = (v1 + v2) / 2
+                        radius = 0.1 * self.distance(v1, v2)  # 10% of distance
+                        # draw arc indicating direction of the angle
+                        self.draw_circle_3d(
+                            center, radius, (v2 - v1), angle=270, c_arrow=True
+                        )
+                self.draw_line_3d(v1, v2, mid_text=text)
