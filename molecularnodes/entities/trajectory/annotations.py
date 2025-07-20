@@ -1,4 +1,5 @@
 import typing
+from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
@@ -254,6 +255,22 @@ class CanonicalDihedrals(TrajectoryAnnotation):
         self.residue = universe.residues[params.resid - 1]
         return True
 
+    def _get_start_dv(self, dihedral: list) -> Vector:
+        """Get the direction vector along which to start the arc"""
+        v0 = Vector(dihedral.atoms[0].position)
+        v1 = Vector(dihedral.atoms[1].position)
+        v2 = Vector(dihedral.atoms[2].position)
+        # find two vectors on the first plane (between 0, 1, 2)
+        v10 = v0 - v1
+        v20 = v0 - v2
+        # the normal of the plane on which the arc is drawn
+        normal = v2 - v1
+        # (v10 x normal) x v20 is a vector in the first plane that is
+        # perpendicular to the normal - get the unit vector
+        dv = v10.cross(normal).cross(v20)
+        dv.normalize()
+        return dv
+
     def draw(self) -> None:
         params = self.interface
         r = self.residue
@@ -281,12 +298,19 @@ class CanonicalDihedrals(TrajectoryAnnotation):
                 v2 = a2.position
                 text = None
                 if ai == 1:
-                    text = f"{symbols[si]} = {selections[si].dihedral.value():1.2f} °"
+                    angle = selections[si].dihedral.value()
+                    text = f"{symbols[si]} = {angle:1.2f} °"
                     if params.show_direction:
                         center = (v1 + v2) / 2
                         radius = 0.1 * self.distance(v1, v2)  # 10% of distance
                         # draw arc indicating direction of the angle
+                        start_dv = self._get_start_dv(selections[si])
                         self.draw_circle_3d(
-                            center, radius, (v2 - v1), angle=270, c_arrow=True
+                            center,
+                            radius,
+                            (v2 - v1),
+                            angle=angle,
+                            start_dv=start_dv,
+                            c_arrow=True,
                         )
                 self.draw_line_3d(v1, v2, mid_text=text)

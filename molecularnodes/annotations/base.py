@@ -327,6 +327,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         radius: float,
         normal: Vector,
         angle: float = 360.0,
+        start_dv: Vector = None,
         c_arrow: bool = False,
         cc_arrow: bool = False,
     ):
@@ -345,14 +346,20 @@ class BaseAnnotation(metaclass=ABCMeta):
         normal: Vector
             The normal vector of the plane on which the cirle is to be drawn
 
-        angle: float
+        angle: float, optional
             An angle less than 360 for partial circle (arc) - in degrees
+            Default is 360 degrees
 
-        c_arrow: bool
-            Whether to display clockwise arrow
+        start_dv: Vector, optional
+            The direction vector along which to start the circle (arc)
+            If not provided, a random point in the plane perpendicular to the
+            normal is chosen
 
-        cc_arrow: bool
-            Whether to display counter clockwise arrow
+        c_arrow: bool, optional
+            Whether to display clockwise arrow. Default is False
+
+        cc_arrow: bool, optional
+            Whether to display counter clockwise arrow. Default is False
 
         """
         # convert to vectors
@@ -361,7 +368,8 @@ class BaseAnnotation(metaclass=ABCMeta):
         if not isinstance(normal, Vector):
             normal = Vector(normal)
         # get a point in the circle plane to start the circle
-        start_dv = self._get_a_normal_plane_point(normal)
+        if start_dv is None:
+            start_dv = self._get_a_normal_plane_point(normal)
         start_dv.normalize()
         start = center + (start_dv * radius)
         n_steps = 36  # number of individual line segments of the circle
