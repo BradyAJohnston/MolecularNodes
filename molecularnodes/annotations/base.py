@@ -5,7 +5,7 @@ import bpy
 import gpu
 from bpy_extras import view3d_utils
 from gpu_extras.batch import batch_for_shader
-from mathutils import Vector
+from mathutils import Matrix, Vector
 from .interface import AnnotationInterface
 
 
@@ -321,6 +321,90 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         return (Vector(v2) - Vector(v1)).length
 
+    def draw_circle_3d(
+        self,
+        center: Vector,
+        radius: float,
+        normal: Vector,
+        angle: float = 360.0,
+        start_dv: Vector = None,
+        c_arrow: bool = False,
+        cc_arrow: bool = False,
+    ):
+        """
+        Draw a circle around a 3D point in the plane perpendicular to the
+        given normal
+
+        Parameters:
+        -----------
+        center: Vector
+            A 3D position vector of the center
+
+        radius: float
+            The radius of the circle
+
+        normal: Vector
+            The normal vector of the plane on which the cirle is to be drawn
+
+        angle: float, optional
+            An angle less than 360 for partial circle (arc) - in degrees
+            Default is 360 degrees
+
+        start_dv: Vector, optional
+            The direction vector along which to start the circle (arc)
+            If not provided, a random point in the plane perpendicular to the
+            normal is chosen
+
+        c_arrow: bool, optional
+            Whether to display clockwise arrow. Default is False
+
+        cc_arrow: bool, optional
+            Whether to display counter clockwise arrow. Default is False
+
+        """
+        # convert to vectors
+        if not isinstance(center, Vector):
+            center = Vector(center)
+        if not isinstance(normal, Vector):
+            normal = Vector(normal)
+        # get a point in the circle plane to start the circle
+        if start_dv is None:
+            start_dv = self._get_a_normal_plane_point(normal)
+        start_dv.normalize()
+        start = center + (start_dv * radius)
+        n_steps = 36  # number of individual line segments of the circle
+        step = radians(angle) / n_steps
+        # matrices to translate to center, rotate and translate back
+        mat_trans1 = Matrix.Translation(-center)
+        mat_rot = Matrix.Rotation(step, 4, normal)
+        mat_trans2 = Matrix.Translation(center)
+        p1 = start
+        # draw individual line segments
+        for i in range(n_steps):
+            p2 = mat_trans2 @ mat_rot @ mat_trans1 @ p1
+            if i == 0 and cc_arrow:
+                self._draw_line(p1, p2, v1_arrow=True, is3d=True)
+            elif i == n_steps - 1 and c_arrow:
+                self._draw_line(p1, p2, v2_arrow=True, is3d=True)
+            else:
+                self._draw_line(p1, p2, is3d=True)
+            p1 = p2.copy()
+
+    def _get_a_normal_plane_point(self, normal: Vector):
+        """Internal: Get a point in the plane perpendicular to the given normal"""
+        # given there are infinite points, pick any standard non zero
+        # ones whose dot product to given normal is 0
+        v = Vector((0, normal[2], -normal[1]))
+        if v.length != 0:
+            return v
+        v = Vector((normal[2], 0, -normal[0]))
+        if v.length != 0:
+            return v
+        v = Vector((normal[1], -normal[0], 0))
+        if v.length != 0:
+            return v
+        raise ValueError("No non-zero vector in normal plane")
+
     def _draw_line(
         self,
         v1: Vector,
@@ -375,7 +459,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             self._draw_line_2d(v2_2d, va)
             self._draw_line_2d(v2_2d, vb)
 
-    def _get_arrow_end_points(self, v1, v2: Vector) -> tuple:
+    def _get_arrow_end_points(self, v1: Vector, v2: Vector) -> tuple:
         """Internal: Get arrow end point positions"""
         params = self.interface
         v = self._interpolate_3d(

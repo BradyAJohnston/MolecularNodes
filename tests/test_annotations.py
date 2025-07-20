@@ -31,6 +31,10 @@ class TestAnnotations:
         assert "com_distance" in manager._classes
         assert hasattr(manager, "add_com_distance")
         assert callable(getattr(manager, "add_com_distance"))
+        # canonical_dihedrals
+        assert "canonical_dihedrals" in manager._classes
+        assert hasattr(manager, "add_canonical_dihedrals")
+        assert callable(getattr(manager, "add_canonical_dihedrals"))
 
     def test_trajectory_annotations_registration(self, universe, session):
         manager = mn.entities.trajectory.TrajectoryAnnotationManager
@@ -258,3 +262,20 @@ class TestAnnotations:
         # test invalid selection type (not str or AtomGroup)
         with pytest.raises(ValueError):
             t1.annotations.add_com_distance(selection1=1, selection2=2)
+
+    def test_trajectory_annotation_canonical_dihedrals(self, universe, session):
+        t1 = session.add_trajectory(universe)
+        assert len(t1.annotations) == 0
+        # test defaults - needs resid input
+        with pytest.raises(ValueError):
+            t1.annotations.add_canonical_dihedrals()
+        assert len(t1.annotations) == 0
+        # test invalid resid
+        with pytest.raises(IndexError):
+            t1.annotations.add_canonical_dihedrals(resid=1000)
+        assert len(t1.annotations) == 0
+        # test valid resid
+        a1 = t1.annotations.add_canonical_dihedrals(resid=1)
+        assert len(t1.annotations) == 1
+        # test change of resid through API
+        a1.resid = 2
