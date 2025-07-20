@@ -2,6 +2,7 @@ import databpy as db
 import numpy as np
 from MDAnalysis import Universe
 from MDAnalysis.coordinates.base import ReaderBase
+from MDAnalysis.core.groups import AtomGroup
 from MDAnalysis.core.topology import Topology
 from MDAnalysis.core.topologyattrs import (
     Atomids,
@@ -384,7 +385,10 @@ class OXDNA(Trajectory):
         )
 
     def _create_object(
-        self, style: str | None = "oxdna", name: str = "NewUniverseObject"
+        self,
+        style: str | None = "oxdna",
+        name: str = "NewUniverseObject",
+        selection: str | AtomGroup | None = None,
     ):
         """
         Create a new object with the trajectory data.
