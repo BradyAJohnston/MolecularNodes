@@ -1,8 +1,8 @@
+import tempfile
 import bpy
 import MDAnalysis as mda
 import pytest
 import molecularnodes as mn
-import tempfile
 from .constants import data_dir
 
 
