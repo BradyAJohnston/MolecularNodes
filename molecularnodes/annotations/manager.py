@@ -12,7 +12,12 @@ from .props import (
     create_annotation_type_inputs,
     create_property_interface,
 )
-from .utils import get_all_class_annotations, get_blender_supported_type
+from .utils import (
+    get_all_class_annotations,
+    get_blender_supported_type,
+    get_view_matrix,
+    is_perspective_projection,
+)
 
 
 def _validate_annotation_update(self, context, attr):
@@ -57,6 +62,15 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # Access to the entity to which this manager is attached
         self._entity = entity
         self._draw_handler = None
+        self._render_mode = False
+        # viewport params
+        self._region = None
+        self._rv3d = None
+        # render params
+        self._scene = None
+        self._image = None
+        self._image_scale = 1
+        # add draw handler by default
         self._draw_handler_add()
 
     def __iter__(self) -> iter:
@@ -404,15 +418,29 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     def _draw_annotations_handler(self, context):
         if self._draw_handler is None:
             return
+        region, rv3d = get_viewport_region_from_context(context)
+        # for viewport drawing, region and rv3d are required
+        if region is None or rv3d is None:
+            return
+        self._region = region
+        self._rv3d = rv3d
+        self._draw_annotations()
+
+    def _enable_render_mode(self, scene, image, image_scale):
+        self._scene = scene
+        self._image = image
+        self._image_scale = image_scale
+        self._render_mode = True
+
+    def _disable_render_mode(self):
+        self._render_mode = False
+
+    def _draw_annotations(self):
         # all annotations visibilty
         if not self.visible:
             return
         # object visibility
         if self._entity.object.hide_get():
-            return
-        region, rv3d = get_viewport_region_from_context(context)
-        # for viewport drawing, region and rv3d are required
-        if region is None or rv3d is None:
             return
         # calculate the min and max viewport distance of the bounding box verts
         # find bounding box verts
@@ -420,12 +448,13 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # viewport distance of the bounding box verts
         bb_verts_distances = []
         for vert in bb_verts:
-            if rv3d.is_perspective:
+            view_matrix = get_view_matrix(self)
+            if is_perspective_projection(self):
                 # perspective
-                dist = (rv3d.view_matrix @ Vector(vert)).length
+                dist = (view_matrix @ Vector(vert)).length
             else:
                 # orthographic
-                dist = -(rv3d.view_matrix @ Vector(vert)).z
+                dist = -(view_matrix @ Vector(vert)).z
             bb_verts_distances.append(dist)
         # min and max
         min_dist = min(bb_verts_distances)
@@ -438,8 +467,16 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             # annotations input validity
             if not getattr(interface, "_valid_inputs", True):
                 continue
-            # set the viewport region
-            interface._instance._set_viewport_region(region, rv3d, min_dist, max_dist)
+            # set distance params
+            interface._instance._set_distance_params(min_dist, max_dist)
+            if self._render_mode:
+                # set the render params
+                interface._instance._set_render_params(
+                    self._scene, self._image, self._image_scale
+                )
+            else:
+                # set the viewport region params
+                interface._instance._set_viewport_params(self._region, self._rv3d)
             # handle exceptions to allow other annotations to be drawn
             try:
                 interface._instance.draw()
