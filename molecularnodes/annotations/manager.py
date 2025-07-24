@@ -3,6 +3,7 @@ import inspect
 from abc import ABCMeta
 from uuid import uuid1
 import bpy
+from databpy.object import LinkedObjectError
 from mathutils import Vector
 from ..blender.utils import get_viewport_region_from_context, viewport_tag_redraw
 from .base import BaseAnnotation
@@ -415,8 +416,18 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         if self._draw_handler is not None:
             viewport_tag_redraw()
 
+    def _is_valid_entity(self) -> bool:
+        try:
+            _name = self._entity.name
+        except LinkedObjectError:
+            # remove any registered draw handler
+            self._draw_handler_remove()
+        return False
+
     def _draw_annotations_handler(self, context):
         if self._draw_handler is None:
+            return
+        if not self._is_valid_entity():
             return
         region, rv3d = get_viewport_region_from_context(context)
         # for viewport drawing, region and rv3d are required

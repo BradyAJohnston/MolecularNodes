@@ -47,6 +47,7 @@ def render_annotations(
 ) -> None:
     """Render annotations of all entities to an image"""
     session = scene.MNSession
+    session.prune()  # remove any invalid session entities
     for entity in session.entities.values():
         if not hasattr(entity, "annotations"):
             continue
