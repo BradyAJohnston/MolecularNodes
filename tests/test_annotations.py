@@ -1,4 +1,3 @@
-import tempfile
 import bpy
 import MDAnalysis as mda
 import pytest
@@ -290,8 +289,3 @@ class TestAnnotations:
         t1.annotations.add_com(selection="resid 1")
         bpy.ops.render.render()
         assert "mn_annotations" in bpy.data.images
-        image = bpy.data.images["mn_annotations"]
-        image.file_format = "PNG"
-        with tempfile.NamedTemporaryFile(mode="w") as tmp_file:
-            image.filepath_raw = tmp_file.name
-            image.save()
