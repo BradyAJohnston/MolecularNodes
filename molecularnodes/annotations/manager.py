@@ -422,7 +422,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         except LinkedObjectError:
             # remove any registered draw handler
             self._draw_handler_remove()
-        return False
+        return True
 
     def _draw_annotations_handler(self, context):
         if self._draw_handler is None:
