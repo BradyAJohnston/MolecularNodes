@@ -1,6 +1,8 @@
 import inspect
 import types
 import typing
+import bpy
+from PIL import Image
 
 
 def get_all_class_annotations(cls) -> dict:
@@ -16,7 +18,14 @@ def get_all_class_annotations(cls) -> dict:
 
 
 def get_blender_supported_type(atype):
-    supported_types = (str, bool, int, float)
+    supported_types = (
+        str,
+        bool,
+        int,
+        float,
+        tuple[float, float],
+        tuple[float, float, float],
+    )
     if atype in supported_types:
         return atype
     if typing.get_origin(atype) is typing.Union or type(atype) is types.UnionType:
@@ -24,3 +33,32 @@ def get_blender_supported_type(atype):
             if utype in supported_types:
                 return utype
     return None
+
+
+def get_view_matrix(obj):
+    if obj._render_mode:
+        return obj._scene.camera.matrix_world.inverted()
+    else:
+        return obj._rv3d.view_matrix
+
+
+def is_perspective_projection(obj):
+    if obj._render_mode:
+        return obj._scene.camera.data.type != "ORTHO"
+    else:
+        return obj._rv3d.is_perspective
+
+
+def render_annotations(
+    scene: bpy.types.Scene, render_scale: float, image: Image, image_scale: float
+) -> None:
+    """Render annotations of all entities to an image"""
+    session = scene.MNSession
+    session.prune()  # remove any invalid session entities
+    for entity in session.entities.values():
+        if not hasattr(entity, "annotations"):
+            continue
+        manager = entity.annotations
+        manager._enable_render_mode(scene, render_scale, image, image_scale)
+        manager._draw_annotations()
+        manager._disable_render_mode()

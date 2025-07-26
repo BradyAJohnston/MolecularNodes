@@ -51,6 +51,20 @@ def create_annotation_type_inputs(
                 default=getattr(annotation_class, attr, 0.0),
                 update=_create_update_callback(update_callback, attr),
             )
+        elif hasattr(stype, "__name__") and stype.__name__ == "tuple":
+            if str(stype) == "tuple[float, float]":
+                size = 2
+                default = (0.0, 0.0)
+            elif str(stype) == "tuple[float, float, float]":
+                size = 3
+                default = (0.0, 0.0, 0.0)
+            else:
+                continue
+            prop = FloatVectorProperty(
+                size=size,
+                default=getattr(annotation_class, attr, default),
+                update=_create_update_callback(update_callback, attr),
+            )
         else:
             continue
         attributes["__annotations__"][attr] = prop
@@ -79,7 +93,11 @@ def create_property_interface(
         return getattr(prop, attr)
 
     def setter(self, value):
-        if atype is not None and not isinstance(value, atype):
+        if (
+            atype is not None
+            and isinstance(atype, type)
+            and not isinstance(value, atype)
+        ):
             # not a supported blender type property
             # set a non blender property and validate
             setattr(instance, nbattr, value)

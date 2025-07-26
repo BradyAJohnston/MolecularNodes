@@ -38,6 +38,8 @@ def get_viewport_region_from_context(context) -> tuple:
     """Get the 3D viewport region and region data from context"""
     region = context.region
     rv3d = None
+    if context.space_data is None:
+        return (region, rv3d)
     if not context.space_data.region_quadviews:
         rv3d = context.space_data.region_3d
     else:
