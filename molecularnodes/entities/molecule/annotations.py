@@ -1,5 +1,6 @@
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
+from ..annotations import Label2D, Label3D
 
 
 class MoleculeAnnotation(BaseAnnotation):
@@ -38,3 +39,11 @@ class MoleculeAnnotationManager(BaseAnnotationManager):
     def __init__(self, entity):
         super().__init__(entity)
         self._interfaces = {}  # Entity instance specific annotation interfaces
+
+
+class Label2D(MoleculeAnnotation, Label2D):
+    """Common Label2D Annotation for all entities"""
+
+
+class Label3D(MoleculeAnnotation, Label3D):
+    """Common Label3D Annotation for all entities"""
