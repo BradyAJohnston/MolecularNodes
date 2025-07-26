@@ -35,6 +35,10 @@ class TestAnnotations:
         assert "canonical_dihedrals" in manager._classes
         assert hasattr(manager, "add_canonical_dihedrals")
         assert callable(getattr(manager, "add_canonical_dihedrals"))
+        # universe_info
+        assert "universe_info" in manager._classes
+        assert hasattr(manager, "add_universe_info")
+        assert callable(getattr(manager, "add_universe_info"))
 
     def test_trajectory_annotations_registration(self, universe, session):
         manager = mn.entities.trajectory.TrajectoryAnnotationManager
@@ -279,3 +283,9 @@ class TestAnnotations:
         assert len(t1.annotations) == 1
         # test change of resid through API
         a1.resid = 2
+
+    def test_trajectory_annotation_universe_info(self, universe, session):
+        t1 = session.add_trajectory(universe)
+        assert len(t1.annotations) == 0
+        t1.annotations.add_universe_info()
+        assert len(t1.annotations) == 1

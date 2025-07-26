@@ -43,7 +43,7 @@ def is_perspective_projection(obj):
 
 
 def render_annotations(
-    scene: bpy.types.Scene, image: Image, image_scale: float
+    scene: bpy.types.Scene, render_scale: float, image: Image, image_scale: float
 ) -> None:
     """Render annotations of all entities to an image"""
     session = scene.MNSession
@@ -52,6 +52,6 @@ def render_annotations(
         if not hasattr(entity, "annotations"):
             continue
         manager = entity.annotations
-        manager._enable_render_mode(scene, image, image_scale)
+        manager._enable_render_mode(scene, render_scale, image, image_scale)
         manager._draw_annotations()
         manager._disable_render_mode()

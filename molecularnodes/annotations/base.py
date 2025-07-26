@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from math import cos, radians, sin
+from math import cos, radians, sin, sqrt
 from pathlib import Path
 import blf
 import bpy
@@ -7,7 +7,7 @@ import gpu
 from bpy_extras import object_utils, view3d_utils
 from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
-from PIL import ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
 from .interface import AnnotationInterface
 from .utils import get_view_matrix, is_perspective_projection
 
@@ -53,6 +53,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             if not bpy.app.background
             else None
         )
+        self._scene = None
+        self._scale = 1.0
         self._render_mode = False
         # distance params
         self._min_dist = 0
@@ -62,7 +64,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._region = None
         self._rv3d = None
         # render params
-        self._scene = None
+        self._render_scale = 1.0
         self._image = None
         self._image_scale = 1
 
@@ -99,7 +101,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     def viewport_width(self) -> int:
         """Get the viewport region width in pixels"""
         if self._render_mode:
-            return self._image.width
+            return self._image.width / self._image_scale
         else:
             return self._region.width
 
@@ -107,7 +109,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     def viewport_height(self) -> int:
         """Get the viewport region height in pixels"""
         if self._render_mode:
-            return self._image.height
+            return self._image.height / self._image_scale
         else:
             return self._region.height
 
@@ -147,6 +149,28 @@ class BaseAnnotation(metaclass=ABCMeta):
         pos_x, pos_y = pos_2d
         new_x = pos_x * self.viewport_width
         new_y = pos_y * self.viewport_height
+        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+            # camera view mode in 3D viewport
+            zoom_factor, camera_view_width, camera_view_height = (
+                self._get_camera_view_info()
+            )
+            # offsets are based off the center of the viewport
+            camera_offset_x = self._rv3d.view_camera_offset[0]
+            camera_offset_y = self._rv3d.view_camera_offset[1]
+            # calculate the origin (bottom left) of the camera view
+            camera_view_x0 = (
+                (self.viewport_width / 2)
+                - (camera_view_width / 2)
+                - (camera_offset_x * self.viewport_width * 2 * zoom_factor)
+            )
+            camera_view_y0 = (
+                (self.viewport_height / 2)
+                - (camera_view_height / 2)
+                - (camera_offset_y * self.viewport_height * 2 * zoom_factor)
+            )
+            # calculate the actual position with respect to the camera view origin
+            new_x = camera_view_x0 + (pos_x * camera_view_width)
+            new_y = camera_view_y0 + (pos_y * camera_view_height)
         self._draw_text((new_x, new_y), text, is3d=False)
 
     def draw_text_2d(self, pos_2d: Vector, text: str) -> None:
@@ -187,7 +211,6 @@ class BaseAnnotation(metaclass=ABCMeta):
                 return
         # draw text at 2D position
         font_id = 0
-        scale = 1
         right_alignment_gap = 12
         params = self.interface
         pos_x, pos_y = pos_2d
@@ -215,6 +238,8 @@ class BaseAnnotation(metaclass=ABCMeta):
                     offset = dist_range
                 r_factor = 1.0 - (offset / dist_range)
             text_size *= r_factor
+        # scale the text - applies for viewport, viewport camera view and renders
+        text_size *= self._scale
         if round(text_size) == 0:
             return
         # set the text size
@@ -223,11 +248,12 @@ class BaseAnnotation(metaclass=ABCMeta):
             font = ImageFont.truetype(FONT_INTER, text_size * self._image_scale)
             bbox = image_draw.textbbox((0, 0), "Tp", font=font)
             max_th = bbox[3] - bbox[1]
-            scale = self._image_scale
+            pos_scale = self._image_scale
         else:
             blf.size(font_id, text_size)
             # height of one line - for use in multiline text
             _, max_th = blf.dimensions(font_id, "Tp")  # uses high/low letters
+            pos_scale = 1
 
         # split lines
         lines = text.split("|")
@@ -241,17 +267,17 @@ class BaseAnnotation(metaclass=ABCMeta):
                 line_width, _ = blf.dimensions(font_id, line)
             # x position based on alignment
             if params.text_align == "center":
-                new_x = (pos_x * scale) - line_width / 2
+                new_x = (pos_x * pos_scale) - line_width / 2
             elif params.text_align == "right":
-                new_x = (pos_x * scale) - line_width - right_alignment_gap
+                new_x = (pos_x * pos_scale) - line_width - right_alignment_gap
             else:
-                new_x = pos_x * scale
+                new_x = pos_x * pos_scale
                 if not self._render_mode:
                     # rotation support only for left alignment and viewport
                     blf.enable(font_id, blf.ROTATION)
                     blf.rotation(font_id, radians(params.text_rotation))
             # calculate new y position
-            new_y = (pos_y * scale) + (max_th * n_lines)
+            new_y = (pos_y * pos_scale) + (max_th * n_lines)
             # draw the text line
             if self._render_mode:
                 image_draw.text(
@@ -515,9 +541,8 @@ class BaseAnnotation(metaclass=ABCMeta):
     def _get_arrow_end_points(self, v1: Vector, v2: Vector) -> tuple:
         """Internal: Get arrow end point positions"""
         params = self.interface
-        v = self._interpolate_3d(
-            (v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), params.arrow_size
-        )
+        arrow_size = params.arrow_size * self._scale
+        v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), arrow_size)
         vi = (v[0] - v1[0], v[1] - v1[1])
         va = (
             int(vi[0] * cos(self._rad45) - vi[1] * sin(self._rad45) + v1[0]),
@@ -535,7 +560,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             return
         params = self.interface
         rgba = params.line_color
-        line_width = params.line_width
+        line_width = params.line_width * self._scale
         if self._render_mode:
             v1 = tuple([v * self._image_scale for v in v1])
             v2 = tuple([v * self._image_scale for v in v2])
@@ -549,7 +574,7 @@ class BaseAnnotation(metaclass=ABCMeta):
                     round(rgba[2] * 255),
                     round(rgba[3] * 255),
                 ),
-                width=round(line_width * self._image_scale),
+                width=round(line_width),
             )
         else:
             viewport_size = (self.viewport_width, self.viewport_height)
@@ -585,26 +610,49 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._max_dist = max_dist
         self._dist_range = max_dist - min_dist
 
+    def _get_camera_view_info(self):
+        # camera view mode in 3D viewport
+        zoom = self._rv3d.view_camera_zoom
+        # From: BKE_screen_view3d_zoom_to_fac in blender/blenkernel/intern/screen.cc
+        zoom_factor = (((zoom / 50.0) + sqrt(2)) / 2) ** 2
+        aspect_ratio = self._scene.render.resolution_x / self._scene.render.resolution_y
+        # caculate actual camera width and height in view
+        camera_view_width = self.viewport_width * zoom_factor
+        if self.viewport_height > self.viewport_width:
+            camera_view_width = self.viewport_height * zoom_factor
+        camera_view_height = camera_view_width / aspect_ratio
+        return zoom_factor, camera_view_width, camera_view_height
+
     def _set_viewport_params(
         self,
+        scene: bpy.types.Scene,
         region: bpy.types.Region | None,
         rv3d: bpy.types.RegionView3D | None,
     ) -> None:
         """Internal: Set the 3D viewport region and region data"""
+        self._scene = scene
         self._region = region
         self._rv3d = rv3d
+        self._scale = 1.0
         self._render_mode = False
+        if self._rv3d.view_perspective == "CAMERA":
+            # camera view mode in 3D viewport
+            _, camera_view_width, _ = self._get_camera_view_info()
+            self._scale = camera_view_width / self._scene.render.resolution_x
 
     def _set_render_params(
         self,
-        scene,
-        image,
+        scene: bpy.types.Scene,
+        render_scale: float,
+        image: Image.Image,
         image_scale: float,
     ) -> None:
         """Internal: Set the render scene, image and scale"""
         self._scene = scene
+        self._render_scale = render_scale
         self._image = image
         self._image_scale = image_scale
+        self._scale = self._render_scale
         self._render_mode = True
 
     def _get_2d_point(self, pos_3d: Vector) -> Vector | None:

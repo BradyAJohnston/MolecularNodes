@@ -63,12 +63,13 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # Access to the entity to which this manager is attached
         self._entity = entity
         self._draw_handler = None
+        self._scene = None
         self._render_mode = False
         # viewport params
         self._region = None
         self._rv3d = None
         # render params
-        self._scene = None
+        self._render_scale = 1.0
         self._image = None
         self._image_scale = 1
         # add draw handler by default
@@ -435,10 +436,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             return
         self._region = region
         self._rv3d = rv3d
+        self._scene = context.scene
         self._draw_annotations()
 
-    def _enable_render_mode(self, scene, image, image_scale):
+    def _enable_render_mode(self, scene, render_scale, image, image_scale):
         self._scene = scene
+        self._render_scale = render_scale
         self._image = image
         self._image_scale = image_scale
         self._render_mode = True
@@ -483,11 +486,13 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             if self._render_mode:
                 # set the render params
                 interface._instance._set_render_params(
-                    self._scene, self._image, self._image_scale
+                    self._scene, self._render_scale, self._image, self._image_scale
                 )
             else:
                 # set the viewport region params
-                interface._instance._set_viewport_params(self._region, self._rv3d)
+                interface._instance._set_viewport_params(
+                    self._scene, self._region, self._rv3d
+                )
             # handle exceptions to allow other annotations to be drawn
             try:
                 interface._instance.draw()

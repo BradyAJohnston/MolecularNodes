@@ -72,7 +72,7 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
         (0, 0, 0, 0),
     )
     # render annotations of all entities
-    render_annotations(scene, image, image_scale)
+    render_annotations(scene, render_scale, image, image_scale)
     if image_scale != 1:
         # scale down to actual render size
         image = image.resize((width, height))
