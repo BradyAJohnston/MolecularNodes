@@ -39,6 +39,14 @@ class TestAnnotations:
         assert "universe_info" in manager._classes
         assert hasattr(manager, "add_universe_info")
         assert callable(getattr(manager, "add_universe_info"))
+        # label_2d
+        assert "label_2d" in manager._classes
+        assert hasattr(manager, "add_label_2d")
+        assert callable(getattr(manager, "add_label_2d"))
+        # label_3d
+        assert "label_3d" in manager._classes
+        assert hasattr(manager, "add_label_3d")
+        assert callable(getattr(manager, "add_label_3d"))
 
     def test_trajectory_annotations_registration(self, universe, session):
         manager = mn.entities.trajectory.TrajectoryAnnotationManager
@@ -288,4 +296,16 @@ class TestAnnotations:
         t1 = session.add_trajectory(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_universe_info()
+        assert len(t1.annotations) == 1
+
+    def test_trajectory_annotation_label_2d(self, universe, session):
+        t1 = session.add_trajectory(universe)
+        assert len(t1.annotations) == 0
+        t1.annotations.add_label_2d(text="2D Text", location=(0.25, 0.75))
+        assert len(t1.annotations) == 1
+
+    def test_trajectory_annotation_label_3d(self, universe, session):
+        t1 = session.add_trajectory(universe)
+        assert len(t1.annotations) == 0
+        t1.annotations.add_label_3d(text="3D Text", location=(0.25, 0.5, 0.75))
         assert len(t1.annotations) == 1

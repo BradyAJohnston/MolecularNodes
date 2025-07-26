@@ -18,7 +18,14 @@ def get_all_class_annotations(cls) -> dict:
 
 
 def get_blender_supported_type(atype):
-    supported_types = (str, bool, int, float)
+    supported_types = (
+        str,
+        bool,
+        int,
+        float,
+        tuple[float, float],
+        tuple[float, float, float],
+    )
     if atype in supported_types:
         return atype
     if typing.get_origin(atype) is typing.Union or type(atype) is types.UnionType:
