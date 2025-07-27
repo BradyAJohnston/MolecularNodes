@@ -279,3 +279,14 @@ class TestAnnotations:
         assert len(t1.annotations) == 1
         # test change of resid through API
         a1.resid = 2
+
+    @pytest.mark.skip(reason="This currently fails on MacOS")
+    def test_annotations_render_image(self, universe, session):
+        assert "mn_annotations" not in bpy.data.images
+        canvas = mn.Canvas(resolution=(192, 108))
+        canvas.engine = "CYCLES"  # Only works for this
+        canvas.engine.samples = 1
+        t1 = session.add_trajectory(universe.select_atoms("resid 1"))
+        t1.annotations.add_com(selection="resid 1")
+        bpy.ops.render.render()
+        assert "mn_annotations" in bpy.data.images
