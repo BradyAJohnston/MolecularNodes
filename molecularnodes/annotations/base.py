@@ -1,12 +1,17 @@
 from abc import ABCMeta, abstractmethod
 from math import cos, radians, sin
+from pathlib import Path
 import blf
 import bpy
 import gpu
-from bpy_extras import view3d_utils
+from bpy_extras import object_utils, view3d_utils
 from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
+from PIL import ImageDraw, ImageFont
 from .interface import AnnotationInterface
+from .utils import get_view_matrix, is_perspective_projection
+
+FONT_INTER = Path(__file__).parent / "fonts/Inter.woff2"
 
 
 class BaseAnnotation(metaclass=ABCMeta):
@@ -48,6 +53,18 @@ class BaseAnnotation(metaclass=ABCMeta):
             if not bpy.app.background
             else None
         )
+        self._render_mode = False
+        # distance params
+        self._min_dist = 0
+        self._max_dist = 0
+        self._dist_range = 0
+        # viewport params
+        self._region = None
+        self._rv3d = None
+        # render params
+        self._scene = None
+        self._image = None
+        self._image_scale = 1
 
     def validate(self) -> bool:
         """
@@ -81,12 +98,18 @@ class BaseAnnotation(metaclass=ABCMeta):
     @property
     def viewport_width(self) -> int:
         """Get the viewport region width in pixels"""
-        return self._region.width
+        if self._render_mode:
+            return self._image.width
+        else:
+            return self._region.width
 
     @property
     def viewport_height(self) -> int:
         """Get the viewport region height in pixels"""
-        return self._region.height
+        if self._render_mode:
+            return self._image.height
+        else:
+            return self._region.height
 
     def draw_text_3d(self, pos_3d: Vector, text: str) -> None:
         """
@@ -145,6 +168,8 @@ class BaseAnnotation(metaclass=ABCMeta):
         """Internal: Draw text 3D or 2D"""
         if pos is None:
             return
+        if not isinstance(pos, Vector):
+            pos = Vector(pos)
         pos_2d = pos
         if is3d:
             text_pos = pos
@@ -152,7 +177,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             # check if pointer is required
             if params.pointer_length > 0:
                 # draw a pointer to the 3D position
-                nv = -Vector(pos)
+                nv = -pos
                 nv.normalize()
                 pointer_begin = pos + (nv * params.pointer_length)
                 text_pos = pointer_begin + (nv * 0.5)  # offset text a bit
@@ -173,11 +198,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         text_size = params.text_size
         # adjust the text size if depth enabled
         if is3d and params.text_depth:
-            view_matrix = self._rv3d.view_matrix
-            if self._rv3d.is_perspective:  # perspective
-                dist = (view_matrix @ (Vector(pos) * self._world_scale)).length
+            view_matrix = get_view_matrix(self)
+            if is_perspective_projection(self):
+                dist = (view_matrix @ (pos * self._world_scale)).length
             else:  # orthographic
-                dist = -(view_matrix @ (Vector(pos) * self._world_scale)).z
+                dist = -(view_matrix @ (pos * self._world_scale)).z
             # adjust distance range based on falloff factor
             dist_range = self._dist_range * params.text_falloff
             r_factor = 0  # reduction factor
@@ -190,16 +215,30 @@ class BaseAnnotation(metaclass=ABCMeta):
                     offset = dist_range
                 r_factor = 1.0 - (offset / dist_range)
             text_size *= r_factor
+        if round(text_size) == 0:
+            return
         # set the text size
-        blf.size(font_id, text_size)
-        # height of one line - for use in multiline text
-        _, max_th = blf.dimensions(font_id, "Tp")  # uses high/low letters
+        if self._render_mode:
+            image_draw = ImageDraw.Draw(self._image)
+            font = ImageFont.truetype(FONT_INTER, text_size * self._image_scale)
+            bbox = image_draw.textbbox((0, 0), "Tp", font=font)
+            max_th = bbox[3] - bbox[1]
+            scale = self._image_scale
+        else:
+            blf.size(font_id, text_size)
+            # height of one line - for use in multiline text
+            _, max_th = blf.dimensions(font_id, "Tp")  # uses high/low letters
+
         # split lines
         lines = text.split("|")
         n_lines = len(lines) - 1
         # draw all text lines
         for line in lines:
-            line_width, _ = blf.dimensions(font_id, line)
+            if self._render_mode:
+                bbox = image_draw.textbbox((0, 0), " " + line, font=font)
+                line_width = bbox[2] - bbox[0]
+            else:
+                line_width, _ = blf.dimensions(font_id, line)
             # x position based on alignment
             if params.text_align == "center":
                 new_x = (pos_x * scale) - line_width / 2
@@ -207,17 +246,31 @@ class BaseAnnotation(metaclass=ABCMeta):
                 new_x = (pos_x * scale) - line_width - right_alignment_gap
             else:
                 new_x = pos_x * scale
-                # rotation support only for left alignment
-                blf.enable(font_id, blf.ROTATION)
-                blf.rotation(font_id, radians(params.text_rotation))
+                if not self._render_mode:
+                    # rotation support only for left alignment and viewport
+                    blf.enable(font_id, blf.ROTATION)
+                    blf.rotation(font_id, radians(params.text_rotation))
             # calculate new y position
             new_y = (pos_y * scale) + (max_th * n_lines)
             # draw the text line
-            blf.position(font_id, new_x, new_y, 0)
-            blf.color(font_id, rgba[0], rgba[1], rgba[2], rgba[3])
-            blf.draw(font_id, " " + line)
+            if self._render_mode:
+                image_draw.text(
+                    (new_x, self._image.height - new_y - max_th),
+                    text=" " + line,
+                    font=font,
+                    fill=(
+                        round(rgba[0] * 255),
+                        round(rgba[1] * 255),
+                        round(rgba[2] * 255),
+                        round(rgba[3] * 255),
+                    ),
+                )
+            else:
+                blf.position(font_id, new_x, new_y, 0)
+                blf.color(font_id, rgba[0], rgba[1], rgba[2], rgba[3])
+                blf.draw(font_id, " " + line)
             n_lines -= 1  # for next iteration
-            if params.text_align == "left":
+            if params.text_align == "left" and not self._render_mode:
                 blf.disable(font_id, blf.ROTATION)
 
     def draw_line_3d(
@@ -483,18 +536,34 @@ class BaseAnnotation(metaclass=ABCMeta):
         params = self.interface
         rgba = params.line_color
         line_width = params.line_width
-        viewport_size = (self.viewport_width, self.viewport_height)
-        coords = [(v1[0], v1[1], 0), (v2[0], v2[1], 0)]
-        gpu.state.blend_set("ALPHA")
-        batch = batch_for_shader(self._shader_line, "LINES", {"pos": coords})
-        try:
-            self._shader_line.bind()
-            self._shader_line.uniform_float("color", rgba)
-            self._shader_line.uniform_float("lineWidth", line_width)
-            self._shader_line.uniform_float("viewportSize", viewport_size)
-            batch.draw(self._shader_line)
-        except Exception as e:
-            print(e)
+        if self._render_mode:
+            v1 = tuple([v * self._image_scale for v in v1])
+            v2 = tuple([v * self._image_scale for v in v2])
+            image_height = self._image.height
+            image_draw = ImageDraw.Draw(self._image)
+            image_draw.line(
+                [(v1[0], image_height - v1[1]), (v2[0], image_height - v2[1])],
+                fill=(
+                    round(rgba[0] * 255),
+                    round(rgba[1] * 255),
+                    round(rgba[2] * 255),
+                    round(rgba[3] * 255),
+                ),
+                width=round(line_width * self._image_scale),
+            )
+        else:
+            viewport_size = (self.viewport_width, self.viewport_height)
+            coords = [(v1[0], v1[1], 0), (v2[0], v2[1], 0)]
+            gpu.state.blend_set("ALPHA")
+            batch = batch_for_shader(self._shader_line, "LINES", {"pos": coords})
+            try:
+                self._shader_line.bind()
+                self._shader_line.uniform_float("color", rgba)
+                self._shader_line.uniform_float("lineWidth", line_width)
+                self._shader_line.uniform_float("viewportSize", viewport_size)
+                batch.draw(self._shader_line)
+            except Exception as e:
+                print(e)
 
     def _interpolate_3d(self, v1: Vector, v2: Vector, d1: float) -> Vector:
         """Internal: Interpolated 3D point between two 3D points at distance d1"""
@@ -510,26 +579,49 @@ class BaseAnnotation(metaclass=ABCMeta):
             x = d1
         return (v1[0] + (v[0] * x), v1[1] + (v[1] * x), v1[2] + (v[2] * x))
 
-    def _set_viewport_region(
-        self,
-        region: bpy.types.Region | None,
-        rv3d: bpy.types.RegionView3D | None,
-        min_dist: float,
-        max_dist: float,
-    ) -> None:
-        """Internal: Set the 3D viewport region and region data"""
-        self._region = region
-        self._rv3d = rv3d
+    def _set_distance_params(self, min_dist: float, max_dist: float) -> None:
+        "Internal: Set the min, max distances and range"
         self._min_dist = min_dist
         self._max_dist = max_dist
         self._dist_range = max_dist - min_dist
 
+    def _set_viewport_params(
+        self,
+        region: bpy.types.Region | None,
+        rv3d: bpy.types.RegionView3D | None,
+    ) -> None:
+        """Internal: Set the 3D viewport region and region data"""
+        self._region = region
+        self._rv3d = rv3d
+        self._render_mode = False
+
+    def _set_render_params(
+        self,
+        scene,
+        image,
+        image_scale: float,
+    ) -> None:
+        """Internal: Set the render scene, image and scale"""
+        self._scene = scene
+        self._image = image
+        self._image_scale = image_scale
+        self._render_mode = True
+
     def _get_2d_point(self, pos_3d: Vector) -> Vector | None:
         """Internal: Get the 2D point in region corresponding to 3D position"""
-        if self._rv3d is not None and self._region is not None:
-            pos_3d_scaled = pos_3d * self._world_scale
+        if not isinstance(pos_3d, Vector):
+            pos_3d = Vector(pos_3d)
+        if self._render_mode:
+            scene = self._scene
+            pos_2d = object_utils.world_to_camera_view(
+                scene, scene.camera, pos_3d * self._world_scale
+            )
+            x = round(pos_2d.x * (self._image.width / self._image_scale))
+            y = round(pos_2d.y * (self._image.height / self._image_scale))
+            return Vector((x, y))
+        elif self._rv3d is not None and self._region is not None:
             return view3d_utils.location_3d_to_region_2d(
-                self._region, self._rv3d, pos_3d_scaled
+                self._region, self._rv3d, pos_3d * self._world_scale
             )
         else:
             return None
