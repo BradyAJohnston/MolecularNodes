@@ -9,6 +9,7 @@ from bpy.props import (
     StringProperty,
 )
 from ..blender.utils import viewport_tag_redraw
+from ..entities.base import MolecularEntity
 from .base import BaseAnnotation
 from .utils import get_all_class_annotations, get_blender_supported_type
 
@@ -77,20 +78,32 @@ def create_annotation_type_inputs(
 
 
 def create_property_interface(
-    prop: bpy.types.bpy_struct,
+    entity: MolecularEntity,
+    uuid: str,
     attr: str,
     atype: typing.Any = None,
     instance: BaseAnnotation = None,
+    annotation_type: str = None,
 ) -> property:
     """Create a property() interface for a blender property"""
 
     nbattr = f"_{attr}"  # non blender property
 
+    def _prop():
+        # Returns blender property - either annotation input or common property
+        # A pointer to the property cannot be used as it could get invalidated
+        # during reallocs and undos. Use indices as recommended by Blender here:
+        # https://docs.blender.org/api/current/info_gotchas_crashes.html
+        if annotation_type is not None:
+            return getattr(entity.object.mn_annotations[uuid], annotation_type)
+        else:
+            return entity.object.mn_annotations[uuid]
+
     def getter(self):
         # return the non blender property if set
         if hasattr(instance, nbattr):
             return getattr(instance, nbattr)
-        return getattr(prop, attr)
+        return getattr(_prop(), attr)
 
     def setter(self, value):
         if (
@@ -104,13 +117,13 @@ def create_property_interface(
             instance.validate()
         else:
             # blender property
-            setattr(prop, attr, value)
+            setattr(_prop(), attr, value)
             # clear any corresponding non blender property
             if hasattr(instance, nbattr):
                 delattr(instance, nbattr)
         viewport_tag_redraw()
 
-    return property(getter, setter, doc=getattr(prop, "description", None))
+    return property(getter, setter, doc=getattr(_prop(), "description", None))
 
 
 class BaseAnnotationProperties(bpy.types.PropertyGroup):
