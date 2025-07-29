@@ -56,6 +56,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._scene = None
         self._scale = 1.0
         self._render_mode = False
+        self._dpi_scale = 2 * (72 / bpy.context.preferences.system.dpi)
         # distance params
         self._min_dist = 0
         self._max_dist = 0
@@ -633,12 +634,14 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._scene = scene
         self._region = region
         self._rv3d = rv3d
-        self._scale = 1.0
+        self._scale = bpy.context.preferences.system.ui_scale
         self._render_mode = False
         if self._rv3d.view_perspective == "CAMERA":
             # camera view mode in 3D viewport
             _, camera_view_width, _ = self._get_camera_view_info()
-            self._scale = camera_view_width / self._scene.render.resolution_x
+            self._scale *= (
+                camera_view_width / self._scene.render.resolution_x
+            ) * self._dpi_scale
 
     def _set_render_params(
         self,
@@ -652,7 +655,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._render_scale = render_scale
         self._image = image
         self._image_scale = image_scale
-        self._scale = self._render_scale
+        self._scale = self._render_scale * self._dpi_scale
         self._render_mode = True
 
     def _get_2d_point(self, pos_3d: Vector) -> Vector | None:

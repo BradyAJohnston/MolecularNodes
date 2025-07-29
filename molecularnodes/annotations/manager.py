@@ -329,7 +329,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             else:
                 prop.label = "Annotation"
             object.mn.annotations_next_index += 1
-        prop_interface = create_property_interface(prop, "label")
+        prop_interface = create_property_interface(self._entity, uuid, "label")
         setattr(interface.__class__, "name", prop_interface)
         # iterate though all the annotation inputs, set passed values and
         # create property interfaces
@@ -337,7 +337,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         if inputs is not None:
             inputs.uuid = uuid  # add annotation uuid for lookup in update callback
             # link to the valid inputs property for use in draw handler
-            prop_interface = create_property_interface(inputs, "valid_inputs")
+            prop_interface = create_property_interface(
+                self._entity, uuid, "valid_inputs", annotation_type=prop.type
+            )
             setattr(interface.__class__, "_valid_inputs", prop_interface)
             # all annotation inputs as defined in class
             for attr, atype in py_annotations.items():
@@ -346,7 +348,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                     continue
                 stype = get_blender_supported_type(atype)
                 prop_interface = create_property_interface(
-                    inputs, attr, stype, annotation_instance
+                    self._entity, uuid, attr, stype, annotation_instance, prop.type
                 )
                 setattr(interface.__class__, attr, prop_interface)
                 # set the input value based on what is passed
@@ -365,7 +367,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 continue
             if item.type == "POINTER":
                 continue
-            prop_interface = create_property_interface(prop, prop_path)
+            prop_interface = create_property_interface(self._entity, uuid, prop_path)
             setattr(interface.__class__, prop_path, prop_interface)
         # call the defaults method in the annotation class if specified
         if hasattr(annotation_instance, "defaults") and callable(
