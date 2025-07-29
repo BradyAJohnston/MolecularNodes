@@ -1,8 +1,10 @@
+import os
 import typing
 from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
+from ..annotations import Label2D, Label3D
 
 
 class TrajectoryAnnotation(BaseAnnotation):
@@ -314,3 +316,75 @@ class CanonicalDihedrals(TrajectoryAnnotation):
                             c_arrow=True,
                         )
                 self.draw_line_3d(v1, v2, mid_text=text)
+
+
+class UniverseInfo(TrajectoryAnnotation):
+    """
+    Universe Info Trajectory Annotation
+
+    Attributes
+    ----------
+    location: tuple[float, float]
+        Normalized coordinates (0.0 - 1.0) of the postion in viewport / render
+
+    show_frame: bool
+        Whether or not to show the frame number
+
+    show_topology: bool
+        Whether or not to show the topology filename
+
+    show_trajectory: bool
+        Whether or not to show the trajectory filename
+
+    show_atoms: bool
+        Whether or not to show the number of atoms
+
+    custom_text: str
+        Any custom text to add at the end of the annotation
+
+    """
+
+    annotation_type = "universe_info"
+
+    location: tuple[float, float] = (0.025, 0.05)
+    show_frame: bool = True
+    show_topology: bool = True
+    show_trajectory: bool = True
+    show_atoms: bool = True
+    custom_text: str = ""
+
+    def defaults(self) -> None:
+        params = self.interface
+        params.text_align = "left"
+
+    def validate(self) -> bool:
+        params = self.interface
+        x, y = params.location
+        if (not 0 <= x <= 1) or (not 0 <= y <= 1):
+            raise ValueError("Normalized coordinates should lie between 0 and 1")
+        return True
+
+    def draw(self) -> None:
+        params = self.interface
+        u = self.trajectory.universe
+        text = ""
+        if params.show_frame:
+            text = f"Frame : {u.trajectory.frame} / {u.trajectory.n_frames - 1}"
+        if params.show_topology and u.filename:
+            text = text + "|Topology : " + os.path.basename(u.filename)
+        if params.show_trajectory and u.trajectory.filename:
+            text = text + "|Trajectory : " + os.path.basename(u.trajectory.filename)
+        if params.show_atoms:
+            text = text + "|Atoms : " + str(u.trajectory.n_atoms)
+        if params.custom_text != "":
+            text = text + "|" + params.custom_text
+        # Draw text at normalized coordinates wrt viewport / render
+        self.draw_text_2d_norm(params.location, text)
+
+
+class Label2D(TrajectoryAnnotation, Label2D):
+    """Common Label2D Annotation for all entities"""
+
+
+class Label3D(TrajectoryAnnotation, Label3D):
+    """Common Label3D Annotation for all entities"""

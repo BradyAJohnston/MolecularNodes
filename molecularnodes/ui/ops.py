@@ -931,7 +931,7 @@ def _register_temp_annotation_add_op(entity):
             if ui_inputs is not None:
                 for prop_name in ui_inputs.__annotations__.keys():
                     if prop_name in ui_inputs:
-                        api_inputs[prop_name] = ui_inputs[prop_name]
+                        api_inputs[prop_name] = getattr(ui_inputs, prop_name)
                     else:
                         if hasattr(annotation_class, prop_name):
                             api_inputs[prop_name] = getattr(annotation_class, prop_name)
