@@ -399,6 +399,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         self._remove_annotation_instance(self._interfaces[uuid])
 
     def _draw_handler_add(self):
+        if bpy.app.background:
+            return
         if self._draw_handler is not None:
             return
         self._draw_handler = bpy.types.SpaceView3D.draw_handler_add(
