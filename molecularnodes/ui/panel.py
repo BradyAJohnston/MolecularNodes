@@ -1,6 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
-from ..entities import trajectory
+from ..entities import density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
@@ -102,7 +102,7 @@ def panel_alphafold(layout, scene):
     row_centre = options.row()
     row_centre.prop(scene.mn, "import_centre", icon_value=0)
     col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.prop(scene.mn, "import_centre_type", text="")
     col_centre.enabled = scene.mn.import_centre
     options.separator()
 
@@ -770,6 +770,7 @@ class MN_PT_Styles(bpy.types.Panel):
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
                 EntityType.MOLECULE.value,
+                EntityType.DENSITY.value,
             )
         except (LinkedObjectError, AttributeError):
             return False
@@ -799,17 +800,18 @@ class MN_PT_Styles(bpy.types.Panel):
             "styles_active_index",
             rows=3,
         )
-        col = row.column()
-        row = col.row()
-        op = row.operator("mn.add_style", icon="ADD", text="")
-        op.uuid = uuid
-        row = col.row()
-        op = row.operator("mn.remove_style", icon="REMOVE", text="")
-        if valid_selection:
+        if not isinstance(entity, density.Density):
+            col = row.column()
+            row = col.row()
+            op = row.operator("mn.add_style", icon="ADD", text="")
             op.uuid = uuid
-            op.style_node_index = styles_active_index
-        else:
-            row.enabled = False
+            row = col.row()
+            op = row.operator("mn.remove_style", icon="REMOVE", text="")
+            if valid_selection:
+                op.uuid = uuid
+                op.style_node_index = styles_active_index
+            else:
+                row.enabled = False
 
         if not valid_selection:
             return
@@ -901,6 +903,7 @@ class MN_PT_Annotations(bpy.types.Panel):
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
                 EntityType.MOLECULE.value,
+                EntityType.DENSITY.value,
             )
         except (LinkedObjectError, AttributeError):
             return False

@@ -181,7 +181,7 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
     text_depth: BoolProperty(
         name="Text Depth",
         description="Adjust text size to show depth",
-        default=False,
+        default=True,
     )  # type: ignore
 
     text_falloff: FloatProperty(

@@ -321,13 +321,6 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
 
-    try:
-        tree = bpy.data.node_groups[node_name]
-        mod.node_group = tree
-        return
-    except KeyError:
-        pass
-
     # create a new GN node group, specific to this particular molecule
     group = new_tree(node_name, fallback=False)
     link = group.links.new
@@ -341,9 +334,17 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
 
     node_density = add_custom(group, styles_mapping[style], [400, 0])
     node_density.inputs["Threshold"].default_value = threshold
+    node_density.label = node_density.name
+
+    # add the join geometry node to keep this consistent with style interface
+    node_join = group.nodes.new("GeometryNodeJoinGeometry")
+    node_join.location = [620, 0]
 
     link(node_input.outputs[0], node_density.inputs[0])
-    link(node_density.outputs[0], node_output.inputs[0])
+    link(node_density.outputs[0], node_join.inputs[0])
+    link(node_join.outputs[0], node_output.inputs[0])
+
+    return node_density
 
 
 def create_starting_node_tree(
