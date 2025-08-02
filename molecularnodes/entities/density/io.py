@@ -1,5 +1,5 @@
 from pathlib import Path
-from .mrc import MRC
+from .grids import Grids
 
 
 def load(
@@ -11,7 +11,7 @@ def load(
     center: bool = False,
     overwrite: bool = False,
 ):
-    density = MRC(
+    density = Grids(
         file_path=file_path, center=center, invert=invert, overwrite=overwrite
     )
     density.create_object(

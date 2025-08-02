@@ -101,3 +101,22 @@ def test_density_operator(
     assert snapshot_custom == db.named_attribute(
         mn.blender.mesh.evaluate_using_mesh(density.object)
     )
+
+
+@pytest.fixture
+def density_file_dx():
+    file = data_dir / "water.dx.gz"
+    vdb_file = data_dir / "water.vdb"
+    vdb_file.unlink(missing_ok=True)
+    # Make sure all densities are removed
+    for o in bpy.data.objects:
+        if o.mn.entity_type == "density":
+            bpy.data.objects.remove(o, do_unlink=True)
+    return file
+
+
+def test_density_load_dx(density_file_dx):
+    density = mn.entities.density.load(density_file_dx)
+    print(f"{list(bpy.data.objects)=}")
+    assert density.object.mn.entity_type == "density"
+    assert density.object.users_collection[0] == mn.blender.coll.mn()

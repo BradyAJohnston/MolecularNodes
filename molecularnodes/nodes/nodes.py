@@ -316,7 +316,14 @@ def create_starting_nodes_starfile(object):
     link(node_input.outputs[0], node_star_instances.inputs[0])
 
 
-def create_starting_nodes_density(object, threshold=0.8, style="density_surface"):
+def create_starting_nodes_density(
+    object,
+    threshold=0.8,
+    style="density_surface",
+    threshold_min=None,
+    threshold_max=None,
+    threshold_type=None,
+):
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
@@ -333,7 +340,24 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
     node_output.location = [800, 0]
 
     node_density = add_custom(group, styles_mapping[style], [400, 0])
+    # make the node tree of this node independent (single user)
+    # to allow separate configuration of min, max and default threshold values
+    node_tree_copy = node_density.node_tree.copy()
+    node_density.node_tree = node_tree_copy
+
+    items_tree = node_density.node_tree.interface.items_tree
+    # set the socket type if specified - NodeSocketInt or NodeSocketFloat
+    if threshold_type is not None:
+        items_tree["Threshold"].socket_type = threshold_type
+    # set the default threshold - both interface and socket
+    items_tree["Threshold"].default_value = threshold
     node_density.inputs["Threshold"].default_value = threshold
+    # set the min, max threshold values if specified
+    if threshold_min is not None:
+        items_tree["Threshold"].min_value = threshold_min
+    if threshold_max is not None:
+        items_tree["Threshold"].max_value = threshold_max
+    # set the label to match node name
     node_density.label = node_density.name
 
     # add the join geometry node to keep this consistent with style interface
