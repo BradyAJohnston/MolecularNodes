@@ -127,14 +127,13 @@ class Grids(Density):
             The path to the converted .vdb file.
         """
 
-        major, minor, _ = bpy.app.version
         is_pyopenvdb = False
-        if (major >= 4 and minor < 4) or (major < 4):
+        if bpy.app.version >= (4, 4, 0):
+            import openvdb as vdb  # type: ignore
+        else:
             import pyopenvdb as vdb  # type: ignore
 
             is_pyopenvdb = True
-        else:
-            import openvdb as vdb  # type: ignore
 
         file_path = self.path_to_vdb(file, center=center, invert=invert)
 
