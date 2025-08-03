@@ -79,6 +79,7 @@ class Grids(Density):
         """
 
         grid = self.grid.grid
+        threshold = np.quantile(grid, 0.995)
         threshold_min = np.min(grid)
         threshold_max = np.max(grid)
         threshold_type = None
@@ -90,7 +91,7 @@ class Grids(Density):
         return nodes.create_starting_nodes_density(
             object=self.object,
             style=style,
-            threshold=self.threshold,
+            threshold=threshold,
             threshold_min=threshold_min,
             threshold_max=threshold_max,
             threshold_type=threshold_type,
@@ -138,8 +139,13 @@ class Grids(Density):
         file_path = self.path_to_vdb(file, center=center, invert=invert)
 
         file_format = None
-        if file.endswith((".map", ".map.gz")):
+        if file.endswith((".map", ".map.gz", ".map.bz2")):
             file_format = "mrc"
+
+        gobj = Grid(file, file_format=file_format)
+        if invert:
+            gobj.grid = np.max(gobj.grid) - gobj.grid
+        self.grid = gobj
 
         # If the grid has already been converted to a .vdb and overwrite is False, return that instead
         if os.path.exists(file_path) and not overwrite:
@@ -151,20 +157,9 @@ class Grids(Density):
                 and "MN_center" in vdb_grid
                 and vdb_grid["MN_center"] == center
             ):
-                self.threshold = vdb_grid["MN_initial_threshold"]
-                gobj = Grid(file, file_format=file_format)
-                self.grid = gobj
                 return file_path
 
-        gobj = Grid(file, file_format=file_format)
         grid = gobj.grid
-
-        if invert:
-            grid = np.max(grid) - grid
-
-        initial_threshold = np.quantile(grid, 0.995)
-        self.threshold = initial_threshold
-        self.grid = gobj
 
         dataType = grid.dtype
         # enables different grid types
@@ -204,7 +199,6 @@ class Grids(Density):
         # been converted correctly
         vdb_grid["MN_invert"] = invert
         vdb_grid["MN_center"] = center
-        vdb_grid["MN_initial_threshold"] = initial_threshold
 
         # Write the grid to a .vdb file
         if os.path.exists(file_path):
