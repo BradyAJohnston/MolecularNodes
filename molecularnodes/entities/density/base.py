@@ -6,6 +6,7 @@ import databpy
 import numpy as np
 from ... import blender as bl
 from ..base import EntityType, MolecularEntity
+from .annotations import DensityAnnotationManager
 
 
 class Density(MolecularEntity, metaclass=ABCMeta):
@@ -21,6 +22,7 @@ class Density(MolecularEntity, metaclass=ABCMeta):
         self.grid = None
         self.file_vdb: str
         self.threshold: float
+        self.annotations = DensityAnnotationManager(self)
 
     def named_attribute(self, name: str, evaluate: bool = True) -> np.ndarray:
         obj = bl.mesh.evaluate_using_mesh(self.object)

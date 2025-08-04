@@ -399,6 +399,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         self._remove_annotation_instance(self._interfaces[uuid])
 
     def _draw_handler_add(self):
+        if bpy.app.background:
+            return
         if self._draw_handler is not None:
             return
         self._draw_handler = bpy.types.SpaceView3D.draw_handler_add(
@@ -422,10 +424,11 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     def _is_valid_entity(self) -> bool:
         try:
             _name = self._entity.name
+            return True
         except LinkedObjectError:
             # remove any registered draw handler
             self._draw_handler_remove()
-        return True
+            return False
 
     def _draw_annotations_handler(self, context):
         if self._draw_handler is None:

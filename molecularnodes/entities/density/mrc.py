@@ -59,7 +59,9 @@ class MRC(Density):
         if name and name != "":
             self.name = name
 
-        self.create_starting_node_tree(style=style)
+        node_density = self.create_starting_node_tree(style=style)
+        # set the active index for UI to the added style
+        self.object.mn.styles_active_index = self.tree.nodes.find(node_density.name)
 
         return self.object
 
@@ -72,7 +74,7 @@ class MRC(Density):
         style : str, optional
             The style of the density object, defaulting to 'density_surface'.
         """
-        nodes.create_starting_nodes_density(
+        return nodes.create_starting_nodes_density(
             object=self.object, style=style, threshold=self.threshold
         )
 
@@ -83,7 +85,7 @@ class MRC(Density):
         world_scale=0.01,
         center: bool = False,
         overwrite=False,
-    ) -> (str, float):
+    ) -> str:
         """
         Converts an MRC file to a .vdb file using pyopenvdb.
 
@@ -106,7 +108,7 @@ class MRC(Density):
         str
             The path to the converted .vdb file.
         """
-        import openvdb as vdb
+        import openvdb as vdb  # type: ignore
 
         file_path = self.path_to_vdb(file, center=center, invert=invert)
 
@@ -171,7 +173,7 @@ class MRC(Density):
             A pyopenvdb FloatGrid object containing the density data.
         """
 
-        import openvdb as vdb
+        import openvdb as vdb  # type: ignore
 
         volume = mrcfile.read(file)
 
