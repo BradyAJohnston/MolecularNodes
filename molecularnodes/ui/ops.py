@@ -617,6 +617,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
             setup_nodes=scene.mn.import_node_setup,
             style=scene.mn.import_density_style,
             center=scene.mn.import_density_center,
+            overwrite=scene.mn.import_density_overwrite,
         )
         return {"FINISHED"}
 

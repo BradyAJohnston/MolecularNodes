@@ -171,7 +171,7 @@ def panel_cellpack(layout, scene):
 
 
 def panel_density(layout, scene):
-    layout.label(text="Load EM Map", icon="FILE_TICK")
+    layout.label(text="Load Density Grids", icon="FILE_TICK")
     layout.separator()
 
     row = layout.row()
@@ -195,6 +195,7 @@ def panel_density(layout, scene):
 
     layout.prop(scene.mn, "import_density_invert")
     layout.prop(scene.mn, "import_density_center")
+    layout.prop(scene.mn, "import_density_overwrite")
     row = layout.row()
     row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()

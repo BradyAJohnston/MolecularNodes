@@ -19,9 +19,7 @@ class Density(MolecularEntity, metaclass=ABCMeta):
         super().__init__()
         self._entity_type = EntityType.DENSITY
         self.file_path: Path = bl.path_resolve(file_path)
-        self.grid = None
         self.file_vdb: str
-        self.threshold: float
         self.annotations = DensityAnnotationManager(self)
 
     def named_attribute(self, name: str, evaluate: bool = True) -> np.ndarray:

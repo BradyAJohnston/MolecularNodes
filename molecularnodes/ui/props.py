@@ -225,6 +225,11 @@ class MolecularNodesSceneProperties(PropertyGroup):
         description="Translate the density so that the center of the box is at the origin.",
         default=False,
     )
+    import_density_overwrite: BoolProperty(  # type: ignore
+        name="Overwrite Intermediate File",
+        description="Overwrite generated intermediate .vdb file.",
+        default=False,
+    )
     import_density: StringProperty(  # type: ignore
         name="File",
         description="File path for the map file.",
