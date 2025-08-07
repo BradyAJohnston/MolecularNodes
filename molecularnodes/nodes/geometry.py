@@ -201,6 +201,8 @@ class GeometryNodeInterFace(TreeInterface):
                 .removeprefix("ball_and_stick_")
                 .removeprefix("cartoon_")
                 .removeprefix("spheres_")
+                .removeprefix("density_surface_")
+                .removeprefix("density_wire_")
             )
             if isinstance(input, bpy.types.NodeSocketMaterial):
                 prop = getset_material(input)

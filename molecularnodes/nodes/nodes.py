@@ -343,6 +343,7 @@ def create_starting_nodes_density(
     # make the node tree of this node independent (single user)
     # to allow separate configuration of min, max and default threshold values
     node_tree_copy = node_density.node_tree.copy()
+    node_tree_copy.name = f"{styles_mapping[style]}.{object.name}"
     node_density.node_tree = node_tree_copy
 
     items_tree = node_density.node_tree.interface.items_tree
