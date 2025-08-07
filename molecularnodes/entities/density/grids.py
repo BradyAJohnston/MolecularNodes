@@ -62,6 +62,7 @@ class Grids(Density):
         if name and name != "":
             self.name = name
 
+        # TODO: setup_nodes is unused. Using it causes pytest failures
         node_density = self.create_starting_node_tree(style=style)
         # set the active index for UI to the added style
         self.object.mn.styles_active_index = self.tree.nodes.find(node_density.name)
@@ -142,7 +143,12 @@ class Grids(Density):
         if file.endswith((".map", ".map.gz", ".map.bz2")):
             file_format = "mrc"
 
-        gobj = Grid(file, file_format=file_format)
+        metadata = {
+            "filepath": file,
+            "invert": invert,
+            "center": center,
+        }
+        gobj = Grid(file, file_format=file_format, metadata=metadata)
         if invert:
             gobj.grid = np.max(gobj.grid) - gobj.grid
         self.grid = gobj

@@ -16,9 +16,13 @@ class AnnotationInterface:
     # these are bound dynamically along with any annotation inputs
     visible: bool
     text_color: np.ndarray | list | tuple
+    text_font: str
     text_size: int
     text_align: str
     text_rotation: float
+    text_vspacing: float
+    text_depth: bool
+    text_falloff: float
     offset_x: float
     offset_y: float
     line_color: np.ndarray | list | tuple

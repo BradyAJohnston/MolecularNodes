@@ -196,9 +196,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         if not isinstance(pos, Vector):
             pos = Vector(pos)
         pos_2d = pos
+        params = self.interface
         if is3d:
             text_pos = pos
-            params = self.interface
             # check if pointer is required
             if params.pointer_length > 0:
                 # draw a pointer to the 3D position
@@ -211,9 +211,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             if pos_2d is None:
                 return
         # draw text at 2D position
-        font_id = 0
         right_alignment_gap = 12
-        params = self.interface
         pos_x, pos_y = pos_2d
         # offset_x and offset_y
         pos_x += params.offset_x
@@ -245,12 +243,29 @@ class BaseAnnotation(metaclass=ABCMeta):
             return
         # set the text size
         if self._render_mode:
+            load_default_font = True
+            if params.text_font != "":
+                try:
+                    # try to load user defined font if specified
+                    font = ImageFont.truetype(
+                        params.text_font, text_size * self._image_scale
+                    )
+                    load_default_font = False
+                except Exception:
+                    pass  # loads default font
+            if load_default_font:
+                font = ImageFont.truetype(FONT_INTER, text_size * self._image_scale)
             image_draw = ImageDraw.Draw(self._image)
-            font = ImageFont.truetype(FONT_INTER, text_size * self._image_scale)
             bbox = image_draw.textbbox((0, 0), "Tp", font=font)
             max_th = bbox[3] - bbox[1]
             pos_scale = self._image_scale
         else:
+            font_id = 0  # default font
+            if params.text_font != "":
+                # load user defined font if specified
+                font_id = blf.load(params.text_font)
+                if font_id == -1:  # use default if load fails
+                    font_id = 0
             blf.size(font_id, text_size)
             # height of one line - for use in multiline text
             _, max_th = blf.dimensions(font_id, "Tp")  # uses high/low letters
@@ -278,7 +293,7 @@ class BaseAnnotation(metaclass=ABCMeta):
                     blf.enable(font_id, blf.ROTATION)
                     blf.rotation(font_id, radians(params.text_rotation))
             # calculate new y position
-            new_y = (pos_y * pos_scale) + (max_th * n_lines)
+            new_y = (pos_y * pos_scale) + ((max_th * params.text_vspacing) * n_lines)
             # draw the text line
             if self._render_mode:
                 image_draw.text(
@@ -299,6 +314,10 @@ class BaseAnnotation(metaclass=ABCMeta):
             n_lines -= 1  # for next iteration
             if params.text_align == "left" and not self._render_mode:
                 blf.disable(font_id, blf.ROTATION)
+        if not self._render_mode:
+            # unload any user defined font
+            if font_id != 0:
+                blf.unload(params.text_font)
 
     def draw_line_3d(
         self,
