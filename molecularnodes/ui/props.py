@@ -247,10 +247,16 @@ class MolecularNodesSceneProperties(PropertyGroup):
                 0,
             ),
             (
+                "density_iso_surface",
+                "ISO Surface",
+                "A mesh surface based on the specified iso value",
+                1,
+            ),
+            (
                 "density_wire",
                 "Wire",
                 "A wire mesh surface based on the specified threshold",
-                1,
+                2,
             ),
         ),
     )

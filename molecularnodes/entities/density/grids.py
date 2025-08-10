@@ -79,23 +79,36 @@ class Grids(Density):
             The style of the density object, defaulting to 'density_surface'.
         """
 
-        grid = self.grid.grid
+        gobj = self.grid
+        grid = gobj.grid
         threshold = np.quantile(grid, 0.995)
-        threshold_min = np.min(grid)
-        threshold_max = np.max(grid)
+        threshold_range = (np.min(grid), np.max(grid))
         threshold_type = None
         if np.issubdtype(grid.dtype, np.floating):
             threshold_type = "NodeSocketFloat"
         elif np.issubdtype(grid.dtype, np.floating):
             threshold_type = "NodeSocketInt"
 
+        x_range = y_range = z_range = None
+        if gobj.origin.size == 3:
+            origin = gobj.origin.copy()
+            if gobj.metadata["center"]:
+                origin = -np.array(grid.shape) * 0.5 * gobj.delta
+            origin *= self._world_scale
+            length = grid.shape * gobj.delta * self._world_scale
+            x_range = (origin[0], origin[0] + length[0])
+            y_range = (origin[1], origin[1] + length[1])
+            z_range = (origin[2], origin[2] + length[2])
+
         return nodes.create_starting_nodes_density(
             object=self.object,
             style=style,
             threshold=threshold,
-            threshold_min=threshold_min,
-            threshold_max=threshold_max,
+            threshold_range=threshold_range,
             threshold_type=threshold_type,
+            x_range=x_range,
+            y_range=y_range,
+            z_range=z_range,
         )
 
     def grid_to_vdb(
