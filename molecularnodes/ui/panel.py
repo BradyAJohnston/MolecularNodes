@@ -823,13 +823,19 @@ class MN_PT_Styles(bpy.types.Panel):
         row = box.row()
         style_node = node_group.nodes[styles_active_index]
 
-        panel = None
-        current_panel_name = None
+        panels = {}
         for item in style_node.node_tree.interface.items_tree.values():
             if item.item_type == "PANEL":
-                header, panel = box.panel(item.name, default_closed=False)
-                header.label(text=item.name)
-                current_panel_name = item.name
+                header = None
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
+                        header, panel = panel.panel(item.name, default_closed=False)
+                else:
+                    header, panel = box.panel(item.name, default_closed=False)
+                if header:
+                    header.label(text=item.name)
+                panels[item.name] = panel
             elif item.name == "Selection":
                 continue
             else:
@@ -839,8 +845,9 @@ class MN_PT_Styles(bpy.types.Panel):
                 if not hasattr(input, "default_value"):
                     continue
                 row = None
-                if item.parent.name == current_panel_name:
-                    if panel:  # Note: cannot merge with above condition
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
                         row = panel.row()
                 else:
                     row = box.row()
