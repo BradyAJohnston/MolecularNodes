@@ -714,6 +714,10 @@ class MN_UL_StylesList(bpy.types.UIList):
             col.label(text=seqno)
             col = split.column()
             col.prop(item, "label", text="", emboss=False)
+            if "Visible" in item.inputs:
+                input = item.inputs["Visible"]
+                hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
+                row.prop(input, "default_value", icon_only=True, icon=hide_icon)
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
@@ -840,6 +844,8 @@ class MN_PT_Styles(bpy.types.Panel):
                 continue
             else:
                 if item.in_out != "INPUT":
+                    continue
+                if item.name in ("Visible"):
                     continue
                 input = style_node.inputs[item.identifier]
                 if not hasattr(input, "default_value"):

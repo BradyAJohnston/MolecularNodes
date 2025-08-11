@@ -28,6 +28,14 @@ def style_density_iso_surface_node_group():
     volume_socket.attribute_domain = "POINT"
     volume_socket.description = "Input geometry"
 
+    # Socket Visible
+    visible_socket = style_density_iso_surface.interface.new_socket(
+        name="Visible", in_out="INPUT", socket_type="NodeSocketBool"
+    )
+    visible_socket.default_value = True
+    visible_socket.attribute_domain = "POINT"
+    visible_socket.description = "Visibility of style"
+
     # Socket Shade Smooth
     shade_smooth_socket = style_density_iso_surface.interface.new_socket(
         name="Shade Smooth", in_out="INPUT", socket_type="NodeSocketBool"
@@ -543,6 +551,11 @@ def style_density_iso_surface_node_group():
     only_contours_switch.name = "Only Contours Switch"
     only_contours_switch.input_type = "GEOMETRY"
 
+    # node Visibility
+    visibility = style_density_iso_surface.nodes.new("GeometryNodeSwitch")
+    visibility.name = "Visibility"
+    visibility.input_type = "GEOMETRY"
+
     # Set parents
     compare_y_positive.parent = frame_y
     compare_x_positive.parent = frame_x
@@ -615,6 +628,7 @@ def style_density_iso_surface_node_group():
     set_material_contours.location = (1720.0, -40.0)
     scale_down_contour_thickness.location = (1020.0, -200.0)
     only_contours_switch.location = (1360.0, 80.0)
+    visibility.location = (-840.0, 120.0)
 
     # Set dimensions
     group_output.width, group_output.height = 140.0, 100.0
@@ -677,6 +691,7 @@ def style_density_iso_surface_node_group():
         100.0,
     )
     only_contours_switch.width, only_contours_switch.height = 140.0, 100.0
+    visibility.width, visibility.height = 140.0, 100.0
 
     # initialize style_density_iso_surface links
     # delete_geometry.Geometry -> mesh_to_curve.Mesh
@@ -723,19 +738,15 @@ def style_density_iso_surface_node_group():
     )
     # group_input.ISO Value -> volume_to_mesh_positive.Threshold
     style_density_iso_surface.links.new(
-        group_input.outputs[2], volume_to_mesh_positive.inputs[3]
+        group_input.outputs[3], volume_to_mesh_positive.inputs[3]
     )
     # group_input.ISO Value -> math.Value
-    style_density_iso_surface.links.new(group_input.outputs[2], math.inputs[0])
+    style_density_iso_surface.links.new(group_input.outputs[3], math.inputs[0])
     # group_input.Show Contours -> mesh_to_curve.Selection
-    style_density_iso_surface.links.new(group_input.outputs[6], mesh_to_curve.inputs[1])
-    # group_input.Volume -> volume_to_mesh_negative.Volume
+    style_density_iso_surface.links.new(group_input.outputs[7], mesh_to_curve.inputs[1])
+    # visibility.Output -> volume_to_mesh_positive.Volume
     style_density_iso_surface.links.new(
-        group_input.outputs[0], volume_to_mesh_negative.inputs[0]
-    )
-    # group_input.Volume -> volume_to_mesh_positive.Volume
-    style_density_iso_surface.links.new(
-        group_input.outputs[0], volume_to_mesh_positive.inputs[0]
+        visibility.outputs[0], volume_to_mesh_positive.inputs[0]
     )
     # join_geometry_final.Geometry -> group_output.Geometry
     style_density_iso_surface.links.new(
@@ -747,15 +758,15 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Left -> map_range_x_positive.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[10], map_range_x_positive.inputs[0]
+        group_input.outputs[11], map_range_x_positive.inputs[0]
     )
     # group_input.Slice Front -> map_range_y_positive.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[12], map_range_y_positive.inputs[0]
+        group_input.outputs[13], map_range_y_positive.inputs[0]
     )
     # group_input.Slice Top -> map_range_z_negative.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[14], map_range_z_negative.inputs[0]
+        group_input.outputs[15], map_range_z_negative.inputs[0]
     )
     # map_range_y_positive.Result -> compare_y_positive.B
     style_density_iso_surface.links.new(
@@ -775,7 +786,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Right -> map_range_x_negative.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[11], map_range_x_negative.inputs[0]
+        group_input.outputs[12], map_range_x_negative.inputs[0]
     )
     # separate_xyz.X -> compare_x_negative.A
     style_density_iso_surface.links.new(
@@ -843,7 +854,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Back -> map_range_y_negative.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[13], map_range_y_negative.inputs[0]
+        group_input.outputs[14], map_range_y_negative.inputs[0]
     )
     # z_min.Value -> map_range_z_positive.To Min
     style_density_iso_surface.links.new(
@@ -863,7 +874,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Bottom -> map_range_z_positive.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[15], map_range_z_positive.inputs[0]
+        group_input.outputs[16], map_range_z_positive.inputs[0]
     )
     # map_range_z_negative.Result -> compare_z_negative.B
     style_density_iso_surface.links.new(
@@ -895,7 +906,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Shade Smooth -> set_shade_smooth.Shade Smooth
     style_density_iso_surface.links.new(
-        group_input.outputs[1], set_shade_smooth.inputs[2]
+        group_input.outputs[2], set_shade_smooth.inputs[2]
     )
     # volume_to_mesh_positive.Mesh -> store_named_attribute_positive.Geometry
     style_density_iso_surface.links.new(
@@ -907,19 +918,19 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Positive Color -> store_named_attribute_positive.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[3], store_named_attribute_positive.inputs[3]
+        group_input.outputs[4], store_named_attribute_positive.inputs[3]
     )
     # group_input.Negative Color -> store_named_attribute_negative.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[4], store_named_attribute_negative.inputs[3]
+        group_input.outputs[5], store_named_attribute_negative.inputs[3]
     )
     # group_input.Material -> set_material_positive.Material
     style_density_iso_surface.links.new(
-        group_input.outputs[5], set_material_positive.inputs[2]
+        group_input.outputs[6], set_material_positive.inputs[2]
     )
     # group_input.Material -> set_material_negative.Material
     style_density_iso_surface.links.new(
-        group_input.outputs[5], set_material_negative.inputs[2]
+        group_input.outputs[6], set_material_negative.inputs[2]
     )
     # set_material_contours.Geometry -> join_geometry_final.Geometry
     style_density_iso_surface.links.new(
@@ -943,7 +954,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Material -> set_material_contours.Material
     style_density_iso_surface.links.new(
-        group_input.outputs[5], set_material_contours.inputs[2]
+        group_input.outputs[6], set_material_contours.inputs[2]
     )
     # scale_down_contour_thickness.Value -> quadrilateral.Width
     style_density_iso_surface.links.new(
@@ -955,7 +966,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Contour Thickness -> scale_down_contour_thickness.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[8], scale_down_contour_thickness.inputs[0]
+        group_input.outputs[9], scale_down_contour_thickness.inputs[0]
     )
     # delete_geometry.Geometry -> only_contours_switch.False
     style_density_iso_surface.links.new(
@@ -963,12 +974,20 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Only Contours -> only_contours_switch.Switch
     style_density_iso_surface.links.new(
-        group_input.outputs[7], only_contours_switch.inputs[0]
+        group_input.outputs[8], only_contours_switch.inputs[0]
     )
     # group_input.Contour Color -> store_named_attribute_contours.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[9], store_named_attribute_contours.inputs[3]
+        group_input.outputs[10], store_named_attribute_contours.inputs[3]
     )
+    # group_input.Volume -> visibility.True
+    style_density_iso_surface.links.new(group_input.outputs[0], visibility.inputs[2])
+    # visibility.Output -> volume_to_mesh_negative.Volume
+    style_density_iso_surface.links.new(
+        visibility.outputs[0], volume_to_mesh_negative.inputs[0]
+    )
+    # group_input.Visible -> visibility.Switch
+    style_density_iso_surface.links.new(group_input.outputs[1], visibility.inputs[0])
     # set_material_positive.Geometry -> join_geometry_mesh.Geometry
     style_density_iso_surface.links.new(
         set_material_positive.outputs[0], join_geometry_mesh.inputs[0]
