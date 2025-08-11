@@ -70,17 +70,63 @@ def style_density_iso_surface_node_group():
     material_socket.attribute_domain = "POINT"
     material_socket.description = "Material to use for this surface"
 
+    # Panel Contours
+    contours_panel = style_density_iso_surface.interface.new_panel("Contours")
     # Socket Show Contours
     show_contours_socket = style_density_iso_surface.interface.new_socket(
-        name="Show Contours", in_out="INPUT", socket_type="NodeSocketBool"
+        name="Show Contours",
+        in_out="INPUT",
+        socket_type="NodeSocketBool",
+        parent=contours_panel,
     )
     show_contours_socket.default_value = False
     show_contours_socket.attribute_domain = "POINT"
     show_contours_socket.description = "Whether to show surface contours"
 
+    # Socket Only Contours
+    only_contours_socket = style_density_iso_surface.interface.new_socket(
+        name="Only Contours",
+        in_out="INPUT",
+        socket_type="NodeSocketBool",
+        parent=contours_panel,
+    )
+    only_contours_socket.default_value = False
+    only_contours_socket.attribute_domain = "POINT"
+    only_contours_socket.description = "Only show contour edges"
+
+    # Socket Contour Thickness
+    contour_thickness_socket = style_density_iso_surface.interface.new_socket(
+        name="Contour Thickness",
+        in_out="INPUT",
+        socket_type="NodeSocketFloat",
+        parent=contours_panel,
+    )
+    contour_thickness_socket.default_value = 0.1
+    contour_thickness_socket.min_value = 0.0
+    contour_thickness_socket.max_value = 1.0
+    contour_thickness_socket.subtype = "NONE"
+    contour_thickness_socket.attribute_domain = "POINT"
+    contour_thickness_socket.description = "Thickness of the contour edges"
+
+    # Socket Contour Color
+    contour_color_socket = style_density_iso_surface.interface.new_socket(
+        name="Contour Color",
+        in_out="INPUT",
+        socket_type="NodeSocketColor",
+        parent=contours_panel,
+    )
+    contour_color_socket.default_value = (0.0, 0.0, 0.0, 1.0)
+    contour_color_socket.attribute_domain = "POINT"
+    contour_color_socket.description = "Color of contour edges"
+
+    # Panel Slicing
+    slicing_panel = style_density_iso_surface.interface.new_panel("Slicing")
     # Socket Slice Left
     slice_left_socket = style_density_iso_surface.interface.new_socket(
-        name="Slice Left", in_out="INPUT", socket_type="NodeSocketFloat"
+        name="Slice Left",
+        in_out="INPUT",
+        socket_type="NodeSocketFloat",
+        parent=slicing_panel,
     )
     slice_left_socket.default_value = 0.0
     slice_left_socket.min_value = 0.0
@@ -91,7 +137,10 @@ def style_density_iso_surface_node_group():
 
     # Socket Slice Right
     slice_right_socket = style_density_iso_surface.interface.new_socket(
-        name="Slice Right", in_out="INPUT", socket_type="NodeSocketFloat"
+        name="Slice Right",
+        in_out="INPUT",
+        socket_type="NodeSocketFloat",
+        parent=slicing_panel,
     )
     slice_right_socket.default_value = 0.0
     slice_right_socket.min_value = 0.0
@@ -102,7 +151,10 @@ def style_density_iso_surface_node_group():
 
     # Socket Slice Front
     slice_front_socket = style_density_iso_surface.interface.new_socket(
-        name="Slice Front", in_out="INPUT", socket_type="NodeSocketFloat"
+        name="Slice Front",
+        in_out="INPUT",
+        socket_type="NodeSocketFloat",
+        parent=slicing_panel,
     )
     slice_front_socket.default_value = 0.0
     slice_front_socket.min_value = 0.0
@@ -113,7 +165,10 @@ def style_density_iso_surface_node_group():
 
     # Socket Slice Back
     slice_back_socket = style_density_iso_surface.interface.new_socket(
-        name="Slice Back", in_out="INPUT", socket_type="NodeSocketFloat"
+        name="Slice Back",
+        in_out="INPUT",
+        socket_type="NodeSocketFloat",
+        parent=slicing_panel,
     )
     slice_back_socket.default_value = 0.0
     slice_back_socket.min_value = 0.0
@@ -124,7 +179,10 @@ def style_density_iso_surface_node_group():
 
     # Socket Slice Top
     slice_top_socket = style_density_iso_surface.interface.new_socket(
-        name="Slice Top", in_out="INPUT", socket_type="NodeSocketFloat"
+        name="Slice Top",
+        in_out="INPUT",
+        socket_type="NodeSocketFloat",
+        parent=slicing_panel,
     )
     slice_top_socket.default_value = 0.0
     slice_top_socket.min_value = 0.0
@@ -135,7 +193,10 @@ def style_density_iso_surface_node_group():
 
     # Socket Slice Bottom
     slice_bottom_socket = style_density_iso_surface.interface.new_socket(
-        name="Slice Bottom", in_out="INPUT", socket_type="NodeSocketFloat"
+        name="Slice Bottom",
+        in_out="INPUT",
+        socket_type="NodeSocketFloat",
+        parent=slicing_panel,
     )
     slice_bottom_socket.default_value = 0.0
     slice_bottom_socket.min_value = 0.0
@@ -436,6 +497,52 @@ def style_density_iso_surface_node_group():
     # Name
     store_named_attribute_negative.inputs[2].default_value = "Color"
 
+    # node Curve to Mesh
+    curve_to_mesh = style_density_iso_surface.nodes.new("GeometryNodeCurveToMesh")
+    curve_to_mesh.name = "Curve to Mesh"
+    # Fill Caps
+    curve_to_mesh.inputs[2].default_value = False
+
+    # node Quadrilateral
+    quadrilateral = style_density_iso_surface.nodes.new(
+        "GeometryNodeCurvePrimitiveQuadrilateral"
+    )
+    quadrilateral.name = "Quadrilateral"
+    quadrilateral.mode = "RECTANGLE"
+
+    # node Store Named Attribute Contours
+    store_named_attribute_contours = style_density_iso_surface.nodes.new(
+        "GeometryNodeStoreNamedAttribute"
+    )
+    store_named_attribute_contours.name = "Store Named Attribute Contours"
+    store_named_attribute_contours.data_type = "FLOAT_COLOR"
+    store_named_attribute_contours.domain = "EDGE"
+    # Selection
+    store_named_attribute_contours.inputs[1].default_value = True
+    # Name
+    store_named_attribute_contours.inputs[2].default_value = "Color"
+
+    # node Set Material Contours
+    set_material_contours = style_density_iso_surface.nodes.new(
+        "GeometryNodeSetMaterial"
+    )
+    set_material_contours.name = "Set Material Contours"
+    # Selection
+    set_material_contours.inputs[1].default_value = True
+
+    # node Scale Down Contour Thickness
+    scale_down_contour_thickness = style_density_iso_surface.nodes.new("ShaderNodeMath")
+    scale_down_contour_thickness.name = "Scale Down Contour Thickness"
+    scale_down_contour_thickness.operation = "MULTIPLY"
+    scale_down_contour_thickness.use_clamp = False
+    # Value_001
+    scale_down_contour_thickness.inputs[1].default_value = 0.001
+
+    # node Only Contours Switch
+    only_contours_switch = style_density_iso_surface.nodes.new("GeometryNodeSwitch")
+    only_contours_switch.name = "Only Contours Switch"
+    only_contours_switch.input_type = "GEOMETRY"
+
     # Set parents
     compare_y_positive.parent = frame_y
     compare_x_positive.parent = frame_x
@@ -460,10 +567,10 @@ def style_density_iso_surface_node_group():
     boolean_math_z.parent = frame_z
 
     # Set locations
-    group_output.location = (1560.0, 40.0)
+    group_output.location = (2200.0, 40.0)
     group_input.location = (-1100.0, 0.0)
     mesh_to_curve.location = (1180.0, -80.0)
-    join_geometry_final.location = (1360.0, 40.0)
+    join_geometry_final.location = (2000.0, 40.0)
     volume_to_mesh_negative.location = (-400.0, 20.0)
     join_geometry_mesh.location = (380.0, 160.0)
     compare_y_positive.location = (550.0, -30.0)
@@ -502,6 +609,12 @@ def style_density_iso_surface_node_group():
     frame_z.location = (-430.0, -990.0)
     store_named_attribute_positive.location = (-240.0, 260.0)
     store_named_attribute_negative.location = (-180.0, 40.0)
+    curve_to_mesh.location = (1360.0, -80.0)
+    quadrilateral.location = (1180.0, -200.0)
+    store_named_attribute_contours.location = (1540.0, -80.0)
+    set_material_contours.location = (1720.0, -40.0)
+    scale_down_contour_thickness.location = (1020.0, -200.0)
+    only_contours_switch.location = (1360.0, 80.0)
 
     # Set dimensions
     group_output.width, group_output.height = 140.0, 100.0
@@ -552,12 +665,20 @@ def style_density_iso_surface_node_group():
         140.0,
         100.0,
     )
+    curve_to_mesh.width, curve_to_mesh.height = 140.0, 100.0
+    quadrilateral.width, quadrilateral.height = 140.0, 100.0
+    store_named_attribute_contours.width, store_named_attribute_contours.height = (
+        140.0,
+        100.0,
+    )
+    set_material_contours.width, set_material_contours.height = 140.0, 100.0
+    scale_down_contour_thickness.width, scale_down_contour_thickness.height = (
+        140.0,
+        100.0,
+    )
+    only_contours_switch.width, only_contours_switch.height = 140.0, 100.0
 
     # initialize style_density_iso_surface links
-    # delete_geometry.Geometry -> join_geometry_final.Geometry
-    style_density_iso_surface.links.new(
-        delete_geometry.outputs[0], join_geometry_final.inputs[0]
-    )
     # delete_geometry.Geometry -> mesh_to_curve.Mesh
     style_density_iso_surface.links.new(
         delete_geometry.outputs[0], mesh_to_curve.inputs[0]
@@ -626,15 +747,15 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Left -> map_range_x_positive.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[7], map_range_x_positive.inputs[0]
+        group_input.outputs[10], map_range_x_positive.inputs[0]
     )
     # group_input.Slice Front -> map_range_y_positive.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[9], map_range_y_positive.inputs[0]
+        group_input.outputs[12], map_range_y_positive.inputs[0]
     )
     # group_input.Slice Top -> map_range_z_negative.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[11], map_range_z_negative.inputs[0]
+        group_input.outputs[14], map_range_z_negative.inputs[0]
     )
     # map_range_y_positive.Result -> compare_y_positive.B
     style_density_iso_surface.links.new(
@@ -654,7 +775,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Right -> map_range_x_negative.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[8], map_range_x_negative.inputs[0]
+        group_input.outputs[11], map_range_x_negative.inputs[0]
     )
     # separate_xyz.X -> compare_x_negative.A
     style_density_iso_surface.links.new(
@@ -722,7 +843,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Back -> map_range_y_negative.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[10], map_range_y_negative.inputs[0]
+        group_input.outputs[13], map_range_y_negative.inputs[0]
     )
     # z_min.Value -> map_range_z_positive.To Min
     style_density_iso_surface.links.new(
@@ -742,7 +863,7 @@ def style_density_iso_surface_node_group():
     )
     # group_input.Slice Bottom -> map_range_z_positive.Value
     style_density_iso_surface.links.new(
-        group_input.outputs[12], map_range_z_positive.inputs[0]
+        group_input.outputs[15], map_range_z_positive.inputs[0]
     )
     # map_range_z_negative.Result -> compare_z_negative.B
     style_density_iso_surface.links.new(
@@ -800,12 +921,60 @@ def style_density_iso_surface_node_group():
     style_density_iso_surface.links.new(
         group_input.outputs[5], set_material_negative.inputs[2]
     )
-    # mesh_to_curve.Curve -> join_geometry_final.Geometry
+    # set_material_contours.Geometry -> join_geometry_final.Geometry
     style_density_iso_surface.links.new(
-        mesh_to_curve.outputs[0], join_geometry_final.inputs[0]
+        set_material_contours.outputs[0], join_geometry_final.inputs[0]
+    )
+    # mesh_to_curve.Curve -> curve_to_mesh.Curve
+    style_density_iso_surface.links.new(
+        mesh_to_curve.outputs[0], curve_to_mesh.inputs[0]
+    )
+    # quadrilateral.Curve -> curve_to_mesh.Profile Curve
+    style_density_iso_surface.links.new(
+        quadrilateral.outputs[0], curve_to_mesh.inputs[1]
+    )
+    # curve_to_mesh.Mesh -> store_named_attribute_contours.Geometry
+    style_density_iso_surface.links.new(
+        curve_to_mesh.outputs[0], store_named_attribute_contours.inputs[0]
+    )
+    # store_named_attribute_contours.Geometry -> set_material_contours.Geometry
+    style_density_iso_surface.links.new(
+        store_named_attribute_contours.outputs[0], set_material_contours.inputs[0]
+    )
+    # group_input.Material -> set_material_contours.Material
+    style_density_iso_surface.links.new(
+        group_input.outputs[5], set_material_contours.inputs[2]
+    )
+    # scale_down_contour_thickness.Value -> quadrilateral.Width
+    style_density_iso_surface.links.new(
+        scale_down_contour_thickness.outputs[0], quadrilateral.inputs[0]
+    )
+    # scale_down_contour_thickness.Value -> quadrilateral.Height
+    style_density_iso_surface.links.new(
+        scale_down_contour_thickness.outputs[0], quadrilateral.inputs[1]
+    )
+    # group_input.Contour Thickness -> scale_down_contour_thickness.Value
+    style_density_iso_surface.links.new(
+        group_input.outputs[8], scale_down_contour_thickness.inputs[0]
+    )
+    # delete_geometry.Geometry -> only_contours_switch.False
+    style_density_iso_surface.links.new(
+        delete_geometry.outputs[0], only_contours_switch.inputs[1]
+    )
+    # group_input.Only Contours -> only_contours_switch.Switch
+    style_density_iso_surface.links.new(
+        group_input.outputs[7], only_contours_switch.inputs[0]
+    )
+    # group_input.Contour Color -> store_named_attribute_contours.Value
+    style_density_iso_surface.links.new(
+        group_input.outputs[9], store_named_attribute_contours.inputs[3]
     )
     # set_material_positive.Geometry -> join_geometry_mesh.Geometry
     style_density_iso_surface.links.new(
         set_material_positive.outputs[0], join_geometry_mesh.inputs[0]
+    )
+    # only_contours_switch.Output -> join_geometry_final.Geometry
+    style_density_iso_surface.links.new(
+        only_contours_switch.outputs[0], join_geometry_final.inputs[0]
     )
     return style_density_iso_surface

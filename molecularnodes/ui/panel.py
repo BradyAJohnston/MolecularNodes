@@ -822,13 +822,30 @@ class MN_PT_Styles(bpy.types.Panel):
         box = layout.box()
         row = box.row()
         style_node = node_group.nodes[styles_active_index]
-        for input in style_node.inputs:
-            if not hasattr(input, "default_value"):
+
+        panel = None
+        current_panel_name = None
+        for item in style_node.node_tree.interface.items_tree.values():
+            if item.item_type == "PANEL":
+                header, panel = box.panel(item.name, default_closed=False)
+                header.label(text=item.name)
+                current_panel_name = item.name
+            elif item.name == "Selection":
                 continue
-            if input.name == "Selection":
-                continue
-            row = box.row()
-            row.prop(data=input, property="default_value", text=input.name)
+            else:
+                if item.in_out != "INPUT":
+                    continue
+                input = style_node.inputs[item.identifier]
+                if not hasattr(input, "default_value"):
+                    continue
+                row = None
+                if item.parent.name == current_panel_name:
+                    if panel:  # Note: cannot merge with above condition
+                        row = panel.row()
+                else:
+                    row = box.row()
+                if row:
+                    row.prop(data=input, property="default_value", text=input.name)
         row = box.row()
 
 
