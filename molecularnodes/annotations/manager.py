@@ -48,9 +48,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     annotation classes, instances and interfaces
 
     Entities that need annotation support have to derive from this base class and
-    set the class attribute '_classes' and instance attribute '_interfaces' to
-    empty dictionaries. Derived classes will have to pass the entity instance as
-    part of its '__init__' as well.
+    set the class attribute _entity_type to the entity tpye, the class attribute
+    '_classes' and instance attribute '_interfaces' to empty dictionaries. Derived
+    classes will have to pass the entity instance as part of its '__init__' as well.
 
     Attributes
     ----------
@@ -58,6 +58,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         Whether to show or hide all annotations
 
     """
+
+    _entity_type = None  # Derived classes need to specify
+    _classes = {}  # All annotation classes across all entities
 
     def __init__(self, entity):
         # Access to the entity to which this manager is attached
@@ -112,9 +115,21 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """
         cls._validate_annotation_class(annotation_class)
         # Add to Entity class specific registry
-        cls._classes[annotation_class.annotation_type] = annotation_class
+        annotation_type = annotation_class.annotation_type
+        if annotation_type in cls._classes:
+            raise ValueError(f"Annotation type {annotation_type} already registered")
+        cls._classes[annotation_type] = annotation_class
+        # Add to all annotation classes
+        if cls._entity_type is None:
+            raise ValueError("Entity type is needed in derived class")
+        entity_annotation_type = f"{cls._entity_type.value}_{annotation_type}"
+        if entity_annotation_type in BaseAnnotationManager._classes:
+            raise ValueError(
+                f"Annotation type {entity_annotation_type} already registered"
+            )
+        BaseAnnotationManager._classes[entity_annotation_type] = annotation_class
         # Add method to Entity specific manager
-        method_name = f"add_{annotation_class.annotation_type}"
+        method_name = f"add_{annotation_type}"
 
         # Add a dynamic wrapper to ensure custom signature is retained
         def dynamic_wrapper(cls, annotation_class, **kwargs):
@@ -152,8 +167,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             "AnnotationProperties", (BaseAnnotationProperties,), {}
         )
         # Add each annotation type inputs as a pointer to a separate property group
-        for annotation_class in cls._classes.values():
-            annotation_type = annotation_class.annotation_type
+        for annotation_type, annotation_class in BaseAnnotationManager._classes.items():
             update_callback = None
             # Add an update callback for annotation input properties to validate
             if hasattr(annotation_class, "validate") and callable(
@@ -183,12 +197,17 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         class registry and removes the 'add_<>' method from the manager
 
         """
-        if annotation_class.annotation_type not in cls._classes:
+        annotation_type = annotation_class.annotation_type
+        if annotation_type not in cls._classes:
             raise ValueError(f"{annotation_class} is not registered")
         cls._validate_annotation_class(annotation_class)
-        del cls._classes[annotation_class.annotation_type]
+        # Delete from Entity class specific registry
+        del cls._classes[annotation_type]
+        # Delete from all annotation classes
+        entity_annotation_type = f"{cls._entity_type.value}_{annotation_type}"
+        del BaseAnnotationManager._classes[entity_annotation_type]
         # Remove method from Entity specific manager
-        method_name = f"add_{annotation_class.annotation_type}"
+        method_name = f"add_{annotation_type}"
         delattr(cls, method_name)
 
     def get(self, name: str) -> AnnotationInterface:
@@ -333,12 +352,16 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         setattr(interface.__class__, "name", prop_interface)
         # iterate though all the annotation inputs, set passed values and
         # create property interfaces
-        inputs = getattr(prop, prop.type, None)
+        entity_annotation_type = f"{self._entity_type.value}_{prop.type}"
+        inputs = getattr(prop, entity_annotation_type, None)
         if inputs is not None:
             inputs.uuid = uuid  # add annotation uuid for lookup in update callback
             # link to the valid inputs property for use in draw handler
             prop_interface = create_property_interface(
-                self._entity, uuid, "valid_inputs", annotation_type=prop.type
+                self._entity,
+                uuid,
+                "valid_inputs",
+                annotation_type=entity_annotation_type,
             )
             setattr(interface.__class__, "_valid_inputs", prop_interface)
             # all annotation inputs as defined in class
@@ -348,7 +371,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                     continue
                 stype = get_blender_supported_type(atype)
                 prop_interface = create_property_interface(
-                    self._entity, uuid, attr, stype, annotation_instance, prop.type
+                    self._entity,
+                    uuid,
+                    attr,
+                    stype,
+                    annotation_instance,
+                    entity_annotation_type,
                 )
                 setattr(interface.__class__, attr, prop_interface)
                 # set the input value based on what is passed

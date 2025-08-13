@@ -4,6 +4,8 @@ import pytest
 import molecularnodes as mn
 from .constants import data_dir
 
+bpy.utils.expose_bundled_modules()
+
 
 class TestAnnotations:
     @pytest.fixture(scope="module")
@@ -15,6 +17,17 @@ class TestAnnotations:
     @pytest.fixture(scope="module")
     def session(self):
         return mn.session.get_session()
+
+    @pytest.fixture(scope="module")
+    def density_file(self):
+        file = data_dir / "emd_24805.map.gz"
+        vdb_file = data_dir / "emd_24805.vdb"
+        vdb_file.unlink(missing_ok=True)
+        # Make all densities are removed
+        for o in bpy.data.objects:
+            if o.mn.entity_type == "density":
+                bpy.data.objects.remove(o, do_unlink=True)
+        return file
 
     def test_registered_trajectory_annotations(self):
         # test if trajectory annotations are correctly auto registered
@@ -51,6 +64,30 @@ class TestAnnotations:
     def test_registered_molecule_annotations(self):
         # test if molecule annotations are correctly auto registered
         manager = mn.entities.molecule.annotations.MoleculeAnnotationManager
+        # molecule_info
+        assert "molecule_info" in manager._classes
+        assert hasattr(manager, "add_molecule_info")
+        assert callable(getattr(manager, "add_molecule_info"))
+        # label_2d
+        assert "label_2d" in manager._classes
+        assert hasattr(manager, "add_label_2d")
+        assert callable(getattr(manager, "add_label_2d"))
+        # label_3d
+        assert "label_3d" in manager._classes
+        assert hasattr(manager, "add_label_3d")
+        assert callable(getattr(manager, "add_label_3d"))
+
+    def test_registered_density_annotations(self):
+        # test if density annotations are correctly auto registered
+        manager = mn.entities.density.annotations.DensityAnnotationManager
+        # density_info
+        assert "density_info" in manager._classes
+        assert hasattr(manager, "add_density_info")
+        assert callable(getattr(manager, "add_density_info"))
+        # grid_axes
+        assert "grid_axes" in manager._classes
+        assert hasattr(manager, "add_grid_axes")
+        assert callable(getattr(manager, "add_grid_axes"))
         # label_2d
         assert "label_2d" in manager._classes
         assert hasattr(manager, "add_label_2d")
@@ -309,6 +346,24 @@ class TestAnnotations:
         assert len(t1.annotations) == 0
         t1.annotations.add_universe_info()
         assert len(t1.annotations) == 1
+
+    def test_molecule_annotation_molecule_info(self):
+        mol = mn.Molecule.load(data_dir / "1cd3.cif")
+        assert len(mol.annotations) == 0
+        mol.annotations.add_molecule_info()
+        assert len(mol.annotations) == 1
+
+    def test_density_annotation_density_info(self, density_file):
+        d1 = mn.entities.density.load(density_file)
+        assert len(d1.annotations) == 0
+        d1.annotations.add_density_info()
+        assert len(d1.annotations) == 1
+
+    def test_density_annotation_grid_axes(self, density_file):
+        d1 = mn.entities.density.load(density_file)
+        assert len(d1.annotations) == 0
+        d1.annotations.add_grid_axes()
+        assert len(d1.annotations) == 1
 
     def test_common_annotation_label_2d(self, universe, session):
         t1 = session.add_trajectory(universe)

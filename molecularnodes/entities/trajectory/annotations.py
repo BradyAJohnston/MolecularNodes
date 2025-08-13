@@ -5,6 +5,7 @@ from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
 from ..annotations import Label2D, Label3D
+from ..base import EntityType
 
 
 class TrajectoryAnnotation(BaseAnnotation):
@@ -38,6 +39,7 @@ class TrajectoryAnnotationManager(BaseAnnotationManager):
 
     """
 
+    _entity_type = EntityType.MD
     _classes = {}  # Entity class specific annotation classes
 
     def __init__(self, entity):
@@ -180,6 +182,10 @@ class COMDistance(TrajectoryAnnotation):
     selection2: str | AtomGroup
     text1: str = "COM1"
     text2: str = "COM2"
+
+    def defaults(self) -> None:
+        params = self.interface
+        params.arrow_size = 10
 
     def validate(self) -> bool:
         params = self.interface

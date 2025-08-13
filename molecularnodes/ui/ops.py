@@ -896,8 +896,9 @@ def _register_temp_annotation_add_op(entity):
     for cls in entity.annotations._classes.values():
         AnnotationTypeInputs = create_annotation_type_inputs(cls)
         register(AnnotationTypeInputs)
-        attributes["__annotations__"][cls.annotation_type] = bpy.props.PointerProperty(
-            type=AnnotationTypeInputs
+        entity_annotation_type = f"{entity._entity_type.value}_{cls.annotation_type}"
+        attributes["__annotations__"][entity_annotation_type] = (
+            bpy.props.PointerProperty(type=AnnotationTypeInputs)
         )
     AnnotationProps = type("AnnotationProps", (bpy.types.PropertyGroup,), attributes)
     register(AnnotationProps)
@@ -913,7 +914,8 @@ def _register_temp_annotation_add_op(entity):
         def draw(self, context):
             layout = self.layout
             layout.prop(self.props, "type")
-            inputs = getattr(self.props, self.props.type, None)
+            entity_annotation_type = f"{entity._entity_type.value}_{self.props.type}"
+            inputs = getattr(self.props, entity_annotation_type, None)
             if inputs is not None:
                 for prop_name in inputs.__annotations__.keys():
                     if prop_name in ("uuid", "valid_inputs"):
@@ -928,7 +930,8 @@ def _register_temp_annotation_add_op(entity):
                 return {"CANCELLED"}
             annotation_class = entity.annotations._classes[self.props.type]
             api_inputs = {}
-            ui_inputs = getattr(self.props, self.props.type, None)
+            entity_annotation_type = f"{entity._entity_type.value}_{self.props.type}"
+            ui_inputs = getattr(self.props, entity_annotation_type, None)
             if ui_inputs is not None:
                 for prop_name in ui_inputs.__annotations__.keys():
                     if prop_name in ui_inputs:

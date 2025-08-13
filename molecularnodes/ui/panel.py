@@ -782,6 +782,8 @@ class MN_PT_Styles(bpy.types.Panel):
         uuid = scene.mn.entities[entities_active_index].name
         entity = scene.MNSession.get(uuid)
         node_group = entity.node_group
+        if node_group is None:
+            return
         styles_active_index = entity.object.mn.styles_active_index
         valid_selection = False
         style_nodes = get_final_style_nodes(node_group)
@@ -953,7 +955,8 @@ class MN_PT_Annotations(bpy.types.Panel):
         row = box.row()
         row.prop(item, "type")
         row.enabled = False
-        inputs = getattr(item, item.type, None)
+        entity_annotation_type = f"{entity._entity_type.value}_{item.type}"
+        inputs = getattr(item, entity_annotation_type, None)
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
             if not inputs.valid_inputs:

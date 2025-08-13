@@ -37,7 +37,9 @@ class MolecularEntity(
 
     @property
     def node_group(self) -> bpy.types.GeometryNodeTree:
-        return self.object.modifiers["MolecularNodes"].node_group
+        if "MolecularNodes" in self.object.modifiers:
+            return self.object.modifiers["MolecularNodes"].node_group
+        return None
 
     @property
     def tree(self) -> bpy.types.GeometryNodeTree:

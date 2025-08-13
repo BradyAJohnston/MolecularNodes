@@ -142,6 +142,13 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         default=True,
     )  # type: ignore
 
+    text_font: StringProperty(  # type: ignore
+        name="Text Font",
+        description="Custom font to use for the text",
+        subtype="FILE_PATH",
+        maxlen=0,
+    )
+
     text_color: FloatVectorProperty(
         name="Text Color",
         description="Font color",
@@ -176,6 +183,14 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         default=0.0,
         min=0.0,
         max=360.0,
+    )  # type: ignore
+
+    text_vspacing: FloatProperty(
+        name="Text Vertical Spacing",
+        description="Vertical Spacing in multiline text",
+        default=1.35,
+        min=1.0,
+        max=4.0,
     )  # type: ignore
 
     text_depth: BoolProperty(
