@@ -348,19 +348,19 @@ def create_starting_nodes_density(
         node_density = group.nodes.new("GeometryNodeGroup")  # type: ignore
         node_density.name = styles_mapping[style]
         node_density.location = [400, 0]
-        node_tree = style_density_iso_surface_node_group()
-        node_tree.name = f"{styles_mapping[style]}.{object.name}"
-        node_density.node_tree = node_tree
+        tree = style_density_iso_surface_node_group()
+        tree.name = f"{styles_mapping[style]}.{object.name}"
+        node_density.node_tree = tree
         assign_material(node_density)
         if x_range is not None:
-            node_tree.nodes["X Min"].outputs["Value"].default_value = x_range[0]
-            node_tree.nodes["X Max"].outputs["Value"].default_value = x_range[1]
+            tree.nodes["X Min"].outputs["Value"].default_value = x_range[0]
+            tree.nodes["X Max"].outputs["Value"].default_value = x_range[1]
         if y_range is not None:
-            node_tree.nodes["Y Min"].outputs["Value"].default_value = y_range[0]
-            node_tree.nodes["Y Max"].outputs["Value"].default_value = y_range[1]
+            tree.nodes["Y Min"].outputs["Value"].default_value = y_range[0]
+            tree.nodes["Y Max"].outputs["Value"].default_value = y_range[1]
         if z_range is not None:
-            node_tree.nodes["Z Min"].outputs["Value"].default_value = z_range[0]
-            node_tree.nodes["Z Max"].outputs["Value"].default_value = z_range[1]
+            tree.nodes["Z Min"].outputs["Value"].default_value = z_range[0]
+            tree.nodes["Z Max"].outputs["Value"].default_value = z_range[1]
     else:
         key = "Threshold"
         node_density = add_custom(group, styles_mapping[style], [400, 0])
