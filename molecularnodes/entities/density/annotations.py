@@ -104,8 +104,12 @@ class DensityInfo(DensityAnnotation):
             text = f"Filename: {filename}"
         if params.show_threshold:
             if self.density.node_group:
-                threshold = self.density.styles[0].threshold
-                text = text + f"|Threshold: {threshold:.2f}"
+                iso_value = getattr(self.density.styles[0], "iso_value", None)
+                if iso_value is None:
+                    threshold = self.density.styles[0].threshold
+                    text = text + f"|Threshold: {threshold:.2f}"
+                else:
+                    text = text + f"|ISO Value: {iso_value:.2f}"
         if params.show_origin:
             text = text + f"|Origin: {np.round(grid.origin, 2)}"
         if params.show_delta:
@@ -134,7 +138,7 @@ class DensityGridAxes(DensityAnnotation):
 
     annotation_type = "grid_axes"
 
-    show_length: bool = False
+    show_length: bool = True
     units: str = "Å"
 
     def defaults(self) -> None:
@@ -151,7 +155,7 @@ class DensityGridAxes(DensityAnnotation):
             return
         origin = grid.origin.copy()
         if grid.metadata["center"]:
-            origin += -np.array(grid.grid.shape) * 0.5 * grid.delta
+            origin = -np.array(grid.grid.shape) * 0.5 * grid.delta
         axes = ["X", "Y", "Z"]
         for i in range(3):
             length = grid.grid.shape[i] * grid.delta[i]

@@ -202,6 +202,7 @@ class GeometryNodeInterFace(TreeInterface):
                 .removeprefix("cartoon_")
                 .removeprefix("spheres_")
                 .removeprefix("density_surface_")
+                .removeprefix("density_iso_surface_")
                 .removeprefix("density_wire_")
             )
             if isinstance(input, bpy.types.NodeSocketMaterial):

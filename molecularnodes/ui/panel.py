@@ -714,6 +714,10 @@ class MN_UL_StylesList(bpy.types.UIList):
             col.label(text=seqno)
             col = split.column()
             col.prop(item, "label", text="", emboss=False)
+            if "Visible" in item.inputs:
+                input = item.inputs["Visible"]
+                hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
+                row.prop(input, "default_value", icon_only=True, icon=hide_icon)
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text="", icon=custom_icon)
@@ -822,13 +826,39 @@ class MN_PT_Styles(bpy.types.Panel):
         box = layout.box()
         row = box.row()
         style_node = node_group.nodes[styles_active_index]
-        for input in style_node.inputs:
-            if not hasattr(input, "default_value"):
+
+        panels = {}
+        for item in style_node.node_tree.interface.items_tree.values():
+            if item.item_type == "PANEL":
+                header = None
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
+                        header, panel = panel.panel(item.name, default_closed=False)
+                else:
+                    header, panel = box.panel(item.name, default_closed=False)
+                if header:
+                    header.label(text=item.name)
+                panels[item.name] = panel
+            elif item.name == "Selection":
                 continue
-            if input.name == "Selection":
-                continue
-            row = box.row()
-            row.prop(data=input, property="default_value", text=input.name)
+            else:
+                if item.in_out != "INPUT":
+                    continue
+                if item.name in ("Visible"):
+                    continue
+                input = style_node.inputs[item.identifier]
+                if not hasattr(input, "default_value"):
+                    continue
+                row = None
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
+                        row = panel.row()
+                else:
+                    row = box.row()
+                if row:
+                    row.prop(data=input, property="default_value", text=input.name)
         row = box.row()
 
 
