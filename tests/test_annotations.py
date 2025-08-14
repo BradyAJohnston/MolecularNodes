@@ -386,4 +386,16 @@ class TestAnnotations:
         t1 = session.add_trajectory(universe.select_atoms("resid 1"))
         t1.annotations.add_com(selection="resid 1")
         bpy.ops.render.render()
-        assert "mn_annotations" in bpy.data.images
+        assert mn.scene.compositor.annotations_image in bpy.data.images
+        scene = bpy.context.scene
+        assert scene.mn.auto_setup_compositor
+        assert scene.node_tree
+        nodes = scene.node_tree.nodes
+        mn_compositor_node_name = mn.scene.compositor.mn_compositor_node_name
+        assert mn_compositor_node_name in nodes
+        mn_compositor_node = nodes[mn_compositor_node_name]
+        assert (
+            mn_compositor_node.inputs["Image"].links[0].from_node.name
+            == "Render Layers"
+        )
+        assert mn_compositor_node.outputs["Image"].links[0].to_node.name == "Composite"

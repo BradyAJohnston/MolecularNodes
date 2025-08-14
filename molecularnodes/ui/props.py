@@ -55,7 +55,8 @@ def _entities_active_index_callback(self, context: bpy.context) -> None:  # type
         return
     # just setting view_layer.objects.active is not enough
     bpy.ops.object.select_all(action="DESELECT")  # deselect all objects
-    context.view_layer.objects.active = entity_object  # make active object
+    if entity_object.name in context.view_layer.objects:
+        context.view_layer.objects.active = entity_object  # make active object
     bpy.context.view_layer.update()  # update view layer to reflect changes
     if bpy.context.active_object:  # can be None for hidden objects
         bpy.context.active_object.select_set(True)  # set as selected object
@@ -299,6 +300,12 @@ class MolecularNodesSceneProperties(PropertyGroup):
         description="File to import (.cif, .bcif)",
         subtype="FILE_PATH",
         maxlen=0,
+    )
+
+    auto_setup_compositor: BoolProperty(  # type: ignore
+        name="Auto Setup",
+        description="Auto setup Molecular Nodes Compositor",
+        default=True,
     )
 
 
