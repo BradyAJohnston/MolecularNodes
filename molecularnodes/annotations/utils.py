@@ -25,6 +25,7 @@ def get_blender_supported_type(atype):
         float,
         tuple[float, float],
         tuple[float, float, float],
+        tuple[float, float, float, float],
     )
     if atype in supported_types:
         return atype
