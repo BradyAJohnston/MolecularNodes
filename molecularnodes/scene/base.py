@@ -277,6 +277,7 @@ class Canvas:
         end = self.frame_end if frame_end is None else frame_end
         if end < start:
             raise ValueError(f"End frame {end} cannot be less than start frame {start}")
+        n = len(str(end))
         frame_range = range(start, end + 1)
 
         scene = bpy.context.scene
@@ -299,7 +300,7 @@ class Canvas:
                 it = tqdm(frame_range, desc="Rendering frames")
                 # render individual frames
                 for frame in it:
-                    render_image = os.path.join(tmp_dir, str(frame).zfill(4)) + ".png"
+                    render_image = os.path.join(tmp_dir, str(frame).zfill(n)) + ".png"
                     # set the output file
                     scene.render.filepath = render_image
                     # set the frame - only frame_set updates animation data
@@ -314,7 +315,7 @@ class Canvas:
             strips = sequence_editor.strips  # .sequences is deprecated
             image_strip = None
             for frame in frame_range:
-                render_image = os.path.join(tmp_dir, str(frame).zfill(4)) + ".png"
+                render_image = os.path.join(tmp_dir, str(frame).zfill(n)) + ".png"
                 if image_strip is None:
                     image_strip = strips.new_image("name", render_image, 1, start)
                 else:
