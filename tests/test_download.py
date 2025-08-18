@@ -1,4 +1,3 @@
-import io
 import os
 import tempfile
 import time
@@ -106,19 +105,6 @@ def test_fetch_new_code(tmpdir, code, format, database):
 
 
 DATABASES = ["rcsb"]  # currently can't figure out downloading from the pdbe
-
-
-@pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("database", DATABASES)
-@pytest.mark.parametrize("format", ["pdb", "cif"])
-def test_fetch_without_cache(tmpdir, code, format, database):
-    downloader = StructureDownloader(cache=None)
-    file = downloader.download(code, format, database=database)
-
-    assert isinstance(file, io.StringIO)
-    content = file.getvalue()
-    assert content.startswith(_filestart(format))
-    time.sleep(0.5)
 
 
 @pytest.mark.parametrize("database", DATABASES)

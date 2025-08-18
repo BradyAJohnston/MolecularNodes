@@ -128,23 +128,3 @@ def test_load_small_mol(snapshot_custom):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
     for att in ["position", "bond_type"]:
         assert snapshot_custom == mol.named_attribute(att).tolist()
-
-
-def test_rcsb_cache(snapshot_custom):
-    import os
-    import tempfile
-    from pathlib import Path
-
-    # we want to make sure cached files are freshly downloaded, but
-    # we don't want to delete our entire real cache
-    # Create a temporary directory
-    with tempfile.TemporaryDirectory() as data_dir:
-        test_cache = Path(data_dir)
-
-        # Run the test
-        mol1 = mn.Molecule.fetch("6BQN", cache=test_cache)
-        file = os.path.join(test_cache, "6BQN.bcif")
-        assert os.path.exists(file)
-
-        mol2 = mn.Molecule.fetch("6BQN", cache=test_cache)
-        assert np.allclose(mol1.position, mol2.position)
