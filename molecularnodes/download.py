@@ -1,6 +1,6 @@
 import gzip
 import io
-import os
+import tempfile
 from pathlib import Path
 import requests
 
@@ -25,9 +25,7 @@ class FileDownloadPDBError(Exception):
 
 class StructureDownloader:
     def __init__(self, cache: str | Path | None = CACHE_DIR):
-        self.cache = str(Path(cache).absolute()) if cache else None
-        if self.cache and not os.path.isdir(self.cache):
-            os.makedirs(self.cache)
+        self.cache = Path(cache).absolute().mkdir(parents=True, exist_ok=True) if cache else None
 
     def download(
         self,
@@ -80,11 +78,11 @@ class StructureDownloader:
         filename = f"{code}.{format}"
 
         if self.cache:
-            file = os.path.join(self.cache, filename)
-            if os.path.exists(file):
-                return Path(file)
+            file = self.cache / filename
+            if file.exists():
+                return file
         else:
-            file = None
+            file = Path(tempfile.gettempdir()) / filename
 
         try:
             r = requests.get(self._url(code, format, database))
