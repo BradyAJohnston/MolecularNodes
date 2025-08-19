@@ -12,13 +12,16 @@ from ..nodes.geometry import (
 )
 
 
-# create a EntityType enum with strings for values, "md", "md-oxdna", "molecule", "star"
+# create a EntityType enum
+# These should match the entity_type EnumProperty in props.py
 class EntityType(Enum):
     MD = "md"
     MD_OXDNA = "md-oxdna"
     MOLECULE = "molecule"
     ENSEMBLE = "ensemble"
     DENSITY = "density"
+    ENSEMBLE_STAR = "ensemble-star"
+    ENSEMBLE_CELLPACK = "ensemble-cellpack"
 
 
 class MolecularEntity(

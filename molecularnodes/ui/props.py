@@ -330,12 +330,16 @@ class MolecularNodesObjectProperties(PropertyGroup):
         name="Entity Type",
         description="How the file was imported, dictating how MN interacts with it",
         items=(
+            ("None", "None", "Not an MN entity"),
             ("molecule", "Molecule", "A single molecule"),
             ("ensemble", "Ensemble", "A collection of molecules"),
-            ("density", "Density", "An electron density map"),
+            ("density", "Density", "A density grid"),
             ("md", "Trajectory", "A molecular dynamics trajectory"),
             ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory "),
+            ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
+            ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
         ),
+        default="None",
     )
 
     code: StringProperty(  # type: ignore

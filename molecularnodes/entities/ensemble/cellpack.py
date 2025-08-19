@@ -8,13 +8,14 @@ from ... import blender as bl
 from ... import color
 from ...nodes import nodes
 from ..utilities import create_object
-from .base import Ensemble
+from .base import Ensemble, EntityType
 from .reader import CellPackReader
 
 
 class CellPack(Ensemble):
     def __init__(self, file_path):
         super().__init__(file_path)
+        self._entity_type = EntityType.ENSEMBLE_CELLPACK
         self.file_type = self._file_type()
         self.file = CellPackReader(file_path)
         self.file.get_molecules()
@@ -22,6 +23,7 @@ class CellPack(Ensemble):
         self.color_entity = {}
         self._color_palette_path = Path(file_path).parent / "color_palette.json"
         self.object = self._create_data_object(name=f"{Path(file_path).name}")
+        self.object.mn.entity_type = self._entity_type.value
         self._create_object_instances(name=self.object.name, node_setup=False)
         self._setup_node_tree(fraction=0.1)
         # self._setup_colors()
@@ -80,6 +82,7 @@ class CellPack(Ensemble):
                 name=mol_id,
                 collection=collection,
             )
+            obj.mn.entity_type = self._entity_type.value
 
             if len(self.color_entity) > 0:
                 self._assign_colors(obj, array)

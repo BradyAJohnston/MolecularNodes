@@ -42,6 +42,8 @@ def test_load_cellpack(snapshot, format):
     file_path = data_dir / f"cellpack/square1.{format}"
 
     ens = mn.entities.ensemble.load_cellpack(file_path, node_setup=False, fraction=0.1)
+    assert ens._entity_type == mn.entities.base.EntityType.ENSEMBLE_CELLPACK
+    assert ens.object.mn.entity_type == ens._entity_type.value
 
     assert ens.name == Path(file_path).name
     assert snapshot == str(ens.object["chain_ids"])

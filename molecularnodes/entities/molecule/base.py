@@ -86,6 +86,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             name=name,
             collection=bl.coll.mn(),
         )
+        self.object.mn.entity_type = self._entity_type.value
         if self._reader is not None:
             self._store_object_custom_properties(self.object, self._reader)
         self._setup_frames_collection()
@@ -218,7 +219,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             code=code, format=format, database=database
         )
         mol = cls.load(file_path, name=code, remove_solvent=remove_solvent)
-        mol.object.mn["entity_type"] = "molecule"
         mol._code = code
 
         return mol
