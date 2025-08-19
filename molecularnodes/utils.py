@@ -1,5 +1,7 @@
 import json
+import os
 import sys
+from contextlib import ExitStack
 from typing import List
 import numpy as np
 from mathutils import Matrix
@@ -147,3 +149,64 @@ def count_value_changes(arr1, arr2):
     result[1:] = np.cumsum(combined_changes)
 
     return result
+
+
+class suppress_stdout(object):
+    """
+    A context manager that blocks stdout for its scope, usage:
+        with suppress_stdout():
+            do_something()
+
+    From: https://stackoverflow.com/a/14797594
+
+    """
+
+    def __init__(self, *args, **kw):
+        sys.stdout.flush()
+        self._origstdout = sys.stdout
+        self._oldstdout_fno = os.dup(sys.stdout.fileno())
+        self._devnull = os.open(os.devnull, os.O_WRONLY)
+
+    def __enter__(self):
+        self._newstdout = os.dup(1)
+        os.dup2(self._devnull, 1)
+        os.close(self._devnull)
+        sys.stdout = os.fdopen(self._newstdout, "w")
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout = self._origstdout
+        sys.stdout.flush()
+        os.dup2(self._oldstdout_fno, 1)
+
+
+class temp_override_property:
+    """
+    A context manager to temporarily override an object property
+
+    """
+
+    def __init__(self, obj, prop_name, value):
+        self.obj = obj
+        self.prop_name = prop_name
+        self.value = value
+        self.orig_value = None
+
+    def __enter__(self):
+        if not hasattr(self.obj, self.prop_name):
+            raise ValueError(f"Property {self.prop_name} not found")
+        self.orig_value = getattr(self.obj, self.prop_name)
+        setattr(self.obj, self.prop_name, self.value)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.orig_value is not None:
+            setattr(self.obj, self.prop_name, self.orig_value)
+
+
+def temp_override_properties(stack: ExitStack, properties: list) -> None:
+    """
+    Add multiple property overrides to an ExitStack
+
+    """
+    for property in properties:
+        stack.enter_context(temp_override_property(*property))

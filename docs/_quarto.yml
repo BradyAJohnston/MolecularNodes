@@ -59,6 +59,7 @@ website:
     - section: "MDAnalysis"
       contents:
       - "mda/example_mda.qmd"
+      - "mda/rendering.qmd"
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
