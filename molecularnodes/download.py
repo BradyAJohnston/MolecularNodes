@@ -1,6 +1,5 @@
 import gzip
 import io
-import tempfile
 from pathlib import Path
 import requests
 
