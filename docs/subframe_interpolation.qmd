@@ -1,0 +1,331 @@
+---
+title: "Subframe Interpolation for Smooth Trajectory Animation"
+format: html
+toc: true
+---
+
+# Introduction
+
+The SubframeInterpolator and AdaptiveSubframeInterpolator classes provide powerful tools for creating smooth animations by interpolating between existing trajectory frames. Instead of jumping abruptly from one frame to the next, these transforms generate intermediate "subframes" that create fluid motion.
+
+This is particularly useful for:
+- Creating smooth animations for publication or presentation
+- Analyzing motion patterns with higher temporal resolution
+- Generating high-quality renders without needing to increase trajectory output frequency
+
+# Basic Subframe Interpolation
+
+The simplest use case involves creating a fixed number of interpolated frames between each pair of original trajectory frames.
+
+```python
+import MDAnalysis as mda
+from molecularnodes.entities.trajectory.transforms import SubframeInterpolator
+
+# Load your trajectory
+u = mda.Universe("topology.pdb", "trajectory.xtc")
+
+# Create interpolator with 3 subframes between each original frame
+transform = SubframeInterpolator(
+    subframes=3,                    # Creates 4 total frames per original frame
+    interpolation="linear",         # Linear interpolation
+    periodic_correction=True        # Handle periodic boundaries
+)
+
+# Add to trajectory
+u.trajectory.add_transformations(transform)
+
+# Now the trajectory has 4x more frames with smooth interpolation
+for ts in u.trajectory[:20]:
+    print(f"Frame {ts.frame}: First atom at {ts.positions[0][:3]}")
+```
+
+With `subframes=3`, you get 4 total frames for each original frame: the original frame plus 3 interpolated frames. This creates smooth motion between the discrete trajectory points.
+
+# Interpolation Methods
+
+Different interpolation methods provide various motion characteristics:
+
+## Linear Interpolation
+The simplest method that creates constant-velocity motion between frames.
+
+```python
+linear_transform = SubframeInterpolator(
+    subframes=4,
+    interpolation="linear"
+)
+```
+
+## Sinusoidal Interpolation
+Creates smooth acceleration and deceleration using a sine function.
+
+```python
+smooth_transform = SubframeInterpolator(
+    subframes=4,
+    interpolation="sinusoidal"
+)
+```
+
+## Ease In-Out Interpolation
+Provides smooth start and end with constant velocity in the middle, ideal for natural-looking motion.
+
+```python
+natural_transform = SubframeInterpolator(
+    subframes=4,
+    interpolation="ease_in_out"
+)
+```
+
+## Cubic Interpolation
+Smooth interpolation using cubic polynomials.
+
+```python
+cubic_transform = SubframeInterpolator(
+    subframes=4,
+    interpolation="cubic"
+)
+```
+
+You can visualize how each interpolation method behaves:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Compare interpolation curves
+t_values = np.linspace(0, 1, 100)
+methods = ["linear", "sinusoidal", "ease_in_out", "cubic"]
+
+for method in methods:
+    transform = SubframeInterpolator(subframes=1, interpolation=method)
+    y_values = [transform.interpolation_func(t) for t in t_values]
+    plt.plot(t_values, y_values, label=method)
+
+plt.xlabel("Input parameter (t)")
+plt.ylabel("Interpolated value")
+plt.legend()
+plt.title("Interpolation Method Comparison")
+plt.show()
+```
+
+# Adaptive Subframe Interpolation
+
+For trajectories with varying amounts of motion, the adaptive interpolator automatically adjusts the number of subframes based on how much atoms move between frames.
+
+```python
+from molecularnodes.entities.trajectory.transforms import AdaptiveSubframeInterpolator
+
+# Create adaptive interpolator
+adaptive_transform = AdaptiveSubframeInterpolator(
+    max_subframes=8,              # Maximum subframes for high motion
+    min_subframes=1,              # Minimum subframes for low motion
+    motion_threshold=2.0,         # Motion threshold in Angstroms
+    interpolation="ease_in_out"   # Smooth interpolation method
+)
+
+u.trajectory.add_transformations(adaptive_transform)
+```
+
+The adaptive interpolator works by:
+1. Calculating the average atomic displacement between consecutive frames
+2. If motion is below the threshold, using minimum subframes
+3. If motion is above the threshold, scaling up to maximum subframes
+4. This optimizes performance while maintaining smoothness where needed
+
+```python
+# Demonstrate adaptation logic
+motions = [0.5, 1.0, 2.0, 4.0, 8.0]  # Different motion amounts in Angstroms
+for motion in motions:
+    adapted_subframes = adaptive_transform._adapt_subframes(motion)
+    print(f"Motion {motion:.1f}Å -> {adapted_subframes} subframes")
+```
+
+# Atom Group Selection
+
+You can apply interpolation to specific parts of your system while leaving others at their original positions.
+
+```python
+# Select only protein atoms for interpolation
+protein_atoms = u.select_atoms("protein")
+
+protein_transform = SubframeInterpolator(
+    subframes=4,
+    interpolation="sinusoidal",
+    ag=protein_atoms,              # Only interpolate protein
+    periodic_correction=True
+)
+
+# Solvent and ions remain at original frame positions
+# Only protein motion is smoothed
+u.trajectory.add_transformations(protein_transform)
+```
+
+This is useful when you want to:
+- Smooth protein conformational changes while keeping solvent discrete
+- Interpolate specific domains or chains independently
+- Focus computational resources on regions of interest
+
+# Integration with MolecularNodes
+
+The subframe interpolators integrate seamlessly with MolecularNodes for Blender visualization:
+
+```python
+import molecularnodes as mn
+
+# Step 1: Create trajectory object
+traj = mn.entities.Trajectory(u)
+traj.create_object()
+
+# Step 2: Add subframe interpolation to the underlying MDAnalysis trajectory
+transform = SubframeInterpolator(
+    subframes=3,
+    interpolation="ease_in_out",
+    periodic_correction=True
+)
+u.trajectory.add_transformations(transform)
+
+# Step 3: Set up Blender timeline
+# - Extend your timeline to 4x length (for 3 subframes)
+# - MolecularNodes will automatically show interpolated positions
+# - Render smooth, high-quality animations
+```
+
+When working in Blender:
+1. Set your frame range to accommodate the additional subframes
+2. The MolecularNodes object automatically updates with interpolated positions
+3. Render settings can take advantage of the smoother motion
+4. Final animations will show fluid motion instead of discrete jumps
+
+# Periodic Boundary Conditions
+
+For systems with periodic boundary conditions, the interpolator can handle atoms that cross box boundaries:
+
+```python
+# Enable periodic correction for wrapped coordinates
+transform = SubframeInterpolator(
+    subframes=3,
+    interpolation="linear",
+    periodic_correction=True  # Handles boundary crossings
+)
+```
+
+Without periodic correction, an atom jumping from one side of the box to the other would be interpolated through the entire box. With correction enabled, the interpolator takes the shortest path, maintaining physical realism.
+
+# Performance Considerations
+
+## Choosing Subframe Count
+- **2-4 subframes**: Good balance of smoothness and performance
+- **5-8 subframes**: Very smooth, higher computational cost
+- **>8 subframes**: Diminishing returns, use only for special cases
+
+## Memory Usage
+The transforms cache frame data for efficiency. For large systems:
+
+```python
+# Monitor memory usage
+import psutil
+process = psutil.Process()
+
+print(f"Memory before: {process.memory_info().rss / 1024**2:.1f} MB")
+
+# Add transforms and process frames
+u.trajectory.add_transformations(transform)
+for ts in u.trajectory[:100]:
+    pass  # Process frames
+
+print(f"Memory after: {process.memory_info().rss / 1024**2:.1f} MB")
+```
+
+## Interpolation Method Performance
+- **Linear**: Fastest, good for real-time preview
+- **Sinusoidal/Ease-in-out**: Slight performance cost, much smoother
+- **Cubic**: Highest quality, highest computational cost
+
+# Advanced Usage Examples
+
+## Multiple Transform Combination
+You can combine multiple transforms for complex effects:
+
+```python
+# Separate transforms for different atom groups
+protein_transform = SubframeInterpolator(
+    subframes=4, 
+    interpolation="ease_in_out",
+    ag=u.select_atoms("protein")
+)
+
+ligand_transform = SubframeInterpolator(
+    subframes=6,  # More subframes for ligand (smaller, faster motion)
+    interpolation="cubic",
+    ag=u.select_atoms("resname LIG")
+)
+
+u.trajectory.add_transformations(protein_transform, ligand_transform)
+```
+
+## Custom Interpolation Functions
+You can extend the system with custom interpolation methods:
+
+```python
+import math
+
+def custom_interpolation(t):
+    """Custom sigmoid-like interpolation"""
+    return 1 / (1 + math.exp(-10 * (t - 0.5)))
+
+# You would need to modify the SubframeInterpolator class to add custom functions
+# or create a subclass with additional interpolation methods
+```
+
+## Validation and Quality Control
+Always validate your interpolated trajectories:
+
+```python
+# Check interpolation quality
+original_frames = []
+interpolated_frames = []
+
+# Collect original frame positions
+u.trajectory.add_transformations()  # No transforms
+for ts in u.trajectory[::4]:  # Every 4th frame (original spacing)
+    original_frames.append(ts.positions.copy())
+
+# Collect interpolated positions
+u.trajectory.add_transformations(transform)
+for ts in u.trajectory:
+    interpolated_frames.append(ts.positions.copy())
+
+# Compare smoothness metrics
+def calculate_smoothness(positions):
+    """Calculate motion smoothness as velocity variance"""
+    velocities = np.diff(positions, axis=0)
+    return np.var(np.linalg.norm(velocities, axis=2))
+
+original_smoothness = calculate_smoothness(original_frames)
+interpolated_smoothness = calculate_smoothness(interpolated_frames)
+
+print(f"Original smoothness: {original_smoothness:.3f}")
+print(f"Interpolated smoothness: {interpolated_smoothness:.3f}")
+print(f"Improvement factor: {original_smoothness/interpolated_smoothness:.1f}x")
+```
+
+# Troubleshooting
+
+## Common Issues
+
+**Memory errors with large systems**: Reduce subframes or use atom group selection to limit interpolation scope.
+
+**Unexpected motion artifacts**: Check periodic boundary correction settings and interpolation method choice.
+
+**Performance issues**: Use adaptive interpolation or reduce subframes for less critical regions.
+
+**Integration problems**: Ensure MDAnalysis and MolecularNodes versions are compatible.
+
+## Best Practices
+
+1. **Start simple**: Begin with linear interpolation and 2-3 subframes
+2. **Test on small systems**: Validate behavior before applying to large trajectories  
+3. **Use adaptive interpolation**: Let the system optimize subframes automatically
+4. **Monitor resources**: Watch memory and CPU usage during processing
+5. **Validate results**: Always check that interpolated motion makes physical sense
+
+The subframe interpolation system provides powerful tools for creating professional-quality molecular animations with smooth, physically realistic motion between trajectory frames.
