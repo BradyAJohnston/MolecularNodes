@@ -1,6 +1,6 @@
 import bpy
 from ..nodes.arrange import arrange_tree
-from ..nodes.mn_compositor_node_group import mn_compositor_node_group
+from ..nodes.compositor import mn_compositor_node_group
 
 annotations_image = "mn_annotations"
 mn_compositor_node_name = "MN Compositor"
