@@ -303,7 +303,9 @@ def position_special_nodes(
             )
 
 
-def cleanup_orphaned_nodes(tree: bpy.types.NodeTree, max_iter: int = 100) -> None:
+def cleanup_orphaned_nodes(
+    tree: bpy.types.NodeTree, max_iter: int = 100, add_group_input: bool = True
+) -> None:
     """Remove nodes that are not connected to anything"""
     to_remove = []
     for _ in range(max_iter):
@@ -321,7 +323,7 @@ def cleanup_orphaned_nodes(tree: bpy.types.NodeTree, max_iter: int = 100) -> Non
 
         to_remove = []
 
-    if "Group Input" not in tree.nodes:
+    if add_group_input and "Group Input" not in tree.nodes:
         n_input = tree.nodes.new("NodeGroupInput")
         if "Join Geometry" in tree.nodes:
             tree.links.new(n_input.outputs[0], tree.nodes["Join Geometry"].inputs[0])
@@ -330,6 +332,7 @@ def cleanup_orphaned_nodes(tree: bpy.types.NodeTree, max_iter: int = 100) -> Non
 def arrange_tree(
     tree: bpy.types.NodeTree,
     spacing: typing.Tuple[float, float] = (50, 25),
+    add_group_input: bool = True,
 ) -> None:
     """Arrange nodes in a node tree based on their dependencies
 
@@ -351,7 +354,7 @@ def arrange_tree(
     Nodes are arranged from left to right based on their dependencies, with special
     handling for geometry nodes and group input/output nodes.
     """
-    cleanup_orphaned_nodes(tree)
+    cleanup_orphaned_nodes(tree, add_group_input=add_group_input)
     dependency_graph, socket_input_connection_count = build_dependency_graph(tree)
     nodes_in_dependency_order = topological_sort(dependency_graph)
     node_columns = organize_into_columns(nodes_in_dependency_order, dependency_graph)
