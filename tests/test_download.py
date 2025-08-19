@@ -1,16 +1,21 @@
+import gzip
+import io
 import os
 import tempfile
 import time
 from pathlib import Path
-import io
-import gzip
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 import biotite.database.rcsb as rcsb
 import pytest
 import requests
 from biotite.structure.io import load_structure
 import molecularnodes as mn
-from molecularnodes.download import FileDownloadPDBError, StructureDownloader, get_alphafold_url, CACHE_DIR
+from molecularnodes.download import (
+    CACHE_DIR,
+    FileDownloadPDBError,
+    StructureDownloader,
+    get_alphafold_url,
+)
 from .constants import codes
 
 # currently can't figure out downloading from other services
@@ -239,7 +244,7 @@ class TestAlphaFoldUrl:
         mock_response = Mock()
         mock_response.json.return_value = [{"pdbUrl": "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.pdb"}]
         mock_get.return_value = mock_response
-        
+
         url = get_alphafold_url("P12345", "pdb")
         assert url == "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.pdb"
         mock_get.assert_called_once_with("https://alphafold.ebi.ac.uk/api/prediction/P12345")
@@ -249,7 +254,7 @@ class TestAlphaFoldUrl:
         mock_response = Mock()
         mock_response.json.return_value = [{"cifUrl": "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.cif"}]
         mock_get.return_value = mock_response
-        
+
         url = get_alphafold_url("P12345", "cif")
         assert url == "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.cif"
 
@@ -270,13 +275,13 @@ class TestCacheBehavior:
         cache_dir = tmpdir.mkdir("cache")
         existing_file = cache_dir.join("test.cif")
         existing_file.write("existing content")
-        
+
         downloader = StructureDownloader(cache=str(cache_dir))
-        
+
         with patch.object(downloader, '_url'), \
              patch('requests.get') as mock_get:
             result = downloader.download("test", "cif")
-            
+
             # Should return existing file without making HTTP request
             assert isinstance(result, Path)
             assert result.name == "test.cif"
@@ -289,10 +294,10 @@ class TestCacheBehavior:
         mock_response.text = "test content"
         mock_response.content = b"test content"
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
         result = downloader.download("test", "cif")
-        
+
         assert isinstance(result, io.StringIO)
         assert result.getvalue() == "test content"
 
@@ -301,10 +306,10 @@ class TestCacheBehavior:
         mock_response = Mock()
         mock_response.content = b"binary content"
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
         result = downloader.download("test", "bcif")
-        
+
         assert isinstance(result, io.BytesIO)
         assert result.getvalue() == b"binary content"
 
@@ -314,7 +319,7 @@ class TestErrorHandling:
     @patch("requests.get")
     def test_http_error_raises_file_download_error(self, mock_get):
         mock_get.side_effect = requests.HTTPError("404 Not Found")
-        
+
         downloader = StructureDownloader(cache=None)
         with pytest.raises(FileDownloadPDBError, match="404 Not Found"):
             downloader.download("nonexistent", "cif")
@@ -329,7 +334,7 @@ class TestErrorHandling:
         mock_response = Mock()
         mock_response.content = "not bytes"  # Should be bytes for binary format
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
         with pytest.raises(ValueError, match="Binary content is not bytes"):
             downloader.download("test", "bcif")
@@ -339,7 +344,7 @@ class TestErrorHandling:
         mock_response = Mock()
         mock_response.text = b"not string"  # Should be string for text format
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
         with pytest.raises(ValueError, match="Text content is not str"):
             downloader.download("test", "cif")
@@ -351,28 +356,28 @@ class TestGzipDecompression:
     def test_gzipped_content_is_decompressed(self, mock_get):
         original_content = b"test binary content"
         gzipped_content = gzip.compress(original_content)
-        
+
         mock_response = Mock()
         mock_response.content = gzipped_content
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
         result = downloader.download("test", "bcif")
-        
+
         assert isinstance(result, io.BytesIO)
         assert result.getvalue() == original_content
 
     @patch("requests.get")
     def test_non_gzipped_binary_content_unchanged(self, mock_get):
         content = b"test binary content"
-        
+
         mock_response = Mock()
         mock_response.content = content
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
         result = downloader.download("test", "bcif")
-        
+
         assert isinstance(result, io.BytesIO)
         assert result.getvalue() == content
 
@@ -384,23 +389,23 @@ class TestInputSanitization:
         mock_response = Mock()
         mock_response.text = "content"
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
-        
+
         with patch.object(downloader, '_url') as mock_url:
             mock_url.return_value = "http://example.com"
             downloader.download("  test  ", "cif")
             # Check that the stripped code was used
             mock_url.assert_called_with("test", "cif", "rcsb")
 
-    @patch("requests.get") 
+    @patch("requests.get")
     def test_format_with_dot_is_stripped(self, mock_get):
         mock_response = Mock()
         mock_response.text = "content"
         mock_get.return_value = mock_response
-        
+
         downloader = StructureDownloader(cache=None)
-        
+
         with patch.object(downloader, '_url') as mock_url:
             mock_url.return_value = "http://example.com"
             downloader.download("test", ".cif")
@@ -416,12 +421,12 @@ class TestFileWriting:
         mock_response = Mock()
         mock_response.text = content
         mock_get.return_value = mock_response
-        
+
         cache_dir = tmpdir.mkdir("cache")
         downloader = StructureDownloader(cache=str(cache_dir))
-        
+
         result = downloader.download("test", "cif")
-        
+
         assert isinstance(result, Path)
         assert result.read_text() == content
 
@@ -431,11 +436,11 @@ class TestFileWriting:
         mock_response = Mock()
         mock_response.content = content
         mock_get.return_value = mock_response
-        
+
         cache_dir = tmpdir.mkdir("cache")
         downloader = StructureDownloader(cache=str(cache_dir))
-        
+
         result = downloader.download("test", "bcif")
-        
+
         assert isinstance(result, Path)
         assert result.read_bytes() == content
