@@ -40,15 +40,16 @@ def test_fail_download_pdb_large_structure_raises():
 
 @pytest.mark.parametrize("format", ["cif", "bcif", "pdb"])
 def test_compare_biotite(format):
-    downloader = StructureDownloader(cache=tempfile.TemporaryDirectory().name)
-    struc_download = load_structure(downloader.download("4ozs", format=format))
-    struc_biotite = load_structure(
-        rcsb.fetch(
-            "4ozs", format=format, target_path=tempfile.TemporaryDirectory().name
-        )
-    )
-    assert struc_download == struc_biotite
-    time.sleep(0.5)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        downloader = StructureDownloader(cache=temp_dir)
+        struc_download = load_structure(downloader.download("4ozs", format=format))
+
+        with tempfile.TemporaryDirectory() as biotite_temp_dir:
+            struc_biotite = load_structure(
+                rcsb.fetch("4ozs", format=format, target_path=biotite_temp_dir)
+            )
+            assert struc_download == struc_biotite
+            time.sleep(0.5)
 
 
 @pytest.mark.parametrize("code", codes)

@@ -37,9 +37,12 @@ class StructureDownloader:
     """
 
     def __init__(self, cache: str | Path | None = CACHE_DIR):
-        self.cache = (
-            Path(cache).absolute().mkdir(parents=True, exist_ok=True) if cache else None
-        )
+        if cache:
+            cache_path = Path(cache).absolute()
+            cache_path.mkdir(parents=True, exist_ok=True)
+            self.cache = cache_path
+        else:
+            self.cache = None
 
     def download(
         self,
@@ -103,7 +106,7 @@ class StructureDownloader:
             if file.exists():
                 return file
         else:
-            file = Path(tempfile.gettempdir()) / filename
+            file = None
 
         try:
             r = requests.get(self._url(code, format, database))
