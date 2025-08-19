@@ -3,6 +3,7 @@ import numpy as np
 from bpy.app.handlers import persistent
 from PIL import Image
 from .annotations.utils import render_annotations
+from .scene.compositor import annotations_image, setup_compositor
 
 
 # this update function requires a self and context input, as funcitons with these inputs
@@ -60,6 +61,9 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     Any changes needed before the rendering of a frame need to go in here
 
     """
+    if scene.mn.auto_setup_compositor:
+        # Setup compositor if not already done
+        setup_compositor(scene)
     # Render annotations to an image
     bpy.context.view_layer.update()
     render_scale = scene.render.resolution_percentage / 100
@@ -76,11 +80,10 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     if image_scale != 1:
         # scale down to actual render size
         image = image.resize((width, height))
-    bpy_image_name = "mn_annotations"
     # create blender image
-    if bpy_image_name not in bpy.data.images:
-        bpy.data.images.new(bpy_image_name, width, height)
-    bpy_image = bpy.data.images[bpy_image_name]
+    if annotations_image not in bpy.data.images:
+        bpy.data.images.new(annotations_image, width, height)
+    bpy_image = bpy.data.images[annotations_image]
     bpy_image.scale(width, height)
     # update from PIL image
     bpy_image.pixels[:] = (np.flipud(np.array(image).astype(float)) / 255.0).ravel()

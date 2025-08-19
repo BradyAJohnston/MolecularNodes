@@ -487,11 +487,15 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         if not self.visible:
             return
         # object visibility
-        if self._entity.object.hide_get():
+        object = self._entity.object
+        if object.hide_get():
+            return
+        # check if object is in current scene
+        if object.name not in self._scene.objects:
             return
         # calculate the min and max viewport distance of the bounding box verts
         # find bounding box verts
-        bb_verts = [co for co in bpy.data.objects[self._entity.object.name].bound_box]
+        bb_verts = [co for co in bpy.data.objects[object.name].bound_box]
         # viewport distance of the bounding box verts
         bb_verts_distances = []
         for vert in bb_verts:

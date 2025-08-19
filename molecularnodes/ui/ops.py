@@ -20,6 +20,7 @@ from ..nodes.geometry import (
     create_style_interface,
     get_final_style_nodes,
 )
+from ..scene.compositor import setup_compositor
 from ..session import get_session
 from . import node_info
 from .style import STYLE_ITEMS
@@ -1003,6 +1004,20 @@ class MN_OT_Remove_Annotation(Operator):
         )
 
 
+class MN_OT_Setup_Compositor(Operator):
+    """
+    Operator to setup compositor
+    """
+
+    bl_idname = "mn.setup_compositor"
+    bl_label = "Setup Compositor"
+    bl_description = "Setup Molecular Nodes Compositor"
+
+    def execute(self, context: Context):
+        setup_compositor(context.scene)
+        return {"FINISHED"}
+
+
 CLASSES = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
@@ -1024,4 +1039,5 @@ CLASSES = [
     MN_OT_Remove_Style,
     MN_OT_Add_Annotation,
     MN_OT_Remove_Annotation,
+    MN_OT_Setup_Compositor,
 ]

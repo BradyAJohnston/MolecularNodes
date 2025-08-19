@@ -1025,6 +1025,35 @@ class MN_PT_Annotations(bpy.types.Panel):
         row = box.row()
 
 
+class MN_PT_Compositor(bpy.types.Panel):
+    """
+    Panel for Compositor
+    """
+
+    bl_idname = "MN_PT_compositor"
+    bl_label = "Options"
+    bl_space_type = "NODE_EDITOR"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        return (
+            context.area.type == "NODE_EDITOR"
+            and context.space_data.tree_type == "CompositorNodeTree"
+        )
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+        box = layout.box()
+        row = box.row()
+        row.prop(scene.mn, "auto_setup_compositor")
+        row = box.row()
+        row.operator("mn.setup_compositor")
+        row.enabled = not scene.mn.auto_setup_compositor
+
+
 CLASSES = [
     MN_PT_Scene,
     MN_UL_EntitiesList,
@@ -1034,4 +1063,5 @@ CLASSES = [
     MN_PT_Styles,
     MN_UL_AnnotationsList,
     MN_PT_Annotations,
+    MN_PT_Compositor,
 ]
