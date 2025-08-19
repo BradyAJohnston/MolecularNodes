@@ -1,6 +1,5 @@
 import gzip
 import io
-import os
 from pathlib import Path
 import requests
 
@@ -11,8 +10,10 @@ class FileDownloadPDBError(Exception):
     """
     Exception raised for errors in the file download process.
 
-    Attributes:
-        message -- explanation of the error
+    Attributes
+    ----------
+    message : str
+        Explanation of the error
     """
 
     def __init__(
@@ -24,10 +25,23 @@ class FileDownloadPDBError(Exception):
 
 
 class StructureDownloader:
+    """
+    A class for downloading molecular structure files from various databases.
+
+    Parameters
+    ----------
+    cache : str, Path, or None, optional
+        Directory path for caching downloaded files. If None, files are not cached.
+        Defaults to CACHE_DIR.
+    """
+
     def __init__(self, cache: str | Path | None = CACHE_DIR):
-        self.cache = str(Path(cache).absolute()) if cache else None
-        if self.cache and not os.path.isdir(self.cache):
-            os.makedirs(self.cache)
+        if cache:
+            cache_path = Path(cache).absolute()
+            cache_path.mkdir(parents=True, exist_ok=True)
+            self.cache = cache_path
+        else:
+            self.cache = None
 
     def download(
         self,
@@ -35,23 +49,23 @@ class StructureDownloader:
         format: str = "cif",
         database: str = "rcsb",
     ) -> Path | io.BytesIO | io.StringIO:
-        """Downloads a structure from the specified protein data bank in the given format.
+        """Download a structure from the specified protein data bank in the given format.
 
         Parameters
         ----------
         code : str
             The code of the file to fetch. Supports both traditional 4-character codes
             and new format codes with 'pdb_' prefix (e.g., 'pdb_00009bdt').
-        format : str
-            The format of the file. Defaults to "cif".
-            Must be one of ['cif', 'pdb', 'bcif'].
-        database : str
-            The database to fetch the file from.
+        format : str, optional
+            The format of the file. Must be one of ['cif', 'pdb', 'bcif'].
+            Defaults to "cif".
+        database : str, optional
+            The database to fetch the file from. Must be one of ['rcsb', 'pdb', 'wwpdb', 'alphafold'].
             Defaults to 'rcsb'.
 
         Returns
         -------
-        Union[Path, io.BytesIO, io.StringIO]
+        Path or io.BytesIO or io.StringIO
             If cache is enabled, returns the path to the cached file as a Path.
             If cache is disabled, returns either:
             - io.BytesIO for binary formats (bcif)
@@ -60,9 +74,16 @@ class StructureDownloader:
         Raises
         ------
         ValueError
-            If the specified format is not supported.
+            If the specified format is not supported, or if new format PDB codes
+            are used with PDB format.
         FileDownloadPDBError
             If there is an error downloading the file from the database.
+
+        Examples
+        --------
+        >>> downloader = StructureDownloader()
+        >>> path = downloader.download("1abc", format="cif")
+        >>> path = downloader.download("pdb_00009bdt", format="bcif")
         """
         code = code.strip()
         format = format.strip(".")
@@ -80,9 +101,9 @@ class StructureDownloader:
         filename = f"{code}.{format}"
 
         if self.cache:
-            file = os.path.join(self.cache, filename)
-            if os.path.exists(file):
-                return Path(file)
+            file = self.cache / filename
+            if file.exists():
+                return file
         else:
             file = None
 
@@ -122,7 +143,27 @@ class StructureDownloader:
         return file
 
     def _url(self, code: str, format: str, database: str = "rcsb") -> str:
-        "Get the URL for downloading the given file form a particular database."
+        """Get the URL for downloading the given file from a particular database.
+
+        Parameters
+        ----------
+        code : str
+            The structure code to download.
+        format : str
+            The file format ('cif', 'pdb', or 'bcif').
+        database : str, optional
+            The database name. Defaults to 'rcsb'.
+
+        Returns
+        -------
+        str
+            The complete URL for downloading the file.
+
+        Raises
+        ------
+        ValueError
+            If the database is not currently supported.
+        """
 
         if database in ["rcsb", "pdb", "wwpdb"]:
             if format == "bcif":
@@ -130,36 +171,46 @@ class StructureDownloader:
             else:
                 return f"https://files.rcsb.org/download/{code}.{format}"
         elif database == "alphafold":
-            return self.get_alphafold_url(code, format)
+            return get_alphafold_url(code, format)
         else:
             raise ValueError(f"Database {database} not currently supported.")
 
-    def get_alphafold_url(self, code: str, format: str) -> str:
-        """Get the URL for downloading a structure from AlphaFold database.
 
-        Parameters
-        ----------
-        code : str
-            The UniProt ID or AlphaFold DB identifier.
-        format : str
-            The file format to download ('pdb', 'cif', or 'bcif').
+def get_alphafold_url(code: str, format: str) -> str:
+    """Get the URL for downloading a structure from AlphaFold database.
 
-        Returns
-        -------
-        str
-            The URL to download the structure file.
+    Parameters
+    ----------
+    code : str
+        The UniProt ID or AlphaFold DB identifier.
+    format : str
+        The file format to download ('pdb', 'cif', or 'bcif').
 
-        Raises
-        ------
-        ValueError
-            If the requested format is not supported.
-        """
-        if format not in ["pdb", "cif", "bcif"]:
-            raise ValueError(
-                f"Format {format} not currently supported from AlphaFold databse."
-            )
+    Returns
+    -------
+    str
+        The URL to download the structure file.
 
-        url = f"https://alphafold.ebi.ac.uk/api/prediction/{code}"
-        response = requests.get(url)
-        data = response.json()[0]
-        return data[f"{format}Url"]
+    Raises
+    ------
+    ValueError
+        If the requested format is not supported.
+    requests.RequestException
+        If there is an error fetching data from the AlphaFold API.
+
+    Examples
+    --------
+    >>> url = get_alphafold_url("P12345", "pdb")
+    >>> print(url)
+    https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.pdb
+    """
+    if format not in ["pdb", "cif", "bcif"]:
+        raise ValueError(
+            f"Format {format} not currently supported from AlphaFold database."
+        )
+
+    url = f"https://alphafold.ebi.ac.uk/api/prediction/{code}"
+    response = requests.get(url)
+    response.raise_for_status()  # This will raise an exception for HTTP errors
+    data = response.json()[0]
+    return data[f"{format}Url"]
