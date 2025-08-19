@@ -53,16 +53,24 @@ def create_annotation_type_inputs(
                 update=_create_update_callback(update_callback, attr),
             )
         elif hasattr(stype, "__name__") and stype.__name__ == "tuple":
+            subtype = "NONE"
             if str(stype) == "tuple[float, float]":
                 size = 2
                 default = (0.0, 0.0)
             elif str(stype) == "tuple[float, float, float]":
                 size = 3
                 default = (0.0, 0.0, 0.0)
+            elif str(stype) == "tuple[float, float, float, float]":
+                size = 4
+                default = (0.0, 0.0, 0.0, 0.0)
+                if "color" in attr.lower():
+                    default = (1.0, 1.0, 1.0, 1.0)
+                    subtype = "COLOR"
             else:
                 continue
             prop = FloatVectorProperty(
                 size=size,
+                subtype=subtype,
                 default=getattr(annotation_class, attr, default),
                 update=_create_update_callback(update_callback, attr),
             )

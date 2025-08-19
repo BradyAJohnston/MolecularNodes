@@ -14,6 +14,17 @@ from .utils import get_view_matrix, is_perspective_projection
 FONT_INTER = Path(__file__).parent / "fonts/Inter.woff2"
 
 
+class _get_params:
+    def __init__(self, interface: AnnotationInterface, overrides: dict = None):
+        self.interface = interface
+        self.overrides = overrides
+
+    def __getattr__(self, name):
+        if self.overrides and name in self.overrides:
+            return self.overrides[name]
+        return getattr(self.interface, name)
+
+
 class BaseAnnotation(metaclass=ABCMeta):
     """
     Base class for an Annotation
@@ -114,7 +125,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         else:
             return self._region.height
 
-    def draw_text_3d(self, pos_3d: Vector, text: str) -> None:
+    def draw_text_3d(self, pos_3d: Vector, text: str, overrides: dict = None) -> None:
         """
         Draw text at a given 3D position
 
@@ -126,10 +137,15 @@ class BaseAnnotation(metaclass=ABCMeta):
         text: str
             Text to display. '|' as multi-line separator
 
-        """
-        self._draw_text(pos_3d, text, is3d=True)
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
 
-    def draw_text_2d_norm(self, pos_2d: Vector, text: str) -> None:
+        """
+        self._draw_text(pos_3d, text, is3d=True, overrides=overrides)
+
+    def draw_text_2d_norm(
+        self, pos_2d: Vector, text: str, overrides: dict = None
+    ) -> None:
         """
         Draw text at a given 2D position (normalized co-ordinates) of Viewport.
 
@@ -140,6 +156,9 @@ class BaseAnnotation(metaclass=ABCMeta):
 
         text: str
             Text to display. '|' as multi-line separator
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
 
         """
         if pos_2d is None:
@@ -172,9 +191,9 @@ class BaseAnnotation(metaclass=ABCMeta):
             # calculate the actual position with respect to the camera view origin
             new_x = camera_view_x0 + (pos_x * camera_view_width)
             new_y = camera_view_y0 + (pos_y * camera_view_height)
-        self._draw_text((new_x, new_y), text, is3d=False)
+        self._draw_text((new_x, new_y), text, is3d=False, overrides=overrides)
 
-    def draw_text_2d(self, pos_2d: Vector, text: str) -> None:
+    def draw_text_2d(self, pos_2d: Vector, text: str, overrides: dict = None) -> None:
         """
         Draw text at a given 2D position (in pixels) of Viewport.
 
@@ -186,17 +205,22 @@ class BaseAnnotation(metaclass=ABCMeta):
         text: str
             Text to display. '|' as multi-line separator
 
-        """
-        self._draw_text(pos_2d, text, is3d=False)
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
 
-    def _draw_text(self, pos: Vector, text: str, is3d: bool = False) -> None:
+        """
+        self._draw_text(pos_2d, text, is3d=False, overrides=overrides)
+
+    def _draw_text(
+        self, pos: Vector, text: str, is3d: bool = False, overrides: dict = None
+    ) -> None:
         """Internal: Draw text 3D or 2D"""
         if pos is None:
             return
         if not isinstance(pos, Vector):
             pos = Vector(pos)
         pos_2d = pos
-        params = self.interface
+        params = _get_params(self.interface, overrides)
         if is3d:
             text_pos = pos
             # check if pointer is required
@@ -206,7 +230,9 @@ class BaseAnnotation(metaclass=ABCMeta):
                 nv.normalize()
                 pointer_begin = pos + (nv * params.pointer_length)
                 text_pos = pointer_begin + (nv * 0.5)  # offset text a bit
-                self._draw_line(pointer_begin, pos, v2_arrow=True, is3d=True)
+                self._draw_line(
+                    pointer_begin, pos, v2_arrow=True, is3d=True, overrides=overrides
+                )
             pos_2d = self._get_2d_point(text_pos)
             if pos_2d is None:
                 return
@@ -328,6 +354,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         mid_text: str = None,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
+        overrides: dict = None,
     ) -> None:
         """
         Draw a line between two points in 3D space
@@ -340,24 +367,35 @@ class BaseAnnotation(metaclass=ABCMeta):
         v2: Vector
             3D co-ordinates of the second point
 
-        v1_text: str
+        v1_text: str, optional
             Optional text to display at v1
 
-        v2_text: str
+        v2_text: str, optional
             Optional text to display at v2
 
-        mid_text: str
+        mid_text: str, optional
             Optional text to display at the middle of the line
 
-        v1_arrow: bool
+        v1_arrow: bool, optional
             Whether to display an arrow at v1
 
-        v2_arrow: bool
+        v2_arrow: bool, optional
             Whether to display an arrow at v2
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
 
         """
         self._draw_line(
-            v1, v2, v1_text, v2_text, mid_text, v1_arrow, v2_arrow, is3d=True
+            v1,
+            v2,
+            v1_text,
+            v2_text,
+            mid_text,
+            v1_arrow,
+            v2_arrow,
+            is3d=True,
+            overrides=overrides,
         )
 
     def draw_line_2d(
@@ -369,6 +407,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         mid_text: str = None,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
+        overrides: dict = None,
     ) -> None:
         """
         Draw a line between two points in 2D viewport space
@@ -381,24 +420,35 @@ class BaseAnnotation(metaclass=ABCMeta):
         v2: Vector
             2D co-ordinates of the second point
 
-        v1_text: str
+        v1_text: str, optional
             Optional text to display at v1
 
-        v2_text: str
+        v2_text: str, optional
             Optional text to display at v2
 
-        mid_text: str
+        mid_text: str, optional
             Optional text to display at the middle of the line
 
-        v1_arrow: bool
+        v1_arrow: bool, optional
             Whether to display an arrow at v1
 
-        v2_arrow: bool
+        v2_arrow: bool, optional
             Whether to display an arrow at v2
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
 
         """
         self._draw_line(
-            v1, v2, v1_text, v2_text, mid_text, v1_arrow, v2_arrow, is3d=False
+            v1,
+            v2,
+            v1_text,
+            v2_text,
+            mid_text,
+            v1_arrow,
+            v2_arrow,
+            is3d=False,
+            overrides=overrides,
         )
 
     def distance(self, v1: Vector, v2: Vector) -> float:
@@ -429,6 +479,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         start_dv: Vector = None,
         c_arrow: bool = False,
         cc_arrow: bool = False,
+        overrides: dict = None,
     ):
         """
         Draw a circle around a 3D point in the plane perpendicular to the
@@ -460,6 +511,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         cc_arrow: bool, optional
             Whether to display counter clockwise arrow. Default is False
 
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
         """
         # convert to vectors
         if not isinstance(center, Vector):
@@ -482,11 +536,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         for i in range(n_steps):
             p2 = mat_trans2 @ mat_rot @ mat_trans1 @ p1
             if i == 0 and cc_arrow:
-                self._draw_line(p1, p2, v1_arrow=True, is3d=True)
+                self._draw_line(p1, p2, v1_arrow=True, is3d=True, overrides=overrides)
             elif i == n_steps - 1 and c_arrow:
-                self._draw_line(p1, p2, v2_arrow=True, is3d=True)
+                self._draw_line(p1, p2, v2_arrow=True, is3d=True, overrides=overrides)
             else:
-                self._draw_line(p1, p2, is3d=True)
+                self._draw_line(p1, p2, is3d=True, overrides=overrides)
             p1 = p2.copy()
 
     def _get_a_normal_plane_point(self, normal: Vector):
@@ -514,18 +568,21 @@ class BaseAnnotation(metaclass=ABCMeta):
         v1_arrow: bool = False,
         v2_arrow: bool = False,
         is3d: bool = False,
+        overrides: dict = None,
     ) -> None:
         """Internal: Draw line 3D or 2D"""
         if v1 is None or v2 is None:
             return
-        self._draw_arrow_line(v1, v2, v1_arrow, v2_arrow, is3d=is3d)
+        self._draw_arrow_line(
+            v1, v2, v1_arrow, v2_arrow, is3d=is3d, overrides=overrides
+        )
         if v1_text is not None:
-            self._draw_text(v1, v1_text, is3d=is3d)
+            self._draw_text(v1, v1_text, is3d=is3d, overrides=overrides)
         if v2_text is not None:
-            self._draw_text(v2, v2_text, is3d=is3d)
+            self._draw_text(v2, v2_text, is3d=is3d, overrides=overrides)
         if mid_text is not None:
             mid = (v1 + v2) / 2
-            self._draw_text(mid, mid_text, is3d=is3d)
+            self._draw_text(mid, mid_text, is3d=is3d, overrides=overrides)
 
     def _draw_arrow_line(
         self,
@@ -534,6 +591,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         v1_arrow: bool = False,
         v2_arrow: bool = False,
         is3d: bool = False,
+        overrides: dict = None,
     ) -> None:
         """Internal: Draw a line between two 2D points with arrows"""
         if v1 is None or v2 is None:
@@ -546,21 +604,23 @@ class BaseAnnotation(metaclass=ABCMeta):
             if v1_2d is None or v2_2d is None:
                 return
         # actual line
-        self._draw_line_2d(v1_2d, v2_2d)
+        self._draw_line_2d(v1_2d, v2_2d, overrides=overrides)
         if v1_arrow:
             # v1 arrow lines
-            va, vb = self._get_arrow_end_points(v1_2d, v2_2d)
-            self._draw_line_2d(v1_2d, va)
-            self._draw_line_2d(v1_2d, vb)
+            va, vb = self._get_arrow_end_points(v1_2d, v2_2d, overrides=overrides)
+            self._draw_line_2d(v1_2d, va, overrides=overrides)
+            self._draw_line_2d(v1_2d, vb, overrides=overrides)
         if v2_arrow:
             # v2 arrow lines
-            va, vb = self._get_arrow_end_points(v2_2d, v1_2d)
-            self._draw_line_2d(v2_2d, va)
-            self._draw_line_2d(v2_2d, vb)
+            va, vb = self._get_arrow_end_points(v2_2d, v1_2d, overrides=overrides)
+            self._draw_line_2d(v2_2d, va, overrides=overrides)
+            self._draw_line_2d(v2_2d, vb, overrides=overrides)
 
-    def _get_arrow_end_points(self, v1: Vector, v2: Vector) -> tuple:
+    def _get_arrow_end_points(
+        self, v1: Vector, v2: Vector, overrides: dict = None
+    ) -> tuple:
         """Internal: Get arrow end point positions"""
-        params = self.interface
+        params = _get_params(self.interface, overrides)
         arrow_size = params.arrow_size * self._scale
         v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), arrow_size)
         vi = (v[0] - v1[0], v[1] - v1[1])
@@ -574,11 +634,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         )
         return (va, vb)
 
-    def _draw_line_2d(self, v1: Vector, v2: Vector) -> None:
+    def _draw_line_2d(self, v1: Vector, v2: Vector, overrides: dict = None) -> None:
         """Internal: Draw a line between two 2D points"""
         if v1 is None or v2 is None:
             return
-        params = self.interface
+        params = _get_params(self.interface, overrides)
         rgba = params.line_color
         line_width = params.line_width * self._scale
         if self._render_mode:
