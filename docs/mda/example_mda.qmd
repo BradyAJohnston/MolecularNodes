@@ -4,7 +4,7 @@ description: "An example of using MDAnalysis with MolecularNodes."
 author: Brady Johnston
 ---
 
-Here is some exampel code that uses MDAnalysis to load a trajectory and visualize it with MolecularNodes.
+Here is some example code that uses MDAnalysis to load a trajectory and visualize it with MolecularNodes.
 
 ```{python}
 import molecularnodes as mn
