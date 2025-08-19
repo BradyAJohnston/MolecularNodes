@@ -421,19 +421,19 @@ def panel_object(layout, context):
     if object is None:
         # When an object is deleted, context.ative_object is None
         return
-    layout.prop(object.mn, "entity_type")
+    row = layout.row()
+    row.prop(object.mn, "entity_type")
+    row.enabled = False
     try:
         mol_type = object.mn.entity_type
     except AttributeError:
         return None
-    if mol_type == "":
+    if mol_type == "None":
         layout.label(text="No MN object selected")
         return None
-    if mol_type == "pdb":
-        layout.label(text=f"PDB: {object.mn.code.upper()}")
     if mol_type.startswith("md"):
         panel_md_properties(layout, context)
-    if mol_type == "star":
+    if mol_type == "ensemble-star":
         layout.label(text="Ensemble")
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object), context=context)
@@ -636,6 +636,15 @@ class MN_PT_Entities(bpy.types.Panel):
         else:
             op.uuid = props.entities[props.entities_active_index].name
 
+        if props.entities_active_index == -1:
+            return
+        # display entity type of the selected entity
+        uuid = props.entities[props.entities_active_index].name
+        entity = context.scene.MNSession.get(uuid)
+        row = layout.row()
+        row.prop(entity.object.mn, "entity_type")
+        row.enabled = False
+
 
 class MN_PT_trajectory(bpy.types.Panel):
     """
@@ -657,8 +666,9 @@ class MN_PT_trajectory(bpy.types.Panel):
             return False
         uuid = scene.mn.entities[active_index].name
         try:
-            return (
-                scene.MNSession.get(uuid).object.mn.entity_type == EntityType.MD.value
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MD_OXDNA.value,
             )
         except (LinkedObjectError, AttributeError):
             return False

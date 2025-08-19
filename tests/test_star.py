@@ -39,6 +39,8 @@ def test_starfile_attributes(type):
 def test_load_starfiles():
     file = data_dir / "starfile/clathrin.star"
     _ensemble = mn.entities.ensemble.load_starfile(file)
+    assert _ensemble._entity_type == mn.entities.base.EntityType.ENSEMBLE_STAR
+    assert _ensemble.object.mn.entity_type == _ensemble._entity_type.value
 
 
 def test_categorical_attributes():

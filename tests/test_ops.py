@@ -43,6 +43,8 @@ def test_op_fetch_alphafold(tmpdir):
             database="alphafold",
         )
         mol = scene.MNSession.match(o.latest())
+        assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
+        assert mol.object.mn.entity_type == mol._entity_type.value
 
     assert mol.name == "Q7Z434"
 
@@ -58,6 +60,8 @@ def test_op_local(snapshot_custom, code, file_format):
     with ObjectTracker() as o:
         bpy.ops.mn.import_local(filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
+        assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
+        assert mol.object.mn.entity_type == mol._entity_type.value
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_local(filepath=str(path), centre=True, centre_type="centroid")
@@ -83,6 +87,8 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     traj_op = bpy.context.scene.MNSession.match(obj_1)
     assert traj_op.name == name
+    assert traj_op._entity_type == mn.entities.base.EntityType.MD
+    assert traj_op.object.mn.entity_type == traj_op._entity_type.value
 
     traj_func = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
 

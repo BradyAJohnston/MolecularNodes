@@ -123,6 +123,8 @@ class TestOXDNAReading:
         traj.create_object()
 
         assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
+        assert traj._entity_type == mn.entities.base.EntityType.MD_OXDNA
+        assert traj.object.mn.entity_type == traj._entity_type.value
 
     def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
         session = mn.session.get_session()

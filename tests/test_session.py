@@ -41,8 +41,10 @@ def universe():
 
 def test_add_trajectory(session, universe):
     # add Universe as trajectory
-    session.add_trajectory(universe, name="u1")
+    t1 = session.add_trajectory(universe, name="u1")
     assert "u1" in bpy.data.objects
+    assert t1._entity_type == mn.entities.base.EntityType.MD
+    assert t1.object.mn.entity_type == t1._entity_type.value
     # add AtomGroup as trajectory
     ag = universe.select_atoms("name CA")
     session.add_trajectory(ag, name="ag1")
