@@ -12,7 +12,7 @@ dependencies = [
     "PyYAML",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
-requires-python = "~=3.11"
+requires-python = "~=3.11.0"
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
