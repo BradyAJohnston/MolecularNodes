@@ -37,13 +37,13 @@ def assess_node_equivalency(name, style):
 
     # check names bidirectionally
     for bname in blender_names:
-        assert bname in style_class_bnames, (
-            f"MN Style {name} has field {bname} that is not found in the styles class"
-        )
+        assert (
+            bname in style_class_bnames
+        ), f"MN Style {name} has field {bname} that is not found in the styles class"
     for sname in style_class_bnames:
-        assert sname in blender_names, (
-            f"Internal Style class for {name} has field {sname} that is not found in the upstream MN Style Node"
-        )
+        assert (
+            sname in blender_names
+        ), f"Internal Style class for {name} has field {sname} that is not found in the upstream MN Style Node"
 
     for [bname, bvalue] in blender_inputs:
         for pdata in style_class.socketdata:
@@ -52,13 +52,13 @@ def assess_node_equivalency(name, style):
                 local_val = getattr(style_class, local_name)
                 # floats come from C++ and are artificially long
                 if isinstance(bvalue, float):
-                    assert math.isclose(bvalue, local_val, rel_tol=0.1, abs_tol=0.1), (
-                        f"( Checking Floats ) In style {name}, field {local_name}: Values {bvalue} and {local_val} are not equivalent"
-                    )
+                    assert math.isclose(
+                        bvalue, local_val, rel_tol=0.1, abs_tol=0.1
+                    ), f"( Checking Floats ) In style {name}, field {local_name}: Values {bvalue} and {local_val} are not equivalent"
                 else:
-                    assert local_val == bvalue, (
-                        f"In style {name}, field {local_name}: Values {bvalue} and {local_val} are not equivalent"
-                    )
+                    assert (
+                        local_val == bvalue
+                    ), f"In style {name}, field {local_name}: Values {bvalue} and {local_val} are not equivalent"
 
     # equivalency check.
     assert style_class_bnames.difference(blender_names) == set()

@@ -225,7 +225,9 @@ class TestUrlGeneration:
 
     def test_url_unsupported_database(self):
         downloader = StructureDownloader(cache=None)
-        with pytest.raises(ValueError, match="Database unsupported not currently supported"):
+        with pytest.raises(
+            ValueError, match="Database unsupported not currently supported"
+        ):
             downloader._url("1abc", "cif", "unsupported")
 
     @patch("molecularnodes.download.get_alphafold_url")
@@ -242,24 +244,33 @@ class TestAlphaFoldUrl:
     @patch("requests.get")
     def test_get_alphafold_url_pdb(self, mock_get):
         mock_response = Mock()
-        mock_response.json.return_value = [{"pdbUrl": "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.pdb"}]
+        mock_response.json.return_value = [
+            {"pdbUrl": "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.pdb"}
+        ]
         mock_get.return_value = mock_response
 
         url = get_alphafold_url("P12345", "pdb")
         assert url == "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.pdb"
-        mock_get.assert_called_once_with("https://alphafold.ebi.ac.uk/api/prediction/P12345")
+        mock_get.assert_called_once_with(
+            "https://alphafold.ebi.ac.uk/api/prediction/P12345"
+        )
 
     @patch("requests.get")
     def test_get_alphafold_url_cif(self, mock_get):
         mock_response = Mock()
-        mock_response.json.return_value = [{"cifUrl": "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.cif"}]
+        mock_response.json.return_value = [
+            {"cifUrl": "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.cif"}
+        ]
         mock_get.return_value = mock_response
 
         url = get_alphafold_url("P12345", "cif")
         assert url == "https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.cif"
 
     def test_get_alphafold_url_unsupported_format(self):
-        with pytest.raises(ValueError, match="Format xyz not currently supported from AlphaFold database"):
+        with pytest.raises(
+            ValueError,
+            match="Format xyz not currently supported from AlphaFold database",
+        ):
             get_alphafold_url("P12345", "xyz")
 
     @patch("requests.get")
@@ -278,8 +289,7 @@ class TestCacheBehavior:
 
         downloader = StructureDownloader(cache=str(cache_dir))
 
-        with patch.object(downloader, '_url'), \
-             patch('requests.get') as mock_get:
+        with patch.object(downloader, "_url"), patch("requests.get") as mock_get:
             result = downloader.download("test", "cif")
 
             # Should return existing file without making HTTP request
@@ -326,7 +336,10 @@ class TestErrorHandling:
 
     def test_new_format_pdb_code_with_pdb_format_raises_error(self):
         downloader = StructureDownloader(cache=None)
-        with pytest.raises(ValueError, match="New format PDB codes .* are not compatible with .pdb format"):
+        with pytest.raises(
+            ValueError,
+            match="New format PDB codes .* are not compatible with .pdb format",
+        ):
             downloader.download("pdb_00001abc", "pdb")
 
     @patch("requests.get")
@@ -392,7 +405,7 @@ class TestInputSanitization:
 
         downloader = StructureDownloader(cache=None)
 
-        with patch.object(downloader, '_url') as mock_url:
+        with patch.object(downloader, "_url") as mock_url:
             mock_url.return_value = "http://example.com"
             downloader.download("  test  ", "cif")
             # Check that the stripped code was used
@@ -406,7 +419,7 @@ class TestInputSanitization:
 
         downloader = StructureDownloader(cache=None)
 
-        with patch.object(downloader, '_url') as mock_url:
+        with patch.object(downloader, "_url") as mock_url:
             mock_url.return_value = "http://example.com"
             downloader.download("test", ".cif")
             # Check that the stripped format was used
