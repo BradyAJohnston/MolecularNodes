@@ -4,7 +4,6 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
-from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve
@@ -793,10 +792,7 @@ class Trajectory(MolecularEntity):
                 co[:] for co in bpy.data.objects[self.object.name].bound_box[:]
             ]
             return bb_verts_3d
-        vertices_world = [Vector(atom.position) for atom in selection.atoms]
-        x, y, z = zip(*(v for v in vertices_world))
-        v0 = Vector((min(x), min(y), min(z))) * self.world_scale
-        v1 = Vector((max(x), max(y), max(z))) * self.world_scale
+        v0, v1 = selection.bbox() * self.world_scale
         bb_verts_3d = [
             (v0[0], v0[1], v0[2]),
             (v0[0], v0[1], v1[2]),
