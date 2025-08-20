@@ -5,6 +5,7 @@ from contextlib import ExitStack
 from pathlib import Path
 import bpy
 from tqdm.auto import tqdm
+from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..utils import suppress_stdout, temp_override_properties
 from .engines import EEVEE, Cycles
@@ -162,15 +163,18 @@ class Canvas:
         self.scene.frame_end = value
 
     def frame_object(self, obj: bpy.types.Object | MolecularEntity) -> None:
+        """
+        Frame an object or Molecular entity
+
+        Parameters
+        ----------
+        obj : bpy.types.Object | MolecularEntity
+            Blender object or Molecular entity to frame.
+
+        """
         if isinstance(obj, MolecularEntity):
             obj = obj.object
-
-        prev_sel = bpy.context.selected_objects
-        obj.select_set(True)
-        bpy.ops.view3d.camera_to_view_selected()
-        obj.select_set(False)
-        for o in prev_sel:
-            o.select_set(True)
+        blender_utils.look_at_object(obj)
 
     def scene_reset(
         self,

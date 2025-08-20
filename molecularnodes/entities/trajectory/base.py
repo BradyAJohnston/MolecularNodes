@@ -4,9 +4,11 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
+from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve
+from ...blender.utils import look_at_bbox, look_at_object
 from ...nodes.geometry import (
     add_style_branch,
 )
@@ -19,6 +21,7 @@ from ...utils import (
     fraction,
     frame_mapper,
     frames_to_average,
+    temp_override_property,
 )
 from ..base import EntityType, MolecularEntity
 from .annotations import TrajectoryAnnotationManager
@@ -782,3 +785,76 @@ class Trajectory(MolecularEntity):
         self.object.mn.styles_active_index = self.tree.nodes.find(node_style.name)
 
         return self
+
+    def _get_3d_bbox(self, selection: mda.AtomGroup) -> list[tuple]:
+        """Get the 3D bounding box vertices of atoms in an AtomGroup"""
+        if selection is None:
+            bb_verts_3d = [
+                co[:] for co in bpy.data.objects[self.object.name].bound_box[:]
+            ]
+            return bb_verts_3d
+        vertices_world = [Vector(atom.position) for atom in selection.atoms]
+        x, y, z = zip(*(v for v in vertices_world))
+        v0 = Vector((min(x), min(y), min(z))) * self.world_scale
+        v1 = Vector((max(x), max(y), max(z))) * self.world_scale
+        bb_verts_3d = [
+            (v0[0], v0[1], v0[2]),
+            (v0[0], v0[1], v1[2]),
+            (v0[0], v1[1], v0[2]),
+            (v0[0], v1[1], v1[2]),
+            (v1[0], v0[1], v0[2]),
+            (v1[0], v0[1], v1[2]),
+            (v1[0], v1[1], v0[2]),
+            (v1[0], v1[1], v1[2]),
+        ]
+        return bb_verts_3d
+
+    def look_at(self, selection: str | AtomGroup, frame: int = None) -> None:
+        """
+        Frame camera to a selection within the trajectory
+
+        Parameters
+        ----------
+
+        selection : str | AtomGroup
+            A selection phrase or AtomGroup
+
+        frame: int, optional
+            Frame number of trajectory to use for calculating bounds.
+            When not specified, current trajectory frame is used
+
+        """
+        if frame is not None:
+            if frame < 0 or frame >= self.n_frames:
+                raise ValueError(
+                    f"{frame} is not within range [0, {self.n_frames - 1}]"
+                )
+        else:
+            frame = self.uframe
+        # temporarily set trajectory frame to specified value
+        with temp_override_property(self, "uframe", frame):
+            if selection is None:
+                # look at the full object when no selection specified
+                look_at_object(self.object)
+                return
+            if isinstance(selection, AtomGroup):
+                atom_group = selection
+            elif isinstance(selection, str):
+                # allow multiple comma separated selection phrases as well
+                selection_array = selection.split(",")
+                try:
+                    atom_group = self.universe.select_atoms(*selection_array)
+                except Exception:
+                    raise ValueError(f"Invalid {selection} phrase")
+            else:
+                raise ValueError(f"{selection} is neither a str or AtomGroup")
+
+            if atom_group.n_atoms == 0:
+                # look at the full object when selection is empty
+                look_at_object(self.object)
+                return
+
+            # get the 3D bounding box vertices of the selected AtomGroup
+            bb_verts_3d = self._get_3d_bbox(atom_group)
+            # look at the bounding box
+            look_at_bbox(bb_verts_3d)

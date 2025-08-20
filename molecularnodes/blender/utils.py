@@ -56,3 +56,29 @@ def get_viewport_region_from_context(context) -> tuple:
             return (region, rv3d)
         rv3d = context.space_data.region_quadviews[i]
     return (region, rv3d)
+
+
+def look_at_object(obj: bpy.types.Object) -> None:
+    """Set camera to look at an object"""
+    prev_sel = bpy.context.selected_objects
+    obj.select_set(True)
+    bpy.ops.view3d.camera_to_view_selected()
+    obj.select_set(False)
+    for o in prev_sel:
+        o.select_set(True)
+
+
+def look_at_bbox(bbox: list[tuple]):
+    """Set camera to look at a bounding box"""
+    # create a temporary mesh from bounding box vertices
+    bb_mesh = bpy.data.meshes.new("bb")
+    bb_mesh.from_pydata(bbox, [], [])
+    bb_mesh.update()
+    # create a temporary object from mesh data
+    bb_obj = bpy.data.objects.new("temp_bb_object", bb_mesh)
+    # link temporary object to scene
+    bpy.context.collection.objects.link(bb_obj)
+    # frame the temporary object
+    look_at_object(bb_obj)
+    # remove temporary object from scene
+    bpy.data.objects.remove(bb_obj, do_unlink=True)
