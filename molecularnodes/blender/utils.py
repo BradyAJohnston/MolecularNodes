@@ -64,10 +64,16 @@ def get_bounding_box(obj: bpy.types.Object) -> list[tuple]:
 
 def look_at_object(obj: bpy.types.Object) -> None:
     """Set camera to look at an object"""
+    # save current selected objects list
     prev_sel = bpy.context.selected_objects
+    # de-select all objects in the scene
+    for o in bpy.data.objects:
+        o.select_set(False)
+    # select this object and set camera view
     obj.select_set(True)
     bpy.ops.view3d.camera_to_view_selected()
     obj.select_set(False)
+    # restore previous object selections
     for o in prev_sel:
         o.select_set(True)
 
