@@ -58,6 +58,10 @@ def get_viewport_region_from_context(context) -> tuple:
     return (region, rv3d)
 
 
+def get_bounding_box(obj: bpy.types.Object) -> list[tuple]:
+    return [co[:] for co in obj.bound_box[:]]
+
+
 def look_at_object(obj: bpy.types.Object) -> None:
     """Set camera to look at an object"""
     prev_sel = bpy.context.selected_objects

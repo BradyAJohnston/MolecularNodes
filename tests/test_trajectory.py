@@ -330,27 +330,20 @@ class TestTrajectory:
         assert len(t1.styles) == 0
         session.remove_trajectory(t1)
 
-    def test_look_at(self, universe):
+    def test_get_view(self, universe):
         session = mn.session.get_session()
         t1 = session.add_trajectory(universe)
-        camera = bpy.context.scene.camera
-        initial_location = camera.location.copy()
-        # look at resid 1
-        t1.look_at(selection="resid 1")
-        location1 = camera.location.copy()
-        assert location1 != initial_location
-        # look at resid 1 at trajectory frame 3
-        t1.look_at(selection="resid 1", frame=3)
-        location2 = camera.location.copy()
-        assert location2 != location1
-        # look at resid 2
-        t1.look_at(selection="resid 2")
-        location3 = camera.location.copy()
-        assert location3 != location1
-        # look at resid 1 again
-        t1.look_at(selection="resid 1")
-        location4 = camera.location.copy()
-        assert location4 == location1
+        # view of resid 1
+        v1 = t1.get_view(selection="resid 1")
+        # view of resid 1 at trajectory frame 3
+        v2 = t1.get_view(selection="resid 1", frame=3)
+        assert v2 != v1
+        # view of resid 2
+        v3 = t1.get_view(selection="resid 2")
+        assert v3 != v1 and v3 != v2
+        # view of whole object
+        v4 = t1.get_view()
+        assert v4 != v1 and v4 != v2 and v4 != v3
 
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])

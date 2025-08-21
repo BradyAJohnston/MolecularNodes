@@ -5,6 +5,7 @@ import bpy
 from databpy import (
     BlenderObject,
 )
+from ..blender import utils as blender_utils
 from ..nodes import nodes
 from ..nodes.geometry import (
     GeometryNodeInterFace,
@@ -97,3 +98,10 @@ class MolecularEntity(
             name=f"MN_{self.name}", input_name="Atoms", is_modifier=True, fallback=False
         )
         self.object.modifiers[0].node_group = tree  # type: ignore
+
+    def get_view(self) -> None:
+        """
+        Get the 3D bounding box of the entity object
+
+        """
+        return blender_utils.get_bounding_box(self.object)

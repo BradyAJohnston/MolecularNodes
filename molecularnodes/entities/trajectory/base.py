@@ -7,7 +7,7 @@ import numpy.typing as npt
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve
-from ...blender.utils import look_at_bbox, look_at_object
+from ...blender import utils as blender_utils
 from ...nodes.geometry import (
     add_style_branch,
 )
@@ -788,10 +788,7 @@ class Trajectory(MolecularEntity):
     def _get_3d_bbox(self, selection: mda.AtomGroup) -> list[tuple]:
         """Get the 3D bounding box vertices of atoms in an AtomGroup"""
         if selection is None:
-            bb_verts_3d = [
-                co[:] for co in bpy.data.objects[self.object.name].bound_box[:]
-            ]
-            return bb_verts_3d
+            return blender_utils.get_bounding_box(self.object)
         v0, v1 = selection.bbox() * self.world_scale
         bb_verts_3d = [
             (v0[0], v0[1], v0[2]),
@@ -805,15 +802,16 @@ class Trajectory(MolecularEntity):
         ]
         return bb_verts_3d
 
-    def look_at(self, selection: str | AtomGroup, frame: int = None) -> None:
+    def get_view(self, selection: str | AtomGroup = None, frame: int = None) -> None:
         """
-        Frame camera to a selection within the trajectory
+        Get the 3D bounding box of a selection within the trajectory
 
         Parameters
         ----------
 
-        selection : str | AtomGroup
+        selection : str | AtomGroup, optional
             A selection phrase or AtomGroup
+            When not specified, the whole entity is considered
 
         frame: int, optional
             Frame number of trajectory to use for calculating bounds.
@@ -830,9 +828,8 @@ class Trajectory(MolecularEntity):
         # temporarily set trajectory frame to specified value
         with temp_override_property(self, "uframe", frame):
             if selection is None:
-                # look at the full object when no selection specified
-                look_at_object(self.object)
-                return
+                # return bbox of object when no selection specified
+                return self._get_3d_bbox(None)
             if isinstance(selection, AtomGroup):
                 atom_group = selection
             elif isinstance(selection, str):
@@ -846,11 +843,8 @@ class Trajectory(MolecularEntity):
                 raise ValueError(f"{selection} is neither a str or AtomGroup")
 
             if atom_group.n_atoms == 0:
-                # look at the full object when selection is empty
-                look_at_object(self.object)
-                return
+                # return bbox of object when selection is empty
+                return self._get_3d_bbox(None)
 
-            # get the 3D bounding box vertices of the selected AtomGroup
-            bb_verts_3d = self._get_3d_bbox(atom_group)
-            # look at the bounding box
-            look_at_bbox(bb_verts_3d)
+            # return the 3D bounding box vertices of the selected AtomGroup
+            return self._get_3d_bbox(atom_group)
