@@ -330,6 +330,21 @@ class TestTrajectory:
         assert len(t1.styles) == 0
         session.remove_trajectory(t1)
 
+    def test_get_view(self, universe):
+        session = mn.session.get_session()
+        t1 = session.add_trajectory(universe)
+        # view of resid 1
+        v1 = t1.get_view(selection="resid 1")
+        # view of resid 1 at trajectory frame 3
+        v2 = t1.get_view(selection="resid 1", frame=3)
+        assert v2 != v1
+        # view of resid 2
+        v3 = t1.get_view(selection="resid 2")
+        assert v3 != v1 and v3 != v2
+        # view of whole object
+        v4 = t1.get_view()
+        assert v4 != v1 and v4 != v2 and v4 != v3
+
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):

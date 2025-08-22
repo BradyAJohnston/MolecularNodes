@@ -5,8 +5,10 @@ from contextlib import ExitStack
 from pathlib import Path
 import bpy
 from tqdm.auto import tqdm
+from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..utils import suppress_stdout, temp_override_properties
+from .camera import Camera, viewpoints
 from .engines import EEVEE, Cycles
 
 try:
@@ -39,6 +41,7 @@ class Canvas:
             self.scene_reset(template=template)
         self.engine = engine
         self.resolution = resolution
+        self.camera = Camera()
 
     @property
     def scene(self) -> bpy.types.Scene:
@@ -161,16 +164,50 @@ class Canvas:
         """
         self.scene.frame_end = value
 
-    def frame_object(self, obj: bpy.types.Object | MolecularEntity) -> None:
+    def frame_object(
+        self, obj: bpy.types.Object | MolecularEntity, viewpoint: viewpoints = None
+    ) -> None:
+        """
+        Frame an object or Molecular entity
+
+        Parameters
+        ----------
+        obj : bpy.types.Object | MolecularEntity
+            Blender object or Molecular entity to frame.
+
+        viewpoint: str, optional
+            Viewing direction along an axis
+            One of ["default", "front", "back", "top", "bottom", "left", "right"]
+
+        """
         if isinstance(obj, MolecularEntity):
             obj = obj.object
+        # set the camera viewpoint if specified
+        if viewpoint is not None:
+            self.camera.set_viewpoint(viewpoint)
+        # set the camera to look at the object
+        blender_utils.look_at_object(obj)
 
-        prev_sel = bpy.context.selected_objects
-        obj.select_set(True)
-        bpy.ops.view3d.camera_to_view_selected()
-        obj.select_set(False)
-        for o in prev_sel:
-            o.select_set(True)
+    def frame_view(self, view: list[tuple], viewpoint: viewpoints = None) -> None:
+        """
+        Frame one or more views of Molecular entities
+        Multiple views can be added with + to combine into a single view
+
+        Parameters
+        ----------
+        view: list[tuple]
+            A bounding box (set of 8 3D vertices) of the region of interest
+
+        viewpoint: str, optional
+            Viewing direction along an axis
+            One of ["default", "front", "back", "top", "bottom", "left", "right"]
+
+        """
+        # set the camera viewpoint if specified
+        if viewpoint is not None:
+            self.camera.set_viewpoint(viewpoint)
+        # set the camera to look at the bounding box of the view
+        blender_utils.look_at_bbox(view)
 
     def scene_reset(
         self,
@@ -204,7 +241,7 @@ class Canvas:
             File format of the rendered image.
 
         """
-        scene = bpy.context.scene
+        scene = self.scene
         render_settings = scene.render
         image_settings = render_settings.image_settings
         render_frame = scene.frame_current if frame is None else frame
@@ -280,7 +317,7 @@ class Canvas:
         n = len(str(end))
         frame_range = range(start, end + 1)
 
-        scene = bpy.context.scene
+        scene = self.scene
         render_settings = scene.render
         image_settings = render_settings.image_settings
         # create a temporary directory
