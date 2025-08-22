@@ -12,6 +12,7 @@ Here is an example that uses Canavs to render images and animations of MDAnalysi
 import warnings
 import molecularnodes as mn
 import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import PSF, DCD
 
 warnings.filterwarnings("ignore")
 
@@ -24,11 +25,8 @@ canvas = mn.Canvas()
 ## Add Universe to Blender
 
 ```{python}
-from pathlib import Path
-folder =  Path("../../") / "tests/data/md_ppr"
-
 # load universe from topology and trajectory files
-u = mda.Universe(folder / "adk.psf", folder / "adk_dims.dcd")
+u = mda.Universe(PSF, DCD)
 
 # get Molecular Nodes Session
 session = mn.session.get_session()
