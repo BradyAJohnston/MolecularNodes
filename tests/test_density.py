@@ -9,8 +9,6 @@ from molecularnodes.nodes import nodes
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
-bpy.utils.expose_bundled_modules()
-
 
 @pytest.fixture
 def density_file():

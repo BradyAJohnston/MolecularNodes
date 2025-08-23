@@ -1,17 +1,18 @@
-import math
+from math import degrees, radians
 from typing import Literal, get_args
 import bpy
 
-viewpoints = Literal["default", "front", "back", "top", "bottom", "left", "right"]
-viewpoint_rotation_eulers = {
+Viewpoints = Literal["default", "front", "back", "top", "bottom", "left", "right"]
+
+_viewpoint_rotation_eulers = {
     # "default" is the camera rotation as per the template
-    "default": (math.radians(70.402), math.radians(0), math.radians(0)),
-    "front": (math.radians(90), math.radians(0), math.radians(0)),
-    "back": (math.radians(90), math.radians(0), math.radians(-180)),
-    "top": (math.radians(0), math.radians(0), math.radians(0)),
-    "bottom": (math.radians(-180), math.radians(0), math.radians(0)),
-    "left": (math.radians(-270), math.radians(0), math.radians(-90)),
-    "right": (math.radians(-270), math.radians(0), math.radians(-270)),
+    "default": (radians(70.402), radians(0), radians(0)),
+    "front": (radians(90), radians(0), radians(0)),
+    "back": (radians(90), radians(0), radians(-180)),
+    "top": (radians(0), radians(0), radians(0)),
+    "bottom": (radians(-180), radians(0), radians(0)),
+    "left": (radians(-270), radians(0), radians(-90)),
+    "right": (radians(-270), radians(0), radians(-270)),
 }
 
 
@@ -29,46 +30,56 @@ class Camera:
 
     @property
     def camera(self) -> bpy.types.Camera:
-        """Camera object"""
+        """Get Camera object"""
         return bpy.context.scene.camera
 
     @property
     def camera_data(self) -> bpy.types.Camera:
-        "Camera data"
+        """Get Camera data"""
         return self.camera.data
 
     @property
     def lens(self) -> float:
-        """Camera focal length"""
+        """Get Camera focal length"""
         return self.camera_data.lens
 
     @lens.setter
     def lens(self, value) -> None:
-        """Camera focal length"""
+        """Set Camera focal length"""
         self.camera_data.lens = value
 
     @property
     def clip_start(self) -> float:
-        """Camera near clipping distance"""
+        """Get Camera near clipping distance"""
         return self.camera_data.clip_start
 
     @clip_start.setter
     def clip_start(self, value) -> None:
-        """Camera near clipping distance"""
+        """Set Camera near clipping distance"""
         self.camera_data.clip_start = value
 
     @property
     def clip_end(self) -> float:
-        """Camera far clipping distance"""
+        """Get Camera far clipping distance"""
         return self.camera_data.clip_end
 
     @clip_end.setter
     def clip_end(self, value) -> None:
-        """Camera far clipping distance"""
+        """Set Camera far clipping distance"""
         self.camera_data.clip_end = value
 
-    def set_viewpoint(self, viewpoint: viewpoints) -> None:
+    @property
+    def rotation(self) -> tuple[float, float, float]:
+        """Get Camera rotation in degrees (XYZ)"""
+        return tuple(degrees(angle) for angle in self.camera.rotation_euler)
+
+    @rotation.setter
+    def rotation(self, angles: tuple[float, float, float]) -> None:
+        """Set Camera rotation in degrees (XYZ)"""
+        self.camera.rotation_euler = tuple(radians(angle) for angle in angles)
+
+    def set_viewpoint(self, viewpoint: Viewpoints) -> None:
         """Set viewpoint to a preset"""
-        if viewpoint not in get_args(viewpoints):
-            raise ValueError(f"{viewpoint} is not one of {get_args(viewpoints)}")
-        self.camera.rotation_euler = viewpoint_rotation_eulers[viewpoint]
+        if viewpoint not in get_args(Viewpoints):
+            raise ValueError(f"{viewpoint} is not one of {get_args(Viewpoints)}")
+        self.camera.rotation_euler = _viewpoint_rotation_eulers[viewpoint]

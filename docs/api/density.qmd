@@ -1,0 +1,188 @@
+---
+title: Density
+jupyter: python3
+execute:
+  daemon: false
+---
+
+## Setup Molecular Nodes
+
+```{python}
+import molecularnodes as mn
+
+# register Molecular Nodes
+mn.register()
+# install template
+mn.template.install()
+# create a canvas object
+canvas = mn.Canvas()
+```
+
+### Add 1EHE Molecule
+
+```{python}
+# fetch 1EHE and add cartoon style with uniform color and transparency
+mol = mn.Molecule.fetch("1EHE").add_style("cartoon", color=(0.2, 1.0, 0.3, 0.5))
+```
+
+```{python}
+# frame molecule and render
+canvas.frame_object(mol)
+canvas.snapshot()
+```
+
+## Add APBS density example
+
+```{python}
+from pathlib import Path
+
+apbs_sample = Path("../../") / "tests/data/apbs.dx.gz"
+
+# load density file
+d = mn.entities.density.io.load(
+    file_path=apbs_sample,
+    style="density_iso_surface",
+    overwrite=True,
+)
+```
+
+### Set ISO Value
+
+```{python}
+# get the density style
+ds = d.styles[0]
+```
+
+```{python}
+# set iso value
+ds.iso_value = 1
+```
+
+## Show Density Grid and Info
+
+```{python}
+# add density grid annotation
+dg = d.annotations.add_grid_axes()
+# add density info annotation
+di = d.annotations.add_density_info()
+```
+
+```{python}
+# frame molecule and render
+canvas.frame_view(mol.get_view(), viewpoint="front")
+canvas.snapshot()
+```
+
+```{python}
+# hide density grid and info
+dg.visible = di.visible = False
+```
+
+## Density View
+
+```{python}
+# frame density and render
+canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.snapshot()
+```
+
+### ISO Value = 25
+
+```{python}
+# set iso value
+ds.iso_value = 25
+```
+
+```{python}
+# frame density and render
+canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.snapshot()
+```
+
+### Contours
+
+```{python}
+# reset ISO value to 1
+ds.iso_value = 1
+```
+
+```{python}
+# enable contours
+ds.show_contours = True
+# set contour thickness
+ds.contour_thickness = 0.1
+ds.contour_color = (1.0, 1.0, 1.0, 0.5)
+# use ds.only_contours to only show contours
+```
+
+```{python}
+# frame density and render
+canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.snapshot()
+```
+
+### Slicing
+
+Density grids can be sliced from `left`, `right`, `front`, `back`, `top` and `bottom` as a percentage of the grid width along that direction.
+
+```{python}
+# remove molecule style
+mol.styles[0].remove()
+```
+
+```{python}
+# slice the grid from the left 35%
+ds.slice_left = 35
+```
+
+```{python}
+# frame density and render
+canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.snapshot()
+```
+
+### Rotated View
+
+```{python}
+# rotate camera 45 degress to left from front view
+canvas.camera.rotation = (90, 0, -45)
+```
+
+```{python}
+# frame density and render
+canvas.frame_view(d.get_view())
+canvas.snapshot()
+```
+
+### Material
+
+```{python}
+# disable contours
+ds.show_contours = False
+```
+
+```{python}
+# set material
+ds.material = "MN Flat Outline"
+```
+
+```{python}
+# frame density and render
+canvas.frame_view(d.get_view())
+canvas.snapshot()
+```
+
+### Colors
+
+```{python}
+# set color for positive ISO values
+ds.positive_color = (0.7, 1.0, 0.7, 1.0)
+# set color for negative ISO values
+ds.negative_color = (0.7, 0.0, 1.0, 1.0)
+```
+
+```{python}
+# frame density and render
+canvas.frame_view(d.get_view())
+canvas.snapshot()
+```
