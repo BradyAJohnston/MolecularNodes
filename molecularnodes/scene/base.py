@@ -8,7 +8,7 @@ from tqdm.auto import tqdm
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..utils import suppress_stdout, temp_override_properties
-from .camera import Camera, viewpoints
+from .camera import Camera, Viewpoints
 from .engines import EEVEE, Cycles
 
 try:
@@ -165,7 +165,7 @@ class Canvas:
         self.scene.frame_end = value
 
     def frame_object(
-        self, obj: bpy.types.Object | MolecularEntity, viewpoint: viewpoints = None
+        self, obj: bpy.types.Object | MolecularEntity, viewpoint: Viewpoints = None
     ) -> None:
         """
         Frame an object or Molecular entity
@@ -188,7 +188,7 @@ class Canvas:
         # set the camera to look at the object
         blender_utils.look_at_object(obj)
 
-    def frame_view(self, view: list[tuple], viewpoint: viewpoints = None) -> None:
+    def frame_view(self, view: list[tuple], viewpoint: Viewpoints = None) -> None:
         """
         Frame one or more views of Molecular entities
         Multiple views can be added with + to combine into a single view

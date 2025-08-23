@@ -6,6 +6,7 @@ website:
       text: Introduction
     - api/styles.qmd
     - api/materials.qmd
+    - api/density.qmd
     - text: '---'
     - contents:
       - api/reference/index.qmd

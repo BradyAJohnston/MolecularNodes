@@ -142,6 +142,8 @@ class Grids(Density):
             The path to the converted .vdb file.
         """
 
+        bpy.utils.expose_bundled_modules()
+
         is_pyopenvdb = False
         if bpy.app.version >= (4, 4, 0):
             import openvdb as vdb  # type: ignore
