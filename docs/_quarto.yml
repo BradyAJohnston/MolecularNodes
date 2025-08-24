@@ -96,6 +96,7 @@ quartodoc:
     - api/styles.qmd
     - api/materials.qmd
     - api/density.qmd
+    - api/canvas.qmd
     - text: "---"
     - section: "Reference"
       contents:
