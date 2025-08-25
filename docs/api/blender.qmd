@@ -1,0 +1,6 @@
+---
+title: Blender
+description: Learnings from Blender Python programming
+---
+
+This document captures some learnings from Blender Python programming.

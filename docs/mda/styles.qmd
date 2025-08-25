@@ -1,0 +1,9 @@
+---
+title: Styles
+description: "Examples of using Styles"
+jupyter: python3
+execute:
+  daemon: false
+---
+
+Trajectory Styles.

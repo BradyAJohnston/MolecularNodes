@@ -1,9 +1,12 @@
 ---
 title: Density
+description: "Examples of using the Density entity API"
 jupyter: python3
 execute:
   daemon: false
 ---
+
+The Density entity can be used to load density grids into Blender. It uses MDAnalysis [`GridDataFormats`](https://www.mdanalysis.org/GridDataFormats/) library and supports a wide variety of [formats](https://www.mdanalysis.org/GridDataFormats/gridData/formats.html).
 
 ## Setup Molecular Nodes
 
@@ -186,3 +189,56 @@ ds.negative_color = (0.7, 0.0, 1.0, 1.0)
 canvas.frame_view(d.get_view())
 canvas.snapshot()
 ```
+
+## Annotations
+
+The bundled annotation types for Densities are:
+
+- `density_info` - For info about the density grid
+- `grid_axes` - For displaying the grid axes
+- `label_2d` - For adding a generic 2d label in viewport / render
+- `label_3d` - For adding a generic 3d label
+
+### density_info
+
+Display the density grid info.
+
+The input parameters for this annotation are:
+
+- `location` - Normalized 2d location (0.0 - 1.0) to show the info wrt viewport / render
+- `show_filename` - Whether to display the grid filename
+- `show_threshold` - Whether to display the ISO value
+- `show_origin` - Whether to display the origin coordinates of the grid
+- `show_delta` - Whether to display the grid lengths along the axes
+- `show_shape` - Whether to display the grid size along the axes
+
+### grid_axes
+
+Display the grid axes.
+
+The input parameters for this annotation are:
+
+- `show_length` - Whether to show the length of each axis
+- `units` - The units to display for the axis length
+
+### label_2d
+
+Display a generic 2d label in the viewport / render.
+
+The input parameters for this annotation are:
+
+- `text` - Text to display
+- `location` - Normalized location (0.0 - 1.0) to show the text wrt viewport / render
+
+### label_3d
+
+Display a generic 3d label on the density grid.
+
+The input parameters for this annotation are:
+
+- `text` - Text to display
+- `location` - 3d coordinates in grid to display text
+
+### Custom Annotations
+
+A custom density annotation class has to extend `DensityAnnotation` and implement the `draw` method. Optional `defaults` method can be used to set defaults for the annotation and a `validate` method that can validate inputs when they change can be implemented. The custom class will have access to the density entity via `self.density`, the density grid object (`Grid`) via `self.density.grid` and the annotation params via `self.interface`. Please see the Annotations API for all the methods available to draw onto the viewport / renders from the `draw` code.
