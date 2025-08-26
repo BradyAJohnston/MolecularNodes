@@ -42,7 +42,7 @@ t = session.add_trajectory(u, style="cartoon")
 
 ## Adding Annotations
 
-Annotations can be added using the `add_<annotation_type>` method of the annotations manager of an entity. Each entity can have different annotation types supported. For example, Trajectories have annotation types like `atom_info`, `com`, `com_distance`, `canonical_dihedrals` and `universe_info`. All entities that support annotations have common annotations types `label_2d` and `label_3d`.
+Annotations can be added using the `add_<annotation_type>` method of the annotations manager of an entity. Each entity can have different annotation types supported. For example, Trajectories have annotation types like [`atom_info`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.AtomInfo), [`com`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COM), [`com_distance`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COMDistance), [`canonical_dihedrals`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.CanonicalDihedrals) and [`universe_info`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.UniverseInfo). All entities that support annotations have common annotations types [`label_2d`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label2D) and [`label_3d`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label2D).
 
 Here is how to access the annotations manager of an entity:
 
@@ -187,11 +187,11 @@ t.annotations.clear()
 
 ## Custom Annotations
 
-Custom annotation types can be added to entities by extending the entity specific base annotation class. For example, to add a custom Trajectory annotation, a new class that extends `TrajectoryAnnotation` has to be written. Custom annotation types will be automatically registered and can be used the same way as described earlier. The GUI to add and configure the annotation will also be automatically available.
+Custom annotation types can be added to entities by extending the entity specific base annotation class. For example, to add a custom Trajectory annotation, a new class that extends [`TrajectoryAnnotation`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation) has to be written. Custom annotation types will be automatically registered and can be used the same way as described earlier. The GUI to add and configure the annotation will also be automatically available.
 
 ### Create a custom annotation
 
-A custom trajectory annotation class has to extend `TrajectoryAnnotation` and implement the `draw` method. Optional `defaults` method can be used to set defaults for the annotation and a `validate` method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via `self.trajectory`, universe via `self.trajectory.universe` and the annotation params via `self.interface`.
+A custom trajectory annotation class has to extend [`TrajectoryAnnotation`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation) and implement the [`draw`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw) method. Optional [`defaults`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.defaults) method can be used to set defaults for the annotation and a [`validate`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.validate) method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via `self.trajectory`, universe via `self.trajectory.universe` and the annotation params via `self.interface`.
 
 ```{python}
 # Add a CutomAnnotation class
@@ -244,9 +244,9 @@ ca = t.annotations.add_custom_annotation(selection="resid 75")
 ca
 ```
 
-### `unregister`
+### [`unregister`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.unregister)
 
-Custom annotations get automatically registered with the entity's annotation manager (eg: `TrajectoryAnnotationManager` for Trajectories). They can be manually unregistered using the `unregister` method.
+Custom annotations get automatically registered with the entity's annotation manager (eg: [`TrajectoryAnnotationManager`](eference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager) for Trajectories). They can be manually unregistered using the [`unregister`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.unregister) method.
 
 ```{python}
 # unregister the annotation
@@ -254,9 +254,9 @@ manager = mn.entities.trajectory.TrajectoryAnnotationManager
 manager.unregister(CustomAnnotation)
 ```
 
-### `register`
+### [`register`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.register)
 
-Custom annotations get automatically registered with the entity's annotation manager (eg: TrajectoryAnnotationManager for Trajectories). They can be manually re-registered using the `register` method if they have been unregistered.
+Custom annotations get automatically registered with the entity's annotation manager (eg: [`TrajectoryAnnotationManager`](eference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager) for Trajectories). They can be manually re-registered using the [`register`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.register) method if they have been unregistered.
 
 ```{python}
 # re-register the custom annotation manually
@@ -270,12 +270,12 @@ Custom annotations can use the drawing utilities available from the base annotat
 
 The following utility methods are currently available:
 
-- `distance` - Distance between two vectors
-- `draw_text_2d` - Draw text at a given 2D position (in pixels) of Viewport
-- `draw_text_2d_norm` - Draw text at a given 2D position (normalized co-ordinates) of Viewport.
-- `draw_text_3d` - Draw text at a given 3D position
-- `draw_line_2d` - Draw a line between two points in 2D viewport space
-- `draw_line_3d` - Draw a line between two points in 3D space
-- `draw_circle_3d` - Draw a circle around a 3D point in the plane perpendicular to the given normal
+- [`distance`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.distance) - Distance between two vectors
+- [`draw_text_2d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d) - Draw text at a given 2D position (in pixels) of Viewport
+- [`draw_text_2d_norm`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm) - Draw text at a given 2D position (normalized co-ordinates) of Viewport.
+- [`draw_text_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_3d) - Draw text at a given 3D position
+- [`draw_line_2d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_line_2d) - Draw a line between two points in 2D viewport space
+- [`draw_line_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_line_3d) - Draw a line between two points in 3D space
+- [`draw_circle_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d) - Draw a circle around a 3D point in the plane perpendicular to the given normal
 
-These methods can be used within the `draw` method of a custom annotation. Please see the API reference for `annotations.base` for details about these methods.
+These methods can be used within the `draw` method of a custom annotation. Please see the API reference for [`annotations.base`](reference/annotations.base.html) for details about these methods.
