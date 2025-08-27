@@ -5,7 +5,7 @@ execute:
   daemon: false
 ---
 
-Here is an example that uses Canavs to render images and animations of MDAnalysis Universes.
+Here is an example that uses [Canavs](../api/canvas.html) to render images and animations of MDAnalysis Universes.
 
 
 ```{python}

@@ -1,0 +1,281 @@
+---
+title: Annotations
+description: Annotations API
+jupyter: python3
+execute:
+  daemon: false
+---
+
+Annotations API allows adding annotations to molecular entities.
+
+## Setup Molecular Nodes
+
+```{python}
+import molecularnodes as mn
+
+# register Molecular Nodes
+mn.register()
+# install template
+mn.template.install()
+# create a canvas object
+canvas = mn.Canvas()
+```
+
+## Add a Trajectory Entity
+
+```{python}
+import warnings
+
+import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
+
+warnings.filterwarnings("ignore")
+
+# load universe
+u = mda.Universe(PSF, DCD)
+# add universes to Blender
+# get MN session
+session = mn.session.get_session()
+# add trajectory
+t = session.add_trajectory(u, style="cartoon")
+```
+
+## Adding Annotations
+
+Annotations can be added using the `add_<annotation_type>` method of the annotations manager of an entity. Each entity can have different annotation types supported. For example, Trajectories have annotation types like [`atom_info`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.AtomInfo), [`com`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COM), [`com_distance`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COMDistance), [`canonical_dihedrals`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.CanonicalDihedrals) and [`universe_info`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.UniverseInfo). All entities that support annotations have common annotations types [`label_2d`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label2D) and [`label_3d`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label2D).
+
+Here is how to access the annotations manager of an entity:
+
+```{python}
+# annotations manager
+t.annotations
+```
+
+Available annotation types can be seen as follows:
+
+```{python}
+# available annotation types
+[a for a in t.annotations.__dir__() if a.startswith("add_")]
+```
+
+Each annotation type can have different input parameters. A common parameter `name` can be passed to name the annotation for easier name based lookups later. All the parameters to the `add_<annotation_type>` method have to be keyword params.
+
+The function signature for adding an annotation type can be seen as follows:
+
+```{python}
+t.annotations.add_atom_info.func.__signature__
+```
+
+Here is an example of adding different annotations to the trajectory entity.
+
+```{python}
+a1 = t.annotations.add_atom_info(selection="resid 1", name="r1 atom info")
+a2 = t.annotations.add_com(selection="protein", name="Protein COM")
+a3 = t.annotations.add_com_distance(
+    selection1="resid 1",
+    selection2="resid 129",
+    text1="resid 1|COM",
+    text2="resid 129|COM",
+    name="r1-129 distance",
+)
+# the annotation below gets added with an auto-generated Annotation name
+a4 = t.annotations.add_universe_info()
+```
+
+## Accessing Annotations
+
+Annotations added to an entity can be accessed in several different ways.
+
+### Name based access
+
+```{python}
+# get the resid 1 atom info annotation by name - subscriptable
+a = t.annotations["r1 atom info"]
+print(a)
+# get the resid 1 atom info annotation by name - get method
+a = t.annotations.get("r1 atom info")
+print(a)
+```
+
+### Index based access
+
+```{python}
+print("# annotations = ", len(t.annotations))
+# get the protein COM annotation by index
+a = t.annotations[1]
+a
+```
+
+### Iterable access
+
+```{python}
+# access all annotations by iteration
+for a in t.annotations:
+    print(a.name)
+```
+
+## Controlling Visiblity
+
+All annotations of an entity can be collectively hidden or displayed using the `visible` attribute of the annotations manager.
+
+```{python}
+# get current annotations visibility
+t.annotations.visible
+```
+
+```{python}
+# hide all annotations
+t.annotations.visible = False
+t.annotations.visible
+```
+
+```{python}
+# show all annotations
+t.annotations.visible = True
+t.annotations.visible
+```
+
+## Common Annotation Params
+
+All annotations have common params that control the display properties. These params are in addition to the annotation specific inputs.
+
+The common annotation params are:
+
+- `name` - Name of the annotation
+- `visible` - Whether or not the annotation is visible
+- `text_font` - Filename of the custom font to use for text
+- `text_color` - Text color - rgba tuple like (1.0, 0.0, 1.0, 1.0)
+- `text_size` - Size of the text displayed
+- `text_alignment` - Alignment of the text (`center`, `left`, `right`)
+- `text_rotation` - Angle by which to rotate text when left aligned
+- `text_vspacing` - Vertical spacing between lines in multi line text
+- `text_depth` - Whether to enable showing text size based on depth (default: True)
+- `text_falloff` - A normalized value (0.0 - 1.0) of how the text size falls off with distance from the viewport / camera
+- `offset_x` - Text offset along the x direction (in pixels)
+- `offset_y` - Text offset along the y direction (in pixels)
+- `arrow_size` - Size of the arrow displayed (for lines with arrow ends)
+- `pointer_length` - Length of a pointer line to draw (defaults to 0, which is no pointer)
+
+```{python}
+# common annotation params for a1
+[(p, getattr(a1, p)) for p in a1.__dir__() if not p.startswith("_")]
+```
+
+## Removing Annotations
+
+Individual annotaitons can be removed using the annotation name or annotation instance.
+
+### Remove by name
+
+```{python}
+# remove by an annotation name
+t.annotations.remove("r1 atom info")
+```
+### Remove by instance
+
+```{python}
+# remove by an annotation instance
+t.annotations.remove(a4)
+```
+
+### Remove all annoations
+
+```{python}
+# remove all annotations
+t.annotations.clear()
+```
+
+## Custom Annotations
+
+Custom annotation types can be added to entities by extending the entity specific base annotation class. For example, to add a custom Trajectory annotation, a new class that extends [`TrajectoryAnnotation`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation) has to be written. Custom annotation types will be automatically registered and can be used the same way as described earlier. The GUI to add and configure the annotation will also be automatically available.
+
+### Create a custom annotation
+
+A custom trajectory annotation class has to extend [`TrajectoryAnnotation`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation) and implement the [`draw`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw) method. Optional [`defaults`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.defaults) method can be used to set defaults for the annotation and a [`validate`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.validate) method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via `self.trajectory`, universe via `self.trajectory.universe` and the annotation params via `self.interface`.
+
+```{python}
+# Add a CutomAnnotation class
+# This class will auto-register with the Trajectory entities
+class CustomAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
+    annotation_type = "custom_annotation"
+
+    selection: str  # required param
+    bool_param: bool = False  # optional bool param
+
+    # optional defaults method
+    def defaults(self) -> None:
+        # any default settings for this annotation go here
+        params = self.interface
+        # set text size to 24
+        params.text_size = 20
+
+    # optional validate method
+    def validate(self) -> bool:
+        # validate any input params that change (either through API or GUI)
+        # return True if validation succeeds else False or raise an Exception
+        params = self.interface
+        universe = self.trajectory.universe
+        # validate and save the selection atom group
+        if isinstance(params.selection, str):
+            # check if selection phrase is valid
+            # mda throws exception if invalid
+            self.atom_group = universe.select_atoms(params.selection)
+        elif isinstance(params.selection, AtomGroup):
+            self.atom_group = params.selection
+        else:
+            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection)}")
+        return True
+
+    # required draw method
+    def draw(self) -> None:
+        # the draw code for this annotation
+        # self.trajectory points to the trajectory instance
+        # self.interface points to the interface that provides
+        #     the annotation inputs and common annotation parameters
+        # show the atom names of the selection
+        for atom in self.atom_group:
+            self.draw_text_3d(atom.position, atom.name)
+```
+
+### Add the custom annotation
+
+```{python}
+ca = t.annotations.add_custom_annotation(selection="resid 75")
+ca
+```
+
+### [`unregister`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.unregister)
+
+Custom annotations get automatically registered with the entity's annotation manager (eg: [`TrajectoryAnnotationManager`](eference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager) for Trajectories). They can be manually unregistered using the [`unregister`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.unregister) method.
+
+```{python}
+# unregister the annotation
+manager = mn.entities.trajectory.TrajectoryAnnotationManager
+manager.unregister(CustomAnnotation)
+```
+
+### [`register`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.register)
+
+Custom annotations get automatically registered with the entity's annotation manager (eg: [`TrajectoryAnnotationManager`](eference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager) for Trajectories). They can be manually re-registered using the [`register`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.register) method if they have been unregistered.
+
+```{python}
+# re-register the custom annotation manually
+manager = mn.entities.trajectory.TrajectoryAnnotationManager
+manager.register(CustomAnnotation)
+```
+
+### Drawing utilities
+
+Custom annotations can use the drawing utilities available from the base annotation class to display text or drawings in the viewport / renders.
+
+The following utility methods are currently available:
+
+- [`distance`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.distance) - Distance between two vectors
+- [`draw_text_2d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d) - Draw text at a given 2D position (in pixels) of Viewport
+- [`draw_text_2d_norm`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm) - Draw text at a given 2D position (normalized co-ordinates) of Viewport.
+- [`draw_text_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_3d) - Draw text at a given 3D position
+- [`draw_line_2d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_line_2d) - Draw a line between two points in 2D viewport space
+- [`draw_line_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_line_3d) - Draw a line between two points in 3D space
+- [`draw_circle_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d) - Draw a circle around a 3D point in the plane perpendicular to the given normal
+
+These methods can be used within the `draw` method of a custom annotation. Please see the API reference for [`annotations.base`](reference/annotations.base.html) for details about these methods.

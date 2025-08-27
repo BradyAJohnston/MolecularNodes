@@ -1,0 +1,161 @@
+---
+title: Blender
+description: Learnings from Blender Python programming
+---
+
+This document captures some learnings from Blender Python programming.
+
+## Props and GUI
+
+- `bpy.props` have an implicit `name` attribute. (It is ok to define it explicitly too) This applies to `CollectionProperty` as well and the `find` method of a collection property uses this `name` to return the index of an item if present. This can be very helpful. Without this, the alternative is to convert the keys to a list and use the `index` method of the list. Note that the `name` becomes part of a tuple during insertion and hence immutable - use a constant value like a hash before insertion (and not something like object name that can change)
+
+- The list index property when using `UILists` can be set to -1. This is the equivalent of nothing selected in the displayed UI list. Always check that the list index is in range before displaying any item details (to avoid out of bound errors) - Blender only sets the value when a UI list item is clicked but updating it when items are added/deleted is user's responsibility
+
+- Blender’s [`UIList`](https://docs.blender.org/api/current/bpy.types.UIList.html#bpy.types.UIList.filter_items) has a way to both filter (using bit fields) and re-order items using the [`filter_items`](https://docs.blender.org/api/current/bpy.types.UIList.html#bpy.types.UIList.filter_items) method. There are also some helper methods that Blender provides in [`bpy.types.UI_UL_list`](https://docs.blender.org/api/current/bpy.types.UI_UL_list.html) that helps both. The management of active index of the selected item in the UIList becomes tricky in case of filtering
+
+- Property changes/updates cannot happen in the `draw`/`draw_item` context. They lead to a `AttributeError: Writing to ID classes in this context is not allowed:` error. So, any property changes that need to reflect when drawing the layout should be updated in a different (like operator/API) context
+
+- Panels can use a mix-in parent class as specified [here](https://docs.blender.org/api/current/bpy.types.Panel.html) to not repeat the common `bl_` values and methods like `poll` etc
+
+- Blender allows panels in the UI layout drawn by users (using `layout.panel(...)`). This allows better organization in what we display
+
+- Panels created using `<layout_item>.panel()` in Blender can be `None` immediately after, so a guarding check is needed to use this correctly in the UI code
+
+- A `CollectionProperty` with a dynamic `PropertyGroup` can be assigned to standard types (like `bpy.types.Object`) at runtime. This is the key that allows extensibility. Blender converts these to ID properties when the corresponding type classes are not registered. Once the type classes are registered they become API defined properties
+  - The property path has to be at the top level and not nested under another property. For example, `bpy.types.Object.mn_annotations` works, but `bpy.types.Object.mn.annotations` doesn’t. The later leads to a `AttributeError: '_PropertyDeferred' object has no attribute '...'` error
+
+- `.bl_rna.properties` of a `PropertyGroup` can be used to iterate all the properties within a `PropertyGroup`. The property name is available under the `identifier` attribute of the iterated item. The `type` attribute specifies the property type (like `POINTER` etc)
+
+- Changing Blender properties through API will need the viewport to be tagged for redraw (`area.tag_redraw()`) to show updated values immediately in Blender’s GUI
+
+- `bpy.props` cannot be setup for instances and can only be setup for types and hence apply to all instances. Once defined, the min/max and other values cannot be updated without re-defining it (which changes for all instances). For example, different objects cannot have a `frame` (`bpy.props.IntProperty`) with different min/max. The `set/get` have to be used to enforce limits
+
+- In property update callbacks, `self` points to the property. For properties/property groups tied to objects, use `self.id_data` to access the object (or parent type) directly
+
+- Property `update` callbacks have to be carefully used. There are several caveats as noted in the [bpy.props](https://docs.blender.org/api/current/bpy.props.html) page. There are also no safety checks for infinite recursion and hence the need for them and the ordering should be carefully considered
+
+- A lambda function can be used to pass the actual property name within a property group that caused the update in the `update` callback. Care should be taken when using lambda functions in a loop - a closure is needed to ensure that correct values are passed - this can be done using defaults, a custom function etc
+
+- Always use Blender properties to keep track of state - this allows interoperability between API and GUI modes. Blender's `PointerProperty` can only hold references to Blender's own `bpy.props` or ID properties and not arbitrary data. There is no way to reference your own python class/object from a Blender property
+
+- Properties that have an `update` callback will NOT be called when keyframing that property. See [Bug 86675](https://projects.blender.org/blender/blender/issues/86675) - need to use the `set` method as that is the only one that will get called
+
+- Properties cannot have just the `set` method alone - both `set` and `get` are needed. See [Bug 107671](https://projects.blender.org/blender/blender/issues/107671)
+
+- There is currently no way to mark a custom property as non-animatable. See [BUg 113506](https://projects.blender.org/blender/blender/issues/113506)
+
+- Using a custom property in the `getter` and `setter` of a blender properties interface allows the use of both blender property types and any custom types for API use. We use this trick to support `AtomGroup` selections through the API. Blender property update callbacks being different from the API based `getter/setter` allows for this to work seamlessly
+
+- There is no way to specify a filter for specific files when using Blender’s `StringProperty` with subtype `FILE_PATH` directly - users can filter from Blender’s file selection GUI
+
+- Blender’s `EnumProperty` defaults to the first value when the default is not specified, so it is good to explicitly set a default
+
+- Blender ID properties (non API defined custom properties) are very different from `bpy.props` (API defined). A good guide to some of the basic differences are highlighted [here](https://blender.stackexchange.com/questions/54038/when-should-custom-properties-be-used-instead-of-bpy-props). ID properties having nested levels are not possible to access through the UI (panels, etc). They have to be flat and at the top level of an instance (like object). They can be used as drivers, can be completely customized for ui (using `id_properties_ui` and `update`) but don't have update callbacks and cannot use [`bpy.msgbus`](https://docs.blender.org/api/current/bpy.msgbus.html) subscriptions as well. Their application for UI needs is pretty limited
+
+## Operators
+
+- Most internal operators require the [context](https://docs.blender.org/api/current/info_gotchas_operators.html) to be set correctly before they are invoked. [`bpy.context.temp_override`](https://docs.blender.org/api/current/bpy.types.Context.html#bpy.types.Context.temp_override) can be used. Since there can be multiple windows with different areas and regions within, it is always safe to iterate through all for the required `window/area/region` before setting the context so that everything is updated correctly
+
+- `window_manager.invoke_confirm` in an operator’s `invoke` is used for confirmation dialogs. `window_manager.invoke_props_dialog` in an operator’s `invoke` is used to show a dialog with the operator properties. An explicit `draw` method can be used to customize the layout of what is shown
+
+- The `execute` method of operators can be directly invoked (bypassing `invoke` etc) using the first param as `EXEC_DEFAULT` - this is very useful in tests to test operators. `EXEC_INVOKE` can be used to directly call the operator and run it’s invoke method
+
+- The most common way to delete an object is to select it and then call an operator like `bpy.ops.object.delete()`. This can be problematic at times if the view layer is not up to date and whatever is the active object will get deleted. A better way is to explicitly delete the object using `bpy.data.objects.remove` and passing the object. Avoid using operators if the same can be achieved in a different way. Operators are both slow and can be asynchronous with different context requirements
+
+- Blender does not allow dynamic properties in an operator. To achieve dynamic properties in an operator (to show in the `invoke` UI for example), a temporary operator has to be created, registered with Blender and invoked. A dynamic `PropertyGroup` with dynamic properties can be created using the `type()` method. This dynamic type can be used within a `PointerProperty` of the temporary operator for dynamic inputs
+
+- `bpy.types.Operator.__subclasses__()` and `bpy.types.PropertyGroup.__subclasses__()` can be used to verify whether temporary operators and property groups are being unregistered and garbage collected. `sys.getrefcount` can be used on a class to get the reference counts
+
+## Viewport
+
+- An object’s `hide_viewport` property is not animatable. To support visibility changes that are animatable, a custom property (with `get` and `set` callbacks) that controls both the viewport and rendering visibility works better
+
+- An object's `visible_get()` method to get whether the object is visible or not can throw a `ReferenceError: StructRNA of type Object has been removed` exception at times - one such case is when the object is selected and moved in the viewport using the `g` operator
+
+- `bpy.context.object` and `bpy.context.active_object` are not necessarily interchangeable. The [Context Access](https://docs.blender.org/api/current/bpy.context.html) page specifies the contexts in which the properties are available. One key point to note is that when an object is active, but hidden, `bpy.context.active_object` will be `None`. So, even though `bpy.context.object` is available for use in panels, the `active_object` property could be useful to distinguish between the active but hidden cases
+
+- The `view_matrix` of Blender’s region data can be used to determine the distance of a 3D point to the virtual 3D viewport camera. This works for both the `othographic` and the more common `perspective` projection modes. A range of the distance values for an object can be determined by calculating the min and max of the object’s bounding box vertices (8 of them). This allows for a really fast way to determine on a normalized scale how far a point in the object space is from the 3D viewport. We use this to adjust the text size of annotations to create a perception of depth.
+
+- Blender uses a bit of magic math to display the camera view outline in the 3D viewport. The actual camera width and height shown and the position can be determined based on the `view_camera_zoom` and `view_camera_offset` params of the region’s 3d data. There is also a dependency on the viewport aspect ratio
+
+- Blender’s `camera_to_view_selected` (`bpy.ops.view3d.camera_to_view_selected()`) is a great way to frame a selection. Care should be taken to ensure only what is required is selected (and restored) before calling this operator
+
+- Viewport rendering uses OpenGL (`bpy.ops.render.opengl`). OpenGL context is not setup in the background (`-b`) mode, which is the same when using the `bpy` module in headless mode
+
+- Most Blender crashes are due to accessing something before the viewport got updated. Ensuring that the viewport is redrawn eliminates most of these crashes. `bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)` as outlined in the [Blender Gotchas](https://docs.blender.org/api/current/info_gotchas_internal_data_and_python_objects.html#can-i-redraw-during-script-execution) page is one quick way, but is not guaranteed compatibility in future. Timers/Handlers/Modals are other recommended ways
+
+- Force redrawing viewport using `bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)` doesn't work in background mode - don't use it in that mode
+
+## Rendering and PIL
+
+- Blender's current default font is `Inter` (4.x onwards) - the font files are in the `datafiles/fonts` directory. PIL needs access to the font file to display text
+
+- PIL does not have anti-aliasing for lines drawn using [`ImageDraw.line`](https://pillow.readthedocs.io/en/stable/reference/ImageDraw.html#PIL.ImageDraw.ImageDraw.line). The only alternatives are to have a custom implementation of anti-aliasing or draw to a bigger image and resize using [`Image.resize`](https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.resize) using the `resample` set to something like `Resampling.LANCZOS`. For the later, font sizes and line widths have to be adjusted accordingly
+
+- PIL’s `textbbox` can be used to get the bounding box - to determine the text width / height
+
+- PIL’s co-ordinate system is from the top left, where as Blender’s 3D viewport is from bottom left
+
+- PIL does not have text rotation support. The recommendation for this support is to draw the text on a separate image, rotate the image and paste it - not ideal
+
+- Blender’s `object_utils.world_to_camera_view` (from bpy_extras) can directly be used to get the corresponding 2D coords of a 3D point in the camera space for rendering
+
+- In the render mode, we can use the inverted value of the world matrix (`camera.matrix_world.inverted()`) as the view matrix for any computations
+
+- Most of what is available through operators for Blender’s Video Sequence Editor (like `bpy.ops.sequencer.image_strip_add`) can be done through API as well (`scene.sequence_editor_create`), which has the added advantage that it is faster and doesn’t require the context to be present
+
+- Images appended to an image strip using `elements.append` will only have to pass the base name of the images and not the full path
+
+- Video sequence editor has to be created (and deleted after generating the video) after rendering all the frames, else it will interfere with the rendering as it has higher precedence, so they must be cleared if setup temporarily
+
+- Setting `bpy.context.scene.render.use_lock_interface` (equivalent of `Render > Lock Interface` in the UI) seems to help, which prevents viewport updates while rendering
+
+- `bpy.context.scene.view_settings.view_transform = "Standard"`, which is the equivalent of `Color Management > View Transform` in Render/Output properties seems to generate sharper viewport render images. The default from Blender 4.0 is `AgX`. If annotations with white `(1, 1, 1, 1)` don't show up as such in renders, this is the reason
+
+- `bpy.data.images["Render Result"]` cannot be accessed to get the raw pixels of the render output. An alternative is to attach a `Viewer Node` in the compositor and access the pixels. However, the pixel values aren't entirely between 0 and 1 and hence cannot be converted to a PIL image, etc.  As outlined [here](https://stackoverflow.com/a/66059853) the viewer node output isn't color corrected etc. So there is no way of accessing the raw bytes (that match the file output) before it is written out to a file
+
+- PIL images have to be flipped (`numpy.flipud`) for use as `bpy.data.images` in compositor
+
+## Nodes
+
+- Changing the node tree in a property callback (like `set`) could lead to a Blender crash when the property is keyframed (see [gotchas](https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender)). The workaround is to do the updates in a one off timer (`bpy.app.timers.register(_update_func, first_interval=0.001)`). An alternative is also described in the [Application Timers](https://docs.blender.org/api/current/bpy.app.timers.html#use-a-timer-to-react-to-events-in-another-thread) page. It is best to not have the node tree structurally change during the rendering process
+
+- `Node Group` instances can be decoupled from one another by simply making a copy of the node tree - this is also equivalent to making a data block as single-user in Blender. This allows changes to each of the node groups to be independent of others
+
+- Panel placeholders in a Blender’s Geometry Node provide a way to add inputs so that when inputs are iterated, they are iterated in a required order. Dynamically adding a new socket at a specific position isn’t straightforward
+
+- There doesn’t seem to be an easy way to link a Geometry Node input to a specific material setting (like say the `use_backface_culling`)
+
+- Using `Ctrl` when placing nodes in the Geometry Nodes editor will ensure snapping to the grid and avoid node locations having floating point values
+
+- Both the Geometry Node editor and Composite editor have the same area type (`NODE_EDITOR`), so the tree type in the context’s space data (`context.space_data.tree_type`) has to be used to distinguish between them (eg: `CompositorNodeTree` for Composite editor)
+
+- The only way to find nodes that belong to a particular frame is by checking the `parent` property of all nodes. Alternatively node names can be saved in properties for direct access instead of full node traversal
+
+## Misc
+
+- [`bpy.msgbus`](https://docs.blender.org/api/current/bpy.msgbus.html) can be used to subscribe to property changes of Blender datablocks. For example, to detect active object changes, `bpy.msgbus.subscribe_rna` has to be used for the key `(bpy.types.LayerObjects, "active")`. This works for all RNA properties (builtin ones and custom ones) and won't work for ID properties
+
+- Any object can be used as a owner for Blender’s `msgbus` subscriptions using `bpy.msgbus.subscribe_rna`. Using a owner allows to clear all subscriptions by the owner using `bpy.msgbus.clear_by_owner`
+
+- Blender has a concept of [Restricted Context](https://archive.blender.org/wiki/2015/index.php/Extensions:2.6/Py/API_Changes/#Restricted_Context) during an extension’s `register()` and `unregister()` methods that limits what is available during those methods. For example, the `scene` entity does not exist in `bpy.context` in these cases
+
+- Blender’s `openvdb` support uses `nanogrid` to check and warn for leaks. Any `vdb` grids created must be ensured they are cleaned up to avoid memory errors, especially in `pytests`
+
+- Blender seems to have some wierd caching of contents loaded from `vdb` files. Overwriting a `vdb` file that is already loaded and re-loading it as a new object will update the old object as well
+
+- There is no separate font styling support in Blender (like `Bold`, `Italic` etc) - the corresponding font file has to be loaded if that is needed (using `blf.load`)
+
+- Fonts loaded using `blf.load` have to be unloaded using `blf.unload` with the same font file as the param and not the returned font id from the load
+
+- For text and lines drawn using `blf`/`gpu` modules, there is a font size and line width discrepancy that depends on the screen resolution. Apparently Blender uses a dpi of 72 internally. `bpy.context.preferences.system.dpi` and `bpy.context.preferences.system.pixel_size` have the dpi and pixel size data. (MacOS retina has 144/2 and regular ones 72/1) Text/line widths have to be scaled accordingly
+
+- A set of vertices can be turned to an object using `from_pydata` of `bpy.data.meshes` that can be used to create bounding box objects
+
+- `bpy.utils.expose_bundled_modules()` is needed to access Blender’s bundled `openvdb` package in the background mode (`bpy`)
+
+- Blender app handlers (like `frame_change_post`, etc) are easy to add, but not straightforward to remove. Using the `clear` will remove all handlers, which is not desirable. The alternative is to remove by using the actual handler name (the function name)
+
+- Always use Blender's [portable installation](https://docs.blender.org/manual/en/latest/advanced/blender_directory_layout.html#portable-installation) to keep environments separate and clean
+
+- Never keep references to Blender [data](https://docs.blender.org/api/current/info_gotchas_internal_data_and_python_objects.html). This is the primary cause of most [crashes](https://docs.blender.org/api/current/info_gotchas_crashes.html) as outlined in the [gotchas](https://docs.blender.org/api/current/info_gotcha.html)
