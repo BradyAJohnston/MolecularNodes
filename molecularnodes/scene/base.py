@@ -5,8 +5,10 @@ from contextlib import ExitStack
 from pathlib import Path
 import bpy
 from tqdm.auto import tqdm
+from .. import assets
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
+from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoints
 from .engines import EEVEE, Cycles
@@ -37,6 +39,8 @@ class Canvas:
         resolution=(1280, 720),
     ) -> None:
         """Initialize the Canvas object."""
+        addon.register()
+        assets.install()
         if template:
             self.scene_reset(template=template)
         self.engine = engine
