@@ -238,7 +238,15 @@ def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInter
     return interface
 
 
+class StyleManager(List):
+    def clear(self) -> None:
+        while len(self) > 0:
+            self.pop().remove()
+
+
 def style_interfaces_from_tree(
     tree: bpy.types.GeometryNodeTree,
-) -> list[GeometryNodeInterFace]:
-    return [create_style_interface(node) for node in get_final_style_nodes(tree)]
+) -> StyleManager[GeometryNodeInterFace]:
+    return StyleManager(
+        create_style_interface(node) for node in get_final_style_nodes(tree)
+    )
