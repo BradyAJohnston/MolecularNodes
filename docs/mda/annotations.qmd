@@ -13,10 +13,6 @@ Annotations can be added to trajectories using the [Annotations API](../api/anno
 ```{python}
 import molecularnodes as mn
 
-# register Molecular Nodes
-mn.register()
-# install template
-mn.template.install()
 # create a canvas object
 canvas = mn.Canvas()
 ```
@@ -33,11 +29,7 @@ warnings.filterwarnings("ignore")
 
 # load universe
 u = mda.Universe(PSF, DCD)
-# add universes to Blender
-# get MN session
-session = mn.session.get_session()
-# add trajectory
-t = session.add_trajectory(u, style="cartoon")
+t = mn.Trajectory(u).add_style("cartoon")
 ```
 
 ## Annotations

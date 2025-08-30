@@ -9,7 +9,6 @@ Here is some example code that uses MDAnalysis to load a trajectory and visualiz
 ```{python}
 import molecularnodes as mn
 import MDAnalysis as mda
-mn.register()
 can = mn.Canvas()
 ```
 
@@ -20,7 +19,6 @@ from pathlib import Path
 folder =  Path("../../") / "tests/data/md_ppr"
 u = mda.Universe(folder / "box.gro", folder / "first_5_frames.xtc")
 traj = mn.entities.Trajectory(u)
-traj.create_object()
 print(traj)
 ```
 

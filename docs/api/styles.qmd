@@ -7,8 +7,7 @@ This is how we can add styles or representations of our molecular data, so we ca
 
 ```{python}
 import molecularnodes as mn
-mn.register()
-mn.assets.install()
+
 can = mn.Canvas()
 can.resolution = (860, 540)
 ```

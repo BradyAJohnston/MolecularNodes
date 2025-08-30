@@ -256,15 +256,15 @@ class TestTrajectory:
     ):
         session = mn.session.get_session()
         # test defaults
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe).add_style("cartoon")
         assert len(t1.tree.nodes) == 7
         session.remove_trajectory(t1)
         # test add_trajectory with non-default style
-        t1 = session.add_trajectory(universe, style="cartoon")
+        t1 = mn.Trajectory(universe).add_style("cartoon")
         assert len(t1.tree.nodes) == 7
         session.remove_trajectory(t1)
         # test add_trajectory with no style
-        t1 = session.add_trajectory(universe, style=None)
+        t1 = mn.Trajectory(universe)
         assert len(t1.tree.nodes) == 2
         # test adding empty style
         t1.add_style(style=None)
@@ -285,7 +285,7 @@ class TestTrajectory:
         assert "sel_1" in t1.list_attributes()
         session.remove_trajectory(t1)
         # test add_style from UI
-        t1 = session.add_trajectory(universe, style=None)
+        t1 = mn.Trajectory(universe)
         assert len(t1.styles) == 0
         bpy.ops.mn.add_style("EXEC_DEFAULT", uuid=t1.uuid)
         assert len(t1.styles) == 1
@@ -296,7 +296,7 @@ class TestTrajectory:
         universe,
     ):
         session = mn.session.get_session()
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe).add_style("cartoon")
         assert len(t1.tree.nodes) == 7
         assert len(t1.styles) == 1
         # add new style
@@ -309,7 +309,7 @@ class TestTrajectory:
         assert len(t1.styles) == 0
         session.remove_trajectory(t1)
         # test remove style from UI
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe).add_style("cartoon")
         assert len(t1.styles) == 1
         style_node = mn.nodes.geometry.get_final_style_nodes(t1.tree)[0]
         style_node_index = t1.tree.nodes.find(style_node.name)
@@ -321,7 +321,7 @@ class TestTrajectory:
 
     def test_get_view(self, universe):
         session = mn.session.get_session()
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         # view of resid 1
         v1 = t1.get_view(selection="resid 1")
         # view of resid 1 at trajectory frame 3

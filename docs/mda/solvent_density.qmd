@@ -22,10 +22,7 @@ warnings.filterwarnings("ignore")
 ## Setup Molecular Nodes
 
 ```{python}
-# register Molecular Nodes
-mn.register()
-# install template
-mn.template.install()
+
 # create a canvas object
 canvas = mn.Canvas()
 ```
@@ -72,7 +69,7 @@ dens.results.density.export("water.dx")
 # get MN session
 session = mn.session.get_session()
 # add trajectory
-t = session.add_trajectory(u, style="cartoon")
+t = mn.Trajectory(u).add_style(style="cartoon")
 ```
 
 ## Add density component

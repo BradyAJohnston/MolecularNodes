@@ -16,8 +16,6 @@ from MDAnalysis.tests.datafiles import PSF, DCD
 
 warnings.filterwarnings("ignore")
 
-# register Molecular Nodes
-mn.register()
 # create a canvas object
 canvas = mn.Canvas()
 ```
@@ -27,12 +25,7 @@ canvas = mn.Canvas()
 ```{python}
 # load universe from topology and trajectory files
 u = mda.Universe(PSF, DCD)
-
-# get Molecular Nodes Session
-session = mn.session.get_session()
-
-# add univese to Blender with cartoon style
-t = session.add_trajectory(u, style="cartoon")
+t = mn.Trajectory(u).add_style("cartoon")
 
 # add resid 1 and 129 with spheres style
 t.add_style(selection="resid 1 129", style="spheres")

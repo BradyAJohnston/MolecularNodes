@@ -25,11 +25,7 @@ bpy.ops.wm.read_homefile(app_template="")
 import molecularnodes as mn
 import numpy as np
 
-# we currently have to manually register a lot of the internals with Blender
-mn.register()
-mn.template.install()
 canvas = mn.Canvas(resolution=(720, 480))
-
 
 # create a 'Molecule' object, by fetching a structure and parsing it into the scene
 mol = mn.Molecule.fetch("6N2Y").add_style('ribbon')

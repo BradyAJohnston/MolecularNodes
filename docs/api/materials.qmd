@@ -9,8 +9,6 @@ We can progrommatically access the properties of the materials like this:
 
 ```{python}
 import molecularnodes as mn
-mn.register()
-mn.assets.install()
 can = mn.Canvas(engine="EEVEE")
 can.scene_reset()
 can.resolution = (860, 540)

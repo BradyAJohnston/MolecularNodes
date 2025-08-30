@@ -13,10 +13,6 @@ The [`Canvas`](reference/Canvas.html) object can be used to configure different 
 ```{python}
 import molecularnodes as mn
 
-# register Molecular Nodes
-mn.register()
-# install template
-mn.template.install()
 # create a canvas object
 canvas = mn.Canvas()
 ```
@@ -31,16 +27,11 @@ from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 
 warnings.filterwarnings("ignore")
 
-# load universe 1
 u1 = mda.Universe(PSF, DCD)
-# load universe 2
 u2 = mda.Universe(TPR, XTC)
 # add universes to Blender
-# get MN session
-session = mn.session.get_session()
-# add trajectories
-t1 = session.add_trajectory(u1, style="cartoon")
-t2 = session.add_trajectory(u2, style=None)
+t1 = mn.Trajectory(u1).add_style("cartoon")
+t2 = mn.Trajectory(u2)
 ```
 
 ## Add Styles and Annotations to Trajectories

@@ -43,7 +43,7 @@ A style can be specified when adding the trajectory to Blender as follows:
 # get MN session
 session = mn.session.get_session()
 # add trajectory with a cartoon style
-t = session.add_trajectory(u, style="cartoon")
+t = mn.Trajectory(u).add_style(style="cartoon")
 ```
 
 ```{python}
