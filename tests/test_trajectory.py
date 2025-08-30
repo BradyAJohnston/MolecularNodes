@@ -38,12 +38,10 @@ class TestTrajectory:
 
     def test_include_bonds(self, universe_with_bonds):
         traj = mn.entities.Trajectory(universe_with_bonds)
-        traj.create_object()
         assert traj.edges.items() != []
 
     def test_attributes_added(self, universe):
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         attributes = traj.list_attributes()
         # check if all attributes are added.
 
@@ -67,8 +65,7 @@ class TestTrajectory:
             assert att in attributes
 
     def test_trajectory_update(self, snapshot, universe):
-        traj = mn.entities.Trajectory(universe)
-        traj.create_object(name="TestTrajectoryUpdate")
+        traj = mn.entities.Trajectory(universe, name="TestTrajectoryUpdate")
         print(f"{bpy.context.scene.frame_current=}")
         print(f"{list(bpy.app.handlers.frame_change_pre)=}")
         bpy.context.scene.frame_set(0)
@@ -89,7 +86,6 @@ class TestTrajectory:
     @pytest.mark.parametrize("offset", [-2, 2])
     def test_trajectory_offset(self, universe, offset: bool):
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         bpy.context.scene.frame_set(0)
         pos_0 = traj.position
 
@@ -112,7 +108,6 @@ class TestTrajectory:
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, universe, interpolate: bool):
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         bpy.context.scene.frame_set(0)
         traj.subframes = 0
         traj.interpolate = interpolate
@@ -148,7 +143,6 @@ class TestTrajectory:
         univ_across_boundary,
     ):
         traj = mn.entities.Trajectory(univ_across_boundary)
-        traj.create_object()
         traj.subframes = 5
         bpy.context.scene.frame_set(2)
         pos_a = traj.position
@@ -161,7 +155,6 @@ class TestTrajectory:
 
     def test_position_at_frame(self, universe):
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         assert not np.allclose(traj._position_at_frame(1), traj._position_at_frame(3))
 
     @pytest.mark.parametrize(
@@ -172,7 +165,6 @@ class TestTrajectory:
         self, snapshot, subframes: int, correct: bool, interpolate: bool, universe
     ):
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         traj.correct_periodic = correct
         traj.subframes = subframes
         traj.interpolate = interpolate
@@ -188,7 +180,6 @@ class TestTrajectory:
         # universe itself, which isn't great
 
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         bpy.context.scene.frame_set(0)
         sel = traj.add_selection(
             name="custom_sel_1", selection_str="around 3.5 protein"
@@ -218,7 +209,6 @@ class TestTrajectory:
         ca_ag = universe.select_atoms("name CA")
         around_protein = universe.select_atoms("around 3.5 protein", updating=True)
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         bpy.context.scene.frame_set(0)
         traj.add_selection_from_atomgroup(atomgroup=ca_ag, name="ca")
         traj.add_selection_from_atomgroup(
@@ -238,7 +228,6 @@ class TestTrajectory:
         session: mn.session.MNSession,
     ):
         traj = mn.entities.Trajectory(universe)
-        traj.create_object()
         traj.reset_playback()
         uuid = traj.uuid
         bpy.context.scene.frame_set(2)
@@ -352,7 +341,6 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
         data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
     traj = mn.entities.Trajectory(universe)
-    traj.create_object()
     obj = traj.object
     bpy.context.scene.frame_set(0)
     pos_a = traj.named_attribute("position")

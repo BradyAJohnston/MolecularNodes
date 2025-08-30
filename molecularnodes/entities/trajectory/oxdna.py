@@ -374,21 +374,33 @@ class OXDNA(Trajectory):
         Names of the attributes to track
     """
 
-    def __init__(self, universe: Universe, world_scale: float = 0.01):
-        super().__init__(universe=universe, world_scale=world_scale * DNA_SCALE)
-        self._entity_type = EntityType.MD_OXDNA
+    def __init__(
+        self,
+        universe: Universe,
+        name: str = "NewOXDNAObject",
+        world_scale: float = 0.01,
+        create_object: bool = True,
+    ):
         self._att_names = (
             "base_vector",
             "base_normal",
             "velocity",
             "angular_velocity",
         )
+        super().__init__(
+            universe=universe,
+            name=name,
+            world_scale=world_scale * DNA_SCALE,
+            create_object=create_object,
+        )
+        self._entity_type = EntityType.MD_OXDNA
+        if create_object:
+            self.object.mn.entity_type = self._entity_type.value
 
     def _create_object(
         self,
-        style: str | None = "oxdna",
         name: str = "NewUniverseObject",
-        selection: str | AtomGroup | None = None,
+        style: str | None = "oxdna",
     ):
         """
         Create a new object with the trajectory data.

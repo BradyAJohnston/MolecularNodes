@@ -680,10 +680,10 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
                 topology_format=trajectory.oxdna.OXDNAParser,
                 format=trajectory.oxdna.OXDNAReader,
             )
-            traj = trajectory.oxdna.OXDNA(uni)
+            traj = trajectory.oxdna.OXDNA(uni, create_object=False)
         else:
-            u = mda.Universe(topo, traj)
-            traj = trajectory.Trajectory(u)
+            uni = mda.Universe(topo, traj)
+            traj = trajectory.Trajectory(uni, create_object=False)
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
