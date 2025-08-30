@@ -7,18 +7,34 @@ author: Brady Johnston
 Here is some example code that uses MDAnalysis to load a trajectory and visualize it with MolecularNodes.
 
 ```{python}
+#| warning: false
 import molecularnodes as mn
 import MDAnalysis as mda
-can = mn.Canvas()
+from MDAnalysis.tests.datafiles import PSF, DCD
+
+cv = mn.Canvas(resolution=(800, 800), transparent=True)
+u = mda.Universe(PSF, DCD)
 ```
 
 ## Loading a Trajectory
 
 ```{python}
-from pathlib import Path
-folder =  Path("../../") / "tests/data/md_ppr"
-u = mda.Universe(folder / "box.gro", folder / "first_5_frames.xtc")
-traj = mn.entities.Trajectory(u)
-print(traj)
+#| label: fig-eevee-raytracing
+#| fig-cap: "Raytracing can be toggled on and off in EEVEE."
+#| layout-ncol: 2
+#| fig-subcap: 
+#|   - "Raytracing On"
+#|   - "Raytracing Off"
+
+traj = mn.Trajectory(u)
+traj.add_style("vdw")
+style = traj.styles[0]
+style.sphere_geometry = "mesh"
+style.sphere_subdivisions = 3
+
+cv.frame_view(traj)
+for e in [mn.scene.Cycles(samples=32), mn.scene.EEVEE()]:
+    cv.engine = e
+    cv.snapshot()
 ```
 

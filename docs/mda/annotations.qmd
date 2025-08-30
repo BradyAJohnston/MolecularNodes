@@ -12,6 +12,8 @@ Annotations can be added to trajectories using the [Annotations API](../api/anno
 
 ```{python}
 import molecularnodes as mn
+import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 
 # create a canvas object
 canvas = mn.Canvas()
@@ -20,14 +22,7 @@ canvas = mn.Canvas()
 ## Add Trajectory
 
 ```{python}
-import warnings
-
-import MDAnalysis as mda
-from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
-
-warnings.filterwarnings("ignore")
-
-# load universe
+#| warning: false
 u = mda.Universe(PSF, DCD)
 t = mn.Trajectory(u).add_style("cartoon")
 ```

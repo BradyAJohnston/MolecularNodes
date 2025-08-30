@@ -14,11 +14,11 @@ website:
   page-navigation: true
   navbar:
     left:
-    - href: tutorials/
-      text: Tutorials
-    - text: Nodes
-      href: nodes/
-    - href: attributes.qmd
+    # - href: tutorials/
+    #   text: Tutorials
+    # - text: Nodes
+    #   href: nodes/
+    - href: tutorials/index.qmd
       text: Documentation
     - text: API
       href: api/
@@ -35,34 +35,39 @@ website:
       href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-  - id: nodes
-    title: Nodes
-    contents: nodes/
+  # - id: nodes
+  #   title: Nodes
+  #   contents: nodes/*
 
   - id: attributes
     contents:
-    - attributes.qmd
-    - data_table.qmd
-
-  - id: tutorials
-    align: left
-    contents:
-    - tutorials/index.qmd
-    - tutorials/installation.qmd
-    - tutorials/interface.qmd
-    - tutorials/importing.qmd
-    - tutorials/selections.qmd
-    - tutorials/trajectories.qmd
-    - tutorials/cryoem.qmd
-    - tutorials/simulation.qmd
-    - text: "---"
-    - section: "MDAnalysis"
+    - section: "Tutorials"
       contents:
-      - "mda/example_mda.qmd"
-      - "mda/styles.qmd"
-      - "mda/annotations.qmd"
-      - "mda/solvent_density.qmd"
-      - "mda/rendering.qmd"
+      - tutorials/index.qmd
+      - tutorials/installation.qmd
+      - tutorials/interface.qmd
+      - tutorials/importing.qmd
+      - tutorials/selections.qmd
+      - tutorials/trajectories.qmd
+      - tutorials/cryoem.qmd
+      - tutorials/simulation.qmd
+    - section: "Reference"
+      contents:
+      - attributes.qmd
+      - data_table.qmd
+    - section: "Nodes"
+      contents: nodes/*
+  # - id: tutorials
+  #   align: left
+  #   contents:
+  #   - tutorials/index.qmd
+  #   - tutorials/installation.qmd
+  #   - tutorials/interface.qmd
+  #   - tutorials/importing.qmd
+  #   - tutorials/selections.qmd
+  #   - tutorials/trajectories.qmd
+  #   - tutorials/cryoem.qmd
+  #   - tutorials/simulation.qmd
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -101,6 +106,15 @@ quartodoc:
     - api/density.qmd
     - api/canvas.qmd
     - api/blender.qmd
+    - text: "---"
+    - section: "MDAnalysis"
+      contents:
+      - "mda/example_mda.qmd"
+      - "mda/styles.qmd"
+      - "mda/annotations.qmd"
+      - "mda/solvent_density.qmd"
+      - "mda/rendering.qmd"
+
     - text: "---"
     - section: "Reference"
       contents:

@@ -15,17 +15,10 @@ Molecular Nodes is versioned to match Blender versions, so while we are currentl
 This is how we can use the API.
 
 ```{python}
-#| echo: false
-#| output: false
-import bpy
-bpy.ops.wm.read_homefile(app_template="")
-```
-
-```{python}
 import molecularnodes as mn
 import numpy as np
 
-canvas = mn.Canvas(resolution=(720, 480))
+canvas = mn.Canvas(mn.scene.Cycles(samples=32), resolution=(720, 480))
 
 # create a 'Molecule' object, by fetching a structure and parsing it into the scene
 mol = mn.Molecule.fetch("6N2Y").add_style('ribbon')
@@ -64,10 +57,30 @@ styles = ['cartoon', 'ribbon', 'spheres']
 materials = ['MN Ambient Occlusion', 'MN Default', 'MN Ambient Occlusion']
 
 for code, style, material in zip(codes, styles, materials):
-        canvas.scene_reset(engine=mn.scene.Cycles(samples=32))
+        canvas.clear()
         mol = mn.Molecule.fetch(code)
         canvas.frame_object(mol)
         mol.add_style(style)
         canvas.snapshot()
 
+```
+
+
+```{python}
+canvas.clear()
+canvas.engine = "eevee"
+canvas.resolution = (800, 800)
+canvas.transparent = True
+
+mol = (
+        mn.Molecule
+        .fetch("Q8W3K0", database="alphafold")
+        .add_style(
+                mn.StyleCartoon(),
+                color="pLDDT",
+                material=mn.material.AmbientOcclusion()
+        )
+)
+canvas.frame_view(mol)
+canvas.snapshot()
 ```

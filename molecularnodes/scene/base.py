@@ -110,17 +110,25 @@ class Canvas:
 
     @engine.setter
     def engine(self, value: Cycles | EEVEE | str) -> None:
-        if isinstance(value, str) and value.upper() == "CYCLES":
-            self._engine = Cycles()
-        elif isinstance(value, str) and value.upper() in [
-            "EEVEE",
-            "BLENDER_EEVEE_NEXT",
-            "BLENDER_EEVEE",
-        ]:
-            self._engine = EEVEE()
-
-        else:
+        if isinstance(value, Cycles) or isinstance(value, EEVEE):
             self._engine = value
+        elif isinstance(value, str):
+            if value.upper() == "CYCLES":
+                self._engine = Cycles()
+            elif value.upper() in [
+                "EEVEE",
+                "BLENDER_EEVEE_NEXT",
+                "BLENDER_EEVEE",
+            ]:
+                self._engine = EEVEE()
+            else:
+                raise ValueError("String does not match either 'EEVEE' or 'CYCLES'")
+        else:
+            raise ValueError(
+                "Must be either a string selecting the render engine or a dataclass mn.scene.Cycles()"
+            )
+
+        self._engine._enable_engine()
 
     @property
     def fps(self) -> float:
@@ -289,7 +297,9 @@ class Canvas:
         # set the camera to look at the object
         blender_utils.look_at_object(obj)
 
-    def frame_view(self, view: list[tuple], viewpoint: Viewpoints = None) -> None:
+    def frame_view(
+        self, view: list[tuple] | MolecularEntity, viewpoint: Viewpoints = None
+    ) -> None:
         """
         Frame one or more views of Molecular entities
         Multiple views can be added with + to combine into a single view
@@ -304,11 +314,15 @@ class Canvas:
             One of ["default", "front", "back", "top", "bottom", "left", "right"]
 
         """
+        if isinstance(view, MolecularEntity):
+            view_tuple = view.get_view()
+        else:
+            view_tuple = view
         # set the camera viewpoint if specified
         if viewpoint is not None:
             self.camera.set_viewpoint(viewpoint)
         # set the camera to look at the bounding box of the view
-        blender_utils.look_at_bbox(view)
+        blender_utils.look_at_bbox(view_tuple)
 
     def clear(self) -> None:
         """

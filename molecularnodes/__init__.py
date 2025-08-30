@@ -1,7 +1,15 @@
 from . import assets, blender, color, download, nodes, session, ui
 from .assets import template
-from .entities import Molecule, Trajectory
+from .entities import Molecule, MoleculeSelector, Trajectory
 from .nodes import material
+from .nodes.styles import (
+    StyleBallandStick,
+    StyleCartoon,
+    StyleRibbon,
+    StyleSpheres,
+    StyleSticks,
+    StyleSurface,
+)
 from .ui.addon import register, unregister
 
 try:
@@ -24,4 +32,11 @@ __all__ = [
     "unregister",
     "download",
     "Canvas",
+    "MoleculeSelector",
+    "StyleRibbon",
+    "StyleCartoon",
+    "StyleBallandStick",
+    "StyleSpheres",
+    "StyleSticks",
+    "StyleSurface",
 ]

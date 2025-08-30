@@ -32,16 +32,17 @@ def insert_set_color(
     _tree = node.id_data
     node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
 
-    if isinstance(color, str) and color.lower() in ["default", "common"]:
-        node_cc = insert_before(node_sc.inputs["Color"], "Color Common")
-        node_car: bpy.types.GeometryNodeGroup = insert_before(  # type: ignore
-            node_cc.inputs["Carbon"], "Color Attribute Random"
-        )
-
-        return node_car
-
     if isinstance(color, str):
-        input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
+        if color.lower() in ["default", "common"]:
+            node_cc = insert_before(node_sc.inputs["Color"], "Color Common")
+            node_car: bpy.types.GeometryNodeGroup = insert_before(  # type: ignore
+                node_cc.inputs["Carbon"], "Color Attribute Random"
+            )
+            return node_car
+        elif color.lower() == "plddt":
+            insert_before(node_sc.inputs["Color"], "Color pLDDT")
+        else:
+            input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
     else:
         node_sc.inputs["Color"].default_value = color  # type: ignore
     return node_sc

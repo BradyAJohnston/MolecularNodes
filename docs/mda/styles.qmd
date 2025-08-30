@@ -11,52 +11,31 @@ Different styles or representations can be added to Trajectories.
 ## Setup Molecular Nodes
 
 ```{python}
+#| warning: false
 import molecularnodes as mn
-
-# register Molecular Nodes
-mn.register()
-# install template
-mn.template.install()
-# create a canvas object
-canvas = mn.Canvas()
-```
-
-## Load Universe
-
-```{python}
-import warnings
-
 import MDAnalysis as mda
 from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 
-warnings.filterwarnings("ignore")
-
-# load universe
 u = mda.Universe(PSF, DCD)
+canvas = mn.Canvas()
 ```
+
 
 ## Add Trajectory
 
 A style can be specified when adding the trajectory to Blender as follows:
 
 ```{python}
-# get MN session
-session = mn.session.get_session()
-# add trajectory with a cartoon style
-t = mn.Trajectory(u).add_style(style="cartoon")
-```
-
-```{python}
-# frame trajectory and render
+t = mn.Trajectory(u).add_style(mn.StyleRibbon(quality=4, backbone_radius = 0.5))
 canvas.frame_object(t)
 canvas.snapshot()
 ```
 
 ## Add Styles
 
-Styles can be added to different selections of the universe after it has been added to Blender using the [`add_styles`](../api/reference/entities.Trajectory.html#molecularnodes.entities.Trajectory.add_style) API.
+Styles can be added to different selections of the universe after it has been added to Blender using the [`add_style`](../api/reference/entities.Trajectory.html#molecularnodes.entities.Trajectory.add_style) API.
 
-```
+```py
 Trajectory.add_style(
     style='spheres',
     color='common',
@@ -83,7 +62,7 @@ Trajectory.add_style(
 
 ```{python}
 # add spheres style to resid 1 and 129
-t.add_style(style="spheres", selection="resid 1 129")
+t.add_style(mn.StyleSpheres(geometry = "Instance", sphere_subdivisions=4), selection="resid 1 129")
 ```
 
 ```{python}
@@ -107,7 +86,7 @@ canvas.snapshot()
 
 ```{python}
 # add a ball and style for resids 180:200
-t.add_style(style="ball_and_stick", selection=u.select_atoms("resid 180:200"))
+t.add_style(mn.StyleBallandStick(quality=4), selection=u.select_atoms("resid 180:200"))
 ```
 
 ```{python}

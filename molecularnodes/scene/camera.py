@@ -1,5 +1,5 @@
 from math import degrees, radians
-from typing import Literal, get_args
+from typing import Literal, get_args, Sequence
 import bpy
 
 Viewpoints = Literal["default", "front", "back", "top", "bottom", "left", "right"]
@@ -78,8 +78,18 @@ class Camera:
         """Set Camera rotation in degrees (XYZ)"""
         self.camera.rotation_euler = tuple(radians(angle) for angle in angles)
 
-    def set_viewpoint(self, viewpoint: Viewpoints) -> None:
-        """Set viewpoint to a preset"""
-        if viewpoint not in get_args(Viewpoints):
-            raise ValueError(f"{viewpoint} is not one of {get_args(Viewpoints)}")
-        self.camera.rotation_euler = _viewpoint_rotation_eulers[viewpoint]
+    def set_viewpoint(self, viewpoint: Viewpoints | Sequence[float]) -> None:
+        """
+        Set viewpoint to a preset or a custom Euler rotation.
+
+        Parameters
+        ----------
+        viewpoint : Viewpoints | Sequence[float]
+            Either a named viewpoint string (e.g. "front", "top") or a tuple/list of three Euler angles in radians.
+        """
+        if isinstance(viewpoint, str):
+            if viewpoint not in get_args(Viewpoints):
+                raise ValueError(f"{viewpoint} is not one of {get_args(Viewpoints)}")
+            self.camera.rotation_euler = _viewpoint_rotation_eulers[viewpoint]
+        else:
+            self.camera.rotation_euler = viewpoint
