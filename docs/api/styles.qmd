@@ -6,6 +6,7 @@ This is how we can add styles or representations of our molecular data, so we ca
 
 ```{python}
 import molecularnodes as mn
+
 cv = mn.Canvas(resolution=(860, 540), transparent=True)
 ```
 
@@ -20,11 +21,11 @@ materials = [
 ]
 
 for code, style, material in zip(codes, styles, materials):
-    canvas.clear()
+    cv.clear()
     mol = mn.Molecule.fetch(code)
     mol.add_style(style)
-    canvas.frame_object(mol)
-    canvas.snapshot()
+    cv.frame_object(mol)
+    cv.snapshot()
 
 ```
 

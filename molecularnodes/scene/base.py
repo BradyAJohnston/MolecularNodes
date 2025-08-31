@@ -4,7 +4,7 @@ import tempfile
 from contextlib import ExitStack
 from enum import Enum
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Tuple
 import bpy
 from tqdm.auto import tqdm
 from .. import assets
@@ -225,6 +225,21 @@ class Canvas:
             True to enable transparency, False to disable.
         """
         self.scene.render.film_transparent = value
+
+    @property
+    def background(self) -> Tuple[float, float, float, float]:
+        return (
+            self.scene.world.node_tree.nodes["MN_world_shader"].inputs[3].default_value
+        )
+
+    @background.setter
+    def background(self, value: Tuple[float, float, float, float]) -> None:
+        self.scene.world.node_tree.nodes["MN_world_shader"].inputs[
+            3
+        ].default_value = value
+
+    # @property
+    # def hdri_strength
 
     @property
     def view_transform(self) -> _view_transform:
