@@ -42,10 +42,10 @@ def _test_register():
 
 def register():
     global _is_registered
-    
+
     if _is_registered:
         return
-    
+
     # register all of the import operators
     for op in all_classes:
         try:
@@ -73,13 +73,13 @@ def register():
     # bpy.types.Object.mn_annotations is dynamically created and updated based
     # on different annotation types. It has to be a top level property to avoid
     # AttributeError: '_PropertyDeferred' object has no attribute '...'
-    
+
     _is_registered = True
 
 
 def unregister():
     global _is_registered
-    
+
     for op in all_classes:
         try:
             bpy.utils.unregister_class(op)
@@ -100,5 +100,5 @@ def unregister():
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore
     del bpy.types.Object.mn_annotations  # type: ignore
-    
+
     _is_registered = False

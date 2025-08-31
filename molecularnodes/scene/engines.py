@@ -1,7 +1,7 @@
+import warnings
 from abc import ABC
 import bpy
 from .render import enable_optimal_gpu
-import warnings
 
 
 class RenderEngine(ABC):

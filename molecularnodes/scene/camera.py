@@ -1,5 +1,5 @@
 from math import degrees, radians
-from typing import Literal, get_args, Sequence
+from typing import Literal, Sequence, get_args
 import bpy
 
 Viewpoints = Literal["default", "front", "back", "top", "bottom", "left", "right"]

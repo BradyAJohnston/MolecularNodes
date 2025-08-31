@@ -48,7 +48,6 @@ def test_frame_object(canvas):
 
 
 def test_frame_view(canvas, universe):
-    session = mn.session.get_session()
     t1 = mn.Trajectory(universe)
 
     # save views for later framing

@@ -2,7 +2,6 @@ import databpy as db
 import numpy as np
 from MDAnalysis import Universe
 from MDAnalysis.coordinates.base import ReaderBase
-from MDAnalysis.core.groups import AtomGroup
 from MDAnalysis.core.topology import Topology
 from MDAnalysis.core.topologyattrs import (
     Atomids,

@@ -320,7 +320,6 @@ class TestTrajectory:
         session.remove_trajectory(t1)
 
     def test_get_view(self, universe):
-        session = mn.session.get_session()
         t1 = mn.Trajectory(universe)
         # view of resid 1
         v1 = t1.get_view(selection="resid 1")
