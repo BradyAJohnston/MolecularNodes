@@ -47,7 +47,7 @@ workflow = [
 u.trajectory.add_transformations(*workflow)
 ```
 
-## Run density analysis and export `.dx` file
+## Analyse and Export `.dx`
 
 ```{python}
 ow = u.select_atoms("name OW")

@@ -9,18 +9,13 @@ filters:
 - quarto
 - quarto-pdb
 
-code-link: true
-
 website:
   title: "Molecular Nodes"
   google-analytics: G-W3K8TDXSCF
   page-navigation: true
+
   navbar:
     left:
-    # - href: tutorials/
-    #   text: Tutorials
-    # - text: Nodes
-    #   href: nodes/
     - href: tutorials/index.qmd
       text: Documentation
     - text: API
@@ -73,7 +68,7 @@ format:
     - style.scss
 
     toc: true
-    toc-depth: 2
+    toc-depth: 3
     preview-colour:
       code: true
       text: true
@@ -109,20 +104,11 @@ quartodoc:
     - api/styles.qmd
     - api/materials.qmd
     - api/density.qmd
+    - api/annotations.qmd
+    - api/canvas.qmd
     - api/blender.qmd
-    - section: "Rendering"
-      contents:
-      - api/canvas.qmd
-      - "mda/rendering.qmd"
-    - section: "Annotations"
-      contents:
-      - api/annotations.qmd
-      - "mda/annotations.qmd"
     - section: "Trajectory"
-      contents:
-      - "mda/styles.qmd"
-      - "mda/solvent_density.qmd"
-
+      contents: api/trajectory/*
     - text: "---"
     - section: "Reference"
       contents:

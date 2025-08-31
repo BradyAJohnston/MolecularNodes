@@ -7,18 +7,10 @@ website:
     - api/styles.qmd
     - api/materials.qmd
     - api/density.qmd
+    - api/annotations.qmd
+    - api/canvas.qmd
     - api/blender.qmd
-    - contents:
-      - api/canvas.qmd
-      - mda/rendering.qmd
-      section: Rendering
-    - contents:
-      - api/annotations.qmd
-      - mda/annotations.qmd
-      section: Annotations
-    - contents:
-      - mda/styles.qmd
-      - mda/solvent_density.qmd
+    - contents: api/trajectory/*
       section: Trajectory
     - text: '---'
     - contents:

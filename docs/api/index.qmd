@@ -15,7 +15,7 @@ The quirks of progamming within Blender are numerous and will likely remain rega
 :::
 
 
-## You are working in a Scene
+## Working in Blender
 
 When scripting with Molecular Nodes, it's important to remember that everything we do doesn't work in isolation. All of the objects we add & changes we make happen within a "3D scene" inside of Blender, so deleting one thing or another doesn't always clean up and reset everything you might expect.
 
@@ -45,31 +45,6 @@ canvas.frame_object(mol)
 canvas.snapshot()
 ```
 
-## The Molecule Object
-
-The `Molecule` object has the original data, as well as the Blender object associated with.
-
-The different methods that are associated mostly interact with the Blender object, which is accessible via the `mol.object`, and the data is accessible via `mol.array`, which is a `biotite.AtomArray` object.
-```{python}
-print(f"{len(mol)=}")
-print(f"{mol.object=}")
-print(f"{mol.array[0][:10]=}")
-```
-
-```{python}
-mol.named_attribute('chain_id')
-```
-
-```{python}
-mol.position
-```
-
-### Updating the Atom Positions
-
-```{python}
-mol.position -= mol.centroid()
-mol.position
-```
 
 
 ```{python}
