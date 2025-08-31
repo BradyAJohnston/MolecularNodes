@@ -5,25 +5,45 @@ jupyter: python3
 ---
 
 ::: {.callout-warning}
-# The API is Unstable
+# The API is Experimental
 
-Molecular Nodes is designed and created first and foremost as an add-on for Blender, so the API can at times seem a bit quirky and for the time being is not to be considered stable.
+Molecular Nodes was first built as an add-on for Blender, intended to be used through the GUI.
 
-Molecular Nodes is versioned to match Blender versions, so while we are currently up to "4.2.*", the  API should be not be considered to be that mature.
+A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The version is pinned to the versions of Blender it is intended for, so while MN is currently version `4.4`, it should not be considered that stable.
+
+The quirks of progamming within Blender are numerous and will likely remain regardless of version.
 :::
 
-This is how we can use the API.
+
+## You are working in a Scene
+
+When scripting with Molecular Nodes, it's important to remember that everything we do doesn't work in isolation. All of the objects we add & changes we make happen within a "3D scene" inside of Blender, so deleting one thing or another doesn't always clean up and reset everything you might expect.
+
+Blender itself has a very extensive python API, accessible through the `bpy` module. Molecular Nodes is designed so that for most general usage you shouldn't have to ever directly use `bpy`, but all of the complex settings and controls are still always accessible through that module.
+
+
+## Getting Started
+
+To get started, with import the module start a new scene be creating out [`Canvas()`](reference/Canvas.qmd) object. This object is how we change settings for how the scene will render and other related settings sich as resolution.
 
 ```{python}
 import molecularnodes as mn
-import numpy as np
 
 canvas = mn.Canvas(mn.scene.Cycles(samples=32), resolution=(720, 480))
-
-# create a 'Molecule' object, by fetching a structure and parsing it into the scene
-mol = mn.Molecule.fetch("6N2Y").add_style('ribbon')
 ```
 
+## Add a `Molecule`
+
+The [`Molecule`](reference/Molecule.qmd) can take a `AtomArray` from the `biotite` package directly, or it has the [`fetch`](reference/Molecule.qmd#fetch) and [`load`](reference/Molecule.qmd#) class methods to download directly from the PDB or load a local file.
+
+After loading the molecule, to be able to see anything we must first add a style. Then we can frame the camera on the object and take a snapshot.
+
+```{python}
+mol = mn.Molecule.fetch("4ozs")
+mol.add_style(mn.StyleCartoon())
+canvas.frame_object(mol)
+canvas.snapshot()
+```
 
 ## The Molecule Object
 
@@ -49,20 +69,6 @@ mol.position
 ```{python}
 mol.position -= mol.centroid()
 mol.position
-```
-
-```{python}
-codes = ["4ozs", "8H1B", "8U8W"]
-styles = ['cartoon', 'ribbon', 'spheres']
-materials = ['MN Ambient Occlusion', 'MN Default', 'MN Ambient Occlusion']
-
-for code, style, material in zip(codes, styles, materials):
-        canvas.clear()
-        mol = mn.Molecule.fetch(code)
-        canvas.frame_object(mol)
-        mol.add_style(style)
-        canvas.snapshot()
-
 ```
 
 

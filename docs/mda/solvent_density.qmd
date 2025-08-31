@@ -21,22 +21,26 @@ canvas = mn.Canvas()
 ## Load and transform Universe
 
 ```{python}
-#| warning: false
+# | warning: false
 u = mda.Universe(TPR, XTC)
 
 protein = u.select_atoms("protein")
-water = u.select_atoms("resname SOL")
+water = u.select_atoms("not protein")
 
 workflow = [
     trans.unwrap(u.atoms),  # unwrap all fragments
     trans.center_in_box(
-        protein, center="geometry"  # move atoms to center protein
+        protein,
+        center="geometry",  # move atoms to center protein
     ),
     trans.wrap(
-        water, compound="residues"  # wrap each water back into box
+        water,
+        compound="residues",  # wrap each water back into box
     ),
     trans.fit_rot_trans(
-        protein, protein, weights="mass"  # align protein to first frame
+        protein,
+        protein,
+        weights="mass",  # align protein to first frame
     ),
 ]
 
@@ -56,16 +60,15 @@ dens.results.density.export("water.dx")
 
 ## Add Universe to Blender
 
-Import universe as a `Trajectory` and add a ribbon style to represent the protein.
+Import universe as a `Trajectory` and add a ribbon style to represent the protein. We also add a style to the non-rotein atoms, sliced along the `y` axis. After taking the snapshot for visual reference we remove the sphere style as we will be showing the water as a density.
 ```{python}
 protein_center = np.mean(protein.atoms.positions, axis=0)
 
-t = mn.Trajectory(u).add_style(style="ribbon")
-t.add_style("spheres", selection=f"not protein and prop y >= {protein_center[1]}")
-
-t.styles[0].backbone_radius = 2
-t.styles[1].sphere_geometry = "instance"
-t.styles[1].sphere_subdivisions = 4
+t = mn.Trajectory(u).add_style(mn.StyleRibbon(quality=5, backbone_radius=2))
+t.add_style(
+    mn.StyleSpheres("Instance", sphere_subdivisions=4),
+    selection=f"not protein and prop y >= {protein_center[1]}",
+)
 
 canvas.frame_view(t, (np.pi / 2, 0, np.pi / 3))
 canvas.snapshot()

@@ -9,6 +9,25 @@ import molecularnodes as mn
 cv = mn.Canvas(resolution=(860, 540), transparent=True)
 ```
 
+
+```{python}
+codes = ["4ozs", "8H1B", "8U8W"]
+styles = ["cartoon", "ribbon", "spheres"]
+materials = [
+    mn.material.Default(),
+    mn.material.AmbientOcclusion(),
+    mn.material.FlatOutline(),
+]
+
+for code, style, material in zip(codes, styles, materials):
+    canvas.clear()
+    mol = mn.Molecule.fetch(code)
+    mol.add_style(style)
+    canvas.frame_object(mol)
+    canvas.snapshot()
+
+```
+
 ```{python}
 mol = (
     mn.Molecule.fetch("8H1B")
@@ -23,6 +42,7 @@ mol = (
 cv.frame_object(mol)
 cv.snapshot()
 ```
+
 
 
 ```{python}

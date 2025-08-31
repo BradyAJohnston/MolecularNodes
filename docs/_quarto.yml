@@ -4,9 +4,12 @@ project:
 
 # lightbox: true
 filters:
+- interlinks
 - filters.lua
 - quarto
 - quarto-pdb
+
+code-link: true
 
 website:
   title: "Molecular Nodes"
@@ -57,17 +60,6 @@ website:
       - data_table.qmd
     - section: "Nodes"
       contents: nodes/*
-  # - id: tutorials
-  #   align: left
-  #   contents:
-  #   - tutorials/index.qmd
-  #   - tutorials/installation.qmd
-  #   - tutorials/interface.qmd
-  #   - tutorials/importing.qmd
-  #   - tutorials/selections.qmd
-  #   - tutorials/trajectories.qmd
-  #   - tutorials/cryoem.qmd
-  #   - tutorials/simulation.qmd
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -89,30 +81,47 @@ format:
 metadata-files:
 - api/_sidebar.yml
 
+interlinks:
+  sources:
+    numpy:
+      url: https://numpy.org/doc/stable/
+    python:
+      url: https://docs.python.org/3/
+    biotite:
+      url: https://www.biotite-python.org/latest/
+    MDAnalysis:
+      url: https://docs.mdanalysis.org/stable/
+    bpy:
+      url: https://docs.blender.org/api/current/
+
 quartodoc:
   package: molecularnodes
   dir: api/reference
+  render_interlinks: true
 
   sidebar:
     file: api/_sidebar.yml
     search: true
-    collapse-level: 3
+    collapse-level: 4
     contents:
     - text: Introduction
       href: api/index.qmd
     - api/styles.qmd
     - api/materials.qmd
-    - api/annotations.qmd
     - api/density.qmd
-    - api/canvas.qmd
     - api/blender.qmd
-    - text: "---"
-    - section: "MDAnalysis"
+    - section: "Rendering"
+      contents:
+      - api/canvas.qmd
+      - "mda/rendering.qmd"
+    - section: "Annotations"
+      contents:
+      - api/annotations.qmd
+      - "mda/annotations.qmd"
+    - section: "Trajectory"
       contents:
       - "mda/styles.qmd"
-      - "mda/annotations.qmd"
       - "mda/solvent_density.qmd"
-      - "mda/rendering.qmd"
 
     - text: "---"
     - section: "Reference"
@@ -125,9 +134,9 @@ quartodoc:
   - title: Entity
     desc: Importing and manipulating different molecular entities
     contents:
-    - entities.Molecule
-    - entities.MoleculeSelector
-    - entities.Trajectory
+    - Molecule
+    - MoleculeSelector
+    - Trajectory
     - entities.Ensemble
     - entities.OXDNA
 

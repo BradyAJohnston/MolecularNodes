@@ -1,30 +1,32 @@
 website:
   sidebar:
-  - collapse-level: 3
+  - collapse-level: 4
     contents:
     - href: api/index.qmd
       text: Introduction
     - api/styles.qmd
     - api/materials.qmd
-    - api/annotations.qmd
     - api/density.qmd
-    - api/canvas.qmd
     - api/blender.qmd
-    - text: '---'
     - contents:
-      - mda/example_mda.qmd
-      - mda/styles.qmd
-      - mda/annotations.qmd
-      - mda/solvent_density.qmd
+      - api/canvas.qmd
       - mda/rendering.qmd
-      section: MDAnalysis
+      section: Rendering
+    - contents:
+      - api/annotations.qmd
+      - mda/annotations.qmd
+      section: Annotations
+    - contents:
+      - mda/styles.qmd
+      - mda/solvent_density.qmd
+      section: Trajectory
     - text: '---'
     - contents:
       - api/reference/index.qmd
       - contents:
-        - api/reference/entities.Molecule.qmd
-        - api/reference/entities.MoleculeSelector.qmd
-        - api/reference/entities.Trajectory.qmd
+        - api/reference/Molecule.qmd
+        - api/reference/MoleculeSelector.qmd
+        - api/reference/Trajectory.qmd
         - api/reference/entities.Ensemble.qmd
         - api/reference/entities.OXDNA.qmd
         section: Entity
