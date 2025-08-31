@@ -13,7 +13,11 @@ cv = mn.Canvas(resolution=(860, 540), transparent=True)
 
 ```{python}
 codes = ["4ozs", "8H1B", "8U8W"]
-styles = ["cartoon", "ribbon", "spheres"]
+styles = [
+    mn.StyleCartoon(),
+    mn.StyleRibbon(),
+    mn.StyleSpheres(geometry="Instance", sphere_subdivisions=4),
+]
 materials = [
     mn.material.Default(),
     mn.material.AmbientOcclusion(),
@@ -21,11 +25,11 @@ materials = [
 ]
 
 for code, style, material in zip(codes, styles, materials):
-    cv.clear()
     mol = mn.Molecule.fetch(code)
-    mol.add_style(style)
+    mol.add_style(style, material=material)
     cv.frame_object(mol)
     cv.snapshot()
+    cv.clear()
 
 ```
 

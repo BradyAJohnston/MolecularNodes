@@ -126,6 +126,25 @@ quartodoc:
     - entities.Ensemble
     - entities.OXDNA
 
+  - title: Styles
+    desc: Setting and controlling the different styles
+    contents:
+    - StyleSpheres
+    - StyleRibbon
+    - StyleCartoon
+    - StyleSurface
+    - StyleSticks
+    - StyleBallandStick
+
+  - title: Materials
+    desc: Setting and controlling the different materials
+    contents:
+    - material.AmbientOcclusion
+    - material.Default
+    - material.Squishy
+    - material.FlatOutline
+    - material.TransparentOutline
+
   - title: Session
     desc: Session object to control molecular entities
     contents:
