@@ -109,7 +109,6 @@ quartodoc:
     - text: "---"
     - section: "MDAnalysis"
       contents:
-      - "mda/example_mda.qmd"
       - "mda/styles.qmd"
       - "mda/annotations.qmd"
       - "mda/solvent_density.qmd"

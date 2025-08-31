@@ -192,6 +192,12 @@ body code:not(.sourceCode) {
     color: rgb(221, 221, 221);
 }
 
+.widget-html-content {
+    padding: 0.2em;
+    // background-color: rgb(76, 80, 91);
+    color: rgb(221, 221, 221);
+}
+
 
 $custom-classes: (
   "float": $node-socket-color-float,

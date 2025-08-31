@@ -9,26 +9,22 @@ Here is an example that uses [Canavs](../api/canvas.html) to render images and a
 
 
 ```{python}
-import warnings
 import molecularnodes as mn
 import MDAnalysis as mda
 from MDAnalysis.tests.datafiles import PSF, DCD
 
-warnings.filterwarnings("ignore")
-
-# create a canvas object
 canvas = mn.Canvas()
 ```
 
 ## Add Universe to Blender
 
 ```{python}
-# load universe from topology and trajectory files
+#| warning: false
 u = mda.Universe(PSF, DCD)
 t = mn.Trajectory(u).add_style("cartoon")
 
 # add resid 1 and 129 with spheres style
-t.add_style(selection="resid 1 129", style="spheres")
+t.add_style('spheres', selection="resid 1 129")
 # set the sphere geometry to mesh
 t.styles[1].sphere_geometry = "mesh"
 ```
