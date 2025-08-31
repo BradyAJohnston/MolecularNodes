@@ -4,16 +4,26 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
+from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve
-from ...nodes import nodes
+from ...blender import utils as blender_utils
+from ...nodes.geometry import (
+    add_style_branch,
+)
+from ...nodes.nodes import styles_mapping
+from ...nodes.styles import (
+    StyleBase,
+)
 from ...utils import (
     correct_periodic_positions,
     fraction,
     frame_mapper,
     frames_to_average,
+    temp_override_property,
 )
 from ..base import EntityType, MolecularEntity
+from .annotations import TrajectoryAnnotationManager
 from .selections import Selection
 
 
@@ -28,6 +38,7 @@ class Trajectory(MolecularEntity):
         self.cache: dict = {}
         self._entity_type = EntityType.MD
         self._updating_in_progress = False
+        self.annotations = TrajectoryAnnotationManager(self)
 
     def selection_from_ui(self, item):
         self.add_selection(
@@ -414,7 +425,10 @@ class Trajectory(MolecularEntity):
         self.interpolate = False
 
     def _create_object(
-        self, style: str | None = "vdw", name: str = "NewUniverseObject"
+        self,
+        style: str | None = "vdw",
+        name: str = "NewUniverseObject",
+        selection: str | AtomGroup | None = None,
     ) -> None:
         self.object = databpy.create_object(
             name=name,
@@ -441,17 +455,17 @@ class Trajectory(MolecularEntity):
 
             self.object["segments"] = segs
 
+        self._setup_modifiers()
         if style is not None:
-            nodes.create_starting_node_tree(
-                self.object, style=style, name=f"MN_{self.name}"
-            )
+            self.add_style(style, selection=selection)
 
     def create_object(
         self,
         name: str = "NewUniverseObject",
         style: str | None = "vdw",
+        selection: str | AtomGroup | None = None,
     ):
-        self._create_object(style=style, name=name)
+        self._create_object(style=style, name=name, selection=selection)
 
         self.object["chain_ids"] = self.chain_ids
 
@@ -681,3 +695,156 @@ class Trajectory(MolecularEntity):
 
     def __repr__(self):
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
+
+    def add_style(
+        self,
+        style: StyleBase | str = "spheres",
+        color: str | None = "common",
+        selection: str | AtomGroup | None = None,
+        material: bpy.types.Material | str | None = None,
+        name: str | None = None,
+    ):
+        """
+        Add a visual style to the trajectory.
+
+        Parameters
+        ----------
+        style : bpy.types.GeometryNodeTree | str, optional
+            The style to apply to the trajectory. Can be a GeometryNodeTree or a string
+            identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
+            Default is "spheres".
+
+        color : str | None, optional
+            The coloring scheme to apply. Can be "common" (element-based coloring),
+            "chain", "residue", or other supported schemes. If None, no coloring
+            is applied. Default is "common".
+
+        selection : str | AtomGroup | None, optional
+            Apply the style only to atoms matching this selection. Can be:
+            - A string referring to an existing boolean attribute on the trajectory
+            - A AtomGroup object defining a selection criteria
+            - None to apply to all atoms (default)
+
+        material : bpy.types.Material | str | None, optional
+            The material to apply to the styled atoms. Can be a Blender Material object,
+            a string with a material name, or None to use default materials. Default is None.
+
+        name: str, optional
+            The label for this style
+
+        Returns
+        -------
+        Trajectory
+            Returns self for method chaining.
+
+        Raises
+        ------
+        ValueError
+            If an unsupported style string is passed
+
+        Notes
+        -----
+        If a selection is provided, it will be evaluated and stored as a new
+        named attribute on the trajectory with an automatically generated name (sel_N).
+        """
+        if style is None:
+            return self
+
+        if isinstance(style, str) and style not in styles_mapping:
+            raise ValueError(
+                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
+            )
+
+        if selection is not None:
+            attribute_name = "sel_0"
+            i = 0
+            while attribute_name in self.list_attributes():
+                attribute_name = f"sel_{i}"
+                i += 1
+            if isinstance(selection, str):
+                # TODO: There are currently no validations for the selection phrase
+                selection = self.add_selection(attribute_name, selection).name
+            elif isinstance(selection, AtomGroup):
+                selection = self.add_selection_from_atomgroup(
+                    selection, name=attribute_name
+                ).name
+            # TODO: Delete these named attributes when style is deleted
+            # Currently, styles are removed using GeometryNodeInterFace.remove(),
+
+        node_style = add_style_branch(
+            tree=self.tree,
+            style=style,
+            color=color,
+            selection=selection,
+            material=material,
+            name=name,
+        )
+
+        # set the active index for UI to the newly added style
+        self.object.mn.styles_active_index = self.tree.nodes.find(node_style.name)
+
+        return self
+
+    def _get_3d_bbox(self, selection: mda.AtomGroup) -> list[tuple]:
+        """Get the 3D bounding box vertices of atoms in an AtomGroup"""
+        if selection is None:
+            return blender_utils.get_bounding_box(self.object)
+        v0, v1 = selection.bbox() * self.world_scale
+        bb_verts_3d = [
+            (v0[0], v0[1], v0[2]),
+            (v0[0], v0[1], v1[2]),
+            (v0[0], v1[1], v0[2]),
+            (v0[0], v1[1], v1[2]),
+            (v1[0], v0[1], v0[2]),
+            (v1[0], v0[1], v1[2]),
+            (v1[0], v1[1], v0[2]),
+            (v1[0], v1[1], v1[2]),
+        ]
+        return bb_verts_3d
+
+    def get_view(self, selection: str | AtomGroup = None, frame: int = None) -> None:
+        """
+        Get the 3D bounding box of a selection within the trajectory
+
+        Parameters
+        ----------
+
+        selection : str | AtomGroup, optional
+            A selection phrase or AtomGroup
+            When not specified, the whole entity is considered
+
+        frame: int, optional
+            Frame number of trajectory to use for calculating bounds.
+            When not specified, current trajectory frame is used
+
+        """
+        if frame is not None:
+            if frame < 0 or frame >= self.n_frames:
+                raise ValueError(
+                    f"{frame} is not within range [0, {self.n_frames - 1}]"
+                )
+        else:
+            frame = self.uframe
+        # temporarily set trajectory frame to specified value
+        with temp_override_property(self, "uframe", frame):
+            if selection is None:
+                # return bbox of object when no selection specified
+                return self._get_3d_bbox(None)
+            if isinstance(selection, AtomGroup):
+                atom_group = selection
+            elif isinstance(selection, str):
+                # allow multiple comma separated selection phrases as well
+                selection_array = selection.split(",")
+                try:
+                    atom_group = self.universe.select_atoms(*selection_array)
+                except Exception:
+                    raise ValueError(f"Invalid {selection} phrase")
+            else:
+                raise ValueError(f"{selection} is neither a str or AtomGroup")
+
+            if atom_group.n_atoms == 0:
+                # return bbox of object when selection is empty
+                return self._get_3d_bbox(None)
+
+            # return the 3D bounding box vertices of the selected AtomGroup
+            return self._get_3d_bbox(atom_group)

@@ -6,6 +6,10 @@ website:
       text: Introduction
     - api/styles.qmd
     - api/materials.qmd
+    - api/annotations.qmd
+    - api/density.qmd
+    - api/canvas.qmd
+    - api/blender.qmd
     - text: '---'
     - contents:
       - api/reference/index.qmd
@@ -17,7 +21,19 @@ website:
         - api/reference/entities.OXDNA.qmd
         section: Entity
       - contents:
+        - api/reference/session.MNSession.qmd
+        section: Session
+      - contents:
+        - api/reference/annotations.base.qmd
+        - api/reference/annotations.interface.qmd
+        - api/reference/annotations.manager.qmd
+        - api/reference/entities.trajectory.annotations.qmd
+        - api/reference/entities.molecule.annotations.qmd
+        - api/reference/entities.density.annotations.qmd
+        section: Annotations
+      - contents:
         - api/reference/Canvas.qmd
+        - api/reference/scene.camera.qmd
         section: Scene
       section: Reference
     id: api/reference

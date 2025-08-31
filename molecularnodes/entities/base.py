@@ -1,18 +1,28 @@
 from abc import ABCMeta
 from enum import Enum
+from typing import List
 import bpy
 from databpy import (
     BlenderObject,
 )
+from ..blender import utils as blender_utils
+from ..nodes import nodes
+from ..nodes.geometry import (
+    GeometryNodeInterFace,
+    style_interfaces_from_tree,
+)
 
 
-# create a EntityType enum with strings for values, "md", "md-oxdna", "molecule", "star"
+# create a EntityType enum
+# These should match the entity_type EnumProperty in props.py
 class EntityType(Enum):
     MD = "md"
     MD_OXDNA = "md-oxdna"
     MOLECULE = "molecule"
     ENSEMBLE = "ensemble"
     DENSITY = "density"
+    ENSEMBLE_STAR = "ensemble-star"
+    ENSEMBLE_CELLPACK = "ensemble-cellpack"
 
 
 class MolecularEntity(
@@ -31,7 +41,25 @@ class MolecularEntity(
 
     @property
     def node_group(self) -> bpy.types.GeometryNodeTree:
-        return self.object.modifiers["MolecularNodes"].node_group
+        if "MolecularNodes" in self.object.modifiers:
+            return self.object.modifiers["MolecularNodes"].node_group
+        return None
+
+    @property
+    def tree(self) -> bpy.types.GeometryNodeTree:
+        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
+        if mod is None:
+            raise ValueError(
+                f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
+            )
+        return mod.node_group  # type: ignore
+
+    @property
+    def styles(self) -> List[GeometryNodeInterFace]:
+        """
+        Get the styles in the tree.
+        """
+        return style_interfaces_from_tree(self.tree)
 
     @property
     def update_with_scene(self) -> bool:
@@ -59,3 +87,21 @@ class MolecularEntity(
             NotImplementedError: If the method is not implemented by a subclass.
         """
         raise NotImplementedError("Subclasses must implement this method")
+
+    def _setup_modifiers(self):
+        """
+        Create the modifiers for the molecule.
+        """
+        self.object.modifiers.new("MolecularNodes", "NODES")
+        # fallback=False => new tree all the time
+        tree = nodes.new_tree(  # type: ignore
+            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True, fallback=False
+        )
+        self.object.modifiers[0].node_group = tree  # type: ignore
+
+    def get_view(self) -> None:
+        """
+        Get the 3D bounding box of the entity object
+
+        """
+        return blender_utils.get_bounding_box(self.object)

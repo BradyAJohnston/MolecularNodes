@@ -1,5 +1,5 @@
 from .base import Density
+from .grids import Grids
 from .io import load
-from .mrc import MRC
 
-__all__ = ["Density", "load", "MRC"]
+__all__ = ["Density", "load", "Grids"]

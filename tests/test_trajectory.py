@@ -261,6 +261,90 @@ class TestTrajectory:
         assert snapshot_custom == verts_frame_4
         assert not np.allclose(verts_frame_0, verts_frame_4)
 
+    def test_add_style(
+        self,
+        universe,
+    ):
+        session = mn.session.get_session()
+        # test defaults
+        t1 = session.add_trajectory(universe)
+        assert len(t1.tree.nodes) == 7
+        session.remove_trajectory(t1)
+        # test add_trajectory with non-default style
+        t1 = session.add_trajectory(universe, style="cartoon")
+        assert len(t1.tree.nodes) == 7
+        session.remove_trajectory(t1)
+        # test add_trajectory with no style
+        t1 = session.add_trajectory(universe, style=None)
+        assert len(t1.tree.nodes) == 2
+        # test adding empty style
+        t1.add_style(style=None)
+        assert len(t1.tree.nodes) == 2
+        # test adding invalid style
+        with pytest.raises(ValueError):
+            t1.add_style(style="invalid")
+        # test adding new style
+        t1.add_style(style="cartoon")
+        assert len(t1.tree.nodes) == 7
+        # test add_style with selection string
+        selection = "resid 1:10"
+        t1.add_style(style="ribbon", selection=selection)
+        assert "sel_0" in t1.list_attributes()
+        # test add_style with AtomGroup selection
+        selection = universe.select_atoms("resid 1:10")
+        t1.add_style(style="ribbon", selection=selection)
+        assert "sel_1" in t1.list_attributes()
+        session.remove_trajectory(t1)
+        # test add_style from UI
+        t1 = session.add_trajectory(universe, style=None)
+        assert len(t1.styles) == 0
+        bpy.ops.mn.add_style("EXEC_DEFAULT", uuid=t1.uuid)
+        assert len(t1.styles) == 1
+        session.remove_trajectory(t1)
+
+    def test_remove_style(
+        self,
+        universe,
+    ):
+        session = mn.session.get_session()
+        t1 = session.add_trajectory(universe)
+        assert len(t1.tree.nodes) == 7
+        assert len(t1.styles) == 1
+        # add new style
+        t1.add_style(style="cartoon")
+        assert len(t1.styles) == 2
+        # test remove style
+        t1.styles[0].remove()
+        assert len(t1.styles) == 1
+        t1.styles[0].remove()
+        assert len(t1.styles) == 0
+        session.remove_trajectory(t1)
+        # test remove style from UI
+        t1 = session.add_trajectory(universe)
+        assert len(t1.styles) == 1
+        style_node = mn.nodes.geometry.get_final_style_nodes(t1.tree)[0]
+        style_node_index = t1.tree.nodes.find(style_node.name)
+        bpy.ops.mn.remove_style(
+            "EXEC_DEFAULT", uuid=t1.uuid, style_node_index=style_node_index
+        )
+        assert len(t1.styles) == 0
+        session.remove_trajectory(t1)
+
+    def test_get_view(self, universe):
+        session = mn.session.get_session()
+        t1 = session.add_trajectory(universe)
+        # view of resid 1
+        v1 = t1.get_view(selection="resid 1")
+        # view of resid 1 at trajectory frame 3
+        v2 = t1.get_view(selection="resid 1", frame=3)
+        assert v2 != v1
+        # view of resid 2
+        v3 = t1.get_view(selection="resid 2")
+        assert v3 != v1 and v3 != v2
+        # view of whole object
+        v4 = t1.get_view()
+        assert v4 != v1 and v4 != v2 and v4 != v3
+
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):

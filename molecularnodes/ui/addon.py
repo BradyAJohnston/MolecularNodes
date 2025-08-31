@@ -12,10 +12,10 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_pre, load_post, save_post
+from bpy.app.handlers import frame_change_pre, load_post, render_pre, save_post
 from bpy.props import CollectionProperty, PointerProperty
 from .. import session
-from ..handlers import update_entities
+from ..handlers import render_pre_handler, update_entities
 from ..utils import add_current_module_to_path
 from . import node_menu, ops, panel, pref, props
 
@@ -54,6 +54,7 @@ def register():
     save_post.append(session._pickle)
     load_post.append(session._load)
     frame_change_pre.append(update_entities)
+    render_pre.append(render_pre_handler)
 
     bpy.types.Scene.MNSession = session.MNSession()  # type: ignore
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
@@ -62,6 +63,9 @@ def register():
     bpy.types.Object.mn_trajectory_selections = CollectionProperty(  # type: ignore
         type=props.TrajectorySelectionItem  # type: ignore
     )
+    # bpy.types.Object.mn_annotations is dynamically created and updated based
+    # on different annotation types. It has to be a top level property to avoid
+    # AttributeError: '_PropertyDeferred' object has no attribute '...'
 
 
 def unregister():
@@ -79,7 +83,9 @@ def unregister():
     save_post.remove(session._pickle)
     load_post.remove(session._load)
     frame_change_pre.remove(update_entities)
+    render_pre.remove(render_pre_handler)
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore
+    del bpy.types.Object.mn_annotations  # type: ignore

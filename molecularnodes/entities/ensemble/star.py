@@ -11,7 +11,7 @@ from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
 from ...nodes import nodes
-from .base import Ensemble
+from .base import Ensemble, EntityType
 
 
 class EnsembleDataFrame:
@@ -152,6 +152,7 @@ class StarFile(Ensemble):
         super().__init__(file_path)
         self.type: str = "starfile"
         self.current_image: int = -1
+        self._entity_type = EntityType.ENSEMBLE_STAR
 
     @classmethod
     def from_starfile(cls, file_path: Union[str, Path]) -> "StarFile":
@@ -281,8 +282,8 @@ class StarFile(Ensemble):
         self.object = databpy.create_object(
             self.df.coordinates_scaled * world_scale, collection=bl.coll.mn(), name=name
         )
+        self.object.mn.entity_type = self._entity_type.value
         self.df.store_data_on_object(self.object)
-        self.object.mn["entity_type"] = "star"  # type: ignore
 
         if node_setup:
             nodes.create_starting_nodes_starfile(self.object)

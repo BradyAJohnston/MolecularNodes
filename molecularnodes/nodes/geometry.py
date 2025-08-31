@@ -1,7 +1,7 @@
 from typing import List, Sequence
 import bpy
-from bpy.types import Node
-from mathutils import Vector
+from bpy.types import Node  # type: ignore
+from mathutils import Vector  # type: ignore
 from . import nodes
 from .arrange import arrange_tree
 from .interface import (
@@ -83,7 +83,8 @@ def add_style_branch(
     selection: str | None = None,
     material: bpy.types.Material | str | None = None,
     frames: bpy.types.Collection | str | None = None,
-) -> None:
+    name: str | None = None,
+) -> bpy.types.GeometryNodeGroup:
     """
     Add a style branch to the tree.
     """
@@ -143,6 +144,13 @@ def add_style_branch(
     if isinstance(style, StyleBase):
         style.update_style_node(node_style)
 
+    if name is not None:
+        node_style.label = name
+    else:
+        node_style.label = node_style.name
+
+    return node_style
+
 
 def get_final_style_nodes(
     tree: bpy.types.GeometryNodeTree,
@@ -193,6 +201,9 @@ class GeometryNodeInterFace(TreeInterface):
                 .removeprefix("ball_and_stick_")
                 .removeprefix("cartoon_")
                 .removeprefix("spheres_")
+                .removeprefix("density_surface_")
+                .removeprefix("density_iso_surface_")
+                .removeprefix("density_wire_")
             )
             if isinstance(input, bpy.types.NodeSocketMaterial):
                 prop = getset_material(input)

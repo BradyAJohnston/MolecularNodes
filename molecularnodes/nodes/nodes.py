@@ -14,6 +14,7 @@ from .. import color, utils
 from ..assets import MN_DATA_FILE
 from ..blender import mesh
 from .material import assign_material
+from .style_density_iso_surface import style_density_iso_surface_node_group
 
 NODE_WIDTH = 180
 
@@ -53,6 +54,7 @@ styles_mapping = {
     "ball+stick": "Style Ball and Stick",
     "oxdna": "MN_oxdna_style_ribbon",
     "density_surface": "Style Density Surface",
+    "density_iso_surface": "Style Density ISO Surface",
     "density_wire": "Style Density Wire",
 }
 
@@ -316,17 +318,19 @@ def create_starting_nodes_starfile(object):
     link(node_input.outputs[0], node_star_instances.inputs[0])
 
 
-def create_starting_nodes_density(object, threshold=0.8, style="density_surface"):
+def create_starting_nodes_density(
+    object: bpy.types.Object,
+    threshold: float = 0.8,
+    style: str = "density_surface",
+    threshold_range: tuple | None = None,
+    threshold_type: str | None = None,
+    x_range: tuple | None = None,
+    y_range: tuple | None = None,
+    z_range: tuple | None = None,
+) -> bpy.types.GeometryNodeGroup:
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
-
-    try:
-        tree = bpy.data.node_groups[node_name]
-        mod.node_group = tree
-        return
-    except KeyError:
-        pass
 
     # create a new GN node group, specific to this particular molecule
     group = new_tree(node_name, fallback=False)
@@ -339,11 +343,56 @@ def create_starting_nodes_density(object, threshold=0.8, style="density_surface"
     node_output = get_output(group)
     node_output.location = [800, 0]
 
-    node_density = add_custom(group, styles_mapping[style], [400, 0])
-    node_density.inputs["Threshold"].default_value = threshold
+    if style == "density_iso_surface":
+        key = "ISO Value"
+        node_density = group.nodes.new("GeometryNodeGroup")  # type: ignore
+        node_density.name = styles_mapping[style]
+        node_density.location = [400, 0]
+        tree = style_density_iso_surface_node_group()
+        tree.name = f"{styles_mapping[style]}.{object.name}"
+        node_density.node_tree = tree
+        assign_material(node_density)
+        if x_range is not None:
+            tree.nodes["X Min"].outputs["Value"].default_value = x_range[0]
+            tree.nodes["X Max"].outputs["Value"].default_value = x_range[1]
+        if y_range is not None:
+            tree.nodes["Y Min"].outputs["Value"].default_value = y_range[0]
+            tree.nodes["Y Max"].outputs["Value"].default_value = y_range[1]
+        if z_range is not None:
+            tree.nodes["Z Min"].outputs["Value"].default_value = z_range[0]
+            tree.nodes["Z Max"].outputs["Value"].default_value = z_range[1]
+    else:
+        key = "Threshold"
+        node_density = add_custom(group, styles_mapping[style], [400, 0])
+        # make the node tree of this node independent (single user)
+        # to allow separate configuration of min, max and default threshold values
+        node_tree_copy = node_density.node_tree.copy()
+        node_tree_copy.name = f"{styles_mapping[style]}.{object.name}"
+        node_density.node_tree = node_tree_copy
+
+    items_tree = node_density.node_tree.interface.items_tree
+    # set the socket type if specified - NodeSocketInt or NodeSocketFloat
+    if threshold_type is not None:
+        items_tree[key].socket_type = threshold_type
+    # set the default threshold - both interface and socket
+    items_tree[key].default_value = threshold
+    node_density.inputs[key].default_value = threshold
+    # set the min, max threshold values if specified
+    if threshold_range is not None:
+        items_tree[key].min_value = threshold_range[0]
+        items_tree[key].max_value = threshold_range[1]
+    # set the label to match node name
+    node_density.label = node_density.name
+
+    # add the join geometry node to keep this consistent with style interface
+    node_join = group.nodes.new("GeometryNodeJoinGeometry")
+    node_join.location = [620, 0]
 
     link(node_input.outputs[0], node_density.inputs[0])
-    link(node_density.outputs[0], node_output.inputs[0])
+    link(node_density.outputs[0], node_join.inputs[0])
+    link(node_join.outputs[0], node_output.inputs[0])
+
+    return node_density
 
 
 def create_starting_node_tree(
