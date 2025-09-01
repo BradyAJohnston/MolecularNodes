@@ -48,14 +48,14 @@ pip install molecularnodes[bpy]
 
 ## Getting Started
 
-There are two main classes you will interact with, the [](`~molecularnodes.Molecule`) and the [](`~molecularnodes.Trajectory`).
+There are two main classes you will interact with, the [](`~mn.Molecule`) and the [](`~mn.Trajectory`).
 
-- [](`~molecularnodes.Molecule`)
+- [](`~mn.Molecule`)
     - Intended for static structures, downloaded from the PDB or loaded locally
     - Uses [](`biotite`) as the backend for parsing files and storing data as a [](`biotite.structure.AtomArray`)
     - doesn't support selection strings
 
-- [](`~molecularnodes.Trajectory`)
+- [](`~mn.Trajectory`)
     - For MD simulation data
     - Uses [](`MDAnalysis`) as the backend, keeping a [](`MDAnalysis.Universe`) updating in the background to update positions
     - supports selection strings and transformations
@@ -65,7 +65,7 @@ How you script with each is unfortunately slightly different when it comes to se
 
 ## Molecules
 
-To get started, with import the module start a new scene be creating out [`Canvas()`](reference/Canvas.qmd) object. This object is how we change settings for how the scene will render and other related settings sich as resolution.
+To get started, with import the module start a new scene be creating out [](`~mn.Canvas`) object. This object is how we change settings for how the scene will render and other related settings sich as resolution.
 
 ```{python}
 import molecularnodes as mn
@@ -75,7 +75,7 @@ canvas = mn.Canvas(mn.scene.Cycles(samples=32), resolution=(720, 480))
 
 ### Add a `Molecule`
 
-The [`Molecule`](reference/Molecule.qmd) can take a `AtomArray` from the `biotite` package directly, or it has the [`fetch`](reference/Molecule.qmd#fetch) and [`load`](reference/Molecule.qmd#) class methods to download directly from the PDB or load a local file.
+The [](`mn.Molecule`) can take a `AtomArray` from the `biotite` package directly, or it has the [](`mn.Molecule.fetch`) and [](`mn.Molecule.load`) class methods to download directly from the PDB or load a local file.
 
 After loading the molecule, to be able to see anything we must first add a style. Then we can frame the camera on the object and take a snapshot.
 

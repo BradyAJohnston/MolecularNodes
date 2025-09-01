@@ -31,6 +31,7 @@ jobs:
           cd docs
           uv run generate.py
           uv run quartodoc build
+          uv run quartodoc interlinks
           cd ..
       
       - name: Render Docs

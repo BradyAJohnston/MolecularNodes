@@ -33,7 +33,7 @@ canvas.snapshot()
 
 ## Add Styles
 
-Styles can be added to different selections of the universe after it has been added to Blender using the [`add_style`](../api/reference/entities.Trajectory.html#molecularnodes.entities.Trajectory.add_style) API.
+Styles can be added to different selections of the universe after it has been added to Blender using the [](`~mn.Trajectory.add_style()`) API.
 
 ```py
 Trajectory.add_style(
