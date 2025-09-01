@@ -134,7 +134,7 @@ quartodoc:
     - StyleCartoon
     - StyleSurface
     - StyleSticks
-    - StyleBallandStick
+    - StyleBallAndStick
 
   - title: Materials
     desc: Setting and controlling the different materials

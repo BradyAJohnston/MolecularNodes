@@ -37,9 +37,9 @@ t2 = mn.Trajectory(u2)
 # styles
 # trajectory 1
 
-t1.add_style(style=mn.StyleBallandStick(quality=4), selection="resid 184")
+t1.add_style(style=mn.StyleBallAndStick(quality=4), selection="resid 184")
 t1.add_style(
-    style=mn.StyleSpheres(sphere_subdivisions=4, geometry="Instance"),
+    style=mn.StyleSpheres(subdivisions=4, geometry="Instance"),
     selection="resid 1 129",
 )
 

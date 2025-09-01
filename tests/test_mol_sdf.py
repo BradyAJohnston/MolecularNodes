@@ -21,7 +21,7 @@ def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
     assert mol.object
 
     if style != "surface":
-        mol.styles[0].sphere_geometry = "Mesh"
+        mol.styles[0].geometry = "Mesh"
 
     for attribute in attributes:
         try:

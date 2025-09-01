@@ -35,17 +35,17 @@
           {
             "identifier": "Point",
             "name": "Point",
-            "description": "Point cloud representation"
+            "description": "Point option"
           },
           {
             "identifier": "Instance",
             "name": "Instance",
-            "description": "Instanced mesh spheres"
+            "description": "Instance option"
           },
           {
             "identifier": "Mesh",
             "name": "Mesh",
-            "description": "Realized mesh spheres"
+            "description": "Mesh option"
           }
         ]
       },
@@ -237,12 +237,12 @@
           {
             "identifier": "Cylinder",
             "name": "Cylinder",
-            "description": "Cylindrical backbone"
+            "description": "Cylinder option"
           },
           {
             "identifier": "Rectangle",
             "name": "Rectangle",
-            "description": "Rectangular backbone"
+            "description": "Rectangle option"
           }
         ]
       },
@@ -266,19 +266,14 @@
         "subtype": null,
         "enum_options": [
           {
-            "identifier": "Rectangle",
-            "name": "Rectangle",
-            "description": "Rectangular base shape"
-          },
-          {
             "identifier": "Cylinder",
             "name": "Cylinder",
-            "description": "Cylindrical base shape"
+            "description": "Cylinder option"
           },
           {
-            "identifier": "Square",
-            "name": "Square",
-            "description": "Square base shape"
+            "identifier": "Rectangle",
+            "name": "Rectangle",
+            "description": "Rectangle option"
           }
         ]
       },
@@ -736,12 +731,12 @@
           {
             "identifier": "Cylinder",
             "name": "Cylinder",
-            "description": "Cylindrical backbone"
+            "description": "Cylinder option"
           },
           {
             "identifier": "Rectangle",
             "name": "Rectangle",
-            "description": "Rectangular backbone"
+            "description": "Rectangle option"
           }
         ]
       },
@@ -811,12 +806,12 @@
           {
             "identifier": "Factor",
             "name": "Factor",
-            "description": "Use factor component"
+            "description": "Factor option"
           },
           {
-            "identifier": "Position",
-            "name": "Position",
-            "description": "Use position component"
+            "identifier": "Length",
+            "name": "Length",
+            "description": "Length option"
           }
         ]
       },
@@ -878,17 +873,17 @@
           {
             "identifier": "Point",
             "name": "Point",
-            "description": "Point cloud representation"
+            "description": "Point option"
           },
           {
             "identifier": "Instance",
             "name": "Instance",
-            "description": "Instanced mesh spheres"
+            "description": "Instance option"
           },
           {
             "identifier": "Mesh",
             "name": "Mesh",
-            "description": "Realized mesh spheres"
+            "description": "Mesh option"
           }
         ]
       },
@@ -1065,18 +1060,13 @@
         "enum_options": [
           {
             "identifier": "chain_id",
-            "name": "Chain ID",
-            "description": "Separate by chain identifier"
+            "name": "chain_id",
+            "description": "chain_id option"
           },
           {
-            "identifier": "res_id",
-            "name": "Residue ID",
-            "description": "Separate by residue identifier"
-          },
-          {
-            "identifier": "entity_id",
-            "name": "Entity ID",
-            "description": "Separate by entity identifier"
+            "identifier": "Group ID",
+            "name": "Group ID",
+            "description": "Group ID option"
           }
         ]
       },
@@ -1102,17 +1092,12 @@
           {
             "identifier": "Alpha Carbon",
             "name": "Alpha Carbon",
-            "description": "Color from alpha carbon atoms"
+            "description": "Alpha Carbon option"
           },
           {
-            "identifier": "Backbone",
-            "name": "Backbone",
-            "description": "Color from backbone atoms"
-          },
-          {
-            "identifier": "All",
-            "name": "All",
-            "description": "Color from all atoms"
+            "identifier": "Nearest",
+            "name": "Nearest",
+            "description": "Nearest option"
           }
         ]
       },

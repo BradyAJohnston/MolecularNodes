@@ -3,7 +3,7 @@ from .assets import template
 from .entities import Molecule, MoleculeSelector, Trajectory
 from .nodes import material
 from .nodes.styles import (
-    StyleBallandStick,
+    StyleBallAndStick,
     StyleCartoon,
     StyleRibbon,
     StyleSpheres,
@@ -35,7 +35,7 @@ __all__ = [
     "MoleculeSelector",
     "StyleRibbon",
     "StyleCartoon",
-    "StyleBallandStick",
+    "StyleBallAndStick",
     "StyleSpheres",
     "StyleSticks",
     "StyleSurface",

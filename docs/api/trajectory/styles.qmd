@@ -48,7 +48,7 @@ Trajectory.add_style(
 - `style` param
   - This param can be a string or an instance of `nodes.StyleBase` class.
   - When passed as a string, the value can be one of `ball_and_stick`, `cartoon`, `ribbon`, `spheres`, `sticks`, `surface`, etc.
-  - When passed as a `nodes.StyleBase` instance, the value can be an instance of `nodes.StyleBallandStick`, `nodes.StyleCartoon`, `nodes.StyleRibbon`, `nodes.StyleSpheres`, `nodes.StyleSticks` and `nodes.StyleSurface`.
+  - When passed as a `nodes.StyleBase` instance, the value can be an instance of `nodes.StyleBallAndStick`, `nodes.StyleCartoon`, `nodes.StyleRibbon`, `nodes.StyleSpheres`, `nodes.StyleSticks` and `nodes.StyleSurface`.
 - `color` param
   - This param can be a string or a tuple with rgba values
   - When passed as a string, the value can be one of `default` or `common`
@@ -62,7 +62,10 @@ Trajectory.add_style(
 
 ```{python}
 # add spheres style to resid 1 and 129
-t.add_style(mn.StyleSpheres(geometry = "Instance", sphere_subdivisions=4), selection="resid 1 129")
+t.add_style(
+    mn.StyleSpheres(geometry="Instance", subdivisions=4),
+    selection="resid 1 129",
+)
 ```
 
 ```{python}
@@ -86,7 +89,7 @@ canvas.snapshot()
 
 ```{python}
 # add a ball and style for resids 180:200
-t.add_style(mn.StyleBallandStick(quality=4), selection=u.select_atoms("resid 180:200"))
+t.add_style(mn.StyleBallAndStick(quality=4), selection=u.select_atoms("resid 180:200"))
 ```
 
 ```{python}

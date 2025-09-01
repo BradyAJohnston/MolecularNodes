@@ -19,6 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from style_node_generator import (
+    MN_DATA_FILE,
     extract_style_nodes,
     generate_style_classes_file,
     save_style_data_to_json,
@@ -49,7 +50,7 @@ def main():
     try:
         if args.list_nodes:
             print("Extracting Style nodes...")
-            style_nodes = extract_style_nodes()
+            style_nodes = extract_style_nodes(MN_DATA_FILE)
             print(f"\nFound {len(style_nodes)} Style nodes:")
             for name, info in style_nodes.items():
                 print(f"  - {name} ({len(info.inputs)} inputs)")
@@ -58,12 +59,27 @@ def main():
             return
 
         if args.json:
-            json_path = output_dir / "style_nodes_data.json"
+            # Default to nodes/ directory for JSON
+            if args.output_dir == ".":
+                json_path = (
+                    Path(__file__).parent
+                    / "molecularnodes"
+                    / "nodes"
+                    / "style_nodes_data.json"
+                )
+            else:
+                json_path = output_dir / "style_nodes_data.json"
             print(f"Generating JSON data to {json_path}...")
             save_style_data_to_json(json_path)
 
         if args.python:
-            py_path = output_dir / "style.py"
+            # Default to nodes/ directory for styles.py
+            if args.output_dir == ".":
+                py_path = (
+                    Path(__file__).parent / "molecularnodes" / "nodes" / "styles.py"
+                )
+            else:
+                py_path = output_dir / "styles.py"
             print(f"Generating Python classes to {py_path}...")
             generate_style_classes_file(py_path)
 

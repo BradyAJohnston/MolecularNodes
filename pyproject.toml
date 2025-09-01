@@ -32,7 +32,10 @@ requires = ["setuptools>=61.0"]
 
 [tool.setuptools]
 include-package-data = true
-packages = ["molecularnodes"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["molecularnodes.nodes._generation*"]
 
 [tool.setuptools.package-data]
 molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]

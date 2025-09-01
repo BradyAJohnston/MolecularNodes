@@ -26,7 +26,7 @@ t = mn.Trajectory(u).add_style("cartoon")
 # add resid 1 and 129 with spheres style
 t.add_style('spheres', selection="resid 1 129")
 # set the sphere geometry to mesh
-t.styles[1].sphere_geometry = "mesh"
+t.styles[1].geometry = "mesh"
 ```
 
 ## Add annotations to Universe
