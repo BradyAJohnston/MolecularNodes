@@ -1154,6 +1154,18 @@ wheels = [
 ]
 
 [[package]]
+name = "mdanalysisdata"
+version = "0.9.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tqdm" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/32/04/df5494e9266b903476f370800ee950a6528b427cb3f77300f19445428278/MDAnalysisData-0.9.0.tar.gz", hash = "sha256:11cbd4a7ebd1df5176fa3e5d18894a5049594471bd80297cc157aaace3c9970c", size = 43252 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b4/8f/577ebc409a9e57e3caad8ef3e118dacf40920b4ddfa2e64094db98d13031/MDAnalysisData-0.9.0-py2.py3-none-any.whl", hash = "sha256:782e58bc8bd44337ec464e925bfa5c6fee3eea2f77dba059da143a500c553b2f", size = 37496 },
+]
+
+[[package]]
 name = "mdanalysistests"
 version = "2.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1223,6 +1235,7 @@ docs = [
     { name = "ipython" },
     { name = "jupyter" },
     { name = "jupyter-cache" },
+    { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
     { name = "nodepad" },
     { name = "quartodoc" },
@@ -1234,6 +1247,7 @@ jupyter = [
 ]
 test = [
     { name = "ipython" },
+    { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -1256,6 +1270,8 @@ requires-dist = [
     { name = "jupyter", marker = "extra == 'jupyter'" },
     { name = "jupyter-cache", marker = "extra == 'docs'" },
     { name = "mdanalysis", specifier = ">=2.7.0" },
+    { name = "mdanalysisdata", marker = "extra == 'docs'" },
+    { name = "mdanalysisdata", marker = "extra == 'test'" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'test'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
