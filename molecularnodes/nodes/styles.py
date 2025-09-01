@@ -1,7 +1,7 @@
 """
 Auto-generated Style Classes
 
-This file contains Style classes automatically generated from the MN_data_file_4.4.blend file.
+This file contains Style classes automatically generated from a Blender file.
 Each class represents a Style node and provides a Python interface to configure the node parameters.
 
 Generated classes follow the same pattern as the existing styles in molecularnodes.nodes.styles,
@@ -10,7 +10,7 @@ using the Socket dataclass system and StyleBase inheritance.
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Any
 from bpy.types import GeometryNodeGroup
 
 __all__ = [
@@ -52,8 +52,10 @@ class StyleBase:
     def update_style_node(self, node_style: GeometryNodeGroup):
         """Update the Blender node inputs with values from this style's attributes.
 
-        Args:
-            node_style: The Blender GeometryNodeGroup to update
+        Parameters
+        ----------
+        node_style : GeometryNodeGroup
+            The Blender GeometryNodeGroup to update
         """
         for input in node_style.inputs:
             if input.type != "GEOMETRY":
