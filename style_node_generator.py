@@ -324,10 +324,10 @@ def save_style_data_to_json(output_path: Path) -> None:
                 {
                     "name": inp.name,
                     "type": inp.type,
-                    "default_value": inp.default_value,
+                    "default_value": round_float_values(inp.default_value),
                     "description": inp.description,
-                    "min_value": inp.min_value,
-                    "max_value": inp.max_value,
+                    "min_value": round_float_values(inp.min_value) if inp.min_value is not None else None,
+                    "max_value": round_float_values(inp.max_value) if inp.max_value is not None else None,
                     "subtype": inp.subtype,
                     "enum_options": [
                         {
@@ -513,6 +513,32 @@ def generate_enum_class(node_input: NodeInput, style_name: str) -> str:
     return enum_class
 
 
+def round_float_values(value: Any) -> Any:
+    """Round float values to 2 decimal places, preserving the original type."""
+    if isinstance(value, float):
+        return round(value, 2)
+    elif isinstance(value, (list, tuple)) and value:
+        # Handle vectors/tuples that may contain floats
+        formatted_items = []
+        for item in value:
+            if isinstance(item, float):
+                formatted_items.append(round(item, 2))
+            else:
+                formatted_items.append(item)
+        if isinstance(value, tuple):
+            return tuple(formatted_items)
+        else:
+            return formatted_items
+    else:
+        return value
+
+
+def format_default_value(value: Any) -> str:
+    """Format default value, rounding floats to 2 decimal places."""
+    rounded_value = round_float_values(value)
+    return repr(rounded_value)
+
+
 def generate_python_class(style_info: StyleNodeInfo) -> str:
     """
     Generate a Python class string for a Style node.
@@ -549,7 +575,7 @@ def generate_python_class(style_info: StyleNodeInfo) -> str:
 
         # Generate type annotation and default value
         py_type = get_python_type_annotation(inp)
-        default_val = repr(inp.default_value)
+        default_val = format_default_value(inp.default_value)
 
         # Add parameter with description comment if available
         param_line = f"        {attr_name}: {py_type} = {default_val},"

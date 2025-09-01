@@ -52,7 +52,7 @@
       {
         "name": "Sphere Radius",
         "type": "VALUE",
-        "default_value": 0.30000001192092896,
+        "default_value": 0.3,
         "description": "Scale the `vdw_radii` attribute before setting the radius for the spheres",
         "min_value": 0.0,
         "max_value": 2.0,
@@ -82,7 +82,7 @@
       {
         "name": "Bond Radius",
         "type": "VALUE",
-        "default_value": 0.30000001192092896,
+        "default_value": 0.3,
         "description": "Set the radius for the generated bonds in Angstroms",
         "min_value": 0.0,
         "max_value": 1.0,
@@ -188,7 +188,7 @@
       {
         "name": "Peptide Thickness",
         "type": "VALUE",
-        "default_value": 0.6000000238418579,
+        "default_value": 0.6,
         "description": "Thickness for the sheets and helices",
         "min_value": 0.0,
         "max_value": 3.4028234663852886e+38,
@@ -198,7 +198,7 @@
       {
         "name": "Peptide Width",
         "type": "VALUE",
-        "default_value": 2.200000047683716,
+        "default_value": 2.2,
         "description": "Width for the sheets and helices",
         "min_value": 0.0,
         "max_value": 3.4028234663852886e+38,
@@ -208,7 +208,7 @@
       {
         "name": "Peptide Loop Radius",
         "type": "VALUE",
-        "default_value": 0.30000001192092896,
+        "default_value": 0.3,
         "description": "Radius of the loops for unstructure regions",
         "min_value": 0.0,
         "max_value": 3.0,
@@ -326,7 +326,7 @@
       {
         "name": "Threshold",
         "type": "VALUE",
-        "default_value": 0.800000011920929,
+        "default_value": 0.8,
         "description": "",
         "min_value": -3.4028234663852886e+38,
         "max_value": 3.4028234663852886e+38,
@@ -357,9 +357,9 @@
         "name": "Color",
         "type": "RGBA",
         "default_value": [
-          0.1994359940290451,
-          0.5091630220413208,
-          0.13218000531196594,
+          0.2,
+          0.51,
+          0.13,
           1.0
         ],
         "description": "",
@@ -387,7 +387,7 @@
       {
         "name": "Threshold",
         "type": "VALUE",
-        "default_value": 0.800000011920929,
+        "default_value": 0.8,
         "description": "",
         "min_value": -3.4028234663852886e+38,
         "max_value": 3.4028234663852886e+38,
@@ -428,9 +428,9 @@
         "name": "Color",
         "type": "RGBA",
         "default_value": [
-          0.10174982994794846,
-          0.3931145668029785,
-          0.10474135726690292,
+          0.1,
+          0.39,
+          0.1,
           1.0
         ],
         "description": "",
@@ -712,7 +712,7 @@
       {
         "name": "Backbone Radius",
         "type": "VALUE",
-        "default_value": 1.600000023841858,
+        "default_value": 1.6,
         "description": "",
         "min_value": 0.0,
         "max_value": 3.4028234663852886e+38,
@@ -890,7 +890,7 @@
       {
         "name": "Radius",
         "type": "VALUE",
-        "default_value": 0.800000011920929,
+        "default_value": 0.8,
         "description": "Scale the `vdw_radii` of the atom when setting the radius of the spheres",
         "min_value": 0.0,
         "max_value": 2.0,
@@ -956,7 +956,7 @@
       {
         "name": "Radius",
         "type": "VALUE",
-        "default_value": 0.20000000298023224,
+        "default_value": 0.2,
         "description": "Radius of the sticks in Angstroms",
         "min_value": 0.0,
         "max_value": 1.0,

@@ -112,10 +112,10 @@ class StyleBallAndStick(StyleBase):
         self,
         quality: int = 2,  # A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
         sphere_geometry: SphereGeometryEnum = 'Instance',  # Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
-        sphere_radius: float = 0.30000001192092896,  # Scale the `vdw_radii` attribute before setting the radius for the spheres
+        sphere_radius: float = 0.3,  # Scale the `vdw_radii` attribute before setting the radius for the spheres
         bond_split: bool = False,  # Split apart double and triple bonds visually
         bond_find: bool = False,  # Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
-        bond_radius: float = 0.30000001192092896,  # Set the radius for the generated bonds in Angstroms
+        bond_radius: float = 0.3,  # Set the radius for the generated bonds in Angstroms
         color_blur: bool = False,  # Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth: bool = True,  # Apply smooth shading to the created geometry
     ):
@@ -232,9 +232,9 @@ class StyleCartoon(StyleBase):
         peptide_cylinders: bool = False,  # Use cylinders for helices instead of ribbons
         peptide_arrows: bool = True,  # User arrows for sheets
         peptide_rounded: bool = False,  # Create rounded sheets and helices
-        peptide_thickness: float = 0.6000000238418579,  # Thickness for the sheets and helices
-        peptide_width: float = 2.200000047683716,  # Width for the sheets and helices
-        peptide_loop_radius: float = 0.30000001192092896,  # Radius of the loops for unstructure regions
+        peptide_thickness: float = 0.6,  # Thickness for the sheets and helices
+        peptide_width: float = 2.2,  # Width for the sheets and helices
+        peptide_loop_radius: float = 0.3,  # Radius of the loops for unstructure regions
         peptide_smoothing: float = 0.5,  # Smoothing to apply to sheets
         backbone_shape: BackboneShapeEnum = 'Cylinder',
         backbone_radius: float = 2.0,
@@ -319,10 +319,10 @@ class StyleDensitySurface(StyleBase):
 
     def __init__(
         self,
-        threshold: float = 0.800000011920929,
+        threshold: float = 0.8,
         shade_smooth: bool = True,  # Apply smooth shading to the created geometry
         hide_dust: float = 0.0,
-        color: Tuple[float, float, float, float] = (0.1994359940290451, 0.5091630220413208, 0.13218000531196594, 1.0),
+        color: Tuple[float, float, float, float] = (0.2, 0.51, 0.13, 1.0),
     ):
         """Style class for Style Density Surface
 
@@ -370,11 +370,11 @@ class StyleDensityWire(StyleBase):
 
     def __init__(
         self,
-        threshold: float = 0.800000011920929,
+        threshold: float = 0.8,
         hide_dust: float = 20.0,
         wire_radius: float = 1.0,  # Radius of the created wire (in relative nm)
         wire_resolution: int = 3,
-        color: Tuple[float, float, float, float] = (0.10174982994794846, 0.3931145668029785, 0.10474135726690292, 1.0),
+        color: Tuple[float, float, float, float] = (0.1, 0.39, 0.1, 1.0),
     ):
         """Style class for Style Density Wire
 
@@ -629,7 +629,7 @@ class StyleRibbon(StyleBase):
         quality: int = 3,  # A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
         backbone_smoothing: float = 0.5,  # Smoothen the sheet ribbons such as beta-sheets
         backbone_threshold: float = 4.5,  # Distance (Angstroms) over which subsequent CA points are treated as a new chain
-        backbone_radius: float = 1.600000023841858,
+        backbone_radius: float = 1.6,
         nucleic_backbone_shape: NucleicBackboneShapeEnum = 'Cylinder',
         nucleic_backbone_radius: float = 2.0,
         base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0),
@@ -723,7 +723,7 @@ class StyleSpheres(StyleBase):
     def __init__(
         self,
         geometry: GeometryEnum = 'Point',  # Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
-        radius: float = 0.800000011920929,  # Scale the `vdw_radii` of the atom when setting the radius of the spheres
+        radius: float = 0.8,  # Scale the `vdw_radii` of the atom when setting the radius of the spheres
         subdivisions: int = 2,  # Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms
         shade_smooth: bool = True,  # Apply smooth shading when using _Instances_ or _Mesh_
     ):
@@ -771,7 +771,7 @@ class StyleSticks(StyleBase):
     def __init__(
         self,
         quality: int = 3,  # A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-        radius: float = 0.20000000298023224,  # Radius of the sticks in Angstroms
+        radius: float = 0.2,  # Radius of the sticks in Angstroms
         color_blur: bool = False,  # Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth: bool = True,  # Apply smooth shading to the created geometry
     ):
