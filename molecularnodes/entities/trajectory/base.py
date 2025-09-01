@@ -28,7 +28,13 @@ from .selections import Selection
 
 
 class Trajectory(MolecularEntity):
-    def __init__(self, universe: mda.Universe, world_scale: float = 0.01):
+    def __init__(
+        self,
+        universe: mda.Universe,
+        name: str = "NewUniverseObject",
+        world_scale: float = 0.01,
+        create_object: bool = True,
+    ):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: Dict[str, Selection] = {}
@@ -39,6 +45,8 @@ class Trajectory(MolecularEntity):
         self._entity_type = EntityType.MD
         self._updating_in_progress = False
         self.annotations = TrajectoryAnnotationManager(self)
+        if create_object:
+            self.create_object(name=name)
 
     def selection_from_ui(self, item):
         self.add_selection(
@@ -426,9 +434,7 @@ class Trajectory(MolecularEntity):
 
     def _create_object(
         self,
-        style: str | None = "vdw",
         name: str = "NewUniverseObject",
-        selection: str | AtomGroup | None = None,
     ) -> None:
         self.object = databpy.create_object(
             name=name,
@@ -456,16 +462,9 @@ class Trajectory(MolecularEntity):
             self.object["segments"] = segs
 
         self._setup_modifiers()
-        if style is not None:
-            self.add_style(style, selection=selection)
 
-    def create_object(
-        self,
-        name: str = "NewUniverseObject",
-        style: str | None = "vdw",
-        selection: str | AtomGroup | None = None,
-    ):
-        self._create_object(style=style, name=name, selection=selection)
+    def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
+        self._create_object(name=name)
 
         self.object["chain_ids"] = self.chain_ids
 

@@ -155,7 +155,7 @@ class TestAnnotations:
         assert "test_annotation" in manager._classes
         assert hasattr(manager, "add_test_annotation")
         # test add
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         # test add with required param missing
         with pytest.raises(ValueError):
             a1 = t1.annotations.add_test_annotation()
@@ -167,7 +167,7 @@ class TestAnnotations:
         a1._instance.draw()
 
     def test_trajectory_annotation_lifecycle(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         # test annotation atom_info add
         assert len(t1.annotations._interfaces) == 0
         a1 = t1.annotations.add_atom_info(selection="all")
@@ -238,7 +238,7 @@ class TestAnnotations:
             t1.annotations._remove_annotation_by_uuid("InvalidUUID")
 
     def test_annotation_ops(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # add annotation operator
         # first annotation type due to no invoke - must have no required inputs
@@ -252,7 +252,7 @@ class TestAnnotations:
         assert len(t1.annotations) == 0
 
     def test_trajectory_annotation_atom_info(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults
         t1.annotations.add_atom_info()
@@ -275,7 +275,7 @@ class TestAnnotations:
             t1.annotations.add_atom_info(selection=1)
 
     def test_trajectory_annotation_com(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults
         t1.annotations.add_com()
@@ -298,7 +298,7 @@ class TestAnnotations:
             t1.annotations.add_com(selection=1)
 
     def test_trajectory_annotation_com_distance(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults
         with pytest.raises(ValueError):
@@ -325,7 +325,7 @@ class TestAnnotations:
             t1.annotations.add_com_distance(selection1=1, selection2=2)
 
     def test_trajectory_annotation_canonical_dihedrals(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults - needs resid input
         with pytest.raises(ValueError):
@@ -342,7 +342,7 @@ class TestAnnotations:
         a1.resid = 2
 
     def test_trajectory_annotation_universe_info(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_universe_info()
         assert len(t1.annotations) == 1
@@ -366,13 +366,13 @@ class TestAnnotations:
         assert len(d1.annotations) == 1
 
     def test_common_annotation_label_2d(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_label_2d(text="2D Text", location=(0.25, 0.75))
         assert len(t1.annotations) == 1
 
     def test_common_annotation_label_3d(self, universe, session):
-        t1 = session.add_trajectory(universe)
+        t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_label_3d(text="3D Text", location=(0.25, 0.5, 0.75))
         assert len(t1.annotations) == 1
@@ -383,7 +383,7 @@ class TestAnnotations:
         canvas = mn.Canvas(resolution=(192, 108))
         canvas.engine = "CYCLES"  # Only works for this
         canvas.engine.samples = 1
-        t1 = session.add_trajectory(universe.select_atoms("resid 1"))
+        t1 = mn.Trajectory(universe.select_atoms("resid 1"))
         t1.annotations.add_com(selection="resid 1")
         bpy.ops.render.render()
         assert mn.scene.compositor.annotations_image in bpy.data.images

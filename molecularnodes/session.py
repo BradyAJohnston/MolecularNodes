@@ -237,12 +237,12 @@ class MNSession:
             )
         selection = None
         if isinstance(universe, AtomGroup):
-            trajectory = Trajectory(universe.universe)  # AtomGroup universe
+            traj = Trajectory(universe.universe, name=name)  # AtomGroup universe
             selection = universe  # AtomGroup
         else:
-            trajectory = Trajectory(universe)
-        trajectory.create_object(name=name, style=style, selection=selection)
-        return trajectory
+            traj = Trajectory(universe, name=name)  # Universe
+        traj.add_style(style=style, selection=selection)
+        return traj
 
     def get_trajectory(
         self,
@@ -381,6 +381,9 @@ class MN_OT_Session_Create_Object(bpy.types.Operator):
 
     def execute(self, context: Context):
         item = get_session().get(self.uuid)
+        if item is None:
+            self.report({"ERROR"}, f"No item with UUID '{self.uuid}'")
+            return {"CANCELLED"}
         item.create_object()
         return {"FINISHED"}
 

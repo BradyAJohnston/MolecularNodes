@@ -32,16 +32,17 @@ def insert_set_color(
     _tree = node.id_data
     node_sc: bpy.types.GeometryNodeGroup = insert_before(node, "Set Color")  # type: ignore
 
-    if isinstance(color, str) and color.lower() in ["default", "common"]:
-        node_cc = insert_before(node_sc.inputs["Color"], "Color Common")
-        node_car: bpy.types.GeometryNodeGroup = insert_before(  # type: ignore
-            node_cc.inputs["Carbon"], "Color Attribute Random"
-        )
-
-        return node_car
-
     if isinstance(color, str):
-        input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
+        if color.lower() in ["default", "common"]:
+            node_cc = insert_before(node_sc.inputs["Color"], "Color Common")
+            node_car: bpy.types.GeometryNodeGroup = insert_before(  # type: ignore
+                node_cc.inputs["Carbon"], "Color Attribute Random"
+            )
+            return node_car
+        elif color.lower() == "plddt":
+            insert_before(node_sc.inputs["Color"], "Color pLDDT")
+        else:
+            input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
     else:
         node_sc.inputs["Color"].default_value = color  # type: ignore
     return node_sc
@@ -238,7 +239,15 @@ def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInter
     return interface
 
 
+class StyleManager(List):
+    def clear(self) -> None:
+        while len(self) > 0:
+            self.pop().remove()
+
+
 def style_interfaces_from_tree(
     tree: bpy.types.GeometryNodeTree,
-) -> list[GeometryNodeInterFace]:
-    return [create_style_interface(node) for node in get_final_style_nodes(tree)]
+) -> StyleManager[GeometryNodeInterFace]:
+    return StyleManager(
+        create_style_interface(node) for node in get_final_style_nodes(tree)
+    )

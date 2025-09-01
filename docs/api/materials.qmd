@@ -9,27 +9,89 @@ We can progrommatically access the properties of the materials like this:
 
 ```{python}
 import molecularnodes as mn
-mn.register()
-mn.assets.install()
-can = mn.Canvas(engine="EEVEE")
-can.scene_reset()
-can.resolution = (860, 540)
+cv = mn.Canvas(engine="EEVEE", resolution=(800, 800), transparent=True)
 ```
 
 
 ```{python}
-mol = mn.Molecule.fetch("8H1B").add_style("surface", material = mn.material.AmbientOcclusion())
-can.frame_object(mol)
-can.snapshot()
-```
+# | label: fig-material-example
+# | fig-cap: A simple Ambient Occlusion material that is performant and aesthetically pleasing. Material properties can be changed through the material interface.
+# | layout-ncol: 2
+# | fig-subcap:
+# |   - "Default settings"
+# |   - "Reduce AO probe distance"
+mol = mn.Molecule.fetch("8H1B").add_style(
+    mn.StyleSurface(), material=mn.material.AmbientOcclusion()
+)
+cv.frame_object(mol)
+cv.snapshot()
 
-
-```{python}
 mol.styles[0].material.ambient_occlusion_distance = 0.1
-can.snapshot()
+cv.snapshot()
 ```
 
+
+```{python}
+# | label: fig-change-material-flat
+# | layout-ncol: 2
+# | fig-subcap:
+# |   - "Reduced AO distance detection"
+# |   - "Flat Outline material"
+mol.styles[0].material = mn.material.FlatOutline()
+cv.snapshot()
+
+mol.styles[0].material.math_value = 0.1
+cv.snapshot()
+```
+
+Propeties for the material interface are based on the inputs of the nodes in the material.
 
 ```{python}
 [x for x in dir(mn.material.AmbientOcclusion()) if not x.startswith("_")]
 ```
+
+## Render Engines and Materials
+
+The different render engines handle materials diferently.
+```{python}
+import MDAnalysis as mda
+import itertools
+from MDAnalysis.tests.datafiles import PSF, DCD
+
+cv = mn.Canvas(resolution=(800, 800), transparent=True)
+```
+
+
+```{python}
+# | warning: false
+# | label: fig-eevee-raytracing
+# | fig-cap: "How different materials behave in each render engine"
+# | layout-ncol: 2
+# | fig-subcap:
+# |   - "Cycles + Default"
+# |   - "EEVEE + Default"
+# |   - "Cycles + Ambient Occlusion"
+# |   - "EEVEE + Ambient Occlusion"
+# |   - "Cycles + Flat Outline"
+# |   - "EEVEE + Flat Outline"
+# |   - "Cycles + Squishy"
+# |   - "EEVEE + Squishy"
+
+u = mda.Universe(PSF, DCD)
+traj = mn.Trajectory(u)
+traj.add_style(mn.StyleSpheres(geometry="Mesh", sphere_subdivisions=4))
+
+cv.frame_view(traj)
+engines = [mn.scene.Cycles(samples=32), mn.scene.EEVEE()]
+materials = [
+    mn.material.Default(),
+    mn.material.AmbientOcclusion(),
+    mn.material.FlatOutline(),
+    mn.material.Squishy(),
+]
+for mat, eng in itertools.product(materials, engines):
+    cv.engine = eng
+    traj.styles[0].material = mat
+    cv.snapshot()
+```
+

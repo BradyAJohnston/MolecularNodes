@@ -1,9 +1,7 @@
 ---
 title: Blender
-description: Learnings from Blender Python programming
+description: Learnings, quirks and gotchas for programming in Blender.
 ---
-
-This document captures some learnings from Blender Python programming.
 
 ## Props and GUI
 

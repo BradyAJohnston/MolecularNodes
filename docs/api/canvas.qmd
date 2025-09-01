@@ -12,11 +12,9 @@ The [`Canvas`](reference/Canvas.html) object can be used to configure different 
 
 ```{python}
 import molecularnodes as mn
+import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 
-# register Molecular Nodes
-mn.register()
-# install template
-mn.template.install()
 # create a canvas object
 canvas = mn.Canvas()
 ```
@@ -24,23 +22,13 @@ canvas = mn.Canvas()
 ## Add Trajectories
 
 ```{python}
-import warnings
-
-import MDAnalysis as mda
-from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
-
-warnings.filterwarnings("ignore")
-
-# load universe 1
+# | warning: false
 u1 = mda.Universe(PSF, DCD)
-# load universe 2
 u2 = mda.Universe(TPR, XTC)
+
 # add universes to Blender
-# get MN session
-session = mn.session.get_session()
-# add trajectories
-t1 = session.add_trajectory(u1, style="cartoon")
-t2 = session.add_trajectory(u2, style=None)
+t1 = mn.Trajectory(u1).add_style("cartoon")
+t2 = mn.Trajectory(u2)
 ```
 
 ## Add Styles and Annotations to Trajectories
@@ -48,9 +36,13 @@ t2 = session.add_trajectory(u2, style=None)
 ```{python}
 # styles
 # trajectory 1
-t1.add_style(selection="resid 184", style="ball_and_stick")
-t1.add_style(selection="resid 1 129", style="spheres")
-t1.styles[2].sphere_geometry = "mesh"
+
+t1.add_style(style=mn.StyleBallandStick(quality=4), selection="resid 184")
+t1.add_style(
+    style=mn.StyleSpheres(sphere_subdivisions=4, geometry="Instance"),
+    selection="resid 1 129",
+)
+
 # trajectory 2
 t2.add_style(style="ribbon", color=(0.162, 0.624, 0.196, 0.5))
 t2.add_style(selection="resid 141", style="ball_and_stick")
@@ -173,23 +165,14 @@ canvas.camera.rotation
 
 ```{python}
 # rotate 45 degrees to left from the front view
-canvas.camera.rotation = (90, 0, -45)
-```
-
-```{python}
 # frame density object - note that viewpoint is not specified
-canvas.frame_view(d1.get_view())
+canvas.frame_view(d1, (90, 0, -45))
 canvas.snapshot()
 ```
 
 ```{python}
-# rotate 45 degrees to right from the front view
-canvas.camera.rotation = (90, 0, 45)
-```
-
-```{python}
 # frame density object and render
-canvas.frame_view(d1.get_view())
+canvas.frame_view(d1, (90, 0, 45))
 canvas.snapshot()
 ```
 

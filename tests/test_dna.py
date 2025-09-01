@@ -52,7 +52,7 @@ class TestOXDNAReading:
         assert u.atoms.n_atoms == 98
 
     def test_univ_as_traj(self, universe):
-        traj = oxdna.OXDNA(universe)
+        traj = oxdna.OXDNA(universe, create_object=False)
         assert traj.universe
         with pytest.raises(LinkedObjectError):
             traj.object
@@ -60,7 +60,6 @@ class TestOXDNAReading:
 
     def test_univ_snapshot(self, universe: mda.Universe, snapshot_custom):
         traj = oxdna.OXDNA(universe)
-        traj.create_object()
         for name in ["position", "res_name", "res_id", "chain_id"]:
             assert snapshot_custom == getattr(traj, name)
 
@@ -92,7 +91,6 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
-        traj.create_object()
         assert len(traj) == 12
         assert snapshot == traj.bonds.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
@@ -107,7 +105,6 @@ class TestOXDNAReading:
                 format=oxdna.OXDNAReader,
             )
         )
-        traj.create_object()
         assert len(np.unique(traj.named_attribute("res_id"))) == 15166
         assert len(np.unique(traj.named_attribute("chain_id"))) == 178
 
@@ -120,7 +117,6 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
-        traj.create_object()
 
         assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
         assert traj._entity_type == mn.entities.base.EntityType.MD_OXDNA
@@ -135,7 +131,6 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
-        traj.create_object()
         obj_name = traj.name
         bpy.context.scene.frame_set(1)
         pos1 = traj.position

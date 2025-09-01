@@ -2,11 +2,16 @@ import os
 import shutil
 import tempfile
 from contextlib import ExitStack
+from enum import Enum
 from pathlib import Path
+from typing import Literal, Tuple
 import bpy
 from tqdm.auto import tqdm
+from .. import assets
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
+from ..session import get_session
+from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoints
 from .engines import EEVEE, Cycles
@@ -17,9 +22,30 @@ except ImportError:
     Image = None
     Video = None
     display = None
-IS_EEVEE_NEXT = bpy.app.version[0] == 4 and bpy.app.version[1] >= 2
+
 IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
 IS_SELF_HOSTED = os.getenv("RUNNER_ENVIRONMENT") == "self-hosted"
+
+
+class ViewTransform(Enum):
+    STANDARD = "Standard"
+    KHRONOS = "Khronos PBR Neutral"
+    AGX = "AgX"
+    FILMIC = "Filmic"
+    FILMIC_LOG = "Filmic Log"
+    FALSE_COLOR = "False Color"
+    RAW = "Raw"
+
+
+_view_transform = Literal[
+    ViewTransform.STANDARD.value,
+    ViewTransform.KHRONOS.value,
+    ViewTransform.AGX.value,
+    ViewTransform.FILMIC.value,
+    ViewTransform.FILMIC_LOG.value,
+    ViewTransform.FALSE_COLOR.value,
+    ViewTransform.RAW.value,
+]
 
 
 class Canvas:
@@ -32,16 +58,20 @@ class Canvas:
 
     def __init__(
         self,
-        template: str | None = "Molecular Nodes",
         engine: EEVEE | Cycles | str = "EEVEE",
         resolution=(1280, 720),
+        transparent: bool = False,
+        template: str | None = "Molecular Nodes",
     ) -> None:
         """Initialize the Canvas object."""
+        addon.register()
+        assets.install()
         if template:
             self.scene_reset(template=template)
         self.engine = engine
         self.resolution = resolution
         self.camera = Camera()
+        self.transparent = transparent
 
     @property
     def scene(self) -> bpy.types.Scene:
@@ -80,17 +110,25 @@ class Canvas:
 
     @engine.setter
     def engine(self, value: Cycles | EEVEE | str) -> None:
-        if isinstance(value, str) and value.upper() == "CYCLES":
-            self._engine = Cycles()
-        elif isinstance(value, str) and value.upper() in [
-            "EEVEE",
-            "BLENDER_EEVEE_NEXT",
-            "BLENDER_EEVEE",
-        ]:
-            self._engine = EEVEE()
-
-        else:
+        if isinstance(value, Cycles) or isinstance(value, EEVEE):
             self._engine = value
+        elif isinstance(value, str):
+            if value.upper() == "CYCLES":
+                self._engine = Cycles()
+            elif value.upper() in [
+                "EEVEE",
+                "BLENDER_EEVEE_NEXT",
+                "BLENDER_EEVEE",
+            ]:
+                self._engine = EEVEE()
+            else:
+                raise ValueError("String does not match either 'EEVEE' or 'CYCLES'")
+        else:
+            raise ValueError(
+                "Must be either a string selecting the render engine or a dataclass mn.scene.Cycles()"
+            )
+
+        self._engine._enable_engine()
 
     @property
     def fps(self) -> float:
@@ -164,6 +202,92 @@ class Canvas:
         """
         self.scene.frame_end = value
 
+    @property
+    def transparent(self) -> bool:
+        """
+        Get the transparency setting for rendering.
+
+        Returns
+        -------
+        bool
+            True if transparency is enabled, False otherwise.
+        """
+        return self.scene.render.film_transparent
+
+    @transparent.setter
+    def transparent(self, value: bool) -> None:
+        """
+        Set the transparency setting for rendering.
+
+        Parameters
+        ----------
+        value : bool
+            True to enable transparency, False to disable.
+        """
+        self.scene.render.film_transparent = value
+
+    @property
+    def background(self) -> Tuple[float, float, float, float]:
+        return (
+            self.scene.world.node_tree.nodes["MN_world_shader"].inputs[3].default_value
+        )
+
+    @background.setter
+    def background(self, value: Tuple[float, float, float, float]) -> None:
+        self.scene.world.node_tree.nodes["MN_world_shader"].inputs[
+            3
+        ].default_value = value
+
+    # @property
+    # def hdri_strength
+
+    @property
+    def view_transform(self) -> _view_transform:
+        """
+        Get the current view transform setting.
+
+        Returns
+        -------
+        str
+            The current view transform value.
+        """
+        return self.scene.view_settings.view_transform
+
+    @view_transform.setter
+    def view_transform(self, value: _view_transform | ViewTransform | str) -> None:
+        """
+        Set the view transform setting.
+
+        Parameters
+        ----------
+        value : str | ViewTransform
+            The view transform value to set. Accepts enum, full name, or lowercase/shortened name.
+        """
+        # Normalize input
+        if isinstance(value, ViewTransform):
+            vt_value = value.value
+        elif isinstance(value, str):
+            value_lower = value.strip().lower()
+            # Try to match full name (case-insensitive)
+            for vt in ViewTransform:
+                if value_lower == vt.value.lower():
+                    vt_value = vt.value
+                    break
+            else:
+                # Try to match shortened name (e.g., "standard", "agx", "filmic", etc.)
+                for vt in ViewTransform:
+                    if value_lower == vt.name.lower():
+                        vt_value = vt.value
+                        break
+                else:
+                    raise ValueError(
+                        f"Invalid view transform '{value}'. Must be one of {[vt.value for vt in ViewTransform]} or a valid enum name."
+                    )
+        else:
+            raise TypeError("view_transform must be a str or ViewTransform enum.")
+
+        self.scene.view_settings.view_transform = vt_value
+
     def frame_object(
         self, obj: bpy.types.Object | MolecularEntity, viewpoint: Viewpoints = None
     ) -> None:
@@ -188,7 +312,9 @@ class Canvas:
         # set the camera to look at the object
         blender_utils.look_at_object(obj)
 
-    def frame_view(self, view: list[tuple], viewpoint: Viewpoints = None) -> None:
+    def frame_view(
+        self, view: list[tuple] | MolecularEntity, viewpoint: Viewpoints = None
+    ) -> None:
         """
         Frame one or more views of Molecular entities
         Multiple views can be added with + to combine into a single view
@@ -203,11 +329,24 @@ class Canvas:
             One of ["default", "front", "back", "top", "bottom", "left", "right"]
 
         """
+        if isinstance(view, MolecularEntity):
+            view_tuple = view.get_view()
+        else:
+            view_tuple = view
         # set the camera viewpoint if specified
         if viewpoint is not None:
             self.camera.set_viewpoint(viewpoint)
         # set the camera to look at the bounding box of the view
-        blender_utils.look_at_bbox(view)
+        blender_utils.look_at_bbox(view_tuple)
+
+    def clear(self) -> None:
+        """
+        Clear all entities from the scene without affecting lighting or render settings.
+        """
+        session = get_session()
+        # Iterate over a list copy to avoid modifying the dict during iteration
+        for entity in list(session.entities.values()):
+            session.remove(entity.uuid)
 
     def scene_reset(
         self,

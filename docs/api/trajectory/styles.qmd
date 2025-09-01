@@ -1,0 +1,166 @@
+---
+title: Styles
+description: "Examples of using Styles"
+jupyter: python3
+execute:
+  daemon: false
+---
+
+Different styles or representations can be added to Trajectories.
+
+## Setup Molecular Nodes
+
+```{python}
+#| warning: false
+import molecularnodes as mn
+import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
+
+u = mda.Universe(PSF, DCD)
+canvas = mn.Canvas()
+```
+
+
+## Add Trajectory
+
+A style can be specified when adding the trajectory to Blender as follows:
+
+```{python}
+t = mn.Trajectory(u).add_style(mn.StyleRibbon(quality=4, backbone_radius = 0.5))
+canvas.frame_object(t)
+canvas.snapshot()
+```
+
+## Add Styles
+
+Styles can be added to different selections of the universe after it has been added to Blender using the [`add_style`](../api/reference/entities.Trajectory.html#molecularnodes.entities.Trajectory.add_style) API.
+
+```py
+Trajectory.add_style(
+    style='spheres',
+    color='common',
+    selection=None,
+    material=None,
+    name=None,
+)
+```
+
+- `style` param
+  - This param can be a string or an instance of `nodes.StyleBase` class.
+  - When passed as a string, the value can be one of `ball_and_stick`, `cartoon`, `ribbon`, `spheres`, `sticks`, `surface`, etc.
+  - When passed as a `nodes.StyleBase` instance, the value can be an instance of `nodes.StyleBallandStick`, `nodes.StyleCartoon`, `nodes.StyleRibbon`, `nodes.StyleSpheres`, `nodes.StyleSticks` and `nodes.StyleSurface`.
+- `color` param
+  - This param can be a string or a tuple with rgba values
+  - When passed as a string, the value can be one of `default` or `common`
+  - When passed as a tuple a regular rgba tuple with four float values can be used
+- `selection` param
+  - This param can be an MDAnalysis selection phrase or an `AtomGroup` of the universe
+- `material` param
+  - This param can be a string or an instance of a material instance created using the `mn.material` API.
+  - When passed as a string, the value can be one of the default materials like `MN Default`, `MN Flat Outline`, `MN Squishy`, `MN Transparent Outline`, `MN Ambient Occlusion` or any other material name
+- `name` param to give a name to the style
+
+```{python}
+# add spheres style to resid 1 and 129
+t.add_style(mn.StyleSpheres(geometry = "Instance", sphere_subdivisions=4), selection="resid 1 129")
+```
+
+```{python}
+# frame trajectory and render
+canvas.frame_object(t)
+canvas.snapshot()
+```
+
+```{python}
+# add surface style for resids between 100 and 150 with transparent material
+t.add_style(
+    style="surface", selection="resid 100:150", material="MN Transparent Outline"
+)
+```
+
+```{python}
+# frame trajectory and render
+canvas.frame_object(t)
+canvas.snapshot()
+```
+
+```{python}
+# add a ball and style for resids 180:200
+t.add_style(mn.StyleBallandStick(quality=4), selection=u.select_atoms("resid 180:200"))
+```
+
+```{python}
+# frame trajectory and render
+canvas.frame_object(t)
+canvas.snapshot()
+```
+
+```{python}
+# add surface style for resids 40:50 with transparent uniform color
+t.add_style(style="surface", selection="resid 40:50", color=(0.162, 0.624, 0.196, 0.5))
+```
+
+```{python}
+# frame trajectory and render
+canvas.frame_object(t)
+canvas.snapshot()
+```
+
+```{python}
+# create a sticks style instance
+s = mn.nodes.styles.StyleSticks()
+# set radius to 0.1
+s.radius = 0.1
+# add style with a style instance
+t.add_style(style=s, selection="resid 40:50")
+```
+
+```{python}
+# frame trajectory and render
+canvas.frame_object(t)
+canvas.snapshot()
+```
+
+## Access Styles
+
+Styles added to a trajectory can be accessed using the styles interface. This interface allows access to all the style specific parameters (Geometry Node inputs).
+
+```{python}
+for s in t.styles:
+    print(s)
+```
+
+```{python}
+# access the first style - cartoon of the trajectory
+s = t.styles[0]
+s
+```
+
+```{python}
+# access the last style - sticks resid 40:50
+s = t.styles[-1]
+# set the sticks radius to 0.3
+s.sticks_radius = 0.3
+```
+
+```{python}
+# frame trajectory and render
+canvas.frame_object(t)
+canvas.snapshot()
+```
+
+## Remove Styles
+
+Styles can be removed using the `remove` method of the style interface.
+
+```{python}
+# remove last two styles
+t.styles[-1].remove()
+t.styles[-1].remove()
+```
+
+```{python}
+# frame trajectory and render
+canvas.frame_object(t)
+canvas.snapshot()
+```

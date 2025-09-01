@@ -174,7 +174,7 @@ class StyleRibbon(StyleBase):
         self,
         quality: int = 3,
         color_blur: bool = False,
-        shade_smooth: bool = False,
+        shade_smooth: bool = True,
         backbone_smoothing: float = 0.5,
         backbone_threshold: float = 4.5,
         base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0),
@@ -183,7 +183,7 @@ class StyleRibbon(StyleBase):
         base_resolution: int = 4,
         base_realize: bool = False,
         uv_map: bool = False,
-        u_component=None,
+        u_component="Factor",
         # u_component_factor=None,
     ):
         self.quality = quality

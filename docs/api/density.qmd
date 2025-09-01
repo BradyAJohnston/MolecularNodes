@@ -13,10 +13,6 @@ The Density entity can be used to load density grids into Blender. It uses MDAna
 ```{python}
 import molecularnodes as mn
 
-# register Molecular Nodes
-mn.register()
-# install template
-mn.template.install()
 # create a canvas object
 canvas = mn.Canvas()
 ```
