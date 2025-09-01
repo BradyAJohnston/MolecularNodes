@@ -1,6 +1,6 @@
 ---
 title: Python API
-description: Introduction to the APi and the quirks of programming in Blender
+description: Introduction to the API and the quirks of programming in Blender
 jupyter: python3
 ---
 
@@ -21,6 +21,30 @@ When scripting with Molecular Nodes, it's important to remember that everything 
 
 Blender itself has a very extensive python API, accessible through the `bpy` module. Molecular Nodes is designed so that for most general usage you shouldn't have to ever directly use `bpy`, but all of the complex settings and controls are still always accessible through that module.
 
+Blender does release the [`bpy`](https://pypi.org/p/bpy) module on pypi, which let's us 
+
+## Installation
+
+If installed inside of Blender as an add-on, you can script using MN in the python console or when running scripts through Blender.
+
+You can also install and use inside of your own python projects.
+
+::: { .callout-warning}
+# Python Versions
+
+`molecularnodes` is only compatible with `python==3.11`
+
+Blender is very particular about python versions (and especially `numpy` versions). Blender adheres to the [VFX Reference platform](https://vfxplatform.com/) which determines python and common package versions to be used across multiple VFX software for consistency.
+
+Because of this, the `bpy` package upon which `molecularnodes` is build is locked to `python==3.11` and in particular `numpy==1.26`. Going outside of these very particular versions is recipe for distaster. The first Blender release of 2026 will increase to `3.13` and `2.3` repsectively.
+
+:::
+
+Blender (`bpy`) is listed as an optional dependency for MN so that when installing inside of Blender there isn't a double up with the bunlded `bpy`. This means you'll need to always manually request it when installing or add it as a requirement to your own project.
+
+```bash
+pip install molecularnodes[bpy]
+```
 
 ## Getting Started
 
@@ -36,7 +60,7 @@ There are two main classes you will interact with, the [](`~molecularnodes.Molec
     - Uses [](`MDAnalysis`) as the backend, keeping a [](`MDAnalysis.Universe`) updating in the background to update positions
     - supports selection strings and transformations
 
-How you script with each is unfortunately slightly different, but will hopefully in the future [be unified](https://github.com/BradyAJohnston/MolecularNodes/discussions/949).
+How you script with each is unfortunately slightly different when it comes to selections, but will hopefully in the future [be unified](https://github.com/BradyAJohnston/MolecularNodes/discussions/949).
 
 
 ## Molecules

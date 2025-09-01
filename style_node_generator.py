@@ -326,8 +326,12 @@ def save_style_data_to_json(output_path: Path) -> None:
                     "type": inp.type,
                     "default_value": round_float_values(inp.default_value),
                     "description": inp.description,
-                    "min_value": round_float_values(inp.min_value) if inp.min_value is not None else None,
-                    "max_value": round_float_values(inp.max_value) if inp.max_value is not None else None,
+                    "min_value": round_float_values(inp.min_value)
+                    if inp.min_value is not None
+                    else None,
+                    "max_value": round_float_values(inp.max_value)
+                    if inp.max_value is not None
+                    else None,
                     "subtype": inp.subtype,
                     "enum_options": [
                         {
@@ -397,7 +401,6 @@ def extract_enum_values_from_error(
         try:
             if hasattr(target_socket, "default_value"):
                 # Store original value
-                original_value = target_socket.default_value
                 # Try to set invalid value
                 target_socket.default_value = "XXXXXXXXXX_INVALID_ENUM_VALUE"
         except (TypeError, ValueError) as e:
@@ -502,7 +505,7 @@ def generate_enum_class(node_input: NodeInput, style_name: str) -> str:
 
     enum_class = f'''class {enum_name}(str, Enum):
     """{node_input.description if node_input.description else f"Enum for {node_input.name} in {style_name}"}
-    
+
     Options
     -------
 {chr(10).join(f"    {option.identifier} : {option.name}" + (f" - {option.description}" if option.description else "") for option in node_input.enum_options)}
@@ -616,7 +619,7 @@ def generate_python_class(style_info: StyleNodeInfo) -> str:
     # Generate the class
     class_code = f'''{"".join(enum_classes)}class {class_name}(StyleBase):
     """{class_docstring}
-    
+
     Parameters
     ----------
 {params_section}
