@@ -10,6 +10,7 @@ dependencies = [
     "mrcfile",
     "starfile",
     "PyYAML",
+    "nodepad>=0.2.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11.0"

@@ -230,7 +230,27 @@
         "enum_options": null
       },
       {
-        "name": "Backbone Radius",
+        "name": "Nucleic Width",
+        "type": "VALUE",
+        "default_value": 3.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Thickness",
+        "type": "VALUE",
+        "default_value": 1.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Radius",
         "type": "VALUE",
         "default_value": 2.0,
         "description": "",
@@ -662,6 +682,16 @@
         "enum_options": null
       },
       {
+        "name": "Radius",
+        "type": "VALUE",
+        "default_value": 1.6,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
         "name": "Backbone Smoothing",
         "type": "VALUE",
         "default_value": 0.5,
@@ -682,16 +712,6 @@
         "enum_options": null
       },
       {
-        "name": "Backbone Radius",
-        "type": "VALUE",
-        "default_value": 1.6,
-        "description": "",
-        "min_value": 0.0,
-        "max_value": 3.4028234663852886e+38,
-        "subtype": "NONE",
-        "enum_options": null
-      },
-      {
         "name": "Nucleic Backbone Shape",
         "type": "UNKNOWN",
         "default_value": "Cylinder",
@@ -702,13 +722,23 @@
         "enum_options": null
       },
       {
-        "name": "Nucleic Backbone Radius",
+        "name": "Backbone Width",
         "type": "VALUE",
-        "default_value": 2.0,
+        "default_value": 3.0,
         "description": "",
         "min_value": 0.0,
-        "max_value": 3.4028234663852886e+38,
-        "subtype": "DISTANCE",
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Backbone Thickness",
+        "type": "VALUE",
+        "default_value": 1.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
         "enum_options": null
       },
       {
@@ -768,7 +798,7 @@
       {
         "name": "Color Blur",
         "type": "BOOLEAN",
-        "default_value": true,
+        "default_value": false,
         "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
         "min_value": null,
         "max_value": null,

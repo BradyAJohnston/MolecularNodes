@@ -1215,6 +1215,7 @@ dependencies = [
     { name = "databpy" },
     { name = "mdanalysis" },
     { name = "mrcfile" },
+    { name = "nodepad" },
     { name = "pyyaml" },
     { name = "starfile" },
 ]
@@ -1275,6 +1276,7 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'test'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
+    { name = "nodepad", specifier = ">=0.2.0" },
     { name = "nodepad", marker = "extra == 'docs'" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'test'" },
@@ -1407,14 +1409,15 @@ wheels = [
 
 [[package]]
 name = "nodepad"
-version = "0.1.5"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "click" },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/92/b7/9e433e2a750e803377839dd89efa49f2fc75cdbf569389187eb5402b1925/nodepad-0.1.5.tar.gz", hash = "sha256:e48602d1681b301aff88dd22653b266ddb3c4b4090c34869de802c59871a9870", size = 19383 }
+sdist = { url = "https://files.pythonhosted.org/packages/c4/f1/8c85487d9a67654d53cce196ebd0c9889e7e95eea154546fad786c654eec/nodepad-0.2.0.tar.gz", hash = "sha256:784446f7d180a894b480c5f4d550d6cf6012f344e0dd2254a0bcafb387842da2", size = 36736 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/20/94/ea56aedf6996f61a76b1e0a9e4050c73278c3e8262c6004ae98b6d498b36/nodepad-0.1.5-py3-none-any.whl", hash = "sha256:d169d4d966f0d4daf24906eeb3538b4d2c0d4e73fabd540185e0cbf94f21081e", size = 19484 },
+    { url = "https://files.pythonhosted.org/packages/f4/be/171e6b1ae98e854e09708a6a0d9244a0229d5c1b12dbb51e4e71e418ecb9/nodepad-0.2.0-py3-none-any.whl", hash = "sha256:f5981d54d742388e229e2b10c07f56bbd41de8590d7808d98e44ea7c30a4f0dd", size = 29639 },
 ]
 
 [[package]]
