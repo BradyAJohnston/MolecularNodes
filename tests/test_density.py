@@ -1,6 +1,5 @@
 import itertools
 import bpy
-import databpy as db
 import numpy as np
 import pytest
 from databpy import ObjectTracker

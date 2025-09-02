@@ -10,7 +10,7 @@ using the Socket dataclass system and StyleBase inheritance.
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional, Tuple, Any
+from typing import List, Optional, Tuple
 from bpy.types import GeometryNodeGroup
 
 __all__ = [
