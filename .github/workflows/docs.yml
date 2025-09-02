@@ -17,10 +17,11 @@ jobs:
       - uses: actions/checkout@v4
       # - uses: quarto-dev/quarto-actions/setup@v2
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           version: "latest"
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
         
       - name: Install Packages
         run: |
@@ -30,7 +31,7 @@ jobs:
         timeout-minutes: 3
         continue-on-error: true
         run: |
-          uv run generate.py
+          uv run docs/generate.py
       - name: Pre-render Scripts
         run: |
           cd docs
@@ -60,7 +61,7 @@ jobs:
       # deploy ----
 
       - name: Create Github Deployment
-        uses: bobheadxi/deployments@v0.4.3
+        uses: bobheadxi/deployments@v1
         if: github.event.pull_request.head.repo.full_name == github.repository
         id: deployment
         with:
@@ -88,8 +89,9 @@ jobs:
 
       - name: Update Github Deployment
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: bobheadxi/deployments@v0.4.3
+        uses: bobheadxi/deployments@v1
         with:
+          env: ${{ steps.deployment.outputs.deployment_id }}
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
@@ -98,7 +100,7 @@ jobs:
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
           
       - name: Deploy Release Documentation
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: github.event_name == 'release'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
