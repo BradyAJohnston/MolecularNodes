@@ -25,29 +25,13 @@
       },
       {
         "name": "Sphere Geometry",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "Instance",
         "description": "Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "Point",
-            "name": "Point",
-            "description": "Point option"
-          },
-          {
-            "identifier": "Instance",
-            "name": "Instance",
-            "description": "Instance option"
-          },
-          {
-            "identifier": "Mesh",
-            "name": "Mesh",
-            "description": "Mesh option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Sphere Radius",
@@ -70,6 +54,16 @@
         "enum_options": null
       },
       {
+        "name": "Bond Radius",
+        "type": "VALUE",
+        "default_value": 0.3,
+        "description": "Set the radius for the generated bonds in Angstroms",
+        "min_value": 0.0,
+        "max_value": 1.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
         "name": "Bond Find",
         "type": "BOOLEAN",
         "default_value": false,
@@ -80,12 +74,12 @@
         "enum_options": null
       },
       {
-        "name": "Bond Radius",
+        "name": "Bond Find Scale",
         "type": "VALUE",
-        "default_value": 0.3,
-        "description": "Set the radius for the generated bonds in Angstroms",
+        "default_value": 1.0,
+        "description": "Scale the VDW radii of the atoms when searching for bonds",
         "min_value": 0.0,
-        "max_value": 1.0,
+        "max_value": 10000.0,
         "subtype": "NONE",
         "enum_options": null
       },
@@ -111,7 +105,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -227,24 +221,13 @@
       },
       {
         "name": "Backbone Shape",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "Cylinder",
         "description": "",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "Cylinder",
-            "name": "Cylinder",
-            "description": "Cylinder option"
-          },
-          {
-            "identifier": "Rectangle",
-            "name": "Rectangle",
-            "description": "Rectangle option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Backbone Radius",
@@ -258,24 +241,13 @@
       },
       {
         "name": "Base Shape",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "Rectangle",
         "description": "",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "Cylinder",
-            "name": "Cylinder",
-            "description": "Cylinder option"
-          },
-          {
-            "identifier": "Rectangle",
-            "name": "Rectangle",
-            "description": "Rectangle option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Base Realize",
@@ -309,7 +281,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -370,7 +342,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -441,7 +413,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -497,7 +469,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -553,7 +525,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -599,7 +571,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -655,7 +627,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -721,24 +693,13 @@
       },
       {
         "name": "Nucleic Backbone Shape",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "Cylinder",
         "description": "",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "Cylinder",
-            "name": "Cylinder",
-            "description": "Cylinder option"
-          },
-          {
-            "identifier": "Rectangle",
-            "name": "Rectangle",
-            "description": "Rectangle option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Nucleic Backbone Radius",
@@ -796,24 +757,13 @@
       },
       {
         "name": "U Component",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "Factor",
         "description": "",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "Factor",
-            "name": "Factor",
-            "description": "Factor option"
-          },
-          {
-            "identifier": "Length",
-            "name": "Length",
-            "description": "Length option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Color Blur",
@@ -837,7 +787,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -863,29 +813,13 @@
       },
       {
         "name": "Geometry",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "Point",
         "description": "Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "Point",
-            "name": "Point",
-            "description": "Point option"
-          },
-          {
-            "identifier": "Instance",
-            "name": "Instance",
-            "description": "Instance option"
-          },
-          {
-            "identifier": "Mesh",
-            "name": "Mesh",
-            "description": "Mesh option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Radius",
@@ -919,7 +853,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -985,7 +919,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,
@@ -1051,24 +985,13 @@
       },
       {
         "name": "Separate By",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "chain_id",
         "description": "",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "chain_id",
-            "name": "chain_id",
-            "description": "chain_id option"
-          },
-          {
-            "identifier": "Group ID",
-            "name": "Group ID",
-            "description": "Group ID option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Group ID",
@@ -1082,24 +1005,13 @@
       },
       {
         "name": "Color Source",
-        "type": "ENUM",
+        "type": "UNKNOWN",
         "default_value": "Alpha Carbon",
         "description": "",
         "min_value": null,
         "max_value": null,
         "subtype": null,
-        "enum_options": [
-          {
-            "identifier": "Alpha Carbon",
-            "name": "Alpha Carbon",
-            "description": "Alpha Carbon option"
-          },
-          {
-            "identifier": "Nearest",
-            "name": "Nearest",
-            "description": "Nearest option"
-          }
-        ]
+        "enum_options": null
       },
       {
         "name": "Color Blur",
@@ -1123,7 +1035,7 @@
       },
       {
         "name": "Material",
-        "type": "NodeSocketMaterial",
+        "type": "MATERIAL",
         "default_value": null,
         "description": "Material to apply to the resulting geometry",
         "min_value": null,

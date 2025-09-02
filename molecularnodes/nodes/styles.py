@@ -9,8 +9,7 @@ using the Socket dataclass system and StyleBase inheritance.
 """
 
 from dataclasses import dataclass
-from enum import Enum
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 from bpy.types import GeometryNodeGroup
 
 __all__ = [
@@ -64,21 +63,6 @@ class StyleBase:
                         input.default_value = getattr(self, arg.name)
 
 
-class SphereGeometryEnum(str, Enum):
-    """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
-
-    Options
-    -------
-    Point : Point - Point option
-    Instance : Instance - Instance option
-    Mesh : Mesh - Mesh option
-    """
-
-    POINT = "Point"
-    INSTANCE = "Instance"
-    MESH = "Mesh"
-
-
 class StyleBallAndStick(StyleBase):
     """Style class for Style Ball and Stick
 
@@ -86,16 +70,18 @@ class StyleBallAndStick(StyleBase):
     ----------
     quality : int
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-    sphere_geometry : SphereGeometryEnum
-        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.. Options: 'Point', 'Instance', 'Mesh'
+    sphere_geometry : Any
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     sphere_radius : float
         Scale the `vdw_radii` attribute before setting the radius for the spheres
     bond_split : bool
         Split apart double and triple bonds visually
-    bond_find : bool
-        Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
     bond_radius : float
         Set the radius for the generated bonds in Angstroms
+    bond_find : bool
+        Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
+    bond_find_scale : float
+        Scale the VDW radii of the atoms when searching for bonds
     color_blur : bool
         Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
     shade_smooth : bool
@@ -108,8 +94,9 @@ class StyleBallAndStick(StyleBase):
         Socket(name="sphere_geometry", blendername="Sphere Geometry"),
         Socket(name="sphere_radius", blendername="Sphere Radius"),
         Socket(name="bond_split", blendername="Bond Split"),
-        Socket(name="bond_find", blendername="Bond Find"),
         Socket(name="bond_radius", blendername="Bond Radius"),
+        Socket(name="bond_find", blendername="Bond Find"),
+        Socket(name="bond_find_scale", blendername="Bond Find Scale"),
         Socket(name="color_blur", blendername="Color Blur"),
         Socket(name="shade_smooth", blendername="Shade Smooth"),
     ]
@@ -117,11 +104,12 @@ class StyleBallAndStick(StyleBase):
     def __init__(
         self,
         quality: int = 2,  # A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-        sphere_geometry: SphereGeometryEnum = "Instance",  # Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+        sphere_geometry: Any = "Instance",  # Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
         sphere_radius: float = 0.3,  # Scale the `vdw_radii` attribute before setting the radius for the spheres
         bond_split: bool = False,  # Split apart double and triple bonds visually
-        bond_find: bool = False,  # Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
         bond_radius: float = 0.3,  # Set the radius for the generated bonds in Angstroms
+        bond_find: bool = False,  # Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
+        bond_find_scale: float = 1.0,  # Scale the VDW radii of the atoms when searching for bonds
         color_blur: bool = False,  # Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth: bool = True,  # Apply smooth shading to the created geometry
     ):
@@ -131,16 +119,18 @@ class StyleBallAndStick(StyleBase):
             ----------
         quality : int
             A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-        sphere_geometry : SphereGeometryEnum
-            Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.. Options: 'Point', 'Instance', 'Mesh'
+        sphere_geometry : Any
+            Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
         sphere_radius : float
             Scale the `vdw_radii` attribute before setting the radius for the spheres
         bond_split : bool
             Split apart double and triple bonds visually
-        bond_find : bool
-            Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
         bond_radius : float
             Set the radius for the generated bonds in Angstroms
+        bond_find : bool
+            Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
+        bond_find_scale : float
+            Scale the VDW radii of the atoms when searching for bonds
         color_blur : bool
             Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth : bool
@@ -150,36 +140,11 @@ class StyleBallAndStick(StyleBase):
         self.sphere_geometry = sphere_geometry
         self.sphere_radius = sphere_radius
         self.bond_split = bond_split
-        self.bond_find = bond_find
         self.bond_radius = bond_radius
+        self.bond_find = bond_find
+        self.bond_find_scale = bond_find_scale
         self.color_blur = color_blur
         self.shade_smooth = shade_smooth
-
-
-class BackboneShapeEnum(str, Enum):
-    """Enum for Backbone Shape in Style Cartoon
-
-    Options
-    -------
-    Cylinder : Cylinder - Cylinder option
-    Rectangle : Rectangle - Rectangle option
-    """
-
-    CYLINDER = "Cylinder"
-    RECTANGLE = "Rectangle"
-
-
-class BaseShapeEnum(str, Enum):
-    """Enum for Base Shape in Style Cartoon
-
-    Options
-    -------
-    Cylinder : Cylinder - Cylinder option
-    Rectangle : Rectangle - Rectangle option
-    """
-
-    CYLINDER = "Cylinder"
-    RECTANGLE = "Rectangle"
 
 
 class StyleCartoon(StyleBase):
@@ -205,12 +170,12 @@ class StyleCartoon(StyleBase):
         Radius of the loops for unstructure regions
     peptide_smoothing : float
         Smoothing to apply to sheets
-    backbone_shape : BackboneShapeEnum
-        Value for Backbone Shape. Options: 'Cylinder', 'Rectangle'
+    backbone_shape : Any
+        Value for Backbone Shape
     backbone_radius : float
         Value for Backbone Radius
-    base_shape : BaseShapeEnum
-        Value for Base Shape. Options: 'Cylinder', 'Rectangle'
+    base_shape : Any
+        Value for Base Shape
     base_realize : bool
         Value for Base Realize
     color_blur : bool
@@ -249,9 +214,9 @@ class StyleCartoon(StyleBase):
         peptide_width: float = 2.2,  # Width for the sheets and helices
         peptide_loop_radius: float = 0.3,  # Radius of the loops for unstructure regions
         peptide_smoothing: float = 0.5,  # Smoothing to apply to sheets
-        backbone_shape: BackboneShapeEnum = "Cylinder",
+        backbone_shape: Any = "Cylinder",
         backbone_radius: float = 2.0,
-        base_shape: BaseShapeEnum = "Rectangle",
+        base_shape: Any = "Rectangle",
         base_realize: bool = False,
         color_blur: bool = True,  # Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth: bool = True,  # Apply smooth shading to the created geometry
@@ -278,12 +243,12 @@ class StyleCartoon(StyleBase):
             Radius of the loops for unstructure regions
         peptide_smoothing : float
             Smoothing to apply to sheets
-        backbone_shape : BackboneShapeEnum
-            Value for Backbone Shape. Options: 'Cylinder', 'Rectangle'
+        backbone_shape : Any
+            Value for Backbone Shape
         backbone_radius : float
             Value for Backbone Radius
-        base_shape : BaseShapeEnum
-            Value for Base Shape. Options: 'Cylinder', 'Rectangle'
+        base_shape : Any
+            Value for Base Shape
         base_realize : bool
             Value for Base Realize
         color_blur : bool
@@ -574,32 +539,6 @@ class StylePreset4(StyleBase):
         self.shade_smooth = shade_smooth
 
 
-class NucleicBackboneShapeEnum(str, Enum):
-    """Enum for Nucleic Backbone Shape in Style Ribbon
-
-    Options
-    -------
-    Cylinder : Cylinder - Cylinder option
-    Rectangle : Rectangle - Rectangle option
-    """
-
-    CYLINDER = "Cylinder"
-    RECTANGLE = "Rectangle"
-
-
-class UComponentEnum(str, Enum):
-    """Enum for U Component in Style Ribbon
-
-    Options
-    -------
-    Factor : Factor - Factor option
-    Length : Length - Length option
-    """
-
-    FACTOR = "Factor"
-    LENGTH = "Length"
-
-
 class StyleRibbon(StyleBase):
     """Style class for Style Ribbon
 
@@ -613,8 +552,8 @@ class StyleRibbon(StyleBase):
         Distance (Angstroms) over which subsequent CA points are treated as a new chain
     backbone_radius : float
         Value for Backbone Radius
-    nucleic_backbone_shape : NucleicBackboneShapeEnum
-        Value for Nucleic Backbone Shape. Options: 'Cylinder', 'Rectangle'
+    nucleic_backbone_shape : Any
+        Value for Nucleic Backbone Shape
     nucleic_backbone_radius : float
         Value for Nucleic Backbone Radius
     base_scale : Tuple[float, float, float]
@@ -625,8 +564,8 @@ class StyleRibbon(StyleBase):
         Value for Base Realize
     uv_map : bool
         Compute and store the `uv_map` for the final protein ribbon geometry
-    u_component : UComponentEnum
-        Value for U Component. Options: 'Factor', 'Length'
+    u_component : Any
+        Value for U Component
     color_blur : bool
         Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
     shade_smooth : bool
@@ -656,13 +595,13 @@ class StyleRibbon(StyleBase):
         backbone_smoothing: float = 0.5,  # Smoothen the sheet ribbons such as beta-sheets
         backbone_threshold: float = 4.5,  # Distance (Angstroms) over which subsequent CA points are treated as a new chain
         backbone_radius: float = 1.6,
-        nucleic_backbone_shape: NucleicBackboneShapeEnum = "Cylinder",
+        nucleic_backbone_shape: Any = "Cylinder",
         nucleic_backbone_radius: float = 2.0,
         base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0),
         base_resolution: int = 4,
         base_realize: bool = False,
         uv_map: bool = False,  # Compute and store the `uv_map` for the final protein ribbon geometry
-        u_component: UComponentEnum = "Factor",
+        u_component: Any = "Factor",
         color_blur: bool = True,  # Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth: bool = True,  # Apply smooth shading to the created geometry
     ):
@@ -678,8 +617,8 @@ class StyleRibbon(StyleBase):
             Distance (Angstroms) over which subsequent CA points are treated as a new chain
         backbone_radius : float
             Value for Backbone Radius
-        nucleic_backbone_shape : NucleicBackboneShapeEnum
-            Value for Nucleic Backbone Shape. Options: 'Cylinder', 'Rectangle'
+        nucleic_backbone_shape : Any
+            Value for Nucleic Backbone Shape
         nucleic_backbone_radius : float
             Value for Nucleic Backbone Radius
         base_scale : Tuple[float, float, float]
@@ -690,8 +629,8 @@ class StyleRibbon(StyleBase):
             Value for Base Realize
         uv_map : bool
             Compute and store the `uv_map` for the final protein ribbon geometry
-        u_component : UComponentEnum
-            Value for U Component. Options: 'Factor', 'Length'
+        u_component : Any
+            Value for U Component
         color_blur : bool
             Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth : bool
@@ -712,28 +651,13 @@ class StyleRibbon(StyleBase):
         self.shade_smooth = shade_smooth
 
 
-class GeometryEnum(str, Enum):
-    """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
-
-    Options
-    -------
-    Point : Point - Point option
-    Instance : Instance - Instance option
-    Mesh : Mesh - Mesh option
-    """
-
-    POINT = "Point"
-    INSTANCE = "Instance"
-    MESH = "Mesh"
-
-
 class StyleSpheres(StyleBase):
     """Style class for Style Spheres
 
     Parameters
     ----------
-    geometry : GeometryEnum
-        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.. Options: 'Point', 'Instance', 'Mesh'
+    geometry : Any
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     radius : float
         Scale the `vdw_radii` of the atom when setting the radius of the spheres
     subdivisions : int
@@ -752,7 +676,7 @@ class StyleSpheres(StyleBase):
 
     def __init__(
         self,
-        geometry: GeometryEnum = "Point",  # Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+        geometry: Any = "Point",  # Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
         radius: float = 0.8,  # Scale the `vdw_radii` of the atom when setting the radius of the spheres
         subdivisions: int = 2,  # Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms
         shade_smooth: bool = True,  # Apply smooth shading when using _Instances_ or _Mesh_
@@ -761,8 +685,8 @@ class StyleSpheres(StyleBase):
 
             Parameters
             ----------
-        geometry : GeometryEnum
-            Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.. Options: 'Point', 'Instance', 'Mesh'
+        geometry : Any
+            Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
         radius : float
             Scale the `vdw_radii` of the atom when setting the radius of the spheres
         subdivisions : int
@@ -825,32 +749,6 @@ class StyleSticks(StyleBase):
         self.shade_smooth = shade_smooth
 
 
-class SeparateByEnum(str, Enum):
-    """Enum for Separate By in Style Surface
-
-    Options
-    -------
-    chain_id : chain_id - chain_id option
-    Group ID : Group ID - Group ID option
-    """
-
-    CHAIN_ID = "chain_id"
-    GROUP_ID = "Group ID"
-
-
-class ColorSourceEnum(str, Enum):
-    """Enum for Color Source in Style Surface
-
-    Options
-    -------
-    Alpha Carbon : Alpha Carbon - Alpha Carbon option
-    Nearest : Nearest - Nearest option
-    """
-
-    ALPHA_CARBON = "Alpha Carbon"
-    NEAREST = "Nearest"
-
-
 class StyleSurface(StyleBase):
     """Style class for Style Surface
 
@@ -864,12 +762,12 @@ class StyleSurface(StyleBase):
         Size of the probe that is used to check for solvent accessibility (Angstroms)
     relaxation_steps : int
         Number of times smoothening is applied to the generate surface stretched between the atoms
-    separate_by : SeparateByEnum
-        Value for Separate By. Options: 'chain_id', 'Group ID'
+    separate_by : Any
+        Value for Separate By
     group_id : int
         Value for Group ID
-    color_source : ColorSourceEnum
-        Value for Color Source. Options: 'Alpha Carbon', 'Nearest'
+    color_source : Any
+        Value for Color Source
     color_blur : int
         Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
     shade_smooth : bool
@@ -895,9 +793,9 @@ class StyleSurface(StyleBase):
         scale_radius: float = 1.5,  # Scale the VDW radii of the atoms when creating the surface
         probe_size: float = 1.0,  # Size of the probe that is used to check for solvent accessibility (Angstroms)
         relaxation_steps: int = 10,  # Number of times smoothening is applied to the generate surface stretched between the atoms
-        separate_by: SeparateByEnum = "chain_id",
+        separate_by: Any = "chain_id",
         group_id: int = 0,
-        color_source: ColorSourceEnum = "Alpha Carbon",
+        color_source: Any = "Alpha Carbon",
         color_blur: int = 2,  # Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth: bool = True,  # Apply smooth shading to the created geometry
     ):
@@ -913,12 +811,12 @@ class StyleSurface(StyleBase):
             Size of the probe that is used to check for solvent accessibility (Angstroms)
         relaxation_steps : int
             Number of times smoothening is applied to the generate surface stretched between the atoms
-        separate_by : SeparateByEnum
-            Value for Separate By. Options: 'chain_id', 'Group ID'
+        separate_by : Any
+            Value for Separate By
         group_id : int
             Value for Group ID
-        color_source : ColorSourceEnum
-            Value for Color Source. Options: 'Alpha Carbon', 'Nearest'
+        color_source : Any
+            Value for Color Source
         color_blur : int
             Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
         shade_smooth : bool
