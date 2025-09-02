@@ -91,7 +91,7 @@ canvas.background = (0, 0.5, 0.5, 1.0)
 canvas.camera.lens = 130
 mol = mn.Molecule.fetch("9MD2")
 mol.add_style(
-    mn.StyleCartoon(backbone_radius=0.4), material=mn.material.AmbientOcclusion()
+    mn.StyleCartoon(peptide_loop_radius=0.4), material=mn.material.AmbientOcclusion()
 )
 canvas.frame_object(mol)
 canvas.snapshot()

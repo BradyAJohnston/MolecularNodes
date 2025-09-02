@@ -682,16 +682,6 @@
         "enum_options": null
       },
       {
-        "name": "Radius",
-        "type": "VALUE",
-        "default_value": 1.6,
-        "description": "",
-        "min_value": 0.0,
-        "max_value": 3.4028234663852886e+38,
-        "subtype": "NONE",
-        "enum_options": null
-      },
-      {
         "name": "Backbone Smoothing",
         "type": "VALUE",
         "default_value": 0.5,
@@ -712,6 +702,16 @@
         "enum_options": null
       },
       {
+        "name": "Backbone Radius",
+        "type": "VALUE",
+        "default_value": 1.6,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
         "name": "Nucleic Backbone Shape",
         "type": "UNKNOWN",
         "default_value": "Cylinder",
@@ -719,6 +719,16 @@
         "min_value": null,
         "max_value": null,
         "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Backbone Radius",
+        "type": "VALUE",
+        "default_value": 1.6,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
         "enum_options": null
       },
       {

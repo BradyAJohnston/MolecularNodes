@@ -560,14 +560,16 @@ class StyleRibbon(StyleBase):
     ----------
     quality : int
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-    radius : float
-        Value for Radius
     backbone_smoothing : float
         Smoothen the sheet ribbons such as beta-sheets
     backbone_threshold : float
         Distance (Angstroms) over which subsequent CA points are treated as a new chain
+    backbone_radius : float
+        Value for Backbone Radius
     nucleic_backbone_shape : Any
         Value for Nucleic Backbone Shape
+    nucleic_backbone_radius : float
+        Value for Nucleic Backbone Radius
     backbone_width : float
         Value for Backbone Width
     backbone_thickness : float
@@ -591,10 +593,11 @@ class StyleRibbon(StyleBase):
     style = "ribbon"
     socketdata: SocketInfo = [
         Socket(name="quality", blendername="Quality"),
-        Socket(name="radius", blendername="Radius"),
         Socket(name="backbone_smoothing", blendername="Backbone Smoothing"),
         Socket(name="backbone_threshold", blendername="Backbone Threshold"),
+        Socket(name="backbone_radius", blendername="Backbone Radius"),
         Socket(name="nucleic_backbone_shape", blendername="Nucleic Backbone Shape"),
+        Socket(name="nucleic_backbone_radius", blendername="Nucleic Backbone Radius"),
         Socket(name="backbone_width", blendername="Backbone Width"),
         Socket(name="backbone_thickness", blendername="Backbone Thickness"),
         Socket(name="base_scale", blendername="Base Scale"),
@@ -609,10 +612,11 @@ class StyleRibbon(StyleBase):
     def __init__(
         self,
         quality: int = 3,  # A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-        radius: float = 1.6,
         backbone_smoothing: float = 0.5,  # Smoothen the sheet ribbons such as beta-sheets
         backbone_threshold: float = 4.5,  # Distance (Angstroms) over which subsequent CA points are treated as a new chain
+        backbone_radius: float = 1.6,
         nucleic_backbone_shape: Any = "Cylinder",
+        nucleic_backbone_radius: float = 1.6,
         backbone_width: float = 3.0,
         backbone_thickness: float = 1.0,
         base_scale: Tuple[float, float, float] = (2.5, 0.5, 7.0),
@@ -629,14 +633,16 @@ class StyleRibbon(StyleBase):
             ----------
         quality : int
             A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-        radius : float
-            Value for Radius
         backbone_smoothing : float
             Smoothen the sheet ribbons such as beta-sheets
         backbone_threshold : float
             Distance (Angstroms) over which subsequent CA points are treated as a new chain
+        backbone_radius : float
+            Value for Backbone Radius
         nucleic_backbone_shape : Any
             Value for Nucleic Backbone Shape
+        nucleic_backbone_radius : float
+            Value for Nucleic Backbone Radius
         backbone_width : float
             Value for Backbone Width
         backbone_thickness : float
@@ -657,10 +663,11 @@ class StyleRibbon(StyleBase):
             Apply smooth shading to the created geometry
         """
         self.quality = quality
-        self.radius = radius
         self.backbone_smoothing = backbone_smoothing
         self.backbone_threshold = backbone_threshold
+        self.backbone_radius = backbone_radius
         self.nucleic_backbone_shape = nucleic_backbone_shape
+        self.nucleic_backbone_radius = nucleic_backbone_radius
         self.backbone_width = backbone_width
         self.backbone_thickness = backbone_thickness
         self.base_scale = base_scale
