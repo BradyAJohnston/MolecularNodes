@@ -52,9 +52,7 @@ jobs:
               uses: astral-sh/setup-uv@v5
             - name: Install molecularnodes
               run: |
-                uv venv --python=3.11
-                uv pip install ".[test]"
-                uv pip install bpy==${{ matrix.version }}
+                uv sync --all-extras
             - name: Run Tests "not density"
               run: |
                 uv run pytest -n auto -k "not density"
