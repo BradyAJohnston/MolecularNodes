@@ -1215,7 +1215,6 @@ dependencies = [
     { name = "databpy" },
     { name = "mdanalysis" },
     { name = "mrcfile" },
-    { name = "nodepad" },
     { name = "pyyaml" },
     { name = "starfile" },
 ]
@@ -1227,6 +1226,7 @@ bpy = [
 dev = [
     { name = "fake-bpy-module" },
     { name = "ipython" },
+    { name = "nodepad" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "scipy" },
@@ -1276,7 +1276,7 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'test'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodepad", specifier = ">=0.2.0" },
+    { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.2.0" },
     { name = "nodepad", marker = "extra == 'docs'" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'test'" },
