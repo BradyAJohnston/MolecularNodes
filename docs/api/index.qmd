@@ -9,7 +9,7 @@ jupyter: python3
 
 Molecular Nodes was first built as an add-on for Blender, intended to be used through the GUI.
 
-A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The version is pinned to the versions of Blender it is intended for, so while MN is currently version `4.4`, it should not be considered that stable.
+A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The version is pinned to the versions of Blender it is intended for, so while MN is currently version `4.5`, it should not be considered that stable.
 
 The quirks of progamming within Blender are numerous and will likely remain regardless of version.
 :::
@@ -91,7 +91,7 @@ canvas.background = (0, 0.5, 0.5, 1.0)
 canvas.camera.lens = 130
 mol = mn.Molecule.fetch("9MD2")
 mol.add_style(
-    mn.StyleCartoon(backbone_radius=0.4), material=mn.material.AmbientOcclusion()
+    mn.StyleCartoon(peptide_loop_radius=0.4), material=mn.material.AmbientOcclusion()
 )
 canvas.frame_object(mol)
 canvas.snapshot()

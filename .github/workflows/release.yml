@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: BradyAJohnston/setup-blender@v3
         with:
-            version: 4.4
+            version: 4.5
       - name: Build Extension
         run: |
           blender -b -P build.py

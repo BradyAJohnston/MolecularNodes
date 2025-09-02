@@ -13,7 +13,7 @@ jobs:
             max-parallel: 4
             fail-fast: false
             matrix:
-              version: ["4.4", "4.5", "daily"]
+              version: ["4.5", "daily"]
               os: [ubuntu-latest, macos-latest, windows-latest]
         steps:
             - uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
             max-parallel: 4
             fail-fast: false
             matrix:
-              version: ["4.4"]
+              version: ["4.5"]
               os: [ubuntu-latest, macos-latest, windows-latest]
         steps:
             - uses: actions/checkout@v4
@@ -52,9 +52,7 @@ jobs:
               uses: astral-sh/setup-uv@v5
             - name: Install molecularnodes
               run: |
-                uv venv --python=3.11
-                uv pip install ".[test]"
-                uv pip install bpy==${{ matrix.version }}
+                uv sync --all-extras
             - name: Run Tests "not density"
               run: |
                 uv run pytest -n auto -k "not density"
