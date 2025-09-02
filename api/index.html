@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Introduction to the APi and the quirks of programming in Blender">
+<meta name="description" content="Introduction to the API and the quirks of programming in Blender">
 
 <title>Python API – Molecular Nodes</title>
 <style>
@@ -76,7 +76,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-d54373584a95d5a94cf1f78d4c48419d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -135,15 +135,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../tutorials/"> 
-<span class="menu-text">Tutorials</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../nodes/"> 
-<span class="menu-text">Nodes</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../attributes.html"> 
+    <a class="nav-link" href="../tutorials/index.html"> 
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
@@ -210,16 +202,69 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
  <span class="menu-text">Materials</span></a>
   </div>
 </li>
-        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Annotations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/blender.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender</span></a>
+  </div>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference</span></a>
+ <span class="menu-text">Trajectory</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/trajectory/rendering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rendering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/trajectory/solvent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/trajectory/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../api/reference/index.html" class="sidebar-item-text sidebar-link">
@@ -228,29 +273,29 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">Entity</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/entities.Molecule.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.Molecule</span></a>
+  <a href="../api/reference/Molecule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Molecule</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/entities.MoleculeSelector.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.MoleculeSelector</span></a>
+  <a href="../api/reference/MoleculeSelector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MoleculeSelector</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/entities.Trajectory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.Trajectory</span></a>
+  <a href="../api/reference/Trajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectory</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -269,17 +314,175 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Scene</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Styles</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleSpheres.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleSpheres</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleRibbon.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleRibbon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleCartoon.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleCartoon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleSurface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleSurface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleSticks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleSticks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleBallAndStick.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleBallAndStick</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Materials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.AmbientOcclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.AmbientOcclusion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Default</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.Squishy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Squishy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.FlatOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.FlatOutline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.TransparentOutline</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Session</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/session.MNSession.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">session.MNSession</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Annotations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.base.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.base</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.manager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.manager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.trajectory.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.density.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.density.annotations</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Scene</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../api/reference/Canvas.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/scene.camera.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.camera</span></a>
   </div>
 </li>
       </ul>
@@ -295,8 +498,21 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
+  <ul>
+  <li><a href="#working-in-blender" id="toc-working-in-blender" class="nav-link active" data-scroll-target="#working-in-blender">Working in Blender</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#molecules" id="toc-molecules" class="nav-link" data-scroll-target="#molecules">Molecules</a>
   <ul class="collapse">
-  <li><a href="#the-molecule-object" id="toc-the-molecule-object" class="nav-link active" data-scroll-target="#the-molecule-object">The Molecule Object</a></li>
+  <li><a href="#add-a-molecule" id="toc-add-a-molecule" class="nav-link" data-scroll-target="#add-a-molecule">Add a <code>Molecule</code></a></li>
+  </ul></li>
+  <li><a href="#trajectories" id="toc-trajectories" class="nav-link" data-scroll-target="#trajectories">Trajectories</a>
+  <ul class="collapse">
+  <li><a href="#initial-snapshot-of-the-universe" id="toc-initial-snapshot-of-the-universe" class="nav-link" data-scroll-target="#initial-snapshot-of-the-universe">Initial snapshot of the Universe</a></li>
+  <li><a href="#add-styles-to-the-universe-based-on-some-mda-selectrion-string" id="toc-add-styles-to-the-universe-based-on-some-mda-selectrion-string" class="nav-link" data-scroll-target="#add-styles-to-the-universe-based-on-some-mda-selectrion-string">Add styles to the universe based on some MDA selectrion string</a></li>
+  <li><a href="#coloring-atoms-based-on-computed-values" id="toc-coloring-atoms-based-on-computed-values" class="nav-link" data-scroll-target="#coloring-atoms-based-on-computed-values">Coloring Atoms Based on Computed Values</a></li>
+  <li><a href="#a-sub-selection-of-atoms" id="toc-a-sub-selection-of-atoms" class="nav-link" data-scroll-target="#a-sub-selection-of-atoms">A sub-selection of atoms</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -310,7 +526,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 <div>
   <div class="description">
-    Introduction to the APi and the quirks of programming in Blender
+    Introduction to the API and the quirks of programming in Blender
   </div>
 </div>
 
@@ -333,297 +549,321 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-The API is Unstable
+The API is Experimental
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Molecular Nodes is designed and created first and foremost as an add-on for Blender, so the API can at times seem a bit quirky and for the time being is not to be considered stable.</p>
-<p>Molecular Nodes is versioned to match Blender versions, so while we are currently up to “4.2.*“, the API should be not be consired to be that mature.</p>
+<p>Molecular Nodes was first built as an add-on for Blender, intended to be used through the GUI.</p>
+<p>A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The version is pinned to the versions of Blender it is intended for, so while MN is currently version <code>4.5</code>, it should not be considered that stable.</p>
+<p>The quirks of progamming within Blender are numerous and will likely remain regardless of version.</p>
 </div>
 </div>
-<p>This is how we can use the API.</p>
-<div id="78116b62" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># we currently have to manually register a lot of the internals with Blender</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>mn.register()</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mn.template.install()</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(resolution<span class="op">=</span>(<span class="dv">720</span>, <span class="dv">480</span>))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># create a 'Molecule' object, by fetching a structure and parsing it into the scene</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"6N2Y"</span>).add_style(<span class="st">'ribbon'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="working-in-blender" class="level2">
+<h2 class="anchored" data-anchor-id="working-in-blender">Working in Blender</h2>
+<p>When scripting with Molecular Nodes, it’s important to remember that everything we do doesn’t work in isolation. All of the objects we add &amp; changes we make happen within a “3D scene” inside of Blender, so deleting one thing or another doesn’t always clean up and reset everything you might expect.</p>
+<p>Blender itself has a very extensive python API, accessible through the <code>bpy</code> module. Molecular Nodes is designed so that for most general usage you shouldn’t have to ever directly use <code>bpy</code>, but all of the complex settings and controls are still always accessible through that module.</p>
+<p>Blender does release the <a href="https://pypi.org/p/bpy"><code>bpy</code></a> module on pypi, which let’s us</p>
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<p>If installed inside of Blender as an add-on, you can script using MN in the python console or when running scripts through Blender.</p>
+<p>You can also install and use inside of your own python projects.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<section id="the-molecule-object" class="level2">
-<h2 class="anchored" data-anchor-id="the-molecule-object">The Molecule Object</h2>
-<p>The <code>Molecule</code> object has the original data, as well as the Blender object associated with.</p>
-<p>The different methods that are associated mostly interact with the Blender object, which is accessible via the <code>mol.object</code>, and the data is accessible via <code>mol.array</code>, which is a <code>biotite.AtomArray</code> object.</p>
-<div id="6f433f76" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="bu">len</span>(mol)<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>mol<span class="sc">.</span><span class="bu">object</span><span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>mol<span class="sc">.</span>array[<span class="dv">0</span>][:<span class="dv">10</span>]<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>len(mol)=35043
-mol.object=bpy.data.objects['6N2Y']
-mol.array[0][:10]=array([
-    Atom(np.array([165.781, 162.453, 265.828], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="N", element="N", atom_id=1, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=14.0067, atomic_number=7, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.015500000000000002, atom_name_int=1, charge=-0.4157, lipophobicity=-0.49, Color=[0.18823529 0.31372549 0.97254902 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
-    Atom(np.array([165.694, 163.886, 266.083], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="CA", element="C", atom_id=2, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.017, atom_name_int=2, charge=-0.0249, lipophobicity=0.02, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=True, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
-    Atom(np.array([166.549, 164.278, 267.281], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="C", element="C", atom_id=3, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.017, atom_name_int=3, charge=0.5973, lipophobicity=-0.61, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
-    Atom(np.array([166.099, 165.005, 268.165], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="O", element="O", atom_id=4, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=15.9994, atomic_number=8, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.0152, atom_name_int=4, charge=-0.5679, lipophobicity=-0.58, Color=[1.         0.05098039 0.05098039 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
-    Atom(np.array([164.24 , 164.303, 266.314], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="CB", element="C", atom_id=5, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.017, atom_name_int=5, charge=0.2117, lipophobicity=0.45, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=False, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=True, is_carb=False),
-    Atom(np.array([164.147, 165.689, 266.594], dtype=float32), chain_id="A", res_id=2, ins_code="", res_name="SER", hetero=False, atom_name="OG", element="O", atom_id=6, b_factor=99.36, occupancy=1.0, sec_struct=3, entity_id=0, mass=15.9994, atomic_number=8, res_name_int=15, chain_id_int=0, ures_id=0, vdw_radii=0.0152, atom_name_int=9, charge=-0.6546, lipophobicity=-0.99, Color=[1.         0.05098039 0.05098039 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=False, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=True, is_carb=False),
-    Atom(np.array([167.783, 163.792, 267.302], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="N", element="N", atom_id=7, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=14.0067, atomic_number=7, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.015500000000000002, atom_name_int=1, charge=-0.4157, lipophobicity=-0.49, Color=[0.18823529 0.31372549 0.97254902 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
-    Atom(np.array([168.702, 164.083, 268.395], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="CA", element="C", atom_id=8, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.017, atom_name_int=2, charge=-0.0597, lipophobicity=0.02, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=True, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
-    Atom(np.array([169.366, 165.434, 268.145], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="C", element="C", atom_id=9, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=12.0107, atomic_number=6, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.017, atom_name_int=3, charge=0.5973, lipophobicity=-0.61, Color=[0.83921569 0.35686275 0.35686275 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False),
-    Atom(np.array([169.633, 165.817, 266.999], dtype=float32), chain_id="A", res_id=3, ins_code="", res_name="ILE", hetero=False, atom_name="O", element="O", atom_id=10, b_factor=93.91, occupancy=1.0, sec_struct=3, entity_id=0, mass=15.9994, atomic_number=8, res_name_int=9, chain_id_int=0, ures_id=1, vdw_radii=0.0152, atom_name_int=4, charge=-0.5679, lipophobicity=-0.58, Color=[1.         0.05098039 0.05098039 1.        ], is_alpha_carbon=False, is_solvent=False, is_backbone=True, is_nucleic=False, is_peptide=True, is_hetero=False, is_side_chain=False, is_carb=False)
-])</code></pre>
+<div class="callout-title-container flex-fill">
+Python Versions
 </div>
 </div>
-<div id="7c7decfd" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.named_attribute(<span class="st">'chain_id'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>array([0, 0, 0, ..., 5, 5, 5])</code></pre>
+<div class="callout-body-container callout-body">
+<p><code>molecularnodes</code> is only compatible with <code>python==3.11</code></p>
+<p>Blender is very particular about python versions (and especially <code>numpy</code> versions). Blender adheres to the <a href="https://vfxplatform.com/">VFX Reference platform</a> which determines python and common package versions to be used across multiple VFX software for consistency.</p>
+<p>Because of this, the <code>bpy</code> package upon which <code>molecularnodes</code> is build is locked to <code>python==3.11</code> and in particular <code>numpy==1.26</code>. Going outside of these very particular versions is recipe for distaster. The first Blender release of 2026 will increase to <code>3.13</code> and <code>2.3</code> repsectively.</p>
 </div>
 </div>
-<div id="2afbe752" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mol.position</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>array([[1.65780997, 1.62452996, 2.6582799 ],
-       [1.65693998, 1.63885999, 2.66083002],
-       [1.66548991, 1.64277995, 2.67281008],
-       ...,
-       [1.37845004, 1.57386994, 2.16669989],
-       [1.38423002, 1.5675199 , 2.17714   ],
-       [1.39749992, 1.55744004, 2.29000998]])</code></pre>
+<p>Blender (<code>bpy</code>) is listed as an optional dependency for MN so that when installing inside of Blender there isn’t a double up with the bunlded <code>bpy</code>. This means you’ll need to always manually request it when installing or add it as a requirement to your own project.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install molecularnodes<span class="pp">[</span><span class="ss">bpy</span><span class="pp">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>There are two main classes you will interact with, the <a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>Molecule</code></a> and the <a href="../api/reference/Trajectory.html#molecularnodes.Trajectory"><code>Trajectory</code></a>.</p>
+<ul>
+<li><a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>Molecule</code></a>
+<ul>
+<li>Intended for static structures, downloaded from the PDB or loaded locally</li>
+<li>Uses <a href="https://www.biotite-python.org/latest/apidoc/biotite.html#module-biotite"><code>biotite</code></a> as the backend for parsing files and storing data as a <a href="https://www.biotite-python.org/latest/apidoc/biotite.structure.AtomArray.html#biotite.structure.AtomArray"><code>biotite.structure.AtomArray</code></a></li>
+<li>doesn’t support selection strings</li>
+</ul></li>
+<li><a href="../api/reference/Trajectory.html#molecularnodes.Trajectory"><code>Trajectory</code></a>
+<ul>
+<li>For MD simulation data</li>
+<li>Uses <code>MDAnalysis</code> as the backend, keeping a <code>MDAnalysis.Universe</code> updating in the background to update positions</li>
+<li>supports selection strings and transformations</li>
+</ul></li>
+</ul>
+<p>How you script with each is unfortunately slightly different when it comes to selections, but will hopefully in the future <a href="https://github.com/BradyAJohnston/MolecularNodes/discussions/949">be unified</a>.</p>
+</section>
+<section id="molecules" class="level2">
+<h2 class="anchored" data-anchor-id="molecules">Molecules</h2>
+<p>To get started, with import the module start a new scene be creating out <a href="../api/reference/Canvas.html#molecularnodes.Canvas"><code>Canvas</code></a> object. This object is how we change settings for how the scene will render and other related settings sich as resolution.</p>
+<div id="90867a54" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>), resolution<span class="op">=</span>(<span class="dv">720</span>, <span class="dv">480</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<section id="updating-the-atom-positions" class="level3">
-<h3 class="anchored" data-anchor-id="updating-the-atom-positions">Updating the Atom Positions</h3>
-<div id="9ccebb6a" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mol.position <span class="op">-=</span> mol.centroid()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>mol.position</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>array([[-0.0113072 , -0.03149763,  0.58922708],
-       [-0.01217719, -0.0171676 ,  0.59177721],
-       [-0.00362726, -0.01324764,  0.60375726],
-       ...,
-       [-0.29066715, -0.08215764,  0.09764704],
-       [-0.28488716, -0.08850768,  0.10808715],
-       [-0.27161726, -0.09858754,  0.22095713]])</code></pre>
-</div>
-</div>
-<div id="f64d7a65" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>codes <span class="op">=</span> [<span class="st">"4ozs"</span>, <span class="st">"8H1B"</span>, <span class="st">"8U8W"</span>]</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>styles <span class="op">=</span> [<span class="st">'cartoon'</span>, <span class="st">'ribbon'</span>, <span class="st">'spheres'</span>]</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>materials <span class="op">=</span> [<span class="st">'MN Ambient Occlusion'</span>, <span class="st">'MN Default'</span>, <span class="st">'MN Ambient Occlusion'</span>]</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> code, style, material <span class="kw">in</span> <span class="bu">zip</span>(codes, styles, materials):</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        canvas.scene_reset(engine<span class="op">=</span>mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>))</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        mol <span class="op">=</span> mn.Molecule.fetch(code)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        canvas.frame_object(mol)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        mol.add_style(style)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:53.80M (Peak 55.68M) | Time:00:00.17 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | 4ozs
-Fra:1 Mem:54.93M (Peak 55.94M) | Time:00:00.18 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Initializing
-Fra:1 Mem:53.46M (Peak 55.94M) | Time:00:00.18 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
-Fra:1 Mem:48.41M (Peak 71.46M) | Time:00:00.22 | Mem:8.00M, Peak:8.00M | Scene, ViewLayer | Waiting for render to start
-Fra:1 Mem:48.41M (Peak 71.46M) | Time:00:00.22 | Mem:8.00M, Peak:8.00M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
-Fra:1 Mem:48.41M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
-Fra:1 Mem:48.41M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Procedurals
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Background
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Camera
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Meshes Flags
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Particle Systems
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
-Fra:1 Mem:48.50M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Meshes
-Fra:1 Mem:48.70M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Mesh | Computing attributes
-Fra:1 Mem:48.98M (Peak 77.06M) | Time:00:00.30 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
-Fra:1 Mem:48.98M (Peak 77.06M) | Time:00:00.30 | Mem:8.30M, Peak:8.30M | Scene, ViewLayer | Updating Geometry BVH 4ozs 1/1 | Building BVH
-Fra:1 Mem:48.98M (Peak 77.06M) | Time:00:00.30 | Mem:8.30M, Peak:8.30M | Scene, ViewLayer | Updating Geometry BVH 4ozs 1/1 | Building OptiX acceleration structure
-Fra:1 Mem:48.98M (Peak 77.06M) | Time:00:00.30 | Mem:8.61M, Peak:9.64M | Scene, ViewLayer | Updating Scene BVH | Building
-Fra:1 Mem:48.98M (Peak 77.06M) | Time:00:00.30 | Mem:8.61M, Peak:9.64M | Scene, ViewLayer | Updating Scene BVH | Building OptiX acceleration structure
-Fra:1 Mem:48.98M (Peak 77.06M) | Time:00:00.30 | Mem:8.61M, Peak:9.64M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
-Fra:1 Mem:48.98M (Peak 77.06M) | Time:00:00.30 | Mem:8.61M, Peak:9.64M | Scene, ViewLayer | Updating Mesh | Computing normals
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:8.61M, Peak:9.64M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:9.18M, Peak:9.64M | Scene, ViewLayer | Updating Objects Flags
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:9.18M, Peak:9.64M | Scene, ViewLayer | Updating Primitive Offsets
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:9.18M, Peak:9.64M | Scene, ViewLayer | Updating Images
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:9.18M, Peak:9.64M | Scene, ViewLayer | Updating Camera Volume
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:9.18M, Peak:9.64M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:9.26M, Peak:9.64M | Scene, ViewLayer | Updating Lights
-Fra:1 Mem:49.55M (Peak 77.06M) | Time:00:00.30 | Mem:9.26M, Peak:9.64M | Scene, ViewLayer | Updating Lights | Importance map
-Fra:1 Mem:113.58M (Peak 401.55M) | Time:00:00.53 | Mem:73.30M, Peak:233.26M | Scene, ViewLayer | Updating Lights | Computing tree
-Fra:1 Mem:113.58M (Peak 401.55M) | Time:00:00.53 | Mem:73.30M, Peak:233.26M | Scene, ViewLayer | Updating Integrator
-Fra:1 Mem:114.58M (Peak 401.55M) | Time:00:00.53 | Mem:74.30M, Peak:233.26M | Scene, ViewLayer | Updating Film
-Fra:1 Mem:114.58M (Peak 401.55M) | Time:00:00.53 | Mem:74.22M, Peak:233.26M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:114.58M (Peak 401.55M) | Time:00:00.53 | Mem:74.30M, Peak:233.26M | Scene, ViewLayer | Updating Baking
-Fra:1 Mem:114.58M (Peak 401.55M) | Time:00:00.53 | Mem:74.30M, Peak:233.26M | Scene, ViewLayer | Updating Device | Writing constant memory
-Fra:1 Mem:114.58M (Peak 401.55M) | Time:00:00.53 | Mem:74.30M, Peak:233.26M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
-Fra:1 Mem:122.27M (Peak 401.55M) | Time:00:00.54 | Mem:735.43M, Peak:735.43M | Scene, ViewLayer | Sample 0/256
-Fra:1 Mem:272.57M (Peak 401.55M) | Time:00:00.55 | Remaining:00:03.03 | Mem:885.72M, Peak:885.72M | Scene, ViewLayer | Sample 1/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.13 | Remaining:00:01.31 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 80/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.23 | Remaining:00:01.15 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 96/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.32 | Remaining:00:01.00 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 112/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.42 | Remaining:00:00.87 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 128/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.51 | Remaining:00:00.75 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 144/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.60 | Remaining:00:00.63 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 160/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.69 | Remaining:00:00.52 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 176/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.78 | Remaining:00:00.41 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 192/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.87 | Remaining:00:00.30 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 208/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:01.96 | Remaining:00:00.20 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 224/256
-Fra:1 Mem:272.58M (Peak 401.55M) | Time:00:02.04 | Remaining:00:00.10 | Mem:885.73M, Peak:885.73M | Scene, ViewLayer | Sample 240/256
-Fra:1 Mem:335.87M (Peak 430.79M) | Time:00:02.41 | Mem:885.73M, Peak:933.19M | Scene, ViewLayer | Sample 256/256
-Fra:1 Mem:335.87M (Peak 430.79M) | Time:00:02.41 | Mem:885.73M, Peak:933.19M | Scene, ViewLayer | Finished
-Saved: '/tmp/tmp3ahgjghl/snapshot.png'
-Time: 00:02.78 (Saving: 00:00.22)
-</code></pre>
-</div>
+<section id="add-a-molecule" class="level3">
+<h3 class="anchored" data-anchor-id="add-a-molecule">Add a <code>Molecule</code></h3>
+<p>The <a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>mn.Molecule</code></a> can take a <code>AtomArray</code> from the <code>biotite</code> package directly, or it has the <a href="../api/reference/Molecule.html#molecularnodes.Molecule.fetch"><code>mn.Molecule.fetch</code></a> and <a href="../api/reference/Molecule.html#molecularnodes.Molecule.load"><code>mn.Molecule.load</code></a> class methods to download directly from the PDB or load a local file.</p>
+<p>After loading the molecule, to be able to see anything we must first add a style. Then we can frame the camera on the object and take a snapshot.</p>
+<div id="33e93ab8" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"4ozs"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mol.add_style(mn.StyleCartoon())</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(mol)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-8-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:43.82M (Peak 47.66M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | 8H1B
-Fra:1 Mem:46.92M (Peak 51.73M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Initializing
-Fra:1 Mem:42.41M (Peak 51.73M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
-Fra:1 Mem:42.76M (Peak 60.42M) | Time:00:00.15 | Mem:8.00M, Peak:8.00M | Scene, ViewLayer | Waiting for render to start
-Fra:1 Mem:42.76M (Peak 60.42M) | Time:00:00.15 | Mem:8.00M, Peak:8.00M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
-Fra:1 Mem:42.76M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
-Fra:1 Mem:42.76M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
-Fra:1 Mem:42.85M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Procedurals
-Fra:1 Mem:42.85M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Background
-Fra:1 Mem:42.85M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Camera
-Fra:1 Mem:42.85M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Meshes Flags
-Fra:1 Mem:42.85M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects
-Fra:1 Mem:42.85M (Peak 71.41M) | Time:00:00.23 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
-Fra:1 Mem:42.86M (Peak 71.41M) | Time:00:00.23 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
-Fra:1 Mem:42.86M (Peak 71.41M) | Time:00:00.23 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems
-Fra:1 Mem:42.86M (Peak 71.41M) | Time:00:00.23 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
-Fra:1 Mem:42.86M (Peak 71.41M) | Time:00:00.23 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Meshes
-Fra:1 Mem:43.55M (Peak 71.41M) | Time:00:00.23 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Mesh | Computing attributes
-Fra:1 Mem:44.18M (Peak 71.41M) | Time:00:00.23 | Mem:8.03M, Peak:8.03M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:8.64M, Peak:8.64M | Scene, ViewLayer | Updating Geometry BVH Mesh 2/2 | Building BVH
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:8.64M, Peak:8.64M | Scene, ViewLayer | Updating Geometry BVH Mesh 2/2 | Building OptiX acceleration structure
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:8.64M, Peak:8.64M | Scene, ViewLayer | Updating Geometry BVH 8H1B 1/2 | Building BVH
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:8.64M, Peak:8.64M | Scene, ViewLayer | Updating Geometry BVH 8H1B 1/2 | Building OptiX acceleration structure
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:9.75M, Peak:13.07M | Scene, ViewLayer | Updating Scene BVH | Building
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:9.75M, Peak:13.07M | Scene, ViewLayer | Updating Scene BVH | Building OptiX acceleration structure
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:9.76M, Peak:13.07M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
-Fra:1 Mem:44.17M (Peak 71.41M) | Time:00:00.23 | Mem:9.76M, Peak:13.07M | Scene, ViewLayer | Updating Mesh | Computing normals
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:9.76M, Peak:13.07M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:11.33M, Peak:13.07M | Scene, ViewLayer | Updating Objects Flags
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:11.33M, Peak:13.07M | Scene, ViewLayer | Updating Primitive Offsets
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:11.33M, Peak:13.07M | Scene, ViewLayer | Updating Images
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:11.33M, Peak:13.07M | Scene, ViewLayer | Updating Camera Volume
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:11.33M, Peak:13.07M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:11.41M, Peak:13.07M | Scene, ViewLayer | Updating Lights
-Fra:1 Mem:45.74M (Peak 71.41M) | Time:00:00.23 | Mem:11.41M, Peak:13.07M | Scene, ViewLayer | Updating Lights | Importance map
-Fra:1 Mem:109.78M (Peak 397.74M) | Time:00:00.45 | Mem:75.44M, Peak:235.41M | Scene, ViewLayer | Updating Lights | Computing tree
-Fra:1 Mem:109.78M (Peak 397.74M) | Time:00:00.45 | Mem:75.44M, Peak:235.41M | Scene, ViewLayer | Updating Integrator
-Fra:1 Mem:110.78M (Peak 397.74M) | Time:00:00.45 | Mem:76.44M, Peak:235.41M | Scene, ViewLayer | Updating Film
-Fra:1 Mem:110.78M (Peak 397.74M) | Time:00:00.46 | Mem:76.36M, Peak:235.41M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:110.78M (Peak 397.74M) | Time:00:00.46 | Mem:76.45M, Peak:235.41M | Scene, ViewLayer | Updating Baking
-Fra:1 Mem:110.78M (Peak 397.74M) | Time:00:00.46 | Mem:76.45M, Peak:235.41M | Scene, ViewLayer | Updating Device | Writing constant memory
-Fra:1 Mem:110.78M (Peak 397.74M) | Time:00:00.46 | Mem:76.45M, Peak:235.41M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
-Fra:1 Mem:118.47M (Peak 397.74M) | Time:00:00.46 | Mem:737.57M, Peak:737.57M | Scene, ViewLayer | Sample 0/256
-Fra:1 Mem:268.77M (Peak 397.74M) | Time:00:00.48 | Remaining:00:03.63 | Mem:887.87M, Peak:887.87M | Scene, ViewLayer | Sample 1/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:01.24 | Remaining:00:01.70 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 80/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:01.37 | Remaining:00:01.51 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 96/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:01.50 | Remaining:00:01.33 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 112/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:01.63 | Remaining:00:01.16 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 128/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:01.76 | Remaining:00:01.00 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 144/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:01.89 | Remaining:00:00.85 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 160/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:02.02 | Remaining:00:00.70 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 176/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:02.14 | Remaining:00:00.56 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 192/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:02.27 | Remaining:00:00.41 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 208/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:02.40 | Remaining:00:00.27 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 224/256
-Fra:1 Mem:268.78M (Peak 397.74M) | Time:00:02.52 | Remaining:00:00.13 | Mem:887.88M, Peak:887.88M | Scene, ViewLayer | Sample 240/256
-Fra:1 Mem:332.06M (Peak 426.99M) | Time:00:02.95 | Mem:887.88M, Peak:935.34M | Scene, ViewLayer | Sample 256/256
-Fra:1 Mem:332.06M (Peak 426.99M) | Time:00:02.95 | Mem:887.88M, Peak:935.34M | Scene, ViewLayer | Finished
-Saved: '/tmp/tmpv6n_1lpy/snapshot.png'
-Time: 00:03.25 (Saving: 00:00.15)
-</code></pre>
 </div>
+<div id="f0e40ff3" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>canvas.background <span class="op">=</span> (<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>canvas.camera.lens <span class="op">=</span> <span class="dv">130</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"9MD2"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>mol.add_style(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    mn.StyleCartoon(peptide_loop_radius<span class="op">=</span><span class="fl">0.4</span>), material<span class="op">=</span>mn.material.AmbientOcclusion()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(mol)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-8-output-4.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Fra:1 Mem:19.78M (Peak 19.78M) | Time:00:00.11 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | 8U8W
-Fra:1 Mem:20.14M (Peak 20.14M) | Time:00:00.11 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Initializing
-Fra:1 Mem:20.07M (Peak 20.14M) | Time:00:00.11 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading forest_cave_1k.hdr
-Fra:1 Mem:26.53M (Peak 38.07M) | Time:00:00.13 | Mem:8.00M, Peak:8.00M | Scene, ViewLayer | Waiting for render to start
-Fra:1 Mem:26.53M (Peak 38.07M) | Time:00:00.13 | Mem:8.00M, Peak:8.00M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
-Fra:1 Mem:26.53M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Scene
-Fra:1 Mem:26.53M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Shaders
-Fra:1 Mem:26.61M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Procedurals
-Fra:1 Mem:26.61M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Background
-Fra:1 Mem:26.61M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Camera
-Fra:1 Mem:26.61M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Meshes Flags
-Fra:1 Mem:26.61M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects
-Fra:1 Mem:26.61M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
-Fra:1 Mem:26.62M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
-Fra:1 Mem:26.62M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Particle Systems
-Fra:1 Mem:26.62M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
-Fra:1 Mem:26.62M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Meshes
-Fra:1 Mem:26.62M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Mesh | Computing attributes
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.02M, Peak:8.02M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.06M, Peak:8.06M | Scene, ViewLayer | Updating Geometry BVH PointCloud 2/2 | Building BVH
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.06M, Peak:8.06M | Scene, ViewLayer | Updating Geometry BVH 8U8W 1/2 | Building BVH
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.06M, Peak:8.06M | Scene, ViewLayer | Updating Geometry BVH 8U8W 1/2 | Building OptiX acceleration structure
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.11M, Peak:8.36M | Scene, ViewLayer | Updating Scene BVH | Building
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.11M, Peak:8.36M | Scene, ViewLayer | Updating Scene BVH | Building OptiX acceleration structure
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.11M, Peak:8.36M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
-Fra:1 Mem:26.65M (Peak 55.18M) | Time:00:00.18 | Mem:8.11M, Peak:8.36M | Scene, ViewLayer | Updating Mesh | Copying Point clouds to device
-Fra:1 Mem:26.70M (Peak 55.18M) | Time:00:00.18 | Mem:8.16M, Peak:8.36M | Scene, ViewLayer | Updating Objects Flags
-Fra:1 Mem:26.70M (Peak 55.18M) | Time:00:00.18 | Mem:8.16M, Peak:8.36M | Scene, ViewLayer | Updating Primitive Offsets
-Fra:1 Mem:26.70M (Peak 55.18M) | Time:00:00.18 | Mem:8.16M, Peak:8.36M | Scene, ViewLayer | Updating Images
-Fra:1 Mem:26.70M (Peak 55.18M) | Time:00:00.18 | Mem:8.16M, Peak:8.36M | Scene, ViewLayer | Updating Camera Volume
-Fra:1 Mem:26.70M (Peak 55.18M) | Time:00:00.18 | Mem:8.16M, Peak:8.36M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:26.70M (Peak 55.18M) | Time:00:00.18 | Mem:8.24M, Peak:8.36M | Scene, ViewLayer | Updating Lights
-Fra:1 Mem:26.70M (Peak 55.18M) | Time:00:00.18 | Mem:8.24M, Peak:8.36M | Scene, ViewLayer | Updating Lights | Importance map
-Fra:1 Mem:90.73M (Peak 378.70M) | Time:00:00.40 | Mem:72.27M, Peak:232.24M | Scene, ViewLayer | Updating Lights | Computing tree
-Fra:1 Mem:90.73M (Peak 378.70M) | Time:00:00.40 | Mem:72.27M, Peak:232.24M | Scene, ViewLayer | Updating Integrator
-Fra:1 Mem:91.73M (Peak 378.70M) | Time:00:00.41 | Mem:73.27M, Peak:232.24M | Scene, ViewLayer | Updating Film
-Fra:1 Mem:91.73M (Peak 378.70M) | Time:00:00.41 | Mem:73.19M, Peak:232.24M | Scene, ViewLayer | Updating Lookup Tables
-Fra:1 Mem:91.73M (Peak 378.70M) | Time:00:00.41 | Mem:73.27M, Peak:232.24M | Scene, ViewLayer | Updating Baking
-Fra:1 Mem:91.73M (Peak 378.70M) | Time:00:00.41 | Mem:73.27M, Peak:232.24M | Scene, ViewLayer | Updating Device | Writing constant memory
-Fra:1 Mem:91.73M (Peak 378.70M) | Time:00:00.41 | Mem:73.27M, Peak:232.24M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
-Fra:1 Mem:99.42M (Peak 378.70M) | Time:00:00.41 | Mem:734.40M, Peak:734.40M | Scene, ViewLayer | Sample 0/256
-Fra:1 Mem:249.72M (Peak 378.70M) | Time:00:00.43 | Remaining:00:05.63 | Mem:884.70M, Peak:884.70M | Scene, ViewLayer | Sample 1/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:01.79 | Remaining:00:03.02 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 80/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:02.04 | Remaining:00:02.71 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 96/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:02.30 | Remaining:00:02.42 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 112/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:02.56 | Remaining:00:02.14 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 128/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:02.81 | Remaining:00:01.86 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 144/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:03.06 | Remaining:00:01.59 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 160/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:03.32 | Remaining:00:01.32 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 176/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:03.57 | Remaining:00:01.05 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 192/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:03.81 | Remaining:00:00.78 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 208/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:04.06 | Remaining:00:00.52 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 224/256
-Fra:1 Mem:249.73M (Peak 378.70M) | Time:00:04.30 | Remaining:00:00.25 | Mem:884.71M, Peak:884.71M | Scene, ViewLayer | Sample 240/256
-Fra:1 Mem:313.01M (Peak 407.94M) | Time:00:04.86 | Mem:884.71M, Peak:932.17M | Scene, ViewLayer | Sample 256/256
-Fra:1 Mem:313.01M (Peak 407.94M) | Time:00:04.86 | Mem:884.71M, Peak:932.17M | Scene, ViewLayer | Finished
-Saved: '/tmp/tmpe7f57n1a/snapshot.png'
-Time: 00:05.17 (Saving: 00:00.16)
-</code></pre>
 </div>
+<div id="49aff5cc" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(mol, (<span class="op">-</span><span class="fl">3.14</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-8-output-6.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="021a134d" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>canvas.engine <span class="op">=</span> <span class="st">"eevee"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas.resolution <span class="op">=</span> (<span class="dv">800</span>, <span class="dv">800</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>canvas.transparent <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"Q8W3K0"</span>, database<span class="op">=</span><span class="st">"alphafold"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>mol.add_style(mn.StyleCartoon(), color<span class="op">=</span><span class="st">"pLDDT"</span>, material<span class="op">=</span>mn.material.AmbientOcclusion())</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(mol)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="trajectories" class="level2">
+<h2 class="anchored" data-anchor-id="trajectories">Trajectories</h2>
+<div id="099366b1" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> PSF, DCD</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysisData <span class="im">import</span> datasets</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis <span class="im">import</span> transformations</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.analysis <span class="im">import</span> rms, align</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.cm <span class="im">as</span> cm</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(mn.scene.Cycles(samples<span class="op">=</span><span class="dv">16</span>), (<span class="dv">800</span>, <span class="dv">800</span>), transparent<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="initial-snapshot-of-the-universe" class="level3">
+<h3 class="anchored" data-anchor-id="initial-snapshot-of-the-universe">Initial snapshot of the Universe</h3>
+<p>The simplest rendering is just loading in the <code>Trajectory</code>, adding a style and then rendering an image. The style can be specified as a string, or using <code>mn.StyleSpheres()</code> to also specify values for the style rather than updating them later.</p>
+<div id="cell-fig-simple" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(PSF, DCD)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>traj <span class="op">=</span> mn.Trajectory(u)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>traj.add_style(<span class="st">"vdw"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(traj)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-simple" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-simple-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-simple-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-simple-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: A simple render of the atoms in the <code>mda.Universe</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="add-styles-to-the-universe-based-on-some-mda-selectrion-string" class="level3">
+<h3 class="anchored" data-anchor-id="add-styles-to-the-universe-based-on-some-mda-selectrion-string">Add styles to the universe based on some MDA selectrion string</h3>
+<p>We can clear all existing styles on the Trajectory, and selectively add them based on some selection. The selections can be <code>AtomGroup</code> or strings. If a string, first the existence of a <code>Named Attribute</code> is checked and if it exists that is uses as a boolean to apply the selection. If the attribute doesn’t exist, the string is used as an MDAnalysis selection string. This is equivalent to doing <code>u.select_atoms()</code> and passing that atom group as a selection.</p>
+<div id="cell-fig-selections" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>median <span class="op">=</span> np.median(traj.atoms.positions, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>traj.styles.clear()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    traj</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    .add_style(mn.StyleSpheres(), selection <span class="op">=</span> <span class="ss">f"prop x &gt; </span><span class="sc">{</span>median[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    .add_style(mn.StyleSpheres(), selection<span class="op">=</span><span class="ss">f"prop x &lt;= </span><span class="sc">{</span>median[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>, color<span class="op">=</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(traj)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="fig-selections" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-selections-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-selections-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-selections-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Selectively apply the style using an MDAnalysis selection string.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="7240f2b3" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>rot <span class="op">=</span> [transformations.rotate.rotateby(<span class="dv">90</span>,direction<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>],point<span class="op">=</span>np.zeros(<span class="dv">3</span>))]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(PSF, DCD, transformations<span class="op">=</span>rot)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>g2 <span class="op">=</span> mn.Trajectory(u).add_style(mn.StyleSpheres())</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(g2)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="coloring-atoms-based-on-computed-values" class="level3">
+<h3 class="anchored" data-anchor-id="coloring-atoms-based-on-computed-values">Coloring Atoms Based on Computed Values</h3>
+<p>Run analysis and compute values.</p>
+<div id="d00f66e5" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>adk <span class="op">=</span> datasets.fetch_adk_equilibrium()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(adk.topology, adk.trajectory)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>average <span class="op">=</span> align.AverageStructure(u, u, select<span class="op">=</span><span class="st">"protein and name CA"</span>, ref_frame<span class="op">=</span><span class="dv">0</span>).run()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>ref <span class="op">=</span> average.results.universe</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>aligner <span class="op">=</span> align.AlignTraj(u, ref, select<span class="op">=</span><span class="st">"protein and name CA"</span>, in_memory<span class="op">=</span><span class="va">True</span>).run()</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>c_alphas <span class="op">=</span> u.select_atoms(<span class="st">"protein and name CA"</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> rms.RMSF(c_alphas).run()</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>u.add_TopologyAttr(<span class="st">"tempfactors"</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>protein <span class="op">=</span> u.select_atoms(<span class="st">"protein"</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> residue, r_value <span class="kw">in</span> <span class="bu">zip</span>(protein.residues, R.results.rmsf):</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    residue.atoms.tempfactors <span class="op">=</span> r_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Compute a numpy array of color values <code>(Red, Green, Blue, Alpha)</code> that we can then store on the mesh object inside of Blender that will be used for coloring in the final render.</p>
+<div id="8140daa4" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>viridis <span class="op">=</span> cm.get_cmap(<span class="st">'inferno'</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">=</span> u.atoms.tempfactors</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">/=</span> col_array.<span class="bu">max</span>()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">=</span> viridis(col_array)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>col_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/r4/ym_ncgbd3qddtxqvrmhps8q80000gn/T/ipykernel_98258/3304747087.py:1: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+  viridis = cm.get_cmap('inferno')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>array([[0.453651, 0.103848, 0.430498, 1.      ],
+       [0.453651, 0.103848, 0.430498, 1.      ],
+       [0.453651, 0.103848, 0.430498, 1.      ],
+       ...,
+       [0.832299, 0.283913, 0.257383, 1.      ],
+       [0.832299, 0.283913, 0.257383, 1.      ],
+       [0.832299, 0.283913, 0.257383, 1.      ]])</code></pre>
+</div>
+</div>
+<p>Create the <code>Trajectory</code> object that will be visualised inside of Blender. After initialising it, we store the computed colors as a <code>Named Attribute</code> on the mesh with the <code>store_named_attribute()</code> function. These values can now be accessed in the rendering pipeline.</p>
+<p>When we add our style, we given it the name of our <code>Named Attribute</code> which will be used for coloring the final mesh. In this example I render both as spheres and also as ribbon backbone - both of which use the colors we computed. The ribbon backbone takes whatever color value is stored on the alpha carbon.</p>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>traj <span class="op">=</span> mn.Trajectory(u)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>traj.store_named_attribute(col_array, <span class="st">"custom_color"</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>traj.add_style(mn.StyleSpheres(radius<span class="op">=</span><span class="fl">0.8</span>), color<span class="op">=</span><span class="st">"custom_color"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(traj)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>traj.styles.clear()</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>traj.add_style(mn.StyleRibbon(quality<span class="op">=</span><span class="dv">6</span>, backbone_radius<span class="op">=</span><span class="fl">1.5</span>), color<span class="op">=</span><span class="st">"custom_color"</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(traj)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="fig-compute-color" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-compute-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-compute-color" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-compute-color-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-compute-color-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-compute-color-output-1.png" class="img-fluid figure-img" data-ref-parent="fig-compute-color">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-compute-color-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Spheres each use the atom’s color.
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-compute-color" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-compute-color-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-compute-color-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-compute-color-output-2.png" class="img-fluid figure-img" data-ref-parent="fig-compute-color">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-compute-color-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Ribbon and cartoon use the color from the alpha carbon.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-compute-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: We can compute custom color values and then use those in the final render.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="a-sub-selection-of-atoms" class="level3">
+<h3 class="anchored" data-anchor-id="a-sub-selection-of-atoms">A sub-selection of atoms</h3>
+<p>When adding a style, we can ensure it is only applied to some selection of atoms. The <code>selection</code> can be an <code>AtomGroup</code> or a string. In this case we pass an <code>AtomGroup</code> and the selection is only applied to those atoms from the group.</p>
+<div id="10dca464" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>adk <span class="op">=</span> datasets.fetch_adk_equilibrium()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(adk.topology, adk.trajectory)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>traj <span class="op">=</span> mn.Trajectory(u)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>traj.add_style(mn.StyleSpheres(), selection<span class="op">=</span>u.atoms[u.atoms.names <span class="op">==</span> <span class="st">"CA"</span>])</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(traj.get_view())</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>

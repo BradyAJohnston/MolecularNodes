@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.29">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Learnings, quirks and gotchas for programming in Blender.">
+
+<title>Blender – Molecular Nodes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../api/trajectory/rendering.html" rel="next">
+<link href="../api/canvas.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> 
+<span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../citations/"> 
+<span class="menu-text">Citations</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/blender.html">Blender</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Annotations</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/blender.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Blender</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Trajectory</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/trajectory/rendering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rendering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/trajectory/solvent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/trajectory/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Entity</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/Molecule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Molecule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/MoleculeSelector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MoleculeSelector</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/Trajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectory</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Styles</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleSpheres.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleSpheres</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleRibbon.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleRibbon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleCartoon.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleCartoon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleSurface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleSurface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleSticks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleSticks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/StyleBallAndStick.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">StyleBallAndStick</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Materials</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.AmbientOcclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.AmbientOcclusion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Default</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.Squishy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Squishy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.FlatOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.FlatOutline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.TransparentOutline</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Session</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/session.MNSession.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">session.MNSession</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Annotations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.base.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.base</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.manager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.manager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.trajectory.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.density.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.density.annotations</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Scene</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/Canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/scene.camera.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.camera</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#props-and-gui" id="toc-props-and-gui" class="nav-link active" data-scroll-target="#props-and-gui">Props and GUI</a></li>
+  <li><a href="#operators" id="toc-operators" class="nav-link" data-scroll-target="#operators">Operators</a></li>
+  <li><a href="#viewport" id="toc-viewport" class="nav-link" data-scroll-target="#viewport">Viewport</a></li>
+  <li><a href="#rendering-and-pil" id="toc-rendering-and-pil" class="nav-link" data-scroll-target="#rendering-and-pil">Rendering and PIL</a></li>
+  <li><a href="#nodes" id="toc-nodes" class="nav-link" data-scroll-target="#nodes">Nodes</a></li>
+  <li><a href="#misc" id="toc-misc" class="nav-link" data-scroll-target="#misc">Misc</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Blender</h1>
+</div>
+
+<div>
+  <div class="description">
+    Learnings, quirks and gotchas for programming in Blender.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="props-and-gui" class="level2">
+<h2 class="anchored" data-anchor-id="props-and-gui">Props and GUI</h2>
+<ul>
+<li><p><code>bpy.props</code> have an implicit <code>name</code> attribute. (It is ok to define it explicitly too) This applies to <code>CollectionProperty</code> as well and the <code>find</code> method of a collection property uses this <code>name</code> to return the index of an item if present. This can be very helpful. Without this, the alternative is to convert the keys to a list and use the <code>index</code> method of the list. Note that the <code>name</code> becomes part of a tuple during insertion and hence immutable - use a constant value like a hash before insertion (and not something like object name that can change)</p></li>
+<li><p>The list index property when using <code>UILists</code> can be set to -1. This is the equivalent of nothing selected in the displayed UI list. Always check that the list index is in range before displaying any item details (to avoid out of bound errors) - Blender only sets the value when a UI list item is clicked but updating it when items are added/deleted is user’s responsibility</p></li>
+<li><p>Blender’s <a href="https://docs.blender.org/api/current/bpy.types.UIList.html#bpy.types.UIList.filter_items"><code>UIList</code></a> has a way to both filter (using bit fields) and re-order items using the <a href="https://docs.blender.org/api/current/bpy.types.UIList.html#bpy.types.UIList.filter_items"><code>filter_items</code></a> method. There are also some helper methods that Blender provides in <a href="https://docs.blender.org/api/current/bpy.types.UI_UL_list.html"><code>bpy.types.UI_UL_list</code></a> that helps both. The management of active index of the selected item in the UIList becomes tricky in case of filtering</p></li>
+<li><p>Property changes/updates cannot happen in the <code>draw</code>/<code>draw_item</code> context. They lead to a <code>AttributeError: Writing to ID classes in this context is not allowed:</code> error. So, any property changes that need to reflect when drawing the layout should be updated in a different (like operator/API) context</p></li>
+<li><p>Panels can use a mix-in parent class as specified <a href="https://docs.blender.org/api/current/bpy.types.Panel.html">here</a> to not repeat the common <code>bl_</code> values and methods like <code>poll</code> etc</p></li>
+<li><p>Blender allows panels in the UI layout drawn by users (using <code>layout.panel(...)</code>). This allows better organization in what we display</p></li>
+<li><p>Panels created using <code>&lt;layout_item&gt;.panel()</code> in Blender can be <code class="custom-object">None</code> immediately after, so a guarding check is needed to use this correctly in the UI code</p></li>
+<li><p>A <code>CollectionProperty</code> with a dynamic <code>PropertyGroup</code> can be assigned to standard types (like <code>bpy.types.Object</code>) at runtime. This is the key that allows extensibility. Blender converts these to ID properties when the corresponding type classes are not registered. Once the type classes are registered they become API defined properties</p>
+<ul>
+<li>The property path has to be at the top level and not nested under another property. For example, <code>bpy.types.Object.mn_annotations</code> works, but <code>bpy.types.Object.mn.annotations</code> doesn’t. The later leads to a <code>AttributeError: '_PropertyDeferred' object has no attribute '...'</code> error</li>
+</ul></li>
+<li><p><code>.bl_rna.properties</code> of a <code>PropertyGroup</code> can be used to iterate all the properties within a <code>PropertyGroup</code>. The property name is available under the <code>identifier</code> attribute of the iterated item. The <code>type</code> attribute specifies the property type (like <code>POINTER</code> etc)</p></li>
+<li><p>Changing Blender properties through API will need the viewport to be tagged for redraw (<code>area.tag_redraw()</code>) to show updated values immediately in Blender’s GUI</p></li>
+<li><p><code>bpy.props</code> cannot be setup for instances and can only be setup for types and hence apply to all instances. Once defined, the min/max and other values cannot be updated without re-defining it (which changes for all instances). For example, different objects cannot have a <code>frame</code> (<code>bpy.props.IntProperty</code>) with different min/max. The <code>set/get</code> have to be used to enforce limits</p></li>
+<li><p>In property update callbacks, <code>self</code> points to the property. For properties/property groups tied to objects, use <code>self.id_data</code> to access the object (or parent type) directly</p></li>
+<li><p>Property <code>update</code> callbacks have to be carefully used. There are several caveats as noted in the <a href="https://docs.blender.org/api/current/bpy.props.html">bpy.props</a> page. There are also no safety checks for infinite recursion and hence the need for them and the ordering should be carefully considered</p></li>
+<li><p>A lambda function can be used to pass the actual property name within a property group that caused the update in the <code>update</code> callback. Care should be taken when using lambda functions in a loop - a closure is needed to ensure that correct values are passed - this can be done using defaults, a custom function etc</p></li>
+<li><p>Always use Blender properties to keep track of state - this allows interoperability between API and GUI modes. Blender’s <code>PointerProperty</code> can only hold references to Blender’s own <code>bpy.props</code> or ID properties and not arbitrary data. There is no way to reference your own python class/object from a Blender property</p></li>
+<li><p>Properties that have an <code>update</code> callback will NOT be called when keyframing that property. See <a href="https://projects.blender.org/blender/blender/issues/86675">Bug 86675</a> - need to use the <code>set</code> method as that is the only one that will get called</p></li>
+<li><p>Properties cannot have just the <code>set</code> method alone - both <code>set</code> and <code>get</code> are needed. See <a href="https://projects.blender.org/blender/blender/issues/107671">Bug 107671</a></p></li>
+<li><p>There is currently no way to mark a custom property as non-animatable. See <a href="https://projects.blender.org/blender/blender/issues/113506">BUg 113506</a></p></li>
+<li><p>Using a custom property in the <code>getter</code> and <code>setter</code> of a blender properties interface allows the use of both blender property types and any custom types for API use. We use this trick to support <code>AtomGroup</code> selections through the API. Blender property update callbacks being different from the API based <code>getter/setter</code> allows for this to work seamlessly</p></li>
+<li><p>There is no way to specify a filter for specific files when using Blender’s <code>StringProperty</code> with subtype <code>FILE_PATH</code> directly - users can filter from Blender’s file selection GUI</p></li>
+<li><p>Blender’s <code>EnumProperty</code> defaults to the first value when the default is not specified, so it is good to explicitly set a default</p></li>
+<li><p>Blender ID properties (non API defined custom properties) are very different from <code>bpy.props</code> (API defined). A good guide to some of the basic differences are highlighted <a href="https://blender.stackexchange.com/questions/54038/when-should-custom-properties-be-used-instead-of-bpy-props">here</a>. ID properties having nested levels are not possible to access through the UI (panels, etc). They have to be flat and at the top level of an instance (like object). They can be used as drivers, can be completely customized for ui (using <code>id_properties_ui</code> and <code>update</code>) but don’t have update callbacks and cannot use <a href="https://docs.blender.org/api/current/bpy.msgbus.html"><code>bpy.msgbus</code></a> subscriptions as well. Their application for UI needs is pretty limited</p></li>
+</ul>
+</section>
+<section id="operators" class="level2">
+<h2 class="anchored" data-anchor-id="operators">Operators</h2>
+<ul>
+<li><p>Most internal operators require the <a href="https://docs.blender.org/api/current/info_gotchas_operators.html">context</a> to be set correctly before they are invoked. <a href="https://docs.blender.org/api/current/bpy.types.Context.html#bpy.types.Context.temp_override"><code>bpy.context.temp_override</code></a> can be used. Since there can be multiple windows with different areas and regions within, it is always safe to iterate through all for the required <code>window/area/region</code> before setting the context so that everything is updated correctly</p></li>
+<li><p><code>window_manager.invoke_confirm</code> in an operator’s <code>invoke</code> is used for confirmation dialogs. <code>window_manager.invoke_props_dialog</code> in an operator’s <code>invoke</code> is used to show a dialog with the operator properties. An explicit <code>draw</code> method can be used to customize the layout of what is shown</p></li>
+<li><p>The <code>execute</code> method of operators can be directly invoked (bypassing <code>invoke</code> etc) using the first param as <code>EXEC_DEFAULT</code> - this is very useful in tests to test operators. <code>EXEC_INVOKE</code> can be used to directly call the operator and run it’s invoke method</p></li>
+<li><p>The most common way to delete an object is to select it and then call an operator like <code>bpy.ops.object.delete()</code>. This can be problematic at times if the view layer is not up to date and whatever is the active object will get deleted. A better way is to explicitly delete the object using <code>bpy.data.objects.remove</code> and passing the object. Avoid using operators if the same can be achieved in a different way. Operators are both slow and can be asynchronous with different context requirements</p></li>
+<li><p>Blender does not allow dynamic properties in an operator. To achieve dynamic properties in an operator (to show in the <code>invoke</code> UI for example), a temporary operator has to be created, registered with Blender and invoked. A dynamic <code>PropertyGroup</code> with dynamic properties can be created using the <code>type()</code> method. This dynamic type can be used within a <code>PointerProperty</code> of the temporary operator for dynamic inputs</p></li>
+<li><p><code>bpy.types.Operator.__subclasses__()</code> and <code>bpy.types.PropertyGroup.__subclasses__()</code> can be used to verify whether temporary operators and property groups are being unregistered and garbage collected. <code>sys.getrefcount</code> can be used on a class to get the reference counts</p></li>
+</ul>
+</section>
+<section id="viewport" class="level2">
+<h2 class="anchored" data-anchor-id="viewport">Viewport</h2>
+<ul>
+<li><p>An object’s <code>hide_viewport</code> property is not animatable. To support visibility changes that are animatable, a custom property (with <code>get</code> and <code>set</code> callbacks) that controls both the viewport and rendering visibility works better</p></li>
+<li><p>An object’s <code>visible_get()</code> method to get whether the object is visible or not can throw a <code>ReferenceError: StructRNA of type Object has been removed</code> exception at times - one such case is when the object is selected and moved in the viewport using the <code>g</code> operator</p></li>
+<li><p><code>bpy.context.object</code> and <code>bpy.context.active_object</code> are not necessarily interchangeable. The <a href="https://docs.blender.org/api/current/bpy.context.html">Context Access</a> page specifies the contexts in which the properties are available. One key point to note is that when an object is active, but hidden, <code>bpy.context.active_object</code> will be <code class="custom-object">None</code>. So, even though <code>bpy.context.object</code> is available for use in panels, the <code>active_object</code> property could be useful to distinguish between the active but hidden cases</p></li>
+<li><p>The <code>view_matrix</code> of Blender’s region data can be used to determine the distance of a 3D point to the virtual 3D viewport camera. This works for both the <code>othographic</code> and the more common <code>perspective</code> projection modes. A range of the distance values for an object can be determined by calculating the min and max of the object’s bounding box vertices (8 of them). This allows for a really fast way to determine on a normalized scale how far a point in the object space is from the 3D viewport. We use this to adjust the text size of annotations to create a perception of depth.</p></li>
+<li><p>Blender uses a bit of magic math to display the camera view outline in the 3D viewport. The actual camera width and height shown and the position can be determined based on the <code>view_camera_zoom</code> and <code>view_camera_offset</code> params of the region’s 3d data. There is also a dependency on the viewport aspect ratio</p></li>
+<li><p>Blender’s <code>camera_to_view_selected</code> (<code>bpy.ops.view3d.camera_to_view_selected()</code>) is a great way to frame a selection. Care should be taken to ensure only what is required is selected (and restored) before calling this operator</p></li>
+<li><p>Viewport rendering uses OpenGL (<code>bpy.ops.render.opengl</code>). OpenGL context is not setup in the background (<code>-b</code>) mode, which is the same when using the <code>bpy</code> module in headless mode</p></li>
+<li><p>Most Blender crashes are due to accessing something before the viewport got updated. Ensuring that the viewport is redrawn eliminates most of these crashes. <code>bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)</code> as outlined in the <a href="https://docs.blender.org/api/current/info_gotchas_internal_data_and_python_objects.html#can-i-redraw-during-script-execution">Blender Gotchas</a> page is one quick way, but is not guaranteed compatibility in future. Timers/Handlers/Modals are other recommended ways</p></li>
+<li><p>Force redrawing viewport using <code>bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)</code> doesn’t work in background mode - don’t use it in that mode</p></li>
+</ul>
+</section>
+<section id="rendering-and-pil" class="level2">
+<h2 class="anchored" data-anchor-id="rendering-and-pil">Rendering and PIL</h2>
+<ul>
+<li><p>Blender’s current default font is <code>Inter</code> (4.x onwards) - the font files are in the <code>datafiles/fonts</code> directory. PIL needs access to the font file to display text</p></li>
+<li><p>PIL does not have anti-aliasing for lines drawn using <a href="https://pillow.readthedocs.io/en/stable/reference/ImageDraw.html#PIL.ImageDraw.ImageDraw.line"><code>ImageDraw.line</code></a>. The only alternatives are to have a custom implementation of anti-aliasing or draw to a bigger image and resize using <a href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.resize"><code>Image.resize</code></a> using the <code>resample</code> set to something like <code>Resampling.LANCZOS</code>. For the later, font sizes and line widths have to be adjusted accordingly</p></li>
+<li><p>PIL’s <code>textbbox</code> can be used to get the bounding box - to determine the text width / height</p></li>
+<li><p>PIL’s co-ordinate system is from the top left, where as Blender’s 3D viewport is from bottom left</p></li>
+<li><p>PIL does not have text rotation support. The recommendation for this support is to draw the text on a separate image, rotate the image and paste it - not ideal</p></li>
+<li><p>Blender’s <code>object_utils.world_to_camera_view</code> (from bpy_extras) can directly be used to get the corresponding 2D coords of a 3D point in the camera space for rendering</p></li>
+<li><p>In the render mode, we can use the inverted value of the world matrix (<code>camera.matrix_world.inverted()</code>) as the view matrix for any computations</p></li>
+<li><p>Most of what is available through operators for Blender’s Video Sequence Editor (like <code>bpy.ops.sequencer.image_strip_add</code>) can be done through API as well (<code>scene.sequence_editor_create</code>), which has the added advantage that it is faster and doesn’t require the context to be present</p></li>
+<li><p>Images appended to an image strip using <code>elements.append</code> will only have to pass the base name of the images and not the full path</p></li>
+<li><p>Video sequence editor has to be created (and deleted after generating the video) after rendering all the frames, else it will interfere with the rendering as it has higher precedence, so they must be cleared if setup temporarily</p></li>
+<li><p>Setting <code>bpy.context.scene.render.use_lock_interface</code> (equivalent of <code>Render &gt; Lock Interface</code> in the UI) seems to help, which prevents viewport updates while rendering</p></li>
+<li><p><code>bpy.context.scene.view_settings.view_transform = "Standard"</code>, which is the equivalent of <code>Color Management &gt; View Transform</code> in Render/Output properties seems to generate sharper viewport render images. The default from Blender 4.0 is <code>AgX</code>. If annotations with white <code>(1, 1, 1, 1)</code> don’t show up as such in renders, this is the reason</p></li>
+<li><p><code>bpy.data.images["Render Result"]</code> cannot be accessed to get the raw pixels of the render output. An alternative is to attach a <code>Viewer Node</code> in the compositor and access the pixels. However, the pixel values aren’t entirely between 0 and 1 and hence cannot be converted to a PIL image, etc. As outlined <a href="https://stackoverflow.com/a/66059853">here</a> the viewer node output isn’t color corrected etc. So there is no way of accessing the raw bytes (that match the file output) before it is written out to a file</p></li>
+<li><p>PIL images have to be flipped (<code>numpy.flipud</code>) for use as <code>bpy.data.images</code> in compositor</p></li>
+</ul>
+</section>
+<section id="nodes" class="level2">
+<h2 class="anchored" data-anchor-id="nodes">Nodes</h2>
+<ul>
+<li><p>Changing the node tree in a property callback (like <code>set</code>) could lead to a Blender crash when the property is keyframed (see <a href="https://docs.blender.org/api/current/info_gotcha.html#help-my-script-crashes-blender">gotchas</a>). The workaround is to do the updates in a one off timer (<code>bpy.app.timers.register(_update_func, first_interval=0.001)</code>). An alternative is also described in the <a href="https://docs.blender.org/api/current/bpy.app.timers.html#use-a-timer-to-react-to-events-in-another-thread">Application Timers</a> page. It is best to not have the node tree structurally change during the rendering process</p></li>
+<li><p><code>Node Group</code> instances can be decoupled from one another by simply making a copy of the node tree - this is also equivalent to making a data block as single-user in Blender. This allows changes to each of the node groups to be independent of others</p></li>
+<li><p>Panel placeholders in a Blender’s Geometry Node provide a way to add inputs so that when inputs are iterated, they are iterated in a required order. Dynamically adding a new socket at a specific position isn’t straightforward</p></li>
+<li><p>There doesn’t seem to be an easy way to link a Geometry Node input to a specific material setting (like say the <code>use_backface_culling</code>)</p></li>
+<li><p>Using <code>Ctrl</code> when placing nodes in the Geometry Nodes editor will ensure snapping to the grid and avoid node locations having floating point values</p></li>
+<li><p>Both the Geometry Node editor and Composite editor have the same area type (<code>NODE_EDITOR</code>), so the tree type in the context’s space data (<code>context.space_data.tree_type</code>) has to be used to distinguish between them (eg: <code>CompositorNodeTree</code> for Composite editor)</p></li>
+<li><p>The only way to find nodes that belong to a particular frame is by checking the <code>parent</code> property of all nodes. Alternatively node names can be saved in properties for direct access instead of full node traversal</p></li>
+</ul>
+</section>
+<section id="misc" class="level2">
+<h2 class="anchored" data-anchor-id="misc">Misc</h2>
+<ul>
+<li><p><a href="https://docs.blender.org/api/current/bpy.msgbus.html"><code>bpy.msgbus</code></a> can be used to subscribe to property changes of Blender datablocks. For example, to detect active object changes, <code>bpy.msgbus.subscribe_rna</code> has to be used for the key <code>(bpy.types.LayerObjects, "active")</code>. This works for all RNA properties (builtin ones and custom ones) and won’t work for ID properties</p></li>
+<li><p>Any object can be used as a owner for Blender’s <code>msgbus</code> subscriptions using <code>bpy.msgbus.subscribe_rna</code>. Using a owner allows to clear all subscriptions by the owner using <code>bpy.msgbus.clear_by_owner</code></p></li>
+<li><p>Blender has a concept of <a href="https://archive.blender.org/wiki/2015/index.php/Extensions:2.6/Py/API_Changes/#Restricted_Context">Restricted Context</a> during an extension’s <code>register()</code> and <code>unregister()</code> methods that limits what is available during those methods. For example, the <code>scene</code> entity does not exist in <code>bpy.context</code> in these cases</p></li>
+<li><p>Blender’s <code>openvdb</code> support uses <code>nanogrid</code> to check and warn for leaks. Any <code>vdb</code> grids created must be ensured they are cleaned up to avoid memory errors, especially in <code>pytests</code></p></li>
+<li><p>Blender seems to have some wierd caching of contents loaded from <code>vdb</code> files. Overwriting a <code>vdb</code> file that is already loaded and re-loading it as a new object will update the old object as well</p></li>
+<li><p>There is no separate font styling support in Blender (like <code>Bold</code>, <code>Italic</code> etc) - the corresponding font file has to be loaded if that is needed (using <code>blf.load</code>)</p></li>
+<li><p>Fonts loaded using <code>blf.load</code> have to be unloaded using <code>blf.unload</code> with the same font file as the param and not the returned font id from the load</p></li>
+<li><p>For text and lines drawn using <code>blf</code>/<code>gpu</code> modules, there is a font size and line width discrepancy that depends on the screen resolution. Apparently Blender uses a dpi of 72 internally. <code>bpy.context.preferences.system.dpi</code> and <code>bpy.context.preferences.system.pixel_size</code> have the dpi and pixel size data. (MacOS retina has 144/2 and regular ones 72/1) Text/line widths have to be scaled accordingly</p></li>
+<li><p>A set of vertices can be turned to an object using <code>from_pydata</code> of <code>bpy.data.meshes</code> that can be used to create bounding box objects</p></li>
+<li><p><code>bpy.utils.expose_bundled_modules()</code> is needed to access Blender’s bundled <code>openvdb</code> package in the background mode (<code>bpy</code>)</p></li>
+<li><p>Blender app handlers (like <code>frame_change_post</code>, etc) are easy to add, but not straightforward to remove. Using the <code>clear</code> will remove all handlers, which is not desirable. The alternative is to remove by using the actual handler name (the function name)</p></li>
+<li><p>Always use Blender’s <a href="https://docs.blender.org/manual/en/latest/advanced/blender_directory_layout.html#portable-installation">portable installation</a> to keep environments separate and clean</p></li>
+<li><p>Never keep references to Blender <a href="https://docs.blender.org/api/current/info_gotchas_internal_data_and_python_objects.html">data</a>. This is the primary cause of most <a href="https://docs.blender.org/api/current/info_gotchas_crashes.html">crashes</a> as outlined in the <a href="https://docs.blender.org/api/current/info_gotcha.html">gotchas</a></p></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../api/canvas.html" class="pagination-link" aria-label="Canvas">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Canvas</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../api/trajectory/rendering.html" class="pagination-link" aria-label="Rendering">
+        <span class="nav-page-text">Rendering</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
