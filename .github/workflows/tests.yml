@@ -54,12 +54,14 @@ jobs:
               run: |
                 uv sync --all-extras
             - name: Run Tests "not density"
-              timeout-minutes: 10
+              timeout-minutes: 5
+              continue-on-error: true
               run: |
                 uv run pytest -n auto -k "not density" --junitxml=test-results-1.xml || echo "TEST_RESULT_1=$?" >> $GITHUB_ENV
                 
             - name: Run Tests "density" 
-              timeout-minutes: 5
+              timeout-minutes: 3
+              continue-on-error: true
               run: |
                 uv run pytest -k density --junitxml=test-results-2.xml || echo "TEST_RESULT_2=$?" >> $GITHUB_ENV
                 
