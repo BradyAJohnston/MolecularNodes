@@ -61,7 +61,7 @@ jobs:
       # deploy ----
 
       - name: Create Github Deployment
-        uses: bobheadxi/deployments@v1
+        uses: bobheadxi/deployments@v0.4.3
         if: github.event.pull_request.head.repo.full_name == github.repository
         id: deployment
         with:
@@ -89,9 +89,8 @@ jobs:
 
       - name: Update Github Deployment
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: bobheadxi/deployments@v1
+        uses: bobheadxi/deployments@v0.4.3
         with:
-          env: ${{ steps.deployment.outputs.deployment_id }}
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
