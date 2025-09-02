@@ -33,13 +33,13 @@ Annotations can be added using the `add_<annotation_type>` method of the annotat
 
 The bundled annotation types for Trajectories are:
 
-- [`atom_info`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.AtomInfo) - For atom info
-- [`com`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COM) - For center-of-mass of a selection
-- [`com_distance`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COMDistance) - For distance between two center-of-masses
-- [`canonical_dihedrals`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.CanonicalDihedrals) - For canonical dihedrals of a residue
-- [`universe_info`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.UniverseInfo) - For universe info
-- [`label_2d`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label2D) - For adding a generic 2d label in viewport / render
-- [`label_3d`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label3D) - For adding a generic 3d label
+- [`add_atom_info()`](`~mn.entities.trajectory.annotations.AtomInfo`) - For some basic atom info
+- [`add_com()`](`~mn.entities.trajectory.annotations.COM) - For center-of-mass of a selection
+- [`add_com_distance()`](`~mn.entities.trajectory.annotations.COMDistance`) - For distance between two center-of-masses
+- [`add_canonical_dihedrals()`](`~mn.entities.trajectory.annotations.CanonicalDihedrals`) - For canonical dihedrals of a residue
+- [`add_universe_info()`](`~mn.entities.trajectory.annotations.UniverseInfo`) - For universe info
+- [`add_label_2d()`](`~mn.entities.trajectory.annotations.Label2D`) - For adding a generic 2d label in viewport / render
+- [`add_label_3d()`](`~mn.entities.trajectory.annotations.Label3D`) - For adding a generic 3d label
 
 All selections used in the annotation APIs can be either MDAnalysis selection phrases (strings) or instances of `AtomGroup`s.
 
@@ -69,7 +69,7 @@ t.annotations.add_atom_info.func.__signature__
 
 ## Annotation Examples
 
-### [atom_info](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.AtomInfo)
+### [atom_info](`~molecularnodes.entities.trajectory.annotations.AtomInfo`)
 
 Display the atom info of a selection.
 
@@ -107,7 +107,7 @@ a1.visible = False
 t.styles[1].remove()
 ```
 
-### [com](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COM)
+### [com](`molecularnodes.entities.trajectory.annotations.COM`)
 
 Display the center-of-mass of a selection.
 
@@ -135,7 +135,7 @@ a2.visible = False
 a3.visible = False
 ```
 
-### [com_distance](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.COMDistance)
+### [com_distance](`molecularnodes.entities.trajectory.annotations.COMDistance`)
 
 Display the distance between center-of-masses of two selections.
 
@@ -168,7 +168,7 @@ canvas.snapshot()
 a4.visible = False
 ```
 
-### [canonical_dihedrals](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.CanonicalDihedrals)
+### [canonical_dihedrals](`molecularnodes.entities.trajectory.annotations.CanonicalDihedrals`)
 
 Display the canonical dihedrals of a residue
 
@@ -194,7 +194,7 @@ canvas.snapshot()
 a5.visible = False
 ```
 
-### [universe_info](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.UniverseInfo)
+### [universe_info](`molecularnodes.entities.trajectory.annotations.UniverseInfo`)
 
 Display the universe info of the trajectory.
 
@@ -222,7 +222,7 @@ canvas.snapshot(frame=50)
 a6.visible = False
 ```
 
-### [label_2d](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label2D)
+### [label_2d](`molecularnodes.entities.trajectory.annotations.Label2D`)
 
 Display a generic 2d label in the viewport / render.
 
@@ -247,7 +247,7 @@ canvas.snapshot()
 a7.visible = False
 ```
 
-### [label_3d](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.Label3D)
+### [label_3d](`molecularnodes.entities.trajectory.annotations.Label3D`)
 
 Display a generic 3d label on the universe.
 
@@ -391,11 +391,11 @@ t.annotations.clear()
 
 ## Custom Annotations
 
-In addition to the above bundled annotations for Trajectories, custom annotation types can be created by extending the [`TrajectoryAnnotation`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation) class. These custom annotation types will be automatically registered and can be added using the same `add_<annotation_type>` method of a trajectory instance. The GUI to add and configure the annotation will also be automatically available.
+In addition to the above bundled annotations for Trajectories, custom annotation types can be created by extending the [](`~molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation`) class. These custom annotation types will be automatically registered and can be added using the same `add_<annotation_type>` method of a trajectory instance. The GUI to add and configure the annotation will also be automatically available.
 
 ### Create a custom annotation
 
-A custom trajectory annotation class has to extend [`TrajectoryAnnotation`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation) and implement the [`draw`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw) method. Optional [`defaults`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.defaults) method can be used to set defaults for the annotation and a [`validate`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.validate) method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via `self.trajectory`, universe via `self.trajectory.universe` and the annotation params via `self.interface`. Please see the drawing utilities section for all the methods available to draw onto the viewport / renders from the [`draw`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw) code.
+A custom trajectory annotation class has to extend [](`~molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation`) and implement the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) method. Optional [](`~molecularnodes.annotations.base.BaseAnnotation.defaults`) method can be used to set defaults for the annotation and a [](`~molecularnodes.annotations.base.BaseAnnotation.validate`) method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via `self.trajectory`, universe via `self.trajectory.universe` and the annotation params via `self.interface`. Please see the drawing utilities section for all the methods available to draw onto the viewport / renders from the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) code.
 
 ```{python}
 # Add a CutomAnnotation class
@@ -463,7 +463,7 @@ ca.visible = False
 
 ### Unregister a custom annotation
 
-Custom annotations get automatically registered with the [`TrajectoryAnnotationManager`](reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager). They can be manually unregistered and re-registered using the [`unregister`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.unregister) and [`register`](reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.register) methods if required.
+Custom annotations get automatically registered with the [](`~mn.entities.trajectory.annotations.TrajectoryAnnotationManager`). They can be manually unregistered and re-registered using the [](`~mn.annotations.manager.BaseAnnotationManager.unregister`) and [](`~mn.annotations.manager.BaseAnnotationManager.register`) methods if required.
 
 ```{python}
 # unregister the annotation
@@ -477,12 +477,12 @@ Custom annotations can use the drawing utilities available from the base annotat
 
 The following utility methods are currently available:
 
-- [`distance`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.distance) - Distance between two vectors
-- [`draw_text_2d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d) - Draw text at a given 2D position (in pixels) of Viewport
-- [`draw_text_2d_norm`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm) - Draw text at a given 2D position (normalized co-ordinates) of Viewport.
-- [`draw_text_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_text_3d) - Draw text at a given 3D position
-- [`draw_line_2d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_line_2d) - Draw a line between two points in 2D viewport space
-- [`draw_line_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_line_3d) - Draw a line between two points in 3D space
-- [`draw_circle_3d`](reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d) - Draw a circle around a 3D point in the plane perpendicular to the given normal
+- [](`~molecularnodes.annotations.base.BaseAnnotation.distance`) - Distance between two vectors
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_text_2d`) - Draw text at a given 2D position (in pixels) of Viewport
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm`) - Draw text at a given 2D position (normalized co-ordinates) of Viewport.
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_text_3d`) - Draw text at a given 3D position
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_line_2d`) - Draw a line between two points in 2D viewport space
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_line_3d`) - Draw a line between two points in 3D space
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d`) - Draw a circle around a 3D point in the plane perpendicular to the given normal
 
-These methods can be used within the `draw` method of a custom annotation. Please see the API reference for [`annotations.base`](reference/annotations.base.html) for details about these methods.
+These methods can be used within the `draw` method of a custom annotation. Please see the API reference for [](`mn.annotations.base`) for details about these methods.

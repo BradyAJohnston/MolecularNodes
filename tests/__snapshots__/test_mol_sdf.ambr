@@ -1,5 +1,5 @@
 # serializer version: 1
-# name: test_load[ball_and_stick-mol]
+# name: test_load[style0-mol]
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -43,7 +43,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-mol].1
+# name: test_load[style0-mol].1
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -87,7 +87,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-mol].10
+# name: test_load[style0-mol].10
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -131,7 +131,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[ball_and_stick-mol].11
+# name: test_load[style0-mol].11
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -161,7 +161,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-mol].12
+# name: test_load[style0-mol].12
   [[0.8 0.2 0.2 1.0]
    [0.8 0.2 0.2 1.0]
    [0.8 0.2 0.2 1.0]
@@ -170,7 +170,7 @@
    [1.0 1.0 1.0 1.0]
    [1.0 1.0 1.0 1.0]]
 # ---
-# name: test_load[ball_and_stick-mol].13
+# name: test_load[style0-mol].13
   [[ 0.  0. -0.]
    [ 0.  0. -0.]
    [ 0.  0. -0.]
@@ -179,7 +179,7 @@
    [-0.  0. -0.]
    [-0.  0. -0.]]
 # ---
-# name: test_load[ball_and_stick-mol].14
+# name: test_load[style0-mol].14
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -265,7 +265,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].15
+# name: test_load[style0-mol].15
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -351,7 +351,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].16
+# name: test_load[style0-mol].16
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -437,7 +437,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].17
+# name: test_load[style0-mol].17
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -523,7 +523,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].18
+# name: test_load[style0-mol].18
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -609,7 +609,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].19
+# name: test_load[style0-mol].19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -695,7 +695,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].2
+# name: test_load[style0-mol].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -739,7 +739,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-mol].20
+# name: test_load[style0-mol].20
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -825,7 +825,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].21
+# name: test_load[style0-mol].21
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -911,7 +911,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-mol].22
+# name: test_load[style0-mol].22
   [2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -941,7 +941,7 @@
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1]
 # ---
-# name: test_load[ball_and_stick-mol].23
+# name: test_load[style0-mol].23
   [16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16.
    16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16.
    16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16.
@@ -999,7 +999,7 @@
    14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14.
    14. 14. 14. 14. 14. 14. 14. 14. 14. 14.]
 # ---
-# name: test_load[ball_and_stick-mol].24
+# name: test_load[style0-mol].24
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1029,7 +1029,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-mol].3
+# name: test_load[style0-mol].3
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -1073,7 +1073,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-mol].4
+# name: test_load[style0-mol].4
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1103,7 +1103,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-mol].5
+# name: test_load[style0-mol].5
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -1147,7 +1147,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[ball_and_stick-mol].6
+# name: test_load[style0-mol].6
   [8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8
    8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8
    8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8
@@ -1177,7 +1177,7 @@
    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
    7]
 # ---
-# name: test_load[ball_and_stick-mol].7
+# name: test_load[style0-mol].7
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1207,7 +1207,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-mol].8
+# name: test_load[style0-mol].8
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1237,7 +1237,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-mol].9
+# name: test_load[style0-mol].9
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1267,7 +1267,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-sdf]
+# name: test_load[style0-sdf]
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -1311,7 +1311,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-sdf].1
+# name: test_load[style0-sdf].1
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -1355,7 +1355,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-sdf].10
+# name: test_load[style0-sdf].10
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -1399,7 +1399,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[ball_and_stick-sdf].11
+# name: test_load[style0-sdf].11
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -1429,7 +1429,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-sdf].12
+# name: test_load[style0-sdf].12
   [[0.8 0.4 0.8 1.0]
    [0.8 0.4 0.8 1.0]
    [0.8 0.4 0.8 1.0]
@@ -1438,7 +1438,7 @@
    [1.0 1.0 1.0 1.0]
    [1.0 1.0 1.0 1.0]]
 # ---
-# name: test_load[ball_and_stick-sdf].13
+# name: test_load[style0-sdf].13
   [[-0.  0. -0.]
    [ 0.  0. -0.]
    [-0.  0. -0.]
@@ -1447,7 +1447,7 @@
    [-0.  0. -0.]
    [-0.  0. -0.]]
 # ---
-# name: test_load[ball_and_stick-sdf].14
+# name: test_load[style0-sdf].14
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1533,7 +1533,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].15
+# name: test_load[style0-sdf].15
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1619,7 +1619,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].16
+# name: test_load[style0-sdf].16
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1705,7 +1705,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].17
+# name: test_load[style0-sdf].17
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1791,7 +1791,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].18
+# name: test_load[style0-sdf].18
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1877,7 +1877,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].19
+# name: test_load[style0-sdf].19
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -1963,7 +1963,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].2
+# name: test_load[style0-sdf].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -2007,7 +2007,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-sdf].20
+# name: test_load[style0-sdf].20
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2093,7 +2093,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].21
+# name: test_load[style0-sdf].21
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2179,7 +2179,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[ball_and_stick-sdf].22
+# name: test_load[style0-sdf].22
   [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -2209,7 +2209,7 @@
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1]
 # ---
-# name: test_load[ball_and_stick-sdf].23
+# name: test_load[style0-sdf].23
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -2267,7 +2267,7 @@
    14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14. 14.
    14. 14. 14. 14. 14. 14. 14. 14. 14. 14.]
 # ---
-# name: test_load[ball_and_stick-sdf].24
+# name: test_load[style0-sdf].24
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -2297,7 +2297,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-sdf].3
+# name: test_load[style0-sdf].3
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -2341,7 +2341,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[ball_and_stick-sdf].4
+# name: test_load[style0-sdf].4
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -2371,7 +2371,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-sdf].5
+# name: test_load[style0-sdf].5
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -2415,7 +2415,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[ball_and_stick-sdf].6
+# name: test_load[style0-sdf].6
   [6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
@@ -2445,7 +2445,7 @@
    7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
    7]
 # ---
-# name: test_load[ball_and_stick-sdf].7
+# name: test_load[style0-sdf].7
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -2475,7 +2475,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-sdf].8
+# name: test_load[style0-sdf].8
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -2505,7 +2505,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[ball_and_stick-sdf].9
+# name: test_load[style0-sdf].9
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -2535,7 +2535,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[spheres-mol]
+# name: test_load[style1-mol]
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -2579,7 +2579,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[spheres-mol].1
+# name: test_load[style1-mol].1
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -2623,7 +2623,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[spheres-mol].10
+# name: test_load[style1-mol].10
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2709,7 +2709,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].11
+# name: test_load[style1-mol].11
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2795,7 +2795,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].12
+# name: test_load[style1-mol].12
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2881,7 +2881,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].13
+# name: test_load[style1-mol].13
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -2967,7 +2967,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].14
+# name: test_load[style1-mol].14
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3053,7 +3053,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].15
+# name: test_load[style1-mol].15
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3139,7 +3139,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].16
+# name: test_load[style1-mol].16
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3225,7 +3225,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].17
+# name: test_load[style1-mol].17
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3311,7 +3311,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-mol].18
+# name: test_load[style1-mol].18
   [2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -3341,7 +3341,7 @@
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1]
 # ---
-# name: test_load[spheres-mol].19
+# name: test_load[style1-mol].19
   [16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16.
    16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16.
    16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16. 16.
@@ -3399,7 +3399,7 @@
     1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.
     1.  1.  1.  1.  1.  1.  1.  1.  1.  1.]
 # ---
-# name: test_load[spheres-mol].2
+# name: test_load[style1-mol].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -3443,7 +3443,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[spheres-mol].20
+# name: test_load[style1-mol].20
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -3473,7 +3473,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[spheres-mol].3
+# name: test_load[style1-mol].3
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -3503,7 +3503,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[spheres-mol].4
+# name: test_load[style1-mol].4
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -3547,7 +3547,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[spheres-mol].5
+# name: test_load[style1-mol].5
   [8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8
    8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8
    8 8 8 8 8 8 8 8 8 8 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
@@ -3577,7 +3577,7 @@
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1]
 # ---
-# name: test_load[spheres-mol].6
+# name: test_load[style1-mol].6
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -3607,7 +3607,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[spheres-mol].7
+# name: test_load[style1-mol].7
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -3651,7 +3651,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[spheres-mol].8
+# name: test_load[style1-mol].8
   [[0.8 0.2 0.2 1.0]
    [0.8 0.2 0.2 1.0]
    [0.8 0.2 0.2 1.0]
@@ -3660,7 +3660,7 @@
    [1.0 1.0 1.0 1.0]
    [1.0 1.0 1.0 1.0]]
 # ---
-# name: test_load[spheres-mol].9
+# name: test_load[style1-mol].9
   [[ 0.  0. -0.]
    [ 0.  0. -0.]
    [ 0.  0. -0.]
@@ -3669,7 +3669,7 @@
    [-0.  0. -0.]
    [-0.  0. -0.]]
 # ---
-# name: test_load[spheres-sdf]
+# name: test_load[style1-sdf]
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -3713,7 +3713,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[spheres-sdf].1
+# name: test_load[style1-sdf].1
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -3757,7 +3757,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[spheres-sdf].10
+# name: test_load[style1-sdf].10
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3843,7 +3843,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].11
+# name: test_load[style1-sdf].11
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -3929,7 +3929,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].12
+# name: test_load[style1-sdf].12
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4015,7 +4015,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].13
+# name: test_load[style1-sdf].13
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4101,7 +4101,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].14
+# name: test_load[style1-sdf].14
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4187,7 +4187,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].15
+# name: test_load[style1-sdf].15
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4273,7 +4273,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].16
+# name: test_load[style1-sdf].16
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4359,7 +4359,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].17
+# name: test_load[style1-sdf].17
   [False False False False False False False False False False False False
    False False False False False False False False False False False False
    False False False False False False False False False False False False
@@ -4445,7 +4445,7 @@
    False False False False False False False False False False False False
    False False False False]
 # ---
-# name: test_load[spheres-sdf].18
+# name: test_load[style1-sdf].18
   [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
@@ -4475,7 +4475,7 @@
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1]
 # ---
-# name: test_load[spheres-sdf].19
+# name: test_load[style1-sdf].19
   [12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
    12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12. 12.
@@ -4533,7 +4533,7 @@
     1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.  1.
     1.  1.  1.  1.  1.  1.  1.  1.  1.  1.]
 # ---
-# name: test_load[spheres-sdf].2
+# name: test_load[style1-sdf].2
   [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
@@ -4577,7 +4577,7 @@
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.
    0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
 # ---
-# name: test_load[spheres-sdf].20
+# name: test_load[style1-sdf].20
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -4607,7 +4607,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[spheres-sdf].3
+# name: test_load[style1-sdf].3
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -4637,7 +4637,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[spheres-sdf].4
+# name: test_load[style1-sdf].4
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -4681,7 +4681,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[spheres-sdf].5
+# name: test_load[style1-sdf].5
   [6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
    6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6
@@ -4711,7 +4711,7 @@
    1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1]
 # ---
-# name: test_load[spheres-sdf].6
+# name: test_load[style1-sdf].6
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -4741,7 +4741,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[spheres-sdf].7
+# name: test_load[style1-sdf].7
   [-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
@@ -4785,7 +4785,7 @@
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
    -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1]
 # ---
-# name: test_load[spheres-sdf].8
+# name: test_load[style1-sdf].8
   [[0.8 0.4 0.8 1.0]
    [0.8 0.4 0.8 1.0]
    [0.8 0.4 0.8 1.0]
@@ -4794,7 +4794,7 @@
    [1.0 1.0 1.0 1.0]
    [1.0 1.0 1.0 1.0]]
 # ---
-# name: test_load[spheres-sdf].9
+# name: test_load[style1-sdf].9
   [[-0.  0. -0.]
    [ 0.  0. -0.]
    [-0.  0. -0.]
@@ -4803,12 +4803,12 @@
    [-0.  0.  0.]
    [-0.  0.  0.]]
 # ---
-# name: test_load[surface-mol]
+# name: test_load[style2-mol]
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 # ---
-# name: test_load[surface-mol].1
+# name: test_load[style2-mol].1
   [[0.8 0.2 0.2 1.0]
    [0.8 0.2 0.2 1.0]
    [0.8 0.2 0.2 1.0]
@@ -4817,7 +4817,7 @@
    [1.0 1.0 1.0 1.0]
    [1.0 1.0 1.0 1.0]]
 # ---
-# name: test_load[surface-mol].2
+# name: test_load[style2-mol].2
   [[-0.0 -0.0 -0.0]
    [-0.0 -0.0 -0.0]
    [-0.0 -0.0  0.0]
@@ -4826,7 +4826,7 @@
    [ 0.1  0.0 -0.0]
    [ 0.1  0.0  0.0]]
 # ---
-# name: test_load[surface-sdf]
+# name: test_load[style2-sdf]
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -4856,7 +4856,7 @@
    0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
    0]
 # ---
-# name: test_load[surface-sdf].1
+# name: test_load[style2-sdf].1
   [[1. 1. 1. 1.]
    [1. 1. 1. 1.]
    [1. 1. 1. 1.]
@@ -4865,7 +4865,7 @@
    [1. 1. 1. 1.]
    [1. 1. 1. 1.]]
 # ---
-# name: test_load[surface-sdf].2
+# name: test_load[style2-sdf].2
   [[-0.0  0.0 -0.0]
    [-0.0  0.0 -0.0]
    [-0.0  0.0 -0.0]

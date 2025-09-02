@@ -27,7 +27,7 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
         style=style, assembly=assembly
     )
     if style == "spheres":
-        mol.styles[0].sphere_geometry = "Mesh"
+        mol.styles[0].geometry = "Mesh"
 
     for att in attributes:
         try:

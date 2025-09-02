@@ -77,6 +77,10 @@ metadata-files:
 - api/_sidebar.yml
 
 interlinks:
+  aliases:
+    numpy: np
+    molecularnodes: mn
+    MDAnalysis: mda
   sources:
     numpy:
       url: https://numpy.org/doc/stable/
@@ -134,7 +138,7 @@ quartodoc:
     - StyleCartoon
     - StyleSurface
     - StyleSticks
-    - StyleBallandStick
+    - StyleBallAndStick
 
   - title: Materials
     desc: Setting and controlling the different materials

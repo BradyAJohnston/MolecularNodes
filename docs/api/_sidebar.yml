@@ -28,7 +28,7 @@ website:
         - api/reference/StyleCartoon.qmd
         - api/reference/StyleSurface.qmd
         - api/reference/StyleSticks.qmd
-        - api/reference/StyleBallandStick.qmd
+        - api/reference/StyleBallAndStick.qmd
         section: Styles
       - contents:
         - api/reference/material.AmbientOcclusion.qmd

@@ -79,7 +79,7 @@ cv = mn.Canvas(resolution=(800, 800), transparent=True)
 
 u = mda.Universe(PSF, DCD)
 traj = mn.Trajectory(u)
-traj.add_style(mn.StyleSpheres(geometry="Mesh", sphere_subdivisions=4))
+traj.add_style(mn.StyleSpheres(geometry="Mesh", subdivisions=4))
 
 cv.frame_view(traj)
 engines = [mn.scene.Cycles(samples=32), mn.scene.EEVEE()]

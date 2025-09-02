@@ -6,7 +6,7 @@ execute:
   daemon: false
 ---
 
-The [`Canvas`](reference/Canvas.html) object can be used to configure different render settings, camera, frame objects and views to render images and animations. The [`snapshot`](reference/Canvas.html#molecularnodes.Canvas.snapshot) and [`animation`](reference/Canvas.html#molecularnodes.Canvas.animation) methods can be used to render images and animations respectively.
+The [](`~mn.Canvas`) object can be used to configure different render settings, camera, frame objects and views to render images and animations. The [](`~molecularnodes.Canvas.snapshot`) and [](`~molecularnodes.Canvas.animation`) methods can be used to render images and animations respectively.
 
 ## Setup Molecular Nodes
 
@@ -37,9 +37,9 @@ t2 = mn.Trajectory(u2)
 # styles
 # trajectory 1
 
-t1.add_style(style=mn.StyleBallandStick(quality=4), selection="resid 184")
+t1.add_style(style=mn.StyleBallAndStick(quality=4), selection="resid 184")
 t1.add_style(
-    style=mn.StyleSpheres(sphere_subdivisions=4, geometry="Instance"),
+    style=mn.StyleSpheres(subdivisions=4, geometry="Instance"),
     selection="resid 1 129",
 )
 
@@ -74,7 +74,7 @@ d1 = mn.entities.density.io.load(
 
 ## Frame Objects
 
-The [`frame_object`](reference/Canvas.html#molecularnodes.Canvas.frame_object) method can be used to frame entity objects. By default, the current camera viewpoint is used to frame objects. An optional `viewpoint` param can be used to set the viewpoint to one of [`default`, `front`, `back`, `left`, `right`, `top`, `bottom`].
+The [](`~molecularnodes.Canvas.frame_object`) method can be used to frame entity objects. By default, the current camera viewpoint is used to frame objects. An optional `viewpoint` param can be used to set the viewpoint to one of [`default`, `front`, `back`, `left`, `right`, `top`, `bottom`].
 
 ```{python}
 # frame trajectory 1 from front and render
@@ -96,9 +96,9 @@ canvas.snapshot()
 
 ## Frame Views
 
-The [`frame_view`](reference/Canvas.html#molecularnodes.Canvas.frame_view) method can be used to frame one or more views. Views can be specific selections within entities or across entities. Multiple views can be combined with a `+` sign before passing to the [`frame_view`](reference/Canvas.html#molecularnodes.Canvas.frame_view) method. An optional `viewpoint` param can be passed to specify the viewpoint like before.
+The [](`~molecularnodes.Canvas.frame_view`) method can be used to frame one or more views. Views can be specific selections within entities or across entities. Multiple views can be combined with a `+` sign before passing to the [](`~molecularnodes.Canvas.frame_view`) method. An optional `viewpoint` param can be passed to specify the viewpoint like before.
 
-All entities have a `get_view` method that returns the entity object by default. The [`get_view`](reference/entities.Trajectory.html#molecularnodes.entities.Trajectory.get_view) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
+All entities have a `get_view` method that returns the entity object by default. The [](`~molecularnodes.entities.Trajectory.get_view`) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
 
 ```{python}
 # frame resid 184 in trajectory 1 from the front
@@ -129,7 +129,7 @@ canvas.snapshot()
 
 ## Camera Zoom in or out
 
-Camera can be zoomed in our out using the camera [`lens`](reference/scene.camera.html#molecularnodes.scene.camera.Camera.lens) settings of the [`Canvas`](reference/Canvas.html) camera object once framed.
+Camera can be zoomed in our out using the camera [](`~molecularnodes.scene.camera.Camera.lens`) settings of the [](`~mn.Canvas`) camera object once framed.
 
 ```{python}
 # frame density object from front and render - default
@@ -156,7 +156,7 @@ canvas.camera.lens = 50
 
 ## Camera Rotation
 
-Camera can be rotated to an arbitrary angle using the camera [`rotation`](reference/scene.camera.html#molecularnodes.scene.camera.Camera.rotation) method of the [`Canvas`](reference/Canvas.html) camera object before framing the object or view. Blender uses a default `XYZ` Euler for rotations along the X, Y and Z axes. The [`rotation`](reference/scene.camera.html#molecularnodes.scene.camera.Camera.rotation) method takes angles in degrees.
+Camera can be rotated to an arbitrary angle using the camera [](`~molecularnodes.scene.camera.Camera.rotation`) method of the [](`~mn.Canvas`) camera object before framing the object or view. Blender uses a default `XYZ` Euler for rotations along the X, Y and Z axes. The [](`~molecularnodes.scene.camera.Camera.rotation`) method takes angles in degrees.
 
 ```{python}
 # print current rotation
@@ -178,7 +178,7 @@ canvas.snapshot()
 
 ## Animations
 
-The [`animation`](reference/Canvas.html#molecularnodes.Canvas.animation) method can be used to render animations. An optional `frame_start` and `frame_end` can be specified to limit animations to a custom range. The `render_scale` parameter can be used to scale the renders as a percentage of the render resolution.
+The [](`~molecularnodes.Canvas.animation`) method can be used to render animations. An optional `frame_start` and `frame_end` can be specified to limit animations to a custom range. The `render_scale` parameter can be used to scale the renders as a percentage of the render resolution.
 
 ```{python}
 # frame resid 1 and 129 in trajectory 1 at frame 97 from the front

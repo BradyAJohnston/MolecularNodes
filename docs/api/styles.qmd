@@ -16,7 +16,7 @@ codes = ["4ozs", "8H1B", "8U8W"]
 styles = [
     mn.StyleCartoon(),
     mn.StyleRibbon(),
-    mn.StyleSpheres(geometry="Instance", sphere_subdivisions=4),
+    mn.StyleSpheres(geometry="Instance", subdivisions=4),
 ]
 materials = [
     mn.material.Default(),
