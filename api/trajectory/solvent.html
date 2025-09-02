@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-27e0e8fe6ee5b2b5dc2ac134a9370860.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -544,7 +544,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>This example follows the <a href="https://userguide.mdanalysis.org/stable/examples/analysis/volumetric/density_analysis.html">Calculating the solvent density around a protein</a> example from the MDAnalysis user guide.</p>
-<div id="da861ac9" class="cell" data-execution_count="1">
+<div id="e577a837" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -556,7 +556,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 <section id="load-and-transform-universe" class="level2">
 <h2 class="anchored" data-anchor-id="load-and-transform-universe">Load and transform Universe</h2>
-<div id="98619e01" class="cell" data-execution_count="2">
+<div id="8f78c4ee" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(TPR, XTC)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>protein <span class="op">=</span> u.select_atoms(<span class="st">"protein"</span>)</span>
@@ -584,7 +584,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="analyse-and-export-.dx" class="level2">
 <h2 class="anchored" data-anchor-id="analyse-and-export-.dx">Analyse and Export <code>.dx</code></h2>
-<div id="bf3f81ae" class="cell" data-execution_count="3">
+<div id="dc61cc7d" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ow <span class="op">=</span> u.select_atoms(<span class="st">"name OW"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dens <span class="op">=</span> density.DensityAnalysis(ow, delta<span class="op">=</span><span class="fl">4.0</span>, padding<span class="op">=</span><span class="dv">2</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dens.run()</span>
@@ -596,7 +596,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="add-universe-to-blender" class="level2">
 <h2 class="anchored" data-anchor-id="add-universe-to-blender">Add Universe to Blender</h2>
 <p>Import universe as a <code>Trajectory</code> and add a ribbon style to represent the protein. We also add a style to the non-rotein atoms, sliced along the <code>y</code> axis. After taking the snapshot for visual reference we remove the sphere style as we will be showing the water as a density.</p>
-<div id="b60edd00" class="cell" data-execution_count="4">
+<div id="c23665e3" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>protein_center <span class="op">=</span> np.mean(protein.atoms.positions, axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> mn.Trajectory(u).add_style(mn.StyleRibbon(quality<span class="op">=</span><span class="dv">5</span>, backbone_radius<span class="op">=</span><span class="dv">2</span>))</span>
@@ -620,7 +620,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="add-density-component" class="level2">
 <h2 class="anchored" data-anchor-id="add-density-component">Add density component</h2>
 <p>We can load the density that was written-out from the analysis performed previously as a <code>Density</code> entity.</p>
-<div id="c5523d4d" class="cell" data-execution_count="5">
+<div id="057cc1e3" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load density file</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> mn.entities.density.io.load(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    file_path<span class="op">=</span><span class="st">"water.dx"</span>,</span>
@@ -637,7 +637,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="visualization">Visualization</h2>
 <section id="set-density-style-values" class="level3">
 <h3 class="anchored" data-anchor-id="set-density-style-values">Set density style values</h3>
-<div id="ad10231e" class="cell" data-execution_count="6">
+<div id="450eee2f" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the density style</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> d.styles[<span class="dv">0</span>]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set the positive color to blue with 50% opacity</span></span>
@@ -646,11 +646,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="iso-value-0.5" class="level3">
 <h3 class="anchored" data-anchor-id="iso-value-0.5">ISO Value 0.5</h3>
-<div id="d4b84b3f" class="cell" data-execution_count="7">
+<div id="0142d343" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set ISO value to 0.5</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ds.iso_value <span class="op">=</span> <span class="fl">0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="93bd4d20" class="cell" data-execution_count="8">
+<div id="e0990793" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the density component and render</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(d, viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -665,7 +665,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="iso-value-0.5-with-contours" class="level3">
 <h3 class="anchored" data-anchor-id="iso-value-0.5-with-contours">ISO Value 0.5 with Contours</h3>
-<div id="47f16c97" class="cell" data-execution_count="9">
+<div id="0d4a826e" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set ISO value to 0.5</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ds.iso_value <span class="op">=</span> <span class="fl">0.5</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># enable contours</span></span>
@@ -675,7 +675,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># set contour colors</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ds.contour_color <span class="op">=</span> (<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="b2674f63" class="cell" data-execution_count="10">
+<div id="f69afd97" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the density component and render</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(d.get_view(), viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -690,11 +690,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="from-top-with-grid-axes" class="level3">
 <h3 class="anchored" data-anchor-id="from-top-with-grid-axes">From Top with Grid Axes</h3>
-<div id="f264d22f" class="cell" data-execution_count="11">
+<div id="afbacd1c" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add grid axes annotation</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ga <span class="op">=</span> d.annotations.add_grid_axes()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="5e24fc6e" class="cell" data-execution_count="12">
+<div id="75b881a4" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set viewpoint to top</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(d.get_view(), viewpoint<span class="op">=</span><span class="st">"top"</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span>
@@ -711,11 +711,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="iso-value-0.5-sliced-from-left" class="level3">
 <h3 class="anchored" data-anchor-id="iso-value-0.5-sliced-from-left">ISO Value 0.5 sliced from Left</h3>
-<div id="602c1cd5" class="cell" data-execution_count="13">
+<div id="674d0782" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># slice the grid from the left 50%</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>ds.slice_left <span class="op">=</span> <span class="dv">50</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cb098281" class="cell" data-execution_count="14">
+<div id="c21723d0" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set viewpoint to left</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(d.get_view(), viewpoint<span class="op">=</span><span class="st">"left"</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -730,13 +730,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="only-contours" class="level3">
 <h3 class="anchored" data-anchor-id="only-contours">Only Contours</h3>
-<div id="69e4b7a9" class="cell" data-execution_count="15">
+<div id="9e4fd0a9" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reset slicing</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ds.slice_left <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># only show contours</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>ds.only_contours <span class="op">=</span> <span class="va">True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="366078d4" class="cell" data-execution_count="16">
+<div id="4557f745" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set viewpoint to front</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(d.get_view(), viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

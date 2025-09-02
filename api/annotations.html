@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-27e0e8fe6ee5b2b5dc2ac134a9370860.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -567,7 +567,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Annotations API allows adding annotations to molecular entities. Molecular Nodes comes with a few bundled annotations for trajectories, but new ones can be dynamically added as well.</p>
 <section id="setup-molecular-nodes" class="level2">
 <h2 class="anchored" data-anchor-id="setup-molecular-nodes">Setup Molecular Nodes</h2>
-<div id="5409f976" class="cell" data-execution_count="1">
+<div id="9ffcb9fd" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> DCD, PSF, TPR, XTC</span>
@@ -578,7 +578,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="add-a-trajectory-entity" class="level2">
 <h2 class="anchored" data-anchor-id="add-a-trajectory-entity">Add a Trajectory Entity</h2>
-<div id="8b69849c" class="cell" data-execution_count="2">
+<div id="b024ca7c" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(PSF, DCD)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> mn.Trajectory(u).add_style(<span class="st">"cartoon"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -598,15 +598,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </ul>
 <p>All selections used in the annotation APIs can be either MDAnalysis selection phrases (strings) or instances of <code>AtomGroup</code>s.</p>
 <p>Here is how to access the annotations manager of an entity:</p>
-<div id="5d370f74" class="cell" data-execution_count="3">
+<div id="67853570" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># annotations manager</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>t.annotations</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>&lt;molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager at 0x16a1b5290&gt;</code></pre>
+<pre><code>&lt;molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager at 0x7d79c4b52950&gt;</code></pre>
 </div>
 </div>
 <p>Available annotation types can be seen as follows:</p>
-<div id="a5746d1e" class="cell" data-execution_count="4">
+<div id="0d027e4e" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># available annotation types</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>[a <span class="cf">for</span> a <span class="kw">in</span> t.annotations.<span class="fu">__dir__</span>() <span class="cf">if</span> a.startswith(<span class="st">"add_"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -622,7 +622,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Each annotation type can have different input parameters. A common parameter <code>name</code> can be passed to name the annotation for easier name based lookups later. All the parameters to the <code>add_&lt;annotation_type&gt;</code> method have to be keyword params.</p>
 <p>Annotations can be added using the <code>add_&lt;annotation_type&gt;</code> method, which returns an instance that can be used to further customize the annotation. Annotation specific inputs as well as common annotation parameters can be customized.</p>
 <p>The function signature for adding an annotation type can be seen as follows:</p>
-<div id="db8d17ff" class="cell" data-execution_count="5">
+<div id="96d3d71e" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>t.annotations.add_atom_info.func.__signature__</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <pre><code>&lt;Signature (self, annotation_class, /, *, selection: str | MDAnalysis.core.groups.AtomGroup = 'name CA', show_resid: bool = False, show_segid: bool = False, name: str = None) -&gt; molecularnodes.annotations.interface.AnnotationInterface&gt;</code></pre>
@@ -640,7 +640,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><code>show_resid</code> - Whether to show the resid</li>
 <li><code>show_segid</code> - Whether to show the segid</li>
 </ul>
-<div id="e2f067cf" class="cell" data-execution_count="6">
+<div id="6e958f2d" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add a style to display all the alpha carbons as spheres</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>t.add_style(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="st">"name CA"</span>, style<span class="op">=</span><span class="st">"ball_and_stick"</span>, color<span class="op">=</span>(<span class="fl">0.162</span>, <span class="fl">0.624</span>, <span class="fl">0.196</span>, <span class="fl">1.0</span>)</span>
@@ -655,7 +655,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># set the font size to 12</span></span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>a1.text_size <span class="op">=</span> <span class="dv">12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="d8be623a" class="cell" data-execution_count="7">
+<div id="f954c289" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(<span class="st">"resid 73:78"</span>), viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -667,7 +667,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="8fd306ba" class="cell" data-execution_count="8">
+<div id="46aafd26" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the annotation and remove the added style</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>a1.visible <span class="op">=</span> <span class="va">False</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>t.styles[<span class="dv">1</span>].remove()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -681,13 +681,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><code>selection</code> - An MDAnalysis selection phrase or <code>AtomGroup</code></li>
 <li><code>text</code> - Text to be displayed at the center-of-mass of selection</li>
 </ul>
-<div id="e315aff5" class="cell" data-execution_count="9">
+<div id="7d5d1dbd" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># show com of the whole protein</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>a2 <span class="op">=</span> t.annotations.add_com(selection<span class="op">=</span><span class="st">"protein"</span>, text<span class="op">=</span><span class="st">"Protein|COM"</span>, name<span class="op">=</span><span class="st">"Protein COM"</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># show com of residues 150 through 170</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>a3 <span class="op">=</span> t.annotations.add_com(selection<span class="op">=</span><span class="st">"resid 150:170"</span>, text<span class="op">=</span><span class="st">"resid 150:170|COM"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="8429516f" class="cell" data-execution_count="10">
+<div id="7f2ac743" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(), viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -699,7 +699,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="0a88ee6c" class="cell" data-execution_count="11">
+<div id="1789a59a" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the added annotations</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>a2.visible <span class="op">=</span> <span class="va">False</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>a3.visible <span class="op">=</span> <span class="va">False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -715,7 +715,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><code>text1</code> - Text to display at com of first selection</li>
 <li><code>text2</code> - Text to display at com of second selection</li>
 </ul>
-<div id="dbbebfcd" class="cell" data-execution_count="12">
+<div id="1c04a889" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add com_distance between resid 1 and 129</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>a4 <span class="op">=</span> t.annotations.add_com_distance(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    selection1<span class="op">=</span><span class="st">"resid 1"</span>,</span>
@@ -725,7 +725,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"r1-129 distance"</span>,</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="998b9597" class="cell" data-execution_count="13">
+<div id="e3bdb72e" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(<span class="st">"resid 1 129"</span>), viewpoint<span class="op">=</span><span class="st">"bottom"</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -737,7 +737,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="142c6276" class="cell" data-execution_count="14">
+<div id="5ff8eda4" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the added annotation</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>a4.visible <span class="op">=</span> <span class="va">False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -751,11 +751,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><code>show_atom_names</code> - Whether to show the atom names in the residue</li>
 <li><code>show_direction</code> - Whether to show the direction arcs of the dihedral angles</li>
 </ul>
-<div id="3cce3535" class="cell" data-execution_count="15">
+<div id="ccd1635b" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># show canonical dihedrals of residue 200</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>a5 <span class="op">=</span> t.annotations.add_canonical_dihedrals(resid<span class="op">=</span><span class="dv">200</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="865d7740" class="cell" data-execution_count="16">
+<div id="d4ab81f6" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(<span class="st">"resid 200"</span>), viewpoint<span class="op">=</span><span class="st">"back"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -767,7 +767,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="82b9a9ea" class="cell" data-execution_count="17">
+<div id="f55b0d81" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the added annotation</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>a5.visible <span class="op">=</span> <span class="va">False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -783,11 +783,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><code>show_trajectory</code> - Whether or not to show the trajectory filename</li>
 <li><code>show_atoms</code> - Whether or not to show the number of atoms in the universe</li>
 </ul>
-<div id="12570a0b" class="cell" data-execution_count="18">
+<div id="3c00a7ea" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add universe_info annotation</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>a6 <span class="op">=</span> t.annotations.add_universe_info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cc61ecd0" class="cell" data-execution_count="19">
+<div id="6ed728f3" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(), viewpoint<span class="op">=</span><span class="st">"top"</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot(frame<span class="op">=</span><span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -799,7 +799,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="128249f3" class="cell" data-execution_count="20">
+<div id="c1045746" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the added annotation</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>a6.visible <span class="op">=</span> <span class="va">False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -812,11 +812,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><code>text</code> - Text to display</li>
 <li><code>location</code> - Normalized location (0.0 - 1.0) to show the text wrt viewport / render</li>
 </ul>
-<div id="14583861" class="cell" data-execution_count="21">
+<div id="6153c042" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># show a 2d label at the top left</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>a7 <span class="op">=</span> t.annotations.add_label_2d(text<span class="op">=</span><span class="st">"Any|2D Label"</span>, location<span class="op">=</span>(<span class="fl">0.1</span>, <span class="fl">0.8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="ad0579ac" class="cell" data-execution_count="22">
+<div id="709c5d0c" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(), viewpoint<span class="op">=</span><span class="st">"left"</span>)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -828,7 +828,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="3af08dec" class="cell" data-execution_count="23">
+<div id="b13d25d4" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the added annotation</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>a7.visible <span class="op">=</span> <span class="va">False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -841,7 +841,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><code>text</code> - Text to display</li>
 <li><code>location</code> - 3d coordinates in universe to display text</li>
 </ul>
-<div id="a91c7687" class="cell" data-execution_count="24">
+<div id="34f47dd0" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># show the alpha carbon of resid 1 as a sphere</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>t.add_style(</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="st">"resid 1 and name CA"</span>,</span>
@@ -857,7 +857,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>a8.pointer_length <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>a8.line_width <span class="op">=</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="8926f7bf" class="cell" data-execution_count="25">
+<div id="f5ca9d5b" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(<span class="st">"resid 1"</span>), viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -869,7 +869,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="64a84529" class="cell" data-execution_count="26">
+<div id="440ad2b3" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the added annotation</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>a8.visible <span class="op">=</span> <span class="va">False</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># remove the added style</span></span>
@@ -882,7 +882,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Annotations added to an entity can be accessed in several different ways.</p>
 <section id="name-based-access" class="level3">
 <h3 class="anchored" data-anchor-id="name-based-access">Name based access</h3>
-<div id="a44c81ed" class="cell" data-execution_count="27">
+<div id="88bf5bd7" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the resid 1 atom info annotation by name - subscriptable</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> t.annotations[<span class="st">"r1 atom info"</span>]</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a)</span>
@@ -890,14 +890,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> t.annotations.get(<span class="st">"r1 atom info"</span>)</span>
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;molecularnodes.annotations.manager.AtomInfo_interface object at 0x32719fa90&gt;
-&lt;molecularnodes.annotations.manager.AtomInfo_interface object at 0x32719fa90&gt;</code></pre>
+<pre><code>&lt;molecularnodes.annotations.manager.AtomInfo_interface object at 0x7d79c4b6d150&gt;
+&lt;molecularnodes.annotations.manager.AtomInfo_interface object at 0x7d79c4b6d150&gt;</code></pre>
 </div>
 </div>
 </section>
 <section id="index-based-access" class="level3">
 <h3 class="anchored" data-anchor-id="index-based-access">Index based access</h3>
-<div id="ccb834ae" class="cell" data-execution_count="28">
+<div id="fa53da56" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"# annotations = "</span>, <span class="bu">len</span>(t.annotations))</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># get the protein COM annotation by index</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> t.annotations[<span class="dv">1</span>]</span>
@@ -906,13 +906,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <pre><code># annotations =  8</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="28">
-<pre><code>&lt;molecularnodes.annotations.manager.COM_interface at 0x32719c4d0&gt;</code></pre>
+<pre><code>&lt;molecularnodes.annotations.manager.COM_interface at 0x7d79c5416dd0&gt;</code></pre>
 </div>
 </div>
 </section>
 <section id="iterable-access" class="level3">
 <h3 class="anchored" data-anchor-id="iterable-access">Iterable access</h3>
-<div id="1db4bb99" class="cell" data-execution_count="29">
+<div id="5db5e22a" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># access all annotations by iteration</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> t.annotations:</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(a.name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -932,14 +932,14 @@ Annotation.004</code></pre>
 <section id="controlling-visiblity" class="level2">
 <h2 class="anchored" data-anchor-id="controlling-visiblity">Controlling Visiblity</h2>
 <p>All annotations of an entity can be collectively hidden or displayed using the <code>visible</code> attribute of the annotations manager.</p>
-<div id="eb5689a6" class="cell" data-execution_count="30">
+<div id="5855d858" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get current annotations visibility</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>t.annotations.visible</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="30">
 <pre><code>True</code></pre>
 </div>
 </div>
-<div id="628c048d" class="cell" data-execution_count="31">
+<div id="38ee81ce" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide all annotations</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>t.annotations.visible <span class="op">=</span> <span class="va">False</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>t.annotations.visible</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -947,7 +947,7 @@ Annotation.004</code></pre>
 <pre><code>False</code></pre>
 </div>
 </div>
-<div id="41a0849c" class="cell" data-execution_count="32">
+<div id="8f09f6dc" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># show all annotations</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>t.annotations.visible <span class="op">=</span> <span class="va">True</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>t.annotations.visible</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -976,7 +976,7 @@ Annotation.004</code></pre>
 <li><code>arrow_size</code> - Size of the arrow displayed (for lines with arrow ends)</li>
 <li><code>pointer_length</code> - Length of a pointer line to draw (defaults to 0, which is no pointer)</li>
 </ul>
-<div id="9f608428" class="cell" data-execution_count="33">
+<div id="5b22d8d0" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># common annotation params for a1</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>[(p, <span class="bu">getattr</span>(a1, p)) <span class="cf">for</span> p <span class="kw">in</span> a1.<span class="fu">__dir__</span>() <span class="cf">if</span> <span class="kw">not</span> p.startswith(<span class="st">"_"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="33">
@@ -1009,21 +1009,21 @@ Annotation.004</code></pre>
 <p>Individual annotaitons can be removed using the annotation name or annotation instance.</p>
 <section id="remove-by-name" class="level3">
 <h3 class="anchored" data-anchor-id="remove-by-name">Remove by name</h3>
-<div id="4d5ff073" class="cell" data-execution_count="34">
+<div id="bbf3b363" class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove by an annotation name</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>t.annotations.remove(<span class="st">"r1 atom info"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="remove-by-instance" class="level3">
 <h3 class="anchored" data-anchor-id="remove-by-instance">Remove by instance</h3>
-<div id="536ebaaf" class="cell" data-execution_count="35">
+<div id="42509861" class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove by an annotation instance</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>t.annotations.remove(a4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="remove-all-annoations" class="level3">
 <h3 class="anchored" data-anchor-id="remove-all-annoations">Remove all annoations</h3>
-<div id="51fa4edb" class="cell" data-execution_count="36">
+<div id="49385ce2" class="cell" data-execution_count="36">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove all annotations</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>t.annotations.clear()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1035,7 +1035,7 @@ Annotation.004</code></pre>
 <section id="create-a-custom-annotation" class="level3">
 <h3 class="anchored" data-anchor-id="create-a-custom-annotation">Create a custom annotation</h3>
 <p>A custom trajectory annotation class has to extend <a href="../api/reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation"><code>TrajectoryAnnotation</code></a> and implement the <a href="../api/reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw"><code>draw</code></a> method. Optional <a href="../api/reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.defaults"><code>defaults</code></a> method can be used to set defaults for the annotation and a <a href="../api/reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.validate"><code>validate</code></a> method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via <code>self.trajectory</code>, universe via <code>self.trajectory.universe</code> and the annotation params via <code>self.interface</code>. Please see the drawing utilities section for all the methods available to draw onto the viewport / renders from the <a href="../api/reference/annotations.base.html#molecularnodes.annotations.base.BaseAnnotation.draw"><code>draw</code></a> code.</p>
-<div id="091e61fa" class="cell" data-execution_count="37">
+<div id="2bdcb10c" class="cell" data-execution_count="37">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a CutomAnnotation class</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This class will auto-register with the Trajectory entities</span></span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CustomAnnotation(mn.entities.trajectory.TrajectoryAnnotation):</span>
@@ -1081,16 +1081,16 @@ Annotation.004</code></pre>
 </section>
 <section id="add-the-custom-annotation" class="level3">
 <h3 class="anchored" data-anchor-id="add-the-custom-annotation">Add the custom annotation</h3>
-<div id="089779ff" class="cell" data-execution_count="38">
+<div id="a8a727b6" class="cell" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>t.add_style(selection<span class="op">=</span><span class="st">"resid 75"</span>, style<span class="op">=</span><span class="st">"ball_and_stick"</span>)</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="co"># add the custom annotation and pass the required selection parameter</span></span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>ca <span class="op">=</span> t.annotations.add_custom_annotation(selection<span class="op">=</span><span class="st">"resid 75"</span>)</span>
 <span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>ca</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="38">
-<pre><code>&lt;molecularnodes.annotations.manager.CustomAnnotation_interface at 0x16a1cf610&gt;</code></pre>
+<pre><code>&lt;molecularnodes.annotations.manager.CustomAnnotation_interface at 0x7d79c4b65710&gt;</code></pre>
 </div>
 </div>
-<div id="8f18f18a" class="cell" data-execution_count="39">
+<div id="720d270a" class="cell" data-execution_count="39">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame the view and render</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(t.get_view(<span class="st">"resid 75"</span>), viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1102,7 +1102,7 @@ Annotation.004</code></pre>
 </div>
 </div>
 </div>
-<div id="1d1c1ad3" class="cell" data-execution_count="40">
+<div id="57ab3521" class="cell" data-execution_count="40">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># hide the added annotation</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>ca.visible <span class="op">=</span> <span class="va">False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1110,7 +1110,7 @@ Annotation.004</code></pre>
 <section id="unregister-a-custom-annotation" class="level3">
 <h3 class="anchored" data-anchor-id="unregister-a-custom-annotation">Unregister a custom annotation</h3>
 <p>Custom annotations get automatically registered with the <a href="../api/reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations.TrajectoryAnnotationManager"><code>TrajectoryAnnotationManager</code></a>. They can be manually unregistered and re-registered using the <a href="../api/reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.unregister"><code>unregister</code></a> and <a href="../api/reference/annotations.manager.html#molecularnodes.annotations.manager.BaseAnnotationManager.register"><code>register</code></a> methods if required.</p>
-<div id="e009c342" class="cell" data-execution_count="41">
+<div id="8b5e4e57" class="cell" data-execution_count="41">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unregister the annotation</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>manager <span class="op">=</span> mn.entities.trajectory.TrajectoryAnnotationManager</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>manager.unregister(CustomAnnotation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
