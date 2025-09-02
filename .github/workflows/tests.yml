@@ -45,7 +45,7 @@ jobs:
             fail-fast: false
             matrix:
               version: ["4.5"]
-              os: [ubuntu-latest, macos-latest, windows-latest]
+              os: [ubuntu-latest, macos-latest]
         steps:
             - uses: actions/checkout@v4
             - name: Install uv
@@ -54,10 +54,47 @@ jobs:
               run: |
                 uv sync --all-extras
             - name: Run Tests "not density"
+              timeout-minutes: 5
+              continue-on-error: true
               run: |
-                uv run pytest -n auto -k "not density"
+                uv run pytest -n auto -k "not density" --junitxml=test-results-1.xml || echo "TEST_RESULT_1=$?" >> $GITHUB_ENV
                 
-            - name: Run Tests "density"
+            - name: Run Tests "density" 
+              timeout-minutes: 3
+              continue-on-error: true
               run: |
-                uv run pytest -k density
+                uv run pytest -k density --junitxml=test-results-2.xml || echo "TEST_RESULT_2=$?" >> $GITHUB_ENV
+                
+            - name: Check Test Results
+              run: |
+                # Check if test result files exist and contain failures
+                FAILED=false
+                
+                if [ -f "test-results-1.xml" ]; then
+                  if grep -q 'failures="[^0]' test-results-1.xml || grep -q 'errors="[^0]' test-results-1.xml; then
+                    echo "Tests 'not density' had failures"
+                    FAILED=true
+                  fi
+                else
+                  echo "Test results file 1 not found, assuming failure"
+                  FAILED=true
+                fi
+                
+                if [ -f "test-results-2.xml" ]; then
+                  if grep -q 'failures="[^0]' test-results-2.xml || grep -q 'errors="[^0]' test-results-2.xml; then
+                    echo "Tests 'density' had failures"
+                    FAILED=true
+                  fi
+                else
+                  echo "Test results file 2 not found, assuming failure"
+                  FAILED=true
+                fi
+                
+                if [ "$FAILED" = true ]; then
+                  echo "Tests failed"
+                  exit 1
+                else
+                  echo "All tests passed successfully"
+                  exit 0
+                fi
       

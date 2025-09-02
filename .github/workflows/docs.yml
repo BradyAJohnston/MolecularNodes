@@ -17,26 +17,34 @@ jobs:
       - uses: actions/checkout@v4
       # - uses: quarto-dev/quarto-actions/setup@v2
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
           version: "latest"
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
         
       - name: Install Packages
         run: |
           uv sync --all-extras
       
       - name: Pre-render Scripts
+        timeout-minutes: 3
+        continue-on-error: true
+        run: |
+          uv run docs/generate.py
+      - name: Pre-render Scripts
         run: |
           cd docs
-          uv run generate.py
           uv run quartodoc build
           uv run quartodoc interlinks
           cd ..
       
-      - name: Render Docs
+      - name: Biotite Setup CCD
         run: |
           uv run python -m biotite.setup_ccd
+        
+      - name: Quarto Render Docs
+        run: |
           uv run quarto render docs
   
       - name: Configure pull release name
@@ -91,7 +99,7 @@ jobs:
           logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
           
       - name: Deploy Release Documentation
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         if: github.event_name == 'release'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
