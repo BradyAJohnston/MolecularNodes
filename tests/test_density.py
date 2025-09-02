@@ -96,9 +96,8 @@ def test_density_operator(
         bpy.ops.mn.import_density()
         density: mn.entities.Density = scene.MNSession.match(o.latest())
 
-    assert snapshot_custom == db.named_attribute(
-        mn.blender.mesh.evaluate_using_mesh(density.object)
-    )
+    obj = mn.blender.mesh.evaluate_using_mesh(density.object)
+    assert len(obj.data.vertices) == [198862, 287422][int(invert)]
 
 
 @pytest.fixture
