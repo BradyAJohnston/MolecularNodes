@@ -27,16 +27,23 @@ jobs:
           uv sync --all-extras
       
       - name: Pre-render Scripts
+        timeout-minutes: 3
+        continue-on-error: true
+        run: |
+          uv run generate.py
+      - name: Pre-render Scripts
         run: |
           cd docs
-          uv run generate.py
           uv run quartodoc build
           uv run quartodoc interlinks
           cd ..
       
-      - name: Render Docs
+      - name: Biotite Setup CCD
         run: |
           uv run python -m biotite.setup_ccd
+        
+      - name: Quarto Render Docs
+        run: |
           uv run quarto render docs
   
       - name: Configure pull release name
