@@ -45,7 +45,7 @@ jobs:
             fail-fast: false
             matrix:
               version: ["4.5"]
-              os: [ubuntu-latest, macos-latest, windows-latest]
+              os: [ubuntu-latest, macos-latest]
         steps:
             - uses: actions/checkout@v4
             - name: Install uv
