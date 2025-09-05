@@ -19,6 +19,10 @@ PASTEL_LIGHTNESS = 0.6
 PASTEL_SATURATION = 0.6
 CARBON_ATOMIC_NUMBER = 6
 
+# Palette generation constants
+MAX_DISTINCT_COLORS = 20  # Reasonable limit before looping with offset
+HUE_OFFSET_FACTOR = 0.618034  # Golden ratio for pleasing offset distribution
+
 
 def clamp(value: float, min_value: float, max_value: float) -> float:
     """Clamp a value between minimum and maximum bounds.
@@ -532,73 +536,147 @@ def colors_from_elements(atomic_numbers: Sequence[int]) -> npt.NDArray[np.int32]
 
 def generate_equidistant_color_palette(
     unique_identifiers: Sequence[Union[str, int]],
-) -> Dict[Union[str, int], Tuple[int, int, int, int]]:
+    max_colors: int = MAX_DISTINCT_COLORS,
+    lightness: float = PASTEL_LIGHTNESS,
+    saturation: float = PASTEL_SATURATION,
+    return_format: str = "rgba_int",
+) -> Dict[
+    Union[str, int], Union[Tuple[int, int, int, int], Tuple[float, float, float, float]]
+]:
     """Generate a color palette with equidistant hues for unique identifiers.
 
     This function creates visually distinct colors by distributing hues
-    evenly around the color wheel while maintaining consistent lightness
-    and saturation for a harmonious palette.
+    evenly around the color wheel. For large numbers of unique values,
+    it intelligently loops back with golden ratio offsets to maintain
+    visual distinction.
 
     Parameters
     ----------
     unique_identifiers : Sequence[Union[str, int]]
         Sequence of unique identifiers to assign colors to.
         Duplicates will be automatically removed.
+    max_colors : int, default=20
+        Maximum number of distinct colors before looping with offset.
+    lightness : float, default=0.6
+        HLS lightness value (0.0 to 1.0).
+    saturation : float, default=0.6
+        HLS saturation value (0.0 to 1.0).
+    return_format : str, default="rgba_int"
+        Return format: "rgba_int" for [0,255] or "rgba_float" for [0,1].
 
     Returns
     -------
-    Dict[Union[str, int], Tuple[int, int, int, int]]
-        Dictionary mapping each unique identifier to an RGBA color tuple
-        with values in [0, 255] range.
+    Dict[Union[str, int], Union[Tuple[int, int, int, int], Tuple[float, float, float, float]]]
+        Dictionary mapping each unique identifier to an RGBA color tuple.
 
     Notes
     -----
-    Uses HLS color space with fixed lightness (0.6) and saturation (0.6)
-    to generate pleasant, distinguishable colors. Hues are distributed
-    evenly across the color wheel with spacing of 1/(n+1) to avoid
-    clustering near red (hue=0).
+    Uses HLS color space with configurable lightness and saturation.
+    For more than max_colors unique values, cycles through hues with
+    golden ratio offsets to maintain visual distinction.
 
     Examples
     --------
     >>> palette = generate_equidistant_color_palette(['A', 'B', 'C'])
     >>> len(palette)
     3
-    >>> all(len(color) == 4 for color in palette.values())  # RGBA
-    True
+    >>> # Test with many values - should loop with offset
+    >>> many_ids = [f"chain_{i}" for i in range(25)]
+    >>> big_palette = generate_equidistant_color_palette(many_ids)
+    >>> len(big_palette)
+    25
     """
     unique_ids = np.unique(unique_identifiers)
-    num_unique_colors = len(unique_ids)
+    num_unique = len(unique_ids)
 
-    if num_unique_colors == 0:
+    if num_unique == 0:
         return {}
 
-    # Generate evenly spaced hues, avoiding clustering at red (hue=0)
-    hue_spacing = 1.0 / (num_unique_colors + 1)
-    hues = [i * hue_spacing for i in range(1, num_unique_colors + 1)]
+    colors = []
 
-    # Convert HLS to RGB with fixed lightness and saturation for consistency
-    rgb_colors = [
-        colorsys.hls_to_rgb(hue, PASTEL_LIGHTNESS, PASTEL_SATURATION) for hue in hues
-    ]
+    for i in range(num_unique):
+        if num_unique <= max_colors:
+            # Simple equidistant distribution
+            hue = (i + 1) / (max_colors + 1)
+        else:
+            # For large numbers, use cycling with golden ratio offset
+            cycle = i // max_colors
+            position_in_cycle = i % max_colors
+            base_hue = (position_in_cycle + 1) / (max_colors + 1)
+            # Add golden ratio offset for each cycle to maintain distinction
+            hue_offset = (cycle * HUE_OFFSET_FACTOR) % 1.0
+            hue = (base_hue + hue_offset) % 1.0
 
-    # Convert to integer RGBA tuples
-    rgba_colors = [
-        (
-            int(red * RGB_MAX_VALUE),
-            int(green * RGB_MAX_VALUE),
-            int(blue * RGB_MAX_VALUE),
-            RGB_MAX_VALUE,
-        )
-        for red, green, blue in rgb_colors
-    ]
+        # Convert HLS to RGB
+        red, green, blue = colorsys.hls_to_rgb(hue, lightness, saturation)
 
-    return dict(zip(unique_ids, rgba_colors))
+        if return_format == "rgba_float":
+            colors.append((red, green, blue, ALPHA_OPAQUE))
+        else:  # rgba_int
+            colors.append(
+                (
+                    int(red * RGB_MAX_VALUE),
+                    int(green * RGB_MAX_VALUE),
+                    int(blue * RGB_MAX_VALUE),
+                    RGB_MAX_VALUE,
+                )
+            )
+
+    return dict(zip(unique_ids, colors))
+
+
+def create_color_array(
+    identifiers: Sequence[Union[str, int]],
+    return_format: str = "rgba_int",
+    **palette_kwargs,
+) -> npt.NDArray[Union[np.int32, np.float32]]:
+    """Create a color array for a sequence of identifiers.
+
+    This is a consolidated function that handles the common pattern of:
+    1. Generate a color palette for unique identifiers
+    2. Map each identifier to its corresponding color
+    3. Return as a numpy array
+
+    Parameters
+    ----------
+    identifiers : Sequence[Union[str, int]]
+        Sequence of identifiers to color.
+    return_format : str, default="rgba_int"
+        Return format: "rgba_int" for [0,255] or "rgba_float" for [0,1].
+    **palette_kwargs
+        Additional arguments passed to generate_equidistant_color_palette.
+
+    Returns
+    -------
+    npt.NDArray[Union[np.int32, np.float32]]
+        Array of RGBA colors with shape (N, 4).
+
+    Examples
+    --------
+    >>> colors = create_color_array(['A', 'B', 'A', 'C'])
+    >>> colors.shape
+    (4, 4)
+    >>> np.array_equal(colors[0], colors[2])  # Same ID, same color
+    True
+    """
+    color_palette = generate_equidistant_color_palette(
+        identifiers, return_format=return_format, **palette_kwargs
+    )
+
+    colors = np.array(
+        [color_palette[identifier] for identifier in identifiers],
+        dtype=np.int32 if return_format == "rgba_int" else np.float32,
+    )
+
+    return colors
 
 
 def color_chains_equidistant(
     chain_identifiers: Sequence[Union[str, int]],
 ) -> npt.NDArray[np.int32]:
     """Assign equidistant colors to protein chain identifiers.
+
+    This is a convenience wrapper around create_color_array.
 
     Parameters
     ----------
@@ -610,25 +688,8 @@ def color_chains_equidistant(
     npt.NDArray[np.int32]
         Array of RGBA colors with shape (N, 4) where N is the length
         of chain_identifiers. Values are in [0, 255] range.
-
-    Notes
-    -----
-    Each unique chain identifier gets a distinct color from an
-    equidistant hue palette. Repeated identifiers get the same color.
-
-    Examples
-    --------
-    >>> colors = color_chains_equidistant(['A', 'B', 'A'])
-    >>> colors.shape
-    (3, 4)
-    >>> np.array_equal(colors[0], colors[2])  # Same chain, same color
-    True
     """
-    color_palette = generate_equidistant_color_palette(chain_identifiers)
-    chain_colors = np.array(
-        [color_palette[chain_id] for chain_id in chain_identifiers], dtype=np.int32
-    )
-    return chain_colors
+    return create_color_array(chain_identifiers, return_format="rgba_int")
 
 
 def color_chains_with_atoms(
@@ -670,12 +731,8 @@ def color_chains_with_atoms(
     # Get element colors for all atoms
     element_colors = colors_from_elements(atomic_numbers)
 
-    # Generate chain-specific color palette
-    chain_color_palette = generate_equidistant_color_palette(chain_identifiers)
-    chain_colors = np.array(
-        [chain_color_palette[chain_id] for chain_id in chain_identifiers],
-        dtype=np.int32,
-    )
+    # Generate chain colors using the consolidated function
+    chain_colors = create_color_array(chain_identifiers, return_format="rgba_int")
 
     # Create mask for carbon atoms (atomic number 6)
     carbon_atom_mask = np.array(atomic_numbers) == CARBON_ATOMIC_NUMBER
@@ -687,10 +744,108 @@ def color_chains_with_atoms(
     return element_colors.astype(np.float32) / RGB_MAX_VALUE
 
 
-# Backward compatibility aliases for renamed functions
+# ============================================================================
+# UNIFIED COLOR PALETTE API
+# ============================================================================
+
+
+def create_palette(
+    identifiers: Sequence[Union[str, int]], palette_type: str = "equidistant", **kwargs
+) -> Union[Dict, npt.NDArray]:
+    """Unified color palette generation function.
+
+    This is the main function for generating color palettes in MolecularNodes.
+    It provides a simple, consistent interface for all color generation needs.
+
+    Parameters
+    ----------
+    identifiers : Sequence[Union[str, int]]
+        Sequence of identifiers to assign colors to.
+    palette_type : str, default="equidistant"
+        Type of palette: "equidistant", "random", or "element".
+    **kwargs
+        Additional arguments passed to specific palette functions.
+        Common options:
+        - return_format: "rgba_int" (default) or "rgba_float"
+        - as_array: bool, if True returns numpy array instead of dict
+        - max_colors: int, maximum distinct colors before cycling
+        - lightness: float, HLS lightness (0-1)
+        - saturation: float, HLS saturation (0-1)
+
+    Returns
+    -------
+    Union[Dict, npt.NDArray]
+        Color palette as dictionary or array based on parameters.
+
+    Examples
+    --------
+    >>> # Simple equidistant palette
+    >>> colors = create_palette(['A', 'B', 'C'])
+    >>>
+    >>> # Large dataset with cycling
+    >>> many_chains = [f"chain_{i}" for i in range(50)]
+    >>> colors = create_palette(many_chains, as_array=True)
+    >>>
+    >>> # Custom lightness and saturation
+    >>> colors = create_palette(['X', 'Y'], lightness=0.8, saturation=0.4)
+    """
+    as_array = kwargs.pop("as_array", False)
+
+    if palette_type == "equidistant":
+        if as_array:
+            return create_color_array(identifiers, **kwargs)
+        else:
+            return generate_equidistant_color_palette(identifiers, **kwargs)
+    elif palette_type == "random":
+        # For random, generate one color per unique identifier
+        unique_ids = np.unique(identifiers)
+        seed = kwargs.get("seed")
+        palette = {}
+        for i, uid in enumerate(unique_ids):
+            color_seed = None if seed is None else seed + i
+            rgb_color = random_rgb(color_seed)
+            if kwargs.get("return_format") == "rgba_int":
+                palette[uid] = tuple((rgb_color * RGB_MAX_VALUE).astype(int))
+            else:
+                palette[uid] = tuple(rgb_color)
+
+        if as_array:
+            colors = [palette[uid] for uid in identifiers]
+            dtype = (
+                np.int32 if kwargs.get("return_format") == "rgba_int" else np.float32
+            )
+            return np.array(colors, dtype=dtype)
+        return palette
+    elif palette_type == "element":
+        if as_array:
+            return colors_from_elements(identifiers)
+        else:
+            unique_atomic_nums = np.unique(identifiers)
+            return {
+                num: tuple(color_from_atomic_number(num)) for num in unique_atomic_nums
+            }
+    else:
+        raise ValueError(f"Unknown palette_type: {palette_type}")
+
+
+# ============================================================================
+# BACKWARD COMPATIBILITY ALIASES
+# ============================================================================
+
 # These aliases preserve the original API while using the new implementations
 equidistant_colors = generate_equidistant_color_palette
 color_chains = color_chains_with_atoms
+
+
+# Additional convenience aliases
+def get_chain_colors(chain_ids: Sequence[Union[str, int]]) -> npt.NDArray[np.int32]:
+    """Simple alias for chain coloring - most common use case."""
+    return create_color_array(chain_ids)
+
+
+def get_element_colors(atomic_numbers: Sequence[int]) -> npt.NDArray[np.int32]:
+    """Simple alias for element coloring."""
+    return colors_from_elements(atomic_numbers)
 
 
 # IUPAC standard colors for chemical elements (RGB values in 0-255 range)
