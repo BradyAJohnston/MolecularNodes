@@ -508,8 +508,14 @@ def style_density_iso_surface_node_group():
     # node Curve to Mesh
     curve_to_mesh = style_density_iso_surface.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
-    # Fill Caps
-    curve_to_mesh.inputs[2].default_value = False
+    if bpy.app.version >= (4, 5, 0):
+        #Scale
+        curve_to_mesh.inputs[2].default_value = 1.0
+        # Fill Caps
+        curve_to_mesh.inputs[3].default_value = False
+    else:
+        # Fill Caps
+        curve_to_mesh.inputs[2].default_value = False
 
     # node Quadrilateral
     quadrilateral = style_density_iso_surface.nodes.new(
