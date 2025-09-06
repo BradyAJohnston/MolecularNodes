@@ -509,7 +509,7 @@ def style_density_iso_surface_node_group():
     curve_to_mesh = style_density_iso_surface.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
     if bpy.app.version >= (4, 5, 0):
-        #Scale
+        # Scale
         curve_to_mesh.inputs[2].default_value = 1.0
         # Fill Caps
         curve_to_mesh.inputs[3].default_value = False
