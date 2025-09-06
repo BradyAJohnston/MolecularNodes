@@ -36,6 +36,8 @@ class TreeInterface:
             )
         # Use the normal attribute setting mechanism
         super().__setattr__(name, value)
+        # update view layer to reflect changes
+        bpy.context.view_layer.update()
 
     def _register_property(self, name):
         """Register a dynamic property that can be set on this interface"""
