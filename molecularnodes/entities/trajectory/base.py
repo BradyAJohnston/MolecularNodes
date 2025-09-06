@@ -226,7 +226,11 @@ class Trajectory(MolecularEntity):
 
     @property
     def atom_id(self) -> np.ndarray:
-        return self.universe.atoms.atom_id
+        # corresponds to Atomids topology attr
+        if hasattr(self.atoms, "ids"):
+            return self.atoms.ids
+        else:
+            return np.zeros(self.n_atoms)
 
     @property
     def res_num(self) -> np.ndarray:
@@ -243,6 +247,22 @@ class Trajectory(MolecularEntity):
     def b_factor(self) -> np.ndarray:
         if hasattr(self.atoms, "tempfactors"):
             return self.atoms.tempfactors
+        else:
+            return np.zeros(self.n_atoms)
+
+    @property
+    def occupancy(self) -> np.ndarray:
+        # corresponds to Occupancies topology attr
+        if hasattr(self.atoms, "occupancies"):
+            return self.atoms.occupancies
+        else:
+            return np.zeros(self.n_atoms)
+
+    @property
+    def charge(self) -> np.ndarray:
+        # corresponds to Charges topology attr
+        if hasattr(self.atoms, "charges"):
+            return self.atoms.charges
         else:
             return np.zeros(self.n_atoms)
 
@@ -363,8 +383,23 @@ class Trajectory(MolecularEntity):
                 "type": "INT",
                 "domain": "POINT",
             },
+            "atom_id": {
+                "value": self.atom_id,
+                "type": "INT",
+                "domain": "POINT",
+            },
             "b_factor": {
                 "value": self.b_factor,
+                "type": "FLOAT",
+                "domain": "POINT",
+            },
+            "occupancy": {
+                "value": self.occupancy,
+                "type": "FLOAT",
+                "domain": "POINT",
+            },
+            "charge": {
+                "value": self.charge,
                 "type": "FLOAT",
                 "domain": "POINT",
             },
@@ -417,9 +452,9 @@ class Trajectory(MolecularEntity):
 
     def save_filepaths_on_object(self) -> None:
         obj = self.object
-        if self.universe.filename is not None:
+        if isinstance(self.universe.filename, str):
             obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
-        if self.universe.trajectory.filename is not None:
+        if isinstance(self.universe.trajectory.filename, str):
             obj.mn.filepath_trajectory = str(
                 path_resolve(self.universe.trajectory.filename)
             )

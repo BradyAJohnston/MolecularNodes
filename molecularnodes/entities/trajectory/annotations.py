@@ -376,9 +376,9 @@ class UniverseInfo(TrajectoryAnnotation):
         text = ""
         if params.show_frame:
             text = f"Frame : {u.trajectory.frame} / {u.trajectory.n_frames - 1}"
-        if params.show_topology and u.filename:
+        if params.show_topology and isinstance(u.filename, str):
             text = text + "|Topology : " + os.path.basename(u.filename)
-        if params.show_trajectory and u.trajectory.filename:
+        if params.show_trajectory and isinstance(u.trajectory.filename, str):
             text = text + "|Trajectory : " + os.path.basename(u.trajectory.filename)
         if params.show_atoms:
             text = text + "|Atoms : " + str(u.trajectory.n_atoms)
