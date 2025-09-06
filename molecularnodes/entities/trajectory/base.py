@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Callable, Dict
 import bpy
 import databpy
@@ -452,9 +453,9 @@ class Trajectory(MolecularEntity):
 
     def save_filepaths_on_object(self) -> None:
         obj = self.object
-        if isinstance(self.universe.filename, str):
+        if isinstance(self.universe.filename, (str, Path)):
             obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
-        if isinstance(self.universe.trajectory.filename, str):
+        if isinstance(self.universe.trajectory.filename, (str, Path)):
             obj.mn.filepath_trajectory = str(
                 path_resolve(self.universe.trajectory.filename)
             )
