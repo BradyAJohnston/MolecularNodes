@@ -348,8 +348,5 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     pos_b = traj.named_attribute("position")
     assert not np.allclose(pos_a, pos_b)
 
-    skip_attributes = ["atom_id", "occupancy", "charge"]
     for att in obj.data.attributes.keys():
-        if att in skip_attributes:
-            continue
         assert snapshot_custom == traj.named_attribute(att)
