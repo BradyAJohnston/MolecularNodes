@@ -306,27 +306,127 @@ def position_special_nodes(
 def cleanup_orphaned_nodes(
     tree: bpy.types.NodeTree, max_iter: int = 100, add_group_input: bool = True
 ) -> None:
-    """Remove nodes that are not connected to anything"""
-    to_remove = []
-    for _ in range(max_iter):
-        for node in tree.nodes:
-            if len(node.outputs) == 0:
-                continue
-            if not any([s.is_linked for s in node.outputs]):
-                to_remove.append(node)
+    """Remove nodes that are not connected to anything
 
+    Parameters
+    ----------
+    tree : bpy.types.NodeTree
+        The node tree to clean up
+    max_iter : int, optional
+        Maximum number of cleanup iterations to prevent infinite loops, by default 100
+    add_group_input : bool, optional
+        Whether to add a Group Input node if none exists, by default True
+
+    Raises
+    ------
+    ValueError
+        If tree is None or invalid
+    RuntimeError
+        If cleanup fails after max_iter iterations
+    """
+    if tree is None:
+        raise ValueError("Node tree cannot be None")
+
+    if not hasattr(tree, "nodes"):
+        raise ValueError("Invalid node tree: missing 'nodes' attribute")
+
+    if max_iter <= 0:
+        raise ValueError("max_iter must be positive")
+
+    nodes_removed_total = 0
+    iteration = 0
+
+    for iteration in range(max_iter):
+        to_remove = []
+        node_names = list(tree.nodes.keys())
+
+        for name in node_names:
+            try:
+                node = tree.nodes[name]
+            except KeyError:
+                continue  # Node was removed in a previous iteration
+
+            # Skip nodes with no outputs (they can't be orphaned)
+            if not hasattr(node, "outputs") or len(node.outputs) == 0:
+                continue
+
+            has_linked_output = any(
+                socket.is_linked
+                for socket in node.outputs
+                if hasattr(socket, "is_linked")
+            )
+
+            if not has_linked_output:
+                to_remove.append(name)
+
+        # If no nodes to remove, we're done
         if len(to_remove) == 0:
             break
 
-        for node in to_remove:
-            tree.nodes.remove(node)
+        # Attempt to remove nodes by name and track progress
+        nodes_removed_this_iter = 0
+        for name in to_remove:
+            try:
+                tree.nodes.remove(tree.nodes[name])
+            except KeyError:
+                continue
 
-        to_remove = []
+        # Track progress to detect infinite loops
+        nodes_removed_total += nodes_removed_this_iter
+        if nodes_removed_this_iter == 0:
+            break
 
-    if add_group_input and "Group Input" not in tree.nodes:
-        n_input = tree.nodes.new("NodeGroupInput")
-        if "Join Geometry" in tree.nodes:
-            tree.links.new(n_input.outputs[0], tree.nodes["Join Geometry"].inputs[0])
+    # Check if we hit max iterations without completing
+    if iteration == max_iter - 1:
+        remaining_orphans = len(
+            [
+                node
+                for node in tree.nodes
+                if hasattr(node, "outputs")
+                and len(node.outputs) > 0
+                and not any(getattr(s, "is_linked", False) for s in node.outputs)
+            ]
+        )
+        if remaining_orphans > 0:
+            raise RuntimeError(
+                f"Failed to clean up all orphaned nodes after {max_iter} iterations. {remaining_orphans} orphans remain."
+            )
+
+    # Add group input if requested and doesn't exist
+    if add_group_input:
+        try:
+            # Check if Group Input node exists
+            group_input_exists = any(
+                node.bl_idname == "NodeGroupInput" for node in tree.nodes
+            )
+
+            if not group_input_exists:
+                n_input = tree.nodes.new("NodeGroupInput")
+
+                # Try to connect to Join Geometry node if it exists
+                node_join_geo = None
+                for node in tree.nodes:
+                    if (
+                        node.bl_idname == "GeometryNodeJoinGeometry"
+                        or node.name == "Join Geometry"
+                    ):
+                        node_join_geo = node
+                        break
+
+                if (
+                    node_join_geo is not None
+                    and len(n_input.outputs) > 0
+                    and len(node_join_geo.inputs) > 0
+                ):
+                    try:
+                        tree.links.new(n_input.outputs[0], node_join_geo.inputs[0])
+                    except (RuntimeError, IndexError):
+                        # Link creation failed, but that's not critical
+                        pass
+
+        except (RuntimeError, AttributeError):
+            # Group input creation failed, but cleanup was successful
+            pass
 
 
 def arrange_tree(
