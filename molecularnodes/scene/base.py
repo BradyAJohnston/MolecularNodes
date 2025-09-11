@@ -61,7 +61,7 @@ class Canvas:
         engine: EEVEE | Cycles | str = "EEVEE",
         resolution=(1280, 720),
         transparent: bool = False,
-        template: str | None = "Molecular Nodes",
+        template: Path | str | None = "Molecular Nodes",
     ) -> None:
         """Initialize the Canvas object."""
         addon.register()
@@ -350,13 +350,38 @@ class Canvas:
 
     def scene_reset(
         self,
-        template: str | None = "Molecular Nodes",
+        template: Path | str | None = "Molecular Nodes",
         engine: Cycles | EEVEE | str = "EEVEE",
     ) -> None:
-        if template:
-            bpy.ops.wm.read_homefile(app_template=template)
+        if template is None:
+            bpy.ops.wm.read_homefile(app_template="")
+        else:
+            file = Path(template) if isinstance(template, str) else template
+            if file.is_file() and file.suffix == ".blend":
+                self.load(file)
+            elif isinstance(template, str):
+                bpy.ops.wm.read_homefile(app_template=template)
+            else:
+                raise ValueError(
+                    f"Template '{template}' is not a valid .blend file or app template name."
+                )
+
         if engine:
             self.engine = engine
+
+    def load(self, path: str | Path) -> None:
+        """
+        Load a .blend file replacing the current scene.
+
+        Parameters
+        ----------
+        path : str | Path
+            The file path to the .blend file to load.
+        """
+        file_path = Path(path) if isinstance(path, str) else path
+        if not file_path.is_file() or file_path.suffix != ".blend":
+            raise ValueError(f"File '{path}' is not a valid .blend file.")
+        bpy.ops.wm.open_mainfile(filepath=str(file_path.resolve()))
 
     def snapshot(
         self,

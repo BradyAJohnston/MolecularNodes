@@ -23,6 +23,19 @@ def test_resolution(canvas):
     assert canvas.resolution == (1920, 1080)
 
 
+def test_load_blend():
+    # Test loading a .blend file
+    file = data_dir / "blendfiles/suzanne.blend"
+    assert not bpy.data.objects.get("Suzanne")
+    canvas = mn.Canvas(template=file)
+    assert bpy.data.objects.get("Suzanne")
+    canvas.scene_reset(None)
+    assert not bpy.data.objects.get("Suzanne")
+    assert bpy.data.objects.get("Cube")
+    canvas.load(file)
+    assert bpy.data.objects.get("Suzanne")
+
+
 def test_animation_settings(canvas):
     # Test FPS
     canvas.fps = 30
