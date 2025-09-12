@@ -33,6 +33,69 @@ class Grids(Density):
             str(self.file_path), center=center, invert=invert, overwrite=overwrite
         )
 
+    def _parse_grid_with_fallback(
+        self,
+        file: str,
+        file_format: str | None,
+        metadata: dict,
+    ):
+        """
+        Try parsing the grid using GridDataFormats first; on failure, fall back to
+        reading with the mrcfile package and constructing a minimal grid-like object.
+
+        Returns an object with attributes: grid (np.ndarray), delta (np.ndarray),
+        origin (np.ndarray), metadata (dict).
+        """
+        # First attempt: GridDataFormats
+        try:
+            return Grid(file, file_format=file_format, metadata=metadata)
+        except Exception:
+            pass
+
+        # Fallback: try using mrcfile for MRC/CCP4/MAP formats
+        try:
+            import mrcfile  # type: ignore
+
+            class _MinimalGrid:
+                def __init__(self, grid: np.ndarray, delta: np.ndarray, origin: np.ndarray, metadata: dict):
+                    self.grid = grid
+                    self.delta = delta
+                    self.origin = origin
+                    self.metadata = metadata
+
+            with mrcfile.open(file, permissive=True) as mrc:
+                data = mrc.data
+
+                # Determine voxel size (delta)
+                try:
+                    vx, vy, vz = float(mrc.voxel_size.x), float(mrc.voxel_size.y), float(mrc.voxel_size.z)
+                except Exception:
+                    # Compute from header cell dimensions if voxel_size unavailable
+                    h = mrc.header
+                    nx, ny, nz = int(h.nx), int(h.ny), int(h.nz)
+                    # cella stored in Angstroms
+                    ax, ay, az = float(h.cella.x), float(h.cella.y), float(h.cella.z)
+                    vx = ax / nx if nx else 1.0
+                    vy = ay / ny if ny else 1.0
+                    vz = az / nz if nz else 1.0
+
+                # Origin (Angstroms). If not set, default to (0,0,0)
+                try:
+                    ox, oy, oz = float(mrc.header.origin.x), float(mrc.header.origin.y), float(mrc.header.origin.z)
+                except Exception:
+                    ox = oy = oz = 0.0
+
+                # The OpenVDB Python API expects array in Z, Y, X order by default.
+                # mrcfile returns data with shape (nz, ny, nx), which matches that order.
+                grid_arr = np.asarray(data)
+                delta = np.array([vx, vy, vz], dtype=float)
+                origin = np.array([ox, oy, oz], dtype=float)
+
+                return _MinimalGrid(grid_arr, delta, origin, metadata)
+        except Exception as e:
+            # Re-raise the original parsing error with context from fallback
+            raise RuntimeError(f"Failed to parse grid file '{file}' with GridDataFormats and mrcfile fallback: {e}")
+
     def create_object(
         self, name="NewDensity", style="density_surface", setup_nodes=True
     ) -> bpy.types.Object:
@@ -163,7 +226,7 @@ class Grids(Density):
             "invert": invert,
             "center": center,
         }
-        gobj = Grid(file, file_format=file_format, metadata=metadata)
+        gobj = self._parse_grid_with_fallback(file, file_format=file_format, metadata=metadata)
         if invert:
             gobj.grid = np.max(gobj.grid) - gobj.grid
         self.grid = gobj
