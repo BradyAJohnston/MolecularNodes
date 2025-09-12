@@ -523,7 +523,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 <section id="molecularnodes.Molecule" class="level1">
 <h1>Molecule</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Molecule(<span class="va">self</span>, array, reader<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Molecule(array, reader<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Primary Molecular Nodes class that coordinates the conversion of structural bioinformatic data into raw Blender data. Most notable the conversion of atoms and bonds into a collection of vertices and lines.</p>
 <p>It associates the atomic data (the array) with the created 3D model inside of Blender (the object). If multiple conformations are imported, then a <code>frames</code> collection is also instantiated.</p>
 <p>The <code>named_attribute()</code> and <code>store_named_attribute()</code> methods access and set attributes on <code>object</code> that is in the Blender scene.</p>

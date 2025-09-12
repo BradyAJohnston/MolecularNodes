@@ -536,7 +536,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <section id="molecularnodes.annotations.base.BaseAnnotation" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation">BaseAnnotation</h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation(<span class="va">self</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Base class for an Annotation</p>
 <p>Any Entity that needs annotations support can derive from this base class for Entity specific annotations. The derived entity annotation will have to implement ‘<strong>init_subclass</strong>’ to register with the Entity’s annotation manager and ‘<strong>init</strong>’ to pass the entity to annotations.</p>
 <p>Entity annotations will have to implement the ‘draw’ method that specifies how to display the annotations An optional ‘validate’ method can be provided to validate annotation inputs An optional ‘defaults’ method can be provided to set default values to the annotation.</p>
