@@ -7,10 +7,10 @@ mn_compositor_node_name = "MN Compositor"
 
 
 def setup_compositor(scene: bpy.types.Scene):
-    node_tree = scene.node_tree
     # add a quick check to see if everything is setup correctly
     # as this runs everytime in the pre-render handler, do as little as needed
-    if node_tree:
+    if hasattr(scene, "node_tree"):
+        node_tree = scene.node_tree
         if (
             bpy.context.scene.use_nodes
             and mn_compositor_node_name in node_tree.nodes
