@@ -10,6 +10,7 @@ from tqdm.auto import tqdm
 from .. import assets
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
+from ..scene.compositor import setup_compositor
 from ..session import get_session
 from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
@@ -72,6 +73,7 @@ class Canvas:
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
+        setup_compositor(self.scene)
 
     @property
     def scene(self) -> bpy.types.Scene:
