@@ -305,7 +305,7 @@ class MolecularNodesSceneProperties(PropertyGroup):
     auto_setup_compositor: BoolProperty(  # type: ignore
         name="Auto Setup",
         description="Auto setup Molecular Nodes Compositor",
-        default=True,
+        default=False,
     )
 
 
