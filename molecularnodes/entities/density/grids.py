@@ -57,7 +57,13 @@ class Grids(Density):
             import mrcfile  # type: ignore
 
             class _MinimalGrid:
-                def __init__(self, grid: np.ndarray, delta: np.ndarray, origin: np.ndarray, metadata: dict):
+                def __init__(
+                    self,
+                    grid: np.ndarray,
+                    delta: np.ndarray,
+                    origin: np.ndarray,
+                    metadata: dict,
+                ):
                     self.grid = grid
                     self.delta = delta
                     self.origin = origin
@@ -68,7 +74,11 @@ class Grids(Density):
 
                 # Determine voxel size (delta)
                 try:
-                    vx, vy, vz = float(mrc.voxel_size.x), float(mrc.voxel_size.y), float(mrc.voxel_size.z)
+                    vx, vy, vz = (
+                        float(mrc.voxel_size.x),
+                        float(mrc.voxel_size.y),
+                        float(mrc.voxel_size.z),
+                    )
                 except Exception:
                     # Compute from header cell dimensions if voxel_size unavailable
                     h = mrc.header
@@ -81,7 +91,11 @@ class Grids(Density):
 
                 # Origin (Angstroms). If not set, default to (0,0,0)
                 try:
-                    ox, oy, oz = float(mrc.header.origin.x), float(mrc.header.origin.y), float(mrc.header.origin.z)
+                    ox, oy, oz = (
+                        float(mrc.header.origin.x),
+                        float(mrc.header.origin.y),
+                        float(mrc.header.origin.z),
+                    )
                 except Exception:
                     ox = oy = oz = 0.0
 
@@ -94,7 +108,9 @@ class Grids(Density):
                 return _MinimalGrid(grid_arr, delta, origin, metadata)
         except Exception as e:
             # Re-raise the original parsing error with context from fallback
-            raise RuntimeError(f"Failed to parse grid file '{file}' with GridDataFormats and mrcfile fallback: {e}")
+            raise RuntimeError(
+                f"Failed to parse grid file '{file}' with GridDataFormats and mrcfile fallback: {e}"
+            )
 
     def create_object(
         self, name="NewDensity", style="density_surface", setup_nodes=True
@@ -226,7 +242,9 @@ class Grids(Density):
             "invert": invert,
             "center": center,
         }
-        gobj = self._parse_grid_with_fallback(file, file_format=file_format, metadata=metadata)
+        gobj = self._parse_grid_with_fallback(
+            file, file_format=file_format, metadata=metadata
+        )
         if invert:
             gobj.grid = np.max(gobj.grid) - gobj.grid
         self.grid = gobj

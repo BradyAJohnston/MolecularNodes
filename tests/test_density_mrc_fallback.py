@@ -1,10 +1,11 @@
-import numpy as np
-import pytest
 import sys
 import types
+import numpy as np
 
 
-def _make_test_mrc(path, shape=(4, 4, 4), voxel_size=(1.5, 2.0, 2.5), origin=(10.0, 20.0, 30.0)):
+def _make_test_mrc(
+    path, shape=(4, 4, 4), voxel_size=(1.5, 2.0, 2.5), origin=(10.0, 20.0, 30.0)
+):
     import mrcfile
 
     data = np.arange(np.prod(shape), dtype=np.float32).reshape(shape)
@@ -27,7 +28,11 @@ def _make_test_mrc(path, shape=(4, 4, 4), voxel_size=(1.5, 2.0, 2.5), origin=(10
             mrc.header.origin.z = origin[2]
         except Exception:
             pass
-    return np.asarray(data), np.asarray(voxel_size, dtype=float), np.asarray(origin, dtype=float)
+    return (
+        np.asarray(data),
+        np.asarray(voxel_size, dtype=float),
+        np.asarray(origin, dtype=float),
+    )
 
 
 def test_parse_grid_with_mrcfile_fallback(monkeypatch, tmp_path):
@@ -41,9 +46,11 @@ def test_parse_grid_with_mrcfile_fallback(monkeypatch, tmp_path):
         sys.modules["databpy"] = types.SimpleNamespace()
     if "gridData" not in sys.modules:
         griddata_stub = types.ModuleType("gridData")
+
         class _DummyGrid:  # placeholder; we will monkeypatch to raising below
             def __init__(self, *args, **kwargs):
                 pass
+
         griddata_stub.Grid = _DummyGrid
         sys.modules["gridData"] = griddata_stub
 
@@ -66,7 +73,11 @@ def test_parse_grid_with_mrcfile_fallback(monkeypatch, tmp_path):
     parsed = grids_mod.Grids._parse_grid_with_fallback(g, str(mrc_path), None, md)
 
     # Validate parsed content
-    assert hasattr(parsed, "grid") and hasattr(parsed, "delta") and hasattr(parsed, "origin")
+    assert (
+        hasattr(parsed, "grid")
+        and hasattr(parsed, "delta")
+        and hasattr(parsed, "origin")
+    )
     assert parsed.grid.shape == data.shape
     assert np.allclose(parsed.delta, voxel_size)
     assert np.allclose(parsed.origin, origin)
