@@ -1,8 +1,20 @@
+import itertools
 import shutil
 from pathlib import Path
 import bpy
 
 SUBFOLDER = "Molecular Nodes"
+
+
+def list_templates():
+    paths = bpy.utils.app_template_paths()
+    t_paths = list(paths) if paths is not None else []
+    names = list(
+        itertools.chain.from_iterable(
+            [[folder.stem for folder in Path(p).rglob("")] for p in t_paths]
+        )
+    )
+    return [name for name in names if not name.startswith("bl_app")]
 
 
 def is_installed():
