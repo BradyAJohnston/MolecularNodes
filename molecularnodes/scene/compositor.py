@@ -7,10 +7,16 @@ mn_compositor_node_name = "MN Compositor"
 
 
 def setup_compositor(scene: bpy.types.Scene):
+    if bpy.app.version >= (5, 0, 0):
+        # There are quite a few changes in 5.x compositor
+        # https://developer.blender.org/docs/release_notes/5.0/compositor/#removed
+        # use_nodes, Composite node, etc that we use here are removed
+        # Silently skip till we add 5.x support
+        return
+    node_tree = scene.node_tree
     # add a quick check to see if everything is setup correctly
     # as this runs everytime in the pre-render handler, do as little as needed
-    if hasattr(scene, "node_tree"):
-        node_tree = scene.node_tree
+    if node_tree:
         if (
             bpy.context.scene.use_nodes
             and mn_compositor_node_name in node_tree.nodes
