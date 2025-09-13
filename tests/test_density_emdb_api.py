@@ -1,4 +1,3 @@
-import bpy
 import numpy as np
 import pytest
 import molecularnodes as mn
