@@ -24,7 +24,17 @@ bpy = ["bpy>=4.5.2, <5.0.0"]
 jupyter = ["jupyter", "IPython"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist", "MDAnalysisTests>=2.7.0", "MDAnalysisData", "pooch>=1.8"]
-docs = ["quartodoc", "tomlkit", "nodepad", "jupyter", "IPython", "jupyter-cache", "MDAnalysisTests>=2.7.0", "MDAnalysisData"]
+docs = [
+    "quartodoc",
+    "quarto-cli~=1.7.0",
+    "tomlkit",
+    "nodepad",
+    "jupyter",
+    "IPython",
+    "jupyter-cache",
+    "MDAnalysisTests>=2.7.0",
+    "MDAnalysisData",
+]
 
 [build-system]
 build-backend = "setuptools.build_meta"
