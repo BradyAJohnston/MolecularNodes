@@ -8,6 +8,7 @@ from typing import Literal, Tuple
 import bpy
 from tqdm.auto import tqdm
 from .. import assets
+from ..assets.template import list_templates
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..scene.compositor import setup_compositor
@@ -16,7 +17,6 @@ from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoints
 from .engines import EEVEE, Cycles
-from ..assets.template import list_templates
 
 try:
     from IPython.display import Image, Video, display
