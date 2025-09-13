@@ -34,6 +34,8 @@ def test_load_blend():
     assert bpy.data.objects.get("Cube")
     canvas.load(file)
     assert bpy.data.objects.get("Suzanne")
+    with pytest.raises(ValueError):
+        mn.Canvas(template="x")
 
 
 def test_animation_settings(canvas):

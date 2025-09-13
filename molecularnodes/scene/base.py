@@ -16,6 +16,7 @@ from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoints
 from .engines import EEVEE, Cycles
+from ..assets.template import list_templates
 
 try:
     from IPython.display import Image, Video, display
@@ -499,7 +500,13 @@ class Canvas:
             if file.is_file() and file.suffix == ".blend":
                 self.load(file)
             elif isinstance(template, str):
-                bpy.ops.wm.read_homefile(app_template=template)
+                if template in list_templates():
+                    bpy.ops.wm.read_homefile(app_template=template)
+                else:
+                    raise ValueError(
+                        f"Template '{template}' is not a valid .blend file or app template name."
+                    )
+
             else:
                 raise ValueError(
                     f"Template '{template}' is not a valid .blend file or app template name."
