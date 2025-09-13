@@ -51,10 +51,65 @@ _view_transform = Literal[
 
 class Canvas:
     """
-    A class to handle canvas and render settings in Blender.
+    High-level render controller for Blender scenes.
 
-    This class provides properties to get and set various render settings like resolution,
-    render engine, samples, FPS, and frame ranges.
+    Canvas configures the active Blender scene for Molecular Nodes renders
+    (engine, resolution, transparency, color management), exposes convenient
+    properties for common render settings, and provides helpers to frame
+    objects/views and render stills or animations.
+
+    Parameters
+    ----------
+    engine : EEVEE | Cycles | str, default "EEVEE"
+        Render engine to use. Accepts an instance of ``mn.scene.EEVEE`` or
+        ``mn.scene.Cycles``, or a case-insensitive string: ``"EEVEE"`` or
+        ``"CYCLES"``.
+    resolution : tuple[int, int], default (1280, 720)
+        Output resolution in pixels as ``(width, height)``.
+    transparent : bool, default False
+        When ``True``, renders use a transparent film (alpha background).
+    template : pathlib.Path | str | None, default "Molecular Nodes"
+        Scene template to initialize. If a string is provided it can be either
+        the name of an installed Blender app template (e.g. ``"Molecular Nodes"``),
+        or a path to a ``.blend`` file. If ``None``, the Blender default startup
+        file is used.
+
+    Attributes
+    ----------
+    scene : bpy.types.Scene
+        The active Blender scene.
+    camera : molecularnodes.scene.camera.Camera
+        Convenience camera controller bound to the active scene camera.
+    engine : EEVEE | Cycles
+        The configured render engine object.
+    resolution : tuple[int, int]
+        Current render resolution in pixels.
+    transparent : bool
+        Whether the film background is transparent.
+    fps : float
+        Frames per second for animation output.
+    frame_start : int
+        Start frame of the scene range.
+    frame_end : int
+        End frame of the scene range.
+    background : tuple[float, float, float, float]
+        World background color as RGBA in the range [0, 1].
+    view_transform : {"Standard", "Khronos PBR Neutral", "AgX", "Filmic", "Filmic Log", "False Color", "Raw"}
+        Active view transform for color management.
+
+    Examples
+    --------
+    Create a canvas and render a snapshot with a transparent background::
+
+        import molecularnodes as mn
+        cv = mn.Canvas(engine="CYCLES", resolution=(800, 800), transparent=True)
+        cv.snapshot("frame.png")
+
+    See Also
+    --------
+    molecularnodes.scene.engines.EEVEE : Render engine configuration for EEVEE.
+    molecularnodes.scene.engines.Cycles : Render engine configuration for Cycles.
+    molecularnodes.scene.camera.Camera : Camera controller used by Canvas.
     """
 
     def __init__(
@@ -64,7 +119,21 @@ class Canvas:
         transparent: bool = False,
         template: Path | str | None = "Molecular Nodes",
     ) -> None:
-        """Initialize the Canvas object."""
+        """
+        Initialize a Canvas and prepare the Blender scene.
+
+        Parameters
+        ----------
+        engine : EEVEE | Cycles | str, default "EEVEE"
+            Render engine configuration or engine name.
+        resolution : tuple[int, int], default (1280, 720)
+            Output resolution in pixels as ``(width, height)``.
+        transparent : bool, default False
+            Enable a transparent film (alpha background) when ``True``.
+        template : pathlib.Path | str | None, default "Molecular Nodes"
+            Scene template name or path to a ``.blend`` file. Use ``None`` for
+            Blender's default startup scene.
+        """
         addon.register()
         assets.install()
         if template:
@@ -77,6 +146,14 @@ class Canvas:
 
     @property
     def scene(self) -> bpy.types.Scene:
+        """
+        Get the active Blender scene.
+
+        Returns
+        -------
+        bpy.types.Scene
+            The current context scene.
+        """
         return bpy.context.scene
 
     @property
@@ -108,10 +185,34 @@ class Canvas:
 
     @property
     def engine(self) -> Cycles | EEVEE:
+        """
+        Get the configured render engine.
+
+        Returns
+        -------
+        EEVEE | Cycles
+            The active engine configuration object.
+        """
         return self._engine
 
     @engine.setter
     def engine(self, value: Cycles | EEVEE | str) -> None:
+        """
+        Set the render engine.
+
+        Parameters
+        ----------
+        value : EEVEE | Cycles | str
+            Either an engine configuration instance or a case-insensitive
+            string: ``"EEVEE"`` or ``"CYCLES"``.
+
+        Raises
+        ------
+        ValueError
+            If an unsupported string is provided.
+        ValueError
+            If the value is neither a valid string nor supported engine type.
+        """
         if isinstance(value, Cycles) or isinstance(value, EEVEE):
             self._engine = value
         elif isinstance(value, str):
@@ -230,12 +331,28 @@ class Canvas:
 
     @property
     def background(self) -> Tuple[float, float, float, float]:
+        """
+        Get the world background color.
+
+        Returns
+        -------
+        tuple[float, float, float, float]
+            RGBA values in the range [0, 1].
+        """
         return (
             self.scene.world.node_tree.nodes["MN_world_shader"].inputs[3].default_value
         )
 
     @background.setter
     def background(self, value: Tuple[float, float, float, float]) -> None:
+        """
+        Set the world background color.
+
+        Parameters
+        ----------
+        value : tuple[float, float, float, float]
+            RGBA values in the range [0, 1].
+        """
         self.scene.world.node_tree.nodes["MN_world_shader"].inputs[
             3
         ].default_value = value
@@ -294,16 +411,15 @@ class Canvas:
         self, obj: bpy.types.Object | MolecularEntity, viewpoint: Viewpoints = None
     ) -> None:
         """
-        Frame an object or Molecular entity
+        Frame an object or MolecularEntity in the active camera view.
 
         Parameters
         ----------
         obj : bpy.types.Object | MolecularEntity
-            Blender object or Molecular entity to frame.
-
-        viewpoint: str, optional
-            Viewing direction along an axis
-            One of ["default", "front", "back", "top", "bottom", "left", "right"]
+            Blender object or Molecular Nodes entity to frame.
+        viewpoint : Viewpoints | str, optional
+            Viewing direction along a principal axis. One of
+            {"default", "front", "back", "top", "bottom", "left", "right"}.
 
         """
         if isinstance(obj, MolecularEntity):
@@ -315,20 +431,20 @@ class Canvas:
         blender_utils.look_at_object(obj)
 
     def frame_view(
-        self, view: list[tuple] | MolecularEntity, viewpoint: Viewpoints = None
+        self, view: list[tuple] | MolecularEntity, viewpoint: Viewpoints | None = None
     ) -> None:
         """
-        Frame one or more views of Molecular entities
-        Multiple views can be added with + to combine into a single view
+        Frame one or more views of Molecular entities.
+        Multiple views can be combined using ``+`` before passing the result.
 
         Parameters
         ----------
-        view: list[tuple]
-            A bounding box (set of 8 3D vertices) of the region of interest
-
-        viewpoint: str, optional
-            Viewing direction along an axis
-            One of ["default", "front", "back", "top", "bottom", "left", "right"]
+        view : list[tuple] | MolecularEntity
+            A bounding box represented by 8 three-dimensional vertices
+            ``[(x, y, z), ...]`` or an entity from which a view is derived.
+        viewpoint : Viewpoints | str, optional
+            Viewing direction along a principal axis. One of
+            {"default", "front", "back", "top", "bottom", "left", "right"}.
 
         """
         if isinstance(view, MolecularEntity):
@@ -343,7 +459,11 @@ class Canvas:
 
     def clear(self) -> None:
         """
-        Clear all entities from the scene without affecting lighting or render settings.
+        Clear all Molecular Nodes entities from the scene.
+
+        Notes
+        -----
+        This does not modify lighting, world, or render settings.
         """
         session = get_session()
         # Iterate over a list copy to avoid modifying the dict during iteration
@@ -355,6 +475,23 @@ class Canvas:
         template: Path | str | None = "Molecular Nodes",
         engine: Cycles | EEVEE | str = "EEVEE",
     ) -> None:
+        """
+        Reset the scene from a template or startup file.
+
+        Parameters
+        ----------
+        template : pathlib.Path | str | None, default "Molecular Nodes"
+            Name of an installed Blender app template, a path to a ``.blend``
+            file, or ``None`` to use Blender's default startup file.
+        engine : EEVEE | Cycles | str, default "EEVEE"
+            Render engine to configure after loading the template.
+
+        Raises
+        ------
+        ValueError
+            If ``template`` is not ``None``, not a valid ``.blend`` file path,
+            and not a known app template name.
+        """
         if template is None:
             bpy.ops.wm.read_homefile(app_template="")
         else:
