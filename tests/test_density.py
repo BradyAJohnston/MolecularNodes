@@ -6,6 +6,7 @@ from databpy import ObjectTracker
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
+from .emdb_pooch import fetch_emdb_map
 from .utils import NumpySnapshotExtension
 
 
@@ -116,3 +117,8 @@ def test_density_load_dx(density_file_dx):
     print(f"{list(bpy.data.objects)=}")
     assert density.object.mn.entity_type == "density"
     assert density.object.users_collection[0] == mn.blender.coll.mn()
+
+
+# this test fails without the fallback using mrcfile
+def test_fallback_reading():
+    mn.entities.density.load(fetch_emdb_map(48397))
