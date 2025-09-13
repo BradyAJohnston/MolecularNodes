@@ -1235,7 +1235,6 @@ dependencies = [
     { name = "databpy" },
     { name = "mdanalysis" },
     { name = "mrcfile" },
-    { name = "pooch" },
     { name = "pyyaml" },
     { name = "starfile" },
 ]
@@ -1300,7 +1299,6 @@ requires-dist = [
     { name = "mrcfile" },
     { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.2.0" },
     { name = "nodepad", marker = "extra == 'docs'" },
-    { name = "pooch", specifier = ">=1.8.2" },
     { name = "pooch", marker = "extra == 'test'", specifier = ">=1.8" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'test'" },

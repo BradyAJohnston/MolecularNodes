@@ -10,7 +10,6 @@ dependencies = [
     "mrcfile",
     "starfile",
     "PyYAML",
-    "pooch>=1.8.2",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11.0"
