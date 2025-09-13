@@ -56,22 +56,7 @@ class Grids(Density):
         try:
             import mrcfile  # type: ignore
 
-            class _MinimalGrid:
-                def __init__(
-                    self,
-                    grid: np.ndarray,
-                    delta: np.ndarray,
-                    origin: np.ndarray,
-                    metadata: dict,
-                ):
-                    self.grid = grid
-                    self.delta = delta
-                    self.origin = origin
-                    self.metadata = metadata
-
             with mrcfile.open(file, permissive=True) as mrc:
-                data = mrc.data
-
                 # Determine voxel size (delta)
                 try:
                     vx, vy, vz = (
@@ -101,11 +86,10 @@ class Grids(Density):
 
                 # The OpenVDB Python API expects array in Z, Y, X order by default.
                 # mrcfile returns data with shape (nz, ny, nx), which matches that order.
-                grid_arr = np.asarray(data)
                 delta = np.array([vx, vy, vz], dtype=float)
                 origin = np.array([ox, oy, oz], dtype=float)
 
-                return _MinimalGrid(grid_arr, delta, origin, metadata)
+                return Grid(mrc.data, origin=origin, delta=delta, metadata=metadata)
         except Exception as e:
             # Re-raise the original parsing error with context from fallback
             raise RuntimeError(
