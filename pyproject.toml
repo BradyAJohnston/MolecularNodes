@@ -26,7 +26,7 @@ dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", 
 test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist", "MDAnalysisTests>=2.7.0", "MDAnalysisData"]
 docs = [
     "quartodoc",
-    "quarto-cli>=1.8.24",
+    "quarto-cli~=1.7.0",
     "tomlkit",
     "nodepad",
     "jupyter",

@@ -1305,7 +1305,7 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'test'" },
     { name = "pytest-xdist", marker = "extra == 'test'" },
     { name = "pyyaml" },
-    { name = "quarto-cli", marker = "extra == 'docs'", specifier = ">=1.8.24" },
+    { name = "quarto-cli", marker = "extra == 'docs'", specifier = "~=1.7.0" },
     { name = "quartodoc", marker = "extra == 'docs'" },
     { name = "scipy", marker = "extra == 'dev'" },
     { name = "scipy", marker = "extra == 'test'" },
@@ -1913,14 +1913,14 @@ wheels = [
 
 [[package]]
 name = "quarto-cli"
-version = "1.8.24"
+version = "1.7.34"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jupyter" },
     { name = "nbclient" },
     { name = "wheel" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d4/56/ffaac82f9479d256bfbfeeea6add1b5825dec4529dd0f6f609f7bfdc43c5/quarto_cli-1.8.24.tar.gz", hash = "sha256:a3a7777451f668551aa56f538f73eaa0c3f00174139709a78780d415ad9bb592", size = 4618, upload-time = "2025-09-12T16:25:39.459Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/24/3a/7c5570f29ac10731a1af53316e94e7a795b878cb6e20aeecb444d1d301ad/quarto_cli-1.7.34.tar.gz", hash = "sha256:a23eb0b817c0e224f49b6f639094c0b56731ff301b9f18b29a33de760bc95c71", size = 4616, upload-time = "2025-08-29T11:37:28.945Z" }
 
 [[package]]
 name = "quartodoc"
