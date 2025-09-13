@@ -1,27 +1,41 @@
 import bpy
 from ..nodes.arrange import arrange_tree
-from ..nodes.compositor import mn_compositor_node_group
+from ..nodes.compositor import default_5x_compositor_node_tree, mn_compositor_node_tree
 
 annotations_image = "mn_annotations"
 mn_compositor_node_name = "MN Compositor"
 
 
 def setup_compositor(scene: bpy.types.Scene):
-    node_tree = scene.node_tree
+    if bpy.app.version >= (5, 0, 0):
+        node_tree = scene.compositing_node_group
+        use_nodes = True
+    else:
+        node_tree = scene.node_tree
+        use_nodes = scene.use_nodes
     # add a quick check to see if everything is setup correctly
     # as this runs everytime in the pre-render handler, do as little as needed
     if node_tree:
         if (
-            bpy.context.scene.use_nodes
+            use_nodes
             and mn_compositor_node_name in node_tree.nodes
             and node_tree.nodes[mn_compositor_node_name].inputs["Image"].is_linked
             and node_tree.nodes[mn_compositor_node_name].outputs["Image"].is_linked
         ):
             # MN Compositor node is present and both inputs and output are linked
             return
-    # enable nodes
-    bpy.context.scene.use_nodes = True
-    node_tree = scene.node_tree
+    else:
+        # no node tree, create one
+        if bpy.app.version >= (5, 0, 0):
+            # Staring 5.x compositor node trees can be re-used
+            # Technically we don't have to create a new one if we import from
+            # assets, but this is the safest when generating from code
+            scene.compositing_node_group = default_5x_compositor_node_tree()
+            node_tree = scene.compositing_node_group
+        else:
+            scene.use_nodes = True
+            node_tree = scene.node_tree
+    # setup the compositor node tree
     nodes = node_tree.nodes
     links = node_tree.links
     # create placeholder annotation image if not present
@@ -29,7 +43,7 @@ def setup_compositor(scene: bpy.types.Scene):
         bpy.data.images.new(annotations_image, 1, 1)
     # add MN Compositor node group to data block if not present
     if mn_compositor_node_name not in bpy.data.node_groups:
-        mn_compositor_node_group()
+        mn_compositor_node_tree()
     # add MN Compositor node to the node tree if not present
     if mn_compositor_node_name not in nodes:
         mn_compositor_node = nodes.new("CompositorNodeGroup")
@@ -38,28 +52,31 @@ def setup_compositor(scene: bpy.types.Scene):
     mn_compositor_node = nodes[mn_compositor_node_name]
     # insert MN Compositor right before the Composite node
     # add "Composite" node to node tree if not present
-    if "Composite" not in nodes:
-        nodes.new(type="CompositorNodeComposite")
-    composite_node = nodes["Composite"]
+    if bpy.app.version >= (5, 0, 0):
+        if "Group Output" not in nodes:
+            nodes.new(type="NodeGroupOutput")
+        output_node = nodes["Group Output"]
+    else:
+        if "Composite" not in nodes:
+            nodes.new(type="CompositorNodeComposite")
+        output_node = nodes["Composite"]
     # add "Render Layers" node to node tree if not present
     if "Render Layers" not in nodes:
         nodes.new(type="CompositorNodeRLayers")
     render_layers_node = nodes["Render Layers"]
-    if composite_node.inputs["Image"].is_linked:
+    if output_node.inputs["Image"].is_linked:
         # Composite node input is linked - ensure it is from MN Compositor
-        from_node = composite_node.inputs["Image"].links[0].from_node
+        from_node = output_node.inputs["Image"].links[0].from_node
         if from_node.name != mn_compositor_node_name:
             # Composite node input is not MN Compositor node, re-link correctly
-            from_socket = composite_node.inputs["Image"].links[0].from_socket
+            from_socket = output_node.inputs["Image"].links[0].from_socket
             links.new(from_socket, mn_compositor_node.inputs["Image"])
-            links.new(
-                mn_compositor_node.outputs["Image"], composite_node.inputs["Image"]
-            )
+            links.new(mn_compositor_node.outputs["Image"], output_node.inputs["Image"])
     else:
         # Composite node input is not linked
         from_socket = render_layers_node.outputs["Image"]
         links.new(from_socket, mn_compositor_node.inputs["Image"])
-        links.new(mn_compositor_node.outputs["Image"], composite_node.inputs["Image"])
+        links.new(mn_compositor_node.outputs["Image"], output_node.inputs["Image"])
     # link MN Compositor node input if not linked
     if not mn_compositor_node.inputs["Image"].is_linked:
         from_socket = render_layers_node.outputs["Image"]
