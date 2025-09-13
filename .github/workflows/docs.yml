@@ -15,7 +15,6 @@ jobs:
     permissions: write-all
     steps:
       - uses: actions/checkout@v4
-      # - uses: quarto-dev/quarto-actions/setup@v2
       - name: Install uv
         uses: astral-sh/setup-uv@v6
         with:

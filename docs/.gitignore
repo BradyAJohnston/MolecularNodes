@@ -3,3 +3,4 @@ reference/*
 _build/*
 objects.json
 *.dx
+**/*.quarto_ipynb
