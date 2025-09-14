@@ -302,12 +302,6 @@ class MolecularNodesSceneProperties(PropertyGroup):
         maxlen=0,
     )
 
-    auto_setup_compositor: BoolProperty(  # type: ignore
-        name="Auto Setup",
-        description="Auto setup Molecular Nodes Compositor",
-        default=False,
-    )
-
 
 class MolecularNodesObjectProperties(PropertyGroup):
     styles_active_index: IntProperty(default=-1)  # type: ignore
