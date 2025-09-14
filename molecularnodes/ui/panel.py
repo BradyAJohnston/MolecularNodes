@@ -1054,14 +1054,10 @@ class MN_PT_Compositor(bpy.types.Panel):
         )
 
     def draw(self, context):
-        scene = context.scene
         layout = self.layout
         box = layout.box()
         row = box.row()
-        row.prop(scene.mn, "auto_setup_compositor")
-        row = box.row()
         row.operator("mn.setup_compositor")
-        row.enabled = not scene.mn.auto_setup_compositor
 
 
 CLASSES = [

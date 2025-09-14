@@ -1,4 +1,5 @@
 from uuid import uuid1
+import databpy as db
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
@@ -109,7 +110,9 @@ class Selection:
         "Sets the selection in the trajectory"
         if not self.updating:
             return
-        self.trajectory.set_boolean(self.to_mask(), name=self.name)
+        self.trajectory.store_named_attribute(
+            self.to_mask(), name=self.name, atype=db.AttributeTypes.BOOLEAN
+        )
 
     def to_mask(self) -> npt.NDArray[np.bool_]:
         "Returns the selection as a 1D numpy boolean mask. If updating=True, recomputes selection."

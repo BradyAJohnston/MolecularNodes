@@ -3,7 +3,7 @@ import numpy as np
 from bpy.app.handlers import persistent
 from PIL import Image
 from .annotations.utils import render_annotations
-from .scene.compositor import annotations_image, setup_compositor
+from .scene.compositor import annotations_image
 
 
 # this update function requires a self and context input, as funcitons with these inputs
@@ -61,9 +61,6 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     Any changes needed before the rendering of a frame need to go in here
 
     """
-    if scene.mn.auto_setup_compositor:
-        # Setup compositor if not already done
-        setup_compositor(scene)
     # Render annotations to an image
     bpy.context.view_layer.update()
     render_scale = scene.render.resolution_percentage / 100
