@@ -2,6 +2,8 @@ from pathlib import Path
 from typing import Callable, Dict
 import bpy
 import databpy
+import databpy as db
+import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
@@ -98,7 +100,9 @@ class Trajectory(MolecularEntity):
         )
 
         self.selections[selection.name] = selection
-        self.set_boolean(selection.to_mask(), name=selection.name)
+        self.store_named_attribute(
+            selection.to_mask(), name=selection.name, atype=db.AttributeTypes.BOOLEAN
+        )
         return selection
 
     @property
