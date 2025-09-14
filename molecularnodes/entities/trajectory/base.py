@@ -1,9 +1,7 @@
 from pathlib import Path
 from typing import Callable, Dict
 import bpy
-import databpy
 import databpy as db
-import databpy
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
@@ -476,7 +474,7 @@ class Trajectory(MolecularEntity):
         self,
         name: str = "NewUniverseObject",
     ) -> None:
-        self.object = databpy.create_object(
+        self.object = db.create_object(
             name=name,
             collection=coll.mn(),
             vertices=self.univ_positions,
@@ -720,7 +718,7 @@ class Trajectory(MolecularEntity):
                 )
 
             # interpolate between the two sets of positions
-            self.position = databpy.lerp(
+            self.position = db.lerp(
                 pos_current, pos_next, t=fraction(frame, self.subframes + 1)
             )
         elif self.average > 0:

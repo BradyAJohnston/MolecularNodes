@@ -1,8 +1,8 @@
 from uuid import uuid1
+import databpy as db
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
-import databpy as db
 
 
 class Selection:
