@@ -445,7 +445,7 @@ def create_material(
     except KeyError:
         output = tree.nodes.new("ShaderNodeOutputMaterial")
         bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")
-        bsdf.location -= (200, 0)
+        bsdf.location = (-200, 0)
         tree.links.new(bsdf.outputs["BSDF"], output.inputs["Surface"])
 
     for input_socket in bsdf.inputs:
