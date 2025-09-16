@@ -448,7 +448,6 @@ def create_material(
         bsdf.location -= (200, 0)
         tree.links.new(bsdf.outputs["BSDF"], output.inputs["Surface"])
 
-
     for input_socket in bsdf.inputs:
         if input_socket.name in key_map:
             input_socket.default_value = key_map[input_socket.name]
