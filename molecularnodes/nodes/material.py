@@ -432,17 +432,22 @@ def create_material(
     if name in bpy.data.materials:
         return bpy.data.materials[name]
 
-        mat = bpy.data.materials.new(name)
+    mat = bpy.data.materials.new(name)
+
+    if bpy.app.version < (5, 0, 0):
+        mat.use_nodes = True
+
     tree = mat.node_tree
     if tree is None:
         raise RuntimeError("Material does not have a node tree")
     try:
-        bsdf = mat.node_tree.nodes["Principled BSDF"]
+        bsdf = mat.node_tree.nodes["Principled BSDF"]  # type: ignore
     except KeyError:
         output = tree.nodes.new("ShaderNodeOutputMaterial")
         bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")
         bsdf.location -= (200, 0)
         tree.links.new(bsdf.outputs["BSDF"], output.inputs["Surface"])
+
 
     for input_socket in bsdf.inputs:
         if input_socket.name in key_map:
