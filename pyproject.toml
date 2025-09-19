@@ -48,7 +48,10 @@ where = ["."]
 exclude = ["molecularnodes.nodes._generation*"]
 
 [tool.setuptools.package-data]
-molecularnodes = ["assets/*", "assets/template/*", "**/*.py"]
+molecularnodes = ["assets/*",
+                  "assets/template/*",
+                  "**/*.py",
+                  "annotations/fonts/*"]
 
 
 [tool.ruff.lint]
