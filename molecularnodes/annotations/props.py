@@ -123,8 +123,18 @@ def create_property_interface(
             # set a non blender property and validate
             setattr(instance, nbattr, value)
             instance.validate()
+            if instance._ready:
+                # update annotation object
+                entity.annotations._update_annotation_object()
         else:
             # blender property
+            if attr == "mesh_material":
+                # special handling for material property to support strings
+                # along with material objects
+                if isinstance(value, str):
+                    if value not in bpy.data.materials:
+                        raise ValueError(f"No material with name '{value}'")
+                    value = bpy.data.materials[value]
             setattr(_prop(), attr, value)
             # clear any corresponding non blender property
             if hasattr(instance, nbattr):
@@ -132,6 +142,11 @@ def create_property_interface(
         viewport_tag_redraw()
 
     return property(getter, setter, doc=getattr(_prop(), "description", None))
+
+
+def _update_annotation_object(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    entity.annotations._update_annotation_object()
 
 
 class BaseAnnotationProperties(bpy.types.PropertyGroup):
@@ -148,6 +163,7 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         name="Visible",
         description="Visibility of the annotation",
         default=True,
+        update=_update_annotation_object,
     )  # type: ignore
 
     text_font: StringProperty(  # type: ignore
@@ -249,6 +265,7 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         description="Arrow size",
         default=16,
         min=0,
+        update=_update_annotation_object,
     )  # type: ignore
 
     pointer_length: IntProperty(
@@ -256,4 +273,44 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         description="Pointer length",
         default=0,
         min=0,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    line_mesh: BoolProperty(
+        name="Line Mesh",
+        description="Draw lines as 3D meshes",
+        default=False,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    line_overlay: BoolProperty(
+        name="Line Overlay",
+        description="Draw overlay lines on top of 3D meshes",
+        default=False,
+    )  # type: ignore
+
+    mesh_color: FloatVectorProperty(
+        name="Mesh Color",
+        description="Mesh color",
+        subtype="COLOR",
+        size=4,
+        default=(1, 1, 1, 1),
+        min=0.0,
+        max=1.0,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_thickness: FloatProperty(
+        name="Mesh Thickness",
+        description="Mesh thickness",
+        default=1.0,
+        min=0.0,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_material: bpy.props.PointerProperty(
+        type=bpy.types.Material,
+        name="Mesh Material",
+        description="Material for 3D line meshes",
+        update=_update_annotation_object,
     )  # type: ignore

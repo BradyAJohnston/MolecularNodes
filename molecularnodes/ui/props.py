@@ -303,6 +303,11 @@ class MolecularNodesSceneProperties(PropertyGroup):
     )
 
 
+def _update_annotations_visibility(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    entity.annotations._update_annotation_object()
+
+
 class MolecularNodesObjectProperties(PropertyGroup):
     styles_active_index: IntProperty(default=-1)  # type: ignore
     annotations_active_index: IntProperty(default=-1)  # type: ignore
@@ -312,6 +317,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
         name="Visible",
         description="Visibility of all annotations",
         default=True,
+        update=_update_annotations_visibility,
     )
 
     biological_assemblies: StringProperty(  # type: ignore

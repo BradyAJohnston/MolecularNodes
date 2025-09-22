@@ -3,11 +3,16 @@ import inspect
 from abc import ABCMeta
 from uuid import uuid1
 import bpy
+import databpy as db
+import numpy as np
 from databpy.object import LinkedObjectError
 from mathutils import Vector
+from ..blender import coll
 from ..blender.utils import get_viewport_region_from_context, viewport_tag_redraw
+from ..nodes.material import append_material
 from .base import BaseAnnotation
 from .interface import AnnotationInterface
+from .node_tree import annotations_node_tree
 from .props import (
     BaseAnnotationProperties,
     create_annotation_type_inputs,
@@ -38,6 +43,9 @@ def _validate_annotation_update(self, context, attr):
         self.valid_inputs = False
         raise exception
     self.valid_inputs = True
+    if instance._ready:
+        # update annotation object
+        entity.annotations._update_annotation_object()
 
 
 class BaseAnnotationManager(metaclass=ABCMeta):
@@ -68,6 +76,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         self._draw_handler = None
         self._scene = None
         self._render_mode = False
+        # annotation blender object
+        self.bob = None
         # viewport params
         self._region = None
         self._rv3d = None
@@ -261,6 +271,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             self._draw_handler_add()
         else:
             self._draw_handler_remove()
+        self._update_annotation_object()
         viewport_tag_redraw()
 
     @classmethod
@@ -305,6 +316,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # set the interface attribute of the annotation instance so that
         # users can access the inputs and common params using this interface
         setattr(annotation_instance, "interface", interface)
+        # instance is ready only after all the property interfaces are created
+        setattr(annotation_instance, "_ready", False)
         # call the validate method in the annotation class if specified for
         # any annotation specific custom validation
         if hasattr(annotation_instance, "validate") and callable(
@@ -393,7 +406,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             prop_path = item.identifier
             if prop_path in ("name", "label", "type"):
                 continue
-            if item.type == "POINTER":
+            if item.type == "POINTER" and prop_path != "mesh_material":
                 continue
             prop_interface = create_property_interface(self._entity, uuid, prop_path)
             setattr(interface.__class__, prop_path, prop_interface)
@@ -402,6 +415,15 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             getattr(annotation_instance, "defaults")
         ):
             annotation_instance.defaults()
+        # material default needs to be set explicitly
+        material = "MN Default"
+        if material not in bpy.data.materials:
+            append_material(material)
+        interface.mesh_material = material
+        # update annotation object
+        self._update_annotation_object()
+        # mark instance ready for object updates from property callbacks
+        annotation_instance._ready = True
         # tag redraw of viewport to refresh values in GUI
         viewport_tag_redraw()
         # return the newly created dynamic annotation interface
@@ -419,6 +441,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         viewport_tag_redraw()
         # remove from instances registry
         del self._interfaces[uuid]
+        # update annotation object
+        self._update_annotation_object()
 
     def _remove_annotation_by_uuid(self, uuid: str) -> None:
         """Remove annotation instance by uuid - used by GUI"""
@@ -482,34 +506,44 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     def _disable_render_mode(self):
         self._render_mode = False
 
-    def _draw_annotations(self):
+    def _draw_annotations(self, get_geometry: bool = False):
+        # geometry of the lines
+        geometry = {
+            "vertices": [],
+            "edges": [],
+            "color": [],
+            "thickness": [],
+        }
         # all annotations visibilty
         if not self.visible:
-            return
+            return geometry
         # object visibility
         object = self._entity.object
         if object.hide_get():
-            return
+            return geometry
         # check if object is in current scene
+        if self._scene is None:
+            self._scene = bpy.context.scene
         if object.name not in self._scene.objects:
-            return
-        # calculate the min and max viewport distance of the bounding box verts
-        # find bounding box verts
-        bb_verts = [co for co in bpy.data.objects[object.name].bound_box]
-        # viewport distance of the bounding box verts
-        bb_verts_distances = []
-        for vert in bb_verts:
-            view_matrix = get_view_matrix(self)
-            if is_perspective_projection(self):
-                # perspective
-                dist = (view_matrix @ Vector(vert)).length
-            else:
-                # orthographic
-                dist = -(view_matrix @ Vector(vert)).z
-            bb_verts_distances.append(dist)
-        # min and max
-        min_dist = min(bb_verts_distances)
-        max_dist = max(bb_verts_distances)
+            return geometry
+        if not get_geometry:
+            # calculate the min and max viewport distance of the bounding box verts
+            # find bounding box verts
+            bb_verts = [co for co in bpy.data.objects[object.name].bound_box]
+            # viewport distance of the bounding box verts
+            bb_verts_distances = []
+            for vert in bb_verts:
+                view_matrix = get_view_matrix(self)
+                if is_perspective_projection(self):
+                    # perspective
+                    dist = (view_matrix @ Vector(vert)).length
+                else:
+                    # orthographic
+                    dist = -(view_matrix @ Vector(vert)).z
+                bb_verts_distances.append(dist)
+            # min and max
+            min_dist = min(bb_verts_distances)
+            max_dist = max(bb_verts_distances)
         # iterate over all annotations
         for interface in self._interfaces.values():
             # annotation specific visibility
@@ -518,20 +552,86 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             # annotations input validity
             if not getattr(interface, "_valid_inputs", True):
                 continue
-            # set distance params
-            interface._instance._set_distance_params(min_dist, max_dist)
-            if self._render_mode:
-                # set the render params
-                interface._instance._set_render_params(
-                    self._scene, self._render_scale, self._image, self._image_scale
-                )
+            interface._instance.geometry = None
+            if get_geometry:
+                if not interface.line_mesh:
+                    continue
+                interface._instance.geometry = geometry
             else:
-                # set the viewport region params
-                interface._instance._set_viewport_params(
-                    self._scene, self._region, self._rv3d
-                )
+                # set distance params
+                interface._instance._set_distance_params(min_dist, max_dist)
+                if self._render_mode:
+                    # set the render params
+                    interface._instance._set_render_params(
+                        self._scene, self._render_scale, self._image, self._image_scale
+                    )
+                else:
+                    # set the viewport region params
+                    interface._instance._set_viewport_params(
+                        self._scene, self._region, self._rv3d
+                    )
             # handle exceptions to allow other annotations to be drawn
             try:
                 interface._instance.draw()
             except Exception:
                 pass
+        return geometry
+
+    def _create_annotation_object(self):
+        """Internal: Create annotation object if it doesn't exist"""
+        create = False
+        if self.bob is not None:
+            try:
+                _ = self.bob.object.name
+            except LinkedObjectError:
+                create = True
+        else:
+            create = True
+        if not create:
+            return
+        # get the geometry from all annotations
+        geometry = self._draw_annotations(get_geometry=True)
+        name = f"MN_an_{self._entity.object.name}"
+        # create an object with geometry
+        object = db.create_object(
+            name=name,
+            collection=coll.mn(),
+            vertices=geometry["vertices"],
+            edges=geometry["edges"],
+        )
+        # create geometry nodes modifier
+        object.modifiers.new("MN_Annotations", "NODES")
+        # attach the annotations node tree
+        tree = annotations_node_tree()
+        tree.name = name
+        object.modifiers[0].node_group = tree
+        object.parent = self._entity.object
+        # save the BlenderObject for further updates
+        self.bob = db.BlenderObject(object)
+
+    def _update_annotation_object(self):
+        """Internal: Update the annotation object mesh and attributes"""
+        # re-create object if not present
+        self._create_annotation_object()
+        # get the geometry from all annotations
+        geometry = self._draw_annotations(get_geometry=True)
+        # update the mesh
+        self.bob.new_from_pydata(
+            vertices=geometry["vertices"],
+            edges=geometry["edges"],
+        )
+        if len(geometry["edges"]) > 0:
+            # add the Color named attribute for line color
+            self.bob.store_named_attribute(
+                np.array(geometry["color"]),
+                name="Color",
+                atype=db.AttributeTypes.FLOAT_COLOR,
+                domain=db.AttributeDomains.EDGE,
+            )
+            # add a thickness named attribute for line thickness
+            self.bob.store_named_attribute(
+                np.array(geometry["thickness"]),
+                name="thickness",
+                atype=db.AttributeTypes.FLOAT,
+                domain=db.AttributeDomains.EDGE,
+            )

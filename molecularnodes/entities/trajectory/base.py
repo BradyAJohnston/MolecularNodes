@@ -630,6 +630,8 @@ class Trajectory(MolecularEntity):
         self._update_positions(frame)
         self._update_selections()
         self._update_calculations()
+        # update annotation object
+        self.annotations._update_annotation_object()
 
     def _position_at_frame(self, frame: int) -> np.ndarray:
         "Return the atom positions at the given universe frame number"

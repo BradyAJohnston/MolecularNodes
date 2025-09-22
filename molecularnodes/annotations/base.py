@@ -573,6 +573,20 @@ class BaseAnnotation(metaclass=ABCMeta):
         """Internal: Draw line 3D or 2D"""
         if v1 is None or v2 is None:
             return
+
+        if is3d and self.geometry is not None:
+            geometry = self.geometry
+            i = len(geometry["vertices"])
+            # add the ends of line as vertices
+            geometry["vertices"].append(Vector(v1) * self._world_scale)
+            geometry["vertices"].append(Vector(v2) * self._world_scale)
+            # add an edge
+            geometry["edges"].append((i, i + 1))
+            params = _get_params(self.interface, overrides)
+            # add resolved params to be added as attributes
+            geometry["color"].append(params.mesh_color)
+            geometry["thickness"].append(params.mesh_thickness)
+
         self._draw_arrow_line(
             v1, v2, v1_arrow, v2_arrow, is3d=is3d, overrides=overrides
         )
@@ -639,6 +653,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         if v1 is None or v2 is None:
             return
         params = _get_params(self.interface, overrides)
+        if params.line_mesh and not params.line_overlay:
+            # only draw overlays when enabled in mesh mode
+            return
         rgba = params.line_color
         line_width = params.line_width * self._scale
         if self._render_mode:
