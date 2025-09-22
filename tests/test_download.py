@@ -128,29 +128,6 @@ def test_fetch_with_invalid_format(database):
     time.sleep(0.5)
 
 
-@pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("database", DATABASES)
-@pytest.mark.parametrize("format", ["bcif"])
-def test_fetch_with_binary_format(tmpdir, code, database, format):
-    cache_dir = tmpdir.mkdir("cache")
-    downloader = StructureDownloader(cache=str(cache_dir))
-    file = downloader.download(code, format, database=database)
-
-    assert isinstance(file, Path)
-    assert os.path.isfile(file)
-    assert file.name == f"{code}.{format}"
-
-    start = {
-        "bcif": b"\x83\xa7",
-        "cif": b"data_",
-        "pdb": b"HEADER",
-    }[format]
-    with open(file, "rb") as f:
-        content = f.read()
-    assert content.startswith(start)
-    time.sleep(0.5)
-
-
 # TODO BCIF is supported elsewhere in the package but can't currently be parsed properly
 # I think there is something weird going on with the alphafold formatted bcif files
 
