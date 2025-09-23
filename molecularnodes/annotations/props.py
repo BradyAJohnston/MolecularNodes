@@ -260,15 +260,15 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         min=0.0,
     )  # type: ignore
 
-    arrow_size: IntProperty(
+    arrow_size: FloatProperty(
         name="Arrow Size",
         description="Arrow size",
-        default=16,
+        default=0.25,
         min=0,
         update=_update_annotation_object,
     )  # type: ignore
 
-    pointer_length: IntProperty(
+    pointer_length: FloatProperty(
         name="Pointer Length",
         description="Pointer length",
         default=0,

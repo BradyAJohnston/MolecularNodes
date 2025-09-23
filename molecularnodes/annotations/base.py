@@ -635,8 +635,8 @@ class BaseAnnotation(metaclass=ABCMeta):
     ) -> tuple:
         """Internal: Get arrow end point positions"""
         params = _get_params(self.interface, overrides)
-        arrow_size = params.arrow_size * self._scale
-        v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), arrow_size)
+        d = self.distance(v1, v2) * params.arrow_size
+        v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), d)
         vi = (v[0] - v1[0], v[1] - v1[1])
         va = (
             int(vi[0] * cos(self._rad45) - vi[1] * sin(self._rad45) + v1[0]),

@@ -29,8 +29,8 @@ class AnnotationInterface:
     offset_y: float
     line_color: np.ndarray | list | tuple
     line_width: float
-    arrow_size: int
-    pointer_length: int
+    arrow_size: float
+    pointer_length: float
     line_mesh: bool
     line_overlay: bool
     mesh_color: np.ndarray | list | tuple

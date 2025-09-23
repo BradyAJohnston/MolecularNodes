@@ -134,7 +134,6 @@ class COM(TrajectoryAnnotation):
         params = self.interface
         # show a default pointer
         params.pointer_length = 2
-        params.arrow_size = 10
 
     def validate(self) -> bool:
         params = self.interface
@@ -186,7 +185,7 @@ class COMDistance(TrajectoryAnnotation):
 
     def defaults(self) -> None:
         params = self.interface
-        params.arrow_size = 10
+        params.arrow_size = 0.1
 
     def validate(self) -> bool:
         params = self.interface
@@ -255,7 +254,7 @@ class CanonicalDihedrals(TrajectoryAnnotation):
 
     def defaults(self) -> None:
         params = self.interface
-        params.arrow_size = 8
+        params.arrow_size = 10.0
         params.mesh_thickness = 0.1
 
     def validate(self) -> bool:

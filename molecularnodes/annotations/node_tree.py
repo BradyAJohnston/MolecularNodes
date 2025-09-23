@@ -81,18 +81,31 @@ def annotations_node_tree():
     )
     # group_input.Geometry -> mesh_to_curve.Mesh
     node_group.links.new(group_input.outputs["Geometry"], mesh_to_curve.inputs["Mesh"])
-    # mesh_to_curve.Curve -> set_curve_radius.Curve
-    node_group.links.new(
-        mesh_to_curve.outputs["Curve"], set_curve_radius.inputs["Curve"]
-    )
-    # thickness_attribute.Attribute -> set_curve_radius.Radius
-    node_group.links.new(
-        thickness_attribute.outputs["Attribute"], set_curve_radius.inputs["Radius"]
-    )
-    # set_curve_radius.Curve -> curve_to_mesh.Curve
-    node_group.links.new(
-        set_curve_radius.outputs["Curve"], curve_to_mesh.inputs["Curve"]
-    )
+    if bpy.app.version >= (4, 5, 0):
+        # From Blender 4.5.x onwards, need to use Scale input of Curve to Mesh
+        # remove set_curve_radius node
+        node_group.nodes.remove(set_curve_radius)
+        # mesh_to_curve.Curve -> curve_to_mesh.Curve
+        node_group.links.new(
+            mesh_to_curve.outputs["Curve"], curve_to_mesh.inputs["Curve"]
+        )
+        # thickness_attribute.Attribute -> curve_to_mesh.Scale
+        node_group.links.new(
+            thickness_attribute.outputs["Attribute"], curve_to_mesh.inputs["Scale"]
+        )
+    else:
+        # mesh_to_curve.Curve -> set_curve_radius.Curve
+        node_group.links.new(
+            mesh_to_curve.outputs["Curve"], set_curve_radius.inputs["Curve"]
+        )
+        # thickness_attribute.Attribute -> set_curve_radius.Radius
+        node_group.links.new(
+            thickness_attribute.outputs["Attribute"], set_curve_radius.inputs["Radius"]
+        )
+        # set_curve_radius.Curve -> curve_to_mesh.Curve
+        node_group.links.new(
+            set_curve_radius.outputs["Curve"], curve_to_mesh.inputs["Curve"]
+        )
     # curve_circle.Curve -> curve_to_mesh.Profile Curve
     node_group.links.new(
         curve_circle.outputs["Curve"], curve_to_mesh.inputs["Profile Curve"]
