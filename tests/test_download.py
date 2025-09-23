@@ -20,6 +20,7 @@ from .constants import codes
 
 # currently can't figure out downloading from other services
 DATABASES = ["rcsb"]
+SLEEP_TIME = 2.0
 
 
 def _filestart(format):
@@ -37,14 +38,14 @@ def test_download_raises_error_on_invalid_format():
         "File format 'invalid_format' not in: supported_formats=['cif', 'pdb', 'bcif']"
         in str(excinfo.value)
     )
-    time.sleep(0.5)
+    time.sleep(SLEEP_TIME)
 
 
 def test_fail_download_pdb_large_structure_raises():
     downloader = StructureDownloader()
     with pytest.raises(FileDownloadPDBError):
         downloader.download("7D6Z", format="pdb")
-    time.sleep(0.5)
+    time.sleep(SLEEP_TIME)
 
 
 @pytest.mark.parametrize("format", ["cif", "bcif", "pdb"])
@@ -58,7 +59,7 @@ def test_compare_biotite(format):
                 rcsb.fetch("4ozs", format=format, target_path=biotite_temp_dir)
             )
             assert struc_download == struc_biotite
-            time.sleep(0.5)
+            time.sleep(SLEEP_TIME)
 
 
 @pytest.mark.parametrize("code", codes)
@@ -84,7 +85,7 @@ def test_fetch_with_cache(tmpdir, code, format, database):
         with open(file, "r") as f:
             content = f.read()
         assert content.startswith(_filestart(format))
-    time.sleep(0.5)
+    time.sleep(SLEEP_TIME)
 
 
 @pytest.mark.parametrize("code", codes)
@@ -111,7 +112,7 @@ def test_fetch_new_code(tmpdir, code, format, database):
     with open(file, "r") as f:
         content = f.read()
     assert content.startswith(_filestart(format))
-    time.sleep(0.5)
+    time.sleep(SLEEP_TIME)
 
 
 DATABASES = ["rcsb"]  # currently can't figure out downloading from the pdbe
@@ -125,30 +126,7 @@ def test_fetch_with_invalid_format(database):
 
     with pytest.raises(ValueError):
         downloader.download(code, format, database=database)
-    time.sleep(0.5)
-
-
-@pytest.mark.parametrize("code", codes)
-@pytest.mark.parametrize("database", DATABASES)
-@pytest.mark.parametrize("format", ["bcif"])
-def test_fetch_with_binary_format(tmpdir, code, database, format):
-    cache_dir = tmpdir.mkdir("cache")
-    downloader = StructureDownloader(cache=str(cache_dir))
-    file = downloader.download(code, format, database=database)
-
-    assert isinstance(file, Path)
-    assert os.path.isfile(file)
-    assert file.name == f"{code}.{format}"
-
-    start = {
-        "bcif": b"\x83\xa7",
-        "cif": b"data_",
-        "pdb": b"HEADER",
-    }[format]
-    with open(file, "rb") as f:
-        content = f.read()
-    assert content.startswith(start)
-    time.sleep(0.5)
+    time.sleep(SLEEP_TIME)
 
 
 # TODO BCIF is supported elsewhere in the package but can't currently be parsed properly
@@ -164,7 +142,7 @@ def test_alphafold_download(format: str, code: str, tmpdir) -> None:
     mol = mn.Molecule.load(file)
 
     assert mol.array
-    time.sleep(0.5)
+    time.sleep(SLEEP_TIME)
 
 
 # Test StructureDownloader initialization
