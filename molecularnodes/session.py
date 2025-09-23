@@ -139,8 +139,11 @@ class MNSession:
             i for i, entity in enumerate(entities) if entity.name not in self.entities
         ]
         if remove_indices:
-            for i in remove_indices:
-                entities.remove(i)
+            # remove indices in the reverse sorted order for correctness
+            reversed_indices = sorted(remove_indices, reverse=True)
+            for i in reversed_indices:
+                if i < len(entities):
+                    entities.remove(i)
             props.entities_active_index = len(entities) - 1
 
     @property
@@ -203,6 +206,9 @@ class MNSession:
             raise ValueError(f"No entity with UUID '{uuid}'")
         entity = self.entities[uuid]
         bpy.data.objects.remove(entity.object, do_unlink=True)
+        if hasattr(entity, "annotations"):
+            if entity.annotations.bob:
+                bpy.data.objects.remove(entity.annotations.bob.object, do_unlink=True)
         self.remove_entity(uuid)
 
     def add_trajectory(
