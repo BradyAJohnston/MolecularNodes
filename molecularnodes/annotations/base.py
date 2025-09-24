@@ -141,6 +141,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        if self.geometry is not None:
+            return
         self._draw_text(pos_3d, text, is3d=True, overrides=overrides)
 
     def draw_text_2d_norm(
@@ -161,6 +163,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        if self.geometry is not None:
+            return
         if pos_2d is None:
             return
         for comp in pos_2d:
@@ -209,12 +213,16 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        if self.geometry is not None:
+            return
         self._draw_text(pos_2d, text, is3d=False, overrides=overrides)
 
     def _draw_text(
         self, pos: Vector, text: str, is3d: bool = False, overrides: dict = None
     ) -> None:
         """Internal: Draw text 3D or 2D"""
+        if self.geometry is not None:
+            return
         if pos is None:
             return
         if not isinstance(pos, Vector):
@@ -779,6 +787,8 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     def _draw_line_2d(self, v1: Vector, v2: Vector, overrides: dict = None) -> None:
         """Internal: Draw a line between two 2D points"""
+        if self.geometry is not None:
+            return
         if v1 is None or v2 is None:
             return
         params = _get_params(self.interface, overrides)
