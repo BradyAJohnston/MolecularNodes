@@ -1,4 +1,5 @@
 import bpy
+from ..nodes.material import append_material
 
 
 def annotations_node_tree():
@@ -51,8 +52,10 @@ def annotations_node_tree():
     # node Set Material
     set_material = node_group.nodes.new("GeometryNodeSetMaterial")
     set_material.name = "Set Material"
-    if "MN Default" in bpy.data.materials:
-        set_material.inputs["Material"].default_value = bpy.data.materials["MN Default"]
+    material = "MN Default"
+    if material not in bpy.data.materials:
+        append_material(material)
+    set_material.inputs["Material"].default_value = bpy.data.materials[material]
 
     # Set locations
     group_input.location = (-340.0, 0.0)

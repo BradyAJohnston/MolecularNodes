@@ -1,5 +1,6 @@
 import bpy
 import MDAnalysis as mda
+import numpy as np
 import pytest
 import molecularnodes as mn
 from .constants import data_dir
@@ -13,10 +14,6 @@ class TestAnnotations:
         topo = data_dir / "md_ppr/box.gro"
         traj = data_dir / "md_ppr/first_5_frames.xtc"
         return mda.Universe(topo, traj)
-
-    @pytest.fixture(scope="module")
-    def session(self):
-        return mn.session.get_session()
 
     @pytest.fixture(scope="module")
     def density_file(self):
@@ -97,7 +94,7 @@ class TestAnnotations:
         assert hasattr(manager, "add_label_3d")
         assert callable(getattr(manager, "add_label_3d"))
 
-    def test_trajectory_annotations_registration(self, universe, session):
+    def test_trajectory_annotations_registration(self, universe):
         manager = mn.entities.trajectory.TrajectoryAnnotationManager
 
         # test register exceptions
@@ -166,7 +163,7 @@ class TestAnnotations:
         # test draw
         a1._instance.draw()
 
-    def test_trajectory_annotation_lifecycle(self, universe, session):
+    def test_trajectory_annotation_lifecycle(self, universe):
         t1 = mn.Trajectory(universe)
         # test annotation atom_info add
         assert len(t1.annotations._interfaces) == 0
@@ -237,7 +234,7 @@ class TestAnnotations:
         with pytest.raises(ValueError):
             t1.annotations._remove_annotation_by_uuid("InvalidUUID")
 
-    def test_annotation_ops(self, universe, session):
+    def test_annotation_ops(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # add annotation operator
@@ -251,7 +248,7 @@ class TestAnnotations:
         )
         assert len(t1.annotations) == 0
 
-    def test_trajectory_annotation_atom_info(self, universe, session):
+    def test_trajectory_annotation_atom_info(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults
@@ -274,7 +271,7 @@ class TestAnnotations:
         with pytest.raises(ValueError):
             t1.annotations.add_atom_info(selection=1)
 
-    def test_trajectory_annotation_com(self, universe, session):
+    def test_trajectory_annotation_com(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults
@@ -297,7 +294,7 @@ class TestAnnotations:
         with pytest.raises(ValueError):
             t1.annotations.add_com(selection=1)
 
-    def test_trajectory_annotation_com_distance(self, universe, session):
+    def test_trajectory_annotation_com_distance(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults
@@ -324,7 +321,7 @@ class TestAnnotations:
         with pytest.raises(ValueError):
             t1.annotations.add_com_distance(selection1=1, selection2=2)
 
-    def test_trajectory_annotation_canonical_dihedrals(self, universe, session):
+    def test_trajectory_annotation_canonical_dihedrals(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # test defaults - needs resid input
@@ -341,7 +338,7 @@ class TestAnnotations:
         # test change of resid through API
         a1.resid = 2
 
-    def test_trajectory_annotation_universe_info(self, universe, session):
+    def test_trajectory_annotation_universe_info(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_universe_info()
@@ -365,20 +362,20 @@ class TestAnnotations:
         d1.annotations.add_grid_axes()
         assert len(d1.annotations) == 1
 
-    def test_common_annotation_label_2d(self, universe, session):
+    def test_common_annotation_label_2d(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_label_2d(text="2D Text", location=(0.25, 0.75))
         assert len(t1.annotations) == 1
 
-    def test_common_annotation_label_3d(self, universe, session):
+    def test_common_annotation_label_3d(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_label_3d(text="3D Text", location=(0.25, 0.5, 0.75))
         assert len(t1.annotations) == 1
 
     @pytest.mark.skip(reason="This currently fails on MacOS")
-    def test_annotations_render_image(self, universe, session):
+    def test_annotations_render_image(self, universe):
         assert "mn_annotations" not in bpy.data.images
         canvas = mn.Canvas(resolution=(192, 108))
         canvas.engine = "CYCLES"  # Only works for this
@@ -387,3 +384,46 @@ class TestAnnotations:
         t1.annotations.add_com(selection="resid 1")
         bpy.ops.render.render()
         assert mn.scene.compositor.annotations_image in bpy.data.images
+
+    def test_line_mesh(self, universe):
+        t = mn.Trajectory(universe, name="TestUniverse")
+        # test automatic annotation object creation
+        name = "MN_an_TestUniverse"
+        assert name not in bpy.data.objects
+        a = t.annotations.add_com_distance(selection1="resid 1", selection2="resid 2")
+        assert name in bpy.data.objects
+        # test parent
+        assert bpy.data.objects[name].parent == t.object
+        # verify default material appended
+        assert "MN Default" in bpy.data.materials
+        # test annotation object creation during update (1)
+        bpy.data.objects.remove(bpy.data.objects[name], do_unlink=True)
+        assert name not in bpy.data.objects
+        t.annotations.visible = True
+        assert name in bpy.data.objects
+        # test annotation object creation during update (2)
+        bpy.data.objects.remove(bpy.data.objects[name], do_unlink=True)
+        assert name not in bpy.data.objects
+        a.visible = True
+        assert name in bpy.data.objects
+        # test line_mesh enable / disable
+        # test no vertices when disabled
+        assert not bpy.data.objects[name].data.vertices
+        # test vertices present when enabled
+        a.line_mesh = True
+        assert bpy.data.objects[name].data.vertices
+        # test attributes (defaults)
+        thickness = t.annotations.bob.named_attribute("thickness")
+        color = t.annotations.bob.named_attribute("Color")
+        # verify single line with arrows at both ends - 5 edges
+        assert len(thickness) == 5
+        assert len(color) == 5
+        assert np.all(thickness == 1.0)
+        assert np.all(color == (1.0, 1.0, 1.0, 1.0))
+        # test attribute updates
+        a.mesh_thickness = 0.5
+        a.mesh_color = (0.0, 1.0, 0.0, 1.0)
+        thickness = t.annotations.bob.named_attribute("thickness")
+        color = t.annotations.bob.named_attribute("Color")
+        assert np.all(thickness == 0.5)
+        assert np.all(color == (0.0, 1.0, 0.0, 1.0))

@@ -455,7 +455,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         Distance between two vectors
 
-        Paramaters
+        Parameters
         ----------
         v1: Vector
             A 3D or 2D vector or tuple
@@ -485,8 +485,8 @@ class BaseAnnotation(metaclass=ABCMeta):
         Draw a circle around a 3D point in the plane perpendicular to the
         given normal
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         center: Vector
             A 3D position vector of the center
 
@@ -536,9 +536,23 @@ class BaseAnnotation(metaclass=ABCMeta):
         for i in range(n_steps):
             p2 = mat_trans2 @ mat_rot @ mat_trans1 @ p1
             if i == 0 and cc_arrow:
-                self._draw_line(p1, p2, v1_arrow=True, is3d=True, overrides=overrides)
+                self._draw_line(
+                    p1,
+                    p2,
+                    v1_arrow=True,
+                    arrow_plane_pt=start,
+                    is3d=True,
+                    overrides=overrides,
+                )
             elif i == n_steps - 1 and c_arrow:
-                self._draw_line(p1, p2, v2_arrow=True, is3d=True, overrides=overrides)
+                self._draw_line(
+                    p1,
+                    p2,
+                    v2_arrow=True,
+                    arrow_plane_pt=start,
+                    is3d=True,
+                    overrides=overrides,
+                )
             else:
                 self._draw_line(p1, p2, is3d=True, overrides=overrides)
             p1 = p2.copy()
@@ -567,28 +581,41 @@ class BaseAnnotation(metaclass=ABCMeta):
         mid_text: str = None,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
+        arrow_plane_pt: Vector = None,
         is3d: bool = False,
         overrides: dict = None,
     ) -> None:
         """Internal: Draw line 3D or 2D"""
         if v1 is None or v2 is None:
             return
-
+        # convert to vectors from here on
+        if not isinstance(v1, Vector):
+            v1 = Vector(v1)
+        if not isinstance(v2, Vector):
+            v2 = Vector(v2)
         if is3d and self.geometry is not None:
-            geometry = self.geometry
-            i = len(geometry["vertices"])
-            # add the ends of line as vertices
-            geometry["vertices"].append(Vector(v1) * self._world_scale)
-            geometry["vertices"].append(Vector(v2) * self._world_scale)
-            # add an edge
-            geometry["edges"].append((i, i + 1))
-            params = _get_params(self.interface, overrides)
-            # add resolved params to be added as attributes
-            geometry["color"].append(params.mesh_color)
-            geometry["thickness"].append(params.mesh_thickness)
+            # add line to geometry
+            self._add_line_to_geometry(v1, v2, overrides=overrides)
+            # add arrow ends to geometry
+            if arrow_plane_pt is None:
+                arrow_plane_pt = self._get_a_normal_plane_point(v2 - v1)
+            if v1_arrow:
+                self._add_arrow_end_to_geometry(
+                    v1, v2, arrow_plane_pt, overrides=overrides
+                )
+            if v2_arrow:
+                self._add_arrow_end_to_geometry(
+                    v2, v1, arrow_plane_pt, overrides=overrides
+                )
 
         self._draw_arrow_line(
-            v1, v2, v1_arrow, v2_arrow, is3d=is3d, overrides=overrides
+            v1,
+            v2,
+            v1_arrow,
+            v2_arrow,
+            arrow_plane_pt=arrow_plane_pt,
+            is3d=is3d,
+            overrides=overrides,
         )
         if v1_text is not None:
             self._draw_text(v1, v1_text, is3d=is3d, overrides=overrides)
@@ -598,12 +625,50 @@ class BaseAnnotation(metaclass=ABCMeta):
             mid = (v1 + v2) / 2
             self._draw_text(mid, mid_text, is3d=is3d, overrides=overrides)
 
+    def _add_line_to_geometry(
+        self,
+        v1: Vector,
+        v2: Vector,
+        overrides: dict = None,
+    ):
+        if self.geometry is None:
+            return
+        geometry = self.geometry
+        i = len(geometry["vertices"])
+        # add the ends of line as vertices
+        geometry["vertices"].append(v1 * self._world_scale)
+        geometry["vertices"].append(v2 * self._world_scale)
+        # add an edge
+        geometry["edges"].append((i, i + 1))
+        params = _get_params(self.interface, overrides)
+        # add resolved params to be added as attributes
+        geometry["color"].append(params.mesh_color)
+        geometry["thickness"].append(params.mesh_thickness)
+
+    def _add_arrow_end_to_geometry(
+        self,
+        v1: Vector,
+        v2: Vector,
+        arrow_plane_pt: Vector,
+        overrides: dict = None,
+    ):
+        if self.geometry is None:
+            return
+        # get arrow end points in 3d
+        va, vb = self._get_arrow_end_points_3d(
+            v1, v2, arrow_plane_pt, overrides=overrides
+        )
+        # add arrow lines to geometry
+        self._add_line_to_geometry(v1, va, overrides=overrides)
+        self._add_line_to_geometry(v1, vb, overrides=overrides)
+
     def _draw_arrow_line(
         self,
         v1: Vector,
         v2: Vector,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
+        arrow_plane_pt: Vector = None,
         is3d: bool = False,
         overrides: dict = None,
     ) -> None:
@@ -617,23 +682,87 @@ class BaseAnnotation(metaclass=ABCMeta):
             v2_2d = self._get_2d_point(v2)
             if v1_2d is None or v2_2d is None:
                 return
+            if arrow_plane_pt is None:
+                arrow_plane_pt = self._get_a_normal_plane_point(v2 - v1)
         # actual line
         self._draw_line_2d(v1_2d, v2_2d, overrides=overrides)
+        # draw arrows
         if v1_arrow:
-            # v1 arrow lines
-            va, vb = self._get_arrow_end_points(v1_2d, v2_2d, overrides=overrides)
-            self._draw_line_2d(v1_2d, va, overrides=overrides)
-            self._draw_line_2d(v1_2d, vb, overrides=overrides)
+            self._draw_arrow(v1, v2, v1_2d, v2_2d, arrow_plane_pt, is3d, overrides)
         if v2_arrow:
-            # v2 arrow lines
-            va, vb = self._get_arrow_end_points(v2_2d, v1_2d, overrides=overrides)
-            self._draw_line_2d(v2_2d, va, overrides=overrides)
-            self._draw_line_2d(v2_2d, vb, overrides=overrides)
+            self._draw_arrow(v2, v1, v2_2d, v1_2d, arrow_plane_pt, is3d, overrides)
 
-    def _get_arrow_end_points(
+    def _draw_arrow(
+        self,
+        v1: Vector,
+        v2: Vector,
+        v1_2d: Vector,
+        v2_2d: Vector,
+        arrow_plane_pt: Vector = None,
+        is3d: bool = False,
+        overrides: dict = None,
+    ) -> None:
+        params = _get_params(self.interface, overrides)
+        draw_3d_arrow_overlay = False
+        if params.line_mesh and params.line_overlay:
+            draw_3d_arrow_overlay = True
+        # 3d or 2d arrow ends based on mode
+        if is3d and draw_3d_arrow_overlay:
+            va, vb = self._get_arrow_end_points_3d(
+                v1, v2, arrow_plane_pt, overrides=overrides
+            )
+            # get the 2d points of the arrow ends for overlay
+            va = self._get_2d_point(va)
+            vb = self._get_2d_point(vb)
+            if va is None or vb is None:
+                return
+        else:
+            va, vb = self._get_arrow_end_points_2d(v1_2d, v2_2d, overrides=overrides)
+        # draw the arrow ends
+        self._draw_line_2d(v1_2d, va, overrides=overrides)
+        self._draw_line_2d(v1_2d, vb, overrides=overrides)
+
+    def _get_arrow_end_points_3d(
+        self,
+        v1: Vector,
+        v2: Vector,
+        arrow_plane_pt: Vector = None,
+        overrides: dict = None,
+    ) -> tuple:
+        """Internal: Get arrow end point positions 3D"""
+        if arrow_plane_pt is None:
+            arrow_plane_pt = self._get_a_normal_plane_point(v2 - v1)
+        # position vectors in arrow plane
+        pv1 = v1 - arrow_plane_pt
+        pv2 = v2 - arrow_plane_pt
+        # calculate rotation axis
+        ra = pv1.cross(pv2)
+        ra.normalize()
+        # use Rodrigues' Rotation Formula
+        # https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+        v = v2 - v1
+        # +45 degrees direction vector
+        dva = (
+            v * cos(self._rad45)
+            + (ra.cross(v) * sin(self._rad45))
+            + (ra * ra.dot(v) * (1 - cos(self._rad45)))
+        )
+        dva.normalize()
+        # -45 degrees direction vector
+        dvb = (
+            v * cos(-1 * self._rad45)
+            + (ra.cross(v) * sin(-1 * self._rad45))
+            + (ra * ra.dot(v) * (1 - cos(-1 * self._rad45)))
+        )
+        dvb.normalize()
+        params = _get_params(self.interface, overrides)
+        d = self.distance(v1, v2) * params.arrow_size
+        return (v1 + (dva * d), v1 + (dvb * d))
+
+    def _get_arrow_end_points_2d(
         self, v1: Vector, v2: Vector, overrides: dict = None
     ) -> tuple:
-        """Internal: Get arrow end point positions"""
+        """Internal: Get arrow end point positions 2D"""
         params = _get_params(self.interface, overrides)
         d = self.distance(v1, v2) * params.arrow_size
         v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), d)
