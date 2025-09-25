@@ -1,5 +1,4 @@
 import bpy
-from ..nodes.material import append_material
 
 
 def annotations_node_tree():
@@ -49,38 +48,46 @@ def annotations_node_tree():
     curve_to_mesh.name = "Curve to Mesh"
     curve_to_mesh.inputs["Fill Caps"].default_value = True
 
-    # node Set Material
-    set_material = node_group.nodes.new("GeometryNodeSetMaterial")
-    set_material.name = "Set Material"
-    material = "MN Default"
-    if material not in bpy.data.materials:
-        append_material(material)
-    set_material.inputs["Material"].default_value = bpy.data.materials[material]
+    # node Join Geometry
+    join_geometry = node_group.nodes.new("GeometryNodeJoinGeometry")
+    join_geometry.name = "Join Geometry"
+
+    # node Set Material Index
+    set_material_index = node_group.nodes.new("GeometryNodeSetMaterialIndex")
+    set_material_index.name = "Set Material Index"
+
+    # node Material Slot Attribute
+    material_slot_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    material_slot_attribute.name = "Named Attribute"
+    material_slot_attribute.data_type = "INT"
+    # Name
+    material_slot_attribute.inputs["Name"].default_value = "material_slot_index"
 
     # Set locations
     group_input.location = (-340.0, 0.0)
-    group_output.location = (560.0, 0.0)
+    group_output.location = (740.0, 0.0)
     mesh_to_curve.location = (-160.0, 0.0)
     set_curve_radius.location = (20.0, 0.0)
     thickness_attribute.location = (-160.0, -120.0)
     curve_circle.location = (20.0, -140.0)
     curve_to_mesh.location = (200.0, 0.0)
-    set_material.location = (380.0, 0.0)
-
-    # Set dimensions
-    group_input.width, group_input.height = 140.0, 100.0
-    group_output.width, group_output.height = 140.0, 100.0
-    mesh_to_curve.width, mesh_to_curve.height = 140.0, 100.0
-    set_curve_radius.width, set_curve_radius.height = 140.0, 100.0
-    thickness_attribute.width, thickness_attribute.height = 140.0, 100.0
-    curve_circle.width, curve_circle.height = 140.0, 100.0
-    curve_to_mesh.width, curve_to_mesh.height = 140.0, 100.0
-    set_material.width, set_material.height = 140.0, 100.0
+    join_geometry.location = (380.0, 0.0)
+    set_material_index.location = (560.0, 0.0)
+    material_slot_attribute.location = (380.0, -120.0)
 
     # initialize links
-    # set_material.Geometry -> group_output.Geometry
+    # set_material_index.Geometry -> group_output.Geometry
     node_group.links.new(
-        set_material.outputs["Geometry"], group_output.inputs["Geometry"]
+        set_material_index.outputs["Geometry"], group_output.inputs["Geometry"]
+    )
+    # join_geometry.Geometry -> set_material_index.Geometry
+    node_group.links.new(
+        join_geometry.outputs["Geometry"], set_material_index.inputs["Geometry"]
+    )
+    # material_slot_attribute.Attribute -> set_material_index.Material Index
+    node_group.links.new(
+        material_slot_attribute.outputs["Attribute"],
+        set_material_index.inputs["Material Index"],
     )
     # group_input.Geometry -> mesh_to_curve.Mesh
     node_group.links.new(group_input.outputs["Geometry"], mesh_to_curve.inputs["Mesh"])
@@ -113,6 +120,16 @@ def annotations_node_tree():
     node_group.links.new(
         curve_circle.outputs["Curve"], curve_to_mesh.inputs["Profile Curve"]
     )
-    # curve_to_mesh.Mesh -> set_material.Geometry
-    node_group.links.new(curve_to_mesh.outputs["Mesh"], set_material.inputs["Geometry"])
+    # curve_to_mesh.Mesh -> join_geometry.Geometry
+    node_group.links.new(
+        curve_to_mesh.outputs["Mesh"], join_geometry.inputs["Geometry"]
+    )
+    # group_input.Geometry -> join_geometry.Geometry
+    node_group.links.new(
+        group_input.outputs["Geometry"], join_geometry.inputs["Geometry"]
+    )
+    # curve_to_mesh.Mesh -> join_geometry.Geometry
+    node_group.links.new(
+        curve_to_mesh.outputs["Mesh"], join_geometry.inputs["Geometry"]
+    )
     return node_group

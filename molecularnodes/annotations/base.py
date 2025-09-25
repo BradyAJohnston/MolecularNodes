@@ -141,8 +141,6 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
-        if self.geometry is not None:
-            return
         self._draw_text(pos_3d, text, is3d=True, overrides=overrides)
 
     def draw_text_2d_norm(
@@ -163,7 +161,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
-        if self.geometry is not None:
+        if self.geometry:
             return
         if pos_2d is None:
             return
@@ -213,7 +211,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
-        if self.geometry is not None:
+        if self.geometry:
             return
         self._draw_text(pos_2d, text, is3d=False, overrides=overrides)
 
@@ -221,8 +219,6 @@ class BaseAnnotation(metaclass=ABCMeta):
         self, pos: Vector, text: str, is3d: bool = False, overrides: dict = None
     ) -> None:
         """Internal: Draw text 3D or 2D"""
-        if self.geometry is not None:
-            return
         if pos is None:
             return
         if not isinstance(pos, Vector):
@@ -244,6 +240,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             pos_2d = self._get_2d_point(text_pos)
             if pos_2d is None:
                 return
+        if self.geometry:
+            return
         # draw text at 2D position
         right_alignment_gap = 12
         pos_x, pos_y = pos_2d
@@ -601,7 +599,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             v1 = Vector(v1)
         if not isinstance(v2, Vector):
             v2 = Vector(v2)
-        if is3d and self.geometry is not None:
+        if is3d and self.geometry:
             # add line to geometry
             self._add_line_to_geometry(v1, v2, overrides=overrides)
             # add arrow ends to geometry
@@ -652,6 +650,16 @@ class BaseAnnotation(metaclass=ABCMeta):
         # add resolved params to be added as attributes
         geometry["color"].append(params.mesh_color)
         geometry["thickness"].append(params.mesh_thickness)
+        if params.mesh_material:
+            material = params.mesh_material.name
+            if material in geometry["materials"]:
+                material_slot_index = geometry["materials"][material]
+            else:
+                material_slot_index = len(geometry["materials"])
+                geometry["materials"][material] = material_slot_index
+            geometry["material_slot_index"].append(material_slot_index)
+        else:
+            geometry["material_slot_index"].append(0)
 
     def _add_arrow_end_to_geometry(
         self,
@@ -787,7 +795,7 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     def _draw_line_2d(self, v1: Vector, v2: Vector, overrides: dict = None) -> None:
         """Internal: Draw a line between two 2D points"""
-        if self.geometry is not None:
+        if self.geometry:
             return
         if v1 is None or v2 is None:
             return

@@ -513,6 +513,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             "edges": [],
             "color": [],
             "thickness": [],
+            "materials": {},
+            "material_slot_index": [],
         }
         # all annotations visibilty
         if not self.visible:
@@ -620,6 +622,13 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             vertices=geometry["vertices"],
             edges=geometry["edges"],
         )
+        # add materials to object material slots
+        # clear all slots
+        self.bob.object.data.materials.clear()
+        for material_name in geometry["materials"]:
+            material = bpy.data.materials[material_name]
+            # add slot
+            self.bob.object.data.materials.append(material)
         if len(geometry["edges"]) > 0:
             # add the Color named attribute for line color
             self.bob.store_named_attribute(
@@ -633,5 +642,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 np.array(geometry["thickness"]),
                 name="thickness",
                 atype=db.AttributeTypes.FLOAT,
+                domain=db.AttributeDomains.EDGE,
+            )
+            # add material_slot_index named attribute
+            self.bob.store_named_attribute(
+                np.array(geometry["material_slot_index"]),
+                name="material_slot_index",
+                atype=db.AttributeTypes.INT,
                 domain=db.AttributeDomains.EDGE,
             )
