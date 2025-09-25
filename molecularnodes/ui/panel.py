@@ -1020,17 +1020,38 @@ class MN_PT_Annotations(bpy.types.Panel):
         header.label(text="Options")
 
         if panel:
+            line_mesh_props = [
+                "line_overlay",
+                "mesh_color",
+                "mesh_thickness",
+                "mesh_material",
+            ]
             for prop in item.bl_rna.properties:
                 if not prop.is_runtime:
                     continue
                 if prop.identifier in ("label", "type", "visible"):
                     continue
-                if prop.type == "POINTER":
+                if prop.type == "POINTER" and prop.identifier != "mesh_material":
                     continue
-                row = panel.row()
-                row.prop(item, prop.identifier)
-                if prop.identifier == "text_falloff":
-                    row.enabled = item.text_depth
+                if prop.identifier not in line_mesh_props:
+                    if prop.identifier == "line_mesh":
+                        # create a new panel for line mesh props
+                        mesh_header, mesh_panel = panel.panel(
+                            "line_mesh", default_closed=False
+                        )
+                        mesh_header.prop(item, prop.identifier)
+                    else:
+                        # all other properties
+                        row = panel.row()
+                        row.prop(item, prop.identifier)
+                        if prop.identifier == "text_falloff":
+                            row.enabled = item.text_depth
+                else:
+                    if mesh_panel:
+                        # line mesh props
+                        row = mesh_panel.row()
+                        row.prop(item, prop.identifier)
+                        row.enabled = item.line_mesh
 
         row = box.row()
 
