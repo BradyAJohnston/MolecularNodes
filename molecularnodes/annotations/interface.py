@@ -32,9 +32,10 @@ class AnnotationInterface:
     arrow_size: float
     pointer_length: float
     line_mesh: bool
-    line_overlay: bool
-    mesh_color: np.ndarray | list | tuple
+    line_mesh_overlay: bool
+    mesh_wireframe: bool
     mesh_thickness: float
+    mesh_color: np.ndarray | list | tuple
     mesh_material: str | bpy.types.Material
 
     def __init__(self, instance):

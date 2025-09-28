@@ -32,6 +32,12 @@ def annotations_node_tree():
     set_curve_radius = node_group.nodes.new("GeometryNodeSetCurveRadius")
     set_curve_radius.name = "Set Curve Radius"
 
+    # node Is Line Attribute
+    is_line_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    is_line_attribute.name = "Is Line Attribute"
+    is_line_attribute.data_type = "BOOLEAN"
+    is_line_attribute.inputs["Name"].default_value = "is_line"
+
     # node Thickness Attribute
     thickness_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
     thickness_attribute.name = "Thickness Attribute"
@@ -63,22 +69,32 @@ def annotations_node_tree():
     # Name
     material_slot_attribute.inputs["Name"].default_value = "material_slot_index"
 
+    # node Set Shade Smooth
+    set_shade_smooth = node_group.nodes.new("GeometryNodeSetShadeSmooth")
+    set_shade_smooth.name = "Set Shade Smooth"
+
     # Set locations
-    group_input.location = (-340.0, 0.0)
-    group_output.location = (740.0, 0.0)
+    group_input.location = (-520.0, 0.0)
+    group_output.location = (920.0, 0.0)
     mesh_to_curve.location = (-160.0, 0.0)
     set_curve_radius.location = (20.0, 0.0)
+    is_line_attribute.location = (-340.0, -120.0)
     thickness_attribute.location = (-160.0, -120.0)
     curve_circle.location = (20.0, -140.0)
     curve_to_mesh.location = (200.0, 0.0)
     join_geometry.location = (380.0, 0.0)
     set_material_index.location = (560.0, 0.0)
     material_slot_attribute.location = (380.0, -120.0)
+    set_shade_smooth.location = (740.0, 0.0)
 
     # initialize links
-    # set_material_index.Geometry -> group_output.Geometry
+    # set_material_index.Geometry -> set_shade_smooth.Geometry
     node_group.links.new(
-        set_material_index.outputs["Geometry"], group_output.inputs["Geometry"]
+        set_material_index.outputs["Geometry"], set_shade_smooth.inputs["Geometry"]
+    )
+    # set_shade_smooth.Geometry -> group_output.Geometry
+    node_group.links.new(
+        set_shade_smooth.outputs["Geometry"], group_output.inputs["Geometry"]
     )
     # join_geometry.Geometry -> set_material_index.Geometry
     node_group.links.new(
@@ -116,6 +132,10 @@ def annotations_node_tree():
         node_group.links.new(
             set_curve_radius.outputs["Curve"], curve_to_mesh.inputs["Curve"]
         )
+    # is_line_attribute.Attribute -> mesh_to_curve.Selection
+    node_group.links.new(
+        is_line_attribute.outputs["Attribute"], mesh_to_curve.inputs["Selection"]
+    )
     # curve_circle.Curve -> curve_to_mesh.Profile Curve
     node_group.links.new(
         curve_circle.outputs["Curve"], curve_to_mesh.inputs["Profile Curve"]

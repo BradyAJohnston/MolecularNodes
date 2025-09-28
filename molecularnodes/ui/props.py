@@ -39,8 +39,9 @@ def _get_entity_visibility(self) -> bool:
 def _set_entity_visibility(self, visible: bool) -> None:
     """set callback for entity visibility property"""
     self["visible"] = visible
-    object = bpy.context.scene.MNSession.get(self.name).object
-    set_object_visibility(object, self.visible)
+    entity = bpy.context.scene.MNSession.get(self.name)
+    set_object_visibility(entity.object, self.visible)
+    entity.annotations._update_annotation_object()
 
 
 def _entities_active_index_callback(self, context: bpy.context) -> None:  # type: ignore

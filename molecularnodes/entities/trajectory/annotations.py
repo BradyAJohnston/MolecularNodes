@@ -389,6 +389,27 @@ class UniverseInfo(TrajectoryAnnotation):
         self.draw_text_2d_norm(params.location, text)
 
 
+class SimulationBox(TrajectoryAnnotation):
+    """
+    Simulation Box of Trajectory (if present)
+
+    """
+
+    annotation_type = "simulation_box"
+
+    def defaults(self) -> None:
+        params = self.interface
+        params.mesh_wireframe = True
+
+    def draw(self) -> None:
+        u = self.trajectory.universe
+        ts = u.trajectory.ts
+        # not all universes have dimensions set
+        if ts.dimensions is not None:
+            a, b, c, alpha, beta, gamma = ts.dimensions
+            self.draw_triclinic_box(a, b, c, alpha, beta, gamma)
+
+
 class Label2D(TrajectoryAnnotation, Label2D):
     """Common Label2D Annotation for all entities"""
 

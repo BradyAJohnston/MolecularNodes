@@ -2,8 +2,11 @@ from abc import ABCMeta, abstractmethod
 from math import cos, radians, sin, sqrt
 from pathlib import Path
 import blf
+import bmesh
 import bpy
 import gpu
+import MDAnalysis as mda
+import numpy as np
 from bpy_extras import object_utils, view3d_utils
 from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
@@ -563,6 +566,255 @@ class BaseAnnotation(metaclass=ABCMeta):
                 self._draw_line(p1, p2, is3d=True, overrides=overrides)
             p1 = p2.copy()
 
+    def draw_sphere(
+        self,
+        location: Vector = (0, 0, 0),
+        radius: float = 1.0,
+        overrides: dict = None,
+    ):
+        """
+        Draw a sphere
+
+        Parameters
+        ----------
+        location: Vector
+            A 3D position vector of the center
+
+        radius: float
+            Radius of the sphere
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        bm = bmesh.new()
+        bmesh.ops.create_icosphere(
+            bm, radius=radius * self._world_scale, subdivisions=4
+        )
+        loc = Matrix.Translation(Vector(location) * self._world_scale)
+        bm.transform(loc)
+        self.draw_bmesh(bm, overrides=overrides)
+        bm.free()
+
+    def draw_cone(
+        self,
+        location: Vector = (0, 0, 0),
+        radius: float = 1.0,
+        height: float = 1.0,
+        axis: Vector = (0, 0, 1),
+        overrides: dict = None,
+    ):
+        """
+        Draw a cone
+
+        Parameters
+        ----------
+        location: Vector
+            A 3D position vector of the base center
+
+        radius: float
+            Radius of the cone
+
+        height: float
+            Height of the cone
+
+        axis: Vector
+            Axis of the cone
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            location,
+            radius1=radius,
+            radius2=0,
+            height=height,
+            axis=axis,
+            overrides=overrides,
+        )
+
+    def draw_cylinder(
+        self,
+        location: Vector = (0, 0, 0),
+        radius: float = 1.0,
+        height: float = 1.0,
+        axis: Vector = (0, 0, 1),
+        overrides: dict = None,
+    ):
+        """
+        Draw a cylinder
+
+        Parameters
+        ----------
+        location: Vector
+            A 3D position vector of the base center
+
+        radius: float
+            Radius of the cylinder
+
+        height: float
+            Height of the cylinder
+
+        axis: Vector
+            Axis of the cylinder
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            location,
+            radius1=radius,
+            radius2=radius,
+            height=height,
+            axis=axis,
+            overrides=overrides,
+        )
+
+    def draw_triclinic_box(
+        self,
+        a: float = 10.0,
+        b: float = 10.0,
+        c: float = 10.0,
+        alpha: float = 90.0,
+        beta: float = 90.0,
+        gamma: float = 90.0,
+        origin: Vector = (0, 0, 0),
+        overrides: dict = None,
+    ):
+        """
+        Draw a triclinic box based on box vector lengths and angles
+
+        Parameters
+        ----------
+
+        a: float
+            Box vector a length
+
+        b: float
+            Box vector b length
+
+        c: float
+            Box vector c length
+
+        alpha: float
+            Angle between box vectors bc
+
+        beta: float
+            Angle between box vectors ac
+
+        gamma: float
+            Angle between box vectors ab
+
+        origin: Vector
+            Origin of the box
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        dimensions = np.array([a, b, c, alpha, beta, gamma], dtype=np.float32)
+        triclinic_vectors = mda.lib.mdamath.triclinic_vectors(dimensions)
+        vo = Vector((0, 0, 0))
+        vx = Vector(triclinic_vectors[0]) * self._world_scale
+        vxy = Vector(triclinic_vectors[1]) * self._world_scale
+        vz = Vector(triclinic_vectors[2]) * self._world_scale
+        vor = vx + vxy
+        bm = bmesh.new()
+        # create the four vertices in the xy plane
+        v1 = bm.verts.new(vo)
+        v2 = bm.verts.new(vx)
+        v3 = bm.verts.new(vor)
+        v4 = bm.verts.new(vxy)
+        # create face in the xy plane
+        bm.verts.ensure_lookup_table()
+        face = bm.faces.new((v1, v2, v3, v4))
+        # extrude face region for new verts
+        ext_geom = bmesh.ops.extrude_face_region(bm, geom=[face])
+        ext_verts = [v for v in ext_geom["geom"] if isinstance(v, bmesh.types.BMVert)]
+        # extrude verts along box vector c
+        bmesh.ops.translate(bm, vec=vz, verts=ext_verts)
+        # translate origin
+        mat = Matrix.Translation(Vector(origin) * self._world_scale)
+        bm.transform(mat)
+        # update face normals
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        # bm.normal_update()
+        self.draw_bmesh(bm, overrides=overrides)
+        bm.free()
+
+    def draw_bmesh(
+        self,
+        bm: bmesh.types.BMesh,
+        overrides: dict = None,
+    ):
+        """
+        Draw a Blender bmesh
+
+        Parameters
+        ----------
+        bm: bmesh.types.BMesh
+            A bmesh object. A copy is made for internal use.
+            Users will have to free the passed in object
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        if not isinstance(bm, bmesh.types.BMesh):
+            raise ValueError("Need a bmesh.types.BMesh object")
+        geometry = self.geometry
+        objects = geometry["objects"]
+        # make a copy of the bmesh which will be freed after
+        # updating the annotation object
+        objects["meshes"].append(bm.copy())
+        # add resolved params to be added as attributes
+        params = _get_params(self.interface, overrides)
+        objects["wireframe"].append(params.mesh_wireframe)
+        objects["thickness"].append(params.mesh_thickness)
+        objects["color"].append(params.mesh_color)
+        self._add_material_to_geometry(objects, params.mesh_material)
+
+    def _draw_cone(
+        self,
+        location: Vector,
+        radius1: float,
+        radius2: float,
+        height: float,
+        axis: Vector = (0, 0, 1),
+        overrides: dict = None,
+    ):
+        """Internal: Common method for cone and cylinder bmesh"""
+        radius1 = radius1 * self._world_scale
+        radius2 = radius2 * self._world_scale
+        height = height * self._world_scale
+        bm = bmesh.new()
+        bmesh.ops.create_cone(
+            bm,
+            cap_ends=True,
+            segments=24,
+            radius1=radius1,
+            radius2=radius2,
+            depth=height,
+        )
+        base_offset = Matrix.Translation(Vector((0, 0, height / 2)))
+        up = Vector((0, 0, 1))
+        rot = up.rotation_difference(axis).to_matrix().to_4x4()
+        loc = Matrix.Translation(Vector(location) * self._world_scale)
+        mat = loc @ rot @ base_offset
+        bm.transform(mat)
+        self.draw_bmesh(bm, overrides=overrides)
+        bm.free()
+
     def _get_a_normal_plane_point(self, normal: Vector):
         """Internal: Get a point in the plane perpendicular to the given normal"""
         # given there are infinite points, pick any standard non zero
@@ -599,7 +851,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             v1 = Vector(v1)
         if not isinstance(v2, Vector):
             v2 = Vector(v2)
-        if is3d and self.geometry:
+        params = _get_params(self.interface, overrides)
+        if is3d and self.geometry and params.line_mesh:
             # add line to geometry
             self._add_line_to_geometry(v1, v2, overrides=overrides)
             # add arrow ends to geometry
@@ -640,26 +893,34 @@ class BaseAnnotation(metaclass=ABCMeta):
         if self.geometry is None:
             return
         geometry = self.geometry
-        i = len(geometry["vertices"])
+        lines = geometry["lines"]
+        i = len(lines["vertices"])
         # add the ends of line as vertices
-        geometry["vertices"].append(v1 * self._world_scale)
-        geometry["vertices"].append(v2 * self._world_scale)
+        lines["vertices"].append(v1 * self._world_scale)
+        lines["vertices"].append(v2 * self._world_scale)
         # add an edge
-        geometry["edges"].append((i, i + 1))
+        lines["edges"].append((i, i + 1))
         params = _get_params(self.interface, overrides)
         # add resolved params to be added as attributes
-        geometry["color"].append(params.mesh_color)
-        geometry["thickness"].append(params.mesh_thickness)
-        if params.mesh_material:
-            material = params.mesh_material.name
-            if material in geometry["materials"]:
-                material_slot_index = geometry["materials"][material]
+        lines["color"].append(params.mesh_color)
+        lines["thickness"].append(params.mesh_thickness)
+        self._add_material_to_geometry(lines, params.mesh_material)
+
+    def _add_material_to_geometry(self, mesh_type, mesh_material):
+        geometry = self.geometry
+        if mesh_material:
+            if isinstance(mesh_material, str):
+                material = mesh_material
             else:
-                material_slot_index = len(geometry["materials"])
-                geometry["materials"][material] = material_slot_index
-            geometry["material_slot_index"].append(material_slot_index)
+                material = mesh_material.name
+            if material in geometry["materials"]:
+                material_index = geometry["materials"][material]
+            else:
+                material_index = len(geometry["materials"])
+                geometry["materials"][material] = material_index
+            mesh_type["material_index"].append(material_index)
         else:
-            geometry["material_slot_index"].append(0)
+            mesh_type["material_index"].append(0)
 
     def _add_arrow_end_to_geometry(
         self,
@@ -720,7 +981,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     ) -> None:
         params = _get_params(self.interface, overrides)
         draw_3d_arrow_overlay = False
-        if params.line_mesh and params.line_overlay:
+        if params.line_mesh and params.line_mesh_overlay:
             draw_3d_arrow_overlay = True
         # 3d or 2d arrow ends based on mode
         if is3d and draw_3d_arrow_overlay:
@@ -800,7 +1061,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         if v1 is None or v2 is None:
             return
         params = _get_params(self.interface, overrides)
-        if params.line_mesh and not params.line_overlay:
+        if params.line_mesh and not params.line_mesh_overlay:
             # only draw overlays when enabled in mesh mode
             return
         rgba = params.line_color

@@ -2,6 +2,7 @@ import functools
 import inspect
 from abc import ABCMeta
 from uuid import uuid1
+import bmesh
 import bpy
 import databpy as db
 import numpy as np
@@ -507,14 +508,23 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         self._render_mode = False
 
     def _draw_annotations(self, get_geometry: bool = False):
-        # geometry of the lines
+        # geometry of lines and bmesh objects
         geometry = {
-            "vertices": [],
-            "edges": [],
-            "color": [],
-            "thickness": [],
+            "lines": {
+                "vertices": [],
+                "edges": [],
+                "thickness": [],
+                "color": [],
+                "material_index": [],
+            },
+            "objects": {
+                "meshes": [],
+                "wireframe": [],
+                "thickness": [],
+                "color": [],
+                "material_index": [],
+            },
             "materials": {},
-            "material_slot_index": [],
         }
         # all annotations visibilty
         if not self.visible:
@@ -556,8 +566,6 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 continue
             interface._instance.geometry = None
             if get_geometry:
-                if not interface.line_mesh:
-                    continue
                 interface._instance.geometry = geometry
             else:
                 # set distance params
@@ -591,16 +599,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             create = True
         if not create:
             return
-        # get the geometry from all annotations
-        geometry = self._draw_annotations(get_geometry=True)
         name = f"MN_an_{self._entity.object.name}"
-        # create an object with geometry
-        object = db.create_object(
-            name=name,
-            collection=coll.mn(),
-            vertices=geometry["vertices"],
-            edges=geometry["edges"],
-        )
+        # create an empty object
+        object = db.create_object(name=name, collection=coll.mn())
         # create geometry nodes modifier
         object.modifiers.new("MN_Annotations", "NODES")
         # attach the annotations node tree
@@ -615,38 +616,117 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """Internal: Update the annotation object mesh and attributes"""
         # re-create object if not present
         self._create_annotation_object()
+        # clear existing geometry
+        self.bob.object.data.clear_geometry()
+        # clear existing material slots
+        self.bob.object.data.materials.clear()
+        # create a new bmesh
+        bm = bmesh.new()
+        # convenience methods
+        add_vert = bm.verts.new
+        add_edge = bm.edges.new
+        add_face = bm.faces.new
+
         # get the geometry from all annotations
         geometry = self._draw_annotations(get_geometry=True)
-        # update the mesh
-        self.bob.new_from_pydata(
-            vertices=geometry["vertices"],
-            edges=geometry["edges"],
-        )
+
+        # edge attributes
+        attr_is_line = []
+        attr_color = []
+        attr_thickness = []
+        attr_material_index = []
+
+        # add lines
+        lines = geometry["lines"]
+        for v in lines["vertices"]:
+            add_vert(v)
+        bm.verts.ensure_lookup_table()
+        for i, (i1, i2) in enumerate(lines["edges"]):
+            add_edge((bm.verts[i1], bm.verts[i2]))
+            # add edge attributes
+            attr_is_line.append(True)
+            attr_color.append(lines["color"][i])
+            attr_thickness.append(lines["thickness"][i])
+            attr_material_index.append(lines["material_index"][i])
+
+        # add bmesh objects
+        # From: https://blender.stackexchange.com/questions/50160/scripting-low-level-join-meshes-elements-hopefully-with-bmesh
+        objects = geometry["objects"]
+        for i, bm_to_add in enumerate(objects["meshes"]):
+            offset = len(bm.verts)
+            # add verts
+            for v in bm_to_add.verts:
+                add_vert(v.co)
+            bm.verts.index_update()
+            bm.verts.ensure_lookup_table()
+            object_wireframe = objects["wireframe"][i]
+            # add faces
+            if not object_wireframe and bm_to_add.faces:
+                for face in bm_to_add.faces:
+                    add_face((bm.verts[i.index + offset] for i in face.verts))
+                bm.faces.index_update()
+            # add edges
+            if bm_to_add.edges:
+                object_color = objects["color"][i]
+                object_material_index = objects["material_index"][i]
+                for edge in bm_to_add.edges:
+                    edge_seq = (bm.verts[i.index + offset] for i in edge.verts)
+                    try:
+                        add_edge(edge_seq)
+                    except ValueError:
+                        # edge exists!
+                        pass
+                    # add edge attributes
+                    if objects["wireframe"][i]:
+                        attr_is_line.append(True)
+                        attr_thickness.append(objects["thickness"][i])
+                    else:
+                        attr_is_line.append(False)
+                        attr_thickness.append(0.0)
+                    attr_color.append(object_color)
+                    attr_material_index.append(object_material_index)
+                bm.edges.index_update()
+                # free bmesh
+                bm_to_add.free()
+
+        # update the object mesh
+        bm.to_mesh(self.bob.object.data)
+        # free bmesh
+        bm.free()
+
         # add materials to object material slots
-        # clear all slots
-        self.bob.object.data.materials.clear()
         for material_name in geometry["materials"]:
             material = bpy.data.materials[material_name]
-            # add slot
+            # add material slot
             self.bob.object.data.materials.append(material)
-        if len(geometry["edges"]) > 0:
-            # add the Color named attribute for line color
+
+        # add edge attributes
+        if len(attr_is_line) > 0:
+            # add the is_line attribute to distinguish lines
             self.bob.store_named_attribute(
-                np.array(geometry["color"]),
+                np.array(attr_is_line),
+                name="is_line",
+                atype=db.AttributeTypes.BOOLEAN,
+                domain=db.AttributeDomains.EDGE,
+            )
+            # add the Color attribute for line color
+            self.bob.store_named_attribute(
+                np.array(attr_color),
                 name="Color",
                 atype=db.AttributeTypes.FLOAT_COLOR,
                 domain=db.AttributeDomains.EDGE,
             )
-            # add a thickness named attribute for line thickness
+            # add a thickness attribute for line thickness
             self.bob.store_named_attribute(
-                np.array(geometry["thickness"]),
+                np.array(attr_thickness),
                 name="thickness",
                 atype=db.AttributeTypes.FLOAT,
                 domain=db.AttributeDomains.EDGE,
             )
-            # add material_slot_index named attribute
+            # add material_slot_index attribute
+            # Note: material_index is a reserved attribute
             self.bob.store_named_attribute(
-                np.array(geometry["material_slot_index"]),
+                np.array(attr_material_index),
                 name="material_slot_index",
                 atype=db.AttributeTypes.INT,
                 domain=db.AttributeDomains.EDGE,

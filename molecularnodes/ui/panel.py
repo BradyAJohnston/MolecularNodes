@@ -1021,10 +1021,7 @@ class MN_PT_Annotations(bpy.types.Panel):
 
         if panel:
             line_mesh_props = [
-                "line_overlay",
-                "mesh_color",
-                "mesh_thickness",
-                "mesh_material",
+                "line_mesh_overlay",
             ]
             for prop in item.bl_rna.properties:
                 if not prop.is_runtime:
@@ -1037,7 +1034,7 @@ class MN_PT_Annotations(bpy.types.Panel):
                     if prop.identifier == "line_mesh":
                         # create a new panel for line mesh props
                         mesh_header, mesh_panel = panel.panel(
-                            "line_mesh", default_closed=False
+                            "line_mesh", default_closed=True
                         )
                         mesh_header.prop(item, prop.identifier)
                     else:

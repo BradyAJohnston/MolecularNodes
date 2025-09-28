@@ -344,6 +344,12 @@ class TestAnnotations:
         t1.annotations.add_universe_info()
         assert len(t1.annotations) == 1
 
+    def test_trajectory_annotation_simulation_box(self, universe):
+        t1 = mn.Trajectory(universe)
+        assert len(t1.annotations) == 0
+        t1.annotations.add_simulation_box()
+        assert len(t1.annotations) == 1
+
     def test_molecule_annotation_molecule_info(self):
         mol = mn.Molecule.load(data_dir / "1cd3.cif")
         assert len(mol.annotations) == 0
@@ -360,6 +366,12 @@ class TestAnnotations:
         d1 = mn.entities.density.load(density_file)
         assert len(d1.annotations) == 0
         d1.annotations.add_grid_axes()
+        assert len(d1.annotations) == 1
+
+    def test_density_annotation_grid_axes_3d(self, density_file):
+        d1 = mn.entities.density.load(density_file)
+        assert len(d1.annotations) == 0
+        d1.annotations.add_grid_axes_3d()
         assert len(d1.annotations) == 1
 
     def test_common_annotation_label_2d(self, universe):

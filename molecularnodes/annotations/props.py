@@ -283,10 +283,25 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         update=_update_annotation_object,
     )  # type: ignore
 
-    line_overlay: BoolProperty(
+    line_mesh_overlay: BoolProperty(
         name="Line Overlay",
         description="Draw overlay lines on top of 3D meshes",
         default=False,
+    )  # type: ignore
+
+    mesh_wireframe: BoolProperty(
+        name="Mesh Wireframe",
+        description="Draw 3D meshes as wireframes",
+        default=False,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_thickness: FloatProperty(
+        name="Mesh Thickness",
+        description="Thickness of the 3D mesh edges",
+        default=1.0,
+        min=0.0,
+        update=_update_annotation_object,
     )  # type: ignore
 
     mesh_color: FloatVectorProperty(
@@ -297,14 +312,6 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         default=(1, 1, 1, 1),
         min=0.0,
         max=1.0,
-        update=_update_annotation_object,
-    )  # type: ignore
-
-    mesh_thickness: FloatProperty(
-        name="Mesh Thickness",
-        description="Mesh thickness",
-        default=1.0,
-        min=0.0,
         update=_update_annotation_object,
     )  # type: ignore
 

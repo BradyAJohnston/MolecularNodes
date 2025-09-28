@@ -169,6 +169,63 @@ class DensityGridAxes(DensityAnnotation):
             )
 
 
+class DensityGridAxes3D(DensityAnnotation):
+    """
+    Density Grid Axes 3D Annotation
+
+    Attributes
+    ----------
+    show_length: bool
+        Whether or not to show the length of the grid axes
+
+    units: str
+        Units to use for length. Default: Å
+
+    """
+
+    annotation_type = "grid_axes_3d"
+
+    show_length: bool = True
+    units: str = "Å"
+
+    def defaults(self) -> None:
+        params = self.interface
+        params.text_depth = False
+        params.mesh_color = (1.0, 1.0, 1.0, 0.5)
+
+    def draw(self) -> None:
+        params = self.interface
+        grid = self.density.grid
+        if grid.origin.size != 3:
+            return
+        origin = grid.origin.copy()
+        if grid.metadata["center"]:
+            origin = -np.array(grid.grid.shape) * 0.5 * grid.delta
+        axes = ["X", "Y", "Z"]
+        for i in range(3):
+            length = grid.grid.shape[i] * grid.delta[i]
+            mid_text = None
+            if params.show_length:
+                mid_text = f"{length:.2f} {params.units}"
+            # cone as arrow end - 10% of axis length
+            cone_height = 0.1 * length
+            cylinder_end = origin.copy()
+            cylinder_end[i] += length - cone_height
+            axis = cylinder_end - origin
+            radius = 0.01 * length
+            # draw axis as a cylinder
+            self.draw_cylinder(origin, radius, length - cone_height, axis)
+            # draw arrow end as a cone
+            self.draw_cone(cylinder_end, radius * 3, cone_height, axis)
+            mid = (origin + cylinder_end) / 2
+            # draw axis length text
+            if mid_text is not None:
+                self.draw_text_3d(mid, mid_text)
+            cylinder_end[i] += cone_height
+            # draw axis name text
+            self.draw_text_3d(cylinder_end, axes[i])
+
+
 class Label2D(DensityAnnotation, Label2D):
     """Common Label2D Annotation for all entities"""
 
