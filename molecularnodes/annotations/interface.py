@@ -37,6 +37,7 @@ class AnnotationInterface:
     mesh_thickness: float
     mesh_color: np.ndarray | list | tuple
     mesh_material: str | bpy.types.Material
+    mesh_shade_smooth: bool
 
     def __init__(self, instance):
         self._instance = instance

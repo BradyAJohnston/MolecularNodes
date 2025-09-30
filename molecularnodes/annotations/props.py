@@ -321,3 +321,10 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         description="Material for 3D line meshes",
         update=_update_annotation_object,
     )  # type: ignore
+
+    mesh_shade_smooth: BoolProperty(
+        name="Mesh Shade Smooth",
+        description="Set Shade Smooth for 3d meshes",
+        default=True,
+        update=_update_annotation_object,
+    )  # type: ignore

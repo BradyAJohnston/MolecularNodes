@@ -202,6 +202,7 @@ class DensityGridAxes3D(DensityAnnotation):
         if grid.metadata["center"]:
             origin = -np.array(grid.grid.shape) * 0.5 * grid.delta
         axes = ["X", "Y", "Z"]
+        colors = [(1, 0, 0, 1), (0, 1, 0, 1), (0, 0, 1, 1)]
         for i in range(3):
             length = grid.grid.shape[i] * grid.delta[i]
             mid_text = None
@@ -214,9 +215,14 @@ class DensityGridAxes3D(DensityAnnotation):
             axis = cylinder_end - origin
             radius = 0.01 * length
             # draw axis as a cylinder
-            self.draw_cylinder(origin, radius, length - cone_height, axis)
+            overrides = {"mesh_color": colors[i]}
+            self.draw_cylinder(
+                origin, radius, length - cone_height, axis, overrides=overrides
+            )
             # draw arrow end as a cone
-            self.draw_cone(cylinder_end, radius * 3, cone_height, axis)
+            self.draw_cone(
+                cylinder_end, radius * 3, cone_height, axis, overrides=overrides
+            )
             mid = (origin + cylinder_end) / 2
             # draw axis length text
             if mid_text is not None:

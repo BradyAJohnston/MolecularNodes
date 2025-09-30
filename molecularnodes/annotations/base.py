@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from math import cos, radians, sin, sqrt
+from math import acos, cos, radians, sin, sqrt
 from pathlib import Path
 import blf
 import bmesh
@@ -750,6 +750,159 @@ class BaseAnnotation(metaclass=ABCMeta):
         self.draw_bmesh(bm, overrides=overrides)
         bm.free()
 
+    def draw_rhombic_dodecahedron(
+        self,
+        d: float = 15,
+        xy_orientation: str = "square",
+        origin: Vector = (0, 0, 0),
+        overrides: dict = None,
+    ):
+        """
+        Draw a rhombic dodecahedron
+
+        d: float
+            Side length (same as distance of face to center)
+
+        xy_orientation: str
+            Orientation of the rhombic dodecahedron on xy plane
+
+        origin: Vector
+            Origin of the box
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        bm = bmesh.new()
+        # vertices of a regular rhombic dodecahedron
+        # 8 vertices of a cube + 6 vertices along face centers
+        # From the 'Extra Mesh Objects' addon with 'Rhombic Dodecahedron' preset
+        vert_coords = [
+            (1, 1, -1),
+            (-1, -1, -1),
+            (-1, 1, 1),
+            (1, -1, 1),
+            (0, 0, -2),
+            (-2, 0, 0),
+            (0, 2, 0),
+            (0, 0, 2),
+            (0, -2, 0),
+            (2, 0, 0),
+            (-1, 1, -1),
+            (1, 1, 1),
+            (1, -1, -1),
+            (-1, -1, 1),
+        ]
+        # add verts to bmesh
+        verts = []
+        for coord in vert_coords:
+            verts.append(bm.verts.new(coord))
+        # add faces to bmesh
+        face_indices = [
+            [0, 4, 10, 6],
+            [0, 6, 11, 9],
+            [0, 9, 12, 4],
+            [1, 5, 10, 4],
+            [1, 4, 12, 8],
+            [1, 8, 13, 5],
+            [2, 6, 10, 5],
+            [2, 5, 13, 7],
+            [2, 7, 11, 6],
+            [3, 9, 11, 7],
+            [3, 7, 13, 8],
+            [3, 8, 12, 9],
+        ]
+        for indices in face_indices:
+            bm.faces.new([verts[i] for i in indices])
+        # scale down by sqrt(3) to get side length of 1 from above coords
+        # scale by given d value
+        scale = (1.0 / sqrt(3)) * d * self._world_scale
+        mat = Matrix.Scale(scale, 4)
+        # rotate for square and hexagon orientations
+        if xy_orientation == "square":
+            mat = Matrix.Rotation(radians(45), 4, "Z") @ mat
+        elif xy_orientation == "hexagon":
+            mat = Matrix.Rotation(radians(45), 4, "Z") @ mat
+            mat = Matrix.Rotation(acos(1 / sqrt(3)), 4, "Y") @ mat
+        # translate origin
+        mat = Matrix.Translation(Vector(origin) * self._world_scale) @ mat
+        # transform bmesh
+        bm.transform(mat)
+        # recaculate face normals
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        if overrides is None:
+            overrides = {}
+        overrides["mesh_shade_smooth"] = False
+        # draw bmesh
+        self.draw_bmesh(bm, overrides=overrides)
+        bm.free()
+
+    def draw_truncated_octahedron(
+        self,
+        d: float = 10,
+        origin: Vector = (0, 0, 0),
+        transform: Matrix = None,
+        overrides: dict = None,
+    ):
+        """
+        Draw a truncated octahedron
+
+        d: float
+            Side length
+
+        origin: Vector
+            Origin of the box
+
+        transform: Matrix
+            Optional matrix to transform the truncated octahedron by
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        bm = bmesh.new()
+        # create a square bipyramid first
+        base_verts = [(1, 1, 0), (-1, 1, 0), (-1, -1, 0), (1, -1, 0)]
+        tip_verts = [(0, 0, sqrt(2)), (0, 0, -sqrt(2))]
+        verts = []
+        for v in base_verts:
+            verts.append(bm.verts.new(v))
+        # create faces from tips to base verts
+        for t in tip_verts:
+            tv = bm.verts.new(t)
+            for i, v in enumerate(base_verts):
+                bm.faces.new([tv, verts[i], verts[(i + 1) % 4]])
+        # ensure vert indices updated
+        bm.verts.ensure_lookup_table()
+        # bevel vertices by 2/3 to get a regular truncated octahedron
+        bmesh.ops.bevel(
+            bm,
+            geom=bm.verts,
+            offset=(2 / 3),
+            segments=1,
+            profile=0.5,
+            clamp_overlap=True,
+        )
+        # scale up by 3/2 to get side length of 1 from above coords
+        # scale by given d value
+        scale = 1.5 * d * self._world_scale
+        mat = Matrix.Scale(scale, 4)
+        # transform by user passed Matrix if any
+        if transform is not None:
+            mat = transform @ mat
+        # translate origin
+        mat = Matrix.Translation(Vector(origin) * self._world_scale) @ mat
+        # transform bmesh
+        bm.transform(mat)
+        # recaculate face normals
+        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+        if overrides is None:
+            overrides = {}
+        overrides["mesh_shade_smooth"] = False
+        # draw bmesh
+        self.draw_bmesh(bm, overrides=overrides)
+        bm.free()
+
     def draw_bmesh(
         self,
         bm: bmesh.types.BMesh,
@@ -782,6 +935,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         objects["wireframe"].append(params.mesh_wireframe)
         objects["thickness"].append(params.mesh_thickness)
         objects["color"].append(params.mesh_color)
+        objects["shade_smooth"].append(params.mesh_shade_smooth)
         self._add_material_to_geometry(objects, params.mesh_material)
 
     def _draw_cone(

@@ -64,10 +64,17 @@ def annotations_node_tree():
 
     # node Material Slot Attribute
     material_slot_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
-    material_slot_attribute.name = "Named Attribute"
+    material_slot_attribute.name = "Material Slot Attribute"
     material_slot_attribute.data_type = "INT"
     # Name
     material_slot_attribute.inputs["Name"].default_value = "material_slot_index"
+
+    # node Shade Smooth Attribute
+    shade_smooth_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
+    shade_smooth_attribute.name = "Shade Smooth Attribute"
+    shade_smooth_attribute.data_type = "BOOLEAN"
+    # Name
+    shade_smooth_attribute.inputs["Name"].default_value = "shade_smooth"
 
     # node Set Shade Smooth
     set_shade_smooth = node_group.nodes.new("GeometryNodeSetShadeSmooth")
@@ -85,9 +92,15 @@ def annotations_node_tree():
     join_geometry.location = (380.0, 0.0)
     set_material_index.location = (560.0, 0.0)
     material_slot_attribute.location = (380.0, -120.0)
+    shade_smooth_attribute.location = (560.0, -140.0)
     set_shade_smooth.location = (740.0, 0.0)
 
     # initialize links
+    # is_line_attribute.Attribute -> set_shade_smooth.Selection
+    node_group.links.new(
+        shade_smooth_attribute.outputs["Attribute"],
+        set_shade_smooth.inputs["Shade Smooth"],
+    )
     # set_material_index.Geometry -> set_shade_smooth.Geometry
     node_group.links.new(
         set_material_index.outputs["Geometry"], set_shade_smooth.inputs["Geometry"]

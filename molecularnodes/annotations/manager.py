@@ -523,6 +523,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 "thickness": [],
                 "color": [],
                 "material_index": [],
+                "shade_smooth": [],
             },
             "materials": {},
         }
@@ -635,6 +636,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         attr_color = []
         attr_thickness = []
         attr_material_index = []
+        attr_shade_smooth = []
 
         # add lines
         lines = geometry["lines"]
@@ -648,6 +650,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             attr_color.append(lines["color"][i])
             attr_thickness.append(lines["thickness"][i])
             attr_material_index.append(lines["material_index"][i])
+            attr_shade_smooth.append(True)
 
         # add bmesh objects
         # From: https://blender.stackexchange.com/questions/50160/scripting-low-level-join-meshes-elements-hopefully-with-bmesh
@@ -669,6 +672,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             if bm_to_add.edges:
                 object_color = objects["color"][i]
                 object_material_index = objects["material_index"][i]
+                object_shade_smooth = objects["shade_smooth"][i]
                 for edge in bm_to_add.edges:
                     edge_seq = (bm.verts[i.index + offset] for i in edge.verts)
                     try:
@@ -685,6 +689,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                         attr_thickness.append(0.0)
                     attr_color.append(object_color)
                     attr_material_index.append(object_material_index)
+                    attr_shade_smooth.append(object_shade_smooth)
                 bm.edges.index_update()
                 # free bmesh
                 bm_to_add.free()
@@ -729,5 +734,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 np.array(attr_material_index),
                 name="material_slot_index",
                 atype=db.AttributeTypes.INT,
+                domain=db.AttributeDomains.EDGE,
+            )
+            # add the shade_smooth attribute
+            self.bob.store_named_attribute(
+                np.array(attr_shade_smooth),
+                name="shade_smooth",
+                atype=db.AttributeTypes.BOOLEAN,
                 domain=db.AttributeDomains.EDGE,
             )
