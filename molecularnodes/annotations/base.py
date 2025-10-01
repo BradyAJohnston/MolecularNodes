@@ -824,6 +824,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         elif xy_orientation == "hexagon":
             mat = Matrix.Rotation(radians(45), 4, "Z") @ mat
             mat = Matrix.Rotation(acos(1 / sqrt(3)), 4, "Y") @ mat
+            mat = Matrix.Rotation(radians(90), 4, "Z") @ mat
         # translate origin
         mat = Matrix.Translation(Vector(origin) * self._world_scale) @ mat
         # transform bmesh
