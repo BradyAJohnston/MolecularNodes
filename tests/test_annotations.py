@@ -403,6 +403,10 @@ class TestAnnotations:
         name = "MN_an_TestUniverse"
         assert name not in bpy.data.objects
         a = t.annotations.add_com_distance(selection1="resid 1", selection2="resid 2")
+        # test no annotation object till geometry gets created
+        assert name not in bpy.data.objects
+        # enable line mesh to create geometry
+        a.line_mesh = True
         assert name in bpy.data.objects
         # test parent
         assert bpy.data.objects[name].parent == t.object
@@ -419,6 +423,7 @@ class TestAnnotations:
         a.visible = True
         assert name in bpy.data.objects
         # test line_mesh enable / disable
+        a.line_mesh = False
         # test no vertices when disabled
         assert not bpy.data.objects[name].data.vertices
         # test vertices present when enabled

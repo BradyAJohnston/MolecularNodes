@@ -1,3 +1,4 @@
+import copy
 import functools
 import inspect
 from abc import ABCMeta
@@ -508,38 +509,40 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         self._render_mode = False
 
     def _draw_annotations(self, get_geometry: bool = False):
-        # geometry of lines and bmesh objects
-        geometry = {
-            "lines": {
-                "vertices": [],
-                "edges": [],
-                "thickness": [],
-                "color": [],
-                "material_index": [],
-            },
-            "objects": {
-                "meshes": [],
-                "wireframe": [],
-                "thickness": [],
-                "color": [],
-                "material_index": [],
-                "shade_smooth": [],
-            },
-            "materials": {},
-        }
         # all annotations visibilty
         if not self.visible:
-            return geometry
+            return
         # object visibility
         object = self._entity.object
         if object.hide_get():
-            return geometry
+            return
         # check if object is in current scene
         if self._scene is None:
             self._scene = bpy.context.scene
         if object.name not in self._scene.objects:
-            return geometry
-        if not get_geometry:
+            return
+        if get_geometry:
+            # geometry of lines and bmesh objects
+            geometry = {
+                "lines": {
+                    "vertices": [],
+                    "edges": [],
+                    "thickness": [],
+                    "color": [],
+                    "material_index": [],
+                },
+                "objects": {
+                    "meshes": [],
+                    "wireframe": [],
+                    "thickness": [],
+                    "color": [],
+                    "material_index": [],
+                    "shade_smooth": [],
+                },
+                "materials": {},
+            }
+            empty_geometry = copy.deepcopy(geometry)
+        else:
             # calculate the min and max viewport distance of the bounding box verts
             # find bounding box verts
             bb_verts = [co for co in bpy.data.objects[object.name].bound_box]
@@ -586,20 +589,24 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 interface._instance.draw()
             except Exception:
                 pass
-        return geometry
+        # check and return geometry if present
+        if get_geometry and geometry != empty_geometry:
+            return geometry
 
-    def _create_annotation_object(self):
-        """Internal: Create annotation object if it doesn't exist"""
-        create = False
+    def _annotation_object_exists(self) -> bool:
+        """Internal: Check if annotation object exists"""
+        exists = True
         if self.bob is not None:
             try:
                 _ = self.bob.object.name
             except LinkedObjectError:
-                create = True
+                exists = False
         else:
-            create = True
-        if not create:
-            return
+            exists = False
+        return exists
+
+    def _create_annotation_object(self):
+        """Internal: Create annotation object if it doesn't exist"""
         name = f"MN_an_{self._entity.object.name}"
         # create an empty object
         object = db.create_object(name=name, collection=coll.mn())
@@ -613,23 +620,36 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # save the BlenderObject for further updates
         self.bob = db.BlenderObject(object)
 
-    def _update_annotation_object(self):
-        """Internal: Update the annotation object mesh and attributes"""
-        # re-create object if not present
-        self._create_annotation_object()
+    def _clear_annotation_object(self):
+        """Internal: Clear annotation object"""
+        if len(self.bob.object.data.vertices) == 0:
+            return
         # clear existing geometry
         self.bob.object.data.clear_geometry()
         # clear existing material slots
         self.bob.object.data.materials.clear()
+
+    def _update_annotation_object(self):
+        """Internal: Update the annotation object mesh and attributes"""
+        # get the geometry from all annotations
+        geometry = self._draw_annotations(get_geometry=True)
+
+        # check and clear or create annotation object
+        if self._annotation_object_exists():
+            self._clear_annotation_object()
+            if geometry is None:
+                return
+        else:
+            if geometry is None:
+                return
+            self._create_annotation_object()
+
         # create a new bmesh
         bm = bmesh.new()
         # convenience methods
         add_vert = bm.verts.new
         add_edge = bm.edges.new
         add_face = bm.faces.new
-
-        # get the geometry from all annotations
-        geometry = self._draw_annotations(get_geometry=True)
 
         # edge attributes
         attr_is_line = []
