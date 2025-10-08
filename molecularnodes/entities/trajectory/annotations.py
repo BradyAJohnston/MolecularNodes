@@ -1,9 +1,8 @@
 import os
 import typing
-from math import radians, sqrt
 from pathlib import Path
 import numpy as np
-from mathutils import Matrix, Vector
+from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
@@ -400,7 +399,7 @@ class SimulationBox(TrajectoryAnnotation):
     annotation_type = "simulation_box"
 
     center_to_origin: bool = False
-    detect_box_type: bool = False
+    compact: bool = False
 
     def defaults(self) -> None:
         params = self.interface
@@ -414,57 +413,20 @@ class SimulationBox(TrajectoryAnnotation):
         ts = u.trajectory.ts
         # not all universes have dimensions set
         if ts.dimensions is not None:
-            a, b, c, alpha, beta, gamma = ts.dimensions
-            atol = 1e-3
-            box_type = "triclinic"
-            if params.detect_box_type:
-                # Gromacs PBC box types
-                # https://manual.gromacs.org/current/reference-manual/algorithms/periodic-boundary-conditions.html
-                if np.isclose(a, b, atol=atol) and np.isclose(b, c, atol=atol):
-                    if np.isclose(alpha, 60.0, atol=atol) and np.isclose(
-                        beta, 60.0, atol=atol
-                    ):
-                        if np.isclose(gamma, 90.0, atol=atol):
-                            # Rhombic Dodecahedron xy-square
-                            box_type = "rds"
-                        elif np.isclose(gamma, 60.0, atol=atol):
-                            # Rhombic Dodecahedron xy-hexagon
-                            box_type = "rdh"
-                    elif (
-                        np.isclose(alpha, 70.53, atol=atol)
-                        and np.isclose(beta, 109.47, atol=atol)
-                        and np.isclose(gamma, 70.53, atol=atol)
-                    ):
-                        # Truncated Octahedron
-                        box_type = "octahedron"
             # draw box
-            box_center = np.sum(ts.triclinic_dimensions, axis=0) / 2
-            origin = Vector((0, 0, 0))
-            # move box center to origin if set
-            if params.center_to_origin:
-                origin = -1 * box_center
-                box_center = Vector((0, 0, 0))
-            if box_type == "rds":
-                # Rhombic Dodecahedron xy-square
-                d = a * ((9 / (16 * sqrt(6))) ** (1 / 3))
-                self.draw_rhombic_dodecahedron(
-                    d=d, xy_orientation="square", origin=box_center
+            if params.compact:
+                # Compact Wigner-Seitz cell
+                self.draw_wigner_seitz_cell(
+                    ts.triclinic_dimensions, params.center_to_origin
                 )
-            elif box_type == "rdh":
-                # Rhombic Dodecahedron xy-hexagon
-                d = a * ((9 / (16 * sqrt(6))) ** (1 / 3))
-                self.draw_rhombic_dodecahedron(
-                    d=d, xy_orientation="hexagon", origin=box_center
-                )
-            elif box_type == "octahedron":
-                # Truncated Octahedron
-                d = a / sqrt(6)
-                mat = Matrix.Rotation(radians(36), 4, "Y")
-                mat = Matrix.Rotation(radians(90), 4, "X") @ mat
-                self.draw_truncated_octahedron(d=d, transform=mat, origin=box_center)
             else:
-                # Regular Triclinic box
-                self.draw_triclinic_box(a, b, c, alpha, beta, gamma, origin=origin)
+                # Regular Triclinic cell
+                a, b, c, alpha, beta, gamma = ts.dimensions
+                origin = Vector((0, 0, 0))
+                # move box center to origin if set
+                if params.center_to_origin:
+                    origin = -1 * np.sum(ts.triclinic_dimensions, axis=0) / 2
+                self.draw_triclinic_cell(a, b, c, alpha, beta, gamma, origin=origin)
 
 
 class Label2D(TrajectoryAnnotation, Label2D):

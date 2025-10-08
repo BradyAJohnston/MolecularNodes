@@ -679,14 +679,22 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             offset = len(bm.verts)
             # add verts
             for v in bm_to_add.verts:
-                add_vert(v.co)
+                try:
+                    add_vert(v.co)
+                except ValueError:
+                    # vertex exists!
+                    pass
             bm.verts.index_update()
             bm.verts.ensure_lookup_table()
             object_wireframe = objects["wireframe"][i]
             # add faces
             if not object_wireframe and bm_to_add.faces:
                 for face in bm_to_add.faces:
-                    add_face((bm.verts[i.index + offset] for i in face.verts))
+                    try:
+                        add_face((bm.verts[i.index + offset] for i in face.verts))
+                    except ValueError:
+                        # face exists! - can happen with n=2 (flat) objects
+                        pass
                 bm.faces.index_update()
             # add edges
             if bm_to_add.edges:

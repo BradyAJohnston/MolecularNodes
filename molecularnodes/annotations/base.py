@@ -1,5 +1,6 @@
+import itertools
 from abc import ABCMeta, abstractmethod
-from math import acos, cos, radians, sin, sqrt
+from math import cos, radians, sin, sqrt
 from pathlib import Path
 import blf
 import bmesh
@@ -7,10 +8,12 @@ import bpy
 import gpu
 import MDAnalysis as mda
 import numpy as np
+import numpy.typing as npt
 from bpy_extras import object_utils, view3d_utils
 from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
 from PIL import Image, ImageDraw, ImageFont
+from scipy.spatial import Voronoi
 from .interface import AnnotationInterface
 from .utils import get_view_matrix, is_perspective_projection
 
@@ -604,6 +607,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         radius: float = 1.0,
         height: float = 1.0,
         axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
         overrides: dict = None,
     ):
         """
@@ -623,6 +627,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         axis: Vector
             Axis of the cone
 
+        cap_ends: bool
+            Whether to cap the base
+
         overrides: dict, optional
             Optional dictionary to override common annotation params
 
@@ -635,6 +642,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             radius2=0,
             height=height,
             axis=axis,
+            cap_ends=cap_ends,
             overrides=overrides,
         )
 
@@ -644,6 +652,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         radius: float = 1.0,
         height: float = 1.0,
         axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
         overrides: dict = None,
     ):
         """
@@ -663,6 +672,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         axis: Vector
             Axis of the cylinder
 
+        cap_ends: bool
+            Whether to cap the ends of cylinder
+
         overrides: dict, optional
             Optional dictionary to override common annotation params
 
@@ -675,10 +687,11 @@ class BaseAnnotation(metaclass=ABCMeta):
             radius2=radius,
             height=height,
             axis=axis,
+            cap_ends=cap_ends,
             overrides=overrides,
         )
 
-    def draw_triclinic_box(
+    def draw_triclinic_cell(
         self,
         a: float = 10.0,
         b: float = 10.0,
@@ -720,6 +733,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        if self.geometry is None:
+            return
         dimensions = np.array([a, b, c, alpha, beta, gamma], dtype=np.float32)
         triclinic_vectors = mda.lib.mdamath.triclinic_vectors(dimensions)
         vo = Vector((0, 0, 0))
@@ -750,159 +765,173 @@ class BaseAnnotation(metaclass=ABCMeta):
         self.draw_bmesh(bm, overrides=overrides)
         bm.free()
 
-    def draw_rhombic_dodecahedron(
+    def draw_wigner_seitz_cell(
         self,
-        d: float = 15,
-        xy_orientation: str = "square",
-        origin: Vector = (0, 0, 0),
+        triclinic_vectors: npt.ArrayLike,
+        center_to_origin: bool = False,
         overrides: dict = None,
     ):
         """
-        Draw a rhombic dodecahedron
+        Draw a Wigner-Seitz cell from triclinic vectors
 
-        d: float
-            Side length (same as distance of face to center)
+        Parameters
+        ----------
 
-        xy_orientation: str
-            Orientation of the rhombic dodecahedron on xy plane
+        triclinic_vectors: npt.ArrayLike
+            Vectors that represent the base triclinic cell
 
-        origin: Vector
-            Origin of the box
+        center_to_origin: bool
+            Move the center of the cell to origin (0, 0, 0)
 
         overrides: dict, optional
             Optional dictionary to override common annotation params
 
         """
-        bm = bmesh.new()
-        # vertices of a regular rhombic dodecahedron
-        # 8 vertices of a cube + 6 vertices along face centers
-        # From the 'Extra Mesh Objects' addon with 'Rhombic Dodecahedron' preset
-        vert_coords = [
-            (1, 1, -1),
-            (-1, -1, -1),
-            (-1, 1, 1),
-            (1, -1, 1),
-            (0, 0, -2),
-            (-2, 0, 0),
-            (0, 2, 0),
-            (0, 0, 2),
-            (0, -2, 0),
-            (2, 0, 0),
-            (-1, 1, -1),
-            (1, 1, 1),
-            (1, -1, -1),
-            (-1, -1, 1),
+        if self.geometry is None:
+            return
+        # convert to blender world scale
+        box_vectors = triclinic_vectors * self._world_scale
+        # From apply_compact_PBC of MDAnalysis
+        pbc_img_coeffs = np.array(list(itertools.product([0, -1, 1], repeat=3)))
+        pbc_img_vecs = np.matmul(pbc_img_coeffs, box_vectors)
+        # add the center point
+        box_center = np.sum(box_vectors, axis=0) / 2
+        lattice_points = [box_center] + pbc_img_vecs
+        # generate Voronoi
+        voronoi = Voronoi(np.array(lattice_points))
+        # The Wigner-Seitz cell for the center point (index 0)
+        center_region = voronoi.point_region[0]
+        center_region_vertices = voronoi.regions[center_region]
+        # filter out invalid vertices
+        valid_vertices = [
+            voronoi.vertices[i] for i in center_region_vertices if i != -1
         ]
-        # add verts to bmesh
-        verts = []
-        for coord in vert_coords:
-            verts.append(bm.verts.new(coord))
-        # add faces to bmesh
-        face_indices = [
-            [0, 4, 10, 6],
-            [0, 6, 11, 9],
-            [0, 9, 12, 4],
-            [1, 5, 10, 4],
-            [1, 4, 12, 8],
-            [1, 8, 13, 5],
-            [2, 6, 10, 5],
-            [2, 5, 13, 7],
-            [2, 7, 11, 6],
-            [3, 9, 11, 7],
-            [3, 7, 13, 8],
-            [3, 8, 12, 9],
-        ]
-        for indices in face_indices:
-            bm.faces.new([verts[i] for i in indices])
-        # scale down by sqrt(3) to get side length of 1 from above coords
-        # scale by given d value
-        scale = (1.0 / sqrt(3)) * d * self._world_scale
-        mat = Matrix.Scale(scale, 4)
-        # rotate for square and hexagon orientations
-        if xy_orientation == "square":
-            mat = Matrix.Rotation(radians(45), 4, "Z") @ mat
-        elif xy_orientation == "hexagon":
-            mat = Matrix.Rotation(radians(45), 4, "Z") @ mat
-            mat = Matrix.Rotation(acos(1 / sqrt(3)), 4, "Y") @ mat
-            mat = Matrix.Rotation(radians(90), 4, "Z") @ mat
-        # translate origin
-        mat = Matrix.Translation(Vector(origin) * self._world_scale) @ mat
-        # transform bmesh
-        bm.transform(mat)
-        # recaculate face normals
-        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-        if overrides is None:
-            overrides = {}
-        overrides["mesh_shade_smooth"] = False
-        # draw bmesh
-        self.draw_bmesh(bm, overrides=overrides)
-        bm.free()
-
-    def draw_truncated_octahedron(
-        self,
-        d: float = 10,
-        origin: Vector = (0, 0, 0),
-        transform: Matrix = None,
-        overrides: dict = None,
-    ):
-        """
-        Draw a truncated octahedron
-
-        d: float
-            Side length
-
-        origin: Vector
-            Origin of the box
-
-        transform: Matrix
-            Optional matrix to transform the truncated octahedron by
-
-        overrides: dict, optional
-            Optional dictionary to override common annotation params
-
-        """
+        # create bmesh
         bm = bmesh.new()
-        # create a square bipyramid first
-        base_verts = [(1, 1, 0), (-1, 1, 0), (-1, -1, 0), (1, -1, 0)]
-        tip_verts = [(0, 0, sqrt(2)), (0, 0, -sqrt(2))]
-        verts = []
-        for v in base_verts:
-            verts.append(bm.verts.new(v))
-        # create faces from tips to base verts
-        for t in tip_verts:
-            tv = bm.verts.new(t)
-            for i, v in enumerate(base_verts):
-                bm.faces.new([tv, verts[i], verts[(i + 1) % 4]])
-        # ensure vert indices updated
+        # add vertices
+        for vert in valid_vertices:
+            bm.verts.new(vert)
+        # use convex hull to create faces from vertices
         bm.verts.ensure_lookup_table()
-        # bevel vertices by 2/3 to get a regular truncated octahedron
-        bmesh.ops.bevel(
+        ch = bmesh.ops.convex_hull(bm, input=bm.verts)
+        # delete interior verts
+        bmesh.ops.delete(bm, geom=ch["geom_interior"], context="VERTS")
+        # delete any duplicate vertices
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-3)
+        # convert triangles to n-gons for clean faces
+        bmesh.ops.dissolve_limit(
             bm,
-            geom=bm.verts,
-            offset=(2 / 3),
-            segments=1,
-            profile=0.5,
-            clamp_overlap=True,
+            angle_limit=1e-3,
+            verts=bm.verts,
+            edges=bm.edges,
         )
-        # scale up by 3/2 to get side length of 1 from above coords
-        # scale by given d value
-        scale = 1.5 * d * self._world_scale
-        mat = Matrix.Scale(scale, 4)
-        # transform by user passed Matrix if any
-        if transform is not None:
-            mat = transform @ mat
-        # translate origin
-        mat = Matrix.Translation(Vector(origin) * self._world_scale) @ mat
-        # transform bmesh
-        bm.transform(mat)
-        # recaculate face normals
-        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-        if overrides is None:
-            overrides = {}
-        overrides["mesh_shade_smooth"] = False
+        # update face normals
+        bm.normal_update()
+        # transform center if needed
+        if center_to_origin:
+            mat = Matrix.Translation(-1 * box_center)
+            bm.transform(mat)
         # draw bmesh
         self.draw_bmesh(bm, overrides=overrides)
         bm.free()
+
+    def draw_n_sided_pyramid(
+        self,
+        n: int = 6,
+        radius: float = 10,
+        height: float = 10,
+        origin: Vector = (0, 0, 0),
+        axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
+        overrides: dict = None,
+    ):
+        """
+        Draw an n sided pyramid
+        Eg: triangle, prism, square pyramid, pentagonal pyramid, etc
+
+        n: int
+            Number of sides
+
+        r: float
+            Radius of the pyramid
+
+        h: float
+            Height of the pyramid
+
+        origin: Vector
+            Center of the base of the pyramid
+
+        axis: Vector
+            Axis of the pyramid
+
+        cap_ends: bool
+            Whether to cap the ends of pyramid
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            origin,
+            radius1=radius,
+            radius2=0,
+            height=height,
+            axis=axis,
+            segments=n,
+            cap_ends=cap_ends,
+            overrides=overrides,
+        )
+
+    def draw_n_sided_cylinder(
+        self,
+        n: int = 6,
+        radius: float = 10,
+        height: float = 10,
+        origin: Vector = (0, 0, 0),
+        axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
+        overrides: dict = None,
+    ):
+        """
+        Draw an n sided cylinder
+        Eg: square, rectangle, triangular prism, cube, cuboid, hexagonal cell etc
+
+        n: int
+            Number of sides
+
+        r: float
+            Radius of the cylinder
+
+        h: float
+            Height of the cylinder
+
+        origin: Vector
+            Center of the base of the cylinder
+
+        axis: Vector
+            Axis of the cylinder
+
+        cap_ends: bool
+            Whether to cap the ends of cylinder
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            origin,
+            radius1=radius,
+            radius2=radius,
+            height=height,
+            axis=axis,
+            segments=n,
+            cap_ends=cap_ends,
+            overrides=overrides,
+        )
 
     def draw_bmesh(
         self,
@@ -946,17 +975,21 @@ class BaseAnnotation(metaclass=ABCMeta):
         radius2: float,
         height: float,
         axis: Vector = (0, 0, 1),
+        segments: int = 24,
+        cap_ends: bool = True,
         overrides: dict = None,
     ):
-        """Internal: Common method for cone and cylinder bmesh"""
+        """Internal: Common method for cone, cylinder, pyramid bmesh"""
+        if self.geometry is None:
+            return
         radius1 = radius1 * self._world_scale
         radius2 = radius2 * self._world_scale
         height = height * self._world_scale
         bm = bmesh.new()
         bmesh.ops.create_cone(
             bm,
-            cap_ends=True,
-            segments=24,
+            cap_ends=cap_ends,
+            segments=segments,
             radius1=radius1,
             radius2=radius2,
             depth=height,
