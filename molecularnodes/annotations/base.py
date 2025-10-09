@@ -700,6 +700,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         beta: float = 90.0,
         gamma: float = 90.0,
         origin: Vector = (0, 0, 0),
+        show_lattice: bool = False,
         overrides: dict = None,
     ):
         """
@@ -729,6 +730,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         origin: Vector
             Origin of the box
 
+        show_lattice: bool
+            Whether to show a 3x3x3 lattice
+
         overrides: dict, optional
             Optional dictionary to override common annotation params
 
@@ -737,10 +741,12 @@ class BaseAnnotation(metaclass=ABCMeta):
             return
         dimensions = np.array([a, b, c, alpha, beta, gamma], dtype=np.float32)
         triclinic_vectors = mda.lib.mdamath.triclinic_vectors(dimensions)
+        # convert to blender world scale
+        box_vectors = triclinic_vectors * self._world_scale
         vo = Vector((0, 0, 0))
-        vx = Vector(triclinic_vectors[0]) * self._world_scale
-        vxy = Vector(triclinic_vectors[1]) * self._world_scale
-        vz = Vector(triclinic_vectors[2]) * self._world_scale
+        vx = Vector(box_vectors[0])
+        vxy = Vector(box_vectors[1])
+        vz = Vector(box_vectors[2])
         vor = vx + vxy
         bm = bmesh.new()
         # create the four vertices in the xy plane
@@ -761,7 +767,17 @@ class BaseAnnotation(metaclass=ABCMeta):
         bm.transform(mat)
         # update face normals
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-        # bm.normal_update()
+        # show a 3x3x3 lattice if enabled
+        if show_lattice:
+            box = bm.verts[:] + bm.edges[:] + bm.faces[:]
+            pbc_img_coeffs = np.array(list(itertools.product([0, -1, 1], repeat=3)))
+            lattice_points = np.matmul(pbc_img_coeffs, box_vectors)
+            for lattice_point in lattice_points:
+                geom = bmesh.ops.duplicate(bm, geom=box)
+                dup_verts = [
+                    v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
+                ]
+                bmesh.ops.translate(bm, verts=dup_verts, vec=lattice_point)
         self.draw_bmesh(bm, overrides=overrides)
         bm.free()
 
@@ -769,6 +785,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         triclinic_vectors: npt.ArrayLike,
         center_to_origin: bool = False,
+        show_lattice: bool = False,
         overrides: dict = None,
     ):
         """
@@ -782,6 +799,9 @@ class BaseAnnotation(metaclass=ABCMeta):
 
         center_to_origin: bool
             Move the center of the cell to origin (0, 0, 0)
+
+        show_lattice: bool
+            Whether to show a 3x3x3 lattice
 
         overrides: dict, optional
             Optional dictionary to override common annotation params
@@ -831,6 +851,18 @@ class BaseAnnotation(metaclass=ABCMeta):
         if center_to_origin:
             mat = Matrix.Translation(-1 * box_center)
             bm.transform(mat)
+        # show a 3x3x3 lattice if enabled
+        if show_lattice:
+            box = bm.verts[:] + bm.edges[:] + bm.faces[:]
+            for lattice_point in lattice_points:
+                if np.array_equal(lattice_point, box_center):
+                    continue
+                geom = bmesh.ops.duplicate(bm, geom=box)
+                dup_verts = [
+                    v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
+                ]
+                translation_vec = lattice_point - box_center
+                bmesh.ops.translate(bm, verts=dup_verts, vec=translation_vec)
         # draw bmesh
         self.draw_bmesh(bm, overrides=overrides)
         bm.free()
@@ -849,13 +881,16 @@ class BaseAnnotation(metaclass=ABCMeta):
         Draw an n sided pyramid
         Eg: triangle, prism, square pyramid, pentagonal pyramid, etc
 
+        Parameters
+        ----------
+
         n: int
             Number of sides
 
-        r: float
+        radius: float
             Radius of the pyramid
 
-        h: float
+        height: float
             Height of the pyramid
 
         origin: Vector
@@ -898,13 +933,16 @@ class BaseAnnotation(metaclass=ABCMeta):
         Draw an n sided cylinder
         Eg: square, rectangle, triangular prism, cube, cuboid, hexagonal cell etc
 
+        Parameters
+        ----------
+
         n: int
             Number of sides
 
-        r: float
+        radius: float
             Radius of the cylinder
 
-        h: float
+        height: float
             Height of the cylinder
 
         origin: Vector
@@ -943,6 +981,7 @@ class BaseAnnotation(metaclass=ABCMeta):
 
         Parameters
         ----------
+
         bm: bmesh.types.BMesh
             A bmesh object. A copy is made for internal use.
             Users will have to free the passed in object

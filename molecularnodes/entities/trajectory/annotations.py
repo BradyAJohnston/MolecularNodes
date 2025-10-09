@@ -394,12 +394,26 @@ class SimulationBox(TrajectoryAnnotation):
     """
     Simulation Box of Trajectory (if present)
 
+    Attributes
+    ----------
+    center_to_origin: bool
+        Whether to move the center of the box to Origin (0, 0, 0)
+
+    compact: bool
+        Whether to create a compact Wigner-Seitz cell
+        Note that the trajectory needs to have been wrapped with the
+        compact option to see it within the box
+
+    show_lattice: bool
+        Whether to show a 3x3x3 lattice of the box
+
     """
 
     annotation_type = "simulation_box"
 
     center_to_origin: bool = False
     compact: bool = False
+    show_lattice: bool = False
 
     def defaults(self) -> None:
         params = self.interface
@@ -417,7 +431,9 @@ class SimulationBox(TrajectoryAnnotation):
             if params.compact:
                 # Compact Wigner-Seitz cell
                 self.draw_wigner_seitz_cell(
-                    ts.triclinic_dimensions, params.center_to_origin
+                    ts.triclinic_dimensions,
+                    params.center_to_origin,
+                    params.show_lattice,
                 )
             else:
                 # Regular Triclinic cell
@@ -426,7 +442,16 @@ class SimulationBox(TrajectoryAnnotation):
                 # move box center to origin if set
                 if params.center_to_origin:
                     origin = -1 * np.sum(ts.triclinic_dimensions, axis=0) / 2
-                self.draw_triclinic_cell(a, b, c, alpha, beta, gamma, origin=origin)
+                self.draw_triclinic_cell(
+                    a,
+                    b,
+                    c,
+                    alpha,
+                    beta,
+                    gamma,
+                    origin=origin,
+                    show_lattice=params.show_lattice,
+                )
 
 
 class Label2D(TrajectoryAnnotation, Label2D):
