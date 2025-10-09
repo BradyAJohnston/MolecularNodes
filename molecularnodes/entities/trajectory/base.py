@@ -113,6 +113,11 @@ class Trajectory(MolecularEntity):
 
     @property
     def atoms(self) -> mda.AtomGroup:
+        try:
+            self.universe.atoms.resnames
+        except mda.exceptions.NoDataError:
+            self.universe.add_TopologyAttr('resnames')
+            self.universe.residues.resnames = "N/A"
         return self.universe.atoms
 
     @property
