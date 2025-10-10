@@ -359,13 +359,13 @@ class Trajectory(MolecularEntity):
 
     def _store_default_attributes(self) -> None:
         for name, func in self._blender_attributes.items():
-            # try:
-            self.store_named_attribute(
-                data=func(),
-                name=name,
-            )
-            # except Exception as e:
-            #     print(e)
+            try:
+                self.store_named_attribute(
+                    data=func(),
+                    name=name,
+                )
+            except Exception as e:
+                print(e)
 
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
