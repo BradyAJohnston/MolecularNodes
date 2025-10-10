@@ -376,7 +376,7 @@ class Trajectory(MolecularEntity):
         for name, func in self._blender_attributes.items():
             try:
                 data = func()
-                if not data:
+                if data is None:
                     continue
                 self.store_named_attribute(
                     data=data,
@@ -384,6 +384,10 @@ class Trajectory(MolecularEntity):
                 )
             except Exception as e:
                 print(e)
+
+    def _store_extra_attributes(self) -> None:
+        # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
+        pass
 
     def _create_object(
         self,
@@ -397,6 +401,7 @@ class Trajectory(MolecularEntity):
         )
 
         self._store_default_attributes()
+        self._store_extra_attributes()
         self._setup_modifiers()
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
