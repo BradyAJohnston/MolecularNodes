@@ -96,7 +96,7 @@ class Cycles(RenderEngine):
 
     @denoise.setter
     def denoise(self, value: bool) -> None:
-        self.engine.use_denoiseing = value
+        self.engine.use_denoising = value
 
     @property
     def denoise_gpu(self) -> bool:
