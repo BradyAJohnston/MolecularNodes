@@ -338,7 +338,7 @@ class TestTrajectory:
         # from the SMILES representation of a simple molecule
         ethanol_smiles = "CCO"
         u = mda.Universe.from_smiles(ethanol_smiles)
-        traj = mn.Trajectory(u)
+        mn.Trajectory(u)
 
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
