@@ -364,8 +364,8 @@ class Trajectory(MolecularEntity):
                     data=func(),
                     name=name,
                 )
-            except Exception as e:
-                print(e)
+            except (mda.NoDataError, AttributeError):
+                pass
 
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
