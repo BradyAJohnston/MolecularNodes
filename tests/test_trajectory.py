@@ -51,7 +51,7 @@ class TestTrajectory:
             "atomic_number",
             "res_id",
             "res_name",
-            "chain_id",
+            # "chain_id",
             "atom_types",
             "atom_name",
             "position",

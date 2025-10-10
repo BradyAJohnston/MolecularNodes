@@ -217,7 +217,7 @@ class Trajectory(MolecularEntity):
     def _compute_res_name(self) -> np.ndarray:
         return np.array(list(map(lambda x: x[0:3], self.atoms.resnames)))
 
-    def _compute_res_num(self) -> np.ndarray:
+    def _compute_res_name_int(self) -> np.ndarray:
         res_name = self._compute_res_name()
         return np.array(
             [
@@ -250,55 +250,40 @@ class Trajectory(MolecularEntity):
         return self.atoms.resids
 
     def _compute_atom_id(self) -> np.ndarray:
-        if hasattr(self.atoms, "ids"):
-            return self.atoms.ids
-        return np.zeros(self.n_atoms)
+        return self.atoms.ids
 
     def _compute_segindices(self) -> np.ndarray:
-        if hasattr(self.atoms, "segindices"):
-            # Store segment names on object if it exists
-            if hasattr(self, "object") and self.object is not None:
-                segs = []
-                for seg in self.atoms.segments:
-                    segs.append(seg.atoms[0].segid)
-                self.object["segments"] = segs
-            return self.atoms.segindices
-        return None
+        segs = []
+        for seg in self.atoms.segments:
+            segs.append(seg.atoms[0].segid)
 
-    def _compute_chain_id(self) -> np.ndarray:
-        if hasattr(self.atoms, "chainIDs"):
-            return self.atoms.chainIDs
-        else:
-            return np.zeros(self.n_atoms)
+        try:
+            self.object["segments"] = segs
+        except db.LinkedObjectError:
+            pass
 
-    @property
-    def chain_ids(self) -> np.ndarray:
-        """Keep this as public property as it's used for object metadata"""
-        chain_id = self._compute_chain_id()
-        return np.unique(chain_id)
+        return self.atoms.segindices
 
-    def _compute_chain_id_num(self) -> np.ndarray:
-        chain_id = self._compute_chain_id()
-        chain_ids, chain_id_index = np.unique(chain_id, return_inverse=True)
-        # Store unique chain_ids on object if it exists
-        if hasattr(self, "object") and self.object is not None:
+    def _compute_chain_id_int(self) -> np.ndarray:
+        chain_ids, chain_id_index = np.unique(self.atoms.chainIDs, return_inverse=True)
+
+        try:
             self.object["chain_ids"] = chain_ids
+        except db.LinkedObjectError:
+            pass
+
         return chain_id_index
 
-    @property
-    def atom_type_unique(self) -> np.ndarray:
-        """Keep this as public property as it's used for object metadata"""
-        if hasattr(self.atoms, "types"):
-            return np.unique(self.atoms.types)
-        return None
-
     def _compute_atom_type_num(self) -> np.ndarray:
-        if hasattr(self.atoms, "types"):
-            atom_type_unique, atom_type_index = np.unique(
-                self.atoms.types, return_inverse=True
-            )
-            return atom_type_index
-        return None
+        atom_type_unique, atom_type_index = np.unique(
+            self.atoms.types, return_inverse=True
+        )
+        try:
+            self.object["atom_type_unique"] = atom_type_unique
+        except db.LinkedObjectError:
+            pass
+
+        return atom_type_index
 
     def _compute_atom_name_num(self) -> np.ndarray:
         if hasattr(self.atoms, "names"):
@@ -339,12 +324,12 @@ class Trajectory(MolecularEntity):
             "mass": self._compute_mass,
             "res_id": self._compute_res_id,
             "segid": self._compute_segindices,
-            "res_name": self._compute_res_num,
+            "res_name": self._compute_res_name_int,
             "atom_id": self._compute_atom_id,
             "b_factor": self._compute_b_factor,
             "occupancy": self._compute_occupancy,
             "charge": self._compute_charge,
-            "chain_id": self._compute_chain_id_num,
+            "chain_id": self._compute_chain_id_int,
             "atom_types": self._compute_atom_type_num,
             "atom_name": self._compute_atom_name_num,
             "is_backbone": self._compute_is_backbone,
@@ -374,16 +359,13 @@ class Trajectory(MolecularEntity):
 
     def _store_default_attributes(self) -> None:
         for name, func in self._blender_attributes.items():
-            try:
-                data = func()
-                if data is None:
-                    continue
-                self.store_named_attribute(
-                    data=data,
-                    name=name,
-                )
-            except Exception as e:
-                print(e)
+            # try:
+            self.store_named_attribute(
+                data=func(),
+                name=name,
+            )
+            # except Exception as e:
+            #     print(e)
 
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
@@ -406,9 +388,6 @@ class Trajectory(MolecularEntity):
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
         self._create_object(name=name)
-
-        if hasattr(self, "atom_type_unique"):
-            self.object["atom_type_unique"] = self.atom_type_unique
 
         self.object.mn.entity_type = self._entity_type.value
         self.object.mn.n_frames = self.n_frames

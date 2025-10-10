@@ -56,12 +56,12 @@ class TestOXDNAReading:
         assert traj.universe
         with pytest.raises(LinkedObjectError):
             traj.object
-        assert all([x in ["A", "C", "T", "G"] for x in traj.res_name])
+        assert all([x in ["A", "C", "T", "G"] for x in traj.atoms.resnames])
 
     def test_univ_snapshot(self, universe: mda.Universe, snapshot_custom):
         traj = oxdna.OXDNA(universe)
         for name in ["position", "res_name", "res_id", "chain_id"]:
-            assert snapshot_custom == getattr(traj, name)
+            assert snapshot_custom == str(traj[name])
 
     def test_detect_new_top(self, file_top_old, file_top_new, file_top_new_custom):
         assert oxdna.OXDNAParser._is_new_topology(file_top_new)
@@ -94,7 +94,7 @@ class TestOXDNAReading:
         assert len(traj) == 12
         assert snapshot == traj.bonds.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
-            assert snapshot == traj.named_attribute(att).tolist()
+            assert snapshot == str(traj[att])
 
     def test_reading_example(self):
         traj = oxdna.OXDNA(
