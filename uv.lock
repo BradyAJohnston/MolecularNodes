@@ -1275,6 +1275,7 @@ test = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-xdist" },
+    { name = "rdkit" },
     { name = "scipy" },
     { name = "syrupy" },
 ]
@@ -1309,6 +1310,7 @@ requires-dist = [
     { name = "pyyaml" },
     { name = "quarto-cli", marker = "extra == 'docs'", specifier = "~=1.7.0" },
     { name = "quartodoc", marker = "extra == 'docs'" },
+    { name = "rdkit", marker = "extra == 'test'" },
     { name = "scipy", marker = "extra == 'dev'" },
     { name = "scipy", marker = "extra == 'test'" },
     { name = "starfile" },
@@ -1960,6 +1962,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ff/b9/0bb44cc62a5d63728d04fd6b1e14bcb64945fabad4aa8c03b9d70315fb06/quartodoc-0.11.1.tar.gz", hash = "sha256:c121626e1a36392d168631f33c4d3e7fd48d185de178859f8eafbda14fbfe92f", size = 778611, upload-time = "2025-06-10T14:50:08.185Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/75/d9/0b48d4184f9ca6a996c4fac46897a968698c9d1e0f0e43a6906746201323/quartodoc-0.11.1-py3-none-any.whl", hash = "sha256:0776eb8e53d89385e2c9a8ae0ec08e8c307c1410dd1bd78bb28e8b1823dbb6ad", size = 88053, upload-time = "2025-06-10T14:50:06.443Z" },
+]
+
+[[package]]
+name = "rdkit"
+version = "2025.9.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "pillow" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/36/bf/cd7258a752b21b4c1051b7c0acd6fb2eb7787ebcaa35598843edd6dc9ade/rdkit-2025.9.1-cp311-cp311-macosx_10_15_x86_64.whl", hash = "sha256:00f7c5b3b095843f0f09df61c4e56c7f1468d4943919fa13d4b6155b790e6880", size = 31691070, upload-time = "2025-10-06T09:04:25.405Z" },
+    { url = "https://files.pythonhosted.org/packages/99/57/97a248b83abf6f0d8ff659987d1209e84b18927f9c5c8692c21ed00c3ba1/rdkit-2025.9.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:41246621a072c107855a09cb7bb25bf4480a86223ab7f9121f2a08636ddd8c7a", size = 29138690, upload-time = "2025-10-06T09:04:29.072Z" },
+    { url = "https://files.pythonhosted.org/packages/12/d0/ddd5f09917cfbcdfdb87fd40870d38b93ef8ef159489c88da2bcaec36a8d/rdkit-2025.9.1-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:9fa4b8c77c5a3107484130c089a3626eb61d078d23e5ebca87a7a84e238f4063", size = 34760030, upload-time = "2025-10-06T09:04:32.914Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/7f/7dc9cd00a6820c82c7c06328c8d73fd131a73ed12a499064db7a0a8cbff3/rdkit-2025.9.1-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:fefdb04534f4875aacf6a9a54a8f77ba482c55289f9de5fb8b8f66dccfdc2b05", size = 36226948, upload-time = "2025-10-06T09:04:37.093Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/b5/122cf75a4ab4abe430db157b72b42e483d815ee2c7b214ecfa0de8680156/rdkit-2025.9.1-cp311-cp311-win_amd64.whl", hash = "sha256:22dbecbeca83eee100417b3289dceb23974598f01a047284c196f863ee2b9d75", size = 23563087, upload-time = "2025-10-06T09:04:40.412Z" },
 ]
 
 [[package]]
