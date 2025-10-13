@@ -2,6 +2,7 @@ import bpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from MDAnalysis.transformations import boxdimensions
 import molecularnodes as mn
 from .constants import data_dir
 
@@ -345,10 +346,54 @@ class TestAnnotations:
         assert len(t1.annotations) == 1
 
     def test_trajectory_annotation_simulation_box(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Trajectory(universe, name="TestUniverse")
         assert len(t1.annotations) == 0
-        t1.annotations.add_simulation_box()
+        box = t1.annotations.add_simulation_box()
         assert len(t1.annotations) == 1
+        obj_name = "MN_an_TestUniverse"
+        assert obj_name in bpy.data.objects
+        obj_data = bpy.data.objects[obj_name].data
+        # verify default triclinic cell in wireframe mode
+        vef = [len(obj_data.vertices), len(obj_data.edges), len(obj_data.polygons)]
+        assert vef == [8, 12, 0]
+        # verify default triclinic cell faces in non-wireframe mode
+        box.mesh_wireframe = False
+        vef = [len(obj_data.vertices), len(obj_data.edges), len(obj_data.polygons)]
+        assert vef == [8, 12, 6]
+        # verify common compact shapes
+        box_dimensions = np.array(
+            [
+                [10, 10, 10, 90, 90, 90],  # cubic
+                [10, 10, 10, 60, 60, 90],  # rhombic dodecahedron xy-square
+                [10, 10, 10, 60, 60, 60],  # rhombic dodecahedron xy-hexagon
+                [10, 10, 10, 70.53, 109.47, 70.53],  # truncated octahedron
+                [10, 10, 20, 90, 90, 60],  # hexagonal cell
+            ]
+        )
+        # add mda transform to set different box vectors for different frames
+        transform = boxdimensions.set_dimensions(box_dimensions)
+        universe.trajectory.add_transformations(transform)
+        # enable compact option for annotation
+        box.compact = True
+        # expected # of vertices, edges and faces for standard compact shapes
+        expected_vef = [
+            [8, 12, 6],  # cubic
+            [14, 24, 12],  # rhombic dodecahedron xy-square
+            [14, 24, 12],  # rhombic dodecahedron xy-hexagon
+            [24, 36, 14],  # truncated octahedron
+            [12, 18, 8],  # hexagonal cell
+        ]
+        # iterate through frames and verify # of vertices, edges and faces
+        for f in range(5):
+            bpy.context.scene.frame_set(f)
+            vef = [len(obj_data.vertices), len(obj_data.edges), len(obj_data.polygons)]
+            assert vef == expected_vef[f]
+        # verify 3x3x3 lattice
+        box.show_lattice = True
+        for f in range(5):
+            bpy.context.scene.frame_set(f)
+            vef = [len(obj_data.vertices), len(obj_data.edges), len(obj_data.polygons)]
+            np.testing.assert_allclose(vef, np.array(expected_vef[f]) * 27)
 
     def test_molecule_annotation_molecule_info(self):
         mol = mn.Molecule.load(data_dir / "1cd3.cif")
@@ -435,12 +480,16 @@ class TestAnnotations:
         # verify single line with arrows at both ends - 5 edges
         assert len(thickness) == 5
         assert len(color) == 5
-        assert np.all(thickness == 1.0)
-        assert np.all(color == (1.0, 1.0, 1.0, 1.0))
+        np.testing.assert_allclose(thickness, 1.0, rtol=0, atol=0)
+        np.testing.assert_allclose(
+            color, np.array([(1.0, 1.0, 1.0, 1.0)] * len(color)), rtol=0, atol=0
+        )
         # test attribute updates
         a.mesh_thickness = 0.5
         a.mesh_color = (0.0, 1.0, 0.0, 1.0)
         thickness = t.annotations.bob.named_attribute("thickness")
         color = t.annotations.bob.named_attribute("Color")
-        assert np.all(thickness == 0.5)
-        assert np.all(color == (0.0, 1.0, 0.0, 1.0))
+        np.testing.assert_allclose(thickness, 0.5, rtol=0, atol=0)
+        np.testing.assert_allclose(
+            color, np.array([(0.0, 1.0, 0.0, 1.0)] * len(color)), rtol=0, atol=0
+        )
