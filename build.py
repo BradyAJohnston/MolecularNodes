@@ -6,6 +6,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from typing import List, Union
+import tomlkit
 
 
 def run_python(args: str | List[str]):
@@ -23,8 +24,6 @@ def run_python(args: str | List[str]):
 
     subprocess.run(args)
 
-
-import tomlkit
 
 TOML_PATH = "molecularnodes/blender_manifest.toml"
 WHL_PATH = "./molecularnodes/wheels"
