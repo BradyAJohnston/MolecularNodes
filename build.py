@@ -24,11 +24,7 @@ def run_python(args: str | List[str]):
     subprocess.run(args)
 
 
-try:
-    import tomlkit
-except ModuleNotFoundError:
-    run_python("-m pip install tomlkit")
-    import tomlkit
+import tomlkit
 
 TOML_PATH = "molecularnodes/blender_manifest.toml"
 WHL_PATH = "./molecularnodes/wheels"

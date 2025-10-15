@@ -31,7 +31,8 @@ jobs:
           version: ${{ matrix.version }}
       - name: Build extension
         run: |
-          uv run build.py --blender-path $(which blender)
+          BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
+          uv run --extra build build.py --blender-path "${BLENDER_PATH}"
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
       - name: Archive addon

@@ -24,7 +24,8 @@ jobs:
       - name: Build Extension
         run: |
           # Use new build script with uv.lock as source of truth
-          uv run build.py --blender-path $(which blender)
+          BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
+          uv run --extra build build.py --blender-path "${BLENDER_PATH}"
       - name: Create Draft Release
         run: |
           gh release create ${{ github.ref_name }} --draft --generate-notes *.zip

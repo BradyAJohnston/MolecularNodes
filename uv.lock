@@ -1253,6 +1253,9 @@ dependencies = [
 bpy = [
     { name = "bpy" },
 ]
+build = [
+    { name = "tomlkit" },
+]
 dev = [
     { name = "fake-bpy-module" },
     { name = "ipython" },
@@ -1326,9 +1329,10 @@ requires-dist = [
     { name = "starfile" },
     { name = "syrupy", marker = "extra == 'dev'" },
     { name = "syrupy", marker = "extra == 'test'" },
+    { name = "tomlkit", marker = "extra == 'build'" },
     { name = "tomlkit", marker = "extra == 'docs'" },
 ]
-provides-extras = ["bpy", "jupyter", "dev", "test", "docs"]
+provides-extras = ["bpy", "jupyter", "build", "dev", "test", "docs"]
 
 [[package]]
 name = "mrcfile"
