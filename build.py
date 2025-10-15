@@ -158,6 +158,7 @@ def build_extension(split: bool = True, blender_path: str = None) -> None:
     if not blender_path:
         try:
             import bpy
+
             blender_path = bpy.app.binary_path
         except (ImportError, AttributeError):
             pass
@@ -166,7 +167,9 @@ def build_extension(split: bool = True, blender_path: str = None) -> None:
         print("\nWarning: Blender executable path not available")
         print("The extension files have been prepared but not built.")
         print("To build the extension, either:")
-        print("  1. Run: blender --command extension build --split-platforms --source-dir molecularnodes --output-dir .")
+        print(
+            "  1. Run: blender --command extension build --split-platforms --source-dir molecularnodes --output-dir ."
+        )
         print("  2. Re-run with: --blender-path /path/to/blender")
         return
 
@@ -259,7 +262,7 @@ def parse_uv_lock_for_packages(package_names: set = None) -> dict:
             package_info_map[normalized_name] = {
                 "version": version,
                 "name": name,  # Keep original name
-                "wheels": {}
+                "wheels": {},
             }
 
             for wheel in wheels:
@@ -330,9 +333,13 @@ def download_wheels_from_lock(
 
                 # For macOS, match any compatible macOS version with the same architecture
                 if "macos" in platform.metadata:
-                    if "arm64" in platform.metadata and ("macosx" in filename and "arm64" in filename):
+                    if "arm64" in platform.metadata and (
+                        "macosx" in filename and "arm64" in filename
+                    ):
                         matched = True
-                    elif "x64" in platform.metadata and ("macosx" in filename and "x86_64" in filename):
+                    elif "x64" in platform.metadata and (
+                        "macosx" in filename and "x86_64" in filename
+                    ):
                         matched = True
                     # Also match universal2 wheels for both macOS architectures
                     elif "macosx" in filename and "universal2" in filename:
@@ -404,8 +411,13 @@ def download_wheels_from_manifest(clean: bool = True, max_workers: int = 8) -> N
 
     wheels_in_manifest = manifest.get("wheels", [])
 
-    # Parse uv.lock to get download URLs
-    exact_match_map, package_info_map = parse_uv_lock()
+    # Parse uv.lock to get download URLs for all packages
+    package_info_map = parse_uv_lock_for_packages()
+
+    # Build exact match map from all packages
+    exact_match_map = {}
+    for pkg_data in package_info_map.values():
+        exact_match_map.update(pkg_data["wheels"])
 
     print(f"Found {len(exact_match_map)} wheel URLs in uv.lock")
     print(f"Need to download {len(wheels_in_manifest)} wheels from manifest")
@@ -422,7 +434,9 @@ def download_wheels_from_manifest(clean: bool = True, max_workers: int = 8) -> N
             pkg_name = match.group(1).lower().replace("_", "-")
             version = match.group(2)
             # Everything after version
-            platform_tags = filename[len(match.group(1)) + 1 + len(match.group(2)) + 1:-4]
+            platform_tags = filename[
+                len(match.group(1)) + 1 + len(match.group(2)) + 1 : -4
+            ]
             return pkg_name, version, platform_tags
         return "", "", ""
 
@@ -456,7 +470,7 @@ def download_wheels_from_manifest(clean: bool = True, max_workers: int = 8) -> N
                     return (
                         url,
                         lock_filename,
-                        f"version mismatch: requested {requested_version}, using {lock_version}"
+                        f"version mismatch: requested {requested_version}, using {lock_version}",
                     )
                 else:
                     return (url, lock_filename, "platform match")
@@ -511,7 +525,9 @@ def download_wheels_from_manifest(clean: bool = True, max_workers: int = 8) -> N
         print(f"  ({version_mismatch_count} version substitutions made)")
 
 
-def verify_wheels_exist(platforms: Union[Platform, List[Platform]], packages_to_exclude: set = None) -> tuple[bool, list, list]:
+def verify_wheels_exist(
+    platforms: Union[Platform, List[Platform]], packages_to_exclude: set = None
+) -> tuple[bool, list, list]:
     """Verify that all required wheels exist in the wheels directory.
 
     Args:
@@ -554,9 +570,13 @@ def verify_wheels_exist(platforms: Union[Platform, List[Platform]], packages_to_
 
                 # For macOS, match any compatible macOS version with the same architecture
                 if "macos" in platform.metadata:
-                    if "arm64" in platform.metadata and ("macosx" in filename and "arm64" in filename):
+                    if "arm64" in platform.metadata and (
+                        "macosx" in filename and "arm64" in filename
+                    ):
                         matched = True
-                    elif "x64" in platform.metadata and ("macosx" in filename and "x86_64" in filename):
+                    elif "x64" in platform.metadata and (
+                        "macosx" in filename and "x86_64" in filename
+                    ):
                         matched = True
                     # Also match universal2 wheels for both macOS architectures
                     elif "macosx" in filename and "universal2" in filename:
@@ -581,7 +601,12 @@ def verify_wheels_exist(platforms: Union[Platform, List[Platform]], packages_to_
     return (len(missing_wheels) == 0, sorted(missing_wheels), sorted(existing_wheels))
 
 
-def build(platform, use_lock: bool = True, skip_download: bool = False, blender_path: str = None) -> None:
+def build(
+    platform,
+    use_lock: bool = True,
+    skip_download: bool = False,
+    blender_path: str = None,
+) -> None:
     """Build the extension.
 
     Args:
@@ -603,7 +628,9 @@ def build(platform, use_lock: bool = True, skip_download: bool = False, blender_
 
     if skip_download:
         print("Verifying all required packages exist...")
-        all_exist, missing, existing = verify_wheels_exist(platform, packages_to_exclude)
+        all_exist, missing, existing = verify_wheels_exist(
+            platform, packages_to_exclude
+        )
 
         if not all_exist:
             print(f"\n✗ Missing {len(missing)} required wheel(s):")
@@ -678,16 +705,21 @@ def main():
             build_platforms,
             clean=not args.no_clean,
             max_workers=args.workers,
-            packages_to_exclude=packages_to_exclude
+            packages_to_exclude=packages_to_exclude,
         )
     else:
         use_lock = not args.use_pip
         mode_str = "pip download" if args.use_pip else "uv.lock"
         if args.build_only:
-            print(f"Mode: Build extension only (verifying packages first)")
+            print("Mode: Build extension only (verifying packages first)")
         else:
             print(f"Mode: Build extension using {mode_str}")
-        build(build_platforms, use_lock=use_lock, skip_download=args.build_only, blender_path=args.blender_path)
+        build(
+            build_platforms,
+            use_lock=use_lock,
+            skip_download=args.build_only,
+            blender_path=args.blender_path,
+        )
 
 
 if __name__ == "__main__":
