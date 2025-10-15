@@ -34,10 +34,11 @@ def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
 def test_op_fetch_alphafold(tmpdir):
     scene = bpy.context.scene
     style = "ribbon"
+    code = "K4PA18"
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_fetch(
-            code="Q7Z434",
+            code=code,
             style=style,
             cache_dir=str(tmpdir),
             database="alphafold",
@@ -46,7 +47,7 @@ def test_op_fetch_alphafold(tmpdir):
         assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
         assert mol.object.mn.entity_type == mol._entity_type.value
 
-    assert mol.name == "Q7Z434"
+    assert mol.name == code
 
 
 @pytest.mark.parametrize("code", codes)
