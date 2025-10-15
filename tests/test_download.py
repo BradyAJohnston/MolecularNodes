@@ -129,7 +129,7 @@ def test_fetch_with_invalid_format(database):
 
 
 # limit to just 1 download test TODO: use API key to up requests in tests
-@pytest.mark.parametrize("format", ("cif"))
+@pytest.mark.parametrize("format", ("cif",))
 # @pytest.mark.parametrize("format", ("pdb", "cif", "bcif"))
 @pytest.mark.parametrize(
     "code",
