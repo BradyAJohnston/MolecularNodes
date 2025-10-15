@@ -128,26 +128,20 @@ def test_fetch_with_invalid_format(database):
     time.sleep(SLEEP_TIME)
 
 
-# TODO BCIF is supported elsewhere in the package but can't currently be parsed properly
-# I think there is something weird going on with the alphafold formatted bcif files
-
-
-@pytest.mark.parametrize("format", ("cif", "bcif"))
+# limit to just 1 download test TODO: use API key to up requests in tests
+@pytest.mark.parametrize("format", ("cif"))
+# @pytest.mark.parametrize("format", ("pdb", "cif", "bcif"))
 @pytest.mark.parametrize(
     "code",
     (
         "K4PA18",
-        "G1JSI4",
+        # "G1JSI4",
     ),
-)  # Only using valid IDs that exist in AFDB
-def test_alphafold_download(format: str, code: str, tmpdir) -> None:
-    downloader = StructureDownloader(cache=tmpdir)
-    file = downloader.download(code=code, format=format, database="alphafold")
-
-    mol = mn.Molecule.load(file)
-
-    assert mol.array
+)
+def test_fetch_alphafold(format: str, code: str, tmpdir) -> None:
     time.sleep(SLEEP_TIME)
+    mol = mn.Molecule.fetch(code, format=format, database="alphafold")
+    assert mol.array
 
 
 # Test StructureDownloader initialization
