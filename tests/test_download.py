@@ -132,7 +132,7 @@ def test_fetch_with_invalid_format(database):
 # I think there is something weird going on with the alphafold formatted bcif files
 
 
-@pytest.mark.parametrize("format", ("cif", "pdb"))
+@pytest.mark.parametrize("format", ("cif", "bcif"))
 @pytest.mark.parametrize(
     "code",
     (
