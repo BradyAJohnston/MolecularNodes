@@ -29,7 +29,7 @@ class PDBXReader(ReaderBase):
                 )
 
     def get_structure(
-        self, model: int | None = None
+        self, model: int | None = None, include_bonds: bool = True
     ) -> struc.AtomArray | struc.AtomArrayStack:
         try:
             array = pdbx.get_structure(
@@ -38,7 +38,7 @@ class PDBXReader(ReaderBase):
         except InvalidFileError:
             array = pdbx.get_component(self.file)
 
-        if not array.bonds:
+        if include_bonds and not array.bonds:
             array.bonds = struc.bonds.connect_via_residue_names(
                 array, inter_residue=True
             )
