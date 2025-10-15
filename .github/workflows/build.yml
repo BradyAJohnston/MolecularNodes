@@ -22,12 +22,16 @@ jobs:
         with:
           file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
           field: 'version'
-      - uses: BradyAJohnston/setup-blender@v3
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - uses: BradyAJohnston/setup-blender@v5
         with:
           version: ${{ matrix.version }}
       - name: Build extension
         run: |
-          blender -b -P build.py
+          uv run build.py --blender-path $(which blender)
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
       - name: Archive addon
