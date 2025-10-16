@@ -2,8 +2,7 @@
 
 <img src="docs/images/logo.png" align="right" style = "height:250px;"/>
 
-
-![Documentation Building](https://github.com/bradyajohnston/molecularnodes/actions/workflows/docs.yml/badge.svg) ![Running Tests](https://github.com/bradyajohnston/molecularnodes/actions/workflows/tests.yml/badge.svg) [![codecov](https://codecov.io/gh/BradyAJohnston/MolecularNodes/branch/main/graph/badge.svg?token=ZB2SJFY8FU)](https://codecov.io/gh/BradyAJohnston/MolecularNodes)
+[![CI](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/ci.yml)
 
 
 <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/v/release/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.github.com/bradyajohnston/MolecularNodes/releases"><img src="https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total.svg" alt="Repo total downloads count." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/license/bradyajohnston/molecularnodes" alt="Badge displaying license, which is MIT." style="height:20px"/></a> <a href="https://www.buymeacoffee.com/bradyajohnston"><img src="https://img.shields.io/github/stars/bradyajohnston/molecularnodes?style=social" alt="Badge displaying count of GitHub stars." style="height:20px"/></a>
