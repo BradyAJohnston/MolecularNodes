@@ -18,12 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Release Assets and Notes
+      - name: Download Release Assets and Create Notes
         run: |
           mkdir assets
           gh release download -p "*.zip" -D assets/
-          RELEASE_NOTES=$(gh release view --json body | jq -r .body)
-          echo "$RELEASE_NOTES" > release_notes.txt
+          RELEASE_URL=$(gh release view --json url | jq -r .url)
+          echo "See release notes: ${RELEASE_URL}" > release_notes.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
