@@ -96,7 +96,10 @@ class CellPackReader(PDBXReader):
         molecules = {}
 
         try:
-            array = self.get_structure()
+            # Skip bond computation for CellPack files as it's extremely slow with large structures
+            # (biotite 1.5+ regression: connect_via_residue_names takes ~80s for 200k atoms)
+            array = self.get_structure(include_bonds=False)
+
             if isinstance(array, struc.AtomArrayStack):
                 array = array[0]
 
@@ -107,7 +110,8 @@ class CellPackReader(PDBXReader):
         except InvalidFileError:
             self._is_petworld = True
             for i in range(self.n_molecules):
-                array = self.get_structure(model=int(i + 1))
+                # Skip bond computation for CellPack files
+                array = self.get_structure(model=int(i + 1), include_bonds=False)
                 array.set_annotation("pdbx_PDB_model_num", np.repeat(i + 1, len(array)))
                 array.chain_id = array.pdbx_PDB_model_num
                 chain_name = "{}_{}".format(

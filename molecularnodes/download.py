@@ -2,6 +2,7 @@ import gzip
 import io
 from pathlib import Path
 import requests
+from biotite.database import afdb
 
 CACHE_DIR = Path(Path.home(), "MolecularNodesCache").expanduser()
 
@@ -97,6 +98,21 @@ class StructureDownloader:
                 "New format PDB codes (starting with 'pdb_') are not compatible with .pdb format. Please use 'cif' or 'bcif' format instead."
             )
 
+        # Use biotite's afdb.fetch for AlphaFold database
+        if database == "alphafold":
+            try:
+                result = afdb.fetch(
+                    code, format=format, target_path=self.cache, overwrite=False
+                )
+                # biotite returns file path as string if cache is used, or StringIO/BytesIO if not
+                if isinstance(result, str):
+                    return Path(result)
+                return result
+            except Exception as e:
+                raise FileDownloadPDBError(
+                    f"Error downloading from AlphaFold database: {str(e)}"
+                )
+
         _is_binary = format in ["bcif"]
         filename = f"{code}.{format}"
 
@@ -170,47 +186,5 @@ class StructureDownloader:
                 return f"https://models.rcsb.org/{code}.bcif"
             else:
                 return f"https://files.rcsb.org/download/{code}.{format}"
-        elif database == "alphafold":
-            return get_alphafold_url(code, format)
         else:
             raise ValueError(f"Database {database} not currently supported.")
-
-
-def get_alphafold_url(code: str, format: str) -> str:
-    """Get the URL for downloading a structure from AlphaFold database.
-
-    Parameters
-    ----------
-    code : str
-        The UniProt ID or AlphaFold DB identifier.
-    format : str
-        The file format to download ('pdb', 'cif', or 'bcif').
-
-    Returns
-    -------
-    str
-        The URL to download the structure file.
-
-    Raises
-    ------
-    ValueError
-        If the requested format is not supported.
-    requests.RequestException
-        If there is an error fetching data from the AlphaFold API.
-
-    Examples
-    --------
-    >>> url = get_alphafold_url("P12345", "pdb")
-    >>> print(url)
-    https://alphafold.ebi.ac.uk/files/AF-P12345-F1-model_v4.pdb
-    """
-    if format not in ["pdb", "cif", "bcif"]:
-        raise ValueError(
-            f"Format {format} not currently supported from AlphaFold database."
-        )
-
-    url = f"https://alphafold.ebi.ac.uk/api/prediction/{code}"
-    response = requests.get(url)
-    response.raise_for_status()  # This will raise an exception for HTTP errors
-    data = response.json()[0]
-    return data[f"{format}Url"]
