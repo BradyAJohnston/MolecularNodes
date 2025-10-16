@@ -555,17 +555,18 @@ class Canvas:
         render_settings = scene.render
         image_settings = render_settings.image_settings
         render_frame = scene.frame_current if frame is None else frame
+        # temporary properties to override
+        override_props = [
+            (render_settings, "use_file_extension", True),
+            (scene, "frame_current", render_frame),
+        ]
+        if bpy.app.version >= (5, 0, 0):
+            override_props.append((image_settings, "media_type", "IMAGE"))
+        override_props.append((image_settings, "file_format", file_format))
         with ExitStack() as stack:
             # set the use_file_extension to auto generate file extension
             # set the file_format to the specified one
-            temp_override_properties(
-                stack,
-                [
-                    (render_settings, "use_file_extension", True),
-                    (image_settings, "file_format", file_format),
-                    (scene, "frame_current", render_frame),
-                ],
-            )
+            temp_override_properties(stack, override_props)
             # create temporary file with the file_format extension
             tmp_file = stack.enter_context(
                 tempfile.NamedTemporaryFile(suffix=render_settings.file_extension)
@@ -630,20 +631,21 @@ class Canvas:
         scene = self.scene
         render_settings = scene.render
         image_settings = render_settings.image_settings
+        # temporary properties to override
+        override_props = [
+            (render_settings, "use_lock_interface", True),
+            (render_settings, "resolution_percentage", render_scale),
+            (render_settings, "filepath", ""),
+            (scene, "frame_current", start),
+        ]
+        if bpy.app.version >= (5, 0, 0):
+            override_props.append((image_settings, "media_type", "IMAGE"))
+        override_props.append((image_settings, "file_format", "PNG"))
         # create a temporary directory
         with tempfile.TemporaryDirectory() as tmp_dir:
             # render individual frames
             with ExitStack() as stack:
-                temp_override_properties(
-                    stack,
-                    [
-                        (render_settings, "use_lock_interface", True),
-                        (render_settings, "resolution_percentage", render_scale),
-                        (render_settings, "filepath", ""),
-                        (image_settings, "file_format", "PNG"),
-                        (scene, "frame_current", start),
-                    ],
-                )
+                temp_override_properties(stack, override_props)
                 it = tqdm(frame_range, desc="Rendering frames")
                 # render individual frames
                 for frame in it:
@@ -670,20 +672,21 @@ class Canvas:
 
             # render animation
             video_file = os.path.join(tmp_dir, "animation.mp4")
+            # temporary properties to override
+            override_props = [
+                (render_settings, "use_lock_interface", True),
+                (render_settings, "resolution_percentage", render_scale),
+                (render_settings, "filepath", ""),
+                (scene, "frame_current", start),
+                (scene, "frame_start", start),
+                (scene, "frame_end", end),
+            ]
+            if bpy.app.version >= (5, 0, 0):
+                override_props.append((image_settings, "media_type", "VIDEO"))
+            override_props.append((image_settings, "file_format", "FFMPEG"))
+            override_props.append((render_settings.ffmpeg, "format", "MPEG4"))
             with ExitStack() as stack:
-                temp_override_properties(
-                    stack,
-                    [
-                        (render_settings, "use_lock_interface", True),
-                        (render_settings, "resolution_percentage", render_scale),
-                        (render_settings, "filepath", ""),
-                        (image_settings, "file_format", "FFMPEG"),
-                        (render_settings.ffmpeg, "format", "MPEG4"),
-                        (scene, "frame_current", start),
-                        (scene, "frame_start", start),
-                        (scene, "frame_end", end),
-                    ],
-                )
+                temp_override_properties(stack, override_props)
                 scene.render.filepath = video_file
                 it = tqdm(range(0, 1), desc="Generating video")
                 for i in it:
