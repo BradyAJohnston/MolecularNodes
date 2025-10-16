@@ -11,6 +11,8 @@ argv = argv[argv.index("--") + 1 :]
 
 
 def main():
+    # bpy.ops.preferences.addon_enable(module="bl_ext.user_default.molecularnodes")
+    # bpy.ops.wm.save_userpref()
     # run the test suite, and we have to manually return the result value if non-zero
     # value is returned for a failing test
     if len(argv) == 0:
