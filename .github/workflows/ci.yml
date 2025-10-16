@@ -29,7 +29,7 @@ jobs:
       runs-on: macos-14
       strategy:
         matrix:
-          version: [4.5]
+          version: [latest]
       env:
         ADDON_NAME: molecularnodes
       steps:
@@ -67,7 +67,6 @@ jobs:
           max-parallel: 4
           fail-fast: false
           matrix:
-            version: ["4.5"]
             os: [ubuntu-latest, macos-latest]
       steps:
           - uses: actions/checkout@v4
@@ -145,12 +144,12 @@ jobs:
               name: ${{ env.ADDON_NAME }}-${{ github.sha }}
               path: ./artifact
 
-          - name: Install extension
-            shell: bash
-            run: |
-              EXTENSION_ZIP=$(ls ./artifact/*.zip | head -n 1)
-              echo "Installing extension from: $EXTENSION_ZIP"
-              blender --command extension install-file --enable "$EXTENSION_ZIP" --repo user_default 
+          # - name: Install extension
+          #   shell: bash
+          #   run: |
+          #     EXTENSION_ZIP=$(ls ./artifact/*.zip | head -n 1)
+          #     echo "Installing extension from: $EXTENSION_ZIP"
+          #     blender --command extension install-file "$EXTENSION_ZIP" --repo user_default 
 
           - name: Install Dependencies
             shell: bash
