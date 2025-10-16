@@ -39,7 +39,7 @@ jobs:
           - name: Upload extension artifact
             uses: actions/upload-artifact@v4
             with:
-              name: ${{ env.ADDON_NAME }}-daily-build-${{ github.sha }}
+              name: ${{ env.ADDON_NAME }}-${{ github.sha }}
               retention-days: 1
               path: ./artifact/*
 
@@ -64,7 +64,7 @@ jobs:
             - name: Download extension artifact
               uses: actions/download-artifact@v4
               with:
-                name: ${{ env.ADDON_NAME }}-daily-build-${{ github.sha }}
+                name: ${{ env.ADDON_NAME }}-${{ github.sha }}
                 path: ./artifact
 
             - name: Install extension
@@ -72,7 +72,7 @@ jobs:
               run: |
                 EXTENSION_ZIP=$(ls ./artifact/*.zip | head -n 1)
                 echo "Installing extension from: $EXTENSION_ZIP"
-                blender --command extension install-file --enable "$EXTENSION_ZIP"
+                blender --command extension install-file --enable "$EXTENSION_ZIP" --repo user_default 
 
             - name: Install test dependencies with pip
               shell: bash
