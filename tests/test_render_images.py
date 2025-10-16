@@ -4,7 +4,6 @@ Image snapshot tests for visual regression testing.
 Use assert_image_snapshot() to compare rendered images with stored snapshots.
 
 Example:
-    @pytest.mark.image_snapshot
     @pytest.mark.parametrize("style", ["ball_and_stick", "cartoon"])
     def test_molecule_render(style, image_snapshot, tmp_path, request):
         canvas = _new_canvas()
@@ -23,6 +22,9 @@ import pytest
 from PIL import Image
 import molecularnodes as mn
 from .constants import data_dir
+
+# Mark all tests in this file as image_snapshot tests
+pytestmark = pytest.mark.image_snapshot
 
 
 def _new_canvas(resolution=(720, 480)):
@@ -87,7 +89,6 @@ MOLECULE_STYLES = [
 ]
 
 
-@pytest.mark.image_snapshot
 @pytest.mark.parametrize("style", MOLECULE_STYLES)
 def test_render_molecule_style_image(style: str, image_snapshot, tmp_path: Path, request):
     """Test molecule rendering with different styles."""
@@ -104,7 +105,6 @@ def test_render_molecule_style_image(style: str, image_snapshot, tmp_path: Path,
     assert_image_snapshot(out, image_snapshot, request)
 
 
-@pytest.mark.image_snapshot
 @pytest.mark.parametrize("style", ["density_surface", "density_wire"])
 def test_render_density_style_image(style: str, image_snapshot, tmp_path: Path, request):
     """Test density rendering with different styles."""
