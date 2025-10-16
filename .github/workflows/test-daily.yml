@@ -3,9 +3,49 @@ name: Test Daily Build
 on:
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
+
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-    build:
+    build-extension:
+        name: Build Extension
+        runs-on: macos-14
+        env:
+          ADDON_NAME: molecularnodes
+        steps:
+          - uses: actions/checkout@v4
+          - uses: SebRollen/toml-action@v1.2.0
+            id: read_manifest
+            with:
+              file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
+              field: 'version'
+          - name: Install uv
+            uses: astral-sh/setup-uv@v5
+            with:
+              enable-cache: true
+          - uses: BradyAJohnston/setup-blender@v5
+            with:
+              version: 4.5
+          - name: Build extension
+            run: |
+              BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
+              uv run --extra build build.py --blender-path "${BLENDER_PATH}"
+              mkdir artifact
+              mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
+          - name: Upload extension artifact
+            uses: actions/upload-artifact@v4
+            with:
+              name: ${{ env.ADDON_NAME }}-daily-build-${{ github.sha }}
+              retention-days: 1
+              path: ./artifact/*
+
+    test-daily:
+        name: Test with Blender Daily
+        needs: [build-extension]
         runs-on: ${{ matrix.os }}
         strategy:
             max-parallel: 4
@@ -13,14 +53,33 @@ jobs:
             matrix:
               version: ["daily"]
               os: [ubuntu-latest, macos-latest, windows-latest]
+        env:
+          ADDON_NAME: molecularnodes
         steps:
             - uses: actions/checkout@v4
             - uses: BradyAJohnston/setup-blender@v5
               with:
                 version: ${{ matrix.version }}
-            - name: Install in Blender
+
+            - name: Download extension artifact
+              uses: actions/download-artifact@v4
+              with:
+                name: ${{ env.ADDON_NAME }}-daily-build-${{ github.sha }}
+                path: ./artifact
+
+            - name: Install extension
+              shell: bash
               run: |
-                blender -b -P tests/python.py -- -m pip install ".[test]"
+                EXTENSION_ZIP=$(ls ./artifact/*.zip | head -n 1)
+                echo "Installing extension from: $EXTENSION_ZIP"
+                blender --command extension install-file --enable "$EXTENSION_ZIP"
+
+            - name: Install test dependencies with pip
+              shell: bash
+              run: |
+                blender -b --python-expr "import sys, subprocess; subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pytest', 'pytest-cov', 'syrupy', 'scipy', 'IPython', 'pytest-xdist', 'MDAnalysisTests>=2.7.0', 'MDAnalysisData', 'pooch>=1.8', 'rdkit'])"
+
             - name: Run Tests
+              shell: bash
               run: |
-                blender -b -P tests/run.py -- -vv tests --cov --cov-report=xml
+                blender -b --python-expr "import sys, subprocess; subprocess.check_call([sys.executable, '-m', 'pytest', '-vv', 'tests', '--cov', '--cov-report=xml'])"

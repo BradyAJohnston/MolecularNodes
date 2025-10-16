@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
 
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   upload-to-extensions:
     runs-on: ubuntu-latest
