@@ -10,8 +10,6 @@ dependencies = [
     "mrcfile",
     "starfile",
     "PyYAML",
-    "pytest-image-snapshot>=0.4.5",
-    "pixelmatch>=0.3.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11.0"
@@ -30,7 +28,8 @@ test = [
     "pytest",
     "pytest-cov",
     "syrupy",
-    "pytest-image-snapshot",
+    "pytest-image-snapshot>=0.4.5",
+    "pixelmatch>=0.3.0",
     "scipy",
     "IPython",
     "pytest-xdist",
