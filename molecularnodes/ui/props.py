@@ -103,17 +103,7 @@ class MolecularNodesSceneProperties(PropertyGroup):
         options={"TEXTEDIT_UPDATE"},
     )
 
-    import_format_alphafold: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        items=(
-            # ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
-            ("cif", ".cif", "The new standard of .cif / .mmcif"),
-            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
-        ),
-    )
-
-    import_format_wwpdb: EnumProperty(  # type: ignore
+    import_format_fetch: EnumProperty(  # type: ignore
         name="Format",
         description="Format to download as from the PDB",
         items=(

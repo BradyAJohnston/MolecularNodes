@@ -396,6 +396,23 @@ class OXDNA(Trajectory):
         if create_object:
             self.object.mn.entity_type = self._entity_type.value
 
+    def _compute_color(self) -> np.ndarray:
+        """Compute equidistant chain coloring for OXDNA"""
+        return color.color_chains_equidistant(self.named_attribute("chain_id"))
+
+    @property
+    def _blender_attributes(self):
+        """
+        Override parent to provide OXDNA-specific attribute mapping.
+        OXDNA stores raw chain IDs and resnames, not the computed indices/numbers.
+        """
+        return {
+            "res_id": self._compute_res_id,
+            "chain_id": self._compute_chain_id_int,
+            "res_name": self._compute_res_name_int,
+            "Color": self._compute_color,
+        }
+
     def _create_object(
         self,
         name: str = "NewUniverseObject",
@@ -422,25 +439,15 @@ class OXDNA(Trajectory):
             vertices=self.univ_positions,
             edges=self.bonds,
         )
+
+        self._store_default_attributes()
+        self._store_extra_attributes()
         self._update_timestep_values()
 
-        for name in ("chain_id", "res_id", "res_name"):
-            if name == "res_name":
-                att_name = "res_num"
-            else:
-                att_name = name
-            self.store_named_attribute(
-                getattr(self, att_name),
-                name,
-                atype=db.AttributeTypes.INT,
-            )
+        # Setup modifiers
+        # self._setup_modifiers()
 
-        self.store_named_attribute(
-            data=color.color_chains_equidistant(self.chain_id),
-            name="Color",
-            atype=db.AttributeTypes.FLOAT_COLOR,
-        )
-
+        # Apply OXDNA-specific style
         if style:
             nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
 

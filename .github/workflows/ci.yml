@@ -1,0 +1,258 @@
+name: CI
+
+on:
+    push:
+      branches: ["main"]
+    pull_request:
+      branches: ["*"]
+    workflow_dispatch:
+
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+    lint:
+      name: Check code style
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: astral-sh/ruff-action@v3
+        - name: Check code formatting
+          run: ruff format --diff
+        - name: Lint code base
+          run: ruff check
+
+    build:
+      name: Build Extension
+      runs-on: macos-14
+      strategy:
+        matrix:
+          version: [latest]
+      env:
+        ADDON_NAME: molecularnodes
+      steps:
+        - uses: actions/checkout@v4
+        - uses: SebRollen/toml-action@v1.2.0
+          id: read_manifest
+          with:
+            file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
+            field: 'version'
+        - name: Install uv
+          uses: astral-sh/setup-uv@v5
+          with:
+            enable-cache: true
+        - uses: BradyAJohnston/setup-blender@v5
+          with:
+            version: ${{ matrix.version }}
+        - name: Build extension
+          run: |
+            BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
+            uv run --extra build build.py --blender-path "${BLENDER_PATH}"
+            mkdir artifact
+            mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
+        - name: Upload extension artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: ${{ env.ADDON_NAME }}-${{ github.sha }}
+            retention-days: 7
+            path: ./artifact/*
+
+    test-bpy:
+      name: Test with bpy
+      needs: [lint, build]
+      runs-on: ${{ matrix.os }}
+      strategy:
+          max-parallel: 4
+          fail-fast: false
+          matrix:
+            os: [ubuntu-latest, macos-latest]
+      steps:
+          - uses: actions/checkout@v4
+          - name: Install uv
+            uses: astral-sh/setup-uv@v5
+          - name: Install molecularnodes
+            run: |
+              uv sync --all-extras
+          - name: Run Tests "not density"
+            timeout-minutes: 5
+            continue-on-error: true
+            run: |
+              uv run pytest -n auto -k "not density" --junitxml=test-results-1.xml || echo "TEST_RESULT_1=$?" >> $GITHUB_ENV
+
+          - name: Run Tests "density"
+            timeout-minutes: 3
+            continue-on-error: true
+            run: |
+              uv run pytest -k density --junitxml=test-results-2.xml || echo "TEST_RESULT_2=$?" >> $GITHUB_ENV
+
+          - name: Check Test Results
+            run: |
+              # Check if test result files exist and contain failures
+              FAILED=false
+
+              if [ -f "test-results-1.xml" ]; then
+                if grep -q 'failures="[^0]' test-results-1.xml || grep -q 'errors="[^0]' test-results-1.xml; then
+                  echo "Tests 'not density' had failures"
+                  FAILED=true
+                fi
+              else
+                echo "Test results file 1 not found, assuming failure"
+                FAILED=true
+              fi
+
+              if [ -f "test-results-2.xml" ]; then
+                if grep -q 'failures="[^0]' test-results-2.xml || grep -q 'errors="[^0]' test-results-2.xml; then
+                  echo "Tests 'density' had failures"
+                  FAILED=true
+                fi
+              else
+                echo "Test results file 2 not found, assuming failure"
+                FAILED=true
+              fi
+
+              if [ "$FAILED" = true ]; then
+                echo "Tests failed"
+                exit 1
+              else
+                echo "All tests passed successfully"
+                exit 0
+              fi
+
+    test-blender:
+      name: Test in Blender
+      needs: [lint, build]
+      runs-on: ${{ matrix.os }}
+      strategy:
+          max-parallel: 6
+          fail-fast: false
+          matrix:
+            version: ["latest", "daily"]
+            os: [ubuntu-latest, macos-latest, windows-latest]
+      env:
+        ADDON_NAME: molecularnodes
+      steps:
+          - uses: actions/checkout@v4
+          - uses: BradyAJohnston/setup-blender@v5
+            with:
+              version: ${{ matrix.version }}
+
+          - name: Download extension artifact
+            uses: actions/download-artifact@v4
+            with:
+              name: ${{ env.ADDON_NAME }}-${{ github.sha }}
+              path: ./artifact
+
+          # - name: Install extension
+          #   shell: bash
+          #   run: |
+          #     EXTENSION_ZIP=$(ls ./artifact/*.zip | head -n 1)
+          #     echo "Installing extension from: $EXTENSION_ZIP"
+          #     blender --command extension install-file "$EXTENSION_ZIP" --repo user_default 
+
+          - name: Install Dependencies
+            shell: bash
+            run: |
+              blender --python-exit-code 0 -b -P tests/install.py
+
+          - name: Run Tests
+            shell: bash
+            run: |
+              blender --python-exit-code 0 -b -P tests/run.py -- -v
+
+    docs:
+      name: Build Documentation
+      needs: [lint, build]
+      runs-on: self-hosted
+      permissions: write-all
+      steps:
+        - uses: actions/checkout@v4
+        - name: Install uv
+          uses: astral-sh/setup-uv@v6
+          with:
+            version: "latest"
+            enable-cache: true
+            cache-dependency-glob: "uv.lock"
+
+        - name: Install Packages
+          run: |
+            uv sync --all-extras
+
+        - name: Pre-render Scripts
+          timeout-minutes: 3
+          continue-on-error: true
+          run: |
+            uv run docs/generate.py
+        - name: Build quartodoc
+          run: |
+            cd docs
+            uv run quartodoc build
+            uv run quartodoc interlinks
+            cd ..
+
+        - name: Biotite Setup CCD
+          run: |
+            uv run python -m biotite.setup_ccd
+
+        - name: Quarto Render Docs
+          run: |
+            uv run quarto render docs
+
+        - name: Configure pull release name
+          if: ${{github.event_name == 'pull_request'}}
+          run: |
+            echo "RELEASE_NAME=pr-${PR_NUMBER}" >> $GITHUB_ENV
+          env:
+            PR_NUMBER: ${{ github.event.number }}
+        - name: Configure branch release name
+          if: ${{github.event_name != 'pull_request'}}
+          run: |
+            # use branch name, but replace slashes. E.g. feat/a -> feat-a
+            echo "RELEASE_NAME=${GITHUB_REF_NAME/\//-}" >> $GITHUB_ENV
+        # deploy ----
+
+        - name: Create Github Deployment
+          uses: bobheadxi/deployments@v0.4.3
+          if: github.event.pull_request.head.repo.full_name == github.repository
+          id: deployment
+          with:
+            step: start
+            token: ${{ secrets.GITHUB_TOKEN }}
+            env: ${{ env.RELEASE_NAME }}
+            ref: ${{ github.head_ref }}
+            transient: true
+            logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+
+        - name: Netlify docs preview
+          if: github.event.pull_request.head.repo.full_name == github.repository
+          run: |
+            npm install -g netlify-cli
+            # push main branch to production, others to preview --
+            if [ "${ALIAS}" == "main" ]; then
+              netlify deploy --dir=docs/_build --alias="main"
+            else
+              netlify deploy --dir=docs/_build --alias="${ALIAS}"
+            fi
+          env:
+            NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+            NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+            ALIAS: ${{ steps.deployment.outputs.env }}
+
+        - name: Update Github Deployment
+          if: github.event.pull_request.head.repo.full_name == github.repository
+          uses: bobheadxi/deployments@v0.4.3
+          with:
+            step: finish
+            token: ${{ secrets.GITHUB_TOKEN }}
+            status: ${{ job.status }}
+            deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+            env_url: 'https://${{ steps.deployment.outputs.env }}--molecularnodes.netlify.app'
+            logs: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+
+        - name: Deploy Release Documentation
+          uses: peaceiris/actions-gh-pages@v4
+          if: github.event_name == 'release'
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: docs/_build

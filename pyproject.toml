@@ -1,12 +1,12 @@
 [project]
 name = "molecularnodes"
-version = "4.5.3"
+version = "4.5.4"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.3.0",
+    "databpy>=0.3.1",
     "MDAnalysis>=2.7.0",
-    "biotite>=1.1",
+    "biotite>=1.5",
     "mrcfile",
     "starfile",
     "PyYAML",
@@ -22,8 +22,21 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 [project.optional-dependencies]
 bpy = ["bpy>=4.5.2, <5.0.0"]
 jupyter = ["jupyter", "IPython"]
+build = ["tomlkit"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
-test = ["pytest", "pytest-cov", "syrupy", "scipy", "IPython", "pytest-xdist", "MDAnalysisTests>=2.7.0", "MDAnalysisData", "pooch>=1.8"]
+test = [
+    "pytest",
+    "pytest-cov",
+    "syrupy",
+    "scipy",
+    "IPython",
+    "pytest-xdist",
+    "MDAnalysisTests>=2.7.0",
+    "MDAnalysisData",
+    "pooch>=1.8",
+    "rdkit",
+    "numpy<2.0"
+    ]
 docs = [
     "quartodoc",
     "quarto-cli~=1.7.0",

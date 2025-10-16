@@ -1,44 +1,36 @@
-import os
 import subprocess
 import sys
 
 
-def main():
-    python = os.path.realpath(sys.executable)
+def install_dependency_group(pyproject_path, group_name):
+    """
+    Install packages from a specific dependency group in pyproject.toml.
 
-    commands = [
-        # include extra dependencies
+    Args:
+        pyproject_path: Path to pyproject.toml file
+        group_name: Name of the dependency group to install
+    """
+    python_exe = sys.executable
+    subprocess.check_call([python_exe, "-m", "pip", "install", "uv"])
+    subprocess.check_call([python_exe, "-m", "pip", "install", "-e", "."])
+    subprocess.check_call(
         [
-            python,
-            "-m",
-            "pip",
-            "install",
-            "uv",
-        ],
-        [
-            python,
+            python_exe,
             "-m",
             "uv",
             "pip",
             "install",
             "-r",
-            "pyproject.toml",
-            "--extra=test",
-        ],
-        [
-            python,
-            "-m",
-            "uv",
-            "pip",
-            "install",
-            "-e",
-            ".",
-        ],
-    ]
+            pyproject_path,
+            "--extra",
+            group_name,
+        ]
+    )
 
-    for command in commands:
-        subprocess.run(command)
 
+# Configuration
+PYPROJECT_PATH = "pyproject.toml"  # Change this to your file path
+GROUP_NAME = "test"  # Change this to your group name (e.g., "dev", "test", "docs")
 
 if __name__ == "__main__":
-    main()
+    install_dependency_group(PYPROJECT_PATH, GROUP_NAME)
