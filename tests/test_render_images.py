@@ -17,6 +17,7 @@ Example:
         # Compare with snapshot - handles everything automatically
         assert_image_snapshot(out, image_snapshot, request)
 """
+
 from pathlib import Path
 import pytest
 from PIL import Image
@@ -90,7 +91,9 @@ MOLECULE_STYLES = [
 
 
 @pytest.mark.parametrize("style", MOLECULE_STYLES)
-def test_render_molecule_style_image(style: str, image_snapshot, tmp_path: Path, request):
+def test_render_molecule_style_image(
+    style: str, image_snapshot, tmp_path: Path, request
+):
     """Test molecule rendering with different styles."""
     canvas = _new_canvas()
 
@@ -106,7 +109,9 @@ def test_render_molecule_style_image(style: str, image_snapshot, tmp_path: Path,
 
 
 @pytest.mark.parametrize("style", ["density_surface", "density_wire"])
-def test_render_density_style_image(style: str, image_snapshot, tmp_path: Path, request):
+def test_render_density_style_image(
+    style: str, image_snapshot, tmp_path: Path, request
+):
     """Test density rendering with different styles."""
     canvas = _new_canvas()
 
