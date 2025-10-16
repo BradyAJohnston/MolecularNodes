@@ -128,9 +128,7 @@ class Trajectory(MolecularEntity):
         return self.atoms.positions * self.world_scale
 
     @property
-    def bonds(self) -> np.ndarray:
-        # the code to remap indices for a selection was removed as we don't subset the trajectory anymore
-        # when importing it, everything is imported and the selections just update
+    def bonds(self) -> np.ndarray | None:
         if hasattr(self.atoms, "bonds"):
             return self.atoms.bonds.indices
         else:
@@ -154,8 +152,7 @@ class Trajectory(MolecularEntity):
         except Exception:
             return np.repeat("X", self.n_atoms)
 
-    @property
-    def atomic_number(self) -> np.ndarray:
+    def _compute_atomic_number(self) -> np.ndarray:
         return np.array(
             [
                 data.elements.get(element, data.elements.get("X")).get("atomic_number")
@@ -163,8 +160,7 @@ class Trajectory(MolecularEntity):
             ]
         )
 
-    @property
-    def vdw_radii(self) -> np.ndarray:
+    def _compute_vdw_radii(self) -> np.ndarray:
         return (
             np.array(
                 [
@@ -176,8 +172,7 @@ class Trajectory(MolecularEntity):
             * self.world_scale  # Angstrom to world scale
         )
 
-    @property
-    def mass(self) -> np.ndarray:
+    def _compute_mass(self) -> np.ndarray:
         # units: daltons
         if hasattr(self.atoms, "masses"):
             return np.array([x.mass for x in self.atoms])
@@ -191,10 +186,6 @@ class Trajectory(MolecularEntity):
     @property
     def n_frames(self) -> int:
         return self.universe.trajectory.n_frames
-
-    @property
-    def res_id(self) -> np.ndarray:
-        return self.atoms.resids
 
     @property
     def uframe(self) -> int:
@@ -223,234 +214,130 @@ class Trajectory(MolecularEntity):
         if self.universe.trajectory.frame != value:
             self.universe.trajectory[value]
 
-    @property
-    def res_name(self) -> np.ndarray:
+    def _compute_res_name(self) -> np.ndarray:
         return np.array(list(map(lambda x: x[0:3], self.atoms.resnames)))
 
-    @property
-    def atom_id(self) -> np.ndarray:
-        # corresponds to Atomids topology attr
-        if hasattr(self.atoms, "ids"):
-            return self.atoms.ids
-        else:
-            return np.zeros(self.n_atoms)
-
-    @property
-    def res_num(self) -> np.ndarray:
+    def _compute_res_name_int(self) -> np.ndarray:
+        res_name = self._compute_res_name()
         return np.array(
             [
-                data.residues.get(res_name, data.residues.get("UNK")).get(
-                    "res_name_num"
-                )
-                for res_name in self.res_name
+                data.residues.get(name, data.residues.get("UNK")).get("res_name_num")
+                for name in res_name
             ]
         )
 
-    @property
-    def b_factor(self) -> np.ndarray:
+    def _compute_b_factor(self) -> np.ndarray:
         if hasattr(self.atoms, "tempfactors"):
             return self.atoms.tempfactors
         else:
             return np.zeros(self.n_atoms)
 
-    @property
-    def occupancy(self) -> np.ndarray:
+    def _compute_occupancy(self) -> np.ndarray:
         # corresponds to Occupancies topology attr
         if hasattr(self.atoms, "occupancies"):
             return self.atoms.occupancies
         else:
             return np.zeros(self.n_atoms)
 
-    @property
-    def charge(self) -> np.ndarray:
+    def _compute_charge(self) -> np.ndarray:
         # corresponds to Charges topology attr
         if hasattr(self.atoms, "charges"):
             return self.atoms.charges
         else:
             return np.zeros(self.n_atoms)
 
-    @property
-    def segindices(self) -> np.ndarray:
-        if hasattr(self.atoms, "segindices"):
-            return self.atoms.segindices
+    def _compute_res_id(self) -> np.ndarray:
+        return self.atoms.resids
 
-    @property
-    def chain_id(self) -> np.ndarray:
-        if hasattr(self.atoms, "chainIDs"):
-            return self.atoms.chainIDs
-        else:
-            return np.zeros(self.n_atoms)
+    def _compute_atom_id(self) -> np.ndarray:
+        return self.atoms.ids
 
-    @property
-    def chain_ids(self) -> np.ndarray:
-        return np.unique(self.chain_id)
+    def _compute_segindices(self) -> np.ndarray:
+        segs = []
+        for seg in self.atoms.segments:
+            segs.append(seg.atoms[0].segid)
 
-    @property
-    def chain_id_num(self) -> np.ndarray:
-        chain_ids, chain_id_index = np.unique(self.chain_id, return_inverse=True)
+        try:
+            self.object["segments"] = segs
+        except db.LinkedObjectError:
+            pass
+
+        return self.atoms.segindices
+
+    def _compute_chain_id_int(self) -> np.ndarray:
+        chain_ids, chain_id_index = np.unique(self.atoms.chainIDs, return_inverse=True)
+
+        try:
+            self.object["chain_ids"] = chain_ids
+        except db.LinkedObjectError:
+            pass
+
         return chain_id_index
 
-    @property
-    def atom_type(self) -> np.ndarray:
-        return self.atoms.types
-
-    @property
-    def atom_type_unique(self) -> np.ndarray:
-        return np.unique(self.atom_type)
-
-    @property
-    def atom_type_num(self) -> np.ndarray:
+    def _compute_atom_type_num(self) -> np.ndarray:
+        atom_type_unique, atom_type_index = np.unique(
+            self.atoms.types, return_inverse=True
+        )
         try:
-            atom_type_unique, atom_type_index = np.unique(
-                self.atom_type, return_inverse=True
-            )
-            return atom_type_index
-        except AttributeError:
-            return None
+            self.object["atom_type_unique"] = atom_type_unique
+        except db.LinkedObjectError:
+            pass
 
-    @property
-    def atom_name(self) -> np.ndarray:
-        if hasattr(self.atoms, "names"):
-            return self.atoms.names
-        else:
-            return np.zeros(self.n_atoms)
+        return atom_type_index
 
-    @property
-    def atom_name_num(self) -> np.ndarray:
+    def _compute_atom_name_num(self) -> np.ndarray:
         if hasattr(self.atoms, "names"):
             return np.array(
-                list(map(lambda x: data.atom_names.get(x, -1), self.atom_name))
+                list(map(lambda x: data.atom_names.get(x, -1), self.atoms.names))
             )
         else:
             return np.repeat(-1, self.n_atoms)
 
-    @property
-    def is_nucleic(self) -> np.ndarray:
+    def _compute_is_nucleic(self) -> np.ndarray:
         return self.bool_selection(self.atoms, "nucleic")
 
-    @property
-    def is_peptide(self) -> np.ndarray:
+    def _compute_is_peptide(self) -> np.ndarray:
         return self.bool_selection(self.atoms, "protein or (name BB SC*)")
 
-    @property
-    def is_lipid(self) -> np.ndarray:
+    def _compute_is_lipid(self) -> np.ndarray:
         return np.isin(self.atoms.resnames, data.lipid_names)
 
-    @property
-    def is_backbone(self) -> np.ndarray:
+    def _compute_is_backbone(self) -> np.ndarray:
         return self.bool_selection(self.atoms, "backbone or nucleicbackbone or name BB")
 
-    @property
-    def is_alpha_carbon(self) -> np.ndarray:
+    def _compute_is_alpha_carbon(self) -> np.ndarray:
         return self.bool_selection(self.atoms, "name CA or name BB")
 
-    @property
-    def is_solvent(self) -> np.ndarray:
+    def _compute_is_solvent(self) -> np.ndarray:
         return self.bool_selection(
             self.atoms, "name OW or name HW1 or name HW2 or resname W or resname PW"
         )
 
     @property
-    def _attributes_2_blender(self):
+    def _blender_attributes(self):
         """
-        The attributes that will be added to the Blender object.
+        Attribute names and the methods to generate their values for the Blender object
         """
         return {
-            "atomic_number": {
-                "value": self.atomic_number,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "vdw_radii": {
-                "value": self.vdw_radii,
-                "type": "FLOAT",
-                "domain": "POINT",
-            },
-            "mass": {
-                "value": self.mass,
-                "type": "FLOAT",
-                "domain": "POINT",
-            },
-            "res_id": {
-                "value": self.res_id,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "segid": {
-                "value": self.segindices,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "res_name": {
-                "value": self.res_num,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "atom_id": {
-                "value": self.atom_id,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "b_factor": {
-                "value": self.b_factor,
-                "type": "FLOAT",
-                "domain": "POINT",
-            },
-            "occupancy": {
-                "value": self.occupancy,
-                "type": "FLOAT",
-                "domain": "POINT",
-            },
-            "charge": {
-                "value": self.charge,
-                "type": "FLOAT",
-                "domain": "POINT",
-            },
-            "chain_id": {
-                "value": self.chain_id_num,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "atom_types": {
-                "value": self.atom_type_num,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "atom_name": {
-                "value": self.atom_name_num,
-                "type": "INT",
-                "domain": "POINT",
-            },
-            "is_backbone": {
-                "value": self.is_backbone,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            "is_alpha_carbon": {
-                "value": self.is_alpha_carbon,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            "is_solvent": {
-                "value": self.is_solvent,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            "is_nucleic": {
-                "value": self.is_nucleic,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            "is_lipid": {
-                "value": self.is_lipid,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
-            "is_peptide": {
-                "value": self.is_peptide,
-                "type": "BOOLEAN",
-                "domain": "POINT",
-            },
+            "atomic_number": self._compute_atomic_number,
+            "vdw_radii": self._compute_vdw_radii,
+            "mass": self._compute_mass,
+            "res_id": self._compute_res_id,
+            "segid": self._compute_segindices,
+            "res_name": self._compute_res_name_int,
+            "atom_id": self._compute_atom_id,
+            "b_factor": self._compute_b_factor,
+            "occupancy": self._compute_occupancy,
+            "charge": self._compute_charge,
+            "chain_id": self._compute_chain_id_int,
+            "atom_types": self._compute_atom_type_num,
+            "atom_name": self._compute_atom_name_num,
+            "is_backbone": self._compute_is_backbone,
+            "is_alpha_carbon": self._compute_is_alpha_carbon,
+            "is_solvent": self._compute_is_solvent,
+            "is_nucleic": self._compute_is_nucleic,
+            "is_lipid": self._compute_is_lipid,
+            "is_peptide": self._compute_is_peptide,
         }
 
     def save_filepaths_on_object(self) -> None:
@@ -470,6 +357,20 @@ class Trajectory(MolecularEntity):
         self.correct_periodic = False
         self.interpolate = False
 
+    def _store_default_attributes(self) -> None:
+        for name, func in self._blender_attributes.items():
+            try:
+                self.store_named_attribute(
+                    data=func(),
+                    name=name,
+                )
+            except (mda.NoDataError, AttributeError):
+                pass
+
+    def _store_extra_attributes(self) -> None:
+        # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
+        pass
+
     def _create_object(
         self,
         name: str = "NewUniverseObject",
@@ -481,33 +382,12 @@ class Trajectory(MolecularEntity):
             edges=self.bonds,
         )
 
-        for att_name, att in self._attributes_2_blender.items():
-            try:
-                self.store_named_attribute(
-                    data=att["value"],
-                    name=att_name,
-                    atype=att["type"],
-                    domain=att["domain"],
-                )
-            except Exception as e:
-                print(e)
-
-        if hasattr(self.atoms, "segindices"):
-            segs = []
-            for seg in self.atoms.segments:
-                segs.append(seg.atoms[0].segid)
-
-            self.object["segments"] = segs
-
+        self._store_default_attributes()
+        self._store_extra_attributes()
         self._setup_modifiers()
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
         self._create_object(name=name)
-
-        self.object["chain_ids"] = self.chain_ids
-
-        if hasattr(self, "atom_type_unique"):
-            self.object["atom_type_unique"] = self.atom_type_unique
 
         self.object.mn.entity_type = self._entity_type.value
         self.object.mn.n_frames = self.n_frames
