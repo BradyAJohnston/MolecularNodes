@@ -34,7 +34,8 @@ test = [
     "MDAnalysisTests>=2.7.0",
     "MDAnalysisData",
     "pooch>=1.8",
-    "rdkit"
+    "rdkit",
+    "numpy<2.0"
     ]
 docs = [
     "quartodoc",

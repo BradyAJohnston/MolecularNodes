@@ -155,23 +155,12 @@ jobs:
           - name: Install test dependencies with pip
             shell: bash
             run: |
-              blender -b --python-expr "import sys, subprocess; subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pytest', 'pytest-cov', 'syrupy', 'scipy', 'IPython', 'pytest-xdist', 'MDAnalysisTests>=2.7.0', 'MDAnalysisData', 'pooch>=1.8', 'rdkit'])"
+              blender -b -P tests/install.py
 
           - name: Run Tests
             shell: bash
             run: |
-              blender -b --python-expr "import sys, subprocess; subprocess.check_call([sys.executable, '-m', 'pytest', '-vv', 'tests', '--cov', '--cov-report=xml'])"
-
-          - name: Expose coverage as a CI download
-            uses: actions/upload-artifact@v4
-            if: matrix.os == 'ubuntu-latest' && matrix.version == 'latest'
-            with:
-              name: coverage.xml
-              path: coverage.xml
-
-          - name: Upload coverage reports to Codecov
-            if: matrix.os == 'ubuntu-latest'
-            uses: codecov/codecov-action@v3
+              blender -b -P tests/run.py
 
     docs:
       name: Build Documentation
