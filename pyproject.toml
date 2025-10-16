@@ -10,6 +10,8 @@ dependencies = [
     "mrcfile",
     "starfile",
     "PyYAML",
+    "pytest-image-snapshot>=0.4.5",
+    "pixelmatch>=0.3.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11.0"
@@ -23,11 +25,12 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 bpy = ["bpy>=4.5.2, <5.0.0"]
 jupyter = ["jupyter", "IPython"]
 build = ["tomlkit"]
-dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
+dev = ["pytest", "pytest-cov", "syrupy", "pytest-image-snapshot", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
 test = [
     "pytest",
     "pytest-cov",
     "syrupy",
+    "pytest-image-snapshot",
     "scipy",
     "IPython",
     "pytest-xdist",
@@ -102,3 +105,9 @@ order-by-type = true
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
+
+[tool.pytest.ini_options]
+markers = [
+    "image_snapshot: tests that compare rendered images (run with -m image_snapshot)"
+]
+addopts = "-m 'not image_snapshot'"

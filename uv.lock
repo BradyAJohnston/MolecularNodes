@@ -1245,6 +1245,8 @@ dependencies = [
     { name = "databpy" },
     { name = "mdanalysis" },
     { name = "mrcfile" },
+    { name = "pixelmatch" },
+    { name = "pytest-image-snapshot" },
     { name = "pyyaml" },
     { name = "starfile" },
 ]
@@ -1262,6 +1264,7 @@ dev = [
     { name = "nodepad" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pytest-image-snapshot" },
     { name = "scipy" },
     { name = "syrupy" },
 ]
@@ -1288,6 +1291,7 @@ test = [
     { name = "pooch" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pytest-image-snapshot" },
     { name = "pytest-xdist" },
     { name = "rdkit" },
     { name = "scipy" },
@@ -1316,11 +1320,15 @@ requires-dist = [
     { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.2.0" },
     { name = "nodepad", marker = "extra == 'docs'" },
     { name = "numpy", marker = "extra == 'test'", specifier = "<2.0" },
+    { name = "pixelmatch", specifier = ">=0.3.0" },
     { name = "pooch", marker = "extra == 'test'", specifier = ">=1.8" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
     { name = "pytest-cov", marker = "extra == 'test'" },
+    { name = "pytest-image-snapshot", specifier = ">=0.4.5" },
+    { name = "pytest-image-snapshot", marker = "extra == 'dev'" },
+    { name = "pytest-image-snapshot", marker = "extra == 'test'" },
     { name = "pytest-xdist", marker = "extra == 'test'" },
     { name = "pyyaml" },
     { name = "quarto-cli", marker = "extra == 'docs'", specifier = "~=1.7.0" },
@@ -1609,6 +1617,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pixelmatch"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1c/59/ebc53e64156db78c75c6d7f535e3f80f62c8a8e1545783770f06f528e187/pixelmatch-0.3.0.tar.gz", hash = "sha256:d0fa36a593cfcfa2d4b225da9d72c5b5218aef8b0594bc1a91953533c2676099", size = 9142, upload-time = "2022-03-23T14:51:35.225Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/09/766e3cb038be997cef78a29cfd4ec5e9be739b8ea44a09c839a6da8cb55b/pixelmatch-0.3.0-py3-none-any.whl", hash = "sha256:1fe86c50e7d00eb4b4de7b991f8b7ebc12da841ce1e9f7304480ab0f58a2bd81", size = 9155, upload-time = "2022-03-23T14:51:33.271Z" },
+]
+
+[[package]]
 name = "platformdirs"
 version = "4.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1831,6 +1848,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5e/f7/c933acc76f5208b3b00089573cf6a2bc26dc80a8aece8f52bb7d6b1855ca/pytest_cov-7.0.0.tar.gz", hash = "sha256:33c97eda2e049a0c5298e91f519302a1334c26ac65c1a483d6206fd458361af1", size = 54328, upload-time = "2025-09-09T10:57:02.113Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ee/49/1377b49de7d0c1ce41292161ea0f721913fa8722c19fb9c1e3aa0367eecb/pytest_cov-7.0.0-py3-none-any.whl", hash = "sha256:3b8e9558b16cc1479da72058bdecf8073661c7f57f7d3c5f22a1c23507f2d861", size = 22424, upload-time = "2025-09-09T10:57:00.695Z" },
+]
+
+[[package]]
+name = "pytest-image-snapshot"
+version = "0.4.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pillow" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6b/af/168d4dc262dd34c61d75d68d4794b2a0e4c5df402e3f7c652b164f0efe51/pytest_image_snapshot-0.4.5.tar.gz", hash = "sha256:706f0ee3f8b7826beda93702a6c0a001ae783ee2cb273948f145f4e8560413d5", size = 6744, upload-time = "2025-07-16T09:59:56.105Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/af/e7/d3de93d95006f30f370a8b8fa41a85ab2a7e69b6cdaf5056d9715599b98d/pytest_image_snapshot-0.4.5-py3-none-any.whl", hash = "sha256:cc544510d87ded7eba48de356601fa5b26ca97f5ee4b891c6c8fe4184cf1930d", size = 6506, upload-time = "2025-07-16T09:59:54.538Z" },
 ]
 
 [[package]]
