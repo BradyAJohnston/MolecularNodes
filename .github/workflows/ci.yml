@@ -152,15 +152,15 @@ jobs:
               echo "Installing extension from: $EXTENSION_ZIP"
               blender --command extension install-file --enable "$EXTENSION_ZIP" --repo user_default 
 
-          - name: Install test dependencies with pip
+          - name: Install Dependencies
             shell: bash
             run: |
-              blender -b -P tests/install.py
+              blender --python-exit-code 0 -b -P tests/install.py
 
           - name: Run Tests
             shell: bash
             run: |
-              blender -b -P tests/run.py
+              blender --python-exit-code 0 -b -P tests/run.py -- -v
 
     docs:
       name: Build Documentation
