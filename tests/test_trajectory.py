@@ -51,7 +51,7 @@ class TestTrajectory:
             "atomic_number",
             "res_id",
             "res_name",
-            "chain_id",
+            # "chain_id",
             "atom_types",
             "atom_name",
             "position",
@@ -332,6 +332,13 @@ class TestTrajectory:
         # view of whole object
         v4 = t1.get_view()
         assert v4 != v1 and v4 != v2 and v4 != v3
+
+    def test_gh_985(self):
+        # ensure that we can create a Trajectory
+        # from the SMILES representation of a simple molecule
+        ethanol_smiles = "CCO"
+        u = mda.Universe.from_smiles(ethanol_smiles)
+        mn.Trajectory(u)
 
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])

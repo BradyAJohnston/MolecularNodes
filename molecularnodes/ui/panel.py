@@ -18,11 +18,11 @@ def panel_wwpdb(layout, scene):
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene.mn, "import_code_pdb")
     row = row_import.split(factor=0.3)
-    row.prop(scene.mn, "import_format_wwpdb", text="")
+    row.prop(scene.mn, "import_format_fetch", text="")
     op = row.operator("mn.import_fetch")
     op.code = scene.mn.import_code_pdb  # type: ignore
     op.database = "wwpdb"  # type: ignore
-    op.file_format = scene.mn.import_format_wwpdb  # type: ignore
+    op.file_format = scene.mn.import_format_fetch  # type: ignore
     op.node_setup = scene.mn.import_node_setup  # type: ignore
     op.remove_solvent = scene.mn.import_remove_solvent  # type: ignore
     op.assembly = scene.mn.import_build_assembly  # type: ignore
@@ -69,11 +69,11 @@ def panel_alphafold(layout, scene):
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene.mn, "import_code_alphafold")
     download = row_import.split(factor=0.3)
-    download.prop(scene.mn, "import_format_alphafold", text="")
+    download.prop(scene.mn, "import_format_fetch", text="")
     op = download.operator("mn.import_fetch")
     op.code = scene.mn.import_code_alphafold  # type: ignore
     op.database = "alphafold"  # type: ignore
-    op.file_format = scene.mn.import_format_alphafold  # type: ignore
+    op.file_format = scene.mn.import_format_fetch  # type: ignore
     op.node_setup = scene.mn.import_node_setup  # type: ignore
     op.assembly = scene.mn.import_build_assembly  # type: ignore
     op.style = scene.mn.import_style  # type: ignore
