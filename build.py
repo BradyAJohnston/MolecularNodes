@@ -354,12 +354,16 @@ def download_wheels_from_lock(
                 # Blender accepts manylinux1, manylinux2010, manylinux2014, manylinux_2_XX, etc.
                 elif "linux" in platform.metadata:
                     # Extract architecture from pypi_suffix (e.g., "manylinux2014_x86_64" -> "x86_64")
-                    arch = platform.pypi_suffix.split("_", 1)[-1]  # Get everything after first underscore
+                    arch = platform.pypi_suffix.split("_", 1)[
+                        -1
+                    ]  # Get everything after first underscore
                     if "manylinux" in filename and ("_" + arch in filename):
                         matched = True
                         priority = 5
                 # For Windows, use exact suffix matching
-                elif "windows" in platform.metadata and platform.pypi_suffix in filename:
+                elif (
+                    "windows" in platform.metadata and platform.pypi_suffix in filename
+                ):
                     matched = True
                     priority = 5
 
@@ -370,7 +374,9 @@ def download_wheels_from_lock(
                         best_wheels[key] = (filename, url, priority)
 
     # Convert to set of (filename, url) tuples, removing duplicates and priorities
-    wheels_to_download = list(set((filename, url) for filename, url, _ in best_wheels.values()))
+    wheels_to_download = list(
+        set((filename, url) for filename, url, _ in best_wheels.values())
+    )
 
     print(f"Total wheels to download: {len(wheels_to_download)}")
     print(f"Using {max_workers} parallel download threads\n")
@@ -616,12 +622,16 @@ def verify_wheels_exist(
                 # Blender accepts manylinux1, manylinux2010, manylinux2014, manylinux_2_XX, etc.
                 elif "linux" in platform.metadata:
                     # Extract architecture from pypi_suffix (e.g., "manylinux2014_x86_64" -> "x86_64")
-                    arch = platform.pypi_suffix.split("_", 1)[-1]  # Get everything after first underscore
+                    arch = platform.pypi_suffix.split("_", 1)[
+                        -1
+                    ]  # Get everything after first underscore
                     if "manylinux" in filename and ("_" + arch in filename):
                         matched = True
                         priority = 5
                 # For Windows, use exact suffix matching
-                elif "windows" in platform.metadata and platform.pypi_suffix in filename:
+                elif (
+                    "windows" in platform.metadata and platform.pypi_suffix in filename
+                ):
                     matched = True
                     priority = 5
 
