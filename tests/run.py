@@ -1,7 +1,5 @@
 import sys
 import pytest
-import molecularnodes as mn
-
 
 argv = sys.argv
 argv = argv[argv.index("--") + 1 :]
