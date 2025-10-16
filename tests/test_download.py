@@ -9,7 +9,6 @@ import biotite.database.rcsb as rcsb
 import pytest
 import requests
 from biotite.structure.io import load_structure
-import molecularnodes as mn
 from molecularnodes.download import (
     CACHE_DIR,
     FileDownloadPDBError,
