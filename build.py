@@ -308,54 +308,69 @@ def download_wheels_from_lock(
     # Parse uv.lock for these packages
     package_info = parse_uv_lock_for_packages(all_deps)
 
-    # Collect all wheels to download for the specified platforms (using set to avoid duplicates)
-    wheels_to_download = set()
+    # Collect wheels per package per platform, selecting only the best match
+    # Key: (package_name, platform_metadata), Value: (filename, url, priority)
+    best_wheels = {}
+
     for pkg_name, pkg_data in package_info.items():
         for filename, url in pkg_data["wheels"].items():
             # Skip PyPy wheels - Blender doesn't support them
             if "-pp3" in filename or "pypy" in filename:
                 continue
 
-            # Universal wheels work for all platforms - add once
+            # Universal wheels work for all platforms - add once with high priority
             if "py3-none-any" in filename or "py2.py3-none-any" in filename:
-                wheels_to_download.add((filename, url))
+                # Universal wheels work for all platforms, but prefer platform-specific wheels
+                for platform in platforms:
+                    key = (pkg_name, platform.metadata)
+                    priority = 0  # Lower priority than platform-specific wheels
+                    if key not in best_wheels or best_wheels[key][2] < priority:
+                        best_wheels[key] = (filename, url, priority)
                 continue
 
             # Check if this wheel matches any of our target platforms
             # Uses Blender's platform matching logic from bl_extension_ops.py
             for platform in platforms:
                 matched = False
+                priority = 1  # Default priority for platform-specific wheels
 
                 # For macOS, match any compatible macOS version with the same architecture
                 if "macos" in platform.metadata:
-                    if "arm64" in platform.metadata and (
+                    if "universal2" in filename and "macosx" in filename:
+                        # Universal2 wheels work for both arm64 and x64 on macOS
+                        matched = True
+                        priority = 10  # High priority - works for both architectures
+                    elif "arm64" in platform.metadata and (
                         "macosx" in filename and "arm64" in filename
                     ):
                         matched = True
+                        priority = 5  # Architecture-specific wheel
                     elif "x64" in platform.metadata and (
                         "macosx" in filename and "x86_64" in filename
                     ):
                         matched = True
-                    # Also match universal2 wheels for both macOS architectures
-                    elif "macosx" in filename and "universal2" in filename:
-                        matched = True
+                        priority = 5  # Architecture-specific wheel
                 # For Linux, match any manylinux wheel with the correct architecture
                 # Blender accepts manylinux1, manylinux2010, manylinux2014, manylinux_2_XX, etc.
                 elif "linux" in platform.metadata:
                     # Extract architecture from pypi_suffix (e.g., "manylinux2014_x86_64" -> "x86_64")
                     arch = platform.pypi_suffix.split("_", 1)[-1]  # Get everything after first underscore
-                    if "manylinux" in filename and filename.endswith(("_" + arch, "_" + arch + ".whl")):
+                    if "manylinux" in filename and ("_" + arch in filename):
                         matched = True
+                        priority = 5
                 # For Windows, use exact suffix matching
                 elif "windows" in platform.metadata and platform.pypi_suffix in filename:
                     matched = True
+                    priority = 5
 
                 if matched:
-                    wheels_to_download.add((filename, url))
-                    break
+                    key = (pkg_name, platform.metadata)
+                    # Only update if this wheel has higher priority
+                    if key not in best_wheels or best_wheels[key][2] < priority:
+                        best_wheels[key] = (filename, url, priority)
 
-    # Convert set back to list for iteration
-    wheels_to_download = list(wheels_to_download)
+    # Convert to set of (filename, url) tuples, removing duplicates and priorities
+    wheels_to_download = list(set((filename, url) for filename, url, _ in best_wheels.values()))
 
     print(f"Total wheels to download: {len(wheels_to_download)}")
     print(f"Using {max_workers} parallel download threads\n")
@@ -555,51 +570,69 @@ def verify_wheels_exist(
     # Parse uv.lock for these packages
     package_info = parse_uv_lock_for_packages(all_deps)
 
-    # Collect all expected wheels for the specified platforms (set already avoids duplicates)
-    expected_wheels = set()
+    # Collect wheels per package per platform, selecting only the best match
+    # Key: (package_name, platform_metadata), Value: (filename, priority)
+    best_wheels = {}
+
     for pkg_name, pkg_data in package_info.items():
         for filename, url in pkg_data["wheels"].items():
             # Skip PyPy wheels - Blender doesn't support them
             if "-pp3" in filename or "pypy" in filename:
                 continue
 
-            # Universal wheels work for all platforms - add once
+            # Universal wheels work for all platforms - add once with low priority
             if "py3-none-any" in filename or "py2.py3-none-any" in filename:
-                expected_wheels.add(filename)
+                # Universal wheels work for all platforms, but prefer platform-specific wheels
+                for platform in platforms:
+                    key = (pkg_name, platform.metadata)
+                    priority = 0  # Lower priority than platform-specific wheels
+                    if key not in best_wheels or best_wheels[key][1] < priority:
+                        best_wheels[key] = (filename, priority)
                 continue
 
             # Check if this wheel matches any of our target platforms
             # Uses Blender's platform matching logic from bl_extension_ops.py
             for platform in platforms:
                 matched = False
+                priority = 1  # Default priority for platform-specific wheels
 
                 # For macOS, match any compatible macOS version with the same architecture
                 if "macos" in platform.metadata:
-                    if "arm64" in platform.metadata and (
+                    if "universal2" in filename and "macosx" in filename:
+                        # Universal2 wheels work for both arm64 and x64 on macOS
+                        matched = True
+                        priority = 10  # High priority - works for both architectures
+                    elif "arm64" in platform.metadata and (
                         "macosx" in filename and "arm64" in filename
                     ):
                         matched = True
+                        priority = 5  # Architecture-specific wheel
                     elif "x64" in platform.metadata and (
                         "macosx" in filename and "x86_64" in filename
                     ):
                         matched = True
-                    # Also match universal2 wheels for both macOS architectures
-                    elif "macosx" in filename and "universal2" in filename:
-                        matched = True
+                        priority = 5  # Architecture-specific wheel
                 # For Linux, match any manylinux wheel with the correct architecture
                 # Blender accepts manylinux1, manylinux2010, manylinux2014, manylinux_2_XX, etc.
                 elif "linux" in platform.metadata:
                     # Extract architecture from pypi_suffix (e.g., "manylinux2014_x86_64" -> "x86_64")
                     arch = platform.pypi_suffix.split("_", 1)[-1]  # Get everything after first underscore
-                    if "manylinux" in filename and filename.endswith(("_" + arch, "_" + arch + ".whl")):
+                    if "manylinux" in filename and ("_" + arch in filename):
                         matched = True
+                        priority = 5
                 # For Windows, use exact suffix matching
                 elif "windows" in platform.metadata and platform.pypi_suffix in filename:
                     matched = True
+                    priority = 5
 
                 if matched:
-                    expected_wheels.add(filename)
-                    break
+                    key = (pkg_name, platform.metadata)
+                    # Only update if this wheel has higher priority
+                    if key not in best_wheels or best_wheels[key][1] < priority:
+                        best_wheels[key] = (filename, priority)
+
+    # Convert to set of filenames, removing duplicates and priorities
+    expected_wheels = set(filename for filename, _ in best_wheels.values())
 
     # Check which wheels actually exist
     existing_wheels = set()
