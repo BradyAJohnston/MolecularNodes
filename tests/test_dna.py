@@ -64,7 +64,7 @@ class TestOXDNAReading:
     ):
         traj = oxdna.OXDNA(universe)
         for name in ["position", "res_name", "res_id", "chain_id"]:
-            assert snapshot_custom == traj[name]
+            assert snapshot_custom == traj[name].astype(np.float_)
 
     def test_detect_new_top(self, file_top_old, file_top_new, file_top_new_custom):
         assert oxdna.OXDNAParser._is_new_topology(file_top_new)
@@ -99,7 +99,7 @@ class TestOXDNAReading:
         assert len(traj) == 12
         assert snapshot == traj.bonds.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
-            assert snapshot == traj[att].tolist()
+            assert snapshot == traj[att].astype(np.float_).tolist()
 
     def test_reading_example(self):
         traj = oxdna.OXDNA(
