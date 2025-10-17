@@ -398,7 +398,7 @@ class OXDNA(Trajectory):
 
     def _compute_color(self) -> np.ndarray:
         """Compute equidistant chain coloring for OXDNA"""
-        return color.color_chains_equidistant(self.named_attribute("chain_id"))
+        return color.color_chains_equidistant(self.named_attribute("chain_id")) / 255
 
     @property
     def _blender_attributes(self):

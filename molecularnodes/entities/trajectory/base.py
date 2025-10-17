@@ -267,13 +267,8 @@ class Trajectory(MolecularEntity):
 
     def _compute_chain_id_int(self) -> np.ndarray:
         chain_ids, chain_id_index = np.unique(self.atoms.chainIDs, return_inverse=True)
-        print(f"{chain_ids=}\n{chain_id_index=}")
 
-        try:
-            self.object["chain_ids"] = chain_ids.tolist()
-        except (db.LinkedObjectError, TypeError):
-            # Ignore errors from storing chain_ids in Blender object
-            pass
+        self.object["chain_ids"] = chain_ids.astype(str).tolist()
 
         return chain_id_index
 
