@@ -356,4 +356,4 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     assert not np.allclose(pos_a, pos_b)
 
     for att in sorted(obj.data.attributes.keys()):
-        assert snapshot_custom == traj.named_attribute(att)
+        assert snapshot_custom == traj.named_attribute(att).astype(np.float_)
