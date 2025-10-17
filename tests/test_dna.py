@@ -6,6 +6,7 @@ from databpy.object import LinkedObjectError
 import molecularnodes as mn
 from molecularnodes.entities.trajectory import oxdna
 from .constants import data_dir
+from .utils import NumpySnapshotExtension
 
 
 class TestOXDNAReading:
@@ -58,10 +59,12 @@ class TestOXDNAReading:
             traj.object
         assert all([x in ["A", "C", "T", "G"] for x in traj.atoms.resnames])
 
-    def test_univ_snapshot(self, universe: mda.Universe, snapshot_custom):
+    def test_univ_snapshot(
+        self, universe: mda.Universe, snapshot_custom: NumpySnapshotExtension
+    ):
         traj = oxdna.OXDNA(universe)
         for name in ["position", "res_name", "res_id", "chain_id"]:
-            assert snapshot_custom == str(traj[name])
+            assert snapshot_custom == traj[name]
 
     def test_detect_new_top(self, file_top_old, file_top_new, file_top_new_custom):
         assert oxdna.OXDNAParser._is_new_topology(file_top_new)
@@ -83,7 +86,9 @@ class TestOXDNAReading:
             assert top.n_residues == 12
 
     @pytest.mark.parametrize("topfile", ["top_new", "top_new_custom", "top_old"])
-    def test_comparing_topologies(self, snapshot, topfile, file_traj_old_new):
+    def test_comparing_topologies(
+        self, snapshot: NumpySnapshotExtension, topfile, file_traj_old_new
+    ):
         u = mda.Universe(
             data_dir / f"oxdna/{topfile}.top",
             file_traj_old_new,
@@ -94,7 +99,7 @@ class TestOXDNAReading:
         assert len(traj) == 12
         assert snapshot == traj.bonds.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
-            assert snapshot == str(traj[att])
+            assert snapshot == traj[att].tolist()
 
     def test_reading_example(self):
         traj = oxdna.OXDNA(
