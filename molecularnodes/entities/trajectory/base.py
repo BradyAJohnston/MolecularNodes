@@ -223,7 +223,8 @@ class Trajectory(MolecularEntity):
             [
                 data.residues.get(name, data.residues.get("UNK")).get("res_name_num")
                 for name in res_name
-            ]
+            ],
+            dtype=np.int32,
         )
 
     def _compute_b_factor(self) -> np.ndarray:
@@ -247,10 +248,10 @@ class Trajectory(MolecularEntity):
             return np.zeros(self.n_atoms)
 
     def _compute_res_id(self) -> np.ndarray:
-        return self.atoms.resids
+        return self.atoms.resids.astype(np.int32)
 
     def _compute_atom_id(self) -> np.ndarray:
-        return self.atoms.ids
+        return self.atoms.ids.astype(np.int32)
 
     def _compute_segindices(self) -> np.ndarray:
         segs = []
@@ -272,7 +273,7 @@ class Trajectory(MolecularEntity):
         except db.LinkedObjectError:
             pass
 
-        return chain_id_index
+        return chain_id_index.astype(np.int32)
 
     def _compute_atom_type_num(self) -> np.ndarray:
         atom_type_unique, atom_type_index = np.unique(
