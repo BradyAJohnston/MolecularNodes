@@ -321,7 +321,13 @@ class TestTrajectory:
 
     def test_get_view(self, universe):
         t1 = mn.Trajectory(universe)
-        # view of resid 1
+        # Note: When a frame is not specified, whatever is the current
+        # universe frame should be used. In some random test failures
+        # with bpy, the frame value was 3 for both cases leading to
+        # an assertion failure. It is very likely a pytest issue.
+        # Explicitly start with the frame reset to 0 for the universe
+        universe.trajectory[0]
+        # view of resid 1 at trajectory frame 0
         v1 = t1.get_view(selection="resid 1")
         # view of resid 1 at trajectory frame 3
         v2 = t1.get_view(selection="resid 1", frame=3)
@@ -355,5 +361,5 @@ def test_martini(snapshot_custom: NumpySnapshotExtension, toplogy):
     pos_b = traj.named_attribute("position")
     assert not np.allclose(pos_a, pos_b)
 
-    for att in obj.data.attributes.keys():
-        assert snapshot_custom == traj.named_attribute(att)
+    for att in sorted(obj.data.attributes.keys()):
+        assert snapshot_custom == traj.named_attribute(att).astype(np.float_)
