@@ -56,55 +56,58 @@
   )
 # ---
 # name: test_load_cellpack[bcif].11
-  array([[ 4.85000992,  5.2200098 ,  0.33998001],
-         [ 4.90885973,  5.12720013,  0.12058   ],
-         [ 4.90488005,  5.12826014,  0.13482   ],
+  array([[ 4.85001   ,  5.22001   ,  0.33998   ],
+         [ 4.9088597 ,  5.1272    ,  0.12058   ],
+         [ 4.90488   ,  5.12826   ,  0.13482   ],
          ...,
-         [11.73818016, -9.59294319,  0.07578434],
-         [11.75336742, -9.57697392,  0.07908607],
-         [11.7156868 , -9.58415127,  0.08706783]])
+         [11.73818   , -9.592943  ,  0.07578434],
+         [11.753367  , -9.576974  ,  0.07908607],
+         [11.715687  , -9.584151  ,  0.08706783]], dtype=float32)
 # ---
 # name: test_load_cellpack[bcif].2
-  array([ True,  True,  True, ...,  True,  True,  True])
+  AttributeArray(name='.select_vert', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=BOOLEAN, shape=(29808,), dtype=bool)
+  array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_load_cellpack[bcif].3
-  array([1, 1, 1, ..., 1, 1, 1])
+  AttributeArray(name='assembly_id', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([1, 1, 1, ..., 1, 1, 1], dtype=int32)
 # ---
 # name: test_load_cellpack[bcif].4
-  array([23, 24, 25, ..., 42, 42, 42])
+  AttributeArray(name='chain_id', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([23, 24, 25, ..., 42, 42, 42], dtype=int32)
 # ---
 # name: test_load_cellpack[bcif].5
-  array([ 0,  0,  0, ..., 14, 14, 14])
+  AttributeArray(name='pdb_model_num', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([ 0,  0,  0, ..., 14, 14, 14], dtype=int32)
 # ---
 # name: test_load_cellpack[bcif].6
-  array([[ 10.19999981,  10.19999981,   0.        ],
-         [ 10.19999981,  10.19999981,   0.        ],
-         [ 10.19999981,  10.19999981,   0.        ],
+  AttributeArray(name='position', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=FLOAT_VECTOR, shape=(29808, 3), dtype=float32)
+  array([[ 10.2       ,  10.2       ,   0.        ],
+         [ 10.2       ,  10.2       ,   0.        ],
+         [ 10.2       ,  10.2       ,   0.        ],
          ...,
-         [ 11.47329998, -10.04710007,   0.33160001],
-         [ 10.7361002 ,  -9.39120007,   0.33990002],
-         [ 10.44810104,  -9.1335001 ,   0.33970001]])
+         [ 11.4733    , -10.0471    ,   0.3316    ],
+         [ 10.7361    ,  -9.3912    ,   0.33990002],
+         [ 10.448101  ,  -9.1335    ,   0.3397    ]], dtype=float32)
 # ---
 # name: test_load_cellpack[bcif].7
-  array([[ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
-           1.00000000e+00],
-         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
-           1.00000000e+00],
-         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
-           1.00000000e+00],
+  AttributeArray(name='rotation', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=QUATERNION, shape=(29808, 4), dtype=float32)
+  array([[ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00],
+         [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00],
+         [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00],
          ...,
-         [ 8.32493484e-01, -3.08766663e-01, -4.60030466e-01,
-          -4.29944375e-05],
-         [ 7.06966341e-01, -4.71753180e-01, -5.27019918e-01,
-           6.62047751e-05],
-         [ 7.06966341e-01, -4.71753180e-01, -5.27019918e-01,
-           6.62047751e-05]])
+         [ 8.3249348e-01, -3.0876666e-01, -4.6003047e-01, -4.2994438e-05],
+         [ 7.0696634e-01, -4.7175318e-01, -5.2701992e-01,  6.6204775e-05],
+         [ 7.0696634e-01, -4.7175318e-01, -5.2701992e-01,  6.6204775e-05]],
+        dtype=float32)
 # ---
 # name: test_load_cellpack[bcif].8
+  AttributeArray(name='sharp_face', object='square1.bcif', mesh='square1.bcif', domain=FACE, type=BOOLEAN, shape=(0,), dtype=bool)
   array([], dtype=bool)
 # ---
 # name: test_load_cellpack[bcif].9
-  array([    0,     0,     0, ..., 18199, 18200, 18201])
+  AttributeArray(name='transform_id', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([    0,     0,     0, ..., 18199, 18200, 18201], dtype=int32)
 # ---
 # name: test_load_cellpack[cif]
   "['Cv0', 'Cv1', 'Cv10', 'Cv11', 'Cv12', 'Cv13', 'Cv2', 'Cv3', 'Cv4', 'Cv5', 'Cv6', 'Cv7', 'Cv8', 'Cv9', 'Ed0', 'Ed1', 'Ed2', 'Ed3', 'Ed4', 'Ed5', 'Ed6', 'Ed7', 'Ed8', 'Gb0', 'Gb1', 'Gb2', 'Gb3', 'Gg01', 'Gg02', 'Gg03', 'Gg04', 'Gg11', 'Gg12', 'Gg13', 'Gg14', 'Gh01', 'Gh02', 'Gh03', 'Gh04', 'Gi01', 'Gi02', 'Gi03', 'Gi04']"
@@ -163,53 +166,56 @@
   )
 # ---
 # name: test_load_cellpack[cif].11
-  array([[ 4.85000992,  5.2200098 ,  0.33998001],
-         [ 4.90885973,  5.12720013,  0.12058   ],
-         [ 4.90488005,  5.12826014,  0.13482   ],
+  array([[ 4.85001   ,  5.22001   ,  0.33998   ],
+         [ 4.9088597 ,  5.1272    ,  0.12058   ],
+         [ 4.90488   ,  5.12826   ,  0.13482   ],
          ...,
-         [11.73818016, -9.59294319,  0.07578434],
-         [11.75336742, -9.57697392,  0.07908607],
-         [11.7156868 , -9.58415127,  0.08706783]])
+         [11.73818   , -9.592943  ,  0.07578434],
+         [11.753367  , -9.576974  ,  0.07908607],
+         [11.715687  , -9.584151  ,  0.08706783]], dtype=float32)
 # ---
 # name: test_load_cellpack[cif].2
-  array([ True,  True,  True, ...,  True,  True,  True])
+  AttributeArray(name='.select_vert', object='square1.cif', mesh='square1.cif', domain=POINT, type=BOOLEAN, shape=(29808,), dtype=bool)
+  array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_load_cellpack[cif].3
-  array([1, 1, 1, ..., 1, 1, 1])
+  AttributeArray(name='assembly_id', object='square1.cif', mesh='square1.cif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([1, 1, 1, ..., 1, 1, 1], dtype=int32)
 # ---
 # name: test_load_cellpack[cif].4
-  array([23, 24, 25, ..., 42, 42, 42])
+  AttributeArray(name='chain_id', object='square1.cif', mesh='square1.cif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([23, 24, 25, ..., 42, 42, 42], dtype=int32)
 # ---
 # name: test_load_cellpack[cif].5
-  array([ 0,  0,  0, ..., 14, 14, 14])
+  AttributeArray(name='pdb_model_num', object='square1.cif', mesh='square1.cif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([ 0,  0,  0, ..., 14, 14, 14], dtype=int32)
 # ---
 # name: test_load_cellpack[cif].6
-  array([[ 10.19999981,  10.19999981,   0.        ],
-         [ 10.19999981,  10.19999981,   0.        ],
-         [ 10.19999981,  10.19999981,   0.        ],
+  AttributeArray(name='position', object='square1.cif', mesh='square1.cif', domain=POINT, type=FLOAT_VECTOR, shape=(29808, 3), dtype=float32)
+  array([[ 10.2       ,  10.2       ,   0.        ],
+         [ 10.2       ,  10.2       ,   0.        ],
+         [ 10.2       ,  10.2       ,   0.        ],
          ...,
-         [ 11.47329998, -10.04710007,   0.33160001],
-         [ 10.7361002 ,  -9.39120007,   0.33990002],
-         [ 10.44810104,  -9.1335001 ,   0.33970001]])
+         [ 11.4733    , -10.0471    ,   0.3316    ],
+         [ 10.7361    ,  -9.3912    ,   0.33990002],
+         [ 10.448101  ,  -9.1335    ,   0.3397    ]], dtype=float32)
 # ---
 # name: test_load_cellpack[cif].7
-  array([[ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
-           1.00000000e+00],
-         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
-           1.00000000e+00],
-         [ 0.00000000e+00,  0.00000000e+00,  0.00000000e+00,
-           1.00000000e+00],
+  AttributeArray(name='rotation', object='square1.cif', mesh='square1.cif', domain=POINT, type=QUATERNION, shape=(29808, 4), dtype=float32)
+  array([[ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00],
+         [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00],
+         [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00],
          ...,
-         [ 8.32493484e-01, -3.08766663e-01, -4.60030466e-01,
-          -4.29944375e-05],
-         [ 7.06966341e-01, -4.71753180e-01, -5.27019918e-01,
-           6.62047751e-05],
-         [ 7.06966341e-01, -4.71753180e-01, -5.27019918e-01,
-           6.62047751e-05]])
+         [ 8.3249348e-01, -3.0876666e-01, -4.6003047e-01, -4.2994438e-05],
+         [ 7.0696634e-01, -4.7175318e-01, -5.2701992e-01,  6.6204775e-05],
+         [ 7.0696634e-01, -4.7175318e-01, -5.2701992e-01,  6.6204775e-05]],
+        dtype=float32)
 # ---
 # name: test_load_cellpack[cif].8
+  AttributeArray(name='sharp_face', object='square1.cif', mesh='square1.cif', domain=FACE, type=BOOLEAN, shape=(0,), dtype=bool)
   array([], dtype=bool)
 # ---
 # name: test_load_cellpack[cif].9
-  array([    0,     0,     0, ..., 18199, 18200, 18201])
+  AttributeArray(name='transform_id', object='square1.cif', mesh='square1.cif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
+  array([    0,     0,     0, ..., 18199, 18200, 18201], dtype=int32)
 # ---

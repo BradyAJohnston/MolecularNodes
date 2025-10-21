@@ -223,7 +223,8 @@ class Trajectory(MolecularEntity):
             [
                 data.residues.get(name, data.residues.get("UNK")).get("res_name_num")
                 for name in res_name
-            ]
+            ],
+            dtype=int,
         )
 
     def _compute_b_factor(self) -> np.ndarray:
@@ -267,14 +268,11 @@ class Trajectory(MolecularEntity):
     def _compute_chain_id_int(self) -> np.ndarray:
         chain_ids, chain_id_index = np.unique(self.atoms.chainIDs, return_inverse=True)
 
-        try:
-            self.object["chain_ids"] = chain_ids
-        except db.LinkedObjectError:
-            pass
+        self.object["chain_ids"] = chain_ids.astype(str).tolist()
 
         return chain_id_index
 
-    def _compute_atom_type_num(self) -> np.ndarray:
+    def _compute_atom_type_int(self) -> np.ndarray:
         atom_type_unique, atom_type_index = np.unique(
             self.atoms.types, return_inverse=True
         )
@@ -285,13 +283,14 @@ class Trajectory(MolecularEntity):
 
         return atom_type_index
 
-    def _compute_atom_name_num(self) -> np.ndarray:
+    def _compute_atom_name_int(self) -> np.ndarray:
         if hasattr(self.atoms, "names"):
             return np.array(
-                list(map(lambda x: data.atom_names.get(x, -1), self.atoms.names))
+                [data.atom_names.get(x, -1) for x in self.atoms.names],
+                dtype=int,
             )
         else:
-            return np.repeat(-1, self.n_atoms)
+            return np.repeat(int(-1), self.n_atoms)
 
     def _compute_is_nucleic(self) -> np.ndarray:
         return self.bool_selection(self.atoms, "nucleic")
@@ -330,8 +329,8 @@ class Trajectory(MolecularEntity):
             "occupancy": self._compute_occupancy,
             "charge": self._compute_charge,
             "chain_id": self._compute_chain_id_int,
-            "atom_types": self._compute_atom_type_num,
-            "atom_name": self._compute_atom_name_num,
+            "atom_types": self._compute_atom_type_int,
+            "atom_name": self._compute_atom_name_int,
             "is_backbone": self._compute_is_backbone,
             "is_alpha_carbon": self._compute_is_alpha_carbon,
             "is_solvent": self._compute_is_solvent,

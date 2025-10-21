@@ -45,19 +45,19 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].1
   '''
-  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [ 1  2  3  4  5  6  7  8  9 10 11 12]
   '''
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].2
   '''
-  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [0 0 0 0 0 0 0 0 0 0 0 0]
   '''
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new].3
   '''
-  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [42 43 43 42 41 42 41 42 41 40 40 41]
   '''
 # ---
@@ -91,19 +91,19 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].1
   '''
-  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [ 1  2  3  4  5  6  7  8  9 10 11 12]
   '''
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].2
   '''
-  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [0 0 0 0 0 0 1 1 1 1 1 1]
   '''
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_new_custom].3
   '''
-  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [42 43 -1 42 41 42 41 42 41 -1 40 41]
   '''
 # ---
@@ -153,25 +153,25 @@
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old].1
   '''
-  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [ 1  2  3  4  5  6  7  8  9 10 11 12]
   '''
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old].2
   '''
-  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [0 0 0 0 0 0 1 1 1 1 1 1]
   '''
 # ---
 # name: TestOXDNAReading.test_comparing_topologies[top_old].3
   '''
-  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int64)
+  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (12,), dtype: int32)
   [42 41 42 43 43 42 41 42 41 40 40 41]
   '''
 # ---
 # name: TestOXDNAReading.test_univ_snapshot
   '''
-  AttributeArray 'position' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98, 3), dtype: float64)
+  AttributeArray 'position' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98, 3), dtype: float32)
   [[-2.71388263e-01  3.47911656e-01  6.11712277e-01]
    [-2.84630984e-01  3.69316101e-01  5.72120309e-01]
    [-2.82102585e-01  4.00576025e-01  5.30809224e-01]
@@ -274,7 +274,7 @@
 # ---
 # name: TestOXDNAReading.test_univ_snapshot.1
   '''
-  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98,), dtype: int64)
+  AttributeArray 'res_name' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98,), dtype: int32)
   [41 41 41 40 41 40 41 42 40 42 43 41 41 43 40 40 41 42 43 41 41 41 42 42
    42 40 41 42 43 43 40 42 42 43 42 40 43 40 41 42 43 42 42 42 41 41 41 40
    41 42 43 40 43 41 40 42 42 41 43 43 40 42 43 41 41 41 43 43 43 43 43 43
@@ -284,7 +284,7 @@
 # ---
 # name: TestOXDNAReading.test_univ_snapshot.2
   '''
-  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98,), dtype: int64)
+  AttributeArray 'res_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98,), dtype: int32)
   [ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
    25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48
    49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72
@@ -294,7 +294,7 @@
 # ---
 # name: TestOXDNAReading.test_univ_snapshot.3
   '''
-  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98,), dtype: int64)
+  AttributeArray 'chain_id' from NewOXDNAObject('NewOXDNAObject')(domain: POINT, shape: (98,), dtype: int32)
   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
    1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
    2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3]
