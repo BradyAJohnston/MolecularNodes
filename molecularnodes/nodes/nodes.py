@@ -298,24 +298,24 @@ def change_style_node(obj: bpy.types.Object, style: str):
 
 
 def create_starting_nodes_starfile(object):
+    """Create a starting node tree for starfile data."""
+    from ..blender.nodetree import NodeTree
+
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     node_mod = get_mod(object)
-
     node_name = f"MN_starfile_{object.name}"
 
-    # create a new GN node group, specific to this particular molecule
-    group = new_tree(node_name)
-    node_mod.node_group = group
-    link = group.links.new
+    # create a new GN node group using the fluent API
+    tree = NodeTree.geometry(node_name)
+    node_mod.node_group = tree.build()
 
-    # move the input and output nodes for the group
-    node_input = get_input(group)
-    node_output = get_output(group)
-    node_input.location = [0, 0]
-    node_output.location = [700, 0]
-    node_star_instances = add_custom(group, "Starfile Instances", [450, 0])
-    link(node_star_instances.outputs[0], node_output.inputs[0])
-    link(node_input.outputs[0], node_star_instances.inputs[0])
+    # position input/output nodes
+    tree.input_node.at(0, 0)
+    tree.output_node.at(700, 0)
+
+    # add the starfile instances node and connect the chain
+    node_star_instances = tree.add_group("Starfile Instances", location=(450, 0))
+    tree.connect_chain([tree.input_node, node_star_instances, tree.output_node])
 
 
 def create_starting_nodes_density(
@@ -328,71 +328,74 @@ def create_starting_nodes_density(
     y_range: tuple | None = None,
     z_range: tuple | None = None,
 ) -> bpy.types.GeometryNodeGroup:
+    """Create a starting node tree for density/volume data."""
+    from ..blender.nodetree import NodeTree
+
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
     node_name = f"MN_density_{object.name}"
 
-    # create a new GN node group, specific to this particular molecule
-    group = new_tree(node_name, fallback=False)
-    link = group.links.new
-    mod.node_group = group
+    # create a new GN node group using the fluent API
+    tree = NodeTree.geometry(node_name, fallback=False)
+    mod.node_group = tree.build()
 
-    # move the input and output nodes for the group
-    node_input = get_input(group)
-    node_input.location = [0, 0]
-    node_output = get_output(group)
-    node_output.location = [800, 0]
+    # position input and output nodes
+    tree.input_node.at(0, 0)
+    tree.output_node.at(800, 0)
 
+    # create the density node based on style
     if style == "density_iso_surface":
         key = "ISO Value"
-        node_density = group.nodes.new("GeometryNodeGroup")  # type: ignore
-        node_density.name = styles_mapping[style]
-        node_density.location = [400, 0]
-        tree = style_density_iso_surface_node_group()
-        tree.name = f"{styles_mapping[style]}.{object.name}"
-        node_density.node_tree = tree
-        assign_material(node_density)
+        # create iso surface node using the procedurally generated tree
+        iso_tree = style_density_iso_surface_node_group()
+        iso_tree.name = f"{styles_mapping[style]}.{object.name}"
+
+        node_density = tree.add_node("GeometryNodeGroup",
+            name=styles_mapping[style],
+            location=(400, 0)
+        )
+        node_density.node_tree = iso_tree
+        assign_material(node_density.node)
+
+        # set axis range values if specified
         if x_range is not None:
-            tree.nodes["X Min"].outputs["Value"].default_value = x_range[0]
-            tree.nodes["X Max"].outputs["Value"].default_value = x_range[1]
+            iso_tree.nodes["X Min"].outputs["Value"].default_value = x_range[0]
+            iso_tree.nodes["X Max"].outputs["Value"].default_value = x_range[1]
         if y_range is not None:
-            tree.nodes["Y Min"].outputs["Value"].default_value = y_range[0]
-            tree.nodes["Y Max"].outputs["Value"].default_value = y_range[1]
+            iso_tree.nodes["Y Min"].outputs["Value"].default_value = y_range[0]
+            iso_tree.nodes["Y Max"].outputs["Value"].default_value = y_range[1]
         if z_range is not None:
-            tree.nodes["Z Min"].outputs["Value"].default_value = z_range[0]
-            tree.nodes["Z Max"].outputs["Value"].default_value = z_range[1]
+            iso_tree.nodes["Z Min"].outputs["Value"].default_value = z_range[0]
+            iso_tree.nodes["Z Max"].outputs["Value"].default_value = z_range[1]
     else:
         key = "Threshold"
-        node_density = add_custom(group, styles_mapping[style], [400, 0])
-        # make the node tree of this node independent (single user)
-        # to allow separate configuration of min, max and default threshold values
-        node_tree_copy = node_density.node_tree.copy()
-        node_tree_copy.name = f"{styles_mapping[style]}.{object.name}"
-        node_density.node_tree = node_tree_copy
+        # use custom node group and make it single-user
+        node_density = (tree.add_group(styles_mapping[style], location=(400, 0))
+            .copy_tree()
+            .set_subtree_name(f"{styles_mapping[style]}.{object.name}")
+        )
 
+    # configure the threshold socket
     items_tree = node_density.node_tree.interface.items_tree
-    # set the socket type if specified - NodeSocketInt or NodeSocketFloat
     if threshold_type is not None:
         items_tree[key].socket_type = threshold_type
-    # set the default threshold - both interface and socket
+
     items_tree[key].default_value = threshold
-    node_density.inputs[key].default_value = threshold
-    # set the min, max threshold values if specified
+    node_density.node.inputs[key].default_value = threshold
+
     if threshold_range is not None:
         items_tree[key].min_value = threshold_range[0]
         items_tree[key].max_value = threshold_range[1]
-    # set the label to match node name
-    node_density.label = node_density.name
 
-    # add the join geometry node to keep this consistent with style interface
-    node_join = group.nodes.new("GeometryNodeJoinGeometry")
-    node_join.location = [620, 0]
+    node_density.set_label(node_density.name)
 
-    link(node_input.outputs[0], node_density.inputs[0])
-    link(node_density.outputs[0], node_join.inputs[0])
-    link(node_join.outputs[0], node_output.inputs[0])
+    # add the join geometry node
+    node_join = tree.add_node("GeometryNodeJoinGeometry", location=(620, 0))
 
-    return node_density
+    # connect the chain
+    tree.connect_chain([tree.input_node, node_density, node_join, tree.output_node])
+
+    return node_density.node
 
 
 def create_starting_node_tree(
@@ -424,77 +427,72 @@ def create_starting_node_tree(
         None doesn't add ay set_color nodes, 'common' adds the color by common elements
         and 'plddt' adds color by pLDDT score.
     """
+    from ..blender.nodetree import NodeTree
+
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
     mod = get_mod(object)
 
     if not name:
         name = f"MN_{object.name}"
 
-    # check if the node tree already exists and use that instead
-    # try:
-    #     tree = bpy.data.node_groups[name]
-    #     mod.node_group = tree
-    #     return
-    # except KeyError:
-    #     pass
+    # create a new geometry node tree with "Atoms" input
+    tree = NodeTree.geometry(name, input_name="Atoms")
+    bpy_tree = tree.build()
+    bpy_tree.is_modifier = is_modifier
+    mod.node_group = bpy_tree
 
-    tree = new_tree(name, input_name="Atoms")
-    tree.is_modifier = is_modifier
-    link = tree.links.new
-    mod.node_group = tree
+    # position input and output nodes
+    tree.input_node.at(0, 0)
+    tree.output_node.at(700, 0)
 
-    # move the input and output nodes for the group
-    node_input = get_input(tree)
-    node_output = get_output(tree)
-    node_input.location = [0, 0]
-    node_output.location = [700, 0]
-
+    # if no style, just connect input to output
     if style is None:
-        link(node_input.outputs[0], node_output.inputs[0])
-        return tree
+        tree.input_node.output(0).link_to(tree.output_node.input(0))
+        return bpy_tree
 
-    node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
-    link(node_style.outputs[0], node_output.inputs[0])
-    link(node_input.outputs[0], node_style.inputs[0])
+    # add the style node
+    node_style = tree.add_group(styles_mapping[style],
+        location=(450, 0),
+        material=material
+    )
+    node_style.output(0).link_to(tree.output_node.input(0))
+    tree.input_node.output(0).link_to(node_style.input(0))
 
-    # if requested, setup the nodes for generating colors in the node tree
+    # setup color nodes if requested
+    to_animate = tree.input_node
     if color is not None:
         if color == "common":
-            node_color_set = add_custom(tree, "Set Color", [200, 0])
-            node_color_common = add_custom(tree, "Color Common", [-50, -150])
-            node_random_color = add_custom(tree, "Color Attribute Random", [-300, -150])
+            node_color_set = tree.add_group("Set Color", location=(200, 0))
+            node_color_common = tree.add_group("Color Common", location=(-50, -150))
+            node_random_color = tree.add_group("Color Attribute Random", location=(-300, -150))
 
-            link(node_input.outputs[0], node_color_set.inputs[0])
-            link(node_random_color.outputs["Color"], node_color_common.inputs["Carbon"])
-            link(node_color_common.outputs[0], node_color_set.inputs["Color"])
-            link(node_color_set.outputs[0], node_style.inputs[0])
+            tree.input_node.output(0).link_to(node_color_set.input(0))
+            node_random_color.output("Color").link_to(node_color_common.input("Carbon"))
+            node_color_common.output(0).link_to(node_color_set.input("Color"))
+            node_color_set.output(0).link_to(node_style.input(0))
             to_animate = node_color_set
         elif color.lower() == "plddt":
-            node_color_set = add_custom(tree, "Set Color", [200, 0])
-            node_color_plddt = add_custom(tree, "Color pLDDT", [-50, -150])
+            node_color_set = tree.add_group("Set Color", location=(200, 0))
+            node_color_plddt = tree.add_group("Color pLDDT", location=(-50, -150))
 
-            link(node_input.outputs[0], node_color_set.inputs["Atoms"])
-            link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
-            link(node_color_set.outputs["Atoms"], node_style.inputs["Atoms"])
-        else:
-            to_animate = node_input
-    else:
-        to_animate = node_input
+            tree.input_node.output(0).link_to(node_color_set.input("Atoms"))
+            node_color_plddt.output(0).link_to(node_color_set.input("Color"))
+            node_color_set.output("Atoms").link_to(node_style.input("Atoms"))
 
-    # if multiple frames, set up the required nodes for an animation
+    # if multiple frames, set up animation nodes
     if coll_frames:
-        node_output.location = [1100, 0]
-        node_style.location = [800, 0]
+        tree.output_node.at(1100, 0)
+        node_style.at(800, 0)
 
-        node_animate_frames = add_custom(tree, "Animate Frames", [500, 0])
-        node_animate = add_custom(tree, "Animate Value", [500, -300])
+        node_animate_frames = tree.add_group("Animate Frames", location=(500, 0))
+        node_animate = tree.add_group("Animate Value", location=(500, -300))
 
-        node_animate_frames.inputs["Frames"].default_value = coll_frames
-        node_animate.inputs["Value Max"].default_value = len(coll_frames.objects) - 1
+        node_animate_frames.set_input_value("Frames", coll_frames)
+        node_animate.set_input_value("Value Max", len(coll_frames.objects) - 1)
 
-        link(to_animate.outputs[0], node_animate_frames.inputs[0])
-        link(node_animate_frames.outputs[0], node_style.inputs[0])
-        link(node_animate.outputs[0], node_animate_frames.inputs["Frame"])
+        to_animate.output(0).link_to(node_animate_frames.input(0))
+        node_animate_frames.output(0).link_to(node_style.input(0))
+        node_animate.output(0).link_to(node_animate_frames.input("Frame"))
 
 
 def combine_join_geometry(group, node_list, output="Geometry", join_offset=300):
