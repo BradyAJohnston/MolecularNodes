@@ -354,7 +354,6 @@ def test_martini(snapshot, toplogy):
         data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
     traj = mn.entities.Trajectory(universe)
-    obj = traj.object
     bpy.context.scene.frame_set(0)
     pos_a = traj.named_attribute("position")
 
