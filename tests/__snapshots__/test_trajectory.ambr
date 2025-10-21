@@ -583,7 +583,7 @@
 # ---
 # name: test_martini[pent/TOPOL2.pdb]
   AttributeArray(name='.select_vert', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True,  True,  True, ...,  True,  True,  True])
+  array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].1
   AttributeArray(name='atom_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
@@ -591,19 +591,19 @@
 # ---
 # name: test_martini[pent/TOPOL2.pdb].10
   AttributeArray(name='is_lipid', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([False, False, False, ..., False, False, False])
+  array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].11
   AttributeArray(name='is_nucleic', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([False, False, False, ..., False, False, False])
+  array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].12
   AttributeArray(name='is_peptide', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True,  True,  True, ..., False, False, False])
+  array([ True,  True,  True, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].13
   AttributeArray(name='is_solvent', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([False, False, False, ..., False, False, False])
+  array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].14
   AttributeArray(name='mass', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
@@ -669,11 +669,11 @@
 # ---
 # name: test_martini[pent/TOPOL2.pdb].8
   AttributeArray(name='is_alpha_carbon', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True, False,  True, ..., False, False, False])
+  array([ True, False,  True, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].9
   AttributeArray(name='is_backbone', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True, False,  True, ..., False, False, False])
+  array([ True, False,  True, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr]
   AttributeArray(name='.edge_verts', object='NewUniverseObject', mesh='NewUniverseObject', domain=EDGE, type=INT32_2D, shape=(35225, 2), dtype=int32)
@@ -687,31 +687,31 @@
 # ---
 # name: test_martini[pent/prot_ion.tpr].1
   AttributeArray(name='.select_edge', object='NewUniverseObject', mesh='NewUniverseObject', domain=EDGE, type=BOOLEAN, shape=(35225,), dtype=bool)
-  array([ True,  True,  True, ...,  True,  True,  True])
+  array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].10
   AttributeArray(name='is_alpha_carbon', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True, False,  True, ..., False, False, False])
+  array([ True, False,  True, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].11
   AttributeArray(name='is_backbone', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True, False,  True, ..., False, False, False])
+  array([ True, False,  True, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].12
   AttributeArray(name='is_lipid', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([False, False, False, ..., False, False, False])
+  array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].13
   AttributeArray(name='is_nucleic', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([False, False, False, ..., False, False, False])
+  array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].14
   AttributeArray(name='is_peptide', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True,  True,  True, ..., False, False, False])
+  array([ True,  True,  True, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].15
   AttributeArray(name='is_solvent', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([False, False, False, ..., False, False, False])
+  array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].16
   AttributeArray(name='mass', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
@@ -737,7 +737,7 @@
 # ---
 # name: test_martini[pent/prot_ion.tpr].2
   AttributeArray(name='.select_vert', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
-  array([ True,  True,  True, ...,  True,  True,  True])
+  array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].20
   AttributeArray(name='res_name', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)

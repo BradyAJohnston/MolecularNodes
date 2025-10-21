@@ -66,7 +66,7 @@
 # ---
 # name: test_load_cellpack[bcif].2
   AttributeArray(name='.select_vert', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=BOOLEAN, shape=(29808,), dtype=bool)
-  array([ True,  True,  True, ...,  True,  True,  True])
+  array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_load_cellpack[bcif].3
   AttributeArray(name='assembly_id', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
@@ -176,7 +176,7 @@
 # ---
 # name: test_load_cellpack[cif].2
   AttributeArray(name='.select_vert', object='square1.cif', mesh='square1.cif', domain=POINT, type=BOOLEAN, shape=(29808,), dtype=bool)
-  array([ True,  True,  True, ...,  True,  True,  True])
+  array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_load_cellpack[cif].3
   AttributeArray(name='assembly_id', object='square1.cif', mesh='square1.cif', domain=POINT, type=INT, shape=(29808,), dtype=int32)
