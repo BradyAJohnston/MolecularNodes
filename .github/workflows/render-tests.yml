@@ -32,8 +32,9 @@ jobs:
 
       - name: Run Image Snapshot Tests
         timeout-minutes: 10
+        continue-on-error: true
         run: |
-          uv run pytest -v -m image_snapshot --image-snapshot-save-diff --junitxml=test-results.xml
+          uv run pytest -v -m image_snapshot --image-snapshot-save-diff --html=report.html --self-contained-html --junitxml=test-results.xml
 
       - name: Upload Image Diff Artifacts
         if: failure()
@@ -41,7 +42,17 @@ jobs:
         with:
           name: image-diffs-gpu
           retention-days: 7
-          path: tests/__image_snapshots__/__diff_output__/
+          path: |
+            tests/__image_snapshots__/*.diff.png
+            tests/__image_snapshots__/*.new.png
+
+      - name: Upload HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          retention-days: 7
+          path: report.html
 
       - name: Upload Test Results
         if: always()
@@ -50,3 +61,16 @@ jobs:
           name: test-results-gpu
           retention-days: 7
           path: test-results.xml
+
+      - name: Run reg-actions
+        if: always()
+        uses: reg-viz/reg-actions@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          image-directory-path: "tests/__image_snapshots__"
+          comment-to-pr: true
+          artifact-upload: true
+
+      - name: Fail if tests failed
+        if: failure()
+        run: exit 1

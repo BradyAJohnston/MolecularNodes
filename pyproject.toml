@@ -23,10 +23,11 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 bpy = ["bpy>=4.5.2, <5.0.0"]
 jupyter = ["jupyter", "IPython"]
 build = ["tomlkit"]
-dev = ["pytest", "pytest-cov", "syrupy", "pytest-image-snapshot", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
+dev = ["pytest", "pytest-cov", "pytest-html", "syrupy", "pytest-image-snapshot", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
 test = [
     "pytest",
     "pytest-cov",
+    "pytest-html",
     "syrupy",
     "pytest-image-snapshot>=0.4.5",
     "pixelmatch>=0.3.0",
