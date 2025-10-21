@@ -53,7 +53,7 @@ def test_load_cellpack(snapshot, format):
     ens.node_group.nodes["Ensemble Instance"].inputs["As Points"].default_value = False
     nodes.realize_instances(ens.object)
     for attribute in ens.list_attributes():
-        assert snapshot == ens.named_attribute(attribute)
+        assert snapshot == ens[attribute]
 
     pos_eval = ens.named_attribute("position", evaluate=True)
     assert snapshot == pos_eval.shape
