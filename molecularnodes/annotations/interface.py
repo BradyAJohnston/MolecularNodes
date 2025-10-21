@@ -1,3 +1,4 @@
+import bpy
 import numpy as np
 
 
@@ -15,6 +16,7 @@ class AnnotationInterface:
     # py annotations of common params for code complete
     # these are bound dynamically along with any annotation inputs
     visible: bool
+    text_font: str
     text_color: np.ndarray | list | tuple
     text_font: str
     text_size: int
@@ -27,8 +29,15 @@ class AnnotationInterface:
     offset_y: float
     line_color: np.ndarray | list | tuple
     line_width: float
-    arrow_size: int
-    pointer_length: int
+    arrow_size: float
+    pointer_length: float
+    line_mesh: bool
+    line_mesh_overlay: bool
+    mesh_wireframe: bool
+    mesh_thickness: float
+    mesh_color: np.ndarray | list | tuple
+    mesh_material: str | bpy.types.Material
+    mesh_shade_smooth: bool
 
     def __init__(self, instance):
         self._instance = instance
