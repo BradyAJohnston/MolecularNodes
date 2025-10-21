@@ -7,7 +7,7 @@
 # ---
 # name: test_centring[1BNA-centroid]
   list([
-    '[-0. -0.  0.]',
+    '[-0.  0. -0.]',
     '[-0.0001 -0.      0.0001]',
   ])
 # ---
@@ -32,7 +32,7 @@
 # name: test_centring[4ozs-mass]
   list([
     '[ 0.     -0.0001  0.0001]',
-    '[-0. -0. -0.]',
+    '[-0. -0.  0.]',
   ])
 # ---
 # name: test_centring[8H1B-]
@@ -43,14 +43,14 @@
 # ---
 # name: test_centring[8H1B-centroid]
   list([
-    '[ 0. -0. -0.]',
+    '[-0. -0.  0.]',
     '[-0.0008 -0.0005  0.0005]',
   ])
 # ---
 # name: test_centring[8H1B-mass]
   list([
     '[ 0.0008  0.0005 -0.0005]',
-    '[-0. -0.  0.]',
+    '[-0. -0. -0.]',
   ])
 # ---
 # name: test_centring[8U8W-]
@@ -68,7 +68,7 @@
 # name: test_centring[8U8W-mass]
   list([
     '[-0.0003  0.0003 -0.0007]',
-    '[-0.  0. -0.]',
+    '[0. 0. 0.]',
   ])
 # ---
 # name: test_load_small_mol
@@ -208,7 +208,7 @@
    [ 3.5e-01 -1.7e-04  1.0e-01]]
 # ---
 # name: test_pdb_no_bonds
-  AttributeArray(name='position', object='no_bonds', mesh='no_bonds', domain=POINT, type=FLOAT_VECTOR, shape=(16, 3), dtype=float64)
+  AttributeArray(name='position', object='no_bonds', mesh='no_bonds', domain=POINT, type=FLOAT_VECTOR, shape=(16, 3), dtype=float32)
   array([[ 0.01,  0.01,  0.01],
          [ 0.02,  0.02,  0.02],
          [ 0.03,  0.03,  0.03],
@@ -224,7 +224,7 @@
          [-0.04, -0.04, -0.04],
          [-0.05, -0.05, -0.05],
          [-0.06, -0.06, -0.06],
-         [-0.07, -0.07, -0.07]])
+         [-0.07, -0.07, -0.07]], dtype=float32)
 # ---
 # name: test_rcsb_nmr
   [[ 0.1  0.0 -0.1]
