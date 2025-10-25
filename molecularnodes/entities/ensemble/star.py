@@ -144,9 +144,8 @@ class CistemDataFrame(EnsembleDataFrame):
 
 
 class StarFile(Ensemble):
-    object: Optional[bpy.types.Object]
-    data: Optional[DataFrame]
-    df: Optional[Union[RelionDataFrame, CistemDataFrame]]
+    data_reader: Optional[DataFrame]
+    data_frame: Optional[Union[RelionDataFrame, CistemDataFrame]]
 
     def __init__(self, file_path: Union[str, Path]) -> None:
         super().__init__(file_path)
@@ -157,15 +156,15 @@ class StarFile(Ensemble):
     @classmethod
     def from_starfile(cls, file_path: Union[str, Path]) -> "StarFile":
         self = cls(file_path)
-        self.data = self._read()
-        self.df = self._assign_df()
+        self.data_reader = self._read()
+        self.data_frame = self._assign_df()
         return self
 
     @classmethod
     def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
-        self.data = self._read()
+        self.data_reader = self._read()
         return self
 
     @property
@@ -190,27 +189,27 @@ class StarFile(Ensemble):
 
     @property
     def n_images(self) -> int:
-        if isinstance(self.data, dict):
-            return len(self.data)
+        if isinstance(self.data_reader, dict):
+            return len(self.data_reader)
         return 1
 
     def _is_relion(self) -> bool:
         return (
-            isinstance(self.data, dict)
-            and "particles" in self.data
-            and "optics" in self.data
-        ) or ("rlnAnglePsi" in self.data)  # type: ignore
+            isinstance(self.data_reader, dict)
+            and "particles" in self.data_reader
+            and "optics" in self.data_reader
+        ) or ("rlnAnglePsi" in self.data_reader)  # type: ignore
 
     def _is_cistem(self) -> bool:
-        return "cisTEMAnglePsi" in self.data  # type: ignore
+        return "cisTEMAnglePsi" in self.data_reader  # type: ignore
 
     def _assign_df(self) -> Union[RelionDataFrame, CistemDataFrame]:
-        if self.data is None:
+        if self.data_reader is None:
             raise ValueError("Data not loaded. Call from_starfile() first.")
         if self._is_relion():
-            return RelionDataFrame(self.data)
+            return RelionDataFrame(self.data_reader)
         elif self._is_cistem():
-            return CistemDataFrame(self.data)
+            return CistemDataFrame(self.data_reader)
         else:
             raise ValueError(
                 "File is not a valid RELION>=3.1 or cisTEM STAR file, other formats are not currently supported."
@@ -276,14 +275,16 @@ class StarFile(Ensemble):
         fraction: float = 1.0,
         simplify: bool = True,
     ) -> bpy.types.Object:
-        if self.df is None:
+        if self.data_frame is None:
             raise ValueError("DataFrame not assigned. Call from_starfile() first.")
 
         self.object = databpy.create_object(
-            self.df.coordinates_scaled * world_scale, collection=bl.coll.mn(), name=name
+            self.data_frame.coordinates_scaled * world_scale,
+            collection=bl.coll.mn(),
+            name=name,
         )
         self.object.mn.entity_type = self._entity_type.value
-        self.df.store_data_on_object(self.object)
+        self.data_frame.store_data_on_object(self.object)
 
         if node_setup:
             nodes.create_starting_nodes_starfile(self.object)
