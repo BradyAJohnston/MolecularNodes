@@ -25,7 +25,18 @@ from ...utils import (
 )
 from ..base import EntityType, MolecularEntity
 from .annotations import TrajectoryAnnotationManager
-from .selections import Selection
+from .selections import SelectionManager
+
+
+def _unique_aname(obj: bpy.types.Object, prefix: str = "sel") -> str:
+    attributes = db.list_attributes(obj)
+    counter = 0
+    aname = "{}_{}".format(prefix, counter)
+    while aname in attributes:
+        counter += 1
+        aname = "{}_{}".format(prefix, counter)
+
+    return aname
 
 
 class Trajectory(MolecularEntity):
@@ -38,7 +49,7 @@ class Trajectory(MolecularEntity):
     ):
         super().__init__()
         self.universe: mda.Universe = universe
-        self.selections: Dict[str, Selection] = {}
+        self.selections: SelectionManager = SelectionManager(self)
         self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
         self.frame_mapping: npt.NDArray[np.int64] | None = None
@@ -48,60 +59,6 @@ class Trajectory(MolecularEntity):
         self.annotations = TrajectoryAnnotationManager(self)
         if create_object:
             self.create_object(name=name)
-
-    def selection_from_ui(self, item):
-        self.add_selection(
-            name=item.name,
-            selection_str=item.selection_str,
-            updating=item.updating,
-            periodic=item.periodic,
-        )
-
-    def add_selection(
-        self,
-        name: str,
-        selection_str: str,
-        updating: bool = True,
-        periodic: bool = True,
-    ):
-        "Adds a new selection with the given name, selection string and selection parameters."
-        selection = Selection(trajectory=self, name=name)
-        self.selections[selection.name] = selection
-        selection.add_selection_property(
-            selection_str=selection_str,
-            updating=updating,
-            periodic=periodic,
-        )
-
-        return selection
-
-    def remove_selection(self, name: str):
-        "Removes the selection with the given name"
-        names = [sel.name for sel in self.object.mn_trajectory_selections]
-        index = names.index(name)
-        self.object.mn_trajectory_selections.remove(index)
-        try:
-            del self.selections[name]
-        except KeyError:
-            pass
-        try:
-            self.remove_named_attribute(name)
-        except AttributeError:
-            pass
-
-    def add_selection_from_atomgroup(
-        self, atomgroup: mda.AtomGroup, name: str = "NewSelection"
-    ):
-        "Create a Selection object from an AtomGroup"
-        selection = Selection.from_atomgroup(
-            trajectory=self, atomgroup=atomgroup, name=name
-        )
-
-        self.selections[selection.name] = selection
-        self.store_named_attribute(
-            selection.to_mask(), name=selection.name, atype=db.AttributeTypes.BOOLEAN
-        )
-        return selection
 
     @property
     def is_orthorhombic(self):
@@ -403,9 +360,9 @@ class Trajectory(MolecularEntity):
                 print(e)
 
     def _update_selections(self):
-        for sel in self.object.mn_trajectory_selections:
-            selection = self.selections[sel.name]
-            selection.set_atom_group(sel.selection_str)
+        for item in self.object.mn_trajectory_selections:
+            selection = self.selections.get(item.name)
+            selection.set_atom_group(item.string)
             selection.set_selection()
 
     @property
@@ -670,20 +627,15 @@ class Trajectory(MolecularEntity):
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
             )
-
-        if selection is not None:
-            attribute_name = "sel_0"
-            i = 0
-            while attribute_name in self.list_attributes():
-                attribute_name = f"sel_{i}"
-                i += 1
+        if selection is None:
+            sel_name = None
+        else:
+            att_name = _unique_aname(self.object, "sel")
             if isinstance(selection, str):
                 # TODO: There are currently no validations for the selection phrase
-                selection = self.add_selection(attribute_name, selection).name
+                sel_name = self.selections.new(selection, att_name).name
             elif isinstance(selection, AtomGroup):
-                selection = self.add_selection_from_atomgroup(
-                    selection, name=attribute_name
-                ).name
+                sel_name = self.selections.from_atomgroup(selection, name=att_name).name
             # TODO: Delete these named attributes when style is deleted
             # Currently, styles are removed using GeometryNodeInterFace.remove(),
 
@@ -691,7 +643,7 @@ class Trajectory(MolecularEntity):
             tree=self.tree,
             style=style,
             color=color,
-            selection=selection,
+            selection=sel_name,
             material=material,
             name=name,
         )

@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import Dict
 from uuid import uuid1
 import databpy as db
 import MDAnalysis as mda
@@ -6,23 +8,21 @@ import numpy.typing as npt
 
 
 class Selection:
-    def __init__(self, trajectory, name: str = "selection_0"):
+    def __init__(self, trajectory: Trajectory, name: str = "selection_0"):
         self._ag: mda.AtomGroup | None = None
         self._uuid: str = str(uuid1())
         self._name = name
-        self._current_selection_str: str = ""
+        self._current_string: str = ""
         self.trajectory = trajectory
 
-    def add_selection_property(
-        self, selection_str: str = "all", updating=True, periodic=True
-    ):
+    def add_selection_property(self, string: str = "all", updating=True, periodic=True):
         prop = self.trajectory.object.mn_trajectory_selections.add()
         prop.name = self.name
         prop.uuid = self._uuid
         self.updating = updating
         self.periodic = periodic
-        self.set_atom_group(selection_str)
-        self.selection_str = selection_str
+        self.set_atom_group(string)
+        self.string = string
         self.mask_array = self._ag_to_mask()
 
     @property
@@ -34,14 +34,14 @@ class Selection:
         return self.trajectory.object.mn_trajectory_selections[self.name]
 
     @property
-    def selection_str(self) -> str:
-        return self.ui_item.selection_str
+    def string(self) -> str:
+        return self.ui_item.string
 
-    @selection_str.setter
-    def selection_str(self, selection_str: str) -> None:
-        self.ui_item.selection_str = selection_str
+    @string.setter
+    def string(self, string: str) -> None:
+        self.ui_item.string = string
         try:
-            self.set_atom_group(selection_str)
+            self.set_atom_group(string)
             self.set_selection()
             self.message = ""
         except Exception as e:
@@ -84,18 +84,18 @@ class Selection:
     def immutable(self, immutable: bool) -> None:
         self.ui_item.immutable = immutable
 
-    def set_atom_group(self, selection_str: str) -> None:
-        if self._current_selection_str == selection_str:
+    def set_atom_group(self, string: str) -> None:
+        if self._current_string == string:
             return
         try:
             self._ag = self.trajectory.universe.select_atoms(
-                selection_str, updating=self.updating, periodic=self.periodic
+                string, updating=self.updating, periodic=self.periodic
             )
             self.mask_array = self._ag_to_mask()
-            self._current_selection_str = selection_str
+            self._current_string = string
             self.message = ""
         except Exception as e:
-            self._current_selection_str = selection_str
+            self._current_string = string
             self.message = str(e)
             print(
                 str(e)
@@ -124,7 +124,7 @@ class Selection:
     def from_atomgroup(cls, trajectory, atomgroup: mda.AtomGroup, name: str = ""):
         "Create a Selection object from an AtomGroup"
         # set default value
-        selection_str = f"sel_{atomgroup.n_atoms}_atoms"
+        string = f"sel_{atomgroup.n_atoms}_atoms"
         updating = False
         periodic = False
 
@@ -133,7 +133,7 @@ class Selection:
             updating = True
             # assuming it's a single selection
             # MDA do support `u.select_atoms('index 0', 'around 5 index 0')
-            selection_str = atomgroup._selection_strings[0]
+            string = atomgroup._selection_strings[0]
             try:
                 if atomgroup._selections[0].periodic:
                     periodic = True
@@ -144,20 +144,73 @@ class Selection:
                 print(e)
 
         if name == "":
-            name = selection_str
-        selection = cls(trajectory=trajectory, name=name)
-        trajectory.selections[selection.name] = selection
+            name = string
+        sel = cls(trajectory=trajectory, name=name)
+        trajectory.selections.append(sel)
 
         prop = trajectory.object.mn_trajectory_selections.add()
         prop.name = name
-        prop.uuid = selection._uuid
+        prop.uuid = sel._uuid
 
-        selection._ag = atomgroup
-        selection.mask_array = selection._ag_to_mask()
-        selection._current_selection_str = name
-        selection.updating = updating
-        selection.periodic = periodic
-        selection.immutable = True
-        selection.selection_str = name
+        sel._ag = atomgroup
+        sel.mask_array = sel._ag_to_mask()
+        sel._current_string = name
+        sel.updating = updating
+        sel.periodic = periodic
+        sel.immutable = True
+        sel.string = name
 
-        return selection
+        return sel
+
+
+class SelectionManager:
+    def __init__(self, trajectory: Trajectory):
+        self.trajectory = trajectory
+        self._selections: Dict[str, Selection] = {}
+
+    def new(
+        self,
+        string: str,
+        name: str = "selection_0",
+        updating: bool = True,
+        periodic: bool = False,
+    ) -> Selection:
+        sel = self._selections[name] = Selection(self.trajectory, name=name)
+        sel.add_selection_property(string=string, updating=updating, periodic=periodic)
+        return sel
+
+    def append(self, selection: Selection) -> None:
+        self._selections[selection.name] = selection
+
+    def from_ui_item(self, item: TrajectorySelectionItem) -> Selection:
+        return self.new(
+            item.string, item.name, updating=item.updating, periodic=item.periodic
+        )
+
+    def from_atomgroup(
+        self, atomgroup: mda.AtomGroup, name: str = "NewSelection"
+    ) -> Selection:
+        sel = Selection.from_atomgroup(
+            trajectory=self.trajectory, atomgroup=atomgroup, name=name
+        )
+        self._selections[sel.name] = sel
+        self.trajectory.store_named_attribute(
+            sel.to_mask(), name=sel.name, atype=db.AttributeTypes.BOOLEAN
+        )
+        return sel
+
+    def remove(self, name: str) -> None:
+        names = [sel.name for sel in self.object.mn_trajectory_selections]
+        index = names.index(name)
+        self.object.mn_trajectory_selections.remove(index)
+        try:
+            del self._selections[name]
+        except KeyError:
+            pass
+        try:
+            self.trajectory.remove_named_attribute(name)
+        except AttributeError:
+            pass
+
+    def get(self, name: str) -> Selection:
+        return self._selections[name]

@@ -427,7 +427,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         update=_update_entities,
     )
 
-    selection_str: StringProperty(  # type: ignore
+    string: StringProperty(  # type: ignore
         name="Selection",
         description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
@@ -518,7 +518,7 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
                 name = f"selection_{i}"
             else:
                 break
-        traj.add_selection(name=name, selection_str="all")
+        traj.selections.new(name=name, string="all")
         obj.mn["list_index"] = i
 
         return {"FINISHED"}
@@ -538,7 +538,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         index = obj.mn.trajectory_selection_index
         traj = get_session(context).match(obj)
         names = [s.name for s in obj.mn_trajectory_selections]
-        traj.remove_selection(names[index])
+        traj.selections.remove(names[index])
         obj.mn.trajectory_selection_index = int(
             max(min(index, len(obj.mn_trajectory_selections) - 1), 0)
         )
