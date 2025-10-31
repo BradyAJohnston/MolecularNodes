@@ -8,6 +8,16 @@ from ...annotations.manager import BaseAnnotationManager
 from ..annotations import Label2D, Label3D
 from ..base import EntityType
 
+__all__ = [
+    "TrajectoryAnnotation",
+    "TrajectoryAnnotationManager",
+    "AtomInfo",
+    "COM",
+    "COMDistance",
+    "CanonicalDihedrals",
+    "UniverseInfo",
+]
+
 
 class TrajectoryAnnotation(BaseAnnotation):
     """

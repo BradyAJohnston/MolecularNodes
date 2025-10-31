@@ -23,6 +23,11 @@ website:
         - api/reference/entities.OXDNA.qmd
         section: Entity
       - contents:
+        - api/reference/Trajectory.qmd
+        - api/reference/entities.trajectory.selections.SelectionManager.qmd
+        - api/reference/entities.trajectory.selections.Selection.qmd
+        section: Trajectory
+      - contents:
         - api/reference/StyleSpheres.qmd
         - api/reference/StyleRibbon.qmd
         - api/reference/StyleCartoon.qmd
