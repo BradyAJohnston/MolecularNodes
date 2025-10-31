@@ -507,7 +507,7 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        traj.selections.new("all")
+        traj.selections.add("all")
         traj.object.mn["list_index"] = len(traj.selections) - 1
         return {"FINISHED"}
 

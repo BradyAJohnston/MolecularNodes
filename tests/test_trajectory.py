@@ -181,7 +181,7 @@ class TestTrajectory:
 
         traj = mn.entities.Trajectory(universe)
         bpy.context.scene.frame_set(0)
-        sel = traj.selections.new(name="custom_sel_1", string="around 3.5 protein")
+        sel = traj.selections.add(name="custom_sel_1", string="around 3.5 protein")
         bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("custom_sel_1")
         bpy.context.scene.frame_set(4)

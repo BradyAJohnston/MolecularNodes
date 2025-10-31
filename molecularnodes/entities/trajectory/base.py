@@ -633,7 +633,7 @@ class Trajectory(MolecularEntity):
             att_name = _unique_aname(self.object, "sel")
             if isinstance(selection, str):
                 # TODO: There are currently no validations for the selection phrase
-                sel_name = self.selections.new(selection, att_name).name
+                sel_name = self.selections.add(selection, att_name).name
             elif isinstance(selection, AtomGroup):
                 sel_name = self.selections.from_atomgroup(selection, name=att_name).name
             # TODO: Delete these named attributes when style is deleted
