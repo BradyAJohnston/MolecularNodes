@@ -39,6 +39,10 @@ def _unique_aname(obj: bpy.types.Object, prefix: str = "sel") -> str:
     return aname
 
 
+def _ag_to_bool(ag: mda.AtomGroup) -> np.ndarray:
+    return np.isin(ag.universe.atoms.ix, ag.ix).astype(bool)
+
+
 class Trajectory(MolecularEntity):
     def __init__(
         self,
@@ -72,10 +76,6 @@ class Trajectory(MolecularEntity):
     def atoms(self) -> mda.AtomGroup:
         return self.universe.atoms
 
-    @staticmethod
-    def bool_selection(ag, selection, **kwargs) -> np.ndarray:
-        return np.isin(ag.ix, ag.select_atoms(selection, **kwargs).ix).astype(bool)
-
     @property
     def univ_positions(self) -> np.ndarray:
         return self.atoms.positions * self.world_scale
@@ -86,6 +86,37 @@ class Trajectory(MolecularEntity):
             return self.atoms.bonds.indices
         else:
             return None
+
+    @property
+    def n_frames(self) -> int:
+        return self.universe.trajectory.n_frames
+
+    @property
+    def uframe(self) -> int:
+        """
+        Get the current frame number of the linked `Universe.trajectory`.
+
+        Returns:
+            int: Current frame number in the trajectory.
+        """
+        return self.universe.trajectory.frame
+
+    @uframe.setter
+    def uframe(self, value) -> None:
+        """
+        Set the current frame number of the linked `Universe.trajectory`.
+
+        The frame number is clamped between 0 and n_frames-1 to prevent
+        out-of-bounds access.
+
+        Args:
+            value (int): Target frame number to set.
+
+        Returns:
+            None
+        """
+        if self.universe.trajectory.frame != value:
+            self.universe.trajectory[value]
 
     def _compute_elements(self) -> np.ndarray:
         if hasattr(self.atoms, "elements"):
@@ -134,37 +165,6 @@ class Trajectory(MolecularEntity):
                 for element in self._compute_elements()
             ]
             return np.array(masses)
-
-    @property
-    def n_frames(self) -> int:
-        return self.universe.trajectory.n_frames
-
-    @property
-    def uframe(self) -> int:
-        """
-        Get the current frame number of the linked `Universe.trajectory`.
-
-        Returns:
-            int: Current frame number in the trajectory.
-        """
-        return self.universe.trajectory.frame
-
-    @uframe.setter
-    def uframe(self, value) -> None:
-        """
-        Set the current frame number of the linked `Universe.trajectory`.
-
-        The frame number is clamped between 0 and n_frames-1 to prevent
-        out-of-bounds access.
-
-        Args:
-            value (int): Target frame number to set.
-
-        Returns:
-            None
-        """
-        if self.universe.trajectory.frame != value:
-            self.universe.trajectory[value]
 
     def _compute_res_name(self) -> np.ndarray:
         return np.array(list(map(lambda x: x[0:3], self.atoms.resnames)))
@@ -244,25 +244,8 @@ class Trajectory(MolecularEntity):
         else:
             return np.repeat(int(-1), len(self))
 
-    def _compute_is_nucleic(self) -> np.ndarray:
-        return self.bool_selection(self.atoms, "nucleic")
-
-    def _compute_is_peptide(self) -> np.ndarray:
-        return self.bool_selection(self.atoms, "protein or (name BB SC*)")
-
     def _compute_is_lipid(self) -> np.ndarray:
         return np.isin(self.atoms.resnames, data.lipid_names)
-
-    def _compute_is_backbone(self) -> np.ndarray:
-        return self.bool_selection(self.atoms, "backbone or nucleicbackbone or name BB")
-
-    def _compute_is_alpha_carbon(self) -> np.ndarray:
-        return self.bool_selection(self.atoms, "name CA or name BB")
-
-    def _compute_is_solvent(self) -> np.ndarray:
-        return self.bool_selection(
-            self.atoms, "name OW or name HW1 or name HW2 or resname W or resname PW"
-        )
 
     @property
     def _blender_attributes(self):
@@ -283,12 +266,12 @@ class Trajectory(MolecularEntity):
             "chain_id": self._compute_chain_id_int,
             "atom_types": self._compute_atom_type_int,
             "atom_name": self._compute_atom_name_int,
-            "is_backbone": self._compute_is_backbone,
-            "is_alpha_carbon": self._compute_is_alpha_carbon,
-            "is_solvent": self._compute_is_solvent,
-            "is_nucleic": self._compute_is_nucleic,
+            "is_backbone": "backbone or nucleicbackbone or name BB",
+            "is_alpha_carbon": "name CA or name BB",
+            "is_solvent": "name OW or name HW1 or name HW2 or resname W or resname PW",
+            "is_nucleic": "nucleic",
             "is_lipid": self._compute_is_lipid,
-            "is_peptide": self._compute_is_peptide,
+            "is_peptide": "protein or (name BB SC*)",
         }
 
     def save_filepaths_on_object(self) -> None:
@@ -309,10 +292,16 @@ class Trajectory(MolecularEntity):
         self.interpolate = False
 
     def _store_default_attributes(self) -> None:
-        for name, func in self._blender_attributes.items():
+        for name, value in self._blender_attributes.items():
             try:
+                if isinstance(value, str):
+                    data = _ag_to_bool(self.universe.select_atoms(value))
+                elif isinstance(value, callable):
+                    data = value()
+                else:
+                    raise ValueError("Unable to convert to attribute for storage")
                 self.store_named_attribute(
-                    data=func(),
+                    data=data,
                     name=name,
                 )
             except (mda.NoDataError, AttributeError):
