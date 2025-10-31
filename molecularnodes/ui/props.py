@@ -10,7 +10,7 @@ from bpy.types import PropertyGroup  # type: ignore
 from databpy.object import LinkedObjectError
 from ..blender.utils import set_object_visibility
 from ..handlers import _update_entities
-from ..session import get_session
+from ..session import get_entity
 from .style import STYLE_ITEMS
 
 uuid_property = StringProperty(  # type: ignore
@@ -506,21 +506,9 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     bl_description = "Add a new boolean attribute for the given MDA selection string"
 
     def execute(self, context):
-        obj = context.active_object
-        traj = get_session(context).match(obj)
-        i = int(len(obj.mn_trajectory_selections) - 1)
-        name = "selection_0"
-        while True:
-            if len(obj.mn_trajectory_selections) == 0:
-                break
-            if name in obj.mn_trajectory_selections:
-                i += 1
-                name = f"selection_{i}"
-            else:
-                break
-        traj.selections.new(name=name, string="all")
-        obj.mn["list_index"] = i
-
+        traj = get_entity(context)
+        traj.selections.new("all")
+        traj.object.mn["list_index"] = len(traj.selections) - 1
         return {"FINISHED"}
 
 
@@ -534,14 +522,11 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         return context.active_object.mn_trajectory_selections
 
     def execute(self, context):
-        obj = context.active_object
-        index = obj.mn.trajectory_selection_index
-        traj = get_session(context).match(obj)
-        names = [s.name for s in obj.mn_trajectory_selections]
+        traj = get_entity(context)
+        names = [s.name for s in traj.selections.items]
+        index = traj.selections.index
         traj.selections.remove(names[index])
-        obj.mn.trajectory_selection_index = int(
-            max(min(index, len(obj.mn_trajectory_selections) - 1), 0)
-        )
+        traj.selections.index = int(max(min(index, len(traj.selections) - 1), 0))
 
         return {"FINISHED"}
 

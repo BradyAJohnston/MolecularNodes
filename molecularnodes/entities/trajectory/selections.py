@@ -1,6 +1,12 @@
 from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ...ui.props import TrajectorySelectionItem
+    from .base import Trajectory
 from typing import Dict
 from uuid import uuid1
+import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
@@ -164,7 +170,7 @@ class Selection:
 
 
 class SelectionManager:
-    def __init__(self, trajectory: Trajectory):
+    def __init__(self, trajectory: "Trajectory"):
         self.trajectory = trajectory
         self._selections: Dict[str, Selection] = {}
 
@@ -200,9 +206,9 @@ class SelectionManager:
         return sel
 
     def remove(self, name: str) -> None:
-        names = [sel.name for sel in self.object.mn_trajectory_selections]
+        names = [sel.name for sel in self.items]
         index = names.index(name)
-        self.object.mn_trajectory_selections.remove(index)
+        self.items.remove(index)
         try:
             del self._selections[name]
         except KeyError:
@@ -214,3 +220,18 @@ class SelectionManager:
 
     def get(self, name: str) -> Selection:
         return self._selections[name]
+
+    @property
+    def items(self) -> bpy.types.UIList:
+        return self.trajectory.object.mn_trajectory_selections
+
+    @property
+    def index(self) -> int:
+        return self.trajectory.object.mn["list_index"]
+
+    @index.setter
+    def index(self, value: int) -> None:
+        self.trajectory.object.mn["list_index"] = value
+
+    def __len__(self) -> int:
+        return len(self._selections)
