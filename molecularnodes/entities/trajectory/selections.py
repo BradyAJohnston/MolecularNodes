@@ -22,7 +22,7 @@ class Selection:
         self.trajectory = trajectory
 
     def add_selection_property(self, string: str = "all", updating=True, periodic=True):
-        prop = self.trajectory.object.mn_trajectory_selections.add()
+        prop = self.trajectory.selections.items.add()
         prop.name = self.name
         prop.uuid = self._uuid
         self.updating = updating
@@ -37,7 +37,7 @@ class Selection:
 
     @property
     def ui_item(self):
-        return self.trajectory.object.mn_trajectory_selections[self.name]
+        return self.trajectory.selections.items[self.name]
 
     @property
     def string(self) -> str:
@@ -222,7 +222,7 @@ class SelectionManager:
         return self._selections[name]
 
     @property
-    def items(self) -> bpy.types.UIList:
+    def items(self) -> bpy.types.CollectionProperty:
         return self.trajectory.object.mn_trajectory_selections
 
     @property
