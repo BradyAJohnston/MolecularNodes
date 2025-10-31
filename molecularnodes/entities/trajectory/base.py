@@ -72,10 +72,6 @@ class Trajectory(MolecularEntity):
     def atoms(self) -> mda.AtomGroup:
         return self.universe.atoms
 
-    @property
-    def n_atoms(self) -> int:
-        return self.atoms.n_atoms
-
     @staticmethod
     def bool_selection(ag, selection, **kwargs) -> np.ndarray:
         return np.isin(ag.ix, ag.select_atoms(selection, **kwargs).ix).astype(bool)
@@ -91,8 +87,7 @@ class Trajectory(MolecularEntity):
         else:
             return None
 
-    @property
-    def elements(self) -> np.ndarray:
+    def _compute_elements(self) -> np.ndarray:
         if hasattr(self.atoms, "elements"):
             return self.atoms.elements
 
@@ -107,13 +102,13 @@ class Trajectory(MolecularEntity):
             return np.array(guessed_elements)
 
         except Exception:
-            return np.repeat("X", self.n_atoms)
+            return np.repeat("X", len(self))
 
     def _compute_atomic_number(self) -> np.ndarray:
         return np.array(
             [
                 data.elements.get(element, data.elements.get("X")).get("atomic_number")
-                for element in self.elements
+                for element in self._compute_elements()
             ]
         )
 
@@ -122,7 +117,7 @@ class Trajectory(MolecularEntity):
             np.array(
                 [
                     data.elements.get(element, {}).get("vdw_radii", 100)
-                    for element in self.elements
+                    for element in self._compute_elements()
                 ]
             )
             * 0.01  # pm to Angstrom
@@ -136,7 +131,7 @@ class Trajectory(MolecularEntity):
         else:
             masses = [
                 data.elements.get(element, {"standard_mass": 0}).get("standard_mass")
-                for element in self.elements
+                for element in self._compute_elements()
             ]
             return np.array(masses)
 
@@ -188,21 +183,21 @@ class Trajectory(MolecularEntity):
         if hasattr(self.atoms, "tempfactors"):
             return self.atoms.tempfactors
         else:
-            return np.zeros(self.n_atoms)
+            return np.zeros(len(self))
 
     def _compute_occupancy(self) -> np.ndarray:
         # corresponds to Occupancies topology attr
         if hasattr(self.atoms, "occupancies"):
             return self.atoms.occupancies
         else:
-            return np.zeros(self.n_atoms)
+            return np.zeros(len(self))
 
     def _compute_charge(self) -> np.ndarray:
         # corresponds to Charges topology attr
         if hasattr(self.atoms, "charges"):
             return self.atoms.charges
         else:
-            return np.zeros(self.n_atoms)
+            return np.zeros(len(self))
 
     def _compute_res_id(self) -> np.ndarray:
         return self.atoms.resids
@@ -247,7 +242,7 @@ class Trajectory(MolecularEntity):
                 dtype=int,
             )
         else:
-            return np.repeat(int(-1), self.n_atoms)
+            return np.repeat(int(-1), len(self))
 
     def _compute_is_nucleic(self) -> np.ndarray:
         return self.bool_selection(self.atoms, "nucleic")
