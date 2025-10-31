@@ -40,7 +40,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ...ui.props import TrajectorySelectionItem
     from .base import Trajectory
-from dataclasses import dataclass
 from typing import Dict
 from uuid import uuid1
 import bpy
@@ -56,15 +55,58 @@ class SelectionError(Exception):
     pass
 
 
-@dataclass
 class AtomGroupMetadata:
     """Metadata extracted from an MDAnalysis AtomGroup."""
 
-    name: str
-    uuid: str
-    string: str
-    updating: bool
-    periodic: bool
+    def __init__(self, atomgroup: mda.AtomGroup):
+        """
+        Initialize metadata from an AtomGroup.
+
+        Parameters
+        ----------
+        atomgroup : mda.AtomGroup
+            The AtomGroup to extract metadata from.
+        """
+        self._atomgroup = atomgroup
+        self._uuid = str(uuid1())
+
+    @property
+    def fallback_name(self) -> str:
+        return self.string or f"sel_{self._atomgroup.n_atoms}_atoms"
+
+    @property
+    def uuid(self) -> str:
+        """Get the unique identifier for this selection."""
+        return self._uuid
+
+    @property
+    def string(self) -> str:
+        """Extract the selection string from the AtomGroup."""
+        # Assuming it's a single selection
+        # MDA does support `u.select_atoms('index 0', 'around 5 index 0')`
+        try:
+            return self._atomgroup._selection_strings[0]
+        except (AttributeError, IndexError):
+            return ""
+
+    @property
+    def updating(self) -> bool:
+        """Determine if the AtomGroup is updating."""
+        return self._atomgroup.__class__.__name__ == "UpdatingAtomGroup"
+
+    @property
+    def periodic(self) -> bool:
+        """Determine if periodic boundary conditions are enabled."""
+        if not self.updating:
+            return False
+        try:
+            return self._atomgroup._selections[0].periodic
+        except (AttributeError, IndexError):
+            # Some selections don't have the periodic attribute
+            return False
+        except Exception as e:
+            print(f"Warning extracting periodic setting: {e}")
+            return False
 
 
 class Selection:
@@ -480,8 +522,9 @@ class Selection:
         """
         if not self.updating:
             return
+        mask = self.to_mask()
         self.trajectory.store_named_attribute(
-            self.to_mask(), name=self.name, atype=db.AttributeTypes.BOOLEAN
+            mask, name=self.name, atype=db.AttributeTypes.BOOLEAN
         )
 
     def set_selection(self) -> None:
@@ -589,60 +632,6 @@ class Selection:
                 f"In UI: {has_ui}"
             )
 
-    @staticmethod
-    def _extract_atomgroup_metadata(
-        atomgroup: mda.AtomGroup, name: str
-    ) -> AtomGroupMetadata:
-        """
-        Extract metadata from an MDAnalysis AtomGroup.
-
-        Inspects the AtomGroup to determine its properties (updating status,
-        periodic settings, selection string) and creates a metadata object.
-
-        Parameters
-        ----------
-        atomgroup : mda.AtomGroup
-            The AtomGroup to inspect.
-        name : str
-            Desired name for the selection (can be empty).
-
-        Returns
-        -------
-        AtomGroupMetadata
-            Metadata extracted from the AtomGroup.
-        """
-        # Set default values
-        string = f"sel_{atomgroup.n_atoms}_atoms"
-        updating = False
-        periodic = False
-
-        # If class is an UpdatingAtomGroup
-        if atomgroup.__class__.__name__ == "UpdatingAtomGroup":
-            updating = True
-            # Assuming it's a single selection
-            # MDA does support `u.select_atoms('index 0', 'around 5 index 0')`
-            string = atomgroup._selection_strings[0]
-            try:
-                if atomgroup._selections[0].periodic:
-                    periodic = True
-            except AttributeError:
-                # Some selections don't have the periodic attribute
-                pass
-            except Exception as e:
-                print(f"Warning extracting periodic setting: {e}")
-
-        # Use string as name if no name provided
-        if name == "":
-            name = string
-
-        return AtomGroupMetadata(
-            name=name,
-            uuid=str(uuid1()),
-            string=string,
-            updating=updating,
-            periodic=periodic,
-        )
-
     @classmethod
     def from_atomgroup(cls, trajectory, atomgroup: mda.AtomGroup, name: str = ""):
         """
@@ -674,30 +663,34 @@ class Selection:
         - The selection is marked as immutable to prevent user modification.
         - The selection is automatically registered with the trajectory's
           SelectionManager.
-        - Creates the UI property FIRST, then the Python wrapper, for proper
-          initialization order.
+        - Creates the Python wrapper FIRST and registers it BEFORE creating the UI
+          property, to avoid race conditions with update handlers.
         """
-        # Extract metadata from the AtomGroup
-        metadata = cls._extract_atomgroup_metadata(atomgroup, name)
+        # Extract metadata from the AtomGroup using the class directly
+        meta = AtomGroupMetadata(atomgroup)
+        name = meta.fallback_name if name == "" else name
 
-        # Create UI property FIRST
-        prop = trajectory.object.mn_trajectory_selections.add()
-        prop.name = metadata.name
-        prop.uuid = metadata.uuid
-        prop.string = metadata.string
-        prop.updating = metadata.updating
-        prop.periodic = metadata.periodic
-        prop.immutable = True
-
-        # Then create Python wrapper
-        sel = cls(trajectory=trajectory, name=metadata.name)
-        sel._uuid = metadata.uuid
+        # Create Python wrapper FIRST
+        sel = cls(trajectory=trajectory, name=name)
+        sel._uuid = meta.uuid
         sel._ag = atomgroup
         sel.mask_array = sel._ag_to_mask()
-        sel._current_string = metadata.string
+        sel._current_string = meta.string
 
-        # Register with manager
+        # Register with manager BEFORE creating UI property
+        # This prevents race conditions when the UI property setter triggers update handlers
         trajectory.selections.append(sel)
+
+        # Create UI property LAST
+        # Note: Setting prop.name may trigger update handlers, but the selection
+        # is already registered in _selections, so get() will find it
+        prop = trajectory.selections.items.add()
+        prop.name = name
+        prop.uuid = meta.uuid
+        prop.string = meta.string
+        prop.updating = meta.updating
+        prop.periodic = meta.periodic
+        prop.immutable = True
 
         return sel
 
@@ -914,7 +907,8 @@ class SelectionManager:
         sel = Selection.from_atomgroup(
             trajectory=self.trajectory, atomgroup=atomgroup, name=name
         )
-        self._selections[sel.name] = sel
+        # Note: sel is already registered in _selections by Selection.from_atomgroup()
+        # Store the mask as a Blender attribute
         self.trajectory.store_named_attribute(
             sel.to_mask(), name=sel.name, atype=db.AttributeTypes.BOOLEAN
         )

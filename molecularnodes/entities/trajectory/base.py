@@ -361,13 +361,20 @@ class Trajectory(MolecularEntity):
 
     def _update_selections(self):
         """Update all selections for the current frame."""
-        for item in self.object.mn_trajectory_selections:
+        for item in self.selections.items:
             try:
+                # Skip non-updating selections - they use static masks
+                if not item.updating:
+                    continue
+
                 # Lazy initialization will occur if needed
                 selection = self.selections.get(item.name)
                 if selection is None:
                     raise KeyError
-                selection.set_atom_group(item.string)
+                # Don't recreate atomgroup for immutable selections (created from atomgroups)
+                # These selections maintain their own atomgroup reference
+                if not item.immutable:
+                    selection.set_atom_group(item.string)
                 selection.set_selection()
             except KeyError as e:
                 print(
