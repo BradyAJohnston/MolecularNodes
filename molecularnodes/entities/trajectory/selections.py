@@ -40,9 +40,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ...ui.props import TrajectorySelectionItem
     from .base import Trajectory
+from dataclasses import dataclass
 from typing import Dict
 from uuid import uuid1
-from dataclasses import dataclass
 import bpy
 import databpy as db
 import MDAnalysis as mda
