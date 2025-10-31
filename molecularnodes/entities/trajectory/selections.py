@@ -950,14 +950,21 @@ class SelectionManager:
         except AttributeError:
             pass
 
-    def get(self, name: str) -> Selection:
+    def get(self, name: str, lazy_init: bool = True) -> Selection | None:
         """
         Retrieve a Selection by name.
+
+        If the selection exists in the UI properties but not in the Python
+        runtime (common when loading from saved .blend files), it will be
+        lazily initialized from the UI property.
 
         Parameters
         ----------
         name : str
             Name of the selection to retrieve.
+        lazy_init : bool, optional
+            If True, attempts to initialize the selection from UI properties
+            if it doesn't exist in Python runtime. Default is True.
 
         Returns
         -------
@@ -967,9 +974,36 @@ class SelectionManager:
         Raises
         ------
         KeyError
-            If no selection with the given name exists.
+            If no selection with the given name exists in either Python
+            runtime or UI properties.
+
+        Notes
+        -----
+        Lazy initialization ensures that selections persist correctly when
+        loading .blend files, where UI properties are restored but Python
+        objects need to be reconstructed.
         """
-        return self._selections[name]
+        # Fast path: already in runtime
+        if name in self._selections:
+            return self._selections.get(name)
+
+        # Lazy initialization path
+        if lazy_init:
+            try:
+                # Check if UI property exists
+                ui_item = self.items[name]
+                # Initialize from UI property
+                selection = self.from_ui_item(ui_item)
+                return selection
+            except (KeyError, AttributeError):
+                # UI property doesn't exist either
+                pass
+
+        # Selection not found anywhere
+        raise KeyError(
+            f"Selection '{name}' not found. "
+            f"Available selections: {list(self._selections.keys())}"
+        )
 
     @property
     def items(self) -> bpy.types.CollectionProperty:
@@ -1018,3 +1052,50 @@ class SelectionManager:
             The number of registered Selection objects.
         """
         return len(self._selections)
+
+    def sync_all_from_ui(self) -> None:
+        """
+        Synchronize all selections from UI properties.
+
+        Iterates through all UI property items and ensures that each has
+        a corresponding Python Selection object. This is useful when loading
+        from saved .blend files where the UI properties are restored but
+        Python objects need to be reconstructed.
+
+        Notes
+        -----
+        This method is typically called during trajectory initialization
+        or when loading from disk. It ensures that the Python runtime state
+        matches the persistent UI property state.
+        """
+        for ui_item in self.items:
+            if ui_item.name not in self._selections:
+                try:
+                    self.from_ui_item(ui_item)
+                except Exception as e:
+                    print(
+                        f"Warning: Failed to initialize selection '{ui_item.name}': {e}"
+                    )
+
+    def has_selection(self, name: str) -> bool:
+        """
+        Check if a selection exists.
+
+        Checks both the Python runtime and UI properties for the selection.
+
+        Parameters
+        ----------
+        name : str
+            Name of the selection to check.
+
+        Returns
+        -------
+        bool
+            True if the selection exists, False otherwise.
+        """
+        if name in self._selections:
+            return True
+        try:
+            return name in self.items
+        except Exception:
+            return False

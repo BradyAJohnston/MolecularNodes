@@ -130,6 +130,13 @@ quartodoc:
     - entities.Ensemble
     - entities.OXDNA
 
+  - title: Trajectory
+    desc: Working with molecular dynamics trajectories
+    contents:
+    - Trajectory
+    - entities.trajectory.selections.SelectionManager
+    - entities.trajectory.selections.Selection
+
   - title: Styles
     desc: Setting and controlling the different styles
     contents:

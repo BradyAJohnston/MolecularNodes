@@ -360,10 +360,25 @@ class Trajectory(MolecularEntity):
                 print(e)
 
     def _update_selections(self):
+        """Update all selections for the current frame."""
         for item in self.object.mn_trajectory_selections:
-            selection = self.selections.get(item.name)
-            selection.set_atom_group(item.string)
-            selection.set_selection()
+            try:
+                # Lazy initialization will occur if needed
+                selection = self.selections.get(item.name)
+                if selection is None:
+                    raise KeyError
+                selection.set_atom_group(item.string)
+                selection.set_selection()
+            except KeyError as e:
+                print(
+                    f"Warning: Failed to update selection '{item.name}': {e}. "
+                    "Skipping this selection."
+                )
+            except Exception as e:
+                print(
+                    f"Warning: Error updating selection '{item.name}': {e}. "
+                    "Skipping this selection."
+                )
 
     @property
     def _frame(self) -> int:
