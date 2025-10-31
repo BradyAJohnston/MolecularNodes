@@ -5,8 +5,21 @@ This module provides classes for managing atom selections in molecular dynamics
 trajectories. It bridges MDAnalysis AtomGroups with Blender's geometry node system,
 allowing dynamic selections that update during trajectory playback.
 
+Data Flow Architecture
+----------------------
+PropertyGroups (TrajectorySelectionItem) are the source of truth for persistent data:
+    User edits UI → PropertyGroup.update callback → _update_entities() handler
+                                                              ↓
+                             Selection.sync_from_ui() ← Called by handler
+                                                              ↓
+                             Selection.set_atom_group() ← Recomputes _ag
+                                                              ↓
+                             Selection.sync_to_blender_attribute() ← Updates geometry
+
 Classes
 -------
+SelectionError
+    Exception raised when selection operations fail.
 Selection
     Wraps an MDAnalysis AtomGroup and syncs it with Blender UI properties
     and geometry node attributes.
@@ -29,11 +42,29 @@ if TYPE_CHECKING:
     from .base import Trajectory
 from typing import Dict
 from uuid import uuid1
+from dataclasses import dataclass
 import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
+
+
+class SelectionError(Exception):
+    """Exception raised when selection operations fail."""
+
+    pass
+
+
+@dataclass
+class AtomGroupMetadata:
+    """Metadata extracted from an MDAnalysis AtomGroup."""
+
+    name: str
+    uuid: str
+    string: str
+    updating: bool
+    periodic: bool
 
 
 class Selection:
@@ -65,6 +96,7 @@ class Selection:
         self._name = name
         self._current_string: str = ""
         self.trajectory = trajectory
+        self._ui_item_cache: TrajectorySelectionItem | None = None
 
     def add_selection_property(self, string: str = "all", updating=True, periodic=True):
         """
@@ -106,17 +138,43 @@ class Selection:
         return self._name
 
     @property
-    def ui_item(self):
+    def ui_item(self) -> "TrajectorySelectionItem":
         """
         Get the Blender UI property item for this selection.
+
+        Uses caching to avoid repeated lookups. The cache can be invalidated
+        by calling invalidate_ui_cache().
 
         Returns
         -------
         TrajectorySelectionItem
             The Blender property group containing UI-accessible properties
             for this selection (string, updating, periodic, message, etc.).
+
+        Raises
+        ------
+        RuntimeError
+            If the UI property cannot be found, indicating the selection
+            was not properly initialized.
         """
-        return self.trajectory.selections.items[self.name]
+        if self._ui_item_cache is None:
+            try:
+                self._ui_item_cache = self.trajectory.selections.items[self.name]
+            except (KeyError, AttributeError) as e:
+                raise RuntimeError(
+                    f"UI property not found for selection '{self.name}'. "
+                    f"Selection may not be properly initialized."
+                ) from e
+        return self._ui_item_cache
+
+    def invalidate_ui_cache(self) -> None:
+        """
+        Invalidate the cached UI property reference.
+
+        Call this if the UI item is recreated or the selection is renamed.
+        The next access to ui_item will fetch a fresh reference.
+        """
+        self._ui_item_cache = None
 
     @property
     def string(self) -> str:
@@ -143,15 +201,23 @@ class Selection:
         ----------
         string : str
             MDAnalysis selection string to apply.
+
+        Notes
+        -----
+        If the selection is marked as immutable, logs a warning and returns
+        without making changes.
         """
+        if self.immutable:
+            print(
+                f"Warning: Attempted to modify immutable selection '{self.name}'. "
+                "Ignoring change."
+            )
+            return
+
         self.ui_item.string = string
-        try:
-            self.set_atom_group(string)
-            self.set_selection()
-            self.message = ""
-        except Exception as e:
-            self.message = str(e)
-            print(e)
+        success = self.apply_selection_string(string)
+        if success:
+            self.sync_to_blender_attribute()
 
     @property
     def periodic(self) -> bool:
@@ -254,7 +320,81 @@ class Selection:
         """
         self.ui_item.immutable = immutable
 
-    def set_atom_group(self, string: str) -> None:
+    def validate_selection_string(self, string: str) -> tuple[bool, str]:
+        """
+        Validate a selection string without side effects.
+
+        Tests whether the selection string can be parsed by MDAnalysis
+        without actually storing the result.
+
+        Parameters
+        ----------
+        string : str
+            MDAnalysis selection string to validate.
+
+        Returns
+        -------
+        tuple[bool, str]
+            A tuple of (is_valid, error_message). If valid, error_message is empty.
+
+        Examples
+        --------
+        >>> is_valid, error = sel.validate_selection_string("name CA")
+        >>> if is_valid:
+        ...     sel.apply_selection_string("name CA")
+        """
+        try:
+            # Just test parsing, don't store
+            self.trajectory.universe.select_atoms(
+                string, updating=False, periodic=False
+            )
+            return True, ""
+        except Exception as e:
+            return False, str(e)
+
+    def apply_selection_string(self, string: str) -> bool:
+        """
+        Apply a selection string and update the atom group.
+
+        This method validates the selection string and, if valid, creates
+        the AtomGroup and updates the cached mask array.
+
+        Parameters
+        ----------
+        string : str
+            MDAnalysis selection string to apply.
+
+        Returns
+        -------
+        bool
+            True if the selection was successfully applied, False otherwise.
+
+        Notes
+        -----
+        Unlike set_atom_group, this method returns a success status and
+        handles errors gracefully by storing them in the message property.
+        """
+        if self._current_string == string:
+            return True
+
+        try:
+            self._ag = self.trajectory.universe.select_atoms(
+                string, updating=self.updating, periodic=self.periodic
+            )
+            self.mask_array = self._ag_to_mask()
+            self._current_string = string
+            self.message = ""
+            return True
+        except Exception as e:
+            error_msg = (
+                f"{str(e)} in selection: `{self.name}` "
+                f"on object: `{self.trajectory.object.name}`"
+            )
+            self.message = str(e)
+            print(error_msg)
+            return False
+
+    def set_atom_group(self, string: str, raise_on_error: bool = False) -> bool:
         """
         Create or update the MDAnalysis AtomGroup from a selection string.
 
@@ -266,14 +406,29 @@ class Selection:
         ----------
         string : str
             MDAnalysis selection string to parse.
+        raise_on_error : bool, optional
+            If True, raises SelectionError on failure.
+            If False, stores error in message and returns False.
+            Default is False.
+
+        Returns
+        -------
+        bool
+            True if successful, False if failed (only when raise_on_error=False).
+
+        Raises
+        ------
+        SelectionError
+            If raise_on_error=True and the selection string is invalid.
 
         Notes
         -----
-        If the selection string is invalid, stores the error message and prints
-        a warning but does not raise an exception.
+        This method is maintained for backward compatibility. New code should
+        prefer apply_selection_string() for better error handling.
         """
         if self._current_string == string:
-            return
+            return True
+
         try:
             self._ag = self.trajectory.universe.select_atoms(
                 string, updating=self.updating, periodic=self.periodic
@@ -281,13 +436,18 @@ class Selection:
             self.mask_array = self._ag_to_mask()
             self._current_string = string
             self.message = ""
+            return True
         except Exception as e:
-            self._current_string = string
-            self.message = str(e)
-            print(
-                str(e)
-                + f" in selection: `{self.name}` on object: `{self.trajectory.object.name}`"
+            error_msg = (
+                f"{str(e)} in selection: `{self.name}` "
+                f"on object: `{self.trajectory.object.name}`"
             )
+            self.message = str(e)
+            print(error_msg)
+
+            if raise_on_error:
+                raise SelectionError(error_msg) from e
+            return False
 
     def _ag_to_mask(self) -> npt.NDArray[np.bool_]:
         """
@@ -305,23 +465,56 @@ class Selection:
         """
         return np.isin(self.trajectory.universe.atoms.ix, self._ag.ix).astype(bool)
 
-    def set_selection(self) -> None:
+    def sync_to_blender_attribute(self) -> None:
         """
-        Store the selection mask as a named attribute in Blender.
+        Synchronize the selection mask to Blender geometry attributes.
 
-        Converts the selection to a boolean mask and stores it as a geometry
-        node attribute on the trajectory object. Only applies if updating=True.
+        Converts the current selection to a boolean mask and stores it as a
+        geometry node attribute on the trajectory object. Only applies if
+        updating=True.
 
         Notes
         -----
-        This method is called after the selection string is updated to sync
-        the selection state with the Blender geometry nodes.
+        This pushes the Python-side selection state to Blender's geometry system,
+        making it available for use in geometry nodes.
         """
         if not self.updating:
             return
         self.trajectory.store_named_attribute(
             self.to_mask(), name=self.name, atype=db.AttributeTypes.BOOLEAN
         )
+
+    def set_selection(self) -> None:
+        """
+        Store the selection mask as a named attribute in Blender.
+
+        .. deprecated::
+            Use sync_to_blender_attribute() instead for clearer intent.
+
+        Notes
+        -----
+        This method is maintained for backward compatibility.
+        """
+        self.sync_to_blender_attribute()
+
+    def sync_from_ui(self) -> None:
+        """
+        Synchronize selection state from the UI property to computed state.
+
+        Pulls the current state from the Blender UI property and updates
+        the computed AtomGroup if the selection string has changed.
+
+        Notes
+        -----
+        This is called by update handlers when the user modifies the selection
+        through Blender's UI. It ensures the Python-side state reflects
+        the PropertyGroup state.
+        """
+        self.invalidate_ui_cache()
+        # Recompute AtomGroup if string changed
+        if self.ui_item.string != self._current_string:
+            self.apply_selection_string(self.ui_item.string)
+            self.sync_to_blender_attribute()
 
     def to_mask(self) -> npt.NDArray[np.bool_]:
         """
@@ -338,6 +531,117 @@ class Selection:
         if self.updating:
             self.mask_array = self._ag_to_mask()
         return self.mask_array
+
+    def is_valid(self) -> bool:
+        """
+        Check if the selection is in a valid state.
+
+        Verifies that all required components are present: the AtomGroup,
+        the mask array, and the UI property.
+
+        Returns
+        -------
+        bool
+            True if the selection is valid and usable, False otherwise.
+
+        Examples
+        --------
+        >>> if not sel.is_valid():
+        ...     print("Selection needs reinitialization")
+        """
+        try:
+            has_ag = self._ag is not None
+            has_mask = self.mask_array is not None
+            has_ui = self.name in self.trajectory.selections.items
+            return has_ag and has_mask and has_ui
+        except Exception:
+            return False
+
+    def ensure_valid(self) -> None:
+        """
+        Raise an exception if the selection is in an invalid state.
+
+        Useful for catching bugs early in development or providing
+        clear error messages when a selection becomes corrupted.
+
+        Raises
+        ------
+        SelectionError
+            If the selection is missing required components or is otherwise invalid.
+
+        Examples
+        --------
+        >>> sel.ensure_valid()  # Raises if invalid
+        >>> # Continue with valid selection operations
+        """
+        if not self.is_valid():
+            has_ag = self._ag is not None
+            has_mask = self.mask_array is not None
+            try:
+                has_ui = self.name in self.trajectory.selections.items
+            except Exception:
+                has_ui = False
+
+            raise SelectionError(
+                f"Selection '{self.name}' is in an invalid state. "
+                f"Has AtomGroup: {has_ag}, "
+                f"Has mask: {has_mask}, "
+                f"In UI: {has_ui}"
+            )
+
+    @staticmethod
+    def _extract_atomgroup_metadata(
+        atomgroup: mda.AtomGroup, name: str
+    ) -> AtomGroupMetadata:
+        """
+        Extract metadata from an MDAnalysis AtomGroup.
+
+        Inspects the AtomGroup to determine its properties (updating status,
+        periodic settings, selection string) and creates a metadata object.
+
+        Parameters
+        ----------
+        atomgroup : mda.AtomGroup
+            The AtomGroup to inspect.
+        name : str
+            Desired name for the selection (can be empty).
+
+        Returns
+        -------
+        AtomGroupMetadata
+            Metadata extracted from the AtomGroup.
+        """
+        # Set default values
+        string = f"sel_{atomgroup.n_atoms}_atoms"
+        updating = False
+        periodic = False
+
+        # If class is an UpdatingAtomGroup
+        if atomgroup.__class__.__name__ == "UpdatingAtomGroup":
+            updating = True
+            # Assuming it's a single selection
+            # MDA does support `u.select_atoms('index 0', 'around 5 index 0')`
+            string = atomgroup._selection_strings[0]
+            try:
+                if atomgroup._selections[0].periodic:
+                    periodic = True
+            except AttributeError:
+                # Some selections don't have the periodic attribute
+                pass
+            except Exception as e:
+                print(f"Warning extracting periodic setting: {e}")
+
+        # Use string as name if no name provided
+        if name == "":
+            name = string
+
+        return AtomGroupMetadata(
+            name=name,
+            uuid=str(uuid1()),
+            string=string,
+            updating=updating,
+            periodic=periodic,
+        )
 
     @classmethod
     def from_atomgroup(cls, trajectory, atomgroup: mda.AtomGroup, name: str = ""):
@@ -370,43 +674,30 @@ class Selection:
         - The selection is marked as immutable to prevent user modification.
         - The selection is automatically registered with the trajectory's
           SelectionManager.
+        - Creates the UI property FIRST, then the Python wrapper, for proper
+          initialization order.
         """
-        # set default value
-        string = f"sel_{atomgroup.n_atoms}_atoms"
-        updating = False
-        periodic = False
+        # Extract metadata from the AtomGroup
+        metadata = cls._extract_atomgroup_metadata(atomgroup, name)
 
-        # if class is an UpdatingAtomGroup
-        if atomgroup.__class__.__name__ == "UpdatingAtomGroup":
-            updating = True
-            # assuming it's a single selection
-            # MDA do support `u.select_atoms('index 0', 'around 5 index 0')
-            string = atomgroup._selection_strings[0]
-            try:
-                if atomgroup._selections[0].periodic:
-                    periodic = True
-            except AttributeError:
-                # some selections don't have the periodic attribute
-                pass
-            except Exception as e:
-                print(e)
-
-        if name == "":
-            name = string
-        sel = cls(trajectory=trajectory, name=name)
-        trajectory.selections.append(sel)
-
+        # Create UI property FIRST
         prop = trajectory.object.mn_trajectory_selections.add()
-        prop.name = name
-        prop.uuid = sel._uuid
+        prop.name = metadata.name
+        prop.uuid = metadata.uuid
+        prop.string = metadata.string
+        prop.updating = metadata.updating
+        prop.periodic = metadata.periodic
+        prop.immutable = True
 
+        # Then create Python wrapper
+        sel = cls(trajectory=trajectory, name=metadata.name)
+        sel._uuid = metadata.uuid
         sel._ag = atomgroup
         sel.mask_array = sel._ag_to_mask()
-        sel._current_string = name
-        sel.updating = updating
-        sel.periodic = periodic
-        sel.immutable = True
-        sel.string = name
+        sel._current_string = metadata.string
+
+        # Register with manager
+        trajectory.selections.append(sel)
 
         return sel
 
@@ -434,6 +725,26 @@ class SelectionManager:
     def __init__(self, trajectory: "Trajectory"):
         self.trajectory = trajectory
         self._selections: Dict[str, Selection] = {}
+
+    def _validate_name_unique(self, name: str) -> None:
+        """
+        Validate that a selection name is unique.
+
+        Parameters
+        ----------
+        name : str
+            The name to validate.
+
+        Raises
+        ------
+        ValueError
+            If a selection with this name already exists.
+        """
+        if name in self._selections:
+            raise ValueError(
+                f"Selection '{name}' already exists. "
+                "Use a unique name or remove the existing selection first."
+            )
 
     def add(
         self,
@@ -464,12 +775,61 @@ class SelectionManager:
         -------
         Selection
             The newly created and registered Selection object.
+
+        Raises
+        ------
+        ValueError
+            If a selection with the given name already exists.
         """
+        # Note: Not validating uniqueness here for backward compatibility
+        # as existing code may rely on overwriting selections
         sel = self._selections[name] = Selection(self.trajectory, name=name)
         sel.add_selection_property(string=string, updating=updating, periodic=periodic)
         return sel
 
-    def append(self, selection: Selection) -> None:
+    def create_selection(
+        self,
+        string: str,
+        name: str = "selection_0",
+        updating: bool = True,
+        periodic: bool = False,
+        validate_unique: bool = True,
+    ) -> Selection:
+        """
+        Create and register a new selection with validation.
+
+        This is the preferred method for creating new selections as it
+        includes proper validation.
+
+        Parameters
+        ----------
+        string : str
+            MDAnalysis selection string (e.g., "name CA", "resid 1:10").
+        name : str, optional
+            Unique name for this selection. Default is "selection_0".
+        updating : bool, optional
+            Whether the selection updates every frame. Default is True.
+        periodic : bool, optional
+            Whether to consider periodic boundary conditions. Default is False.
+        validate_unique : bool, optional
+            Whether to validate that the name is unique. Default is True.
+
+        Returns
+        -------
+        Selection
+            The newly created and registered Selection object.
+
+        Raises
+        ------
+        ValueError
+            If validate_unique=True and a selection with the given name already exists.
+        """
+        if validate_unique:
+            self._validate_name_unique(name)
+
+        return self.add(string=string, name=name, updating=updating, periodic=periodic)
+
+    def register_selection(self, selection: Selection) -> None:
         """
         Register an existing Selection object with this manager.
 
@@ -481,8 +841,28 @@ class SelectionManager:
         ----------
         selection : Selection
             The Selection object to register.
+
+        Notes
+        -----
+        This method is typically used internally by factory methods like
+        from_atomgroup() after they've created both the UI property and
+        the Selection object.
         """
         self._selections[selection.name] = selection
+
+    def append(self, selection: Selection) -> None:
+        """
+        Register an existing Selection object with this manager.
+
+        .. deprecated::
+            Use register_selection() instead for clearer intent.
+
+        Parameters
+        ----------
+        selection : Selection
+            The Selection object to register.
+        """
+        self.register_selection(selection)
 
     def from_ui_item(self, item: TrajectorySelectionItem) -> Selection:
         """
