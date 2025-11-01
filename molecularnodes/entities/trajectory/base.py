@@ -5,10 +5,10 @@ This module provides the Trajectory class for loading and visualizing molecular
 dynamics trajectories in Blender using MDAnalysis as the backend.
 """
 
-from collections import OrderedDict
 import functools
 import inspect
 import logging
+from collections import OrderedDict
 from pathlib import Path
 from typing import Callable, Dict
 import bpy
@@ -17,20 +17,6 @@ import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
 from MDAnalysis.core.groups import AtomGroup
-
-from .helpers import (
-    AttributeMetadata,
-    AttributeSpec,
-    BlenderProperty,
-    BlenderPropertyBridge,
-    ComputeAttributeFunc,
-    FrameManager,
-    PositionCache,
-    _validate_frame,
-    _validate_non_negative,
-)
-
-logger = logging.getLogger(__name__)
 from ...assets import data
 from ...blender import coll, path_resolve
 from ...blender import utils as blender_utils
@@ -42,17 +28,21 @@ from ...nodes.styles import (
     StyleBase,
 )
 from ...utils import (
-    correct_periodic_positions,
-    fraction,
     frame_mapper,
-    frames_to_average,
     temp_override_property,
 )
 from ..base import EntityType, MolecularEntity
 from .annotations import TrajectoryAnnotationManager
+from .helpers import (
+    AttributeMetadata,
+    BlenderProperty,
+    FrameManager,
+    _validate_frame,
+    _validate_non_negative,
+)
 from .selections import SelectionManager
 
-
+logger = logging.getLogger(__name__)
 # ============================================================================
 # Utility Functions
 # ============================================================================
@@ -115,6 +105,7 @@ class Trajectory(MolecularEntity):
         >>> traj.add_style("ribbon", color="chain")
         >>> traj.selections.add("protein and name CA", name="alpha_carbons")
     """
+
     # Blender property descriptors with validation
     frame = BlenderProperty("frame", validate_fn=_validate_frame)
     subframes = BlenderProperty("subframes", validate_fn=_validate_non_negative)
@@ -341,7 +332,9 @@ class Trajectory(MolecularEntity):
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
 
-    def _compute_segindices(self, metadata: AttributeMetadata | None = None) -> np.ndarray:
+    def _compute_segindices(
+        self, metadata: AttributeMetadata | None = None
+    ) -> np.ndarray:
         segs = []
         for seg in self.atoms.segments:
             segs.append(seg.atoms[0].segid)
@@ -356,7 +349,9 @@ class Trajectory(MolecularEntity):
 
         return self.atoms.segindices
 
-    def _compute_chain_id_int(self, metadata: AttributeMetadata | None = None) -> np.ndarray:
+    def _compute_chain_id_int(
+        self, metadata: AttributeMetadata | None = None
+    ) -> np.ndarray:
         chain_ids, chain_id_index = np.unique(self.atoms.chainIDs, return_inverse=True)
 
         if metadata is not None:
@@ -369,7 +364,9 @@ class Trajectory(MolecularEntity):
 
         return chain_id_index
 
-    def _compute_atom_type_int(self, metadata: AttributeMetadata | None = None) -> np.ndarray:
+    def _compute_atom_type_int(
+        self, metadata: AttributeMetadata | None = None
+    ) -> np.ndarray:
         atom_type_unique, atom_type_index = np.unique(
             self.atoms.types, return_inverse=True
         )
@@ -461,7 +458,7 @@ class Trajectory(MolecularEntity):
                 elif callable(value):
                     # Check if function accepts metadata parameter
                     sig = inspect.signature(value)
-                    if 'metadata' in sig.parameters:
+                    if "metadata" in sig.parameters:
                         data = value(metadata)
                     else:
                         data = value()
@@ -539,7 +536,9 @@ class Trajectory(MolecularEntity):
             try:
                 self.store_named_attribute(data=func(self.universe), name=name)
             except Exception as e:
-                logger.error(f"Failed to update calculation '{name}': {e}", exc_info=True)
+                logger.error(
+                    f"Failed to update calculation '{name}': {e}", exc_info=True
+                )
 
     def _update_selections(self) -> None:
         """Update all selections for the current frame."""
@@ -570,7 +569,7 @@ class Trajectory(MolecularEntity):
             except Exception as e:
                 logger.error(
                     f"Error updating selection '{item.name}': {e}. Skipping this selection.",
-                    exc_info=True
+                    exc_info=True,
                 )
 
     def _frame_range(self, frame: int) -> npt.NDArray[np.int64]:
@@ -813,7 +812,9 @@ class Trajectory(MolecularEntity):
         ]
         return bb_verts_3d
 
-    def get_view(self, selection: str | AtomGroup | None = None, frame: int | None = None) -> list[tuple]:
+    def get_view(
+        self, selection: str | AtomGroup | None = None, frame: int | None = None
+    ) -> list[tuple]:
         """
         Get the 3D bounding box of a selection within the trajectory
 

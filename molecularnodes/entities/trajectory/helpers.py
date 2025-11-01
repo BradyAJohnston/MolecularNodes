@@ -8,17 +8,15 @@ This module contains utility classes that support the Trajectory class by handli
 - Attribute metadata collection
 """
 
+import logging
 from collections import OrderedDict
 from dataclasses import dataclass
-import functools
-import logging
 from typing import Any, Callable, Dict, Protocol
 import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
-
 from ...utils import (
     correct_periodic_positions,
     fraction,
@@ -35,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 class ComputeAttributeFunc(Protocol):
     """Protocol for attribute computation functions."""
+
     def __call__(self) -> np.ndarray: ...
 
 
@@ -55,6 +54,7 @@ class AttributeSpec:
         dtype: Python type for the attribute data
         domain: Blender attribute domain (POINT, EDGE, etc.)
     """
+
     name: str
     compute_fn: Callable[[], np.ndarray] | None = None
     selection_str: str | None = None
@@ -78,6 +78,7 @@ class AttributeSpec:
             return self.compute_fn()
         elif self.selection_str is not None and universe is not None:
             from .base import _ag_to_bool
+
             return _ag_to_bool(universe.select_atoms(self.selection_str))
         else:
             raise ValueError(
@@ -143,9 +144,7 @@ class BlenderProperty:
     """
 
     def __init__(
-        self,
-        attr_name: str,
-        validate_fn: Callable[[Any], None] | None = None
+        self, attr_name: str, validate_fn: Callable[[Any], None] | None = None
     ):
         """
         Initialize the descriptor.
@@ -199,8 +198,7 @@ class BlenderPropertyBridge:
 
     @staticmethod
     def sync_from_blender(
-        obj: bpy.types.Object,
-        property_names: list[str]
+        obj: bpy.types.Object, property_names: list[str]
     ) -> Dict[str, Any]:
         """
         Read trajectory properties from a Blender object.
@@ -271,9 +269,7 @@ class PositionCache:
             self._cache.popitem(last=False)
 
     def get_or_compute(
-        self,
-        frame: int,
-        compute_fn: Callable[[int], np.ndarray]
+        self, frame: int, compute_fn: Callable[[int], np.ndarray]
     ) -> np.ndarray:
         """
         Get cached position or compute and cache it.
@@ -360,9 +356,7 @@ class FrameManager:
         return self.trajectory.univ_positions
 
     def adjust_periodic_positions(
-        self,
-        pos1: np.ndarray,
-        pos2: np.ndarray
+        self, pos1: np.ndarray, pos2: np.ndarray
     ) -> np.ndarray:
         """
         Apply periodic boundary correction to positions.
