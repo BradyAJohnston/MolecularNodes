@@ -243,6 +243,19 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         default=0,
     )  # type: ignore
 
+    line_as_mesh: BoolProperty(
+        name="Line As Mesh",
+        description="Draw lines as 3D meshes",
+        default=False,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    line_mesh_overlay: BoolProperty(
+        name="Line Overlay",
+        description="Draw overlay lines on top of 3D meshes",
+        default=False,
+    )  # type: ignore
+
     line_color: FloatVectorProperty(
         name="Line Color",
         description="Line color",
@@ -274,19 +287,6 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         default=0,
         min=0,
         update=_update_annotation_object,
-    )  # type: ignore
-
-    line_as_mesh: BoolProperty(
-        name="Line As Mesh",
-        description="Draw lines as 3D meshes",
-        default=False,
-        update=_update_annotation_object,
-    )  # type: ignore
-
-    line_mesh_overlay: BoolProperty(
-        name="Line Overlay",
-        description="Draw overlay lines on top of 3D meshes",
-        default=False,
     )  # type: ignore
 
     mesh_wireframe: BoolProperty(
