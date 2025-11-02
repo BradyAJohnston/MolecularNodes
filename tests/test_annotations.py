@@ -442,7 +442,7 @@ class TestAnnotations:
         bpy.ops.render.render()
         assert mn.scene.compositor.annotations_image in bpy.data.images
 
-    def test_line_mesh(self, universe):
+    def test_line_as_mesh(self, universe):
         t = mn.Trajectory(universe, name="TestUniverse")
         # test automatic annotation object creation
         name = "MN_an_TestUniverse"
@@ -451,7 +451,7 @@ class TestAnnotations:
         # test no annotation object till geometry gets created
         assert name not in bpy.data.objects
         # enable line mesh to create geometry
-        a.line_mesh = True
+        a.line_as_mesh = True
         assert name in bpy.data.objects
         # test parent
         assert bpy.data.objects[name].parent == t.object
@@ -467,12 +467,12 @@ class TestAnnotations:
         assert name not in bpy.data.objects
         a.visible = True
         assert name in bpy.data.objects
-        # test line_mesh enable / disable
-        a.line_mesh = False
+        # test line_as_mesh enable / disable
+        a.line_as_mesh = False
         # test no vertices when disabled
         assert not bpy.data.objects[name].data.vertices
         # test vertices present when enabled
-        a.line_mesh = True
+        a.line_as_mesh = True
         assert bpy.data.objects[name].data.vertices
         # test attributes (defaults)
         thickness = t.annotations.bob.named_attribute("thickness")

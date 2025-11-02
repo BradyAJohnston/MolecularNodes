@@ -1020,9 +1020,13 @@ class MN_PT_Annotations(bpy.types.Panel):
         header.label(text="Options")
 
         if panel:
-            line_mesh_props = [
-                "line_mesh_overlay",
-            ]
+            text_header, text_panel = panel.panel("text_options", default_closed=True)
+            text_header.label(text="Text")
+            line_header, line_panel = panel.panel("line_options", default_closed=True)
+            line_header.label(text="Lines")
+            mesh_header, mesh_panel = panel.panel("mesh_options", default_closed=True)
+            mesh_header.label(text="Meshes")
+
             for prop in item.bl_rna.properties:
                 if not prop.is_runtime:
                     continue
@@ -1030,25 +1034,19 @@ class MN_PT_Annotations(bpy.types.Panel):
                     continue
                 if prop.type == "POINTER" and prop.identifier != "mesh_material":
                     continue
-                if prop.identifier not in line_mesh_props:
-                    if prop.identifier == "line_mesh":
-                        # create a new panel for line mesh props
-                        mesh_header, mesh_panel = panel.panel(
-                            "line_mesh", default_closed=True
-                        )
-                        mesh_header.prop(item, prop.identifier)
-                    else:
-                        # all other properties
-                        row = panel.row()
-                        row.prop(item, prop.identifier)
-                        if prop.identifier == "text_falloff":
-                            row.enabled = item.text_depth
-                else:
-                    if mesh_panel:
-                        # line mesh props
-                        row = mesh_panel.row()
-                        row.prop(item, prop.identifier)
-                        row.enabled = item.line_mesh
+                if text_panel and prop.identifier.startswith("text_"):
+                    row = text_panel.row()
+                    row.prop(item, prop.identifier)
+                    if prop.identifier == "text_falloff":
+                        row.enabled = item.text_depth
+                elif line_panel and prop.identifier.startswith("line_"):
+                    row = line_panel.row()
+                    row.prop(item, prop.identifier)
+                    if prop.identifier == "line_mesh_overlay":
+                        row.enabled = item.line_as_mesh
+                elif mesh_panel and prop.identifier.startswith("mesh_"):
+                    row = mesh_panel.row()
+                    row.prop(item, prop.identifier)
 
         row = box.row()
 

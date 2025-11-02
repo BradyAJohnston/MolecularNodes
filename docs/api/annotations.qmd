@@ -157,7 +157,7 @@ a4 = t.annotations.add_com_distance(
 )
 # display the distance line as a 3d mesh
 # with the 2d line overlay and a specific color
-a4.line_mesh = True
+a4.line_as_mesh = True
 a4.line_mesh_overlay = True
 a4.mesh_color = (0, 1, 0, 1)  # (r, g, b, a)
 ```
@@ -289,7 +289,7 @@ atom = r1.atoms[0]
 # add a 3d label to display text at this atom's location
 a8 = t.annotations.add_label_3d(text=f"CA|resid 1|{atom.segid}", location=atom.position)
 # add a pointer to point at the location
-a8.pointer_length = 2
+a8.line_pointer_length = 2
 a8.line_width = 2
 ```
 
@@ -375,11 +375,11 @@ The common annotation params are:
 - `text_vspacing` - Vertical spacing between lines in multi line text
 - `text_depth` - Whether to enable showing text size based on depth (default: True)
 - `text_falloff` - A normalized value (0.0 - 1.0) of how the text size falls off with distance from the viewport / camera
-- `offset_x` - Text offset along the x direction (in pixels)
-- `offset_y` - Text offset along the y direction (in pixels)
-- `arrow_size` - Size of the arrow displayed (for lines with arrow ends)
-- `pointer_length` - Length of a pointer line to draw (defaults to 0, which is no pointer)
-- `line_mesh` - Whether to display lines as 3D meshes
+- `text_offset_x` - Text offset along the x direction (in pixels)
+- `text_offset_y` - Text offset along the y direction (in pixels)
+- `line_arrow_size` - Size of the arrow displayed (for lines with arrow ends)
+- `line_pointer_length` - Length of a pointer line to draw (defaults to 0, which is no pointer)
+- `line_as_mesh` - Whether to display lines as 3D meshes
 - `line_mesh_overlay` - Whether to draw overlay lines on 3D line meshes
 - `mesh_wireframe` - Whether to show 3d meshes as wireframes
 - `mesh_thickness` - Thickness of the edges in wireframe mode

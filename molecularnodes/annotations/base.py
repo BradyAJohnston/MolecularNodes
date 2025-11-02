@@ -234,11 +234,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         if is3d:
             text_pos = pos
             # check if pointer is required
-            if params.pointer_length > 0:
+            if params.line_pointer_length > 0:
                 # draw a pointer to the 3D position
                 nv = -pos
                 nv.normalize()
-                pointer_begin = pos + (nv * params.pointer_length)
+                pointer_begin = pos + (nv * params.line_pointer_length)
                 text_pos = pointer_begin + (nv * 0.5)  # offset text a bit
                 self._draw_line(
                     pointer_begin, pos, v2_arrow=True, is3d=True, overrides=overrides
@@ -251,9 +251,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         # draw text at 2D position
         right_alignment_gap = 12
         pos_x, pos_y = pos_2d
-        # offset_x and offset_y
-        pos_x += params.offset_x
-        pos_y += params.offset_y
+        # text_offset_x and text_offset_y
+        pos_x += params.text_offset_x
+        pos_y += params.text_offset_y
         rgba = params.text_color
         text_size = params.text_size
         # adjust the text size if depth enabled
@@ -1079,7 +1079,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         if not isinstance(v2, Vector):
             v2 = Vector(v2)
         params = _get_params(self.interface, overrides)
-        if is3d and self.geometry and params.line_mesh:
+        if is3d and self.geometry and params.line_as_mesh:
             # add line to geometry
             self._add_line_to_geometry(v1, v2, overrides=overrides)
             # add arrow ends to geometry
@@ -1208,7 +1208,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     ) -> None:
         params = _get_params(self.interface, overrides)
         draw_3d_arrow_overlay = False
-        if params.line_mesh and params.line_mesh_overlay:
+        if params.line_as_mesh and params.line_mesh_overlay:
             draw_3d_arrow_overlay = True
         # 3d or 2d arrow ends based on mode
         if is3d and draw_3d_arrow_overlay:
@@ -1260,7 +1260,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         )
         dvb.normalize()
         params = _get_params(self.interface, overrides)
-        d = self.distance(v1, v2) * params.arrow_size
+        d = self.distance(v1, v2) * params.line_arrow_size
         return (v1 + (dva * d), v1 + (dvb * d))
 
     def _get_arrow_end_points_2d(
@@ -1268,7 +1268,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     ) -> tuple:
         """Internal: Get arrow end point positions 2D"""
         params = _get_params(self.interface, overrides)
-        d = self.distance(v1, v2) * params.arrow_size
+        d = self.distance(v1, v2) * params.line_arrow_size
         v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), d)
         vi = (v[0] - v1[0], v[1] - v1[1])
         va = (
@@ -1288,7 +1288,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         if v1 is None or v2 is None:
             return
         params = _get_params(self.interface, overrides)
-        if params.line_mesh and not params.line_mesh_overlay:
+        if params.line_as_mesh and not params.line_mesh_overlay:
             # only draw overlays when enabled in mesh mode
             return
         rgba = params.line_color

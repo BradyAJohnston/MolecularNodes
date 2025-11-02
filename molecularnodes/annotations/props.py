@@ -231,15 +231,15 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         max=1.0,
     )  # type: ignore
 
-    offset_x: IntProperty(
-        name="Offset X",
-        description="Offset in X direction",
+    text_offset_x: IntProperty(
+        name="Text Offset X",
+        description="Text offset in X direction",
         default=0,
     )  # type: ignore
 
-    offset_y: IntProperty(
-        name="offset Y",
-        description="Offset in Y direction",
+    text_offset_y: IntProperty(
+        name="Text Offset Y",
+        description="Text offset in Y direction",
         default=0,
     )  # type: ignore
 
@@ -260,24 +260,24 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         min=0.0,
     )  # type: ignore
 
-    arrow_size: FloatProperty(
-        name="Arrow Size",
-        description="Arrow size",
+    line_arrow_size: FloatProperty(
+        name="Line Arrow Size",
+        description="Line arrow size",
         default=0.25,
         min=0,
         update=_update_annotation_object,
     )  # type: ignore
 
-    pointer_length: FloatProperty(
-        name="Pointer Length",
-        description="Pointer length",
+    line_pointer_length: FloatProperty(
+        name="Line Pointer Length",
+        description="Line pointer length",
         default=0,
         min=0,
         update=_update_annotation_object,
     )  # type: ignore
 
-    line_mesh: BoolProperty(
-        name="Line Mesh",
+    line_as_mesh: BoolProperty(
+        name="Line As Mesh",
         description="Draw lines as 3D meshes",
         default=False,
         update=_update_annotation_object,

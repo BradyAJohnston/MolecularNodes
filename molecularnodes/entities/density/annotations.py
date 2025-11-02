@@ -144,7 +144,7 @@ class DensityGridAxes(DensityAnnotation):
     def defaults(self) -> None:
         params = self.interface
         params.text_depth = False
-        params.arrow_size = 0.05
+        params.line_arrow_size = 0.05
         params.text_color = (1.0, 1.0, 1.0, 0.5)
         params.line_color = (1.0, 1.0, 1.0, 0.5)
 
