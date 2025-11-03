@@ -157,8 +157,7 @@ a4 = t.annotations.add_com_distance(
 )
 # display the distance line as a 3d mesh
 # with the 2d line overlay and a specific color
-a4.line_as_mesh = True
-a4.line_mesh_overlay = True
+a4.line_mode = "mesh_and_overlay"
 a4.mesh_color = (0, 1, 0, 1)  # (r, g, b, a)
 ```
 
@@ -379,8 +378,7 @@ The common annotation params are:
 - `text_offset_y` - Text offset along the y direction (in pixels)
 - `line_arrow_size` - Size of the arrow displayed (for lines with arrow ends)
 - `line_pointer_length` - Length of a pointer line to draw (defaults to 0, which is no pointer)
-- `line_as_mesh` - Whether to display lines as 3D meshes
-- `line_mesh_overlay` - Whether to draw overlay lines on 3D line meshes
+- `line_mode` - Display mode of line (`overlay`, `mesh`, `mesh_and_overlay`)
 - `mesh_wireframe` - Whether to show 3d meshes as wireframes
 - `mesh_thickness` - Thickness of the edges in wireframe mode
 - `mesh_color` - Color of the 3d meshes

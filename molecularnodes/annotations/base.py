@@ -1079,7 +1079,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         if not isinstance(v2, Vector):
             v2 = Vector(v2)
         params = _get_params(self.interface, overrides)
-        if is3d and self.geometry and params.line_as_mesh:
+        if is3d and self.geometry and params.line_mode != "overlay":
             # add line to geometry
             self._add_line_to_geometry(v1, v2, overrides=overrides)
             # add arrow ends to geometry
@@ -1208,7 +1208,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     ) -> None:
         params = _get_params(self.interface, overrides)
         draw_3d_arrow_overlay = False
-        if params.line_as_mesh and params.line_mesh_overlay:
+        if params.line_mode == "mesh_and_overlay":
             draw_3d_arrow_overlay = True
         # 3d or 2d arrow ends based on mode
         if is3d and draw_3d_arrow_overlay:
@@ -1288,8 +1288,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         if v1 is None or v2 is None:
             return
         params = _get_params(self.interface, overrides)
-        if params.line_as_mesh and not params.line_mesh_overlay:
-            # only draw overlays when enabled in mesh mode
+        if params.line_mode == "mesh":
             return
         rgba = params.line_color
         line_width = params.line_width * self._scale

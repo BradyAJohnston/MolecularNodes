@@ -27,12 +27,11 @@ class AnnotationInterface:
     text_falloff: float
     text_offset_x: float
     text_offset_y: float
+    line_mode: str
     line_color: np.ndarray | list | tuple
     line_width: float
     line_arrow_size: float
     line_pointer_length: float
-    line_as_mesh: bool
-    line_mesh_overlay: bool
     mesh_wireframe: bool
     mesh_thickness: float
     mesh_color: np.ndarray | list | tuple

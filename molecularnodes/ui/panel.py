@@ -1042,13 +1042,9 @@ class MN_PT_Annotations(bpy.types.Panel):
                 elif line_panel and prop.identifier.startswith("line_"):
                     row = line_panel.row()
                     row.prop(item, prop.identifier)
-                    if prop.identifier == "line_as_mesh":
+                    if prop.identifier == "line_mode":
                         continue
-                    if prop.identifier == "line_mesh_overlay":
-                        row.enabled = item.line_as_mesh
-                        continue
-                    if item.line_as_mesh and not item.line_mesh_overlay:
-                        row.enabled = False
+                    row.enabled = item.line_mode != "mesh"
                 elif mesh_panel and prop.identifier.startswith("mesh_"):
                     row = mesh_panel.row()
                     row.prop(item, prop.identifier)
