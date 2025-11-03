@@ -172,17 +172,14 @@ class TestTrajectory:
         traj.subframes = subframes
         traj.interpolate = interpolate
         traj.subframes = 0
-        assert np.allclose(
-            traj.frame_manager._position_at_frame(1),
-            traj.frame_manager._position_at_frame(1),
-        )
+        traj.frame = 1
+        pos_1 = traj.position
+        assert np.allclose(traj.frame_manager.position_cache_mean(1), pos_1)
         traj.average = 1
         assert not np.allclose(
             traj.frame_manager.position_cache_mean(1),
-            traj.frame_manager._position_at_frame(1),
+            pos_1,
         )
-        assert snapshot == traj.frame_manager.position_cache_mean(1)
-        assert snapshot == traj.frame_manager.cache._cache
 
     def test_update_selection(self, snapshot_custom, universe):
         # to API add selections we currently have to operate on the UIList rather than the

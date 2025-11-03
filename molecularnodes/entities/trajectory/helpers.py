@@ -495,20 +495,3 @@ def _validate_non_negative(value: int) -> None:
     """
     if value < 0:
         raise ValueError(f"Value must be non-negative, got {value}")
-
-
-def _validate_frame(value: int) -> None:
-    """Validate frame numbers.
-
-    Parameters
-    ----------
-    value : int
-        Frame number to validate
-
-    Raises
-    ------
-    ValueError
-        If frame is negative
-    """
-    if value < 0:
-        raise ValueError(f"Frame must be non-negative, got {value}")

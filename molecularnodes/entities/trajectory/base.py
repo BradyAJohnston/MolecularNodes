@@ -33,7 +33,6 @@ from .helpers import (
     FrameManager,
     IntProperty,
     StringProperty,
-    _validate_frame,
     _validate_non_negative,
 )
 from .selections import SelectionManager
@@ -108,7 +107,7 @@ class Trajectory(MolecularEntity):
     """
 
     # Blender property descriptors with validation
-    frame = IntProperty("frame", validate_fn=_validate_frame)
+    frame = IntProperty("frame")
     subframes = IntProperty("subframes", validate_fn=_validate_non_negative)
     offset = IntProperty("offset")
     average = IntProperty("average", validate_fn=_validate_non_negative)
