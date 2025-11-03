@@ -736,12 +736,12 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
         context.view_layer.objects.active = traj.object
         context.scene.frame_start = 0
-        context.scene.frame_end = int(traj.universe.trajectory.n_frames - 1)
+        context.scene.frame_end = int(traj.frame_manager.n_frames - 1)
 
         self.report(
             {"INFO"},
             message=f"Imported '{self.topology}' as {traj.name} "
-            f"with {str(traj.universe.trajectory.n_frames)} "
+            f"with {str(traj.frame_manager.n_frames)} "
             f"frames from '{self.trajectory}'.",
         )
 

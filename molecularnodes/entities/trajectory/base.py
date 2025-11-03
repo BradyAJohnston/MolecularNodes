@@ -1,21 +1,17 @@
-"""
-Trajectory entity for molecular dynamics simulations.
+"""Trajectory entity for molecular dynamics simulations.
 
-This module provides the Trajectory class for loading and visualizing molecular
-dynamics trajectories in Blender using MDAnalysis as the backend.
+Provides Trajectory class for loading and visualizing MD trajectories in Blender
+using MDAnalysis.
 """
 
 import functools
-import inspect
 import logging
-from collections import OrderedDict
 from pathlib import Path
 from typing import Callable, Dict
 import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
-import numpy.typing as npt
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve
@@ -28,15 +24,15 @@ from ...nodes.styles import (
     StyleBase,
 )
 from ...utils import (
-    frame_mapper,
     temp_override_property,
 )
 from ..base import EntityType, MolecularEntity
 from .annotations import TrajectoryAnnotationManager
 from .helpers import (
-    AttributeMetadata,
-    BlenderProperty,
+    BoolProperty,
     FrameManager,
+    IntProperty,
+    StringProperty,
     _validate_frame,
     _validate_non_negative,
 )
@@ -65,55 +61,66 @@ def _ag_to_bool(ag: mda.AtomGroup) -> np.ndarray:
 
 
 class Trajectory(MolecularEntity):
-    """
-    Molecular dynamics trajectory entity for Blender.
+    """MD trajectory entity for Blender visualization.
 
-    This class provides a complete interface for loading, visualizing, and
-    manipulating molecular dynamics trajectories in Blender using MDAnalysis
-    as the backend. It handles:
+    Complete interface for loading, visualizing, and manipulating MD trajectories
+    in Blender using MDAnalysis.
 
-    - Trajectory loading and frame management
-    - Attribute computation (positions, elements, residues, etc.)
-    - Selection management and updates
-    - Visual styling and rendering
-    - Frame interpolation and averaging
-    - Periodic boundary condition handling
-    - Integration with Blender's animation system
+    Features: trajectory loading, attribute computation, selection management,
+    visual styling, frame interpolation/averaging, periodic boundary handling,
+    Blender animation integration.
 
-    Attributes:
-        universe: MDAnalysis Universe containing the trajectory
-        frame_manager: Handles position caching and frame updates
-        selections: Manager for dynamic atom selections
-        calculations: Dictionary of custom per-frame calculations
-        annotations: Manager for trajectory annotations
-        world_scale: Scale factor from Angstroms to Blender units
-        frame_mapping: Optional custom frame number mapping
+    Attributes
+    ----------
+    universe : mda.Universe
+        MDAnalysis Universe with topology and trajectory
+    frame_manager : FrameManager
+        Position caching and frame updates
+    selections : SelectionManager
+        Dynamic atom selections
+    calculations : dict
+        Custom per-frame calculations
+    annotations : TrajectoryAnnotationManager
+        Trajectory annotations
+    world_scale : float
+        Scale factor from Angstroms to Blender units
+    frame : int
+        Current animation frame (synced with Blender)
+    subframes : int
+        Interpolation steps between frames
+    offset : int
+        Frame offset for playback
+    average : int
+        Number of frames to average (smoothing)
+    correct_periodic : bool
+        Apply periodic boundary corrections
+    interpolate : bool
+        Enable position interpolation
 
-    Properties (synced with Blender):
-        frame: Current animation frame
-        subframes: Number of interpolation steps between frames
-        offset: Frame offset for playback
-        average: Number of frames to average (smoothing)
-        correct_periodic: Apply periodic boundary corrections
-        interpolate: Enable position interpolation between frames
-
-    Example:
-        >>> import MDAnalysis as mda
-        >>> import molecularnodes as mn
-        >>> u = mda.Universe("topology.pdb", "trajectory.dcd")
-        >>> traj = mn.entities.Trajectory(u)
-        >>> traj.add_style("ribbon", color="chain")
-        >>> traj.selections.add("protein and name CA", name="alpha_carbons")
+    Examples
+    --------
+    >>> import MDAnalysis as mda
+    >>> import molecularnodes as mn
+    >>> u = mda.Universe("topology.pdb", "trajectory.dcd")
+    >>> traj = mn.entities.Trajectory(u)
+    >>> traj.add_style("ribbon", color="chain")
+    >>> traj.selections.add("protein and name CA", name="alpha_carbons")
     """
 
     # Blender property descriptors with validation
-    frame = BlenderProperty("frame", validate_fn=_validate_frame)
-    subframes = BlenderProperty("subframes", validate_fn=_validate_non_negative)
-    offset = BlenderProperty("offset")
-    average = BlenderProperty("average", validate_fn=_validate_non_negative)
-    correct_periodic = BlenderProperty("correct_periodic")
-    interpolate = BlenderProperty("interpolate")
-    _frame = BlenderProperty("frame_hidden")
+    frame = IntProperty("frame", validate_fn=_validate_frame)
+    subframes = IntProperty("subframes", validate_fn=_validate_non_negative)
+    offset = IntProperty("offset")
+    average = IntProperty("average", validate_fn=_validate_non_negative)
+    correct_periodic = BoolProperty("correct_periodic")
+    interpolate = BoolProperty("interpolate")
+
+    _mn_frame = BoolProperty("frame_hidden")
+    _mn_styles_active_index = IntProperty("styles_active_index", _validate_non_negative)
+    _mn_entity_type = StringProperty("entity_type")
+    _mn_filepath_topology = StringProperty("filepath_topology")
+    _mn_filepath_trajectory = StringProperty("filepath_trajectory")
+    _mn_n_frames = IntProperty("n_frames", _validate_non_negative)
 
     def __init__(
         self,
@@ -122,26 +129,28 @@ class Trajectory(MolecularEntity):
         world_scale: float = 0.01,
         create_object: bool = True,
     ):
-        """
-        Initialize a Trajectory entity from an MDAnalysis Universe.
+        """Initialize Trajectory from MDAnalysis Universe.
 
-        Args:
-            universe: MDAnalysis Universe containing topology and trajectory
-            name: Name for the Blender object
-            world_scale: Scale factor from Angstroms to Blender units (default: 0.01)
-            create_object: If True, immediately create the Blender object
+        Parameters
+        ----------
+        universe : mda.Universe
+            MDAnalysis Universe with topology and trajectory
+        name : str, default="NewUniverseObject"
+            Name for the Blender object
+        world_scale : float, default=0.01
+            Scale factor from Angstroms to Blender units
+        create_object : bool, default=True
+            Whether to immediately create the Blender object
 
-        Note:
-            The default world_scale of 0.01 converts Angstroms to Blender units,
-            which works well for typical molecular sizes.
+        Notes
+        -----
+        Default world_scale of 0.01 converts Angstroms to Blender units.
         """
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: SelectionManager = SelectionManager(self)
         self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
-        self.frame_mapping: npt.NDArray[np.int64] | None = None
-        self._entity_type = EntityType.MD
         self._updating_in_progress = False
         self.annotations = TrajectoryAnnotationManager(self)
         self.frame_manager = FrameManager(self)
@@ -149,15 +158,15 @@ class Trajectory(MolecularEntity):
             self.create_object(name=name)
 
     @property
-    def is_orthorhombic(self) -> bool:
-        """
-        Check if the simulation box has orthorhombic geometry.
+    def _is_orthorhombic(self) -> bool:
+        """Check if simulation box is orthorhombic.
 
-        Orthorhombic boxes have all angles equal to 90 degrees, which
-        enables optimized periodic boundary condition handling.
+        Orthorhombic boxes (all angles = 90°) enable optimized periodic boundary handling.
 
-        Returns:
-            True if box angles are all 90 degrees, False otherwise
+        Returns
+        -------
+        bool
+            True if box angles are all 90 degrees
         """
         dim = self.universe.dimensions
         if dim is None:
@@ -166,72 +175,43 @@ class Trajectory(MolecularEntity):
 
     @property
     def atoms(self) -> mda.AtomGroup:
-        """All atoms in the trajectory as an MDAnalysis AtomGroup."""
+        """All atoms as MDAnalysis AtomGroup."""
         return self.universe.atoms
 
     @property
-    def univ_positions(self) -> np.ndarray:
-        """
-        Current atom positions scaled to Blender world units.
+    def _scaled_position(self) -> np.ndarray:
+        """Current atom positions in Blender world units.
 
-        Returns:
-            Array of shape (n_atoms, 3) with positions in Blender units
+        Returns
+        -------
+        np.ndarray
+            Shape (n_atoms, 3) in Blender units
         """
         return self.atoms.positions * self.world_scale
 
     @property
-    def bonds(self) -> np.ndarray | None:
-        """
-        Bond connectivity as pairs of atom indices.
-
-        Returns:
-            Array of shape (n_bonds, 2) with atom index pairs, or None if no bonds
-        """
-        if hasattr(self.atoms, "bonds"):
-            return self.atoms.bonds.indices
-        else:
-            return None
-
-    @property
-    def n_frames(self) -> int:
-        """Total number of frames in the trajectory."""
-        return self.universe.trajectory.n_frames
-
-    @property
-    def cache(self) -> OrderedDict[int, np.ndarray]:
-        """
-        Access to the position cache for advanced use.
-
-        The cache stores precomputed positions for recently accessed frames.
-        This is primarily for internal use and testing.
-
-        Returns:
-            OrderedDict mapping frame numbers to position arrays
-        """
-        return self.frame_manager.cache._cache
-
-    @property
     def uframe(self) -> int:
-        """
-        Current frame number in the MDAnalysis Universe.
+        """Current frame number in MDAnalysis Universe.
 
-        This differs from the `frame` property, which tracks the Blender
-        scene frame. Use this to query the actual trajectory frame being displayed.
+        Differs from `frame` property (Blender scene frame). Query actual trajectory frame.
 
-        Returns:
-            Current Universe frame number (0-indexed)
+        Returns
+        -------
+        int
+            Current Universe frame (0-indexed)
         """
         return self.universe.trajectory.frame
 
     @uframe.setter
     def uframe(self, value: int) -> None:
-        """
-        Set the current frame in the MDAnalysis Universe.
+        """Set current frame in MDAnalysis Universe.
 
-        Only updates if the frame has changed to avoid redundant operations.
+        Only updates if changed to avoid redundant operations.
 
-        Args:
-            value: Target frame number (0-indexed, will be clamped to valid range)
+        Parameters
+        ----------
+        value : int
+            Target frame number (0-indexed)
         """
         if self.universe.trajectory.frame != value:
             self.universe.trajectory[value]
@@ -332,15 +312,11 @@ class Trajectory(MolecularEntity):
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
 
-    def _compute_segindices(
-        self, metadata: AttributeMetadata | None = None
-    ) -> np.ndarray:
+    def _compute_segindices(self) -> np.ndarray:
         segs = []
         for seg in self.atoms.segments:
             segs.append(seg.atoms[0].segid)
 
-        if metadata is not None:
-            metadata.add("segments", segs)
         else:
             try:
                 self.object["segments"] = segs
@@ -349,35 +325,25 @@ class Trajectory(MolecularEntity):
 
         return self.atoms.segindices
 
-    def _compute_chain_id_int(
-        self, metadata: AttributeMetadata | None = None
-    ) -> np.ndarray:
+    def _compute_chain_id_int(self) -> np.ndarray:
         chain_ids, chain_id_index = np.unique(self.atoms.chainIDs, return_inverse=True)
 
-        if metadata is not None:
-            metadata.add("chain_ids", chain_ids.astype(str).tolist())
-        else:
-            try:
-                self.object["chain_ids"] = chain_ids.astype(str).tolist()
-            except db.LinkedObjectError:
-                logger.warning("Failed to store chain_ids metadata on object")
+        try:
+            self.object["chain_ids"] = chain_ids.astype(str).tolist()
+        except db.LinkedObjectError:
+            logger.warning("Failed to store chain_ids metadata on object")
 
         return chain_id_index
 
-    def _compute_atom_type_int(
-        self, metadata: AttributeMetadata | None = None
-    ) -> np.ndarray:
+    def _compute_atom_type_int(self) -> np.ndarray:
         atom_type_unique, atom_type_index = np.unique(
             self.atoms.types, return_inverse=True
         )
 
-        if metadata is not None:
-            metadata.add("atom_type_unique", atom_type_unique)
-        else:
-            try:
-                self.object["atom_type_unique"] = atom_type_unique
-            except db.LinkedObjectError:
-                logger.warning("Failed to store atom_type_unique metadata on object")
+        try:
+            self.object["atom_type_unique"] = atom_type_unique
+        except db.LinkedObjectError:
+            logger.warning("Failed to store atom_type_unique metadata on object")
 
         return atom_type_index
 
@@ -393,19 +359,35 @@ class Trajectory(MolecularEntity):
     def _compute_is_lipid(self) -> np.ndarray:
         return np.isin(self.atoms.resnames, data.lipid_names)
 
+    def _save_filepaths_on_object(self) -> None:
+        """Save file paths to the Blender object for reference"""
+        obj = self.object
+        if isinstance(self.universe.filename, (str, Path)):
+            self._mn_filepath_topology = str(path_resolve(self.universe.filename))
+        if isinstance(self.universe.trajectory.filename, (str, Path)):
+            self._mn_filepath_trajectory = str(
+                path_resolve(self.universe.trajectory.filename)
+            )
+
+    def reset_playback(self) -> None:
+        """Set the playback settings to their default values"""
+        self.subframes = 0
+        self.offset = 0
+        self.average = 0
+        self.correct_periodic = False
+        self.interpolate = False
+
     @property
     def _blender_attributes(self) -> Dict[str, Callable | str]:
-        """
-        Registry of default attributes to store on the Blender object.
+        """Registry of default attributes for Blender object.
 
-        This property defines the standard molecular attributes that are
-        computed and stored when a trajectory is created. Each entry maps
-        an attribute name to either:
-        - A callable that computes the attribute values
-        - A selection string for MDAnalysis boolean selections
+        Defines standard molecular attributes computed at trajectory creation.
+        Maps attribute names to compute functions or MDAnalysis selection strings.
 
-        Returns:
-            Dictionary mapping attribute names to compute functions or selection strings
+        Returns
+        -------
+        dict
+            Attribute names to compute functions or selection strings
         """
         return {
             "atomic_number": self._compute_atomic_number,
@@ -429,39 +411,15 @@ class Trajectory(MolecularEntity):
             "is_peptide": "protein or (name BB SC*)",
         }
 
-    def save_filepaths_on_object(self) -> None:
-        """Save file paths to the Blender object for reference"""
-        obj = self.object
-        if isinstance(self.universe.filename, (str, Path)):
-            obj.mn.filepath_topology = str(path_resolve(self.universe.filename))
-        if isinstance(self.universe.trajectory.filename, (str, Path)):
-            obj.mn.filepath_trajectory = str(
-                path_resolve(self.universe.trajectory.filename)
-            )
-
-    def reset_playback(self) -> None:
-        """Set the playback settings to their default values"""
-        self.subframes = 0
-        self.offset = 0
-        self.average = 0
-        self.correct_periodic = False
-        self.interpolate = False
-
     def _store_default_attributes(self) -> None:
-        """Store default attributes with batch metadata collection"""
-        metadata = AttributeMetadata()
+        """Store default attributes"""
 
-        for name, value in self._blender_attributes.items():
+        for name, item in self._blender_attributes.items():
             try:
-                if isinstance(value, str):
-                    data = _ag_to_bool(self.universe.select_atoms(value))
-                elif callable(value):
-                    # Check if function accepts metadata parameter
-                    sig = inspect.signature(value)
-                    if "metadata" in sig.parameters:
-                        data = value(metadata)
-                    else:
-                        data = value()
+                if isinstance(item, str):
+                    data = _ag_to_bool(self.universe.select_atoms(item))
+                elif callable(item):
+                    data = item()
                 else:
                     raise ValueError("Unable to convert to attribute for storage")
                 self.store_named_attribute(
@@ -473,9 +431,6 @@ class Trajectory(MolecularEntity):
             except Exception as e:
                 logger.warning(f"Failed to compute attribute '{name}': {e}")
 
-        # Batch apply all collected metadata to the object
-        metadata.apply_to_object(self.object)
-
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
         pass
@@ -484,48 +439,46 @@ class Trajectory(MolecularEntity):
         self,
         name: str = "NewUniverseObject",
     ) -> None:
-        """
-        Internal method to create the Blender mesh object.
+        """Create Blender mesh object (internal).
 
-        Creates the mesh with initial positions and bonds, then stores
-        all computed attributes and sets up modifiers.
+        Creates mesh with positions and bonds, stores attributes, sets up modifiers.
 
-        Args:
-            name: Name for the Blender object
+        Parameters
+        ----------
+        name : str
+            Name for the Blender object
         """
         self.object = db.create_object(
             name=name,
             collection=coll.mn(),
-            vertices=self.univ_positions,
-            edges=self.bonds,
+            vertices=self._scaled_position,
+            edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
+        self._mn_entity_type = EntityType.MD.value
 
         self._store_default_attributes()
         self._store_extra_attributes()
         self._setup_modifiers()
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
-        """
-        Create and initialize the Blender object for this trajectory.
+        """Create and initialize Blender object for trajectory.
 
-        This method:
-        1. Creates the mesh object with positions and bonds
-        2. Computes and stores all molecular attributes
-        3. Sets up geometry node modifiers
-        4. Registers the object with MolecularNodes
-        5. Sets it as the active object
+        Creates mesh, computes attributes, sets up modifiers, registers with MolecularNodes.
 
-        Args:
-            name: Name for the Blender object
+        Parameters
+        ----------
+        name : str, default="NewUniverseObject"
+            Name for the Blender object
 
-        Returns:
-            The created Blender object
+        Returns
+        -------
+        bpy.types.Object
+            Created Blender object
         """
         self._create_object(name=name)
 
-        self.object.mn.entity_type = self._entity_type.value
-        self.object.mn.n_frames = self.n_frames
-        self.save_filepaths_on_object()
+        self._mn_n_frames = self.universe.trajectory.n_frames
+        self._save_filepaths_on_object()
         bpy.context.view_layer.objects.active = self.object
 
         return self.object
@@ -572,74 +525,20 @@ class Trajectory(MolecularEntity):
                     exc_info=True,
                 )
 
-    def _frame_range(self, frame: int) -> npt.NDArray[np.int64]:
-        """
-        Get frame numbers to include when averaging.
-
-        Args:
-            frame: Center frame number
-
-        Returns:
-            Array of frame numbers to average over
-        """
-        return self.frame_manager._frame_range(frame)
-
-    def _cache_ordered(self) -> np.ndarray:
-        """
-        Get cached frames as a chronologically ordered 3D array.
-
-        Returns:
-            Array of shape (n_cached_frames, n_atoms, 3)
-        """
-        return self.frame_manager.cache.get_ordered_array()
-
-    def adjust_periodic_positions(
-        self, pos1: np.ndarray, pos2: np.ndarray
-    ) -> np.ndarray:
-        """
-        Apply periodic boundary corrections to positions.
-
-        Corrects for atoms that crossed periodic boundaries between pos1 and pos2,
-        ensuring smooth visualization across boundaries.
-
-        Args:
-            pos1: Reference positions
-            pos2: Positions to potentially correct
-
-        Returns:
-            Corrected positions (or unchanged if correction not needed/applicable)
-        """
-        return self.frame_manager.adjust_periodic_positions(pos1, pos2)
-
-    def position_cache_mean(self, frame: int) -> np.ndarray:
-        """
-        Get mean position from the averaging window.
-
-        Computes the average over frames specified by the `average` property,
-        applying periodic corrections if enabled.
-
-        Args:
-            frame: Center frame for averaging window
-
-        Returns:
-            Averaged atom positions
-        """
-        return self.frame_manager.position_cache_mean(frame)
-
     def set_frame(self, frame: int) -> None:
-        """
-        Update trajectory state for a given scene frame.
+        """Update trajectory state for scene frame.
 
-        This is the main entry point called by Blender's animation system.
-        It updates positions, selections, and custom calculations while
-        preventing recursive updates.
+        Main entry point called by Blender's animation system. Updates positions,
+        selections, and calculations with recursion prevention.
 
-        Args:
-            frame: Scene frame number (not Universe frame - mapping is applied)
+        Parameters
+        ----------
+        frame : int
+            Scene frame number (mapping applied to get Universe frame)
 
-        Note:
-            This method is typically called automatically by frame change handlers,
-            not directly by user code.
+        Notes
+        -----
+        Typically called automatically by frame change handlers, not user code.
         """
         if self._updating_in_progress:
             logger.debug("Update already in progress, skipping nested update")
@@ -652,49 +551,6 @@ class Trajectory(MolecularEntity):
             self._update_calculations()
         finally:
             self._updating_in_progress = False
-
-    def _position_at_frame(self, frame: int) -> np.ndarray:
-        """
-        Get raw atom positions at a specific Universe frame.
-
-        Args:
-            frame: Universe frame number
-
-        Returns:
-            Scaled atom positions
-        """
-        return self.frame_manager._position_at_frame(frame)
-
-    def update_position_cache(self, frame: int, cache_ahead: bool = True) -> None:
-        """
-        Update the position cache for the current frame.
-
-        Intelligently caches positions based on averaging and interpolation settings.
-
-        Args:
-            frame: Current frame number
-            cache_ahead: If True, prefetch next frame for interpolation
-        """
-        self.frame_manager.update_position_cache(frame, cache_ahead)
-
-    def frame_mapper(self, frame: int) -> int:
-        """
-        Map scene frame to Universe frame number.
-
-        Applies offset, subframe subdivision, and custom frame mapping.
-
-        Args:
-            frame: Scene frame number
-
-        Returns:
-            Corresponding Universe frame number
-        """
-        return frame_mapper(
-            frame=frame,
-            subframes=self.subframes,
-            offset=self.offset,
-            mapping=self.frame_mapping,
-        )
 
     def _update_positions(self, frame: int) -> None:
         """
@@ -791,7 +647,7 @@ class Trajectory(MolecularEntity):
         )
 
         # set the active index for UI to the newly added style
-        self.object.mn.styles_active_index = self.tree.nodes.find(node_style.name)
+        self._mn_styles_active_index = self.tree.nodes.find(node_style.name)
 
         return self
 
@@ -831,9 +687,9 @@ class Trajectory(MolecularEntity):
 
         """
         if frame is not None:
-            if frame < 0 or frame >= self.n_frames:
+            if frame < 0 or frame >= self.universe.trajectory.n_frames:
                 raise ValueError(
-                    f"{frame} is not within range [0, {self.n_frames - 1}]"
+                    f"{frame} is not within range [0, {self.universe.trajectory.n_frames - 1}]"
                 )
         else:
             frame = self.uframe

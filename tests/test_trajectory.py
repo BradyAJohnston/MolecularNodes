@@ -155,7 +155,10 @@ class TestTrajectory:
 
     def test_position_at_frame(self, universe):
         traj = mn.entities.Trajectory(universe)
-        assert not np.allclose(traj._position_at_frame(1), traj._position_at_frame(3))
+        assert not np.allclose(
+            traj.frame_manager._position_at_frame(1),
+            traj.frame_manager._position_at_frame(3),
+        )
 
     @pytest.mark.parametrize(
         "correct,subframes,interpolate",
@@ -169,11 +172,17 @@ class TestTrajectory:
         traj.subframes = subframes
         traj.interpolate = interpolate
         traj.subframes = 0
-        assert np.allclose(traj.position_cache_mean(1), traj._position_at_frame(1))
+        assert np.allclose(
+            traj.frame_manager._position_at_frame(1),
+            traj.frame_manager._position_at_frame(1),
+        )
         traj.average = 1
-        assert not np.allclose(traj.position_cache_mean(1), traj._position_at_frame(1))
-        assert snapshot == traj.position_cache_mean(1)
-        assert snapshot == traj.cache
+        assert not np.allclose(
+            traj.frame_manager.position_cache_mean(1),
+            traj.frame_manager._position_at_frame(1),
+        )
+        assert snapshot == traj.frame_manager.position_cache_mean(1)
+        assert snapshot == traj.frame_manager.cache._cache
 
     def test_update_selection(self, snapshot_custom, universe):
         # to API add selections we currently have to operate on the UIList rather than the

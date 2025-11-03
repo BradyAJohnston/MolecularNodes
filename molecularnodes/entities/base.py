@@ -31,13 +31,8 @@ class MolecularEntity(
 ):
     def __init__(self) -> None:
         super().__init__(obj=None)
-        self._entity_type: EntityType
         self._register_with_session()
         self._world_scale = 0.01
-
-    @property
-    def bob(self) -> BlenderObject:
-        return BlenderObject(self.object)
 
     @property
     def node_group(self) -> bpy.types.GeometryNodeTree:
@@ -99,7 +94,7 @@ class MolecularEntity(
         )
         self.object.modifiers[0].node_group = tree  # type: ignore
 
-    def get_view(self) -> None:
+    def get_view(self) -> List[tuple]:
         """
         Get the 3D bounding box of the entity object
 

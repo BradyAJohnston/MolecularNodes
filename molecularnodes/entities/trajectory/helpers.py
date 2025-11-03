@@ -1,157 +1,54 @@
-"""
-Helper classes for trajectory data management and Blender integration.
+"""Helper classes for trajectory data management and Blender integration.
 
-This module contains utility classes that support the Trajectory class by handling:
-- Position caching and management
-- Frame calculations and interpolation
-- Blender property synchronization
-- Attribute metadata collection
+Provides utility classes for position caching, frame management, Blender property
+synchronization, and attribute metadata collection.
 """
 
 import logging
 from collections import OrderedDict
-from dataclasses import dataclass
-from typing import Any, Callable, Dict, Protocol
+from typing import Any, Callable, Dict
 import bpy
 import databpy as db
-import MDAnalysis as mda
 import numpy as np
 import numpy.typing as npt
 from ...utils import (
     correct_periodic_positions,
     fraction,
+    frame_mapper,
     frames_to_average,
 )
 
 logger = logging.getLogger(__name__)
-
-
-# ============================================================================
-# Protocols and Type Definitions
-# ============================================================================
-
-
-class ComputeAttributeFunc(Protocol):
-    """Protocol for attribute computation functions."""
-
-    def __call__(self) -> np.ndarray: ...
-
-
-# ============================================================================
-# Attribute Management
-# ============================================================================
-
-
-@dataclass
-class AttributeSpec:
-    """
-    Metadata specification for a Blender attribute.
-
-    Attributes:
-        name: The attribute name in Blender
-        compute_fn: Optional function to compute the attribute values
-        selection_str: Optional MDAnalysis selection string
-        dtype: Python type for the attribute data
-        domain: Blender attribute domain (POINT, EDGE, etc.)
-    """
-
-    name: str
-    compute_fn: Callable[[], np.ndarray] | None = None
-    selection_str: str | None = None
-    dtype: type = float
-    domain: str = "POINT"
-
-    def compute(self, universe: mda.Universe | None = None) -> np.ndarray:
-        """
-        Compute attribute values.
-
-        Args:
-            universe: MDAnalysis Universe for selection-based computation
-
-        Returns:
-            Computed attribute values as numpy array
-
-        Raises:
-            ValueError: If neither compute_fn nor selection_str is provided
-        """
-        if self.compute_fn is not None:
-            return self.compute_fn()
-        elif self.selection_str is not None and universe is not None:
-            from .base import _ag_to_bool
-
-            return _ag_to_bool(universe.select_atoms(self.selection_str))
-        else:
-            raise ValueError(
-                f"Cannot compute attribute {self.name}: "
-                "no compute function or selection string"
-            )
-
-
-class AttributeMetadata:
-    """
-    Collects metadata during attribute computation for batch application.
-
-    This class accumulates metadata entries during attribute computation
-    and applies them all at once to minimize Blender API calls.
-    """
-
-    def __init__(self):
-        self.metadata: Dict[str, Any] = {}
-
-    def add(self, key: str, value: Any) -> None:
-        """
-        Add a metadata entry.
-
-        Args:
-            key: Metadata key
-            value: Metadata value (must be JSON-serializable)
-        """
-        self.metadata[key] = value
-
-    def apply_to_object(self, obj: bpy.types.Object) -> None:
-        """
-        Batch apply all collected metadata to a Blender object.
-
-        Args:
-            obj: Target Blender object
-        """
-        for key, value in self.metadata.items():
-            try:
-                obj[key] = value
-            except (TypeError, db.LinkedObjectError) as e:
-                logger.warning(f"Failed to set metadata '{key}' on object: {e}")
-
-    def clear(self) -> None:
-        """Clear all collected metadata."""
-        self.metadata.clear()
-
 
 # ============================================================================
 # Blender Property Management
 # ============================================================================
 
 
-class BlenderProperty:
-    """
-    Descriptor for properties stored on Blender objects with optional validation.
+class ObjectMNProperty:
+    """Descriptor for Blender object properties with optional validation.
 
-    This descriptor provides a clean interface for accessing Blender custom
-    properties while supporting validation and type checking.
+    Provides clean interface for Blender custom properties with validation support.
 
-    Example:
-        >>> class MyClass:
-        ...     frame = BlenderProperty("frame", validate_fn=lambda x: x >= 0)
+    Examples
+    --------
+    >>> class MyClass:
+    ...     frame = ObjectMNProperty("frame", validate_fn=lambda x: x >= 0)
     """
 
     def __init__(
-        self, attr_name: str, validate_fn: Callable[[Any], None] | None = None
+        self,
+        attr_name: str,
+        validate_fn: Callable[[Any], None] | None = None,
     ):
-        """
-        Initialize the descriptor.
+        """Initialize the descriptor.
 
-        Args:
-            attr_name: Name of the property on the Blender object
-            validate_fn: Optional validation function that raises on invalid values
+        Parameters
+        ----------
+        attr_name : str
+            Name of the property on the Blender object
+        validate_fn : callable, optional
+            Validation function that raises on invalid values
         """
         self.attr_name = attr_name
         self.validate_fn = validate_fn
@@ -162,8 +59,6 @@ class BlenderProperty:
 
     def __get__(self, obj, objtype=None):
         """Get property value from Blender object."""
-        if obj is None:
-            return self
         return getattr(obj.object.mn, self.attr_name)
 
     def __set__(self, obj, value):
@@ -173,22 +68,43 @@ class BlenderProperty:
         setattr(obj.object.mn, self.attr_name, value)
 
 
-class BlenderPropertyBridge:
-    """
-    Handles bidirectional data exchange between trajectory state and Blender properties.
+class IntProperty(ObjectMNProperty):
+    def __get__(self, obj, objtype=None) -> int:
+        return super().__get__(obj, objtype)
 
-    This class centralizes the logic for reading and writing trajectory
-    properties to/from Blender objects.
-    """
+    def __set__(self, obj, value: int):
+        return super().__set__(obj, value)
+
+
+class BoolProperty(ObjectMNProperty):
+    def __get__(self, obj, objtype=None) -> bool:
+        return super().__get__(obj, objtype)
+
+    def __set__(self, obj, value: bool):
+        return super().__set__(obj, value)
+
+
+class StringProperty(ObjectMNProperty):
+    def __get__(self, obj, objtype=None) -> str:
+        return super().__get__(obj, objtype)
+
+    def __set__(self, obj, value: str):
+        return super().__set__(obj, value)
+
+
+class BlenderPropertyBridge:
+    """Bidirectional data exchange between trajectory state and Blender properties."""
 
     @staticmethod
     def sync_to_blender(obj: bpy.types.Object, properties: Dict[str, Any]) -> None:
-        """
-        Write trajectory properties to a Blender object.
+        """Write trajectory properties to a Blender object.
 
-        Args:
-            obj: Target Blender object
-            properties: Dictionary of property names and values
+        Parameters
+        ----------
+        obj : bpy.types.Object
+            Target Blender object
+        properties : dict
+            Property names and values to write
         """
         for key, value in properties.items():
             try:
@@ -200,15 +116,19 @@ class BlenderPropertyBridge:
     def sync_from_blender(
         obj: bpy.types.Object, property_names: list[str]
     ) -> Dict[str, Any]:
-        """
-        Read trajectory properties from a Blender object.
+        """Read trajectory properties from a Blender object.
 
-        Args:
-            obj: Source Blender object
-            property_names: List of property names to read
+        Parameters
+        ----------
+        obj : bpy.types.Object
+            Source Blender object
+        property_names : list of str
+            Property names to read
 
-        Returns:
-            Dictionary of property names and their values
+        Returns
+        -------
+        dict
+            Property names and their values
         """
         properties = {}
         for name in property_names:
@@ -225,19 +145,23 @@ class BlenderPropertyBridge:
 
 
 class PositionCache:
-    """
-    Manages position caching with automatic size limits and cleanup.
+    """Position cache with automatic size limits and cleanup.
 
-    This class provides an OrderedDict-based cache for trajectory positions
-    with automatic eviction of old entries to maintain memory efficiency.
+    OrderedDict-based cache with automatic eviction for memory efficiency.
+
+    Parameters
+    ----------
+    max_size : int, default=10
+        Maximum number of frames to cache
     """
 
     def __init__(self, max_size: int = 10):
-        """
-        Initialize the position cache.
+        """Initialize the position cache.
 
-        Args:
-            max_size: Maximum number of frames to cache
+        Parameters
+        ----------
+        max_size : int
+            Maximum number of frames to cache
         """
         self._cache: OrderedDict[int, np.ndarray] = OrderedDict()
         self._max_size = max_size
@@ -271,14 +195,18 @@ class PositionCache:
     def get_or_compute(
         self, frame: int, compute_fn: Callable[[int], np.ndarray]
     ) -> np.ndarray:
-        """
-        Get cached position or compute and cache it.
+        """Get cached position or compute and cache it.
 
-        Args:
-            frame: Frame number
-            compute_fn: Function to compute positions if not cached
+        Parameters
+        ----------
+        frame : int
+            Frame number
+        compute_fn : callable
+            Function to compute positions if not cached
 
-        Returns:
+        Returns
+        -------
+        np.ndarray
             Atom positions for the frame
         """
         if frame not in self._cache:
@@ -291,22 +219,24 @@ class PositionCache:
         self._cache.clear()
 
     def remove_frames_except(self, frames_to_keep: npt.NDArray[np.int64]) -> None:
-        """
-        Remove all frames except the specified ones.
+        """Remove all frames except the specified ones.
 
-        Args:
-            frames_to_keep: Array of frame numbers to retain
+        Parameters
+        ----------
+        frames_to_keep : np.ndarray
+            Frame numbers to retain
         """
         to_remove = [f for f in self._cache if f not in frames_to_keep]
         for f in to_remove:
             del self._cache[f]
 
     def get_ordered_array(self) -> np.ndarray:
-        """
-        Return cached frames as a 3D array in chronological order.
+        """Return cached frames as a 3D array in chronological order.
 
-        Returns:
-            3D numpy array of shape (n_frames, n_atoms, 3)
+        Returns
+        -------
+        np.ndarray
+            Shape (n_frames, n_atoms, 3)
         """
         keys = list(self._cache.keys())
         keys.sort()
@@ -319,59 +249,73 @@ class PositionCache:
 
 
 class FrameManager:
-    """
-    Manages frame updates, position caching, interpolation, and periodic corrections.
+    """Frame updates, position caching, interpolation, and periodic corrections.
 
-    This class encapsulates all logic related to:
+    Encapsulates:
     - Position caching and retrieval
     - Frame-to-frame interpolation
-    - Periodic boundary condition corrections
+    - Periodic boundary corrections
     - Frame averaging
 
-    The FrameManager is designed to work with a Trajectory instance and
-    handles the complexity of mapping between scene frames and universe frames.
+    Maps between Blender scene frames and trajectory universe frames.
+
+    Parameters
+    ----------
+    trajectory : Trajectory
+        Parent Trajectory instance
     """
 
     def __init__(self, trajectory):
-        """
-        Initialize the frame manager.
+        """Initialize the frame manager.
 
-        Args:
-            trajectory: Parent Trajectory instance
+        Parameters
+        ----------
+        trajectory : Trajectory
+            Parent Trajectory instance
         """
         self.trajectory = trajectory
         self.cache = PositionCache()
 
+    @property
+    def n_frames(self) -> int:
+        return self.trajectory.universe.trajectory.n_frames
+
     def _position_at_frame(self, frame: int) -> np.ndarray:
-        """
-        Get atom positions at a specific universe frame.
+        """Get atom positions at a specific universe frame.
 
-        Args:
-            frame: Universe frame number
+        Parameters
+        ----------
+        frame : int
+            Universe frame number
 
-        Returns:
-            Scaled atom positions as numpy array
+        Returns
+        -------
+        np.ndarray
+            Scaled atom positions
         """
         self.trajectory.uframe = frame
-        return self.trajectory.univ_positions
+        return self.trajectory._scaled_position
 
     def adjust_periodic_positions(
         self, pos1: np.ndarray, pos2: np.ndarray
     ) -> np.ndarray:
+        """Apply periodic boundary correction to positions.
+
+        Corrects for atoms crossing periodic boundaries, ensuring smooth interpolation.
+
+        Parameters
+        ----------
+        pos1 : np.ndarray
+            Reference positions
+        pos2 : np.ndarray
+            Positions to correct
+
+        Returns
+        -------
+        np.ndarray
+            Corrected positions (unchanged if correction not needed)
         """
-        Apply periodic boundary correction to positions.
-
-        Corrects for atoms that have crossed periodic boundaries between frames,
-        ensuring smooth interpolation across boundaries.
-
-        Args:
-            pos1: Reference positions
-            pos2: Positions to correct
-
-        Returns:
-            Corrected positions (or unchanged if correction not needed)
-        """
-        if self.trajectory.correct_periodic and self.trajectory.is_orthorhombic:
+        if self.trajectory.correct_periodic and self.trajectory._is_orthorhombic:
             return correct_periodic_positions(
                 pos1, pos2, self.trajectory.universe.dimensions[:3]
             )
@@ -379,36 +323,43 @@ class FrameManager:
             return pos2
 
     def _frame_range(self, frame: int) -> npt.NDArray[np.int64]:
-        """
-        Get frame numbers to average over.
+        """Get frame numbers to average over.
 
-        Args:
-            frame: Center frame number
+        Parameters
+        ----------
+        frame : int
+            Center frame number
 
-        Returns:
-            Array of frame numbers to include in average
+        Returns
+        -------
+        np.ndarray
+            Frame numbers to include in average
         """
         return frames_to_average(
-            frame, self.trajectory.n_frames, average=self.trajectory.average
+            frame,
+            self.n_frames,
+            average=self.trajectory.average,
         )
 
     def update_position_cache(self, frame: int, cache_ahead: bool = True) -> None:
-        """
-        Update the position cache for the current frame.
+        """Update the position cache for the current frame.
 
-        This method intelligently caches positions based on averaging and
-        interpolation settings, prefetching the next frame when needed.
+        Intelligently caches based on averaging and interpolation settings,
+        prefetching the next frame when needed.
 
-        Args:
-            frame: Current frame number
-            cache_ahead: If True, cache next frame for interpolation
+        Parameters
+        ----------
+        frame : int
+            Current frame number
+        cache_ahead : bool, default=True
+            Whether to cache next frame for interpolation
         """
         frames_to_cache = self._frame_range(frame)
 
         # If interpolating, ensure we cache 1 frame ahead
         if (
             len(frames_to_cache) == 1
-            and frames_to_cache[0] != (self.trajectory.n_frames - 1)
+            and frames_to_cache[0] != (self.n_frames - 1)
             and cache_ahead
         ):
             frames_to_cache = np.array(
@@ -425,16 +376,18 @@ class FrameManager:
                 self.cache[f] = self._position_at_frame(f)
 
     def position_cache_mean(self, frame: int) -> np.ndarray:
-        """
-        Get mean position from cached frames.
+        """Get mean position from cached frames.
 
-        Computes the average position over the frames specified by the
-        averaging window, applying periodic boundary corrections if needed.
+        Computes average over the averaging window with periodic corrections if needed.
 
-        Args:
-            frame: Center frame number
+        Parameters
+        ----------
+        frame : int
+            Center frame number
 
-        Returns:
+        Returns
+        -------
+        np.ndarray
             Mean positions (or single frame if not averaging)
         """
         self.update_position_cache(frame)
@@ -443,7 +396,7 @@ class FrameManager:
             return self.cache[frame]
 
         array = self.cache.get_ordered_array()
-        if self.trajectory.correct_periodic and self.trajectory.is_orthorhombic:
+        if self.trajectory.correct_periodic and self.trajectory._is_orthorhombic:
             # Correct periodic boundary crossing relative to the first frame
             for i, pos in enumerate(array):
                 if i == 0:
@@ -453,19 +406,19 @@ class FrameManager:
         return np.mean(array, axis=0)
 
     def get_positions_at_frame(self, frame: int) -> np.ndarray:
-        """
-        Get positions for a given frame with all processing applied.
+        """Get positions for a given frame with all processing applied.
 
-        This is the main entry point for position retrieval, handling:
-        - Frame mapping (offset, subframes)
-        - Interpolation between frames
-        - Averaging over multiple frames
-        - Periodic boundary corrections
+        Main entry point for position retrieval. Handles frame mapping, interpolation,
+        averaging, and periodic boundary corrections.
 
-        Args:
-            frame: Scene frame number
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
 
-        Returns:
+        Returns
+        -------
+        np.ndarray
             Processed atom positions
         """
         if not self.trajectory.update_with_scene:
@@ -473,9 +426,13 @@ class FrameManager:
             return self._position_at_frame(frame)
 
         # Map scene frame to universe frame
-        uframe_current = self.trajectory.frame_mapper(frame)
+        uframe_current = frame_mapper(
+            frame=frame,
+            subframes=self.trajectory.subframes,
+            offset=self.trajectory.offset,
+        )
         uframe_next = uframe_current + 1
-        last_frame = self.trajectory.n_frames - 1
+        last_frame = self.n_frames - 1
 
         if uframe_current >= last_frame:
             uframe_current = last_frame
@@ -496,7 +453,7 @@ class FrameManager:
             # Apply periodic correction if needed (and not already applied via averaging)
             if (
                 self.trajectory.correct_periodic
-                and self.trajectory.is_orthorhombic
+                and self.trajectory._is_orthorhombic
                 and self.trajectory.average == 0
             ):
                 pos_next = correct_periodic_positions(
@@ -524,28 +481,34 @@ class FrameManager:
 
 
 def _validate_non_negative(value: int) -> None:
-    """
-    Validation function for non-negative integers.
+    """Validate non-negative integers.
 
-    Args:
-        value: Value to validate
+    Parameters
+    ----------
+    value : int
+        Value to validate
 
-    Raises:
-        ValueError: If value is negative
+    Raises
+    ------
+    ValueError
+        If value is negative
     """
     if value < 0:
         raise ValueError(f"Value must be non-negative, got {value}")
 
 
 def _validate_frame(value: int) -> None:
-    """
-    Validation function for frame numbers.
+    """Validate frame numbers.
 
-    Args:
-        value: Frame number to validate
+    Parameters
+    ----------
+    value : int
+        Frame number to validate
 
-    Raises:
-        ValueError: If frame is negative
+    Raises
+    ------
+    ValueError
+        If frame is negative
     """
     if value < 0:
         raise ValueError(f"Frame must be non-negative, got {value}")

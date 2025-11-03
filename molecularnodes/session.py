@@ -30,7 +30,7 @@ def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
         traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
         # restore linked universe frame
         traj.uframe = uframe
-        traj.save_filepaths_on_object()
+        traj._save_filepaths_on_object()
 
 
 def trim_root_folder(filename):

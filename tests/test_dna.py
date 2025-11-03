@@ -92,7 +92,7 @@ class TestOXDNAReading:
         )
         traj = oxdna.OXDNA(u)
         assert len(traj) == 12
-        assert snapshot == traj.bonds.tolist()
+        assert snapshot == traj.atoms.bonds.indices.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
             assert snapshot == str(traj[att])
 
@@ -119,8 +119,7 @@ class TestOXDNAReading:
         traj = oxdna.OXDNA(u)
 
         assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
-        assert traj._entity_type == mn.entities.base.EntityType.MD_OXDNA
-        assert traj.object.mn.entity_type == traj._entity_type.value
+        assert traj._mn_entity_type == mn.entities.base.EntityType.MD_OXDNA.value
 
     def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
         session = mn.session.get_session()

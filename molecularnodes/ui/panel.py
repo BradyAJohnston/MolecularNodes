@@ -375,7 +375,7 @@ def panel_md_properties(layout, context):
     # only enable this as an option if the universe is orthothombic
     row = col.row()
     row.prop(obj.mn, "correct_periodic")
-    row.enabled = traj.is_orthorhombic
+    row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
