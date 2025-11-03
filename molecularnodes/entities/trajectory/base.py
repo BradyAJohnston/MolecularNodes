@@ -361,7 +361,6 @@ class Trajectory(MolecularEntity):
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
-        obj = self.object
         if isinstance(self.universe.filename, (str, Path)):
             self._mn_filepath_topology = str(path_resolve(self.universe.filename))
         if isinstance(self.universe.trajectory.filename, (str, Path)):
