@@ -995,7 +995,7 @@ class MN_PT_Annotations(bpy.types.Panel):
         row = box.row()
         row.prop(item, "type")
         row.enabled = False
-        entity_annotation_type = f"{entity._entity_type.value}_{item.type}"
+        entity_annotation_type = f"{entity._mn_entity_type}_{item.type}"
         inputs = getattr(item, entity_annotation_type, None)
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
