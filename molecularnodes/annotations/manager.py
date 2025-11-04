@@ -3,14 +3,17 @@ import functools
 import inspect
 from abc import ABCMeta
 from uuid import uuid1
-import bmesh
 import bpy
 import databpy as db
 import numpy as np
 from databpy.object import LinkedObjectError
 from mathutils import Vector
 from ..blender import coll
-from ..blender.utils import get_viewport_region_from_context, viewport_tag_redraw
+from ..blender.utils import (
+    get_viewport_region_from_context,
+    new_bmesh,
+    viewport_tag_redraw,
+)
 from ..nodes.material import append_material
 from .base import BaseAnnotation
 from .interface import AnnotationInterface
@@ -645,87 +648,89 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             self._create_annotation_object()
 
         # create a new bmesh
-        bm = bmesh.new()
-        # convenience methods
-        add_vert = bm.verts.new
-        add_edge = bm.edges.new
-        add_face = bm.faces.new
+        with new_bmesh() as bm:
+            # convenience methods
+            add_vert = bm.verts.new
+            add_edge = bm.edges.new
+            add_face = bm.faces.new
 
-        # edge attributes
-        attr_is_line = []
-        attr_color = []
-        attr_thickness = []
-        attr_material_index = []
-        attr_shade_smooth = []
+            # edge attributes
+            attr_is_line = []
+            attr_color = []
+            attr_thickness = []
+            attr_material_index = []
+            attr_shade_smooth = []
 
-        # add lines
-        lines = geometry["lines"]
-        for v in lines["vertices"]:
-            add_vert(v)
-        bm.verts.ensure_lookup_table()
-        for i, (i1, i2) in enumerate(lines["edges"]):
-            add_edge((bm.verts[i1], bm.verts[i2]))
-            # add edge attributes
-            attr_is_line.append(True)
-            attr_color.append(lines["color"][i])
-            attr_thickness.append(lines["thickness"][i])
-            attr_material_index.append(lines["material_index"][i])
-            attr_shade_smooth.append(True)
-
-        # add bmesh objects
-        # From: https://blender.stackexchange.com/questions/50160/scripting-low-level-join-meshes-elements-hopefully-with-bmesh
-        objects = geometry["objects"]
-        for i, bm_to_add in enumerate(objects["meshes"]):
-            offset = len(bm.verts)
-            # add verts
-            for v in bm_to_add.verts:
-                try:
-                    add_vert(v.co)
-                except ValueError:
-                    # vertex exists!
-                    pass
-            bm.verts.index_update()
+            # add lines
+            lines = geometry["lines"]
+            for v in lines["vertices"]:
+                add_vert(v)
             bm.verts.ensure_lookup_table()
-            object_wireframe = objects["wireframe"][i]
-            # add faces
-            if not object_wireframe and bm_to_add.faces:
-                for face in bm_to_add.faces:
-                    try:
-                        add_face((bm.verts[i.index + offset] for i in face.verts))
-                    except ValueError:
-                        # face exists! - can happen with n=2 (flat) objects
-                        pass
-                bm.faces.index_update()
-            # add edges
-            if bm_to_add.edges:
-                object_color = objects["color"][i]
-                object_material_index = objects["material_index"][i]
-                object_shade_smooth = objects["shade_smooth"][i]
-                for edge in bm_to_add.edges:
-                    edge_seq = (bm.verts[i.index + offset] for i in edge.verts)
-                    try:
-                        add_edge(edge_seq)
-                    except ValueError:
-                        # edge exists!
-                        pass
-                    # add edge attributes
-                    if objects["wireframe"][i]:
-                        attr_is_line.append(True)
-                        attr_thickness.append(objects["thickness"][i])
-                    else:
-                        attr_is_line.append(False)
-                        attr_thickness.append(0.0)
-                    attr_color.append(object_color)
-                    attr_material_index.append(object_material_index)
-                    attr_shade_smooth.append(object_shade_smooth)
-                bm.edges.index_update()
-                # free bmesh
-                bm_to_add.free()
+            for i, (i1, i2) in enumerate(lines["edges"]):
+                add_edge((bm.verts[i1], bm.verts[i2]))
+                # add edge attributes
+                attr_is_line.append(True)
+                attr_color.append(lines["color"][i])
+                attr_thickness.append(lines["thickness"][i])
+                attr_material_index.append(lines["material_index"][i])
+                attr_shade_smooth.append(True)
 
-        # update the object mesh
-        bm.to_mesh(self.bob.object.data)
-        # free bmesh
-        bm.free()
+            # add bmesh objects
+            # From: https://blender.stackexchange.com/questions/50160/scripting-low-level-join-meshes-elements-hopefully-with-bmesh
+            objects = geometry["objects"]
+            for i, bm_to_add in enumerate(objects["meshes"]):
+                try:
+                    offset = len(bm.verts)
+                    # add verts
+                    for v in bm_to_add.verts:
+                        try:
+                            add_vert(v.co)
+                        except ValueError:
+                            # vertex exists!
+                            pass
+                    bm.verts.index_update()
+                    bm.verts.ensure_lookup_table()
+                    object_wireframe = objects["wireframe"][i]
+                    # add faces
+                    if not object_wireframe and bm_to_add.faces:
+                        for face in bm_to_add.faces:
+                            try:
+                                add_face(
+                                    (bm.verts[i.index + offset] for i in face.verts)
+                                )
+                            except ValueError:
+                                # face exists! - can happen with n=2 (flat) objects
+                                pass
+                        bm.faces.index_update()
+                    # add edges
+                    if bm_to_add.edges:
+                        object_color = objects["color"][i]
+                        object_material_index = objects["material_index"][i]
+                        object_shade_smooth = objects["shade_smooth"][i]
+                        for edge in bm_to_add.edges:
+                            edge_seq = (bm.verts[i.index + offset] for i in edge.verts)
+                            try:
+                                add_edge(edge_seq)
+                            except ValueError:
+                                # edge exists!
+                                pass
+                            # add edge attributes
+                            if objects["wireframe"][i]:
+                                attr_is_line.append(True)
+                                attr_thickness.append(objects["thickness"][i])
+                            else:
+                                attr_is_line.append(False)
+                                attr_thickness.append(0.0)
+                            attr_color.append(object_color)
+                            attr_material_index.append(object_material_index)
+                            attr_shade_smooth.append(object_shade_smooth)
+                        bm.edges.index_update()
+                finally:
+                    # free bmesh
+                    bm_to_add.free()
+
+            # update the object mesh
+            bm.to_mesh(self.bob.object.data)
 
         # add materials to object material slots
         for material_name in geometry["materials"]:

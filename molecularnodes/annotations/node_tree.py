@@ -161,8 +161,4 @@ def annotations_node_tree():
     node_group.links.new(
         group_input.outputs["Geometry"], join_geometry.inputs["Geometry"]
     )
-    # curve_to_mesh.Mesh -> join_geometry.Geometry
-    node_group.links.new(
-        curve_to_mesh.outputs["Mesh"], join_geometry.inputs["Geometry"]
-    )
     return node_group

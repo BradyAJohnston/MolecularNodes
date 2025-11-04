@@ -14,6 +14,7 @@ from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
 from PIL import Image, ImageDraw, ImageFont
 from scipy.spatial import Voronoi
+from ..blender.utils import new_bmesh
 from .interface import AnnotationInterface
 from .utils import get_view_matrix, is_perspective_projection
 
@@ -592,14 +593,13 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         if self.geometry is None:
             return
-        bm = bmesh.new()
-        bmesh.ops.create_icosphere(
-            bm, radius=radius * self._world_scale, subdivisions=4
-        )
-        loc = Matrix.Translation(Vector(location) * self._world_scale)
-        bm.transform(loc)
-        self.draw_bmesh(bm, overrides=overrides)
-        bm.free()
+        with new_bmesh() as bm:
+            bmesh.ops.create_icosphere(
+                bm, radius=radius * self._world_scale, subdivisions=4
+            )
+            loc = Matrix.Translation(Vector(location) * self._world_scale)
+            bm.transform(loc)
+            self.draw_bmesh(bm, overrides=overrides)
 
     def draw_cone(
         self,
@@ -748,38 +748,39 @@ class BaseAnnotation(metaclass=ABCMeta):
         vxy = Vector(box_vectors[1])
         vz = Vector(box_vectors[2])
         vor = vx + vxy
-        bm = bmesh.new()
-        # create the four vertices in the xy plane
-        v1 = bm.verts.new(vo)
-        v2 = bm.verts.new(vx)
-        v3 = bm.verts.new(vor)
-        v4 = bm.verts.new(vxy)
-        # create face in the xy plane
-        bm.verts.ensure_lookup_table()
-        face = bm.faces.new((v1, v2, v3, v4))
-        # extrude face region for new verts
-        ext_geom = bmesh.ops.extrude_face_region(bm, geom=[face])
-        ext_verts = [v for v in ext_geom["geom"] if isinstance(v, bmesh.types.BMVert)]
-        # extrude verts along box vector c
-        bmesh.ops.translate(bm, vec=vz, verts=ext_verts)
-        # translate origin
-        mat = Matrix.Translation(Vector(origin) * self._world_scale)
-        bm.transform(mat)
-        # update face normals
-        bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-        # show a 3x3x3 lattice if enabled
-        if show_lattice:
-            box = bm.verts[:] + bm.edges[:] + bm.faces[:]
-            pbc_img_coeffs = np.array(list(itertools.product([0, -1, 1], repeat=3)))
-            lattice_points = np.matmul(pbc_img_coeffs, box_vectors)
-            for lattice_point in lattice_points:
-                geom = bmesh.ops.duplicate(bm, geom=box)
-                dup_verts = [
-                    v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
-                ]
-                bmesh.ops.translate(bm, verts=dup_verts, vec=lattice_point)
-        self.draw_bmesh(bm, overrides=overrides)
-        bm.free()
+        with new_bmesh() as bm:
+            # create the four vertices in the xy plane
+            v1 = bm.verts.new(vo)
+            v2 = bm.verts.new(vx)
+            v3 = bm.verts.new(vor)
+            v4 = bm.verts.new(vxy)
+            # create face in the xy plane
+            bm.verts.ensure_lookup_table()
+            face = bm.faces.new((v1, v2, v3, v4))
+            # extrude face region for new verts
+            ext_geom = bmesh.ops.extrude_face_region(bm, geom=[face])
+            ext_verts = [
+                v for v in ext_geom["geom"] if isinstance(v, bmesh.types.BMVert)
+            ]
+            # extrude verts along box vector c
+            bmesh.ops.translate(bm, vec=vz, verts=ext_verts)
+            # translate origin
+            mat = Matrix.Translation(Vector(origin) * self._world_scale)
+            bm.transform(mat)
+            # update face normals
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+            # show a 3x3x3 lattice if enabled
+            if show_lattice:
+                box = bm.verts[:] + bm.edges[:] + bm.faces[:]
+                pbc_img_coeffs = np.array(list(itertools.product([0, -1, 1], repeat=3)))
+                lattice_points = np.matmul(pbc_img_coeffs, box_vectors)
+                for lattice_point in lattice_points:
+                    geom = bmesh.ops.duplicate(bm, geom=box)
+                    dup_verts = [
+                        v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
+                    ]
+                    bmesh.ops.translate(bm, verts=dup_verts, vec=lattice_point)
+            self.draw_bmesh(bm, overrides=overrides)
 
     def draw_wigner_seitz_cell(
         self,
@@ -827,45 +828,44 @@ class BaseAnnotation(metaclass=ABCMeta):
             voronoi.vertices[i] for i in center_region_vertices if i != -1
         ]
         # create bmesh
-        bm = bmesh.new()
-        # add vertices
-        for vert in valid_vertices:
-            bm.verts.new(vert)
-        # use convex hull to create faces from vertices
-        bm.verts.ensure_lookup_table()
-        ch = bmesh.ops.convex_hull(bm, input=bm.verts)
-        # delete interior verts
-        bmesh.ops.delete(bm, geom=ch["geom_interior"], context="VERTS")
-        # delete any duplicate vertices
-        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-3)
-        # convert triangles to n-gons for clean faces
-        bmesh.ops.dissolve_limit(
-            bm,
-            angle_limit=1e-3,
-            verts=bm.verts,
-            edges=bm.edges,
-        )
-        # update face normals
-        bm.normal_update()
-        # transform center if needed
-        if center_to_origin:
-            mat = Matrix.Translation(-1 * box_center)
-            bm.transform(mat)
-        # show a 3x3x3 lattice if enabled
-        if show_lattice:
-            box = bm.verts[:] + bm.edges[:] + bm.faces[:]
-            for lattice_point in lattice_points:
-                if np.array_equal(lattice_point, box_center):
-                    continue
-                geom = bmesh.ops.duplicate(bm, geom=box)
-                dup_verts = [
-                    v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
-                ]
-                translation_vec = lattice_point - box_center
-                bmesh.ops.translate(bm, verts=dup_verts, vec=translation_vec)
-        # draw bmesh
-        self.draw_bmesh(bm, overrides=overrides)
-        bm.free()
+        with new_bmesh() as bm:
+            # add vertices
+            for vert in valid_vertices:
+                bm.verts.new(vert)
+            # use convex hull to create faces from vertices
+            bm.verts.ensure_lookup_table()
+            ch = bmesh.ops.convex_hull(bm, input=bm.verts)
+            # delete interior verts
+            bmesh.ops.delete(bm, geom=ch["geom_interior"], context="VERTS")
+            # delete any duplicate vertices
+            bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-3)
+            # convert triangles to n-gons for clean faces
+            bmesh.ops.dissolve_limit(
+                bm,
+                angle_limit=1e-3,
+                verts=bm.verts,
+                edges=bm.edges,
+            )
+            # update face normals
+            bm.normal_update()
+            # transform center if needed
+            if center_to_origin:
+                mat = Matrix.Translation(-1 * box_center)
+                bm.transform(mat)
+            # show a 3x3x3 lattice if enabled
+            if show_lattice:
+                box = bm.verts[:] + bm.edges[:] + bm.faces[:]
+                for lattice_point in lattice_points:
+                    if np.array_equal(lattice_point, box_center):
+                        continue
+                    geom = bmesh.ops.duplicate(bm, geom=box)
+                    dup_verts = [
+                        v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
+                    ]
+                    translation_vec = lattice_point - box_center
+                    bmesh.ops.translate(bm, verts=dup_verts, vec=translation_vec)
+            # draw bmesh
+            self.draw_bmesh(bm, overrides=overrides)
 
     def draw_n_sided_pyramid(
         self,
@@ -1024,23 +1024,22 @@ class BaseAnnotation(metaclass=ABCMeta):
         radius1 = radius1 * self._world_scale
         radius2 = radius2 * self._world_scale
         height = height * self._world_scale
-        bm = bmesh.new()
-        bmesh.ops.create_cone(
-            bm,
-            cap_ends=cap_ends,
-            segments=segments,
-            radius1=radius1,
-            radius2=radius2,
-            depth=height,
-        )
-        base_offset = Matrix.Translation(Vector((0, 0, height / 2)))
-        up = Vector((0, 0, 1))
-        rot = up.rotation_difference(axis).to_matrix().to_4x4()
-        loc = Matrix.Translation(Vector(location) * self._world_scale)
-        mat = loc @ rot @ base_offset
-        bm.transform(mat)
-        self.draw_bmesh(bm, overrides=overrides)
-        bm.free()
+        with new_bmesh() as bm:
+            bmesh.ops.create_cone(
+                bm,
+                cap_ends=cap_ends,
+                segments=segments,
+                radius1=radius1,
+                radius2=radius2,
+                depth=height,
+            )
+            base_offset = Matrix.Translation(Vector((0, 0, height / 2)))
+            up = Vector((0, 0, 1))
+            rot = up.rotation_difference(axis).to_matrix().to_4x4()
+            loc = Matrix.Translation(Vector(location) * self._world_scale)
+            mat = loc @ rot @ base_offset
+            bm.transform(mat)
+            self.draw_bmesh(bm, overrides=overrides)
 
     def _get_a_normal_plane_point(self, normal: Vector):
         """Internal: Get a point in the plane perpendicular to the given normal"""

@@ -18,7 +18,6 @@ class AnnotationInterface:
     visible: bool
     text_font: str
     text_color: np.ndarray | list | tuple
-    text_font: str
     text_size: int
     text_align: str
     text_rotation: float

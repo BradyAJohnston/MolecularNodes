@@ -1,7 +1,6 @@
 import os
 import typing
 from pathlib import Path
-import numpy as np
 from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
@@ -441,7 +440,7 @@ class SimulationBox(TrajectoryAnnotation):
                 origin = Vector((0, 0, 0))
                 # move box center to origin if set
                 if params.center_to_origin:
-                    origin = -1 * np.sum(ts.triclinic_dimensions, axis=0) / 2
+                    origin = Vector(-sum(ts.triclinic_dimensions) / 2)
                 self.draw_triclinic_cell(
                     a,
                     b,

@@ -40,8 +40,9 @@ def _set_entity_visibility(self, visible: bool) -> None:
     """set callback for entity visibility property"""
     self["visible"] = visible
     entity = bpy.context.scene.MNSession.get(self.name)
-    set_object_visibility(entity.object, self.visible)
-    entity.annotations._update_annotation_object()
+    if entity is not None:
+        set_object_visibility(entity.object, self.visible)
+        entity.annotations._update_annotation_object()
 
 
 def _entities_active_index_callback(self, context: bpy.context) -> None:  # type: ignore
@@ -296,7 +297,8 @@ class MolecularNodesSceneProperties(PropertyGroup):
 
 def _update_annotations_visibility(self, context):
     entity = context.scene.MNSession.get(self.id_data.uuid)
-    entity.annotations._update_annotation_object()
+    if entity is not None:
+        entity.annotations._update_annotation_object()
 
 
 class MolecularNodesObjectProperties(PropertyGroup):

@@ -146,7 +146,8 @@ def create_property_interface(
 
 def _update_annotation_object(self, context):
     entity = context.scene.MNSession.get(self.id_data.uuid)
-    entity.annotations._update_annotation_object()
+    if entity is not None:
+        entity.annotations._update_annotation_object()
 
 
 class BaseAnnotationProperties(bpy.types.PropertyGroup):

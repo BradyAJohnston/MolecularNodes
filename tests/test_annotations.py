@@ -346,7 +346,8 @@ class TestAnnotations:
         assert len(t1.annotations) == 1
 
     def test_trajectory_annotation_simulation_box(self, universe):
-        t1 = mn.Trajectory(universe, name="TestUniverse")
+        universe_copy = universe.copy()
+        t1 = mn.Trajectory(universe_copy, name="TestUniverse")
         assert len(t1.annotations) == 0
         box = t1.annotations.add_simulation_box()
         assert len(t1.annotations) == 1
@@ -372,7 +373,7 @@ class TestAnnotations:
         )
         # add mda transform to set different box vectors for different frames
         transform = boxdimensions.set_dimensions(box_dimensions)
-        universe.trajectory.add_transformations(transform)
+        universe_copy.trajectory.add_transformations(transform)
         # enable compact option for annotation
         box.compact = True
         # expected # of vertices, edges and faces for standard compact shapes

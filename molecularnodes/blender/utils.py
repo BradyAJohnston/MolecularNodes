@@ -1,4 +1,6 @@
+from contextlib import contextmanager
 from pathlib import Path
+import bmesh
 import bpy
 
 
@@ -92,3 +94,15 @@ def look_at_bbox(bbox: list[tuple]):
     look_at_object(bb_obj)
     # remove temporary object from scene
     bpy.data.objects.remove(bb_obj, do_unlink=True)
+
+
+@contextmanager
+def new_bmesh() -> bmesh.types.BMesh:  # type: ignore
+    # create a new bmesh
+    bm = bmesh.new()
+    try:
+        # return the new bmesh
+        yield bm
+    finally:
+        # free bmesh
+        bm.free()
