@@ -398,7 +398,7 @@ def panel_md_properties(layout, context):
 
         col = layout.column(align=False)
         row = col.row()
-        col.prop(item, "selection_str")
+        col.prop(item, "string")
 
         # disable editing for immutable selections
         # disable modifying updating and periodic

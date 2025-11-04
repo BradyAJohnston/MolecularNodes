@@ -181,9 +181,7 @@ class TestTrajectory:
 
         traj = mn.entities.Trajectory(universe)
         bpy.context.scene.frame_set(0)
-        sel = traj.add_selection(
-            name="custom_sel_1", selection_str="around 3.5 protein"
-        )
+        sel = traj.selections.add(name="custom_sel_1", string="around 3.5 protein")
         bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("custom_sel_1")
         bpy.context.scene.frame_set(4)
@@ -210,10 +208,8 @@ class TestTrajectory:
         around_protein = universe.select_atoms("around 3.5 protein", updating=True)
         traj = mn.entities.Trajectory(universe)
         bpy.context.scene.frame_set(0)
-        traj.add_selection_from_atomgroup(atomgroup=ca_ag, name="ca")
-        traj.add_selection_from_atomgroup(
-            atomgroup=around_protein, name="around_protein"
-        )
+        traj.selections.from_atomgroup(atomgroup=ca_ag, name="ca")
+        traj.selections.from_atomgroup(atomgroup=around_protein, name="around_protein")
         bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("around_protein")
         bpy.context.scene.frame_set(4)

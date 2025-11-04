@@ -310,6 +310,11 @@ def get_session(context: Context | None = None) -> MNSession:
     return context.scene.MNSession
 
 
+def get_entity(context: Context | None = None) -> Molecule | Trajectory | Ensemble:
+    session = get_session(context)
+    return session.match(context.active_object)
+
+
 @persistent
 def _pickle(filepath) -> None:
     get_session().pickle(filepath)
