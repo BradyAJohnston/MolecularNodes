@@ -155,6 +155,10 @@ a4 = t.annotations.add_com_distance(
     text2="resid 129|COM",
     name="r1-129 distance",
 )
+# display the distance line as a 3d mesh
+# with the 2d line overlay and a specific color
+a4.line_mode = "mesh_and_overlay"
+a4.mesh_color = (0, 1, 0, 1)  # (r, g, b, a)
 ```
 
 ```{python}
@@ -222,6 +226,21 @@ canvas.snapshot(frame=50)
 a6.visible = False
 ```
 
+### [simulation_box](`molecularnodes.entities.trajectory.annotations.SimulationBox`)
+
+Display the simulation box of the trajectory if box dimensions are present.
+
+The input parameters for this annotation are:
+
+- `center_to_origin` - Whether to move the center of the box to Origin (0, 0, 0)
+- `compact` - Whether to create a compact Wigner-Seitz cell. Note that the trajectory needs to have been wrapped with the compact option to see it within the box
+- `show_lattice` - Whether to show a 3x3x3 lattice of the box
+
+```{python}
+# add simulation box annotation
+t.annotations.add_simulation_box()
+```
+
 ### [label_2d](`molecularnodes.entities.trajectory.annotations.Label2D`)
 
 Display a generic 2d label in the viewport / render.
@@ -269,7 +288,7 @@ atom = r1.atoms[0]
 # add a 3d label to display text at this atom's location
 a8 = t.annotations.add_label_3d(text=f"CA|resid 1|{atom.segid}", location=atom.position)
 # add a pointer to point at the location
-a8.pointer_length = 2
+a8.line_pointer_length = 2
 a8.line_width = 2
 ```
 
@@ -355,10 +374,16 @@ The common annotation params are:
 - `text_vspacing` - Vertical spacing between lines in multi line text
 - `text_depth` - Whether to enable showing text size based on depth (default: True)
 - `text_falloff` - A normalized value (0.0 - 1.0) of how the text size falls off with distance from the viewport / camera
-- `offset_x` - Text offset along the x direction (in pixels)
-- `offset_y` - Text offset along the y direction (in pixels)
-- `arrow_size` - Size of the arrow displayed (for lines with arrow ends)
-- `pointer_length` - Length of a pointer line to draw (defaults to 0, which is no pointer)
+- `text_offset_x` - Text offset along the x direction (in pixels)
+- `text_offset_y` - Text offset along the y direction (in pixels)
+- `line_arrow_size` - Size of the arrow displayed (for lines with arrow ends)
+- `line_pointer_length` - Length of a pointer line to draw (defaults to 0, which is no pointer)
+- `line_mode` - Display mode of line (`overlay`, `mesh`, `mesh_and_overlay`)
+- `mesh_wireframe` - Whether to show 3d meshes as wireframes
+- `mesh_thickness` - Thickness of the edges in wireframe mode
+- `mesh_color` - Color of the 3d meshes
+- `mesh_material` - Material to use for 3d meshes
+- `mesh_shade_smooth` - Whether to use shade smooth for 3d meshes
 
 ```{python}
 # common annotation params for a1
@@ -484,5 +509,13 @@ The following utility methods are currently available:
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_line_2d`) - Draw a line between two points in 2D viewport space
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_line_3d`) - Draw a line between two points in 3D space
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d`) - Draw a circle around a 3D point in the plane perpendicular to the given normal
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_sphere`) - Draw a sphere object at a 3D point
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_cone`) - Draw a cone object along an axis
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_cylinder`) - Draw a cylinder object along an axis
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_cylinder`) - Draw an n sided cylinder
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_pyramid`) - Draw an n sided pyramid
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_triclinic_cell`) - Draw a triclinic cell
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_wigner_seitz_cell`) - Draw a compact Wigner-Seitz cell
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_bmesh`) - Draw a generic Blender BMesh
 
 These methods can be used within the `draw` method of a custom annotation. Please see the API reference for [](`mn.annotations.base`) for details about these methods.

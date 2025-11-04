@@ -1,13 +1,20 @@
+import itertools
 from abc import ABCMeta, abstractmethod
 from math import cos, radians, sin, sqrt
 from pathlib import Path
 import blf
+import bmesh
 import bpy
 import gpu
+import MDAnalysis as mda
+import numpy as np
+import numpy.typing as npt
 from bpy_extras import object_utils, view3d_utils
 from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector
 from PIL import Image, ImageDraw, ImageFont
+from scipy.spatial import Voronoi
+from ..blender.utils import new_bmesh
 from .interface import AnnotationInterface
 from .utils import get_view_matrix, is_perspective_projection
 
@@ -161,6 +168,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        if self.geometry:
+            return
         if pos_2d is None:
             return
         for comp in pos_2d:
@@ -209,6 +218,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        if self.geometry:
+            return
         self._draw_text(pos_2d, text, is3d=False, overrides=overrides)
 
     def _draw_text(
@@ -224,11 +235,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         if is3d:
             text_pos = pos
             # check if pointer is required
-            if params.pointer_length > 0:
+            if params.line_pointer_length > 0:
                 # draw a pointer to the 3D position
                 nv = -pos
                 nv.normalize()
-                pointer_begin = pos + (nv * params.pointer_length)
+                pointer_begin = pos + (nv * params.line_pointer_length)
                 text_pos = pointer_begin + (nv * 0.5)  # offset text a bit
                 self._draw_line(
                     pointer_begin, pos, v2_arrow=True, is3d=True, overrides=overrides
@@ -236,12 +247,14 @@ class BaseAnnotation(metaclass=ABCMeta):
             pos_2d = self._get_2d_point(text_pos)
             if pos_2d is None:
                 return
+        if self.geometry:
+            return
         # draw text at 2D position
         right_alignment_gap = 12
         pos_x, pos_y = pos_2d
-        # offset_x and offset_y
-        pos_x += params.offset_x
-        pos_y += params.offset_y
+        # text_offset_x and text_offset_y
+        pos_x += params.text_offset_x
+        pos_y += params.text_offset_y
         rgba = params.text_color
         text_size = params.text_size
         # adjust the text size if depth enabled
@@ -455,7 +468,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         Distance between two vectors
 
-        Paramaters
+        Parameters
         ----------
         v1: Vector
             A 3D or 2D vector or tuple
@@ -485,8 +498,8 @@ class BaseAnnotation(metaclass=ABCMeta):
         Draw a circle around a 3D point in the plane perpendicular to the
         given normal
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         center: Vector
             A 3D position vector of the center
 
@@ -536,12 +549,497 @@ class BaseAnnotation(metaclass=ABCMeta):
         for i in range(n_steps):
             p2 = mat_trans2 @ mat_rot @ mat_trans1 @ p1
             if i == 0 and cc_arrow:
-                self._draw_line(p1, p2, v1_arrow=True, is3d=True, overrides=overrides)
+                self._draw_line(
+                    p1,
+                    p2,
+                    v1_arrow=True,
+                    arrow_plane_pt=start,
+                    is3d=True,
+                    overrides=overrides,
+                )
             elif i == n_steps - 1 and c_arrow:
-                self._draw_line(p1, p2, v2_arrow=True, is3d=True, overrides=overrides)
+                self._draw_line(
+                    p1,
+                    p2,
+                    v2_arrow=True,
+                    arrow_plane_pt=start,
+                    is3d=True,
+                    overrides=overrides,
+                )
             else:
                 self._draw_line(p1, p2, is3d=True, overrides=overrides)
             p1 = p2.copy()
+
+    def draw_sphere(
+        self,
+        location: Vector = (0, 0, 0),
+        radius: float = 1.0,
+        overrides: dict = None,
+    ):
+        """
+        Draw a sphere
+
+        Parameters
+        ----------
+        location: Vector
+            A 3D position vector of the center
+
+        radius: float
+            Radius of the sphere
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        with new_bmesh() as bm:
+            bmesh.ops.create_icosphere(
+                bm, radius=radius * self._world_scale, subdivisions=4
+            )
+            loc = Matrix.Translation(Vector(location) * self._world_scale)
+            bm.transform(loc)
+            self.draw_bmesh(bm, overrides=overrides)
+
+    def draw_cone(
+        self,
+        location: Vector = (0, 0, 0),
+        radius: float = 1.0,
+        height: float = 1.0,
+        axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
+        overrides: dict = None,
+    ):
+        """
+        Draw a cone
+
+        Parameters
+        ----------
+        location: Vector
+            A 3D position vector of the base center
+
+        radius: float
+            Radius of the cone
+
+        height: float
+            Height of the cone
+
+        axis: Vector
+            Axis of the cone
+
+        cap_ends: bool
+            Whether to cap the base
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            location,
+            radius1=radius,
+            radius2=0,
+            height=height,
+            axis=axis,
+            cap_ends=cap_ends,
+            overrides=overrides,
+        )
+
+    def draw_cylinder(
+        self,
+        location: Vector = (0, 0, 0),
+        radius: float = 1.0,
+        height: float = 1.0,
+        axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
+        overrides: dict = None,
+    ):
+        """
+        Draw a cylinder
+
+        Parameters
+        ----------
+        location: Vector
+            A 3D position vector of the base center
+
+        radius: float
+            Radius of the cylinder
+
+        height: float
+            Height of the cylinder
+
+        axis: Vector
+            Axis of the cylinder
+
+        cap_ends: bool
+            Whether to cap the ends of cylinder
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            location,
+            radius1=radius,
+            radius2=radius,
+            height=height,
+            axis=axis,
+            cap_ends=cap_ends,
+            overrides=overrides,
+        )
+
+    def draw_triclinic_cell(
+        self,
+        a: float = 10.0,
+        b: float = 10.0,
+        c: float = 10.0,
+        alpha: float = 90.0,
+        beta: float = 90.0,
+        gamma: float = 90.0,
+        origin: Vector = (0, 0, 0),
+        show_lattice: bool = False,
+        overrides: dict = None,
+    ):
+        """
+        Draw a triclinic box based on box vector lengths and angles
+
+        Parameters
+        ----------
+
+        a: float
+            Box vector a length
+
+        b: float
+            Box vector b length
+
+        c: float
+            Box vector c length
+
+        alpha: float
+            Angle between box vectors bc
+
+        beta: float
+            Angle between box vectors ac
+
+        gamma: float
+            Angle between box vectors ab
+
+        origin: Vector
+            Origin of the box
+
+        show_lattice: bool
+            Whether to show a 3x3x3 lattice
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        dimensions = np.array([a, b, c, alpha, beta, gamma], dtype=np.float32)
+        triclinic_vectors = mda.lib.mdamath.triclinic_vectors(dimensions)
+        # convert to blender world scale
+        box_vectors = triclinic_vectors * self._world_scale
+        vo = Vector((0, 0, 0))
+        vx = Vector(box_vectors[0])
+        vxy = Vector(box_vectors[1])
+        vz = Vector(box_vectors[2])
+        vor = vx + vxy
+        with new_bmesh() as bm:
+            # create the four vertices in the xy plane
+            v1 = bm.verts.new(vo)
+            v2 = bm.verts.new(vx)
+            v3 = bm.verts.new(vor)
+            v4 = bm.verts.new(vxy)
+            # create face in the xy plane
+            bm.verts.ensure_lookup_table()
+            face = bm.faces.new((v1, v2, v3, v4))
+            # extrude face region for new verts
+            ext_geom = bmesh.ops.extrude_face_region(bm, geom=[face])
+            ext_verts = [
+                v for v in ext_geom["geom"] if isinstance(v, bmesh.types.BMVert)
+            ]
+            # extrude verts along box vector c
+            bmesh.ops.translate(bm, vec=vz, verts=ext_verts)
+            # translate origin
+            mat = Matrix.Translation(Vector(origin) * self._world_scale)
+            bm.transform(mat)
+            # update face normals
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+            # show a 3x3x3 lattice if enabled
+            if show_lattice:
+                box = bm.verts[:] + bm.edges[:] + bm.faces[:]
+                pbc_img_coeffs = np.array(list(itertools.product([0, -1, 1], repeat=3)))
+                lattice_points = np.matmul(pbc_img_coeffs, box_vectors)
+                for lattice_point in lattice_points:
+                    geom = bmesh.ops.duplicate(bm, geom=box)
+                    dup_verts = [
+                        v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
+                    ]
+                    bmesh.ops.translate(bm, verts=dup_verts, vec=lattice_point)
+            self.draw_bmesh(bm, overrides=overrides)
+
+    def draw_wigner_seitz_cell(
+        self,
+        triclinic_vectors: npt.ArrayLike,
+        center_to_origin: bool = False,
+        show_lattice: bool = False,
+        overrides: dict = None,
+    ):
+        """
+        Draw a Wigner-Seitz cell from triclinic vectors
+
+        Parameters
+        ----------
+
+        triclinic_vectors: npt.ArrayLike
+            Vectors that represent the base triclinic cell
+
+        center_to_origin: bool
+            Move the center of the cell to origin (0, 0, 0)
+
+        show_lattice: bool
+            Whether to show a 3x3x3 lattice
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        # convert to blender world scale
+        box_vectors = triclinic_vectors * self._world_scale
+        # From apply_compact_PBC of MDAnalysis
+        pbc_img_coeffs = np.array(list(itertools.product([0, -1, 1], repeat=3)))
+        pbc_img_vecs = np.matmul(pbc_img_coeffs, box_vectors)
+        # add the center point
+        box_center = np.sum(box_vectors, axis=0) / 2
+        lattice_points = [box_center] + pbc_img_vecs
+        # generate Voronoi
+        voronoi = Voronoi(np.array(lattice_points))
+        # The Wigner-Seitz cell for the center point (index 0)
+        center_region = voronoi.point_region[0]
+        center_region_vertices = voronoi.regions[center_region]
+        # filter out invalid vertices
+        valid_vertices = [
+            voronoi.vertices[i] for i in center_region_vertices if i != -1
+        ]
+        # create bmesh
+        with new_bmesh() as bm:
+            # add vertices
+            for vert in valid_vertices:
+                bm.verts.new(vert)
+            # use convex hull to create faces from vertices
+            bm.verts.ensure_lookup_table()
+            ch = bmesh.ops.convex_hull(bm, input=bm.verts)
+            # delete interior verts
+            bmesh.ops.delete(bm, geom=ch["geom_interior"], context="VERTS")
+            # delete any duplicate vertices
+            bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-3)
+            # convert triangles to n-gons for clean faces
+            bmesh.ops.dissolve_limit(
+                bm,
+                angle_limit=1e-3,
+                verts=bm.verts,
+                edges=bm.edges,
+            )
+            # update face normals
+            bm.normal_update()
+            # transform center if needed
+            if center_to_origin:
+                mat = Matrix.Translation(-1 * box_center)
+                bm.transform(mat)
+            # show a 3x3x3 lattice if enabled
+            if show_lattice:
+                box = bm.verts[:] + bm.edges[:] + bm.faces[:]
+                for lattice_point in lattice_points:
+                    if np.array_equal(lattice_point, box_center):
+                        continue
+                    geom = bmesh.ops.duplicate(bm, geom=box)
+                    dup_verts = [
+                        v for v in geom["geom"] if isinstance(v, bmesh.types.BMVert)
+                    ]
+                    translation_vec = lattice_point - box_center
+                    bmesh.ops.translate(bm, verts=dup_verts, vec=translation_vec)
+            # draw bmesh
+            self.draw_bmesh(bm, overrides=overrides)
+
+    def draw_n_sided_pyramid(
+        self,
+        n: int = 6,
+        radius: float = 10,
+        height: float = 10,
+        origin: Vector = (0, 0, 0),
+        axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
+        overrides: dict = None,
+    ):
+        """
+        Draw an n sided pyramid
+        Eg: triangle, prism, square pyramid, pentagonal pyramid, etc
+
+        Parameters
+        ----------
+
+        n: int
+            Number of sides
+
+        radius: float
+            Radius of the pyramid
+
+        height: float
+            Height of the pyramid
+
+        origin: Vector
+            Center of the base of the pyramid
+
+        axis: Vector
+            Axis of the pyramid
+
+        cap_ends: bool
+            Whether to cap the ends of pyramid
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            origin,
+            radius1=radius,
+            radius2=0,
+            height=height,
+            axis=axis,
+            segments=n,
+            cap_ends=cap_ends,
+            overrides=overrides,
+        )
+
+    def draw_n_sided_cylinder(
+        self,
+        n: int = 6,
+        radius: float = 10,
+        height: float = 10,
+        origin: Vector = (0, 0, 0),
+        axis: Vector = (0, 0, 1),
+        cap_ends: bool = True,
+        overrides: dict = None,
+    ):
+        """
+        Draw an n sided cylinder
+        Eg: square, rectangle, triangular prism, cube, cuboid, hexagonal cell etc
+
+        Parameters
+        ----------
+
+        n: int
+            Number of sides
+
+        radius: float
+            Radius of the cylinder
+
+        height: float
+            Height of the cylinder
+
+        origin: Vector
+            Center of the base of the cylinder
+
+        axis: Vector
+            Axis of the cylinder
+
+        cap_ends: bool
+            Whether to cap the ends of cylinder
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        self._draw_cone(
+            origin,
+            radius1=radius,
+            radius2=radius,
+            height=height,
+            axis=axis,
+            segments=n,
+            cap_ends=cap_ends,
+            overrides=overrides,
+        )
+
+    def draw_bmesh(
+        self,
+        bm: bmesh.types.BMesh,
+        overrides: dict = None,
+    ):
+        """
+        Draw a Blender bmesh
+
+        Parameters
+        ----------
+
+        bm: bmesh.types.BMesh
+            A bmesh object. A copy is made for internal use.
+            Users will have to free the passed in object
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry is None:
+            return
+        if not isinstance(bm, bmesh.types.BMesh):
+            raise ValueError("Need a bmesh.types.BMesh object")
+        geometry = self.geometry
+        objects = geometry["objects"]
+        # make a copy of the bmesh which will be freed after
+        # updating the annotation object
+        objects["meshes"].append(bm.copy())
+        # add resolved params to be added as attributes
+        params = _get_params(self.interface, overrides)
+        objects["wireframe"].append(params.mesh_wireframe)
+        objects["thickness"].append(params.mesh_thickness)
+        objects["color"].append(params.mesh_color)
+        objects["shade_smooth"].append(params.mesh_shade_smooth)
+        self._add_material_to_geometry(objects, params.mesh_material)
+
+    def _draw_cone(
+        self,
+        location: Vector,
+        radius1: float,
+        radius2: float,
+        height: float,
+        axis: Vector = (0, 0, 1),
+        segments: int = 24,
+        cap_ends: bool = True,
+        overrides: dict = None,
+    ):
+        """Internal: Common method for cone, cylinder, pyramid bmesh"""
+        if self.geometry is None:
+            return
+        radius1 = radius1 * self._world_scale
+        radius2 = radius2 * self._world_scale
+        height = height * self._world_scale
+        with new_bmesh() as bm:
+            bmesh.ops.create_cone(
+                bm,
+                cap_ends=cap_ends,
+                segments=segments,
+                radius1=radius1,
+                radius2=radius2,
+                depth=height,
+            )
+            base_offset = Matrix.Translation(Vector((0, 0, height / 2)))
+            up = Vector((0, 0, 1))
+            rot = up.rotation_difference(axis).to_matrix().to_4x4()
+            loc = Matrix.Translation(Vector(location) * self._world_scale)
+            mat = loc @ rot @ base_offset
+            bm.transform(mat)
+            self.draw_bmesh(bm, overrides=overrides)
 
     def _get_a_normal_plane_point(self, normal: Vector):
         """Internal: Get a point in the plane perpendicular to the given normal"""
@@ -567,14 +1065,42 @@ class BaseAnnotation(metaclass=ABCMeta):
         mid_text: str = None,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
+        arrow_plane_pt: Vector = None,
         is3d: bool = False,
         overrides: dict = None,
     ) -> None:
         """Internal: Draw line 3D or 2D"""
         if v1 is None or v2 is None:
             return
+        # convert to vectors from here on
+        if not isinstance(v1, Vector):
+            v1 = Vector(v1)
+        if not isinstance(v2, Vector):
+            v2 = Vector(v2)
+        params = _get_params(self.interface, overrides)
+        if is3d and self.geometry and params.line_mode != "overlay":
+            # add line to geometry
+            self._add_line_to_geometry(v1, v2, overrides=overrides)
+            # add arrow ends to geometry
+            if arrow_plane_pt is None:
+                arrow_plane_pt = self._get_a_normal_plane_point(v2 - v1)
+            if v1_arrow:
+                self._add_arrow_end_to_geometry(
+                    v1, v2, arrow_plane_pt, overrides=overrides
+                )
+            if v2_arrow:
+                self._add_arrow_end_to_geometry(
+                    v2, v1, arrow_plane_pt, overrides=overrides
+                )
+
         self._draw_arrow_line(
-            v1, v2, v1_arrow, v2_arrow, is3d=is3d, overrides=overrides
+            v1,
+            v2,
+            v1_arrow,
+            v2_arrow,
+            arrow_plane_pt=arrow_plane_pt,
+            is3d=is3d,
+            overrides=overrides,
         )
         if v1_text is not None:
             self._draw_text(v1, v1_text, is3d=is3d, overrides=overrides)
@@ -584,12 +1110,68 @@ class BaseAnnotation(metaclass=ABCMeta):
             mid = (v1 + v2) / 2
             self._draw_text(mid, mid_text, is3d=is3d, overrides=overrides)
 
+    def _add_line_to_geometry(
+        self,
+        v1: Vector,
+        v2: Vector,
+        overrides: dict = None,
+    ):
+        if self.geometry is None:
+            return
+        geometry = self.geometry
+        lines = geometry["lines"]
+        i = len(lines["vertices"])
+        # add the ends of line as vertices
+        lines["vertices"].append(v1 * self._world_scale)
+        lines["vertices"].append(v2 * self._world_scale)
+        # add an edge
+        lines["edges"].append((i, i + 1))
+        params = _get_params(self.interface, overrides)
+        # add resolved params to be added as attributes
+        lines["color"].append(params.mesh_color)
+        lines["thickness"].append(params.mesh_thickness)
+        self._add_material_to_geometry(lines, params.mesh_material)
+
+    def _add_material_to_geometry(self, mesh_type, mesh_material):
+        geometry = self.geometry
+        if mesh_material:
+            if isinstance(mesh_material, str):
+                material = mesh_material
+            else:
+                material = mesh_material.name
+            if material in geometry["materials"]:
+                material_index = geometry["materials"][material]
+            else:
+                material_index = len(geometry["materials"])
+                geometry["materials"][material] = material_index
+            mesh_type["material_index"].append(material_index)
+        else:
+            mesh_type["material_index"].append(0)
+
+    def _add_arrow_end_to_geometry(
+        self,
+        v1: Vector,
+        v2: Vector,
+        arrow_plane_pt: Vector,
+        overrides: dict = None,
+    ):
+        if self.geometry is None:
+            return
+        # get arrow end points in 3d
+        va, vb = self._get_arrow_end_points_3d(
+            v1, v2, arrow_plane_pt, overrides=overrides
+        )
+        # add arrow lines to geometry
+        self._add_line_to_geometry(v1, va, overrides=overrides)
+        self._add_line_to_geometry(v1, vb, overrides=overrides)
+
     def _draw_arrow_line(
         self,
         v1: Vector,
         v2: Vector,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
+        arrow_plane_pt: Vector = None,
         is3d: bool = False,
         overrides: dict = None,
     ) -> None:
@@ -603,26 +1185,90 @@ class BaseAnnotation(metaclass=ABCMeta):
             v2_2d = self._get_2d_point(v2)
             if v1_2d is None or v2_2d is None:
                 return
+            if arrow_plane_pt is None:
+                arrow_plane_pt = self._get_a_normal_plane_point(v2 - v1)
         # actual line
         self._draw_line_2d(v1_2d, v2_2d, overrides=overrides)
+        # draw arrows
         if v1_arrow:
-            # v1 arrow lines
-            va, vb = self._get_arrow_end_points(v1_2d, v2_2d, overrides=overrides)
-            self._draw_line_2d(v1_2d, va, overrides=overrides)
-            self._draw_line_2d(v1_2d, vb, overrides=overrides)
+            self._draw_arrow(v1, v2, v1_2d, v2_2d, arrow_plane_pt, is3d, overrides)
         if v2_arrow:
-            # v2 arrow lines
-            va, vb = self._get_arrow_end_points(v2_2d, v1_2d, overrides=overrides)
-            self._draw_line_2d(v2_2d, va, overrides=overrides)
-            self._draw_line_2d(v2_2d, vb, overrides=overrides)
+            self._draw_arrow(v2, v1, v2_2d, v1_2d, arrow_plane_pt, is3d, overrides)
 
-    def _get_arrow_end_points(
+    def _draw_arrow(
+        self,
+        v1: Vector,
+        v2: Vector,
+        v1_2d: Vector,
+        v2_2d: Vector,
+        arrow_plane_pt: Vector = None,
+        is3d: bool = False,
+        overrides: dict = None,
+    ) -> None:
+        params = _get_params(self.interface, overrides)
+        draw_3d_arrow_overlay = False
+        if params.line_mode == "mesh_and_overlay":
+            draw_3d_arrow_overlay = True
+        # 3d or 2d arrow ends based on mode
+        if is3d and draw_3d_arrow_overlay:
+            va, vb = self._get_arrow_end_points_3d(
+                v1, v2, arrow_plane_pt, overrides=overrides
+            )
+            # get the 2d points of the arrow ends for overlay
+            va = self._get_2d_point(va)
+            vb = self._get_2d_point(vb)
+            if va is None or vb is None:
+                return
+        else:
+            va, vb = self._get_arrow_end_points_2d(v1_2d, v2_2d, overrides=overrides)
+        # draw the arrow ends
+        self._draw_line_2d(v1_2d, va, overrides=overrides)
+        self._draw_line_2d(v1_2d, vb, overrides=overrides)
+
+    def _get_arrow_end_points_3d(
+        self,
+        v1: Vector,
+        v2: Vector,
+        arrow_plane_pt: Vector = None,
+        overrides: dict = None,
+    ) -> tuple:
+        """Internal: Get arrow end point positions 3D"""
+        if arrow_plane_pt is None:
+            arrow_plane_pt = self._get_a_normal_plane_point(v2 - v1)
+        # position vectors in arrow plane
+        pv1 = v1 - arrow_plane_pt
+        pv2 = v2 - arrow_plane_pt
+        # calculate rotation axis
+        ra = pv1.cross(pv2)
+        ra.normalize()
+        # use Rodrigues' Rotation Formula
+        # https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+        v = v2 - v1
+        # +45 degrees direction vector
+        dva = (
+            v * cos(self._rad45)
+            + (ra.cross(v) * sin(self._rad45))
+            + (ra * ra.dot(v) * (1 - cos(self._rad45)))
+        )
+        dva.normalize()
+        # -45 degrees direction vector
+        dvb = (
+            v * cos(-1 * self._rad45)
+            + (ra.cross(v) * sin(-1 * self._rad45))
+            + (ra * ra.dot(v) * (1 - cos(-1 * self._rad45)))
+        )
+        dvb.normalize()
+        params = _get_params(self.interface, overrides)
+        d = self.distance(v1, v2) * params.line_arrow_size
+        return (v1 + (dva * d), v1 + (dvb * d))
+
+    def _get_arrow_end_points_2d(
         self, v1: Vector, v2: Vector, overrides: dict = None
     ) -> tuple:
-        """Internal: Get arrow end point positions"""
+        """Internal: Get arrow end point positions 2D"""
         params = _get_params(self.interface, overrides)
-        arrow_size = params.arrow_size * self._scale
-        v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), arrow_size)
+        d = self.distance(v1, v2) * params.line_arrow_size
+        v = self._interpolate_3d((v1[0], v1[1], 0.0), (v2[0], v2[1], 0.0), d)
         vi = (v[0] - v1[0], v[1] - v1[1])
         va = (
             int(vi[0] * cos(self._rad45) - vi[1] * sin(self._rad45) + v1[0]),
@@ -636,9 +1282,13 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     def _draw_line_2d(self, v1: Vector, v2: Vector, overrides: dict = None) -> None:
         """Internal: Draw a line between two 2D points"""
+        if self.geometry:
+            return
         if v1 is None or v2 is None:
             return
         params = _get_params(self.interface, overrides)
+        if params.line_mode == "mesh":
+            return
         rgba = params.line_color
         line_width = params.line_width * self._scale
         if self._render_mode:

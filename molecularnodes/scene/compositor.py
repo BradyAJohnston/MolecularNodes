@@ -13,6 +13,8 @@ def setup_compositor(scene: bpy.types.Scene):
     else:
         node_tree = scene.node_tree
         use_nodes = scene.use_nodes
+    # lock interface when rendering
+    scene.render.use_lock_interface = True
     # add a quick check to see if everything is setup correctly
     if node_tree:
         if (
