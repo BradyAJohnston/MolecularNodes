@@ -27,36 +27,21 @@ from ...utils import (
     temp_override_property,
 )
 from ..base import EntityType, MolecularEntity
-from .annotations import TrajectoryAnnotationManager
-from .helpers import (
-    BoolProperty,
-    FrameManager,
-    IntProperty,
-    StringProperty,
+from ..utilities import (
+    BoolObjectMNProperty,
+    IntObjectMNProperty,
+    StringObjectMNProperty,
+    _unique_aname,
     _validate_non_negative,
 )
+from .annotations import TrajectoryAnnotationManager
+from .helpers import FrameManager, _ag_to_bool
 from .selections import SelectionManager
 
 logger = logging.getLogger(__name__)
 # ============================================================================
 # Utility Functions
 # ============================================================================
-
-
-def _unique_aname(obj: bpy.types.Object, prefix: str = "sel") -> str:
-    attributes = db.list_attributes(obj)
-    counter = 0
-    aname = "{}_{}".format(prefix, counter)
-    while aname in attributes:
-        counter += 1
-        aname = "{}_{}".format(prefix, counter)
-
-    return aname
-
-
-def _ag_to_bool(ag: mda.AtomGroup) -> np.ndarray:
-    """Convert AtomGroup to boolean mask for the entire universe."""
-    return np.isin(ag.universe.atoms.ix, ag.ix).astype(bool)
 
 
 class Trajectory(MolecularEntity):
@@ -107,19 +92,21 @@ class Trajectory(MolecularEntity):
     """
 
     # Blender property descriptors with validation
-    frame = IntProperty("frame")
-    subframes = IntProperty("subframes", validate_fn=_validate_non_negative)
-    offset = IntProperty("offset")
-    average = IntProperty("average", validate_fn=_validate_non_negative)
-    correct_periodic = BoolProperty("correct_periodic")
-    interpolate = BoolProperty("interpolate")
+    frame = IntObjectMNProperty("frame")
+    subframes = IntObjectMNProperty("subframes", validate_fn=_validate_non_negative)
+    offset = IntObjectMNProperty("offset")
+    average = IntObjectMNProperty("average", validate_fn=_validate_non_negative)
+    correct_periodic = BoolObjectMNProperty("correct_periodic")
+    interpolate = BoolObjectMNProperty("interpolate")
 
-    _mn_frame = BoolProperty("frame_hidden")
-    _mn_styles_active_index = IntProperty("styles_active_index", _validate_non_negative)
-    _mn_entity_type = StringProperty("entity_type")
-    _mn_filepath_topology = StringProperty("filepath_topology")
-    _mn_filepath_trajectory = StringProperty("filepath_trajectory")
-    _mn_n_frames = IntProperty("n_frames", _validate_non_negative)
+    _mn_frame = BoolObjectMNProperty("frame_hidden")
+    _mn_styles_active_index = IntObjectMNProperty(
+        "styles_active_index", _validate_non_negative
+    )
+    _mn_entity_type = StringObjectMNProperty("entity_type")
+    _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
+    _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
+    _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
 
     def __init__(
         self,
@@ -175,6 +162,8 @@ class Trajectory(MolecularEntity):
     @property
     def atoms(self) -> mda.AtomGroup:
         """All atoms as MDAnalysis AtomGroup."""
+        if self.universe.atoms is None:
+            raise ValueError(f"Universe {self.universe} has no atoms")
         return self.universe.atoms
 
     @property

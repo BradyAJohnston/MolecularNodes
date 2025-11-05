@@ -6,11 +6,11 @@ synchronization, and attribute metadata collection.
 
 import logging
 from collections import OrderedDict
-from typing import Any, Callable, Dict
-import bpy
+from typing import Callable
 import databpy as db
 import numpy as np
 import numpy.typing as npt
+from MDAnalysis import AtomGroup
 from ...utils import (
     correct_periodic_positions,
     fraction,
@@ -20,123 +20,10 @@ from ...utils import (
 
 logger = logging.getLogger(__name__)
 
-# ============================================================================
-# Blender Property Management
-# ============================================================================
 
-
-class ObjectMNProperty:
-    """Descriptor for Blender object properties with optional validation.
-
-    Provides clean interface for Blender custom properties with validation support.
-
-    Examples
-    --------
-    >>> class MyClass:
-    ...     frame = ObjectMNProperty("frame", validate_fn=lambda x: x >= 0)
-    """
-
-    def __init__(
-        self,
-        attr_name: str,
-        validate_fn: Callable[[Any], None] | None = None,
-    ):
-        """Initialize the descriptor.
-
-        Parameters
-        ----------
-        attr_name : str
-            Name of the property on the Blender object
-        validate_fn : callable, optional
-            Validation function that raises on invalid values
-        """
-        self.attr_name = attr_name
-        self.validate_fn = validate_fn
-
-    def __set_name__(self, owner, name):
-        """Store the Python attribute name."""
-        self.name = name
-
-    def __get__(self, obj, objtype=None):
-        """Get property value from Blender object."""
-        return getattr(obj.object.mn, self.attr_name)
-
-    def __set__(self, obj, value):
-        """Set property value on Blender object with validation."""
-        if self.validate_fn is not None:
-            self.validate_fn(value)
-        setattr(obj.object.mn, self.attr_name, value)
-
-
-class IntProperty(ObjectMNProperty):
-    def __get__(self, obj, objtype=None) -> int:
-        return super().__get__(obj, objtype)
-
-    def __set__(self, obj, value: int):
-        return super().__set__(obj, value)
-
-
-class BoolProperty(ObjectMNProperty):
-    def __get__(self, obj, objtype=None) -> bool:
-        return super().__get__(obj, objtype)
-
-    def __set__(self, obj, value: bool):
-        return super().__set__(obj, value)
-
-
-class StringProperty(ObjectMNProperty):
-    def __get__(self, obj, objtype=None) -> str:
-        return super().__get__(obj, objtype)
-
-    def __set__(self, obj, value: str):
-        return super().__set__(obj, value)
-
-
-class BlenderPropertyBridge:
-    """Bidirectional data exchange between trajectory state and Blender properties."""
-
-    @staticmethod
-    def sync_to_blender(obj: bpy.types.Object, properties: Dict[str, Any]) -> None:
-        """Write trajectory properties to a Blender object.
-
-        Parameters
-        ----------
-        obj : bpy.types.Object
-            Target Blender object
-        properties : dict
-            Property names and values to write
-        """
-        for key, value in properties.items():
-            try:
-                setattr(obj.mn, key, value)
-            except AttributeError as e:
-                logger.warning(f"Failed to set property '{key}' on Blender object: {e}")
-
-    @staticmethod
-    def sync_from_blender(
-        obj: bpy.types.Object, property_names: list[str]
-    ) -> Dict[str, Any]:
-        """Read trajectory properties from a Blender object.
-
-        Parameters
-        ----------
-        obj : bpy.types.Object
-            Source Blender object
-        property_names : list of str
-            Property names to read
-
-        Returns
-        -------
-        dict
-            Property names and their values
-        """
-        properties = {}
-        for name in property_names:
-            try:
-                properties[name] = getattr(obj.mn, name)
-            except AttributeError:
-                logger.warning(f"Property '{name}' not found on Blender object")
-        return properties
+def _ag_to_bool(ag: AtomGroup) -> np.ndarray:
+    """Convert AtomGroup to boolean mask for the entire universe."""
+    return np.isin(ag.universe.atoms.ix, ag.ix).astype(bool)
 
 
 # ============================================================================
@@ -473,25 +360,3 @@ class FrameManager:
         else:
             # Just return current positions
             return self._position_at_frame(uframe_current)
-
-
-# ============================================================================
-# Validation Functions
-# ============================================================================
-
-
-def _validate_non_negative(value: int) -> None:
-    """Validate non-negative integers.
-
-    Parameters
-    ----------
-    value : int
-        Value to validate
-
-    Raises
-    ------
-    ValueError
-        If value is negative
-    """
-    if value < 0:
-        raise ValueError(f"Value must be non-negative, got {value}")

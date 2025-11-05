@@ -9,7 +9,7 @@ from bpy.types import Context  # type: ignore
 from databpy.object import LinkedObjectError, get_from_uuid
 from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
-from .entities.base import EntityType
+from .entities.base import EntityType, MolecularEntity
 from .entities.ensemble.base import Ensemble
 from .entities.trajectory.base import Trajectory
 from .nodes.nodes import styles_mapping
@@ -77,7 +77,7 @@ class MNSession:
         # return a filtered dictionary of only the ensembles using isinstance(item, Ensemble)
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
-    def register_entity(self, item: Union[Molecule, Trajectory, Ensemble]) -> None:
+    def register_entity(self, item: MolecularEntity) -> None:
         """Add entity to the dictionary"""
         self.entities[item.uuid] = item
         # add entity to blender properties if it doesn't exist
