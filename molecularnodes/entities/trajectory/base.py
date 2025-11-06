@@ -536,7 +536,7 @@ class Trajectory(MolecularEntity):
             self._update_positions(frame)
             self._update_selections()
             self._update_calculations()
-                # update annotation object
+            # update annotation object
             self.annotations._update_annotation_object()
         finally:
             self._updating_in_progress = False
