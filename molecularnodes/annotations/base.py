@@ -63,7 +63,6 @@ class BaseAnnotation(metaclass=ABCMeta):
     interface: AnnotationInterface
 
     def __init__(self):
-        self._world_scale = 0.01
         self._rad45 = radians(45)
         self._rad315 = radians(315)
         self._shader_line = (
@@ -86,6 +85,12 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._render_scale = 1.0
         self._image = None
         self._image_scale = 1
+
+    @property
+    def _world_scale(self) -> float:
+        """Get the global world scale from scene properties."""
+        from ..blender import utils as blender_utils
+        return blender_utils.get_world_scale()
 
     def validate(self) -> bool:
         """

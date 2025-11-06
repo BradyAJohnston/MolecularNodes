@@ -63,8 +63,6 @@ class Trajectory(MolecularEntity):
         Custom per-frame calculations
     annotations : TrajectoryAnnotationManager
         Trajectory annotations
-    world_scale : float
-        Scale factor from Angstroms to Blender units
     frame : int
         Current animation frame (synced with Blender)
     subframes : int
@@ -77,6 +75,11 @@ class Trajectory(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
+
+    Properties
+    ----------
+    world_scale : float
+        Scale factor from Angstroms to Blender units (read from global scene property)
 
     Examples
     --------
@@ -115,7 +118,6 @@ class Trajectory(MolecularEntity):
         self,
         universe: mda.Universe,
         name: str = "NewUniverseObject",
-        world_scale: float = 0.01,
         create_object: bool = True,
     ):
         """Initialize Trajectory from MDAnalysis Universe.
@@ -126,20 +128,18 @@ class Trajectory(MolecularEntity):
             MDAnalysis Universe with topology and trajectory
         name : str, default="NewUniverseObject"
             Name for the Blender object
-        world_scale : float, default=0.01
-            Scale factor from Angstroms to Blender units
         create_object : bool, default=True
             Whether to immediately create the Blender object
 
         Notes
         -----
-        Default world_scale of 0.01 converts Angstroms to Blender units.
+        World scale is now read from the global scene property bpy.context.scene.mn.world_scale.
+        Default of 0.01 converts Angstroms to Blender units.
         """
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: SelectionManager = SelectionManager(self)
         self.calculations: Dict[str, Callable] = {}
-        self.world_scale = world_scale
         self._updating_in_progress = False
         self.annotations = TrajectoryAnnotationManager(self)
         self.frame_manager = FrameManager(self)
@@ -168,6 +168,17 @@ class Trajectory(MolecularEntity):
         if self.universe.atoms is None:
             raise ValueError(f"Universe {self.universe} has no atoms")
         return self.universe.atoms
+
+    @property
+    def world_scale(self) -> float:
+        """Get the global world scale from scene properties.
+
+        Returns
+        -------
+        float
+            Scale factor from Angstroms to Blender units
+        """
+        return blender_utils.get_world_scale()
 
     @property
     def _scaled_position(self) -> np.ndarray:

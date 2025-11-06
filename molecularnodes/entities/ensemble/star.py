@@ -271,12 +271,14 @@ class StarFile(Ensemble):
         self,
         name: str = "StarFileObject",
         node_setup: bool = True,
-        world_scale: float = 0.01,
         fraction: float = 1.0,
         simplify: bool = True,
     ) -> bpy.types.Object:
         if self.data_frame is None:
             raise ValueError("DataFrame not assigned. Call from_starfile() first.")
+
+        from ...blender import utils as blender_utils
+        world_scale = blender_utils.get_world_scale()
 
         self.object = databpy.create_object(
             self.data_frame.coordinates_scaled * world_scale,

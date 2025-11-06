@@ -56,7 +56,6 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         self,
         name: str = "NewEnsemble",
         node_setup: bool = True,
-        world_scale: float = 0.01,
         fraction: float = 1.0,
         simplify=False,
     ) -> bpy.types.Object:
@@ -69,8 +68,6 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
             The name of the model, by default "NewEnsemble"
         node_setup : bool, optional
             Whether to setup nodes for the data and instancing objects, by default True
-        world_scale : float, optional
-            Scaling transform for the coordinates before loading in to Blender, by default 0.01
         fraction : float, optional
             The fraction of the instances to display on loading. Reducing can help with performance, by default 1.0
         simplify : bool, optional
@@ -80,5 +77,6 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         -----
         Creates a data object which stores all of the required instancing information. If
         there are molecules to be instanced, they are also created in their own data collection.
+        World scale is now read from the global scene property bpy.context.scene.mn.world_scale.
         """
         pass

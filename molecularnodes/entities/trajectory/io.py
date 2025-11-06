@@ -26,7 +26,7 @@ def load(
     return trajectory
 
 
-def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
+def load_oxdna(top, traj, name="oxDNA", style="oxdna"):
     """
     Load an oxDNA trajectory.
 
@@ -40,16 +40,18 @@ def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
         Name for the created object, by default "oxDNA"
     style : str, optional
         Style of representation, by default "oxdna"
-    world_scale : float, optional
-        Scaling factor for world coordinates, by default 0.01
 
     Returns
     -------
     OXDNA
         The created trajectory object
+
+    Notes
+    -----
+    World scale is now read from the global scene property bpy.context.scene.mn.world_scale.
     """
     univ = mda.Universe(
         top, traj, topology_format=oxdna.OXDNAParser, format=oxdna.OXDNAReader
     )
-    traj = oxdna.OXDNA(univ, name=name, world_scale=world_scale).add_style(style=style)
+    traj = oxdna.OXDNA(univ, name=name).add_style(style=style)
     return traj

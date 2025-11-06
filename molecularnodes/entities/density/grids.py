@@ -178,7 +178,6 @@ class Grids(Density):
         self,
         file: str,
         invert: bool = False,
-        world_scale=0.01,
         center: bool = False,
         overwrite=False,
     ) -> str:
@@ -192,8 +191,6 @@ class Grids(Density):
         invert : bool, optional
             Whether to invert the data from the grid, defaulting to False. Some file types
             such as EM tomograms have inverted values, where a high value == low density.
-        world_scale : float, optional
-            The scaling factor to apply to the voxel size of the input file. Defaults to 0.01.
         center : bool, optional
             Whether to center the volume on the origin. Defaults to False.
         overwrite : bool, optional
@@ -202,8 +199,14 @@ class Grids(Density):
         Returns
         -------
         str
+
+        Notes
+        -----
+        World scale is now read from the global scene property bpy.context.scene.mn.world_scale.
             The path to the converted .vdb file.
         """
+
+        from ...blender import utils as blender_utils
 
         bpy.utils.expose_bundled_modules()
 
@@ -215,6 +218,7 @@ class Grids(Density):
 
             is_pyopenvdb = True
 
+        world_scale = blender_utils.get_world_scale()
         file_path = self.path_to_vdb(file, center=center, invert=invert)
 
         file_format = None

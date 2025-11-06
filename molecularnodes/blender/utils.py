@@ -13,6 +13,24 @@ def path_resolve(path: str | Path) -> Path:
         raise ValueError(f"Unable to resolve path: {path}")
 
 
+def get_world_scale() -> float:
+    """Get the global world scale value from scene properties.
+
+    Returns the world scale factor used to convert Angstroms to Blender units.
+    Default is 0.01 which converts Angstroms to Blender meters.
+
+    Returns
+    -------
+    float
+        The world scale factor, defaults to 0.01 if not set
+    """
+    try:
+        return bpy.context.scene.mn.world_scale
+    except (AttributeError, KeyError):
+        # Fallback for cases where scene properties aren't initialized yet
+        return 0.01
+
+
 def set_obj_active(
     obj: bpy.types.Object, context: bpy.types.Context | None = None
 ) -> None:

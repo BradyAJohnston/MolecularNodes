@@ -3,6 +3,7 @@ from bpy.props import (  # type: ignore
     BoolProperty,
     CollectionProperty,
     EnumProperty,
+    FloatProperty,
     IntProperty,
     StringProperty,
 )
@@ -84,6 +85,16 @@ class MolecularNodesSceneProperties(PropertyGroup):
         default=-1,
         update=_entities_active_index_callback,
     )  # type: ignore
+
+    world_scale: FloatProperty(  # type: ignore
+        name="World Scale",
+        description="Global scale factor for converting Angstroms to Blender units. Default of 0.01 converts Angstroms to Blender meters",
+        default=0.01,
+        min=0.0001,
+        max=1.0,
+        soft_min=0.001,
+        soft_max=0.1,
+    )
 
     import_del_hydrogen: BoolProperty(  # type: ignore
         name="Remove Hydrogens",

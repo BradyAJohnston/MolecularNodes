@@ -362,8 +362,6 @@ class OXDNA(Trajectory):
     ----------
     universe : MDAnalysis.Universe
         The MDAnalysis Universe object containing the trajectory data
-    world_scale : float, optional
-        Scaling factor for the world coordinates, by default 0.01
 
     Attributes
     ----------
@@ -371,13 +369,16 @@ class OXDNA(Trajectory):
         Type of the molecular entity
     _att_names : tuple
         Names of the attributes to track
+
+    Notes
+    -----
+    OXDNA applies an additional DNA_SCALE factor (10x) on top of the global world_scale.
     """
 
     def __init__(
         self,
         universe: Universe,
         name: str = "NewOXDNAObject",
-        world_scale: float = 0.01,
         create_object: bool = True,
     ):
         self._att_names = (
@@ -389,9 +390,20 @@ class OXDNA(Trajectory):
         super().__init__(
             universe=universe,
             name=name,
-            world_scale=world_scale * DNA_SCALE,
             create_object=create_object,
         )
+
+    @property
+    def world_scale(self) -> float:
+        """Get the global world scale with DNA_SCALE applied.
+
+        Returns
+        -------
+        float
+            Scale factor from OXDNA units to Blender units (global world_scale * DNA_SCALE)
+        """
+        from ...blender import utils as blender_utils
+        return blender_utils.get_world_scale() * DNA_SCALE
 
     def _compute_color(self) -> np.ndarray:
         """Compute equidistant chain coloring for OXDNA"""

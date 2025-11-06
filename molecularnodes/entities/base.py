@@ -38,7 +38,11 @@ class MolecularEntity(
     def __init__(self) -> None:
         super().__init__(obj=None)
         self._register_with_session()
-        self._world_scale = 0.01
+
+    @property
+    def _world_scale(self) -> float:
+        """Get the global world scale from scene properties."""
+        return blender_utils.get_world_scale()
 
     @property
     def node_group(self) -> bpy.types.NodeTree | None:

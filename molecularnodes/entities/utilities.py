@@ -128,7 +128,6 @@ def create_object(
     array: AtomArray | AtomArrayStack,
     name="NewObject",
     centre: str | None = None,
-    world_scale: float = 0.01,
     collection: bpy.types.Collection | None = None,
 ) -> bpy.types.Object:
     """
@@ -148,9 +147,6 @@ def create_object(
     centre : str or None, optional
         If provided, centers the object according to the specified criteria.
         Default is None (no centering).
-    world_scale : float, optional
-        Scale factor to apply to atomic coordinates when creating the model.
-        Default is 0.01, which converts Ångströms to a reasonable size in Blender.
     collection : bpy.types.Collection or None, optional
         The Blender collection to add the new object to. If None, the object
         is added to the active collection. Default is None.
@@ -161,11 +157,17 @@ def create_object(
         The created 3D model, as an object in the 3D scene.
         The object contains vertices for atoms and edges for bonds,
         with all molecular properties stored as named attributes.
+
+    Notes
+    -----
+    World scale is now read from the global scene property bpy.context.scene.mn.world_scale.
     """
+    from ..blender import utils as blender_utils
 
     if isinstance(array, AtomArrayStack):
         array = array[0]
 
+    world_scale = blender_utils.get_world_scale()
     bob = db.create_bob(
         vertices=array.coord * world_scale,
         edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
@@ -184,7 +186,7 @@ def create_object(
             atype=db.AttributeTypes.INT,
         )
 
-    atom_array_to_named_attributes(array, bob.object, world_scale=world_scale)
+    atom_array_to_named_attributes(array, bob.object)
 
     if centre is not None:
         bob.position -= bob.centroid(centre)
@@ -193,7 +195,7 @@ def create_object(
 
 
 def atom_array_to_named_attributes(
-    array: AtomArray, obj: bpy.types.Object, world_scale: float = 0.01
+    array: AtomArray, obj: bpy.types.Object
 ) -> None:
     """
     Store all annotations from an AtomArray as named attributes on Blender vertex data.
@@ -212,9 +214,6 @@ def atom_array_to_named_attributes(
         The biotite AtomArray containing molecular data and annotations to be stored.
     obj : bpy.types.Object
         The Blender object (typically a mesh) on which to store the attributes.
-    world_scale : float, optional
-        Scale factor to apply to size-related values like van der Waals radii.
-        Default is 0.01 to convert from Ångströms to Blender units.
 
     Notes
     -----
@@ -222,10 +221,14 @@ def atom_array_to_named_attributes(
     - 'hetero' flag is also skipped from the annotations.
     - Any string attributes that were converted to integer codes will have the '_int'
       suffix removed when stored on the mesh.
+    - World scale is read from the global scene property bpy.context.scene.mn.world_scale.
     """
+    from ..blender import utils as blender_utils
 
     # don't need to add coordinates as those have been stored as `position` on the mesh
     annotations_to_skip = ["coord", "hetero"]
+
+    world_scale = blender_utils.get_world_scale()
 
     for attr in array.get_annotation_categories():
         if attr in annotations_to_skip:
