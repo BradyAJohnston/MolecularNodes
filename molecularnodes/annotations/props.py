@@ -123,8 +123,18 @@ def create_property_interface(
             # set a non blender property and validate
             setattr(instance, nbattr, value)
             instance.validate()
+            if instance._ready:
+                # update annotation object
+                entity.annotations._update_annotation_object()
         else:
             # blender property
+            if attr == "mesh_material":
+                # special handling for material property to support strings
+                # along with material objects
+                if isinstance(value, str):
+                    if value not in bpy.data.materials:
+                        raise ValueError(f"No material with name '{value}'")
+                    value = bpy.data.materials[value]
             setattr(_prop(), attr, value)
             # clear any corresponding non blender property
             if hasattr(instance, nbattr):
@@ -132,6 +142,12 @@ def create_property_interface(
         viewport_tag_redraw()
 
     return property(getter, setter, doc=getattr(_prop(), "description", None))
+
+
+def _update_annotation_object(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    if entity is not None:
+        entity.annotations._update_annotation_object()
 
 
 class BaseAnnotationProperties(bpy.types.PropertyGroup):
@@ -148,6 +164,7 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         name="Visible",
         description="Visibility of the annotation",
         default=True,
+        update=_update_annotation_object,
     )  # type: ignore
 
     text_font: StringProperty(  # type: ignore
@@ -215,16 +232,31 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         max=1.0,
     )  # type: ignore
 
-    offset_x: IntProperty(
-        name="Offset X",
-        description="Offset in X direction",
+    text_offset_x: IntProperty(
+        name="Text Offset X",
+        description="Text offset in X direction",
         default=0,
     )  # type: ignore
 
-    offset_y: IntProperty(
-        name="offset Y",
-        description="Offset in Y direction",
+    text_offset_y: IntProperty(
+        name="Text Offset Y",
+        description="Text offset in Y direction",
         default=0,
+    )  # type: ignore
+
+    line_mode: EnumProperty(
+        name="Line Mode",
+        description="Line display mode",
+        items=(
+            ("overlay", "Overlay", "Display line as overlay"),
+            ("mesh", "Mesh", "Display line as a 3D mesh"),
+            (
+                "mesh_and_overlay",
+                "Mesh and Overlay",
+                "Display line as a 3D mesh with an overlay",
+            ),
+        ),
+        update=_update_annotation_object,
     )  # type: ignore
 
     line_color: FloatVectorProperty(
@@ -244,16 +276,58 @@ class BaseAnnotationProperties(bpy.types.PropertyGroup):
         min=0.0,
     )  # type: ignore
 
-    arrow_size: IntProperty(
-        name="Arrow Size",
-        description="Arrow size",
-        default=16,
+    line_arrow_size: FloatProperty(
+        name="Line Arrow Size",
+        description="Line arrow size",
+        default=0.25,
         min=0,
+        update=_update_annotation_object,
     )  # type: ignore
 
-    pointer_length: IntProperty(
-        name="Pointer Length",
-        description="Pointer length",
+    line_pointer_length: FloatProperty(
+        name="Line Pointer Length",
+        description="Line pointer length",
         default=0,
         min=0,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_wireframe: BoolProperty(
+        name="Mesh Wireframe",
+        description="Draw 3D meshes as wireframes",
+        default=False,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_thickness: FloatProperty(
+        name="Mesh Thickness",
+        description="Thickness of the 3D mesh edges",
+        default=1.0,
+        min=0.0,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_color: FloatVectorProperty(
+        name="Mesh Color",
+        description="Mesh color",
+        subtype="COLOR",
+        size=4,
+        default=(1, 1, 1, 1),
+        min=0.0,
+        max=1.0,
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_material: bpy.props.PointerProperty(
+        type=bpy.types.Material,
+        name="Mesh Material",
+        description="Material for 3D line meshes",
+        update=_update_annotation_object,
+    )  # type: ignore
+
+    mesh_shade_smooth: BoolProperty(
+        name="Mesh Shade Smooth",
+        description="Set Shade Smooth for 3d meshes",
+        default=True,
+        update=_update_annotation_object,
     )  # type: ignore

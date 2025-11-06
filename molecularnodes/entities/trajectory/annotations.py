@@ -143,8 +143,7 @@ class COM(TrajectoryAnnotation):
     def defaults(self) -> None:
         params = self.interface
         # show a default pointer
-        params.pointer_length = 2
-        params.arrow_size = 10
+        params.line_pointer_length = 2
 
     def validate(self) -> bool:
         params = self.interface
@@ -196,7 +195,7 @@ class COMDistance(TrajectoryAnnotation):
 
     def defaults(self) -> None:
         params = self.interface
-        params.arrow_size = 10
+        params.line_arrow_size = 0.1
 
     def validate(self) -> bool:
         params = self.interface
@@ -265,7 +264,8 @@ class CanonicalDihedrals(TrajectoryAnnotation):
 
     def defaults(self) -> None:
         params = self.interface
-        params.arrow_size = 8
+        params.line_arrow_size = 10.0
+        params.mesh_thickness = 0.1
 
     def validate(self) -> bool:
         params = self.interface
@@ -397,6 +397,70 @@ class UniverseInfo(TrajectoryAnnotation):
             text = text + "|" + params.custom_text
         # Draw text at normalized coordinates wrt viewport / render
         self.draw_text_2d_norm(params.location, text)
+
+
+class SimulationBox(TrajectoryAnnotation):
+    """
+    Simulation Box of Trajectory (if present)
+
+    Attributes
+    ----------
+    center_to_origin: bool
+        Whether to move the center of the box to Origin (0, 0, 0)
+
+    compact: bool
+        Whether to create a compact Wigner-Seitz cell
+        Note that the trajectory needs to have been wrapped with the
+        compact option to see it within the box
+
+    show_lattice: bool
+        Whether to show a 3x3x3 lattice of the box
+
+    """
+
+    annotation_type = "simulation_box"
+
+    center_to_origin: bool = False
+    compact: bool = False
+    show_lattice: bool = False
+
+    def defaults(self) -> None:
+        params = self.interface
+        params.mesh_wireframe = True
+        params.mesh_thickness = 5.0
+        params.mesh_shade_smooth = False
+
+    def draw(self) -> None:
+        params = self.interface
+        u = self.trajectory.universe
+        ts = u.trajectory.ts
+        # not all universes have dimensions set
+        if ts.dimensions is not None:
+            # draw box
+            if params.compact:
+                # Compact Wigner-Seitz cell
+                self.draw_wigner_seitz_cell(
+                    ts.triclinic_dimensions,
+                    params.center_to_origin,
+                    params.show_lattice,
+                )
+            else:
+                # Regular Triclinic cell
+                a, b, c, alpha, beta, gamma = ts.dimensions
+                origin = Vector((0, 0, 0))
+                # move box center to origin if set
+                if params.center_to_origin:
+                    origin = Vector(-sum(ts.triclinic_dimensions) / 2)
+                self.draw_triclinic_cell(
+                    a,
+                    b,
+                    c,
+                    alpha,
+                    beta,
+                    gamma,
+                    origin=origin,
+                    show_lattice=params.show_lattice,
+                )
 
 
 class Label2D(TrajectoryAnnotation, Label2D):

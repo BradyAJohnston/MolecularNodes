@@ -61,6 +61,10 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     Any changes needed before the rendering of a frame need to go in here
 
     """
+    # frame_change_pre is supposed to be called before render_pre
+    # however, that doesn't seem to be the case
+    # update entities here to ensure annotations match entity frame
+    update_entities(scene)
     # Render annotations to an image
     bpy.context.view_layer.update()
     render_scale = scene.render.resolution_percentage / 100

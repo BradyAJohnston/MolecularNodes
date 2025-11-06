@@ -1020,17 +1020,34 @@ class MN_PT_Annotations(bpy.types.Panel):
         header.label(text="Options")
 
         if panel:
+            text_header, text_panel = panel.panel("text_options", default_closed=True)
+            text_header.label(text="Text")
+            line_header, line_panel = panel.panel("line_options", default_closed=True)
+            line_header.label(text="Lines")
+            mesh_header, mesh_panel = panel.panel("mesh_options", default_closed=True)
+            mesh_header.label(text="Meshes")
+
             for prop in item.bl_rna.properties:
                 if not prop.is_runtime:
                     continue
                 if prop.identifier in ("label", "type", "visible"):
                     continue
-                if prop.type == "POINTER":
+                if prop.type == "POINTER" and prop.identifier != "mesh_material":
                     continue
-                row = panel.row()
-                row.prop(item, prop.identifier)
-                if prop.identifier == "text_falloff":
-                    row.enabled = item.text_depth
+                if text_panel and prop.identifier.startswith("text_"):
+                    row = text_panel.row()
+                    row.prop(item, prop.identifier)
+                    if prop.identifier == "text_falloff":
+                        row.enabled = item.text_depth
+                elif line_panel and prop.identifier.startswith("line_"):
+                    row = line_panel.row()
+                    row.prop(item, prop.identifier)
+                    if prop.identifier == "line_mode":
+                        continue
+                    row.enabled = item.line_mode != "mesh"
+                elif mesh_panel and prop.identifier.startswith("mesh_"):
+                    row = mesh_panel.row()
+                    row.prop(item, prop.identifier)
 
         row = box.row()
 
