@@ -89,8 +89,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     traj_op = bpy.context.scene.MNSession.match(obj_1)
     assert traj_op.name == name
-    assert traj_op._entity_type == mn.entities.base.EntityType.MD
-    assert traj_op.object.mn.entity_type == traj_op._entity_type.value
+    assert traj_op._mn_entity_type == mn.entities.base.EntityType.MD.value
 
     traj_func = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
 

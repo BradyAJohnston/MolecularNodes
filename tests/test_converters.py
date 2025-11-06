@@ -32,7 +32,7 @@ def test_biotite_converter(code, format):
     for attr in attrs:
         assert np.allclose(mol.named_attribute(attr), traj.named_attribute(attr))
     # check string attributes
-    assert np.array_equal(mol.array.element, traj.elements)
+    assert np.array_equal(mol.array.element, traj.atoms.elements)
     assert np.array_equal(mol.array.ins_code, traj.atoms.icodes)
     # check computed attributes
     # the ones that currently differ are commented out with reasons

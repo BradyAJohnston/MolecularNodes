@@ -11,13 +11,117 @@ other molecular attributes are preserved as named attributes that can be used wi
 Geometry Nodes and other Blender features.
 """
 
+from typing import Any, Callable
 import bpy
-import databpy
+import databpy as db
 import numpy as np
 from biotite.structure import AtomArray, AtomArrayStack
-from databpy import AttributeDomains, AttributeTypes
 
 __all__ = ["create_object", "atom_array_to_named_attributes"]
+
+
+def _get_gn_modifier(obj: bpy.types.Object, name: str) -> bpy.types.NodesModifier:
+    mod = obj.modifiers[name]
+    if not isinstance(mod, bpy.types.NodesModifier):
+        raise TypeError(
+            f"Modifier {name} is of type {type(mod)} not {bpy.types.NodesModifier}"
+        )
+    return mod
+
+
+def _unique_aname(obj: bpy.types.Object, prefix: str = "sel") -> str:
+    attributes = db.list_attributes(obj)
+    counter = 0
+    aname = "{}_{}".format(prefix, counter)
+    while aname in attributes:
+        counter += 1
+        aname = "{}_{}".format(prefix, counter)
+
+    return aname
+
+
+def _validate_non_negative(value: int) -> None:
+    """Validate non-negative integers.
+
+    Parameters
+    ----------
+    value : int
+        Value to validate
+
+    Raises
+    ------
+    ValueError
+        If value is negative
+    """
+    if value < 0:
+        raise ValueError(f"Value must be non-negative, got {value}")
+
+
+class ObjectMNProperty:
+    """Descriptor for Blender object properties with optional validation.
+
+    Provides clean interface for Blender custom properties with validation support.
+
+    Examples
+    --------
+    >>> class MyClass:
+    ...     frame = ObjectMNProperty("frame", validate_fn=lambda x: x >= 0)
+    """
+
+    def __init__(
+        self,
+        attr_name: str,
+        validate_fn: Callable[[Any], None] | None = None,
+    ):
+        """Initialize the descriptor.
+
+        Parameters
+        ----------
+        attr_name : str
+            Name of the property on the Blender object
+        validate_fn : callable, optional
+            Validation function that raises on invalid values
+        """
+        self.attr_name = attr_name
+        self.validate_fn = validate_fn
+
+    def __set_name__(self, owner, name):
+        """Store the Python attribute name."""
+        self.name = name
+
+    def __get__(self, obj, objtype=None):
+        """Get property value from Blender object."""
+        return getattr(obj.object.mn, self.attr_name)
+
+    def __set__(self, obj, value):
+        """Set property value on Blender object with validation."""
+        if self.validate_fn is not None:
+            self.validate_fn(value)
+        setattr(obj.object.mn, self.attr_name, value)
+
+
+class IntObjectMNProperty(ObjectMNProperty):
+    def __get__(self, obj, objtype=None) -> int:
+        return super().__get__(obj, objtype)
+
+    def __set__(self, obj, value: int):
+        return super().__set__(obj, value)
+
+
+class BoolObjectMNProperty(ObjectMNProperty):
+    def __get__(self, obj, objtype=None) -> bool:
+        return super().__get__(obj, objtype)
+
+    def __set__(self, obj, value: bool):
+        return super().__set__(obj, value)
+
+
+class StringObjectMNProperty(ObjectMNProperty):
+    def __get__(self, obj, objtype=None) -> str:
+        return super().__get__(obj, objtype)
+
+    def __set__(self, obj, value: str):
+        return super().__set__(obj, value)
 
 
 def create_object(
@@ -62,7 +166,7 @@ def create_object(
     if isinstance(array, AtomArrayStack):
         array = array[0]
 
-    bob = databpy.create_bob(
+    bob = db.create_bob(
         vertices=array.coord * world_scale,
         edges=array.bonds.as_array()[:, :2] if array.bonds is not None else None,
         name=name,
@@ -76,8 +180,8 @@ def create_object(
         bob.store_named_attribute(
             array.bonds.as_array()[:, 2],
             "bond_type",
-            domain=AttributeDomains.EDGE,
-            atype=AttributeTypes.INT,
+            domain=db.AttributeDomains.EDGE,
+            atype=db.AttributeTypes.INT,
         )
 
     atom_array_to_named_attributes(array, bob.object, world_scale=world_scale)
@@ -145,7 +249,7 @@ def atom_array_to_named_attributes(
         # the integer versions of strings have been added as annotations that just
         # append `_int` onto the name so we don't overrite the original data but when
         # storing on the meshh we can just remove the `_int`
-        databpy.store_named_attribute(
+        db.store_named_attribute(
             obj=obj,
             data=data,
             name=attr.replace("_int", ""),

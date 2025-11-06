@@ -392,9 +392,6 @@ class OXDNA(Trajectory):
             world_scale=world_scale * DNA_SCALE,
             create_object=create_object,
         )
-        self._entity_type = EntityType.MD_OXDNA
-        if create_object:
-            self.object.mn.entity_type = self._entity_type.value
 
     def _compute_color(self) -> np.ndarray:
         """Compute equidistant chain coloring for OXDNA"""
@@ -436,9 +433,10 @@ class OXDNA(Trajectory):
         self.object = db.create_object(
             name=name,
             collection=coll.mn(),
-            vertices=self.univ_positions,
-            edges=self.bonds,
+            vertices=self._scaled_position,
+            edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
+        self._mn_entity_type = EntityType.MD_OXDNA.value
 
         self._store_default_attributes()
         self._store_extra_attributes()
