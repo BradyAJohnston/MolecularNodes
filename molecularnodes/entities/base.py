@@ -11,6 +11,7 @@ from ..nodes.geometry import (
     GeometryNodeInterFace,
     style_interfaces_from_tree,
 )
+from .utilities import BoolObjectMNProperty, _get_gn_modifier
 
 
 # create a EntityType enum
@@ -25,24 +26,24 @@ class EntityType(Enum):
     ENSEMBLE_CELLPACK = "ensemble-cellpack"
 
 
+bpy.types.NodesModifier
+
+
 class MolecularEntity(
     BlenderObject,
     metaclass=ABCMeta,
 ):
+    update_with_scene = BoolObjectMNProperty("update_with_scene")
+
     def __init__(self) -> None:
         super().__init__(obj=None)
-        self._entity_type: EntityType
         self._register_with_session()
         self._world_scale = 0.01
 
     @property
-    def bob(self) -> BlenderObject:
-        return BlenderObject(self.object)
-
-    @property
-    def node_group(self) -> bpy.types.GeometryNodeTree:
+    def node_group(self) -> bpy.types.NodeTree | None:
         if "MolecularNodes" in self.object.modifiers:
-            return self.object.modifiers["MolecularNodes"].node_group
+            return _get_gn_modifier(self.object, "MolecularNodes").node_group
         return None
 
     @property
@@ -61,16 +62,8 @@ class MolecularEntity(
         """
         return style_interfaces_from_tree(self.tree)
 
-    @property
-    def update_with_scene(self) -> bool:
-        return self.object.mn.update_with_scene
-
-    @update_with_scene.setter
-    def update_with_scene(self, value: bool) -> None:
-        self.object.mn.update_with_scene = value
-
     def _register_with_session(self) -> None:
-        bpy.context.scene.MNSession.register_entity(self)
+        bpy.context.scene.MNSession.register_entity(self)  # type: ignore
 
     def set_frame(self, frame: int) -> None:
         """
@@ -99,7 +92,7 @@ class MolecularEntity(
         )
         self.object.modifiers[0].node_group = tree  # type: ignore
 
-    def get_view(self) -> None:
+    def get_view(self) -> List[tuple]:
         """
         Get the 3D bounding box of the entity object
 

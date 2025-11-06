@@ -375,7 +375,7 @@ def panel_md_properties(layout, context):
     # only enable this as an option if the universe is orthothombic
     row = col.row()
     row.prop(obj.mn, "correct_periodic")
-    row.enabled = traj.is_orthorhombic
+    row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
@@ -995,7 +995,7 @@ class MN_PT_Annotations(bpy.types.Panel):
         row = box.row()
         row.prop(item, "type")
         row.enabled = False
-        entity_annotation_type = f"{entity._entity_type.value}_{item.type}"
+        entity_annotation_type = f"{entity._mn_entity_type}_{item.type}"
         inputs = getattr(item, entity_annotation_type, None)
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
