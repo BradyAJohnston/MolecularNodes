@@ -14,7 +14,7 @@ import MDAnalysis as mda
 import numpy as np
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
-from ...blender import coll, path_resolve
+from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
 from ...nodes.geometry import (
     add_style_branch,
@@ -39,9 +39,6 @@ from .helpers import FrameManager, _ag_to_bool
 from .selections import SelectionManager
 
 logger = logging.getLogger(__name__)
-# ============================================================================
-# Utility Functions
-# ============================================================================
 
 
 class Trajectory(MolecularEntity):
@@ -83,12 +80,18 @@ class Trajectory(MolecularEntity):
 
     Examples
     --------
-    >>> import MDAnalysis as mda
-    >>> import molecularnodes as mn
-    >>> u = mda.Universe("topology.pdb", "trajectory.dcd")
-    >>> traj = mn.entities.Trajectory(u)
-    >>> traj.add_style("ribbon", color="chain")
-    >>> traj.selections.add("protein and name CA", name="alpha_carbons")
+    ```{python}
+    #| warning: false
+    import MDAnalysis as mda
+    from MDAnalysis.tests.datafiles import PSF, DCD
+    import molecularnodes as mn
+    canvas = mn.Canvas()
+    u = mda.Universe(PSF, DCD)
+    traj = mn.entities.Trajectory(u)
+    traj.add_style(mn.StyleSpheres(geometry="Mesh"), selection="resname LYS")
+    canvas.frame_view(traj)
+    canvas.snapshot()
+    ```
     """
 
     # Blender property descriptors with validation
@@ -214,12 +217,12 @@ class Trajectory(MolecularEntity):
             return self.atoms.elements
 
         try:
-            default_guesser = mda.guesser.default_guesser.DefaultGuesser(None)
+            default_guesser = mda.guesser.default_guesser.DefaultGuesser(None)  # type: ignore
             guessed_elements = [
                 x
                 if x in data.elements.keys()
                 else default_guesser.guess_atom_element(x)
-                for x in self.atoms.names
+                for x in self.atoms.names  # type: ignore
             ]
             return np.array(guessed_elements)
         except Exception as e:
@@ -233,7 +236,7 @@ class Trajectory(MolecularEntity):
     def _compute_atomic_number(self) -> np.ndarray:
         return np.array(
             [
-                data.elements.get(element, data.elements.get("X")).get("atomic_number")
+                data.elements.get(element, data.elements["X"]).get("atomic_number")
                 for element in self._elements
             ]
         )
@@ -268,7 +271,7 @@ class Trajectory(MolecularEntity):
         res_name = self._compute_res_name()
         return np.array(
             [
-                data.residues.get(name, data.residues.get("UNK")).get("res_name_num")
+                data.residues.get(name, data.residues["UNK"]).get("res_name_num")
                 for name in res_name
             ],
             dtype=int,
@@ -338,7 +341,7 @@ class Trajectory(MolecularEntity):
     def _compute_atom_name_int(self) -> np.ndarray:
         if hasattr(self.atoms, "names"):
             return np.array(
-                [data.atom_names.get(x, -1) for x in self.atoms.names],
+                [data.atom_names.get(x, -1) for x in self.atoms.names],  # type: ignore
                 dtype=int,
             )
         else:
@@ -466,7 +469,7 @@ class Trajectory(MolecularEntity):
 
         self._mn_n_frames = self.universe.trajectory.n_frames
         self._save_filepaths_on_object()
-        bpy.context.view_layer.objects.active = self.object
+        set_obj_active(self.object)
 
         return self.object
 

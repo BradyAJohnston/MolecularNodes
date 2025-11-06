@@ -13,6 +13,15 @@ def path_resolve(path: str | Path) -> Path:
         raise ValueError(f"Unable to resolve path: {path}")
 
 
+def set_obj_active(
+    obj: bpy.types.Object, context: bpy.types.Context | None = None
+) -> None:
+    if not context:
+        context = bpy.context
+
+    context.view_layer.objects.active = obj  # type: ignore
+
+
 def set_object_visibility(object: bpy.types.Object, visible: bool) -> None:
     """Set visibility of Blender object"""
     if object.name not in bpy.context.view_layer.objects:
