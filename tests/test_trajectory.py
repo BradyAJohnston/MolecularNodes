@@ -9,6 +9,12 @@ import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
+pytestmark = [
+    pytest.mark.filterwarnings("ignore::UserWarning"),
+    pytest.mark.filterwarnings("ignore::DeprecationWarning"),
+    pytest.mark.filterwarnings("ignore::PendingDeprecationWarning"),
+]
+
 
 class TestTrajectory:
     @pytest.fixture(scope="module")

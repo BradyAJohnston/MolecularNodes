@@ -106,6 +106,7 @@ def test_local_pdb(snapshot_custom):
         assert snapshot_custom == mol.named_attribute("position")
 
 
+@pytest.mark.filterwarnings("ignore::UserWarning")
 def test_pdb_no_bonds(snapshot):
     mol = mn.Molecule.load(data_dir / "no_bonds.pdb")
     assert len(mol.object.data.edges) == 0
