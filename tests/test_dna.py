@@ -7,6 +7,10 @@ import molecularnodes as mn
 from molecularnodes.entities.trajectory import oxdna
 from .constants import data_dir
 
+pytestmark = pytest.mark.filterwarnings(
+    "ignore:.*no reference attributes.*:UserWarning"
+)
+
 
 class TestOXDNAReading:
     @pytest.fixture(scope="module")

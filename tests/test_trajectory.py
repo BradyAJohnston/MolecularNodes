@@ -9,6 +9,13 @@ import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
+pytestmark = [
+    pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning"),
+    pytest.mark.filterwarnings(
+        "ignore:.*Unknown masses are set to.*:PendingDeprecationWarning"
+    ),
+]
+
 
 class TestTrajectory:
     @pytest.fixture(scope="module")
@@ -38,7 +45,7 @@ class TestTrajectory:
 
     def test_include_bonds(self, universe_with_bonds):
         traj = mn.entities.Trajectory(universe_with_bonds)
-        assert traj.edges.items() != []
+        assert len(traj.data.edges) == 28015
 
     def test_attributes_added(self, universe):
         traj = mn.entities.Trajectory(universe)
