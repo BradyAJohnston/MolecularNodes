@@ -45,7 +45,7 @@ class TestTrajectory:
 
     def test_include_bonds(self, universe_with_bonds):
         traj = mn.entities.Trajectory(universe_with_bonds)
-        assert traj.edges.items() != []
+        assert len(traj.data.edges) == 28015
 
     def test_attributes_added(self, universe):
         traj = mn.entities.Trajectory(universe)
