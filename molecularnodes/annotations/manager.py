@@ -118,6 +118,18 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """Return annotation names"""
         return [i.name for i in self._interfaces.values()]
 
+    def __getstate__(self):
+        """Get state for pickling this object"""
+        state = self.__dict__.copy()
+        # Remove reference to Scene before pickling
+        del state["_scene"]
+        return state
+
+    def __setstate__(self, state):
+        """Set state when unpickling this object"""
+        self.__dict__.update(state)
+        self._scene = None
+
     @classmethod
     def register(cls, annotation_class) -> None:
         """
