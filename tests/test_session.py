@@ -39,7 +39,7 @@ def universe():
     return mda.Universe(topo, traj)
 
 
-@pytest.mark.filterwarnings("ignore::UserWarning")
+@pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning")
 def test_add_trajectory(session, universe):
     # add Universe as trajectory
     t1 = session.add_trajectory(universe, name="u1")

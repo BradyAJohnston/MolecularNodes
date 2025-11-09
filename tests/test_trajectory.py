@@ -10,9 +10,10 @@ from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
 pytestmark = [
-    pytest.mark.filterwarnings("ignore::UserWarning"),
-    pytest.mark.filterwarnings("ignore::DeprecationWarning"),
-    pytest.mark.filterwarnings("ignore::PendingDeprecationWarning"),
+    pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning"),
+    pytest.mark.filterwarnings(
+        "ignore:.*Unknown masses are set to.*:PendingDeprecationWarning"
+    ),
 ]
 
 
