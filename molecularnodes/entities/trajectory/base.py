@@ -12,6 +12,7 @@ import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
+from MDAnalysis.coordinates import IMD
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
@@ -110,6 +111,7 @@ class Trajectory(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
+    _mn_is_streaming = BoolObjectMNProperty("is_streaming")
 
     def __init__(
         self,
@@ -557,9 +559,11 @@ class Trajectory(MolecularEntity):
         Args:
             frame: Scene frame number
         """
-        # self.position = self.frame_manager.get_positions_at_frame(frame)
-        self.universe.trajectory.next()
-        self.position = self._scaled_position
+        if self._mn_is_streaming:
+            self.universe.trajectory.next()
+            self.position = self._scaled_position
+        else:
+            self.position = self.frame_manager.get_positions_at_frame(frame)
 
     def __repr__(self) -> str:
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

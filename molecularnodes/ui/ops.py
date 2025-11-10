@@ -682,7 +682,12 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
             )
             traj = trajectory.oxdna.OXDNA(uni, create_object=False)
         else:
-            uni = mda.Universe(topo, traj)
+            if str(traj).startswith("imd:"):
+                uni = mda.Universe(
+                    topo, str(traj).replace("imd:/", "imd://"), format="IMD"
+                )
+            else:
+                uni = mda.Universe(topo, traj)
             traj = trajectory.Trajectory(uni, create_object=False)
 
         traj.object = obj
@@ -736,14 +741,21 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
         context.view_layer.objects.active = traj.object
         context.scene.frame_start = 0
-        context.scene.frame_end = int(traj.frame_manager.n_frames - 1)
-
-        self.report(
-            {"INFO"},
-            message=f"Imported '{self.topology}' as {traj.name} "
-            f"with {str(traj.frame_manager.n_frames)} "
-            f"frames from '{self.trajectory}'.",
-        )
+        if not traj._mn_is_streaming:
+            context.scene.frame_end = int(traj.frame_manager.n_frames - 1)
+            self.report(
+                {"INFO"},
+                message=f"Imported '{self.topology}' as {traj.name} "
+                f"with {str(traj.frame_manager.n_frames)} "
+                f"frames from '{self.trajectory}'.",
+            )
+        else:
+            self.report(
+                {"INFO"},
+                message="Imported a streaming trajectory with topology {} and streaming URL: {}".format(
+                    self.topology, self.trajectory
+                ),
+            )
 
         return {"FINISHED"}
 

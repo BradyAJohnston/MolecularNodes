@@ -18,10 +18,16 @@ def load(
     style: str | None = "spheres",
     selection: str | None = None,
 ):
-    universe = mda.Universe(top, traj)
-    trajectory = Trajectory(universe=universe, name=name).add_style(
-        style=style, selection=selection
-    )
+    if str(traj).startswith("imd:"):
+        imd = str(traj).replace("imd:/", "imd://")
+        universe = mda.Universe(top, imd, format="IMD")
+        trajectory = Trajectory(universe, name=name)
+        trajectory._mn_is_streaming = True
+    else:
+        universe = mda.Universe(top, traj)
+        trajectory = Trajectory(universe=universe, name=name)
+
+    trajectory.add_style(style=style, selection=selection)
 
     return trajectory
 
