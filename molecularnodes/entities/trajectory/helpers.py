@@ -165,7 +165,10 @@ class FrameManager:
 
     @property
     def n_frames(self) -> int:
-        return self.trajectory.universe.trajectory.n_frames
+        try:
+            return self.trajectory.universe.trajectory.n_frames
+        except RuntimeError:
+            pass
 
     def _position_at_frame(self, frame: int) -> np.ndarray:
         """Get atom positions at a specific universe frame.

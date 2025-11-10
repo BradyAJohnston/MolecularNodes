@@ -5,11 +5,13 @@ description = "Toolbox for molecular animations with Blender and Geometry Nodes.
 readme = "README.md"
 dependencies = [
     "databpy>=0.5.1",
-    "MDAnalysis>=2.7.0",
+    "mdanalysis>=2.10",
     "biotite>=1.5",
     "mrcfile",
     "starfile",
     "PyYAML",
+    "imdclient>=0.2.3",
+    "ipython>=9.7.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11.0"

@@ -466,8 +466,11 @@ class Trajectory(MolecularEntity):
             Created Blender object
         """
         self._create_object(name=name)
-
-        self._mn_n_frames = self.universe.trajectory.n_frames
+        try:
+            self._mn_n_frames = self.universe.trajectory.n_frames
+        except RuntimeError as e:
+            print(e)
+            pass
         self._save_filepaths_on_object()
         set_obj_active(self.object)
 
@@ -554,7 +557,9 @@ class Trajectory(MolecularEntity):
         Args:
             frame: Scene frame number
         """
-        self.position = self.frame_manager.get_positions_at_frame(frame)
+        # self.position = self.frame_manager.get_positions_at_frame(frame)
+        self.universe.trajectory.next()
+        self.position = self._scaled_position
 
     def __repr__(self) -> str:
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
