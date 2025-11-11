@@ -9,6 +9,7 @@ from bpy.props import (  # type: ignore
 from bpy.types import PropertyGroup  # type: ignore
 from databpy.object import LinkedObjectError
 from ..blender.utils import set_object_visibility
+from ..entities.utilities import _unique_aname
 from ..handlers import _update_entities
 from ..session import get_entity
 from .style import STYLE_ITEMS
@@ -516,13 +517,13 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        traj.selections.add("all")
-        traj.object.mn["list_index"] = len(traj.selections) - 1
+        traj.selections.add("all", name=_unique_aname(traj.object, "selection"))
+        traj.selections.index = len(traj.selections) - 1
         return {"FINISHED"}
 
 
 class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
-    bl_idname = "mda.delete_item"
+    bl_idname = "mn.trajectory_selection_remove"
     bl_label = "-"
     bl_description = "Delete the given boolean selection from the universe"
 
@@ -532,10 +533,12 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        names = [s.name for s in traj.selections.items]
         index = traj.selections.index
-        traj.selections.remove(names[index])
-        traj.selections.index = int(max(min(index, len(traj.selections) - 1), 0))
+        traj.selections.remove(index)
+
+        # the length of items in the list has changed, set the currently selected index
+        # to a new value. Ensure it is between 0 and the length of the items in the list
+        traj.selections.index = max(0, min(index, len(traj.selections.items) - 1))
 
         return {"FINISHED"}
 

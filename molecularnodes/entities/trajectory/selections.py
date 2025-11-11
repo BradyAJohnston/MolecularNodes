@@ -914,7 +914,7 @@ class SelectionManager:
         )
         return sel
 
-    def remove(self, name: str) -> None:
+    def remove(self, name: str | int) -> None:
         """
         Remove a selection from the manager and clean up all references.
 
@@ -924,17 +924,32 @@ class SelectionManager:
 
         Parameters
         ----------
-        name : str
-            Name of the selection to remove.
+        name : str | int
+            Name of the selection to remove or index of the item in the list
 
         Notes
         -----
         Silently ignores KeyError or AttributeError if the selection was not
         fully registered in all locations.
         """
-        names = [sel.name for sel in self.items]
-        index = names.index(name)
-        self.items.remove(index)
+        name_list = [sel.name for sel in self.items]
+        if isinstance(name, int):
+            idx = name
+            name = name_list[idx]
+        elif isinstance(name, str):
+            if name not in name_list:
+                raise ValueError(
+                    "{} must be the name of a selection in '{}'".format(
+                        name, [name_list]
+                    )
+                )
+            idx = name_list.index(name)
+        else:
+            raise ValueError(
+                "`name` must be a string name of a selection or an index for the name to remove."
+            )
+
+        self.items.remove(idx)
         try:
             del self._selections[name]
         except KeyError:
@@ -1022,7 +1037,7 @@ class SelectionManager:
         int
             The index of the currently selected selection in the UI list.
         """
-        return self.trajectory.object.mn["list_index"]
+        return self.trajectory.object.mn["trajectory_selection_index"]
 
     @index.setter
     def index(self, value: int) -> None:
@@ -1034,7 +1049,7 @@ class SelectionManager:
         value : int
             The index to select in the UI list.
         """
-        self.trajectory.object.mn["list_index"] = value
+        self.trajectory.object.mn["trajectory_selection_index"] = value
 
     def __len__(self) -> int:
         """

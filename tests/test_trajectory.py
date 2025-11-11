@@ -188,6 +188,21 @@ class TestTrajectory:
             pos_1,
         )
 
+    def test_gui_selection_add_remove(self, universe):
+        traj = mn.Trajectory(universe)
+        assert "selection_0" not in traj.list_attributes()
+        bpy.ops.mn.trajectory_selection_add()
+        assert "selection_0" in traj.list_attributes()
+        assert traj.selections.index == 0
+        bpy.ops.mn.trajectory_selection_add()
+        bpy.ops.mn.trajectory_selection_add()
+        assert "selection_1" in traj.list_attributes()
+        assert "selection_2" in traj.list_attributes()
+        traj.selections.index = 1
+        bpy.ops.mn.trajectory_selection_remove()
+        assert "selection_1" not in traj.list_attributes()
+        assert traj.selections.index == 1
+
     def test_update_selection(self, snapshot_custom, universe):
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great

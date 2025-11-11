@@ -392,7 +392,7 @@ def panel_md_properties(layout, context):
     )
     col = row.column()
     col.operator("mn.trajectory_selection_add", icon="ADD", text="")
-    col.operator("mda.delete_item", icon="REMOVE", text="")
+    col.operator("mn.trajectory_selection_remove", icon="REMOVE", text="")
     if obj.mn_trajectory_selections:
         item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
 
