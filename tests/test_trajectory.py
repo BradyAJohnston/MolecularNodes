@@ -202,6 +202,12 @@ class TestTrajectory:
         bpy.ops.mn.trajectory_selection_remove()
         assert "selection_1" not in traj.list_attributes()
         assert traj.selections.index == 1
+        with pytest.raises(ValueError):
+            traj.selections.remove("non_existent_selection")
+        with pytest.raises(ValueError):
+            traj.selections.remove(int)
+        with pytest.raises(IndexError):
+            traj.selections.remove(10)
 
     def test_update_selection(self, snapshot_custom, universe):
         # to API add selections we currently have to operate on the UIList rather than the
