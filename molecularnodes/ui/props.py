@@ -424,17 +424,15 @@ class MolecularNodesObjectProperties(PropertyGroup):
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
-    uuid: StringProperty(  # type: ignore
-        name="UUID",
-        description="Unique ID for matching selection in UI to selection on python object",
+    name: StringProperty(  # type: ignore
+        name="Name",
+        description="UUID name for matching to atomgroup",
         default="",
     )
 
-    name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name of the attribute on the mesh",
-        default="custom_selection",
-        update=_update_entities,
+    attribute_name: StringProperty(  # type: ignore
+        name="DisplayName",
+        description="Name of the attribute that will be stored on the mesh",
     )
 
     string: StringProperty(  # type: ignore
@@ -444,18 +442,20 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         update=_update_entities,
     )
 
+    previous_string: StringProperty()  # type: ignore
+
     updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Recalculate the selection on scene frame change",
         default=True,
-        # update=_selection_update_trajectories,
+        update=_update_entities,
     )
 
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
-        # update=_selection_update_trajectories,
+        update=_update_entities,
     )
 
     message: StringProperty(  # type: ignore
@@ -496,7 +496,7 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
                 row.alert = True
 
             col = row.column()
-            col.prop(item, "name", text="", emboss=False)
+            col.prop(item, "attribute_name", text="", emboss=False)
             col.enabled = False
             row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
             row.prop(item, "periodic", icon_only=True, icon="CUBE")
@@ -517,8 +517,8 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        traj.selections.add("all", name=_unique_aname(traj.object, "selection"))
-        traj.selections.index = len(traj.selections) - 1
+        traj.selections.add("all")
+        traj.selections.ui_index = len(traj.selections) - 1
         return {"FINISHED"}
 
 
@@ -533,12 +533,12 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        index = traj.selections.index
+        index = traj.selections.ui_index
         traj.selections.remove(index)
 
         # the length of items in the list has changed, set the currently selected index
         # to a new value. Ensure it is between 0 and the length of the items in the list
-        traj.selections.index = max(0, min(index, len(traj.selections.items) - 1))
+        traj.selections.ui_index = max(0, min(index, len(traj.selections.ui_items) - 1))
 
         return {"FINISHED"}
 

@@ -193,15 +193,15 @@ class TestTrajectory:
         assert "selection_0" not in traj.list_attributes()
         bpy.ops.mn.trajectory_selection_add()
         assert "selection_0" in traj.list_attributes()
-        assert traj.selections.index == 0
+        assert traj.selections.ui_index == 0
         bpy.ops.mn.trajectory_selection_add()
         bpy.ops.mn.trajectory_selection_add()
         assert "selection_1" in traj.list_attributes()
         assert "selection_2" in traj.list_attributes()
-        traj.selections.index = 1
+        traj.selections.ui_index = 1
         bpy.ops.mn.trajectory_selection_remove()
         assert "selection_1" not in traj.list_attributes()
-        assert traj.selections.index == 1
+        assert traj.selections.ui_index == 1
         with pytest.raises(ValueError):
             traj.selections.remove("non_existent_selection")
         with pytest.raises(ValueError):
@@ -215,7 +215,7 @@ class TestTrajectory:
 
         traj = mn.entities.Trajectory(universe)
         bpy.context.scene.frame_set(0)
-        sel = traj.selections.add(name="custom_sel_1", string="around 3.5 protein")
+        sel = traj.selections.add(att_name="custom_sel_1", string="around 3.5 protein")
         bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("custom_sel_1")
         bpy.context.scene.frame_set(4)
@@ -242,8 +242,10 @@ class TestTrajectory:
         around_protein = universe.select_atoms("around 3.5 protein", updating=True)
         traj = mn.entities.Trajectory(universe)
         bpy.context.scene.frame_set(0)
-        traj.selections.from_atomgroup(atomgroup=ca_ag, name="ca")
-        traj.selections.from_atomgroup(atomgroup=around_protein, name="around_protein")
+        traj.selections.from_atomgroup(atomgroup=ca_ag, att_name="ca")
+        traj.selections.from_atomgroup(
+            atomgroup=around_protein, att_name="around_protein"
+        )
         bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("around_protein")
         bpy.context.scene.frame_set(4)
@@ -308,11 +310,11 @@ class TestTrajectory:
         # test add_style with selection string
         selection = "resid 1:10"
         t1.add_style(style="ribbon", selection=selection)
-        assert "sel_0" in t1.list_attributes()
+        assert "selection_0" in t1.list_attributes()
         # test add_style with AtomGroup selection
         selection = universe.select_atoms("resid 1:10")
         t1.add_style(style="ribbon", selection=selection)
-        assert "sel_1" in t1.list_attributes()
+        assert "selection_1" in t1.list_attributes()
         session.remove_trajectory(t1)
         # test add_style from UI
         t1 = mn.Trajectory(universe)
