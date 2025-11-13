@@ -2,13 +2,17 @@ import os
 import pickle as pk
 from typing import Dict, Union
 import bpy
-from bpy.app.handlers import persistent
-from bpy.props import StringProperty
-from bpy.types import Context
+import MDAnalysis as mda
+from bpy.app.handlers import persistent  # type: ignore
+from bpy.props import StringProperty  # type: ignore
+from bpy.types import Context  # type: ignore
 from databpy.object import LinkedObjectError, get_from_uuid
+from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
+from .entities.base import EntityType, MolecularEntity
 from .entities.ensemble.base import Ensemble
 from .entities.trajectory.base import Trajectory
+from .nodes.nodes import styles_mapping
 
 
 def trim(dictionary: dict):
@@ -26,7 +30,7 @@ def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
         traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
         # restore linked universe frame
         traj.uframe = uframe
-        traj.save_filepaths_on_object()
+        traj._save_filepaths_on_object()
 
 
 def trim_root_folder(filename):
@@ -73,8 +77,36 @@ class MNSession:
         # return a filtered dictionary of only the ensembles using isinstance(item, Ensemble)
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
-    def register_entity(self, item: Union[Molecule, Trajectory, Ensemble]) -> None:
+    def register_entity(self, item: MolecularEntity) -> None:
+        """Add entity to the dictionary"""
         self.entities[item.uuid] = item
+        # add entity to blender properties if it doesn't exist
+        props = bpy.context.scene.mn
+        entities = props.entities  # entities collection
+        if entities.find(item.uuid) == -1:
+            entity = entities.add()  # add new entity to collection
+            entity.name = item.uuid  # immutable name that allows find to get index
+            # EntityType is not available here in most cases as it is set after __init__
+            # In other cases, it is reset later like in case of MD_OXDNA
+            # So, use a simple check based on supported entity types here
+            if isinstance(item, Molecule):
+                entity.type = EntityType.MOLECULE.value
+            elif isinstance(item, Trajectory):
+                entity.type = EntityType.MD.value
+            elif isinstance(item, Ensemble):
+                entity.type = EntityType.ENSEMBLE.value
+            props.entities_active_index = len(entities) - 1
+
+    def remove_entity(self, uuid: str) -> None:
+        """Remove entity from the dictionary"""
+        del self.entities[uuid]
+        # remove entity from blender properties
+        props = bpy.context.scene.mn
+        entities = props.entities
+        index = entities.find(uuid)
+        if index != -1:
+            entities.remove(index)  # remove entity from collection
+            props.entities_active_index = len(entities) - 1
 
     def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
         return self.get(obj.uuid)
@@ -94,11 +126,25 @@ class MNSession:
         """
         Remove any entities that no longer exist in Blender
         """
+        # remove any entities that don't have linked objects
         for uuid in list(self.entities):
             try:
                 _ = self.entities[uuid].name
             except LinkedObjectError:
-                del self.entities[uuid]
+                self.remove_entity(uuid)
+        # remove any properties that don't exist in session
+        props = bpy.context.scene.mn
+        entities = props.entities
+        remove_indices = [
+            i for i, entity in enumerate(entities) if entity.name not in self.entities
+        ]
+        if remove_indices:
+            # remove indices in the reverse sorted order for correctness
+            reversed_indices = sorted(remove_indices, reverse=True)
+            for i in reversed_indices:
+                if i < len(entities):
+                    entities.remove(i)
+            props.entities_active_index = len(entities) - 1
 
     @property
     def n_items(self) -> int:
@@ -154,11 +200,119 @@ class MNSession:
         """Remove references to all molecules, trajectories and ensembles."""
         self.entities = {}
 
+    def remove(self, uuid: str) -> None:
+        """Remove an entity by uuid"""
+        if uuid not in self.entities:
+            raise ValueError(f"No entity with UUID '{uuid}'")
+        entity = self.entities[uuid]
+        bpy.data.objects.remove(entity.object, do_unlink=True)
+        if hasattr(entity, "annotations"):
+            if entity.annotations.bob:
+                bpy.data.objects.remove(entity.annotations.bob.object, do_unlink=True)
+        self.remove_entity(uuid)
+
+    def add_trajectory(
+        self,
+        universe: mda.Universe | AtomGroup,
+        style: str | None = "vdw",
+        name: str = "NewUniverseObject",
+    ) -> Trajectory:
+        """
+        Add a new trajectory
+
+        Parameters
+        ----------
+        universe: mda.Universe | AtomGroup, required
+            MDAnalysis Universe or AtomGroup instance
+
+        style: str | None, optional
+            The style to apply to the Universe or AtomGroup.
+
+        name: str, optional
+            Name of the trajectory object in Blender
+
+        Returns
+        -------
+        Trajectory
+            The newly added Trajectory instance
+
+        """
+        if style is not None and style not in styles_mapping:
+            raise ValueError(
+                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
+            )
+        selection = None
+        if isinstance(universe, AtomGroup):
+            traj = Trajectory(universe.universe, name=name)  # AtomGroup universe
+            selection = universe  # AtomGroup
+        else:
+            traj = Trajectory(universe, name=name)  # Universe
+        traj.add_style(style=style, selection=selection)
+        return traj
+
+    def get_trajectory(
+        self,
+        name: str,
+    ) -> Trajectory:
+        """
+        Get trajectory instance by name
+
+        Parameters
+        ----------
+        name: str, required
+            Name of the trajectory object
+
+        Returns
+        -------
+        Trajectory
+            A Trajectory instance
+
+        Raises
+        ------
+        ValueError if trajectory is not found
+
+        """
+        for v in self.entities.values():
+            if isinstance(v, Trajectory) and v.object.name == name:
+                return v
+        raise ValueError(f"No trajectory named '{name}'")
+
+    def remove_trajectory(
+        self,
+        trajectory: Trajectory | str,
+    ) -> None:
+        """
+        Remove an existing trajectory
+
+        Parameters
+        ----------
+        trajectory: Trajectory | str, required
+            A Trajectory instance or name of the trajectory
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError if trajectory name is not found
+
+        """
+        instance = trajectory
+        if isinstance(trajectory, str):
+            instance = self.get_trajectory(trajectory)
+        self.remove(instance.uuid)
+
 
 def get_session(context: Context | None = None) -> MNSession:
     if not context:
         context = bpy.context
     return context.scene.MNSession
+
+
+def get_entity(context: Context | None = None) -> Molecule | Trajectory | Ensemble:
+    session = get_session(context)
+    return session.match(context.active_object)
 
 
 @persistent
@@ -238,8 +392,21 @@ class MN_OT_Session_Create_Object(bpy.types.Operator):
 
     def execute(self, context: Context):
         item = get_session().get(self.uuid)
+        if item is None:
+            self.report({"ERROR"}, f"No item with UUID '{self.uuid}'")
+            return {"CANCELLED"}
         item.create_object()
         return {"FINISHED"}
 
 
-CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object]
+class MN_OT_Session_Prune(bpy.types.Operator):
+    bl_idname = "mn.session_prune"
+    bl_label = "Session Prune"
+    bl_description = "Prune session entities by removing ones that no longer exist"
+
+    def execute(self, context: Context):
+        get_session().prune()
+        return {"FINISHED"}
+
+
+CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object, MN_OT_Session_Prune]

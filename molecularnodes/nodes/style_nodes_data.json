@@ -1,0 +1,1088 @@
+{
+  "Style Ball and Stick": {
+    "name": "Style Ball and Stick",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 2,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 8,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Sphere Geometry",
+        "type": "UNKNOWN",
+        "default_value": "Instance",
+        "description": "Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Sphere Radius",
+        "type": "VALUE",
+        "default_value": 0.3,
+        "description": "Scale the `vdw_radii` attribute before setting the radius for the spheres",
+        "min_value": 0.0,
+        "max_value": 2.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Bond Split",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Split apart double and triple bonds visually",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Bond Radius",
+        "type": "VALUE",
+        "default_value": 0.3,
+        "description": "Set the radius for the generated bonds in Angstroms",
+        "min_value": 0.0,
+        "max_value": 1.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Bond Find",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Bond Find Scale",
+        "type": "VALUE",
+        "default_value": 1.0,
+        "description": "Scale the VDW radii of the atoms when searching for bonds",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Cartoon": {
+    "name": "Style Cartoon",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 2,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 8,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Peptide DSSP",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Use the DSSP algorithm to compute the `sec_struct` attribute",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Peptide Cylinders",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Use cylinders for helices instead of ribbons",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Peptide Arrows",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "User arrows for sheets",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Peptide Rounded",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Create rounded sheets and helices",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Peptide Thickness",
+        "type": "VALUE",
+        "default_value": 0.6,
+        "description": "Thickness for the sheets and helices",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Peptide Width",
+        "type": "VALUE",
+        "default_value": 2.2,
+        "description": "Width for the sheets and helices",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Peptide Loop Radius",
+        "type": "VALUE",
+        "default_value": 0.3,
+        "description": "Radius of the loops for unstructure regions",
+        "min_value": 0.0,
+        "max_value": 3.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Peptide Smoothing",
+        "type": "VALUE",
+        "default_value": 0.5,
+        "description": "Smoothing to apply to sheets",
+        "min_value": 0.0,
+        "max_value": 1.0,
+        "subtype": "FACTOR",
+        "enum_options": null
+      },
+      {
+        "name": "Backbone Shape",
+        "type": "UNKNOWN",
+        "default_value": "Cylinder",
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Width",
+        "type": "VALUE",
+        "default_value": 3.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Thickness",
+        "type": "VALUE",
+        "default_value": 1.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Radius",
+        "type": "VALUE",
+        "default_value": 2.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "DISTANCE",
+        "enum_options": null
+      },
+      {
+        "name": "Base Shape",
+        "type": "UNKNOWN",
+        "default_value": "Rectangle",
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Base Realize",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Density Surface": {
+    "name": "Style Density Surface",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Threshold",
+        "type": "VALUE",
+        "default_value": 0.8,
+        "description": "",
+        "min_value": -3.4028234663852886e+38,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Hide Dust",
+        "type": "VALUE",
+        "default_value": 0.0,
+        "description": "",
+        "min_value": -10000.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color",
+        "type": "RGBA",
+        "default_value": [
+          0.2,
+          0.51,
+          0.13,
+          1.0
+        ],
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Density Wire": {
+    "name": "Style Density Wire",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Threshold",
+        "type": "VALUE",
+        "default_value": 0.8,
+        "description": "",
+        "min_value": -3.4028234663852886e+38,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Hide Dust",
+        "type": "VALUE",
+        "default_value": 20.0,
+        "description": "",
+        "min_value": -10000.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Wire Radius",
+        "type": "VALUE",
+        "default_value": 1.0,
+        "description": "Radius of the created wire (in relative nm)",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Wire Resolution",
+        "type": "INT",
+        "default_value": 3,
+        "description": "",
+        "min_value": 3,
+        "max_value": 32,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color",
+        "type": "RGBA",
+        "default_value": [
+          0.1,
+          0.39,
+          0.1,
+          1.0
+        ],
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Preset 1": {
+    "name": "Style Preset 1",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 3,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 6,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Preset 2": {
+    "name": "Style Preset 2",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 3,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 6,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Preset 3": {
+    "name": "Style Preset 3",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 3,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 6,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Preset 4": {
+    "name": "Style Preset 4",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 3,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 6,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Ribbon": {
+    "name": "Style Ribbon",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 3,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 6,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Backbone Smoothing",
+        "type": "VALUE",
+        "default_value": 0.5,
+        "description": "Smoothen the sheet ribbons such as beta-sheets",
+        "min_value": 0.0,
+        "max_value": 1.0,
+        "subtype": "FACTOR",
+        "enum_options": null
+      },
+      {
+        "name": "Backbone Threshold",
+        "type": "VALUE",
+        "default_value": 4.5,
+        "description": "Distance (Angstroms) over which subsequent CA points are treated as a new chain",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Backbone Radius",
+        "type": "VALUE",
+        "default_value": 1.6,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Backbone Shape",
+        "type": "UNKNOWN",
+        "default_value": "Cylinder",
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Nucleic Backbone Radius",
+        "type": "VALUE",
+        "default_value": 1.6,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 3.4028234663852886e+38,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Backbone Width",
+        "type": "VALUE",
+        "default_value": 3.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Backbone Thickness",
+        "type": "VALUE",
+        "default_value": 1.0,
+        "description": "",
+        "min_value": 0.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Base Scale",
+        "type": "VECTOR",
+        "default_value": [
+          2.5,
+          0.5,
+          7.0
+        ],
+        "description": "",
+        "min_value": -10000.0,
+        "max_value": 10000.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Base Resolution",
+        "type": "INT",
+        "default_value": 4,
+        "description": "",
+        "min_value": 3,
+        "max_value": 512,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Base Realize",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "UV Map",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Compute and store the `uv_map` for the final protein ribbon geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "U Component",
+        "type": "UNKNOWN",
+        "default_value": "Factor",
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Spheres": {
+    "name": "Style Spheres",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Geometry",
+        "type": "UNKNOWN",
+        "default_value": "Point",
+        "description": "Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Radius",
+        "type": "VALUE",
+        "default_value": 0.8,
+        "description": "Scale the `vdw_radii` of the atom when setting the radius of the spheres",
+        "min_value": 0.0,
+        "max_value": 2.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Subdivisions",
+        "type": "INT",
+        "default_value": 2,
+        "description": "Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms",
+        "min_value": 0,
+        "max_value": 5,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading when using _Instances_ or _Mesh_",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Sticks": {
+    "name": "Style Sticks",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 3,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 5,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Radius",
+        "type": "VALUE",
+        "default_value": 0.2,
+        "description": "Radius of the sticks in Angstroms",
+        "min_value": 0.0,
+        "max_value": 1.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "BOOLEAN",
+        "default_value": false,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  },
+  "Style Surface": {
+    "name": "Style Surface",
+    "description": "",
+    "inputs": [
+      {
+        "name": "Selection",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Selection of atoms to apply this style to, discarding unselected points",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Quality",
+        "type": "INT",
+        "default_value": 3,
+        "description": "A lower value results in less geometry, with a higher value meaning better looking but more dense geometry",
+        "min_value": 0,
+        "max_value": 8,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Scale Radius",
+        "type": "VALUE",
+        "default_value": 1.5,
+        "description": "Scale the VDW radii of the atoms when creating the surface",
+        "min_value": 0.0,
+        "max_value": 10.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Probe Size",
+        "type": "VALUE",
+        "default_value": 1.0,
+        "description": "Size of the probe that is used to check for solvent accessibility (Angstroms)",
+        "min_value": 0.0,
+        "max_value": 5.0,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Relaxation Steps",
+        "type": "INT",
+        "default_value": 10,
+        "description": "Number of times smoothening is applied to the generate surface stretched between the atoms",
+        "min_value": 0,
+        "max_value": 30,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Separate By",
+        "type": "UNKNOWN",
+        "default_value": "chain_id",
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Group ID",
+        "type": "INT",
+        "default_value": 0,
+        "description": "",
+        "min_value": -2147483648,
+        "max_value": 2147483647,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Color Source",
+        "type": "UNKNOWN",
+        "default_value": "Alpha Carbon",
+        "description": "",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Color Blur",
+        "type": "INT",
+        "default_value": 2,
+        "description": "Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating",
+        "min_value": 0,
+        "max_value": 20,
+        "subtype": "NONE",
+        "enum_options": null
+      },
+      {
+        "name": "Shade Smooth",
+        "type": "BOOLEAN",
+        "default_value": true,
+        "description": "Apply smooth shading to the created geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      },
+      {
+        "name": "Material",
+        "type": "MATERIAL",
+        "default_value": null,
+        "description": "Material to apply to the resulting geometry",
+        "min_value": null,
+        "max_value": null,
+        "subtype": null,
+        "enum_options": null
+      }
+    ]
+  }
+}

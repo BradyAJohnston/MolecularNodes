@@ -4,6 +4,7 @@ project:
 
 # lightbox: true
 filters:
+- interlinks
 - filters.lua
 - quarto
 - quarto-pdb
@@ -12,13 +13,10 @@ website:
   title: "Molecular Nodes"
   google-analytics: G-W3K8TDXSCF
   page-navigation: true
+
   navbar:
     left:
-    - href: tutorials/
-      text: Tutorials
-    - text: Nodes
-      href: nodes/
-    - href: attributes.qmd
+    - href: tutorials/index.qmd
       text: Documentation
     - text: API
       href: api/
@@ -35,26 +33,28 @@ website:
       href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-  - id: nodes
-    title: Nodes
-    contents: nodes/
+  # - id: nodes
+  #   title: Nodes
+  #   contents: nodes/*
 
   - id: attributes
     contents:
-    - attributes.qmd
-    - data_table.qmd
-
-  - id: tutorials
-    align: left
-    contents:
-    - tutorials/index.qmd
-    - tutorials/installation.qmd
-    - tutorials/interface.qmd
-    - tutorials/importing.qmd
-    - tutorials/selections.qmd
-    - tutorials/trajectories.qmd
-    - tutorials/cryoem.qmd
-    - tutorials/simulation.qmd
+    - section: "Tutorials"
+      contents:
+      - tutorials/index.qmd
+      - tutorials/installation.qmd
+      - tutorials/interface.qmd
+      - tutorials/importing.qmd
+      - tutorials/selections.qmd
+      - tutorials/trajectories.qmd
+      - tutorials/cryoem.qmd
+      - tutorials/simulation.qmd
+    - section: "Reference"
+      contents:
+      - attributes.qmd
+      - data_table.qmd
+    - section: "Nodes"
+      contents: nodes/*
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -68,7 +68,7 @@ format:
     - style.scss
 
     toc: true
-    toc-depth: 2
+    toc-depth: 3
     preview-colour:
       code: true
       text: true
@@ -76,36 +76,103 @@ format:
 metadata-files:
 - api/_sidebar.yml
 
+interlinks:
+  aliases:
+    numpy: np
+    molecularnodes: mn
+    MDAnalysis: mda
+  sources:
+    numpy:
+      url: https://numpy.org/doc/stable/
+    python:
+      url: https://docs.python.org/3/
+    biotite:
+      url: https://www.biotite-python.org/latest/
+    MDAnalysis:
+      url: https://docs.mdanalysis.org/stable/
+    bpy:
+      url: https://docs.blender.org/api/current/
+
 quartodoc:
   package: molecularnodes
   dir: api/reference
+  render_interlinks: true
 
   sidebar:
     file: api/_sidebar.yml
     search: true
-    collapse-level: 3
+    collapse-level: 4
     contents:
     - text: Introduction
       href: api/index.qmd
     - api/styles.qmd
     - api/materials.qmd
+    - api/density.qmd
+    - api/annotations.qmd
+    - api/canvas.qmd
+    - api/blender.qmd
+    - section: "Trajectory"
+      contents: api/trajectory/*
     - text: "---"
     - section: "Reference"
       contents:
       - "{{ contents }}"
   # css: api/_styles-quartodoc.css
 
+
   sections:
   - title: Entity
     desc: Importing and manipulating different molecular entities
     contents:
-    - entities.Molecule
-    - entities.MoleculeSelector
-    - entities.Trajectory
+    - Molecule
+    - MoleculeSelector
+    - Trajectory
     - entities.Ensemble
     - entities.OXDNA
+
+  - title: Trajectory
+    desc: Working with molecular dynamics trajectories
+    contents:
+    - Trajectory
+    - entities.trajectory.selections.SelectionManager
+    - entities.trajectory.selections.Selection
+
+  - title: Styles
+    desc: Setting and controlling the different styles
+    contents:
+    - StyleSpheres
+    - StyleRibbon
+    - StyleCartoon
+    - StyleSurface
+    - StyleSticks
+    - StyleBallAndStick
+
+  - title: Materials
+    desc: Setting and controlling the different materials
+    contents:
+    - material.AmbientOcclusion
+    - material.Default
+    - material.Squishy
+    - material.FlatOutline
+    - material.TransparentOutline
+
+  - title: Session
+    desc: Session object to control molecular entities
+    contents:
+    - session.MNSession
+
+  - title: Annotations
+    desc: Annotations for molecular entitites
+    contents:
+    - annotations.base
+    - annotations.interface
+    - annotations.manager
+    - entities.trajectory.annotations
+    - entities.molecule.annotations
+    - entities.density.annotations
 
   - title: Scene
     desc: Control settings for the Blender scene through the `Canvas` object.
     contents:
     - Canvas
+    - scene.camera

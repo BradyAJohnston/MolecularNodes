@@ -2,19 +2,26 @@ from pathlib import Path
 import bpy
 import databpy
 import MDAnalysis as mda
-from bpy.props import (
+from bpy.props import (  # type: ignore
     BoolProperty,
     CollectionProperty,
     EnumProperty,
     IntProperty,
     StringProperty,
 )
-from bpy.types import Context, Operator
+from bpy.types import Context, Operator  # type: ignore
 from .. import entities
+from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import Molecule, density, ensemble, trajectory
 from ..nodes import nodes
+from ..nodes.geometry import (
+    create_style_interface,
+    get_final_style_nodes,
+)
+from ..scene.compositor import setup_compositor
+from ..session import get_session
 from . import node_info
 from .style import STYLE_ITEMS
 
@@ -611,6 +618,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
             setup_nodes=scene.mn.import_node_setup,
             style=scene.mn.import_density_style,
             center=scene.mn.import_density_center,
+            overwrite=scene.mn.import_density_overwrite,
         )
         return {"FINISHED"}
 
@@ -672,10 +680,10 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
                 topology_format=trajectory.oxdna.OXDNAParser,
                 format=trajectory.oxdna.OXDNAReader,
             )
-            traj = trajectory.oxdna.OXDNA(uni)
+            traj = trajectory.oxdna.OXDNA(uni, create_object=False)
         else:
-            u = mda.Universe(topo, traj)
-            traj = trajectory.Trajectory(u)
+            uni = mda.Universe(topo, traj)
+            traj = trajectory.Trajectory(uni, create_object=False)
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
@@ -728,12 +736,12 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
         context.view_layer.objects.active = traj.object
         context.scene.frame_start = 0
-        context.scene.frame_end = int(traj.universe.trajectory.n_frames - 1)
+        context.scene.frame_end = int(traj.frame_manager.n_frames - 1)
 
         self.report(
             {"INFO"},
             message=f"Imported '{self.topology}' as {traj.name} "
-            f"with {str(traj.universe.trajectory.n_frames)} "
+            f"with {str(traj.frame_manager.n_frames)} "
             f"frames from '{self.trajectory}'.",
         )
 
@@ -756,6 +764,260 @@ class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
         return {"FINISHED"}
 
 
+class MN_OT_Add_Style(Operator):
+    """
+    Operator to add a new style to an entity
+    """
+
+    bl_idname = "mn.add_style"
+    bl_label = "Add Style"
+    bl_description = "Add new style to entity"
+
+    uuid: StringProperty()  # type: ignore
+
+    style: EnumProperty(  # type: ignore
+        name="Style",
+        default="spheres",
+        description="Style type",
+        items=STYLE_ITEMS,
+    )
+
+    use_uniform_color: BoolProperty(
+        name="Use uniform color",
+        description="Use uniform color for style",
+        default=False,
+    )  # type: ignore
+
+    uniform_color: bpy.props.FloatVectorProperty(
+        name="Uniform color",
+        description="Uniform color for style",
+        subtype="COLOR",
+        size=4,
+        default=(0.162, 0.624, 0.196, 1),
+        min=0.0,
+        max=1.0,
+    )  # type: ignore
+
+    color_scheme: StringProperty(
+        name="Coloring scheme",
+        description="Coloring scheme for style",
+        default="common",
+    )  # type: ignore
+
+    selection: StringProperty(
+        name="Selection",
+        description="Selection for which thisthe style applies",
+        default="",
+    )  # type: ignore
+
+    name: StringProperty(
+        name="Name",
+        description="Label for the style",
+        default="",
+    )  # type: ignore
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "style")
+        layout.prop(self, "use_uniform_color")
+        if self.use_uniform_color:
+            layout.prop(self, "uniform_color")
+        else:
+            layout.prop(self, "color_scheme")
+        layout.prop(self, "selection")
+        layout.prop(self, "name")
+        # Note: Materials cannot be passed into operators
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if self.use_uniform_color:
+            color = self.uniform_color
+        else:
+            color = self.color_scheme
+        entity.add_style(
+            style=self.style,
+            color=color,
+            selection=self.selection.strip() or None,
+            name=self.name.strip() or None,
+        )
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+
+class MN_OT_Remove_Style(Operator):
+    """
+    Operator to remove a style from an entity
+    """
+
+    bl_idname = "mn.remove_style"
+    bl_label = "Remove Style"
+    bl_description = "Remove style from entity"
+
+    uuid: StringProperty()  # type: ignore
+    style_node_index: IntProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        node_group = entity.node_group
+        style_node = node_group.nodes[self.style_node_index]
+        create_style_interface(style_node).remove()
+        # set the active index in UI to the last style
+        style_nodes = get_final_style_nodes(node_group)
+        if len(style_nodes) > 0:
+            entity.object.mn.styles_active_index = node_group.nodes.find(
+                style_nodes[-1].name
+            )
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_confirm(self, event, title="Remove Style?")
+
+
+def _register_temp_annotation_add_op(entity):
+    """Register a temporary annotation add operator with custom input properties"""
+
+    def get_annotation_types(self, context):
+        annotation_types = []
+        for type in entity.annotations._classes.keys():
+            annotation_types.append((type, type, f"Annotation of type {type}"))
+        if not annotation_types:
+            annotation_types = [("None", "None", "None")]
+        return annotation_types
+
+    registered_classes = []
+
+    def register(cls):
+        bpy.utils.register_class(cls)
+        registered_classes.append(cls)
+
+    attributes = {"__annotations__": {}}
+    attributes["__annotations__"]["type"] = EnumProperty(items=get_annotation_types)
+    for cls in entity.annotations._classes.values():
+        AnnotationTypeInputs = create_annotation_type_inputs(cls)
+        register(AnnotationTypeInputs)
+        entity_annotation_type = f"{entity._mn_entity_type}_{cls.annotation_type}"
+        attributes["__annotations__"][entity_annotation_type] = (
+            bpy.props.PointerProperty(type=AnnotationTypeInputs)
+        )
+    AnnotationProps = type("AnnotationProps", (bpy.types.PropertyGroup,), attributes)
+    register(AnnotationProps)
+
+    # Temporary annotation add operator
+    class TempAnnotationAddOperator(bpy.types.Operator):
+        bl_idname = "mn.temp_annotation_add"
+        bl_label = "Add annotation"
+        bl_description = "Add a new annotation"
+
+        props: bpy.props.PointerProperty(type=AnnotationProps)  # type: ignore
+
+        def draw(self, context):
+            layout = self.layout
+            layout.prop(self.props, "type")
+            entity_annotation_type = f"{entity._mn_entity_type}_{self.props.type}"
+            inputs = getattr(self.props, entity_annotation_type, None)
+            if inputs is not None:
+                for prop_name in inputs.__annotations__.keys():
+                    if prop_name in ("uuid", "valid_inputs"):
+                        continue
+                    layout.prop(inputs, prop_name)
+
+        def invoke(self, context, event):
+            return context.window_manager.invoke_props_dialog(self)
+
+        def execute(self, context):
+            if self.props.type == "None":
+                return {"CANCELLED"}
+            annotation_class = entity.annotations._classes[self.props.type]
+            api_inputs = {}
+            entity_annotation_type = f"{entity._mn_entity_type}_{self.props.type}"
+            ui_inputs = getattr(self.props, entity_annotation_type, None)
+            if ui_inputs is not None:
+                for prop_name in ui_inputs.__annotations__.keys():
+                    if prop_name in ui_inputs:
+                        api_inputs[prop_name] = getattr(ui_inputs, prop_name)
+                    else:
+                        if hasattr(annotation_class, prop_name):
+                            api_inputs[prop_name] = getattr(annotation_class, prop_name)
+            # call the same method used by the APIs
+            method_name = f"add_{annotation_class.annotation_type}"
+            method = getattr(entity.annotations, method_name)
+            method(**api_inputs)
+            return {"FINISHED"}
+
+    register(TempAnnotationAddOperator)
+    return registered_classes
+
+
+class MN_OT_Add_Annotation(Operator):
+    """
+    Operator to add a new annotation to an entity
+    """
+
+    bl_idname = "mn.add_annotation"
+    bl_label = "Add annotation"
+    bl_description = "Add annotation to entity"
+
+    uuid: StringProperty()  # type: ignore
+
+    _temp_classes = []
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "type")
+
+    def execute(self, context: Context):
+        # unregister any temp classes from previous invocation
+        # verify in: bpy.types.Operator.__subclasses__() and
+        # bpy.types.PropertyGroup.__subclasses__()
+        for cls in MN_OT_Add_Annotation._temp_classes:
+            bpy.utils.unregister_class(cls)
+        entity = get_session().get(self.uuid)
+        # register the temporary operator with required type inputs
+        MN_OT_Add_Annotation._temp_classes = _register_temp_annotation_add_op(entity)
+        # invoke the temporary add operator
+        bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")
+        return {"FINISHED"}
+
+
+class MN_OT_Remove_Annotation(Operator):
+    """
+    Operator to remove an annotation from an entity
+    """
+
+    bl_idname = "mn.remove_annotation"
+    bl_label = "Remove annotation"
+    bl_description = "Remove annotation from entity"
+
+    uuid: StringProperty()  # type: ignore
+    annotation_uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        entity.annotations._remove_annotation_by_uuid(self.annotation_uuid)
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_confirm(
+            self, event, title="Remove Annotation?"
+        )
+
+
+class MN_OT_Setup_Compositor(Operator):
+    """
+    Operator to setup compositor
+    """
+
+    bl_idname = "mn.setup_compositor"
+    bl_label = "Setup Compositor"
+    bl_description = "Setup Molecular Nodes Compositor"
+
+    def execute(self, context: Context):
+        setup_compositor(context.scene)
+        return {"FINISHED"}
+
+
 CLASSES = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
@@ -773,4 +1035,9 @@ CLASSES = [
     MN_OT_Import_Protein_Local,
     MN_OT_Import_Molecule,
     MN_FH_Import_Molecule,
+    MN_OT_Add_Style,
+    MN_OT_Remove_Style,
+    MN_OT_Add_Annotation,
+    MN_OT_Remove_Annotation,
+    MN_OT_Setup_Compositor,
 ]

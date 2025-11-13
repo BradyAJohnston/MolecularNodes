@@ -36,6 +36,8 @@ class TreeInterface:
             )
         # Use the normal attribute setting mechanism
         super().__setattr__(name, value)
+        # update view layer to reflect changes
+        bpy.context.view_layer.update()
 
     def _register_property(self, name):
         """Register a dynamic property that can be set on this interface"""
@@ -52,6 +54,17 @@ T = TypeVar(
     tuple[float, float, float],
     list[float, float, float],
 )
+
+# Named Attribute node only allows the following data types
+named_attribute_data_types = [
+    "FLOAT",
+    "INT",
+    "FLOAT_VECTOR",
+    "FLOAT_COLOR",
+    "BOOLEAN",
+    "QUATERNION",
+    "FLOAT4X4",
+]
 
 
 class SocketLinkedError(Exception):
@@ -151,7 +164,7 @@ def create_socket_property(
     def setter(self, value):
         remove_linked(socket)
 
-        if isinstance(value, str):
+        if isinstance(value, str) and data_type in named_attribute_data_types:
             input_named_attribute(socket, value, data_type)
         elif isinstance(value, value_type):
             # For array-like types, check length if specified

@@ -1,0 +1,193 @@
+---
+title: Canvas
+description: "Examples of using the Canvas object"
+jupyter: python3
+execute:
+  daemon: false
+---
+
+The [](`~mn.Canvas`) object can be used to configure different render settings, camera, frame objects and views to render images and animations. The [](`~molecularnodes.Canvas.snapshot`) and [](`~molecularnodes.Canvas.animation`) methods can be used to render images and animations respectively.
+
+## Setup Molecular Nodes
+
+```{python}
+import molecularnodes as mn
+import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
+
+# create a canvas object
+canvas = mn.Canvas()
+```
+
+## Add Trajectories
+
+```{python}
+# | warning: false
+u1 = mda.Universe(PSF, DCD)
+u2 = mda.Universe(TPR, XTC)
+
+# add universes to Blender
+t1 = mn.Trajectory(u1).add_style("cartoon")
+t2 = mn.Trajectory(u2)
+```
+
+## Add Styles and Annotations to Trajectories
+
+```{python}
+# styles
+# trajectory 1
+
+t1.add_style(style=mn.StyleBallAndStick(quality=4), selection="resid 184")
+t1.add_style(
+    style=mn.StyleSpheres(subdivisions=4, geometry="Instance"),
+    selection="resid 1 129",
+)
+
+# trajectory 2
+t2.add_style(style="ribbon", color=(0.162, 0.624, 0.196, 0.5))
+t2.add_style(selection="resid 141", style="ball_and_stick")
+
+# annotations
+# trajectory 1
+t1.annotations.add_com_distance(
+    selection1="resid 1", selection2="resid 129", text1="resid 1", text2="resid 129"
+)
+t1.annotations.add_atom_info(selection="name CA and resid 184", show_resid=True)
+# trajectory 2
+t2.annotations.add_atom_info(selection="name CA and resid 141", show_resid=True)
+```
+
+## Add Density component
+
+```{python}
+from pathlib import Path
+
+d1_path = Path("../../") / "tests/data/emd_24805.map.gz"
+
+# load density file
+d1 = mn.entities.density.io.load(
+    file_path=d1_path,
+    style="density_iso_surface",
+    overwrite=True,
+)
+```
+
+## Frame Objects
+
+The [](`~molecularnodes.Canvas.frame_object`) method can be used to frame entity objects. By default, the current camera viewpoint is used to frame objects. An optional `viewpoint` param can be used to set the viewpoint to one of [`default`, `front`, `back`, `left`, `right`, `top`, `bottom`].
+
+```{python}
+# frame trajectory 1 from front and render
+canvas.frame_object(t1, viewpoint="front")
+canvas.snapshot()
+```
+
+```{python}
+# frame trajectory 2 from front and render
+canvas.frame_object(t2, viewpoint="front")
+canvas.snapshot()
+```
+
+```{python}
+# frame density object from right and render
+canvas.frame_object(d1, viewpoint="right")
+canvas.snapshot()
+```
+
+## Frame Views
+
+The [](`~molecularnodes.Canvas.frame_view`) method can be used to frame one or more views. Views can be specific selections within entities or across entities. Multiple views can be combined with a `+` sign before passing to the [](`~molecularnodes.Canvas.frame_view`) method. An optional `viewpoint` param can be passed to specify the viewpoint like before.
+
+All entities have a `get_view` method that returns the entity object by default. The [](`~molecularnodes.entities.Trajectory.get_view`) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
+
+```{python}
+# frame resid 184 in trajectory 1 from the front
+v184 = t1.get_view(selection="resid 184")
+canvas.frame_view(v184, viewpoint="front")
+canvas.snapshot()
+```
+
+```{python}
+# frame resid 1 and 129 in trajectory 1 at frame 97 from the front
+canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint="front")
+canvas.snapshot()
+```
+
+```{python}
+# frame resid 184 from trajectory 1 and resid 141 from trajectory 2
+canvas.frame_view(
+    t1.get_view("resid 184") + t2.get_view("resid 141"), viewpoint="front"
+)
+canvas.snapshot()
+```
+
+```{python}
+# frame trajectory 2 and density component from left
+canvas.frame_view(t2.get_view() + d1.get_view(), viewpoint="left")
+canvas.snapshot()
+```
+
+## Camera Zoom in or out
+
+Camera can be zoomed in our out using the camera [](`~molecularnodes.scene.camera.Camera.lens`) settings of the [](`~mn.Canvas`) camera object once framed.
+
+```{python}
+# frame density object from front and render - default
+canvas.frame_object(d1, viewpoint="front")
+canvas.snapshot()
+```
+
+```{python}
+# zoom in
+canvas.camera.lens = 150
+canvas.snapshot()
+```
+
+```{python}
+# zoom out
+canvas.camera.lens = 35
+canvas.snapshot()
+```
+
+```{python}
+# reset camera lens to default (50mm)
+canvas.camera.lens = 50
+```
+
+## Camera Rotation
+
+Camera can be rotated to an arbitrary angle using the camera [](`~molecularnodes.scene.camera.Camera.rotation`) method of the [](`~mn.Canvas`) camera object before framing the object or view. Blender uses a default `XYZ` Euler for rotations along the X, Y and Z axes. The [](`~molecularnodes.scene.camera.Camera.rotation`) method takes angles in degrees.
+
+```{python}
+# print current rotation
+canvas.camera.rotation
+```
+
+```{python}
+# rotate 45 degrees to left from the front view
+# frame density object - note that viewpoint is not specified
+canvas.frame_view(d1, (90, 0, -45))
+canvas.snapshot()
+```
+
+```{python}
+# frame density object and render
+canvas.frame_view(d1, (90, 0, 45))
+canvas.snapshot()
+```
+
+## Animations
+
+The [](`~molecularnodes.Canvas.animation`) method can be used to render animations. An optional `frame_start` and `frame_end` can be specified to limit animations to a custom range. The `render_scale` parameter can be used to scale the renders as a percentage of the render resolution.
+
+```{python}
+# frame resid 1 and 129 in trajectory 1 at frame 97 from the front
+canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint="front")
+# add a universe info annotation to trajectory 1
+t1.annotations.add_universe_info()
+```
+
+```{python}
+# render animation of scene from frame 10 to 50 at 50% sccale
+canvas.animation(frame_start=10, frame_end=50, render_scale=50)
+```

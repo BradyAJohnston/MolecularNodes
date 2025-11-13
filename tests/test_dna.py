@@ -7,6 +7,10 @@ import molecularnodes as mn
 from molecularnodes.entities.trajectory import oxdna
 from .constants import data_dir
 
+pytestmark = pytest.mark.filterwarnings(
+    "ignore:.*no reference attributes.*:UserWarning"
+)
+
 
 class TestOXDNAReading:
     @pytest.fixture(scope="module")
@@ -52,17 +56,16 @@ class TestOXDNAReading:
         assert u.atoms.n_atoms == 98
 
     def test_univ_as_traj(self, universe):
-        traj = oxdna.OXDNA(universe)
+        traj = oxdna.OXDNA(universe, create_object=False)
         assert traj.universe
         with pytest.raises(LinkedObjectError):
             traj.object
-        assert all([x in ["A", "C", "T", "G"] for x in traj.res_name])
+        assert all([x in ["A", "C", "T", "G"] for x in traj.atoms.resnames])
 
     def test_univ_snapshot(self, universe: mda.Universe, snapshot_custom):
         traj = oxdna.OXDNA(universe)
-        traj.create_object()
         for name in ["position", "res_name", "res_id", "chain_id"]:
-            assert snapshot_custom == getattr(traj, name)
+            assert snapshot_custom == str(traj[name])
 
     def test_detect_new_top(self, file_top_old, file_top_new, file_top_new_custom):
         assert oxdna.OXDNAParser._is_new_topology(file_top_new)
@@ -92,11 +95,10 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
-        traj.create_object()
         assert len(traj) == 12
-        assert snapshot == traj.bonds.tolist()
+        assert snapshot == traj.atoms.bonds.indices.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
-            assert snapshot == traj.named_attribute(att).tolist()
+            assert snapshot == str(traj[att])
 
     def test_reading_example(self):
         traj = oxdna.OXDNA(
@@ -107,7 +109,6 @@ class TestOXDNAReading:
                 format=oxdna.OXDNAReader,
             )
         )
-        traj.create_object()
         assert len(np.unique(traj.named_attribute("res_id"))) == 15166
         assert len(np.unique(traj.named_attribute("chain_id"))) == 178
 
@@ -120,9 +121,9 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
-        traj.create_object()
 
         assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
+        assert traj._mn_entity_type == mn.entities.base.EntityType.MD_OXDNA.value
 
     def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
         session = mn.session.get_session()
@@ -133,7 +134,6 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
-        traj.create_object()
         obj_name = traj.name
         bpy.context.scene.frame_set(1)
         pos1 = traj.position

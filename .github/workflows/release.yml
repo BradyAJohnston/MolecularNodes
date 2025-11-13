@@ -5,21 +5,36 @@ on:
     tags:
       - 'v*'
 
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-draft-release:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
     permissions:
       contents: write
       discussions: write
 
     steps:
       - uses: actions/checkout@v4
-      - uses: BradyAJohnston/setup-blender@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-            version: 4.4
+          enable-cache: true
+
+      - uses: BradyAJohnston/setup-blender@v5
+        with:
+          version: 4.5
+
       - name: Build Extension
         run: |
-          blender -b -P build.py
+          # Use new build script with uv.lock as source of truth
+          BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
+          uv run --extra build build.py --blender-path "${BLENDER_PATH}"
+
       - name: Create Draft Release
         run: |
           gh release create ${{ github.ref_name }} --draft --generate-notes *.zip

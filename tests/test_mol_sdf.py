@@ -8,20 +8,24 @@ formats = ["mol", "sdf"]
 
 
 @pytest.mark.parametrize("format", formats)
-def test_open(snapshot_custom, format):
+def test_open(format):
     molecule = mn.Molecule.load(data_dir / f"caffeine.{format}")
 
     assert molecule.array
 
 
 @pytest.mark.parametrize("format", formats)
-@pytest.mark.parametrize("style", ["ball_and_stick", "spheres", "surface"])
+@pytest.mark.parametrize(
+    "style",
+    [
+        mn.StyleBallAndStick(sphere_geometry="Mesh"),
+        mn.StyleSpheres(geometry="Mesh"),
+        mn.StyleSurface(),
+    ],
+)
 def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
     mol = mn.Molecule.load(data_dir / f"caffeine.{format}").add_style(style=style)
     assert mol.object
-
-    if style != "surface":
-        mol.styles[0].sphere_geometry = "Mesh"
 
     for attribute in attributes:
         try:

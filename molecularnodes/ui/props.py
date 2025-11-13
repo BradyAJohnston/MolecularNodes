@@ -1,8 +1,16 @@
 import bpy
-from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
-from bpy.types import PropertyGroup
+from bpy.props import (  # type: ignore
+    BoolProperty,
+    CollectionProperty,
+    EnumProperty,
+    IntProperty,
+    StringProperty,
+)
+from bpy.types import PropertyGroup  # type: ignore
+from databpy.object import LinkedObjectError
+from ..blender.utils import set_object_visibility
 from ..handlers import _update_entities
-from ..session import get_session
+from ..session import get_entity
 from .style import STYLE_ITEMS
 
 uuid_property = StringProperty(  # type: ignore
@@ -23,7 +31,60 @@ def _set_frame(self, frame):
     _update_entities(self, bpy.context)
 
 
+def _get_entity_visibility(self) -> bool:
+    """get callback for entity visibility property"""
+    return self.get("visible", True)
+
+
+def _set_entity_visibility(self, visible: bool) -> None:
+    """set callback for entity visibility property"""
+    self["visible"] = visible
+    entity = bpy.context.scene.MNSession.get(self.name)
+    if entity is not None:
+        set_object_visibility(entity.object, self.visible)
+        entity.annotations._update_annotation_object()
+
+
+def _entities_active_index_callback(self, context: bpy.context) -> None:  # type: ignore
+    """update callback for entities active_index change"""
+    if self.entities_active_index == -1:
+        return
+    uuid = context.scene.mn.entities[self.entities_active_index].name
+    try:
+        # object might not yet be created during session entity registration
+        entity_object = context.scene.MNSession.get(uuid).object
+    except (LinkedObjectError, AttributeError):
+        return
+    # just setting view_layer.objects.active is not enough
+    bpy.ops.object.select_all(action="DESELECT")  # deselect all objects
+    if entity_object.name in context.view_layer.objects:
+        context.view_layer.objects.active = entity_object  # make active object
+    bpy.context.view_layer.update()  # update view layer to reflect changes
+    if bpy.context.active_object:  # can be None for hidden objects
+        bpy.context.active_object.select_set(True)  # set as selected object
+
+
+class EntityProperties(bpy.types.PropertyGroup):
+    # name property is implicit and is set to uuid for find lookups
+    # type value is one of EntityType enum
+    type: StringProperty(name="Entity Type", default="")  # type: ignore
+    visible: BoolProperty(
+        name="visible",
+        description="Visibility of the entity",
+        default=True,
+        get=_get_entity_visibility,
+        set=_set_entity_visibility,
+    )  # type: ignore
+
+
 class MolecularNodesSceneProperties(PropertyGroup):
+    entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
+    entities_active_index: IntProperty(
+        name="Active entity index",
+        default=-1,
+        update=_entities_active_index_callback,
+    )  # type: ignore
+
     import_del_hydrogen: BoolProperty(  # type: ignore
         name="Remove Hydrogens",
         description="Remove the hydrogens from a structure on import",
@@ -44,17 +105,7 @@ class MolecularNodesSceneProperties(PropertyGroup):
         options={"TEXTEDIT_UPDATE"},
     )
 
-    import_format_alphafold: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        items=(
-            # ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
-            ("cif", ".cif", "The new standard of .cif / .mmcif"),
-            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
-        ),
-    )
-
-    import_format_wwpdb: EnumProperty(  # type: ignore
+    import_format_fetch: EnumProperty(  # type: ignore
         name="Format",
         description="Format to download as from the PDB",
         items=(
@@ -167,6 +218,11 @@ class MolecularNodesSceneProperties(PropertyGroup):
         description="Translate the density so that the center of the box is at the origin.",
         default=False,
     )
+    import_density_overwrite: BoolProperty(  # type: ignore
+        name="Overwrite Intermediate File",
+        description="Overwrite generated intermediate .vdb file.",
+        default=False,
+    )
     import_density: StringProperty(  # type: ignore
         name="File",
         description="File path for the map file.",
@@ -184,10 +240,16 @@ class MolecularNodesSceneProperties(PropertyGroup):
                 0,
             ),
             (
+                "density_iso_surface",
+                "ISO Surface",
+                "A mesh surface based on the specified iso value",
+                1,
+            ),
+            (
                 "density_wire",
                 "Wire",
                 "A wire mesh surface based on the specified threshold",
-                1,
+                2,
             ),
         ),
     )
@@ -233,7 +295,24 @@ class MolecularNodesSceneProperties(PropertyGroup):
     )
 
 
+def _update_annotations_visibility(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    if entity is not None:
+        entity.annotations._update_annotation_object()
+
+
 class MolecularNodesObjectProperties(PropertyGroup):
+    styles_active_index: IntProperty(default=-1)  # type: ignore
+    annotations_active_index: IntProperty(default=-1)  # type: ignore
+    annotations_next_index: IntProperty(default=0)  # type: ignore
+
+    annotations_visible: BoolProperty(  # type: ignore
+        name="Visible",
+        description="Visibility of all annotations",
+        default=True,
+        update=_update_annotations_visibility,
+    )
+
     biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
         description="A list of biological assemblies to be created",
@@ -244,12 +323,16 @@ class MolecularNodesObjectProperties(PropertyGroup):
         name="Entity Type",
         description="How the file was imported, dictating how MN interacts with it",
         items=(
+            ("None", "None", "Not an MN entity"),
             ("molecule", "Molecule", "A single molecule"),
             ("ensemble", "Ensemble", "A collection of molecules"),
-            ("density", "Density", "An electron density map"),
+            ("density", "Density", "A density grid"),
             ("md", "Trajectory", "A molecular dynamics trajectory"),
             ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory "),
+            ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
+            ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
         ),
+        default="None",
     )
 
     code: StringProperty(  # type: ignore
@@ -353,7 +436,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         update=_update_entities,
     )
 
-    selection_str: StringProperty(  # type: ignore
+    string: StringProperty(  # type: ignore
         name="Selection",
         description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
@@ -432,21 +515,9 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     bl_description = "Add a new boolean attribute for the given MDA selection string"
 
     def execute(self, context):
-        obj = context.active_object
-        traj = get_session(context).match(obj)
-        i = int(len(obj.mn_trajectory_selections) - 1)
-        name = "selection_0"
-        while True:
-            if len(obj.mn_trajectory_selections) == 0:
-                break
-            if name in obj.mn_trajectory_selections:
-                i += 1
-                name = f"selection_{i}"
-            else:
-                break
-        traj.add_selection(name=name, selection_str="all")
-        obj.mn["list_index"] = i
-
+        traj = get_entity(context)
+        traj.selections.add("all")
+        traj.object.mn["list_index"] = len(traj.selections) - 1
         return {"FINISHED"}
 
 
@@ -460,19 +531,17 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
         return context.active_object.mn_trajectory_selections
 
     def execute(self, context):
-        obj = context.active_object
-        index = obj.mn.trajectory_selection_index
-        traj = get_session(context).match(obj)
-        names = [s.name for s in obj.mn_trajectory_selections]
-        traj.remove_selection(names[index])
-        obj.mn.trajectory_selection_index = int(
-            max(min(index, len(obj.mn_trajectory_selections) - 1), 0)
-        )
+        traj = get_entity(context)
+        names = [s.name for s in traj.selections.items]
+        index = traj.selections.index
+        traj.selections.remove(names[index])
+        traj.selections.index = int(max(min(index, len(traj.selections) - 1), 0))
 
         return {"FINISHED"}
 
 
 CLASSES = [
+    EntityProperties,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly

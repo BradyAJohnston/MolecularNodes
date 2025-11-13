@@ -6,9 +6,8 @@ from databpy import ObjectTracker
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
+from .emdb_pooch import fetch_emdb_map
 from .utils import NumpySnapshotExtension
-
-bpy.utils.expose_bundled_modules()
 
 
 @pytest.fixture
@@ -95,6 +94,31 @@ def test_density_operator(
     scene.mn.import_density_center = center
     with ObjectTracker() as o:
         bpy.ops.mn.import_density()
-        density = scene.MNSession.match(o.latest())
+        density: mn.entities.Density = scene.MNSession.match(o.latest())
 
-    assert snapshot_custom == density.position
+    obj = mn.blender.mesh.evaluate_using_mesh(density.object)
+    assert len(obj.data.vertices) == [198862, 287422][int(invert)]
+
+
+@pytest.fixture
+def density_file_dx():
+    file = data_dir / "water.dx.gz"
+    vdb_file = data_dir / "water.vdb"
+    vdb_file.unlink(missing_ok=True)
+    # Make sure all densities are removed
+    for o in bpy.data.objects:
+        if o.mn.entity_type == "density":
+            bpy.data.objects.remove(o, do_unlink=True)
+    return file
+
+
+def test_density_load_dx(density_file_dx):
+    density = mn.entities.density.load(density_file_dx)
+    print(f"{list(bpy.data.objects)=}")
+    assert density.object.mn.entity_type == "density"
+    assert density.object.users_collection[0] == mn.blender.coll.mn()
+
+
+# this test fails without the fallback using mrcfile
+def test_fallback_reading():
+    mn.entities.density.load(fetch_emdb_map(48397))

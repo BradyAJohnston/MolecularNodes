@@ -7,7 +7,7 @@ fig-align: center
 
 The different lookup tables that are used to conver strings to integers in Molecular Nodes.
 
-Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnston/MolecularNodes/blob/main/molecularnodes/data.py)
+Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnston/MolecularNodes/blob/main/molecularnodes/assets/data.py)
 
 ### Residue Names
 
@@ -54,6 +54,7 @@ Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnsto
 | C | `41::Int` |
 | G | `42::Int` |
 | U | `43::Int` |
+| T | `43::Int` |
 
 
 ### Atom Names

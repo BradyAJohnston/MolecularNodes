@@ -1,6 +1,9 @@
 import bpy
-from ..entities import trajectory
+from databpy.object import LinkedObjectError
+from ..entities import density, trajectory
+from ..entities.base import EntityType
 from ..nodes import nodes
+from ..nodes.geometry import get_final_style_nodes
 from ..session import get_session
 from .pref import addon_preferences
 from .utils import check_online_access_for_ui
@@ -15,11 +18,11 @@ def panel_wwpdb(layout, scene):
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene.mn, "import_code_pdb")
     row = row_import.split(factor=0.3)
-    row.prop(scene.mn, "import_format_wwpdb", text="")
+    row.prop(scene.mn, "import_format_fetch", text="")
     op = row.operator("mn.import_fetch")
     op.code = scene.mn.import_code_pdb  # type: ignore
     op.database = "wwpdb"  # type: ignore
-    op.file_format = scene.mn.import_format_wwpdb  # type: ignore
+    op.file_format = scene.mn.import_format_fetch  # type: ignore
     op.node_setup = scene.mn.import_node_setup  # type: ignore
     op.remove_solvent = scene.mn.import_remove_solvent  # type: ignore
     op.assembly = scene.mn.import_build_assembly  # type: ignore
@@ -66,11 +69,11 @@ def panel_alphafold(layout, scene):
     row_import = layout.row().split(factor=0.5)
     row_import.prop(scene.mn, "import_code_alphafold")
     download = row_import.split(factor=0.3)
-    download.prop(scene.mn, "import_format_alphafold", text="")
+    download.prop(scene.mn, "import_format_fetch", text="")
     op = download.operator("mn.import_fetch")
     op.code = scene.mn.import_code_alphafold  # type: ignore
     op.database = "alphafold"  # type: ignore
-    op.file_format = scene.mn.import_format_alphafold  # type: ignore
+    op.file_format = scene.mn.import_format_fetch  # type: ignore
     op.node_setup = scene.mn.import_node_setup  # type: ignore
     op.assembly = scene.mn.import_build_assembly  # type: ignore
     op.style = scene.mn.import_style  # type: ignore
@@ -99,7 +102,7 @@ def panel_alphafold(layout, scene):
     row_centre = options.row()
     row_centre.prop(scene.mn, "import_centre", icon_value=0)
     col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "centre_type", text="")
+    col_centre.prop(scene.mn, "import_centre_type", text="")
     col_centre.enabled = scene.mn.import_centre
     options.separator()
 
@@ -168,7 +171,7 @@ def panel_cellpack(layout, scene):
 
 
 def panel_density(layout, scene):
-    layout.label(text="Load EM Map", icon="FILE_TICK")
+    layout.label(text="Load Density Grids", icon="FILE_TICK")
     layout.separator()
 
     row = layout.row()
@@ -192,6 +195,7 @@ def panel_density(layout, scene):
 
     layout.prop(scene.mn, "import_density_invert")
     layout.prop(scene.mn, "import_density_center")
+    layout.prop(scene.mn, "import_density_overwrite")
     row = layout.row()
     row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
@@ -371,7 +375,7 @@ def panel_md_properties(layout, context):
     # only enable this as an option if the universe is orthothombic
     row = col.row()
     row.prop(obj.mn, "correct_periodic")
-    row.enabled = traj.is_orthorhombic
+    row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
@@ -394,7 +398,7 @@ def panel_md_properties(layout, context):
 
         col = layout.column(align=False)
         row = col.row()
-        col.prop(item, "selection_str")
+        col.prop(item, "string")
 
         # disable editing for immutable selections
         # disable modifying updating and periodic
@@ -417,19 +421,19 @@ def panel_object(layout, context):
     if object is None:
         # When an object is deleted, context.ative_object is None
         return
-    layout.prop(object.mn, "entity_type")
+    row = layout.row()
+    row.prop(object.mn, "entity_type")
+    row.enabled = False
     try:
         mol_type = object.mn.entity_type
     except AttributeError:
         return None
-    if mol_type == "":
+    if mol_type == "None":
         layout.label(text="No MN object selected")
         return None
-    if mol_type == "pdb":
-        layout.label(text=f"PDB: {object.mn.code.upper()}")
     if mol_type.startswith("md"):
         panel_md_properties(layout, context)
-    if mol_type == "star":
+    if mol_type == "ensemble-star":
         layout.label(text="Ensemble")
         box = layout.box()
         ui_from_node(box, nodes.get_star_node(object), context=context)
@@ -543,4 +547,544 @@ class MN_PT_Scene(bpy.types.Panel):
         which_panel[scene.mn.panel_selection](layout, context)
 
 
-CLASSES = [MN_PT_Scene]
+class MN_UL_EntitiesList(bpy.types.UIList):
+    """
+    UIList of entities in Entities panel (Viewport)
+    """
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "WORLD"
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            seqno = f"{index + 1}. "
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=seqno)
+            col = split.column()
+            session = context.scene.MNSession
+            entity = session.get(item.name)
+            col.prop(entity.object, "name", text="", emboss=False)
+            # use the object viewport visibility to determine the icon
+            # we do not have direct callbacks for raw object visibility changes
+            hide_icon = "HIDE_OFF" if not entity.object.hide_get() else "HIDE_ON"
+            row.prop(
+                item,
+                "visible",
+                icon_only=True,
+                icon=hide_icon,
+            )
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, propname):
+        items = getattr(data, propname)
+        filtered = [self.bitflag_filter_item] * len(items)
+        for i, item in enumerate(items):
+            try:
+                _ = context.scene.MNSession.get(item.name).name
+            except (LinkedObjectError, AttributeError):
+                filtered[i] &= ~self.bitflag_filter_item
+        return filtered, []
+
+
+class MN_PT_Entities(bpy.types.Panel):
+    """
+    Panel to list MN Entities in Viewport
+    """
+
+    bl_idname = "MN_PT_Entities"
+    bl_label = "Entities"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    def draw(self, context):
+        layout = self.layout
+        props = context.scene.mn
+        row = layout.row()
+        row.template_list(
+            "MN_UL_EntitiesList",
+            "entities_list",
+            props,
+            "entities",
+            props,
+            "entities_active_index",
+            rows=3,
+        )
+        col = row.column()
+        row = col.row()
+        row.operator("mn.session_prune", icon="FILE_REFRESH", text="")
+        row = col.row()
+        row.operator("mn.session_create_object", icon="ADD", text="")
+        row.enabled = False  # TODO: create object or create entity or remove?
+        row = col.row()
+        op = row.operator("mn.session_remove_item", icon="REMOVE", text="")
+        if props.entities_active_index == -1:
+            row.enabled = False
+        else:
+            op.uuid = props.entities[props.entities_active_index].name
+
+        if props.entities_active_index == -1:
+            return
+        # display entity type of the selected entity
+        uuid = props.entities[props.entities_active_index].name
+        entity = context.scene.MNSession.get(uuid)
+        row = layout.row()
+        row.prop(entity.object.mn, "entity_type")
+        row.enabled = False
+
+
+class MN_PT_trajectory(bpy.types.Panel):
+    """
+    Panel for trajectory details
+    """
+
+    bl_idname = "MN_PT_trajectory"
+    bl_label = "Trajectory"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MD_OXDNA.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        layout = self.layout
+        # To enable the animatate dot next to property in UI
+        # layout.use_property_split = True
+        # layout.use_property_decorate = True
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[active_index].name
+        # Use the object corresponding to the entity
+        object = scene.MNSession.get(uuid).object
+        props = object.mn
+        row = layout.row()
+        label = "This trajectory has " + str(props.n_frames) + " frames"
+        row.label(text=label)
+        row = layout.row()
+        row.prop(props, "update_with_scene")
+        box = layout.box()
+        row = box.row()
+        row.prop(props, "frame")
+        box.enabled = not props.update_with_scene
+
+
+class MN_UL_StylesList(bpy.types.UIList):
+    """
+    UIList of styles for an entity
+    """
+
+    seqno = 1
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "WORLD"
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            seqno = f"{self.seqno}. "
+            MN_UL_StylesList.seqno += 1
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=seqno)
+            col = split.column()
+            col.prop(item, "label", text="", emboss=False)
+            if "Visible" in item.inputs:
+                input = item.inputs["Visible"]
+                hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
+                row.prop(input, "default_value", icon_only=True, icon=hide_icon)
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, propname):
+        items = getattr(data, propname)
+        helper_funcs = bpy.types.UI_UL_list
+        filtered = []
+        # Filtering by name
+        if self.filter_name:
+            filtered = helper_funcs.filter_items_by_name(
+                self.filter_name,
+                self.bitflag_filter_item,
+                items,
+                "label",
+                reverse=False,
+            )
+        if not filtered:
+            filtered = [self.bitflag_filter_item] * len(items)
+        style_nodes = get_final_style_nodes(data)
+        ordered = [-1] * len(items)
+        for i, item in enumerate(items):
+            if item in style_nodes:
+                ordered[i] = style_nodes.index(item)
+            else:
+                filtered[i] &= ~self.bitflag_filter_item
+        index = len(style_nodes)
+        for i, item in enumerate(items):
+            if ordered[i] == -1:
+                ordered[i] = index
+                index += 1
+        return filtered, ordered
+
+
+class MN_PT_Styles(bpy.types.Panel):
+    """
+    Panel for styles
+    """
+
+    bl_idname = "MN_PT_styles"
+    bl_label = "Styles"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory or molecule"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MOLECULE.value,
+                EntityType.DENSITY.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        scene = context.scene
+        entities_active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[entities_active_index].name
+        entity = scene.MNSession.get(uuid)
+        node_group = entity.node_group
+        if node_group is None:
+            return
+        styles_active_index = entity.object.mn.styles_active_index
+        valid_selection = False
+        style_nodes = get_final_style_nodes(node_group)
+        if 0 <= styles_active_index < len(node_group.nodes):
+            if node_group.nodes[styles_active_index] in style_nodes:
+                valid_selection = True
+
+        layout = self.layout
+        row = layout.row()
+        MN_UL_StylesList.seqno = 1
+        row.template_list(
+            "MN_UL_StylesList",
+            "styles_list",
+            node_group,
+            "nodes",
+            entity.object.mn,
+            "styles_active_index",
+            rows=3,
+        )
+        if not isinstance(entity, density.Density):
+            col = row.column()
+            row = col.row()
+            op = row.operator("mn.add_style", icon="ADD", text="")
+            op.uuid = uuid
+            row = col.row()
+            op = row.operator("mn.remove_style", icon="REMOVE", text="")
+            if valid_selection:
+                op.uuid = uuid
+                op.style_node_index = styles_active_index
+            else:
+                row.enabled = False
+
+        if not valid_selection:
+            return
+
+        box = layout.box()
+        row = box.row()
+        style_node = node_group.nodes[styles_active_index]
+
+        panels = {}
+        for item in style_node.node_tree.interface.items_tree.values():
+            if item.item_type == "PANEL":
+                header = None
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
+                        header, panel = panel.panel(item.name, default_closed=False)
+                else:
+                    header, panel = box.panel(item.name, default_closed=False)
+                if header:
+                    header.label(text=item.name)
+                panels[item.name] = panel
+            elif item.name == "Selection":
+                continue
+            else:
+                if item.in_out != "INPUT":
+                    continue
+                if item.name in ("Visible"):
+                    continue
+                input = style_node.inputs[item.identifier]
+                if not hasattr(input, "default_value"):
+                    continue
+                row = None
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
+                        row = panel.row()
+                else:
+                    row = box.row()
+                if row:
+                    row.prop(data=input, property="default_value", text=input.name)
+        row = box.row()
+
+
+class MN_UL_AnnotationsList(bpy.types.UIList):
+    """
+    UIList of annotations for an entity
+    """
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        custom_icon = "WORLD"
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            split = row.split(factor=0.1)
+            col = split.column()
+            col.label(text=f"{index + 1}. ")
+            col = split.column()
+            col.prop(item, "label", text="", emboss=False)
+            hide_icon = "HIDE_OFF" if item.visible else "HIDE_ON"
+            row.prop(item, "visible", icon_only=True, icon=hide_icon)
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text="", icon=custom_icon)
+
+    def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
+        items = getattr(data, propname)
+        helper_funcs = bpy.types.UI_UL_list
+        filtered = []
+        # Filtering by name
+        if self.filter_name:
+            filtered = helper_funcs.filter_items_by_name(
+                self.filter_name,
+                self.bitflag_filter_item,
+                items,
+                "label",
+                reverse=False,
+            )
+        if not filtered:
+            filtered = [self.bitflag_filter_item] * len(items)
+        return filtered, []
+
+
+class MN_PT_Annotations(bpy.types.Panel):
+    """
+    Panel for annotations
+    """
+
+    bl_idname = "MN_PT_annotations"
+    bl_label = "Annotations"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory or molecule"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MOLECULE.value,
+                EntityType.DENSITY.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        scene = context.scene
+        entities_active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[entities_active_index].name
+        entity = scene.MNSession.get(uuid)
+        object = entity.object
+        annotations_active_index = object.mn.annotations_active_index
+        valid_selection = annotations_active_index != -1
+
+        layout = self.layout
+        row = layout.row()
+        row.prop(object.mn, "annotations_visible", text="Visible")
+
+        row = layout.row()
+        MN_UL_AnnotationsList.seqno = 1
+        row.template_list(
+            "MN_UL_AnnotationsList",
+            "annotations_list",
+            object,
+            "mn_annotations",
+            object.mn,
+            "annotations_active_index",
+            rows=3,
+        )
+        col = row.column()
+        row = col.row()
+        op = row.operator("mn.add_annotation", icon="ADD", text="")
+        op.uuid = uuid
+        row = col.row()
+        op = row.operator("mn.remove_annotation", icon="REMOVE", text="")
+        if valid_selection:
+            op.uuid = uuid
+            op.annotation_uuid = object.mn_annotations[annotations_active_index].name
+        else:
+            row.enabled = False
+
+        if not valid_selection:
+            return
+
+        item = object.mn_annotations[annotations_active_index]
+        box = layout.box()
+        row = box.row()
+        row.prop(item, "type")
+        row.enabled = False
+        entity_annotation_type = f"{entity._mn_entity_type}_{item.type}"
+        inputs = getattr(item, entity_annotation_type, None)
+        instance = entity.annotations._interfaces.get(inputs.uuid)._instance
+        if inputs is not None:
+            if not inputs.valid_inputs:
+                col = layout.column()
+                box = col.box()
+                box.label(text="Invalid inputs", icon="ERROR")
+                box.alert = True
+
+            for prop_name in inputs.__annotations__.keys():
+                if prop_name in ("uuid", "valid_inputs"):
+                    continue
+                row = box.row()
+                if hasattr(instance, f"_{prop_name}"):
+                    # indicate use of non blender property in draw
+                    row.label(icon="ERROR")
+                    row.alert = True
+                row.prop(inputs, prop_name)
+
+        # Add all the common annotation params within the 'Options' panel
+        header, panel = box.panel("annotation_options", default_closed=True)
+        header.label(text="Options")
+
+        if panel:
+            text_header, text_panel = panel.panel("text_options", default_closed=True)
+            text_header.label(text="Text")
+            line_header, line_panel = panel.panel("line_options", default_closed=True)
+            line_header.label(text="Lines")
+            mesh_header, mesh_panel = panel.panel("mesh_options", default_closed=True)
+            mesh_header.label(text="Meshes")
+
+            for prop in item.bl_rna.properties:
+                if not prop.is_runtime:
+                    continue
+                if prop.identifier in ("label", "type", "visible"):
+                    continue
+                if prop.type == "POINTER" and prop.identifier != "mesh_material":
+                    continue
+                if text_panel and prop.identifier.startswith("text_"):
+                    row = text_panel.row()
+                    row.prop(item, prop.identifier)
+                    if prop.identifier == "text_falloff":
+                        row.enabled = item.text_depth
+                elif line_panel and prop.identifier.startswith("line_"):
+                    row = line_panel.row()
+                    row.prop(item, prop.identifier)
+                    if prop.identifier == "line_mode":
+                        continue
+                    row.enabled = item.line_mode != "mesh"
+                elif mesh_panel and prop.identifier.startswith("mesh_"):
+                    row = mesh_panel.row()
+                    row.prop(item, prop.identifier)
+
+        row = box.row()
+
+
+class MN_PT_Compositor(bpy.types.Panel):
+    """
+    Panel for Compositor
+    """
+
+    bl_idname = "MN_PT_compositor"
+    bl_label = "Options"
+    bl_space_type = "NODE_EDITOR"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        return (
+            context.area.type == "NODE_EDITOR"
+            and context.space_data.tree_type == "CompositorNodeTree"
+        )
+
+    def draw(self, context):
+        layout = self.layout
+        box = layout.box()
+        row = box.row()
+        row.operator("mn.setup_compositor")
+
+
+CLASSES = [
+    MN_PT_Scene,
+    MN_UL_EntitiesList,
+    MN_PT_Entities,
+    MN_PT_trajectory,
+    MN_UL_StylesList,
+    MN_PT_Styles,
+    MN_UL_AnnotationsList,
+    MN_PT_Annotations,
+    MN_PT_Compositor,
+]

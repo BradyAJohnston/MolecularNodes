@@ -30,8 +30,8 @@ def enable_optimal_gpu():
     for backend in options:
         try:
             enable_gpus(backend)
-            break
+            return
         except TypeError:
             continue
 
-        raise TypeError("No GPU Device found")
+    raise TypeError("Failed to enable GPU backend")

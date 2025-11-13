@@ -3,7 +3,7 @@ import bpy
 import molecularnodes as mn
 from molecularnodes.nodes.nodes import get_style_node
 from molecularnodes.nodes.styles import (
-    StyleBallandStick,
+    StyleBallAndStick,
     StyleCartoon,
     StyleSpheres,
     StyleSticks,
@@ -68,7 +68,7 @@ def assess_node_equivalency(name, style):
 
 
 def test_styles():
-    assess_node_equivalency("ball+stick", StyleBallandStick)
+    assess_node_equivalency("ball+stick", StyleBallAndStick)
     assess_node_equivalency("cartoon", StyleCartoon)
     # note backbone radius of ribbon seems to switch between 1.6 and 2.0
     # assess_node_equivalency("ribbon", StyleRibbon)

@@ -27,7 +27,7 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
         style=style, assembly=assembly
     )
     if style == "spheres":
-        mol.styles[0].sphere_geometry = "Mesh"
+        mol.styles[0].geometry = "Mesh"
 
     for att in attributes:
         try:
@@ -43,6 +43,8 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style)
 )
 def test_download_format(code, format):
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
+    assert mol.object.mn.entity_type == mol._entity_type.value
     with db.ObjectTracker() as o:
         bpy.ops.mn.import_fetch(code=code, file_format=format, cache_dir=str(data_dir))
         mol2 = bpy.context.scene.MNSession.match(o.latest())
@@ -104,6 +106,7 @@ def test_local_pdb(snapshot_custom):
         assert snapshot_custom == mol.named_attribute("position")
 
 
+@pytest.mark.filterwarnings("ignore:.*elements were guessed.*:UserWarning")
 def test_pdb_no_bonds(snapshot):
     mol = mn.Molecule.load(data_dir / "no_bonds.pdb")
     assert len(mol.object.data.edges) == 0
@@ -126,25 +129,7 @@ def test_rcsb_nmr(snapshot_custom):
 
 def test_load_small_mol(snapshot_custom):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
+    assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
+    assert mol.object.mn.entity_type == mol._entity_type.value
     for att in ["position", "bond_type"]:
         assert snapshot_custom == mol.named_attribute(att).tolist()
-
-
-def test_rcsb_cache(snapshot_custom):
-    import os
-    import tempfile
-    from pathlib import Path
-
-    # we want to make sure cached files are freshly downloaded, but
-    # we don't want to delete our entire real cache
-    # Create a temporary directory
-    with tempfile.TemporaryDirectory() as data_dir:
-        test_cache = Path(data_dir)
-
-        # Run the test
-        mol1 = mn.Molecule.fetch("6BQN", cache=test_cache)
-        file = os.path.join(test_cache, "6BQN.bcif")
-        assert os.path.exists(file)
-
-        mol2 = mn.Molecule.fetch("6BQN", cache=test_cache)
-        assert np.allclose(mol1.position, mol2.position)

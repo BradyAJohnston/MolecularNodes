@@ -1,23 +1,61 @@
 website:
   sidebar:
-  - collapse-level: 3
+  - collapse-level: 4
     contents:
     - href: api/index.qmd
       text: Introduction
     - api/styles.qmd
     - api/materials.qmd
+    - api/density.qmd
+    - api/annotations.qmd
+    - api/canvas.qmd
+    - api/blender.qmd
+    - contents: api/trajectory/*
+      section: Trajectory
     - text: '---'
     - contents:
       - api/reference/index.qmd
       - contents:
-        - api/reference/entities.Molecule.qmd
-        - api/reference/entities.MoleculeSelector.qmd
-        - api/reference/entities.Trajectory.qmd
+        - api/reference/Molecule.qmd
+        - api/reference/MoleculeSelector.qmd
+        - api/reference/Trajectory.qmd
         - api/reference/entities.Ensemble.qmd
         - api/reference/entities.OXDNA.qmd
         section: Entity
       - contents:
+        - api/reference/Trajectory.qmd
+        - api/reference/entities.trajectory.selections.SelectionManager.qmd
+        - api/reference/entities.trajectory.selections.Selection.qmd
+        section: Trajectory
+      - contents:
+        - api/reference/StyleSpheres.qmd
+        - api/reference/StyleRibbon.qmd
+        - api/reference/StyleCartoon.qmd
+        - api/reference/StyleSurface.qmd
+        - api/reference/StyleSticks.qmd
+        - api/reference/StyleBallAndStick.qmd
+        section: Styles
+      - contents:
+        - api/reference/material.AmbientOcclusion.qmd
+        - api/reference/material.Default.qmd
+        - api/reference/material.Squishy.qmd
+        - api/reference/material.FlatOutline.qmd
+        - api/reference/material.TransparentOutline.qmd
+        section: Materials
+      - contents:
+        - api/reference/session.MNSession.qmd
+        section: Session
+      - contents:
+        - api/reference/annotations.base.qmd
+        - api/reference/annotations.interface.qmd
+        - api/reference/annotations.manager.qmd
+        - api/reference/entities.trajectory.annotations.qmd
+        - api/reference/entities.molecule.annotations.qmd
+        - api/reference/entities.density.annotations.qmd
+        section: Annotations
+      - contents:
         - api/reference/Canvas.qmd
+        - api/reference/scene.camera.qmd
         section: Scene
       section: Reference
     id: api/reference

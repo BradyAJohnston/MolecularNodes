@@ -187,11 +187,17 @@ background-color: $global-background;
 }
 
 body code:not(.sourceCode) {
-    padding: 0.1em;
-    background-color: rgb(198, 198, 198);
-    color: rgb(50, 59, 128);
-    
+    padding: 0.2em;
+    background-color: rgb(76, 80, 91);
+    color: rgb(221, 221, 221);
 }
+
+.widget-html-content {
+    padding: 0.2em;
+    // background-color: rgb(76, 80, 91);
+    color: rgb(221, 221, 221);
+}
+
 
 $custom-classes: (
   "float": $node-socket-color-float,

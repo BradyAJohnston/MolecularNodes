@@ -1,18 +1,37 @@
 ---
 title: Styles
-jupyter: python3
 ---
 
 This is how we can add styles or representations of our molecular data, so we can actually see something.
 
 ```{python}
 import molecularnodes as mn
-mn.register()
-mn.assets.install()
-can = mn.Canvas()
-can.resolution = (860, 540)
+
+cv = mn.Canvas(resolution=(860, 540), transparent=True)
 ```
 
+
+```{python}
+codes = ["4ozs", "8H1B", "8U8W"]
+styles = [
+    mn.StyleCartoon(),
+    mn.StyleRibbon(),
+    mn.StyleSpheres(geometry="Instance", subdivisions=4),
+]
+materials = [
+    mn.material.Default(),
+    mn.material.AmbientOcclusion(),
+    mn.material.FlatOutline(),
+]
+
+for code, style, material in zip(codes, styles, materials):
+    mol = mn.Molecule.fetch(code)
+    mol.add_style(style, material=material)
+    cv.frame_object(mol)
+    cv.snapshot()
+    cv.clear()
+
+```
 
 ```{python}
 mol = (
@@ -20,19 +39,20 @@ mol = (
     .add_style("cartoon", material = mn.material.AmbientOcclusion())
     .add_style(
         style="surface",
-        selection="is_peptide",
+        selection=mn.MoleculeSelector().is_peptide(),
         color=(0.6, 0.6, 0.8, 1.0),
         material=mn.material.TransparentOutline()
         )
 )
-can.frame_object(mol)
-can.snapshot()
+cv.frame_object(mol)
+cv.snapshot()
 ```
+
 
 
 ```{python}
 mol.styles[0].remove()
-can.snapshot()
+cv.snapshot()
 ```
 
 
@@ -42,24 +62,27 @@ can.snapshot()
     .add_style('ribbon', selection="is_peptide")
     .add_style('surface', selection="is_nucleic")
 )
-mol.styles[1].backbone_radius = 1.5
-mol.styles[1].quality = 5
-mol.styles[1].material = mn.material.AmbientOcclusion()
-can.snapshot()
+style = mol.styles[1]
+style.backbone_radius = 1.5
+style.quality = 5
+style.material = mn.material.AmbientOcclusion()
+cv.snapshot()
 ```
 
 
 ```{python}
-import bpy
-can.scene_reset()
+cv.clear()
+cv.engine = mn.scene.Cycles(samples=32)
 mol = (
     mn.Molecule.fetch("9EYM")
     .add_style("cartoon", material = mn.material.AmbientOcclusion(), selection = "is_peptide")
     .add_style("ball_and_stick", selection=mn.entities.MoleculeSelector().not_peptide())
 )
-bpy.context.scene.camera.rotation_euler = (3.14, 0, 0)
 mol.styles[1].bond_find = True
-can.frame_object(mol)
-can.engine = mn.scene.Cycles(samples=32)
-can.snapshot()
+cv.frame_view(mol)
+cv.snapshot()
+```
+```{python}
+cv.frame_view(mol, (-3.14, 0, 0))
+cv.snapshot()
 ```

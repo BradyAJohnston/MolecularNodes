@@ -373,18 +373,47 @@ class OXDNA(Trajectory):
         Names of the attributes to track
     """
 
-    def __init__(self, universe: Universe, world_scale: float = 0.01):
-        super().__init__(universe=universe, world_scale=world_scale * DNA_SCALE)
-        self._entity_type = EntityType.MD_OXDNA
+    def __init__(
+        self,
+        universe: Universe,
+        name: str = "NewOXDNAObject",
+        world_scale: float = 0.01,
+        create_object: bool = True,
+    ):
         self._att_names = (
             "base_vector",
             "base_normal",
             "velocity",
             "angular_velocity",
         )
+        super().__init__(
+            universe=universe,
+            name=name,
+            world_scale=world_scale * DNA_SCALE,
+            create_object=create_object,
+        )
+
+    def _compute_color(self) -> np.ndarray:
+        """Compute equidistant chain coloring for OXDNA"""
+        return color.color_chains_equidistant(self.named_attribute("chain_id")) / 255
+
+    @property
+    def _blender_attributes(self):
+        """
+        Override parent to provide OXDNA-specific attribute mapping.
+        OXDNA stores raw chain IDs and resnames, not the computed indices/numbers.
+        """
+        return {
+            "res_id": self._compute_res_id,
+            "chain_id": self._compute_chain_id_int,
+            "res_name": self._compute_res_name_int,
+            "Color": self._compute_color,
+        }
 
     def _create_object(
-        self, style: str | None = "oxdna", name: str = "NewUniverseObject"
+        self,
+        name: str = "NewUniverseObject",
+        style: str | None = "oxdna",
     ):
         """
         Create a new object with the trajectory data.
@@ -404,28 +433,19 @@ class OXDNA(Trajectory):
         self.object = db.create_object(
             name=name,
             collection=coll.mn(),
-            vertices=self.univ_positions,
-            edges=self.bonds,
+            vertices=self._scaled_position,
+            edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
+        self._mn_entity_type = EntityType.MD_OXDNA.value
+
+        self._store_default_attributes()
+        self._store_extra_attributes()
         self._update_timestep_values()
 
-        for name in ("chain_id", "res_id", "res_name"):
-            if name == "res_name":
-                att_name = "res_num"
-            else:
-                att_name = name
-            self.store_named_attribute(
-                getattr(self, att_name),
-                name,
-                atype=db.AttributeTypes.INT,
-            )
+        # Setup modifiers
+        # self._setup_modifiers()
 
-        self.store_named_attribute(
-            data=color.color_chains_equidistant(self.chain_id),
-            name="Color",
-            atype=db.AttributeTypes.FLOAT_COLOR,
-        )
-
+        # Apply OXDNA-specific style
         if style:
             nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
 
