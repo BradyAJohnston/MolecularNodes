@@ -9,7 +9,6 @@ from bpy.props import (  # type: ignore
 from bpy.types import PropertyGroup  # type: ignore
 from databpy.object import LinkedObjectError
 from ..blender.utils import set_object_visibility
-from ..entities.utilities import _unique_aname
 from ..handlers import _update_entities
 from ..session import get_entity
 from .style import STYLE_ITEMS
