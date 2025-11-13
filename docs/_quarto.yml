@@ -135,7 +135,6 @@ quartodoc:
     contents:
     - Trajectory
     - entities.trajectory.selections.SelectionManager
-    - entities.trajectory.selections.Selection
 
   - title: Styles
     desc: Setting and controlling the different styles
