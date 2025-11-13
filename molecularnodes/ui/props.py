@@ -439,7 +439,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
 
     updating: BoolProperty(  # type: ignore
         name="Updating",
-        description="Recalculate the selection on scene frame change",
+        description="Potential recalculate the selection when the scene frame changes",
         default=True,
         update=_update_entities,
     )
@@ -459,13 +459,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
 
     from_atomgroup: BoolProperty(  # type: ignore
         name="From AtomGroup",
-        description="If the UI item has been created from an AtomGroup instead of via a UI item",
-        default=False,
-    )
-
-    immutable: BoolProperty(  # type: ignore
-        name="Immutable",
-        description="Whether the selection is immutable",
+        description="If the UI item has been created from an existing AtomGroup. Will prevent editing in the UI by a user.",
         default=False,
     )
 
@@ -499,7 +493,7 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
             col.enabled = False
             row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
             row.prop(item, "periodic", icon_only=True, icon="CUBE")
-            if item.immutable:
+            if item.from_atomgroup:
                 row.enabled = False
 
         elif self.layout_type in {"GRID"}:

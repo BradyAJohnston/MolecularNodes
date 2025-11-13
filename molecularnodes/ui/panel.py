@@ -402,7 +402,7 @@ def panel_md_properties(layout, context):
 
         # disable editing for immutable selections
         # disable modifying updating and periodic
-        if item.immutable:
+        if item.from_atomgroup:
             col.enabled = False
 
         if item.message != "":
