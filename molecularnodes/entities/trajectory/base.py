@@ -31,7 +31,6 @@ from ..utilities import (
     BoolObjectMNProperty,
     IntObjectMNProperty,
     StringObjectMNProperty,
-    _unique_aname,
     _validate_non_negative,
 )
 from .annotations import TrajectoryAnnotationManager
@@ -485,35 +484,7 @@ class Trajectory(MolecularEntity):
 
     def _update_selections(self) -> None:
         """Update all selections for the current frame."""
-        for item in self.selections.items:
-            try:
-                # Skip non-updating selections - they use static masks
-                if not item.updating:
-                    continue
-
-                # Lazy initialization will occur if needed
-                selection = self.selections.get(item.name)
-                if selection is None:
-                    raise KeyError(f"Selection '{item.name}' not found")
-
-                # Don't recreate atomgroup for immutable selections (created from atomgroups)
-                # These selections maintain their own atomgroup reference
-                if not item.immutable:
-                    selection.set_atom_group(item.string)
-                selection.set_selection()
-            except KeyError as e:
-                logger.warning(
-                    f"Failed to update selection '{item.name}': {e}. Skipping this selection."
-                )
-            except mda.SelectionError as e:
-                logger.error(
-                    f"Invalid selection syntax for '{item.name}': {e}. Skipping this selection."
-                )
-            except Exception as e:
-                logger.error(
-                    f"Error updating selection '{item.name}': {e}. Skipping this selection.",
-                    exc_info=True,
-                )
+        self.selections.update_attributes()
 
     def set_frame(self, frame: int) -> None:
         """Update trajectory state for scene frame.
@@ -618,14 +589,14 @@ class Trajectory(MolecularEntity):
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
             )
         if selection is None:
-            sel_name = None
+            attribute_name = None
         else:
-            att_name = _unique_aname(self.object, "sel")
             if isinstance(selection, str):
                 # TODO: There are currently no validations for the selection phrase
-                sel_name = self.selections.add(selection, att_name).name
+                sel = self.selections.from_string(selection)
             elif isinstance(selection, AtomGroup):
-                sel_name = self.selections.from_atomgroup(selection, name=att_name).name
+                sel = self.selections.from_atomgroup(selection)
+            attribute_name = sel.name
             # TODO: Delete these named attributes when style is deleted
             # Currently, styles are removed using GeometryNodeInterFace.remove(),
 
@@ -633,7 +604,7 @@ class Trajectory(MolecularEntity):
             tree=self.tree,
             style=style,
             color=color,
-            selection=sel_name,
+            selection=attribute_name,
             material=material,
             name=name,
         )
