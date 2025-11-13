@@ -233,7 +233,7 @@ Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python 
 conda create -n mn python==3.11
 conda activate mn
 pip install poetry
-poetry install --with dev
+poetry install --extras test
 ```
 
 ### Running Tests
