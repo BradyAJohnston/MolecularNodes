@@ -254,6 +254,7 @@ To build the documentation, [`Quarto`](https://quarto.org) is used. The docs can
 
 ```bash
 conda activate mn
+poetry install --extras docs
 python docs/generate.py
 quarto preview
 ```
