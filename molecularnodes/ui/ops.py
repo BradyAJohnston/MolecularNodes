@@ -818,7 +818,7 @@ class MN_OT_Add_Style(Operator):
 
     selection: StringProperty(
         name="Selection",
-        description="Selection for which thisthe style applies",
+        description="Selection for which the style applies",
         default="",
     )  # type: ignore
 

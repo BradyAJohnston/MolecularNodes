@@ -428,17 +428,9 @@ class MolecularNodesObjectProperties(PropertyGroup):
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
-    uuid: StringProperty(  # type: ignore
-        name="UUID",
-        description="Unique ID for matching selection in UI to selection on python object",
-        default="",
-    )
-
     name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name of the attribute on the mesh",
-        default="custom_selection",
-        update=_update_entities,
+        name="Attribute Name",
+        description="Name of the attribute that will be created when storing on the mesh",
     )
 
     string: StringProperty(  # type: ignore
@@ -448,18 +440,20 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         update=_update_entities,
     )
 
+    previous_string: StringProperty()  # type: ignore
+
     updating: BoolProperty(  # type: ignore
         name="Updating",
-        description="Recalculate the selection on scene frame change",
+        description="Potential recalculate the selection when the scene frame changes",
         default=True,
-        # update=_selection_update_trajectories,
+        update=_update_entities,
     )
 
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
-        # update=_selection_update_trajectories,
+        update=_update_entities,
     )
 
     message: StringProperty(  # type: ignore
@@ -468,9 +462,9 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         default="",
     )
 
-    immutable: BoolProperty(  # type: ignore
-        name="Immutable",
-        description="Whether the selection is immutable",
+    from_atomgroup: BoolProperty(  # type: ignore
+        name="From AtomGroup",
+        description="If the UI item has been created from an existing AtomGroup. Will prevent editing in the UI by a user.",
         default=False,
     )
 
@@ -504,7 +498,7 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
             col.enabled = False
             row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
             row.prop(item, "periodic", icon_only=True, icon="CUBE")
-            if item.immutable:
+            if item.from_atomgroup:
                 row.enabled = False
 
         elif self.layout_type in {"GRID"}:
@@ -521,13 +515,13 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        traj.selections.add("all")
-        traj.object.mn["list_index"] = len(traj.selections) - 1
+        traj.selections.from_string("all")
+        traj.selections.ui_index = max(0, len(traj.selections) - 1)
         return {"FINISHED"}
 
 
 class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
-    bl_idname = "mda.delete_item"
+    bl_idname = "mn.trajectory_selection_remove"
     bl_label = "-"
     bl_description = "Delete the given boolean selection from the universe"
 
@@ -537,10 +531,12 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        names = [s.name for s in traj.selections.items]
-        index = traj.selections.index
-        traj.selections.remove(names[index])
-        traj.selections.index = int(max(min(index, len(traj.selections) - 1), 0))
+        index = traj.selections.ui_index
+        traj.selections.remove(index)
+
+        # the length of items in the list has changed, set the currently selected index
+        # to a new value. Ensure it is between 0 and the length of the items in the list
+        traj.selections.ui_index = max(0, min(index, len(traj.selections.ui_items) - 1))
 
         return {"FINISHED"}
 

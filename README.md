@@ -48,7 +48,7 @@ If you would like to contribute to the project, please open an issue to discuss 
 
 It's recommended to clone this repository using `git clone --depth 1` as the complete commit history gets close to 1GB of data. I also recommend using VS Code with the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process.
 
-Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addonds`.
+Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
 
 Once happy with your code, open a pull request to discuss and get it reviewed by others working on the project. Open a draft pull request early, or open an issue to discuss the scope and feasability of potential features.
 
@@ -60,6 +60,6 @@ A paper has not yet been published on the addon, but if you use it in your acade
 
 ## Thanks
 
-A massive thanks to the [Blender Foundation](https://blender.org) which develops Blender as a free and open source program, and to the python package developers who enable the functionality of the this add-on. Primaryil Biotite and MDAnalysis teams.
+A massive thanks to the [Blender Foundation](https://blender.org) which develops Blender as a free and open source program, and to the python package developers who enable the functionality of the this add-on. Primarily Biotite and MDAnalysis teams.
 
 <img src="https://download.blender.org/branding/blender_logo.png" alt="The Blender logo." style="height:80px"/>

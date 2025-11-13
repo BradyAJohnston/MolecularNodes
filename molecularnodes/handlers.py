@@ -18,18 +18,6 @@ def _update_entities(self, context: bpy.types.Context) -> None:
     update_entities(context.scene)
 
 
-def _selection_update_trajectories(self, context: bpy.types.Context) -> None:
-    """
-    Function for selection changing. If the selection is immutable e.g.
-    when it is generated from an AtomGroup,
-    update universe will not be called to avoid invalid selection str.
-    """
-    if self.immutable:
-        return
-    else:
-        update_entities(context.scene)
-
-
 # this is the 'perisisent' function which can be appended onto the
 # `bpy.app.handlers.frame_change_*` functions. Either before or after the frame changes
 # this function will then be called - ensuring all of the trajectories are up to date. We

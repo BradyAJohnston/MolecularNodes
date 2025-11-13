@@ -188,13 +188,45 @@ class TestTrajectory:
             pos_1,
         )
 
+    def test_gui_selection_add_remove(self, universe):
+        traj = mn.Trajectory(universe)
+        assert "selection_0" not in traj.list_attributes()
+        bpy.ops.mn.trajectory_selection_add()
+        assert "selection_0" in traj.list_attributes()
+        assert traj.selections.ui_index == 0
+        bpy.ops.mn.trajectory_selection_add()
+        bpy.ops.mn.trajectory_selection_add()
+        assert "selection_1" in traj.list_attributes()
+        assert "selection_2" in traj.list_attributes()
+        traj.selections.ui_index = 1
+        bpy.ops.mn.trajectory_selection_remove()
+        assert "selection_1" not in traj.list_attributes()
+        assert traj.selections.ui_index == 1
+
+        traj.selections.from_string("around 3.5 protein")
+        traj.set_frame(0)
+        sel_0 = traj["selection_1"]
+        traj.set_frame(1)
+        sel_1 = traj["selection_1"]
+        assert not np.array_equal(sel_0, sel_1)
+        traj.selections["selection_1"].updating = False
+        traj.set_frame(2)
+        assert np.array_equal(sel_1, traj["selection_1"])
+
+        with pytest.raises(ValueError):
+            traj.selections.remove("non_existent_selection")
+        with pytest.raises(ValueError):
+            traj.selections.remove(int)
+        with pytest.raises(IndexError):
+            traj.selections.remove(10)
+
     def test_update_selection(self, snapshot_custom, universe):
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great
 
         traj = mn.entities.Trajectory(universe)
         bpy.context.scene.frame_set(0)
-        sel = traj.selections.add(name="custom_sel_1", string="around 3.5 protein")
+        sel = traj.selections.from_string("around 3.5 protein", name="custom_sel_1")
         bpy.context.scene.frame_set(2)
         sel_1 = traj.named_attribute("custom_sel_1")
         bpy.context.scene.frame_set(4)
@@ -287,11 +319,11 @@ class TestTrajectory:
         # test add_style with selection string
         selection = "resid 1:10"
         t1.add_style(style="ribbon", selection=selection)
-        assert "sel_0" in t1.list_attributes()
+        assert "selection_0" in t1.list_attributes()
         # test add_style with AtomGroup selection
         selection = universe.select_atoms("resid 1:10")
         t1.add_style(style="ribbon", selection=selection)
-        assert "sel_1" in t1.list_attributes()
+        assert "selection_1" in t1.list_attributes()
         session.remove_trajectory(t1)
         # test add_style from UI
         t1 = mn.Trajectory(universe)
