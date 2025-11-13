@@ -202,6 +202,17 @@ class TestTrajectory:
         bpy.ops.mn.trajectory_selection_remove()
         assert "selection_1" not in traj.list_attributes()
         assert traj.selections.ui_index == 1
+
+        traj.selections.from_string("around 3.5 protein")
+        traj.set_frame(0)
+        sel_0 = traj["selection_1"]
+        traj.set_frame(1)
+        sel_1 = traj["selection_1"]
+        assert not np.array_equal(sel_0, sel_1)
+        traj.selections["selection_1"].updating = False
+        traj.set_frame(2)
+        assert np.array_equal(sel_1, traj["selection_1"])
+
         with pytest.raises(ValueError):
             traj.selections.remove("non_existent_selection")
         with pytest.raises(ValueError):

@@ -3,7 +3,7 @@ Trajectory selection management for MolecularNodes.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ...ui.props import TrajectorySelectionItem
@@ -161,7 +161,7 @@ class SelectionManager:
                     item.message = str(e)
                     continue
 
-            if self.ag_is_updating(ag) or selection_has_changed:
+            if selection_has_changed or (item.updating and self.ag_is_updating(ag)):
                 self.ag_to_attribute(ag, item.attribute_name)
 
     def remove(self, value: int | str):
@@ -190,3 +190,6 @@ class SelectionManager:
 
     def __len__(self) -> int:
         return len(self.atomgroups)
+
+    def __getitem__(self, name: str) -> Any:
+        return next((i for i in self.ui_items if i.attribute_name == name), None)

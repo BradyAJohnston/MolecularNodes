@@ -31,7 +31,6 @@ from ..utilities import (
     BoolObjectMNProperty,
     IntObjectMNProperty,
     StringObjectMNProperty,
-    _unique_aname,
     _validate_non_negative,
 )
 from .annotations import TrajectoryAnnotationManager
