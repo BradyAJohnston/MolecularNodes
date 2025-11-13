@@ -495,7 +495,7 @@ class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
                 row.alert = True
 
             col = row.column()
-            col.prop(item, "attribute_name", text="", emboss=False)
+            col.prop(item, "name", text="", emboss=False)
             col.enabled = False
             row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
             row.prop(item, "periodic", icon_only=True, icon="CUBE")
