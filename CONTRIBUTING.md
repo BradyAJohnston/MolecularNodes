@@ -227,7 +227,7 @@ Please open an issue or PR if you would like to discuss submitting changes. Supp
 ## Testing
 
 ### Python Environments
-Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. I recommend using `anaconda` or something similar to manage python environments. They aren't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but they are required for running tests.
+Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. I recommend using `anaconda` or something similar (minimal options include [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) and [micromamba](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html)) to manage python environments. They aren't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but they are required for running tests.
 
 ```bash
 conda create -n mn python==3.11
