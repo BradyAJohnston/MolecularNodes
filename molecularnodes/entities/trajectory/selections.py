@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from ...ui.props import TrajectorySelectionItem
     from .base import Trajectory
-from uuid import uuid1
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -68,8 +67,7 @@ class SelectionManager:
     ) -> TrajectorySelectionItem:
         with FrozenUpdates(self):
             item: TrajectorySelectionItem = self.ui_items.add()
-            item.name = str(uuid1())
-            item.attribute_name = name if name else self._unique_selection_name()
+            item.name = name if name else self._unique_selection_name()
             item.string = string
             item.updating = updating
             item.periodic = periodic
@@ -93,8 +91,7 @@ class SelectionManager:
     ) -> TrajectorySelectionItem:
         with FrozenUpdates(self):
             item: TrajectorySelectionItem = self.ui_items.add()  # type: ignore
-            item.name = str(uuid1())
-            item.attribute_name = name if name else self._unique_selection_name()
+            item.name = name if name else self._unique_selection_name()
             self.atomgroups[item.name] = atomgroup
             item.from_atomgroup = True
             ag_as_string = str(atomgroup)
@@ -102,7 +99,7 @@ class SelectionManager:
             item.previous_string = ag_as_string
             item.immutable = immutable
 
-        self.ag_to_attribute(atomgroup, item.attribute_name)
+        self.ag_to_attribute(atomgroup, item.name)
         return item
 
     def ui_item_to_ag(self, item: TrajectorySelectionItem) -> mda.AtomGroup:
@@ -132,12 +129,12 @@ class SelectionManager:
                 del self.atomgroups[key]
                 continue
 
-            if item.attribute_name == "":
-                item.attribute_name = self._unique_selection_name()
+            if item.name == "":
+                item.name = self._unique_selection_name()
 
             if item.from_atomgroup:
                 if self.ag_is_updating(ag):
-                    self.ag_to_attribute(ag, item.attribute_name)
+                    self.ag_to_attribute(ag, item.name)
                 continue
 
             # if the ui selection item can't be successfully created as an AtomGroup the
@@ -162,7 +159,7 @@ class SelectionManager:
                     continue
 
             if selection_has_changed or (item.updating and self.ag_is_updating(ag)):
-                self.ag_to_attribute(ag, item.attribute_name)
+                self.ag_to_attribute(ag, item.name)
 
     def remove(self, value: int | str):
         if isinstance(value, str):
@@ -179,7 +176,7 @@ class SelectionManager:
         # we want to remove the named attribute that might be stored, the atomgroup we are
         # tracking with it and also finally the ui_item that corresponds to it all
         try:
-            self.trajectory.remove_named_attribute(item.attribute_name)
+            self.trajectory.remove_named_attribute(item.name)
         except db.NamedAttributeError:
             pass
         try:
@@ -192,4 +189,4 @@ class SelectionManager:
         return len(self.atomgroups)
 
     def __getitem__(self, name: str) -> Any:
-        return next((i for i in self.ui_items if i.attribute_name == name), None)
+        return self.ui_items[name]

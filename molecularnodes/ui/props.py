@@ -424,12 +424,6 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
     name: StringProperty(  # type: ignore
-        name="Name",
-        description="UUID name for matching to atomgroup",
-        default="",
-    )
-
-    attribute_name: StringProperty(  # type: ignore
         name="Attribute Name",
         description="Name of the attribute that will be created when storing on the mesh",
     )

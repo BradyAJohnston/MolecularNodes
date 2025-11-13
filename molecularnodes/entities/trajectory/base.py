@@ -596,7 +596,7 @@ class Trajectory(MolecularEntity):
                 sel = self.selections.from_string(selection)
             elif isinstance(selection, AtomGroup):
                 sel = self.selections.from_atomgroup(selection)
-            attribute_name = sel.attribute_name
+            attribute_name = sel.name
             # TODO: Delete these named attributes when style is deleted
             # Currently, styles are removed using GeometryNodeInterFace.remove(),
 
