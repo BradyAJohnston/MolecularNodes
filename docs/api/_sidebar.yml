@@ -24,7 +24,7 @@ website:
         section: Entity
       - contents:
         - api/reference/Trajectory.qmd
-        - api/reference/entities.trajectory.selections.SelectionManager.qmd
+        - api/reference/entities.trajectory.SelectionManager.qmd
         section: Trajectory
       - contents:
         - api/reference/StyleSpheres.qmd

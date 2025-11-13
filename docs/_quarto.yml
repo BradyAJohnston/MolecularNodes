@@ -134,7 +134,7 @@ quartodoc:
     desc: Working with molecular dynamics trajectories
     contents:
     - Trajectory
-    - entities.trajectory.selections.SelectionManager
+    - entities.trajectory.SelectionManager
 
   - title: Styles
     desc: Setting and controlling the different styles

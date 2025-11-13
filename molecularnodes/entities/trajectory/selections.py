@@ -1,13 +1,18 @@
 """
-Trajectory selection management for MolecularNodes.
+Managing selections for the ``Trajectory``
 
-This module manages atom selections for an mda.Universe, coordinating between MDAnalysis
-``AtomGroup`` objects, Blender UI properties, and geometry node attributes.
+For selectively applying styles inside of Blender, we represent selections as a
+boolean attribute on the mesh of the ``trajectory.object``.
 
-Notes
------
-Architecture
-~~~~~~~~~~~~
+These could be directly created with ``traj.store_named_attribute(array, "selection_name")``
+but the SelectionManager class is a convenience class for helping to manage selections
+and allow editing and updating via the GUI.
+
+Each selection is ultimately just a an `~AtomGroup` that can be changed via the GUI.
+Selections can be created from existing AtomGroups or from a selection string that is then
+internally used to create a new AtomGroup.
+
+#### Architecture
 The ``SelectionManager`` maintains selections through three synchronized layers:
 
 1. **UI Layer**: Blender ``CollectionProperty`` (``mn_trajectory_selections``)
@@ -25,35 +30,21 @@ The ``SelectionManager`` maintains selections through three synchronized layers:
    - Updated for changed or dynamic (``UpdatingAtomGroup``) selections
    - Used by geometry nodes for visual styling
 
-Data Flow
----------
-User creates selection → UI item created → :meth:`SelectionManager.update_attributes`
-→ ``AtomGroup`` created → Boolean attribute stored → Geometry nodes use attribute
-
-Classes
--------
-SelectionError
-    Exception for selection operation failures.
-FrozenUpdates
-    Context manager to freeze updates during bulk UI changes.
-SelectionManager
-    Main manager coordinating all selection operations.
-
-See Also
---------
+#### See Also
 molecularnodes.entities.trajectory.base.Trajectory : Uses SelectionManager.
 molecularnodes.ui.props.TrajectorySelectionItem : UI property definition.
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ...ui.props import TrajectorySelectionItem
     from .base import Trajectory
 import bpy
 import databpy as db
-import MDAnalysis as mda
+from bpy.types import Object
+from MDAnalysis import AtomGroup, Universe
 from ..utilities import IntObjectMNProperty, _unique_aname
 from .helpers import _ag_to_bool
 
@@ -118,7 +109,7 @@ class SelectionManager:
 
     Attributes
     ----------
-    atomgroups : dict[str, mda.AtomGroup]
+    atomgroups : dict[str, AtomGroup]
         Cached ``AtomGroup`` objects keyed by selection name.
     ui_index : IntObjectMNProperty
         Property descriptor for current UI selection index.
@@ -128,7 +119,7 @@ class SelectionManager:
 
     def __init__(self, trajectory: Trajectory):
         self.trajectory = trajectory
-        self.atomgroups: dict[str, mda.AtomGroup] = {}
+        self.atomgroups: dict[str, AtomGroup] = {}
         self._is_frozen: bool = False
 
     @property
@@ -144,28 +135,28 @@ class SelectionManager:
         return self.object.mn_trajectory_selections  # type: ignore
 
     @property
-    def object(self) -> bpy.types.Object:
+    def object(self) -> Object:
         """Blender object associated with the Trajectory and SelectionManager.
 
         Returns
         -------
-        bpy.types.Object
+        Object
             The Blender object representing the trajectory mesh.
         """
         return self.trajectory.object
 
     @property
-    def universe(self) -> mda.Universe:
+    def universe(self) -> Universe:
         """MDAnalysis Universe for the Trajectory and SelectionManager.
 
         Returns
         -------
-        mda.Universe
+        Universe
             The MDAnalysis Universe containing topology and trajectory data.
         """
         return self.trajectory.universe
 
-    def ag_to_attribute(self, ag: mda.AtomGroup, name: str) -> None:
+    def ag_to_attribute(self, ag: AtomGroup, name: str) -> None:
         """Convert and store an AtomGroup as a boolean attribute.
 
         Converts an ``AtomGroup`` to a boolean mask into the original ``Universe`` that would
@@ -174,7 +165,7 @@ class SelectionManager:
 
         Parameters
         ----------
-        ag : mda.AtomGroup
+        ag : AtomGroup
             The atom group to convert.
         name : str
             Name for the attribute.
@@ -253,7 +244,7 @@ class SelectionManager:
         """
         return _unique_aname(self.object, "selection")
 
-    def ag_is_updating(self, atomgroup: mda.AtomGroup) -> bool:
+    def ag_is_updating(self, atomgroup: AtomGroup) -> bool:
         """Check if an AtomGroup is an UpdatingAtomGroup.
 
         ``UpdatingAtomGroup`` objects recalculate their members each frame based on
@@ -261,7 +252,7 @@ class SelectionManager:
 
         Parameters
         ----------
-        atomgroup : mda.AtomGroup
+        atomgroup : AtomGroup
             The atom group to check.
 
         Returns
@@ -277,7 +268,7 @@ class SelectionManager:
 
     def from_atomgroup(
         self,
-        atomgroup: mda.AtomGroup,
+        atomgroup: AtomGroup,
         *,
         name: str | None = None,
     ) -> TrajectorySelectionItem:
@@ -289,7 +280,7 @@ class SelectionManager:
 
         Parameters
         ----------
-        atomgroup : mda.AtomGroup
+        atomgroup : AtomGroup
             Pre-existing ``AtomGroup`` (static or updating).
         name : str, optional
             Name for the selection. Auto-generated if not provided via :meth:`_unique_selection_name`.
@@ -321,8 +312,8 @@ class SelectionManager:
         self.ag_to_attribute(atomgroup, item.name)
         return item
 
-    def ui_item_to_ag(self, item: TrajectorySelectionItem) -> mda.AtomGroup:
-        """Generate an ``mda.AtomGroup`` from a ``TrajectorySelectionItem``.
+    def ui_item_to_ag(self, item: TrajectorySelectionItem) -> AtomGroup:
+        """Generate an ``AtomGroup`` from a ``TrajectorySelectionItem``.
 
         Uses the item's ``string``, ``updating``, and ``periodic`` properties to create
         the corresponding ``AtomGroup`` from the trajectory's ``Universe``.
@@ -334,7 +325,7 @@ class SelectionManager:
 
         Returns
         -------
-        mda.AtomGroup
+        AtomGroup
             ``AtomGroup`` (or ``UpdatingAtomGroup``) created from the item's parameters.
 
         See Also
@@ -500,7 +491,7 @@ class SelectionManager:
         """
         return len(self.ui_items)
 
-    def __getitem__(self, name: str) -> Any:
+    def __getitem__(self, name: str) -> TrajectorySelectionItem:
         """Get a UI selection item by name.
 
         Enables dictionary-style access: ``manager['selection_name']``.
