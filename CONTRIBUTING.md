@@ -23,7 +23,7 @@
 ## Introduction
 Molecular Nodes is an add-on for the 3D modelling and animation program [Blender](https://blender.org). It enables import of structural biology data formats into Blender, and provides a suite of methods for interacting, animating and visualising this data.
 
-The structure of Molecular Nodes is likely quite different to other python projects you may be familiar with, and different to other Blender add-ons as well. Some things are done in a particularly _quirky_ qay, usually to be usable as an add-on inside of Blender.
+The structure of Molecular Nodes is likely quite different to other python projects you may be familiar with, and different to other Blender add-ons as well. Some things are done in a particularly _quirky_ way, usually to be usable as an add-on inside of Blender.
 
 Molecular Nodes is primarily an add-on, and intended to be interacted with through Blender's GUI. There is experimental support for installing and using as a python package from `pypi`. This is still extremely experimental, and again results in a lot of strange quirks as we are using a program intended for use through a GUI, through a script.
 
@@ -218,10 +218,10 @@ opaque to `git`, so we just need to rely upon tests for checking if something is
 broken. 
 
 ## Coding Standards
-This project has already gone through several iterations to improve the general code base and the ability for others to contribute. It started as my (@bradyajohnston) first python project, so there is still lots of old code that could do with a refresh. It is slowly being improve to better fit PEP8 standards, but there are no official standards for the project currently. I welcome suggestions and discussion around the topic.
+This project has already gone through several iterations to improve the general code base and the ability for others to contribute. It started as my (@bradyajohnston) first python project, so there is still lots of old code that could do with a refresh. It is slowly being improved to better fit PEP8 standards, but there are no official standards for the project currently. I welcome suggestions and discussion around the topic.
 
 ## Submitting Changes
-Please open an issue or PR if you would like to discuss submitting changes. Support for importing more data formats or improving on current import formats are more than welcome. Submitting changes for node groups can be a bit tricky as the node graphs inside of Blender don't work with `git`, so please open an issue or discussion with propose changes.
+Please open an issue or PR if you would like to discuss submitting changes. Support for importing more data formats or improving on current import formats are more than welcome. Submitting changes for node groups can be a bit tricky as the node graphs inside of Blender don't work with `git`, so please open an issue or discussion with proposed changes.
 
 
 ## Testing
