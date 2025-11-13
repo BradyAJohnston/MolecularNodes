@@ -590,14 +590,14 @@ class Trajectory(MolecularEntity):
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
             )
         if selection is None:
-            sel_name = None
+            attribute_name = None
         else:
             if isinstance(selection, str):
                 # TODO: There are currently no validations for the selection phrase
-                sel = self.selections.add(selection)
+                sel = self.selections.from_string(selection)
             elif isinstance(selection, AtomGroup):
                 sel = self.selections.from_atomgroup(selection)
-            sel_name = sel.name
+            attribute_name = sel.attribute_name
             # TODO: Delete these named attributes when style is deleted
             # Currently, styles are removed using GeometryNodeInterFace.remove(),
 
@@ -605,7 +605,7 @@ class Trajectory(MolecularEntity):
             tree=self.tree,
             style=style,
             color=color,
-            selection=sel_name,
+            selection=attribute_name,
             material=material,
             name=name,
         )

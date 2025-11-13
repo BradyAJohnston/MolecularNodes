@@ -431,8 +431,8 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     )
 
     attribute_name: StringProperty(  # type: ignore
-        name="DisplayName",
-        description="Name of the attribute that will be stored on the mesh",
+        name="Attribute Name",
+        description="Name of the attribute that will be created when storing on the mesh",
     )
 
     string: StringProperty(  # type: ignore
@@ -462,6 +462,12 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         name="Message",
         description="Message to report back from `universe.select_atoms()`",
         default="",
+    )
+
+    from_atomgroup: BoolProperty(  # type: ignore
+        name="From AtomGroup",
+        description="If the UI item has been created from an AtomGroup instead of via a UI item",
+        default=False,
     )
 
     immutable: BoolProperty(  # type: ignore
@@ -517,8 +523,8 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
 
     def execute(self, context):
         traj = get_entity(context)
-        traj.selections.add("all")
-        traj.selections.ui_index = len(traj.selections) - 1
+        traj.selections.from_string("all")
+        traj.selections.ui_index = max(0, len(traj.selections) - 1)
         return {"FINISHED"}
 
 
