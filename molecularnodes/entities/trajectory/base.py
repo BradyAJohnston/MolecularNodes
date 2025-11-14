@@ -12,7 +12,6 @@ import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
-from MDAnalysis.coordinates import IMD
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
@@ -110,7 +109,6 @@ class Trajectory(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
-    _mn_is_streaming = BoolObjectMNProperty("is_streaming")
 
     def __init__(
         self,
@@ -467,15 +465,33 @@ class Trajectory(MolecularEntity):
             Created Blender object
         """
         self._create_object(name=name)
+
+        # Only set n_frames if available (not streaming)
         try:
             self._mn_n_frames = self.universe.trajectory.n_frames
-        except RuntimeError as e:
-            print(e)
-            pass
+        except (RuntimeError, AttributeError) as e:
+            logger.debug(f"Could not set n_frames (likely streaming trajectory): {e}")
+
         self._save_filepaths_on_object()
         set_obj_active(self.object)
 
         return self.object
+
+    @classmethod
+    def load(
+        cls,
+        topology: Path | str,
+        coordinates: Path | str,
+        name: str = "NewTrajectory",
+        style: str | None = "spheres",
+        selection: str | None = None,
+        create_object: bool = True,
+    ):
+        u = mda.Universe(topology, coordinates)
+        traj = cls(u, name=name, create_object=create_object)
+        if style:
+            traj.add_style(style=style, selection=selection)
+        return traj
 
     def _update_calculations(self) -> None:
         """Update all registered calculations for the current frame"""
@@ -530,11 +546,20 @@ class Trajectory(MolecularEntity):
         Args:
             frame: Scene frame number
         """
-        if self._mn_is_streaming:
-            self.universe.trajectory.next()
-            self.position = self._scaled_position
-        else:
-            self.position = self.frame_manager.get_positions_at_frame(frame)
+        self._update_trajectory_positions(frame)
+
+    def _update_trajectory_positions(self, frame: int) -> None:
+        """Update trajectory positions for the given frame.
+
+        This method can be overridden by subclasses to implement custom
+        position update logic (e.g., for streaming trajectories).
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
+        """
+        self.position = self.frame_manager.get_positions_at_frame(frame)
 
     def __repr__(self) -> str:
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"

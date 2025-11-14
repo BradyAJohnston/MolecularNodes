@@ -1,7 +1,7 @@
 from .density import Density
 from .ensemble import CellPack, Ensemble, StarFile
 from .molecule.base import Molecule, MoleculeSelector
-from .trajectory import OXDNA, Trajectory
+from .trajectory import OXDNA, StreamingTrajectory, Trajectory
 
 __all__ = [
     "CellPack",
@@ -12,4 +12,5 @@ __all__ = [
     "MoleculeSelector",
     "OXDNA",
     "Trajectory",
+    "StreamingTrajectory",
 ]

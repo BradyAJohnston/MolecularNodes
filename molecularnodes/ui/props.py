@@ -328,7 +328,12 @@ class MolecularNodesObjectProperties(PropertyGroup):
             ("ensemble", "Ensemble", "A collection of molecules"),
             ("density", "Density", "A density grid"),
             ("md", "Trajectory", "A molecular dynamics trajectory"),
-            ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory "),
+            ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
+            (
+                "md-streaming",
+                "Streaming Trajectory",
+                "A streaming IMD molecular dynamics trajectory",
+            ),
             ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
             ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
         ),

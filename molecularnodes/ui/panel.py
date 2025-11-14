@@ -669,6 +669,7 @@ class MN_PT_trajectory(bpy.types.Panel):
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
                 EntityType.MD_OXDNA.value,
+                EntityType.MD_STREAMING.value,
             )
         except (LinkedObjectError, AttributeError):
             return False
@@ -784,6 +785,7 @@ class MN_PT_Styles(bpy.types.Panel):
         try:
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
                 EntityType.MOLECULE.value,
                 EntityType.DENSITY.value,
             )
@@ -945,6 +947,7 @@ class MN_PT_Annotations(bpy.types.Panel):
         try:
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
                 EntityType.MOLECULE.value,
                 EntityType.DENSITY.value,
             )
