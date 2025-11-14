@@ -7,10 +7,7 @@ simulations using the IMD protocol via MDAnalysis and imdclient.
 import logging
 from pathlib import Path
 from typing import Optional
-import databpy as db
 import MDAnalysis as mda
-from bpy.types import Object
-from ...blender import set_obj_active
 from ..base import EntityType
 from .base import Trajectory
 
