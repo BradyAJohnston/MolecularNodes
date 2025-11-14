@@ -14,9 +14,8 @@
     - [Manipulation](#manipulation)
   - [Coding Standards](#coding-standards)
   - [Submitting Changes](#submitting-changes)
-  - [Testing](#testing)
-    - [Python Environments](#python-environments)
-    - [Running Tests](#running-tests)
+  - [Building a Dev Environment](#building-a-dev-environment)
+  - [Running Tests](#running-tests)
   - [Writing and Building Docs](#writing-and-building-docs)
   - [Getting Help](#getting-help)
 
@@ -226,7 +225,9 @@ Please open an issue or PR if you would like to discuss submitting changes. Supp
 
 ## Building a Dev Environment
 
-Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. Building a local development environment isn't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but _is_ required for running tests and building docs locally.
+Building a local development environment isn't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but it _is_ required for [running tests](#running-tests) and [building docs](#writing-and-building-docs) locally.
+
+Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`.
 
 ### Building with `uv` (recommended)
 
@@ -262,6 +263,8 @@ Note that for both `uv` and `poetry`, in place of `--all-extras`, you can use `-
 
 ## Running Tests
 
+With [your dev environment](#building-a-dev-environment):
+
 ```bash
 pytest -v # run with a more verbose output
 pytest -v tests/test_load.py # run a single tests file
@@ -276,6 +279,7 @@ Based on the current snapshot method, I can't think of of a better way to handle
 ## Writing and Building Docs
 To build the documentation, [`Quarto`](https://quarto.org) is used. The docs can be built and previewed with the following line which launches a live preview of the docs.
 
+With [your dev environment](#building-a-dev-environment):
 
 ```bash
 python docs/generate.py
