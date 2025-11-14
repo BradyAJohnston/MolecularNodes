@@ -1298,6 +1298,7 @@ jupyter = [
     { name = "jupyter" },
 ]
 test = [
+    { name = "bpy" },
     { name = "ipython" },
     { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
@@ -1315,6 +1316,7 @@ test = [
 requires-dist = [
     { name = "biotite", specifier = ">=1.5" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.5.2" },
+    { name = "bpy", marker = "extra == 'test'", specifier = ">=4.5.2" },
     { name = "databpy", specifier = ">=0.5.1" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
     { name = "imdclient", specifier = ">=0.2.3" },
