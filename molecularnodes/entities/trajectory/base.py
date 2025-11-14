@@ -443,7 +443,6 @@ class Trajectory(MolecularEntity):
             vertices=self._scaled_position,
             edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
-        self._mn_entity_type = EntityType.MD.value
 
         self._store_default_attributes()
         self._store_extra_attributes()
@@ -465,16 +464,10 @@ class Trajectory(MolecularEntity):
             Created Blender object
         """
         self._create_object(name=name)
-
-        # Only set n_frames if available (not streaming)
-        try:
-            self._mn_n_frames = self.universe.trajectory.n_frames
-        except (RuntimeError, AttributeError) as e:
-            logger.debug(f"Could not set n_frames (likely streaming trajectory): {e}")
-
+        self._mn_entity_type = EntityType.MD.value
+        self._mn_n_frames = self.universe.trajectory.n_frames
         self._save_filepaths_on_object()
         set_obj_active(self.object)
-
         return self.object
 
     @classmethod

@@ -669,7 +669,6 @@ class MN_PT_trajectory(bpy.types.Panel):
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
                 EntityType.MD_OXDNA.value,
-                EntityType.MD_STREAMING.value,
             )
         except (LinkedObjectError, AttributeError):
             return False

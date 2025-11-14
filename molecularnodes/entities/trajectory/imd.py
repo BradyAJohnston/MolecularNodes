@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Optional
 import MDAnalysis as mda
 from bpy.types import Object
+from ...blender import set_obj_active
 from ..base import EntityType
 from .base import Trajectory
 
@@ -79,10 +80,12 @@ class StreamingTrajectory(Trajectory):
         super().__init__(universe, name=name, create_object=create_object)
 
     def create_object(self, name: str = "NewUniverseObject") -> Object:
-        obj = super().create_object(name)
-        self._mn_entity_type = EntityType.MD_STREAMING.value
+        super()._create_object(name)
         logger.info(f"Created streaming trajectory object: {self.name}")
-        return obj
+        self._mn_entity_type = EntityType.MD_STREAMING.value
+        self._save_filepaths_on_object()
+        set_obj_active(self.object)
+        return self.object
 
     @property
     def n_frames(self) -> Optional[int]:
