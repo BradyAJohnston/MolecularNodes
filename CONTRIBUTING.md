@@ -224,19 +224,44 @@ This project has already gone through several iterations to improve the general 
 Please open an issue or PR if you would like to discuss submitting changes. Support for importing more data formats or improving on current import formats are more than welcome. Submitting changes for node groups can be a bit tricky as the node graphs inside of Blender don't work with `git`, so please open an issue or discussion with proposed changes.
 
 
-## Testing
+## Building a Dev Environment
 
-### Python Environments
-Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. I recommend using `anaconda` or something similar (minimal options include [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) and [micromamba](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html)) to manage python environments. They aren't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but they are required for running tests.
+Blender is _VERY PARTICULAR_ about python versions. Blender 4.1 now uses Python `3.11.X`. Blender 4.0 and some earlier versions use Python `3.10.X`. Building a local development environment isn't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but _is_ required for running tests and building docs locally.
+
+### Building with `uv` (recommended)
+
+I recommend using `uv` for managing your development environment(s).
+Once you've [installed uv](https://docs.astral.sh/uv/#installation), the following steps will build a dev environment:
+
+```bash
+ uv sync --all-extras
+```
+
+Then [activate your environment](https://docs.astral.sh/uv/pip/environments/#using-a-virtual-environment) with:
+
+```bash
+source .venv/bin/activate
+```
+
+or prefix any further commands with `uv run`, e.g. `uv run pytest -v`.
+
+
+### Building with `conda` (or `mamba`) and `poetry`
+
+You can also use `anaconda` or something similar (minimal options include [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) and [micromamba](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html)) to manage python environments.
 
 ```bash
 conda create -n mn python==3.11
 conda activate mn
 pip install poetry
-poetry install --extras test
+poetry install --all-extras
 ```
 
-### Running Tests
+Note that for both `uv` and `poetry`, in place of `--all-extras`, you can use `--extras test` or `--extras docs` to install only the optional dependencies you need for testing or docs building, respectively.
+
+
+## Running Tests
+
 ```bash
 pytest -v # run with a more verbose output
 pytest -v tests/test_load.py # run a single tests file
@@ -244,8 +269,8 @@ pytest -v -k centre # pattern match to 'centre' and only run tests with that in 
 ```
 
 Look over other tests to see how we are structuring them. Most of the tests will involve importing data, generating a 3D model and then creating a `snapshot` of the attributes for some subset of vertices from that 3D model.
-We could snapshot _all_ of the vertices, but the snapshots are just `.txt` files so the diffs would become very large. 
-When changing something that _should_ change the output of the snapshots, we end up with _very_ large number of files changed. 
+We could snapshot _all_ of the vertices, but the snapshots are just `.txt` files so the diffs would become very large.
+When changing something that _should_ change the output of the snapshots, we end up with _very_ large number of files changed.
 Based on the current snapshot method, I can't think of of a better way to handle this.
 
 ## Writing and Building Docs
@@ -253,8 +278,6 @@ To build the documentation, [`Quarto`](https://quarto.org) is used. The docs can
 
 
 ```bash
-conda activate mn
-poetry install --extras docs
 python docs/generate.py
 quarto preview
 ```
