@@ -25,6 +25,7 @@ jupyter = ["jupyter", "IPython"]
 build = ["tomlkit"]
 dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
 test = [
+    "bpy>=4.5.2",
     "pytest",
     "pytest-cov",
     "syrupy",
