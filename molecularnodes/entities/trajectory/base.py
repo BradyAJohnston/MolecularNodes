@@ -443,7 +443,10 @@ class Trajectory(MolecularEntity):
         )
 
         self._mn_entity_type = self._entity_type.value
-        self._mn_n_frames = self.universe.trajectory.n_frames
+        try:
+            self._mn_n_frames = self.universe.trajectory.n_frames
+        except RuntimeError:
+            pass
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
         """Create and initialize Blender object for trajectory.
