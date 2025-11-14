@@ -109,6 +109,7 @@ class Trajectory(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
+    _entity_type: EntityType = EntityType.MD
 
     def __init__(
         self,
@@ -424,10 +425,7 @@ class Trajectory(MolecularEntity):
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
         pass
 
-    def _create_object(
-        self,
-        name: str = "NewUniverseObject",
-    ) -> None:
+    def _create_object(self, name: str = "NewUniverseObject") -> None:
         """Create Blender mesh object (internal).
 
         Creates mesh with positions and bonds, stores attributes, sets up modifiers.
@@ -444,9 +442,8 @@ class Trajectory(MolecularEntity):
             edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
 
-        self._store_default_attributes()
-        self._store_extra_attributes()
-        self._setup_modifiers()
+        self._mn_entity_type = self._entity_type.value
+        self._mn_n_frames = self.universe.trajectory.n_frames
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
         """Create and initialize Blender object for trajectory.
@@ -464,8 +461,9 @@ class Trajectory(MolecularEntity):
             Created Blender object
         """
         self._create_object(name=name)
-        self._mn_entity_type = EntityType.MD.value
-        self._mn_n_frames = self.universe.trajectory.n_frames
+        self._store_default_attributes()
+        self._store_extra_attributes()
+        self._setup_modifiers()
         self._save_filepaths_on_object()
         set_obj_active(self.object)
         return self.object

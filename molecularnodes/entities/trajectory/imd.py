@@ -7,6 +7,7 @@ simulations using the IMD protocol via MDAnalysis and imdclient.
 import logging
 from pathlib import Path
 from typing import Optional
+import databpy as db
 import MDAnalysis as mda
 from bpy.types import Object
 from ...blender import set_obj_active
@@ -71,6 +72,8 @@ class StreamingTrajectory(Trajectory):
         Create the mesh object to be linked to this trajectory
     """
 
+    _entity_type = EntityType.MD_STREAMING
+
     def __init__(
         self,
         universe: mda.Universe,
@@ -78,14 +81,6 @@ class StreamingTrajectory(Trajectory):
         create_object=True,
     ):
         super().__init__(universe, name=name, create_object=create_object)
-
-    def create_object(self, name: str = "NewUniverseObject") -> Object:
-        super()._create_object(name)
-        logger.info(f"Created streaming trajectory object: {self.name}")
-        self._mn_entity_type = EntityType.MD_STREAMING.value
-        self._save_filepaths_on_object()
-        set_obj_active(self.object)
-        return self.object
 
     @property
     def n_frames(self) -> Optional[int]:
