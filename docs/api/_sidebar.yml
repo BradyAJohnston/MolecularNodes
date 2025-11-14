@@ -25,6 +25,7 @@ website:
       - contents:
         - api/reference/Trajectory.qmd
         - api/reference/entities.trajectory.SelectionManager.qmd
+        - api/reference/entities.StreamingTrajectory.qmd
         section: Trajectory
       - contents:
         - api/reference/StyleSpheres.qmd

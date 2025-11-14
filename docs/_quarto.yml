@@ -119,6 +119,8 @@ quartodoc:
       - "{{ contents }}"
   # css: api/_styles-quartodoc.css
 
+  options:
+    include_inherited: true
 
   sections:
   - title: Entity
@@ -135,6 +137,7 @@ quartodoc:
     contents:
     - Trajectory
     - entities.trajectory.SelectionManager
+    - entities.StreamingTrajectory
 
   - title: Styles
     desc: Setting and controlling the different styles
