@@ -423,11 +423,6 @@ class MolecularNodesObjectProperties(PropertyGroup):
         subtype="FILE_PATH",
         default="",
     )
-    is_streaming: IntProperty(  # type: ignore
-        name="Is Streaming",
-        description="The Trajectory is streaming from a live simulation via IMDClient",
-        default=False,
-    )
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
