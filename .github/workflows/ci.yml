@@ -128,7 +128,7 @@ jobs:
           max-parallel: 6
           fail-fast: false
           matrix:
-            version: ["latest", "daily"]
+            version: ["4.5", "latest", "daily"]
             os: [ubuntu-latest, macos-latest, windows-latest]
       env:
         ADDON_NAME: molecularnodes
