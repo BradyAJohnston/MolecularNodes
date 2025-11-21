@@ -19,6 +19,7 @@ from .utilities import BoolObjectMNProperty, _get_gn_modifier
 class EntityType(Enum):
     MD = "md"
     MD_OXDNA = "md-oxdna"
+    MD_STREAMING = "md-streaming"
     MOLECULE = "molecule"
     ENSEMBLE = "ensemble"
     DENSITY = "density"

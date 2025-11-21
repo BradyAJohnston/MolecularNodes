@@ -14,7 +14,14 @@ from .. import entities
 from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
-from ..entities import Molecule, density, ensemble, trajectory
+from ..entities import (
+    Molecule,
+    StreamingTrajectory,
+    Trajectory,
+    density,
+    ensemble,
+    trajectory,
+)
 from ..nodes import nodes
 from ..nodes.geometry import (
     create_style_interface,
@@ -665,25 +672,26 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        traj = context.scene.MNSession.match(obj)
-        return not traj
+        loaded_trajectory = context.scene.MNSession.match(obj)
+        return obj.mn.entity_type.startswith("md") and not loaded_trajectory
 
     def execute(self, context):
         obj = context.active_object
-        topo = path_resolve(obj.mn.filepath_topology)
-        traj = path_resolve(obj.mn.filepath_trajectory)
+        path_topo = path_resolve(obj.mn.filepath_topology)
+        path_traj = path_resolve(obj.mn.filepath_trajectory)
 
         if "oxdna" in obj.mn.entity_type:
             uni = mda.Universe(
-                topo,
-                traj,
+                path_topo,
+                path_traj,
                 topology_format=trajectory.oxdna.OXDNAParser,
                 format=trajectory.oxdna.OXDNAReader,
             )
             traj = trajectory.oxdna.OXDNA(uni, create_object=False)
+        elif "streaming" in obj.mn.entity_type:
+            traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
         else:
-            uni = mda.Universe(topo, traj)
-            traj = trajectory.Trajectory(uni, create_object=False)
+            traj = Trajectory.load(path_topo, path_traj, create_object=False)
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
@@ -727,23 +735,40 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
     )
 
     def execute(self, context):
-        traj = trajectory.load(
-            top=path_resolve(self.topology),
-            traj=path_resolve(self.trajectory),
-            name=self.name,
-            style=self.style if self.setup_nodes else None,
-        )
+        topology = path_resolve(self.topology)
+        coordinates = path_resolve(self.trajectory)
+
+        if self.trajectory.startswith("imd://"):
+            traj = StreamingTrajectory.load(
+                topology=topology,
+                coordinates=coordinates,
+                name=self.name,
+                style=self.style,
+            )
+        else:
+            traj = Trajectory.load(
+                topology=topology,
+                coordinates=coordinates,
+                name=self.name,
+                style=self.style if self.setup_nodes else None,
+            )
 
         context.view_layer.objects.active = traj.object
         context.scene.frame_start = 0
-        context.scene.frame_end = int(traj.frame_manager.n_frames - 1)
 
-        self.report(
-            {"INFO"},
-            message=f"Imported '{self.topology}' as {traj.name} "
-            f"with {str(traj.frame_manager.n_frames)} "
-            f"frames from '{self.trajectory}'.",
-        )
+        if isinstance(traj, StreamingTrajectory):
+            self.report(
+                {"INFO"},
+                message=f"Streaming trajectory '{traj.name}' from '{self.trajectory}'",
+            )
+        else:
+            n_frames = int(traj.object.mn.n_frames - 1)
+            context.scene.frame_end = n_frames
+            self.report(
+                {"INFO"},
+                message=f"Imported '{self.topology}' as {traj.name} "
+                f"with {n_frames} frames from '{self.trajectory}'.",
+            )
 
         return {"FINISHED"}
 

@@ -15,7 +15,6 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
-from ...blender import coll
 from ...nodes import nodes
 from ..base import EntityType
 from .base import Trajectory
@@ -373,6 +372,14 @@ class OXDNA(Trajectory):
         Names of the attributes to track
     """
 
+    _entity_type = EntityType.MD_OXDNA
+    _att_names = (
+        "base_vector",
+        "base_normal",
+        "velocity",
+        "angular_velocity",
+    )
+
     def __init__(
         self,
         universe: Universe,
@@ -380,12 +387,6 @@ class OXDNA(Trajectory):
         world_scale: float = 0.01,
         create_object: bool = True,
     ):
-        self._att_names = (
-            "base_vector",
-            "base_normal",
-            "velocity",
-            "angular_velocity",
-        )
         super().__init__(
             universe=universe,
             name=name,
@@ -398,7 +399,7 @@ class OXDNA(Trajectory):
         return color.color_chains_equidistant(self.named_attribute("chain_id")) / 255
 
     @property
-    def _blender_attributes(self):
+    def _blender_attributes(self) -> dict:
         """
         Override parent to provide OXDNA-specific attribute mapping.
         OXDNA stores raw chain IDs and resnames, not the computed indices/numbers.
@@ -413,8 +414,7 @@ class OXDNA(Trajectory):
     def _create_object(
         self,
         name: str = "NewUniverseObject",
-        style: str | None = "oxdna",
-    ):
+    ) -> None:
         """
         Create a new object with the trajectory data.
 
@@ -424,30 +424,9 @@ class OXDNA(Trajectory):
             Style of the object representation, by default "oxdna"
         name : str, optional
             Name of the new object, by default "NewUniverseObject"
-
-        Returns
-        -------
-        bpy.types.Object
-            The created Blender object
         """
-        self.object = db.create_object(
-            name=name,
-            collection=coll.mn(),
-            vertices=self._scaled_position,
-            edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
-        )
-        self._mn_entity_type = EntityType.MD_OXDNA.value
-
-        self._store_default_attributes()
-        self._store_extra_attributes()
-        self._update_timestep_values()
-
-        # Setup modifiers
-        # self._setup_modifiers()
-
-        # Apply OXDNA-specific style
-        if style:
-            nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
+        super()._create_object(name=name)
+        nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
 
     def set_frame(self, frame: int) -> None:
         super()._update_positions(frame)

@@ -1,6 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
-from ..entities import density, trajectory
+from ..entities import StreamingTrajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
@@ -350,12 +350,20 @@ def panel_md_properties(layout, context):
         return None
 
     layout.label(text="Trajectory Playback", icon="OPTIONS")
-    label = "This trajectory has " + str(obj.mn.n_frames) + " frame"
-    if obj.mn.n_frames > 1:
-        label += "s"
-    layout.label(text=label)
+    is_streaming = isinstance(traj, StreamingTrajectory)
 
-    row = layout.row()
+    if is_streaming:
+        label = "Streaming trajectory; cannot alter playback"
+    else:
+        label = "Trajectory has {} {}".format(
+            obj.mn.n_frames, "frames" if obj.mn.n_frames else "frame"
+        )
+
+    layout.label(text=label)
+    playback = layout.column()
+    playback.enabled = not is_streaming
+    row = playback.row()
+
     col = row.column()
     if obj.mn.update_with_scene:
         col.prop(obj.mn, "frame_hidden")
@@ -363,7 +371,7 @@ def panel_md_properties(layout, context):
         col.prop(obj.mn, "frame")
     col.enabled = not obj.mn.update_with_scene
     row.prop(obj.mn, "update_with_scene")
-    row = layout.row()
+    row = playback.row()
     col = row.column()
     col.enabled = obj.mn.update_with_scene
     col.prop(obj.mn, "average")
@@ -641,6 +649,8 @@ class MN_PT_Entities(bpy.types.Panel):
         # display entity type of the selected entity
         uuid = props.entities[props.entities_active_index].name
         entity = context.scene.MNSession.get(uuid)
+        if not entity:
+            return
         row = layout.row()
         row.prop(entity.object.mn, "entity_type")
         row.enabled = False
@@ -784,6 +794,7 @@ class MN_PT_Styles(bpy.types.Panel):
         try:
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
                 EntityType.MOLECULE.value,
                 EntityType.DENSITY.value,
             )
@@ -945,6 +956,7 @@ class MN_PT_Annotations(bpy.types.Panel):
         try:
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
                 EntityType.MOLECULE.value,
                 EntityType.DENSITY.value,
             )

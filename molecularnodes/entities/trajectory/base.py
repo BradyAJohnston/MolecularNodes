@@ -109,6 +109,7 @@ class Trajectory(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
+    _entity_type: EntityType = EntityType.MD
 
     def __init__(
         self,
@@ -424,10 +425,7 @@ class Trajectory(MolecularEntity):
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
         pass
 
-    def _create_object(
-        self,
-        name: str = "NewUniverseObject",
-    ) -> None:
+    def _create_object(self, name: str = "NewUniverseObject") -> None:
         """Create Blender mesh object (internal).
 
         Creates mesh with positions and bonds, stores attributes, sets up modifiers.
@@ -443,11 +441,12 @@ class Trajectory(MolecularEntity):
             vertices=self._scaled_position,
             edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
-        self._mn_entity_type = EntityType.MD.value
 
-        self._store_default_attributes()
-        self._store_extra_attributes()
-        self._setup_modifiers()
+        self._mn_entity_type = self._entity_type.value
+        try:
+            self._mn_n_frames = self.universe.trajectory.n_frames
+        except RuntimeError:
+            pass
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
         """Create and initialize Blender object for trajectory.
@@ -465,12 +464,28 @@ class Trajectory(MolecularEntity):
             Created Blender object
         """
         self._create_object(name=name)
-
-        self._mn_n_frames = self.universe.trajectory.n_frames
+        self._store_default_attributes()
+        self._store_extra_attributes()
+        self._setup_modifiers()
         self._save_filepaths_on_object()
         set_obj_active(self.object)
-
         return self.object
+
+    @classmethod
+    def load(
+        cls,
+        topology: Path | str,
+        coordinates: Path | str,
+        name: str = "NewTrajectory",
+        style: str | None = "spheres",
+        selection: str | None = None,
+        create_object: bool = True,
+    ):
+        u = mda.Universe(topology, coordinates)
+        traj = cls(u, name=name, create_object=create_object)
+        if style:
+            traj.add_style(style=style, selection=selection)
+        return traj
 
     def _update_calculations(self) -> None:
         """Update all registered calculations for the current frame"""
@@ -524,6 +539,19 @@ class Trajectory(MolecularEntity):
 
         Args:
             frame: Scene frame number
+        """
+        self._update_trajectory_positions(frame)
+
+    def _update_trajectory_positions(self, frame: int) -> None:
+        """Update trajectory positions for the given frame.
+
+        This method can be overridden by subclasses to implement custom
+        position update logic (e.g., for streaming trajectories).
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
         """
         self.position = self.frame_manager.get_positions_at_frame(frame)
 

@@ -6,7 +6,7 @@ synchronization, and attribute metadata collection.
 
 import logging
 from collections import OrderedDict
-from typing import Callable
+from typing import Callable, Optional
 import databpy as db
 import numpy as np
 import numpy.typing as npt
@@ -164,8 +164,23 @@ class FrameManager:
         self.cache = PositionCache()
 
     @property
-    def n_frames(self) -> int:
-        return self.trajectory.universe.trajectory.n_frames
+    def n_frames(self) -> Optional[int]:
+        """Get number of frames in trajectory.
+
+        Returns None for streaming trajectories where the frame count
+        is not known in advance.
+
+        Returns
+        -------
+        Optional[int]
+            Number of frames, or None for streaming trajectories
+        """
+        try:
+            return self.trajectory.universe.trajectory.n_frames
+        except (RuntimeError, AttributeError):
+            # Streaming trajectories may not have known n_frames
+            logger.debug("n_frames not available (likely streaming trajectory)")
+            return None
 
     def _position_at_frame(self, frame: int) -> np.ndarray:
         """Get atom positions at a specific universe frame.
@@ -222,9 +237,14 @@ class FrameManager:
         np.ndarray
             Frame numbers to include in average
         """
+        n_frames = self.n_frames
+        if n_frames is None:
+            # Streaming trajectory - just return current frame
+            return np.array([frame], dtype=np.int64)
+
         return frames_to_average(
             frame,
-            self.n_frames,
+            n_frames,
             average=self.trajectory.average,
         )
 
@@ -242,11 +262,14 @@ class FrameManager:
             Whether to cache next frame for interpolation
         """
         frames_to_cache = self._frame_range(frame)
+        n_frames = self.n_frames
 
         # If interpolating, ensure we cache 1 frame ahead
+        # Skip for streaming trajectories (n_frames is None)
         if (
             len(frames_to_cache) == 1
-            and frames_to_cache[0] != (self.n_frames - 1)
+            and n_frames is not None
+            and frames_to_cache[0] != (n_frames - 1)
             and cache_ahead
         ):
             frames_to_cache = np.array(
@@ -312,6 +335,8 @@ class FrameManager:
             # Just return positions at the frame without any special handling
             return self._position_at_frame(frame)
 
+        n_frames = self.n_frames
+
         # Map scene frame to universe frame
         uframe_current = frame_mapper(
             frame=frame,
@@ -319,11 +344,13 @@ class FrameManager:
             offset=self.trajectory.offset,
         )
         uframe_next = uframe_current + 1
-        last_frame = self.n_frames - 1
 
-        if uframe_current >= last_frame:
-            uframe_current = last_frame
-            uframe_next = uframe_current
+        # Handle frame bounds for non-streaming trajectories
+        if n_frames is not None:
+            last_frame = n_frames - 1
+            if uframe_current >= last_frame:
+                uframe_current = last_frame
+                uframe_next = uframe_current
 
         # Update the frame_hidden property for the UI
         try:

@@ -47,6 +47,7 @@ website:
       - tutorials/importing.qmd
       - tutorials/selections.qmd
       - tutorials/trajectories.qmd
+      - tutorials/streaming-trajectories.qmd
       - tutorials/cryoem.qmd
       - tutorials/simulation.qmd
     - section: "Reference"
@@ -119,6 +120,8 @@ quartodoc:
       - "{{ contents }}"
   # css: api/_styles-quartodoc.css
 
+  options:
+    include_inherited: true
 
   sections:
   - title: Entity
@@ -135,6 +138,7 @@ quartodoc:
     contents:
     - Trajectory
     - entities.trajectory.SelectionManager
+    - entities.StreamingTrajectory
 
   - title: Styles
     desc: Setting and controlling the different styles

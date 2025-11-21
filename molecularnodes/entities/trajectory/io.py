@@ -7,7 +7,7 @@ __author__ = "Brady Johnston"
 
 from pathlib import Path
 import MDAnalysis as mda
-from . import oxdna
+from . import StreamingTrajectory, imd, oxdna
 from .base import Trajectory
 
 
@@ -18,10 +18,36 @@ def load(
     style: str | None = "spheres",
     selection: str | None = None,
 ):
-    universe = mda.Universe(top, traj)
-    trajectory = Trajectory(universe=universe, name=name).add_style(
-        style=style, selection=selection
-    )
+    """Load a trajectory with automatic format detection.
+
+    Detects and loads trajectories in various formats including standard
+    MD trajectories and real-time IMD streaming connections.
+
+    Parameters
+    ----------
+    top : str | Path
+        Path to topology file
+    traj : str | Path
+        Path to trajectory file or IMD URL (e.g., 'imd://localhost:3000')
+    name : str, optional
+        Name for the trajectory object, by default "NewTrajectory"
+    style : str | None, optional
+        Visual style to apply, by default "spheres"
+    selection : str | None, optional
+        Atom selection string, by default None (all atoms)
+
+    Returns
+    -------
+    Trajectory
+        Loaded trajectory object (may be StreamingTrajectory for IMD)
+    """
+    if imd.is_imd_url(traj):
+        trajectory = StreamingTrajectory.load(top, traj, name=name)
+    else:
+        universe = mda.Universe(top, traj)
+        trajectory = Trajectory(universe=universe, name=name)
+
+    trajectory.add_style(style=style, selection=selection)
 
     return trajectory
 
