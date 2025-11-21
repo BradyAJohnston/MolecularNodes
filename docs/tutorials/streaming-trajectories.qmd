@@ -1,0 +1,62 @@
+---
+title: Streaming Trajectories
+subtitle: Load and stream a currently running simulation using MDanalysis and IMDClient.
+author: Brady Johnston
+fig-align: center
+---
+
+With the MDAnalysis [2.10 release](https://www.mdanalysis.org/2025/10/26/release-2.10.0/) we can now stream information (positions, velocities etc) from an actively running simulation.
+This is useful for doing analysis 'on-the-fly' and even getting access to timesteps that would normally be discarded when saving to disk for size constraints.
+
+Thanks to MDAnalysis handling everything 'under the hood' - we can also stream these results directly into Blender using Molecular Nodes.
+
+This example uses the [2025 IMD workshop materials](https://github.com/amruthesht/imd-workshop-2025) which provides example code for setting up and running a simulation that provide results for streaming. The simulation I show below is the example [GROMACS simulation](https://github.com/amruthesht/imd-workshop-2025/tree/main/workshop/sample_simulation/GROMACS).
+
+Streaming isn't supported in a GROMACS release at time of writing (but will be soon) - I followed [these instructions](https://github.com/amruthesht/imd-workshop-2025?tab=readme-ov-file#from-source) for how to compile it myself with the new IMDClient functionality.
+
+## Running the Simulation
+
+Once installed GROMACS and running the simulation should just be `./run.sh` inside of the `sample_simulation/GROMACS` folder. By defualt it is set up to run on a single core (this demo was intended to run on GitHub codespaces), so we can make a quick change to increase the core count or else it won't simulate fast enough for our purposes:
+
+```{filename="run.sh"}
+ # Run simulation with IMD streaming
+-gmx mdrun -v -nt 1 \
++gmx mdrun -v -nt 8 \
+```
+
+After increasing the number of cores - we can start kick off the simulation and it will setup and wait for a client to connect.
+
+![](images/trajectory/streaming-simulation-start.mp4)
+
+Once we have the simulation up and running - we can connect to it remotely with something using IMD Client. This is the point where you can do analysis with MDAnalysis, and also the point where we can connect to it with Molecular Nodes.
+
+## Connecting to the Simulation
+
+::: {.callout-warning}
+# Experimental
+Connecting to streaming trajectories in MN should still be considered experimental. As it becomes more mature in the simulation packages themselves we should be able to better decide on how this should all work.
+:::
+
+Once we have a simulation that is up and running, we can import it to Molecular Nodes like we would a normal trajecotry. For the coordinates, instead of a filepath we give the IMD streaming server. By default on your own machine it will be `imd://localhost:8889`.
+
+After we load the trajectory, every time the frame changes inside of Blender it will fetch the latest frame from the simulation and the 3D model will be updated. 
+
+![](images/trajectory/streaming-example.mp4)
+
+If the simulation is dependent on GO / PAUSE orders then pausing Blender will pause the simulation, but we could just as easily link this to a running simulation which doesn't wait for us and just visually inspect / render some frames from the simulation as it runs.
+
+Everything inside of Molecular Nodes like adding styles & selections should all work as normal, just that the positions come from a currently updating simulation.
+
+::: {.callout-warning}
+# Timeline
+
+If you scrub around on the timeline (move to the first frame) it will still advance to the next frame in the simulation. There is no caching of positions currently enabled so even going back in 'time' will move forward in time for the simulation.
+:::
+
+### Potential Features
+
+Like said above - this is very experimental. Potential features could be:
+ - caching some number of frames of the simulation so that scrubbing back N number of frames does acces old positions rather than always fetching new ones
+ - IMD protocol supports sending forces back to the simulation. We could interact with the simulation via Blender
+
+If you have other suggestions of questions around it, please open an issue or discussion on the [GitHub page](https://github.com/BradyAJohnston/MolecularNodes) and discuss it there.

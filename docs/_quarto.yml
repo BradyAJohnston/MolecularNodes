@@ -47,6 +47,7 @@ website:
       - tutorials/importing.qmd
       - tutorials/selections.qmd
       - tutorials/trajectories.qmd
+      - tutorials/streaming-trajectories.qmd
       - tutorials/cryoem.qmd
       - tutorials/simulation.qmd
     - section: "Reference"
