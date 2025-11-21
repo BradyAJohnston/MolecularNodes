@@ -1,6 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
-from ..entities import density, trajectory, StreamingTrajectory, Trajectory
+from ..entities import StreamingTrajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
