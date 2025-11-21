@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../api/reference/entities.trajectory.selections.SelectionManager.html" rel="next">
+<link href="../../api/reference/entities.trajectory.SelectionManager.html" rel="next">
 <link href="../../api/reference/entities.Ensemble.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -329,14 +329,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.SelectionManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.SelectionManager</span></a>
+  <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.SelectionManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.Selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.Selection</span></a>
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
   </div>
 </li>
       </ul>
@@ -532,6 +532,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <ul class="collapse">
+  <li><a href="#molecularnodes.entities.OXDNA.add_style" id="toc-molecularnodes.entities.OXDNA.add_style" class="nav-link" data-scroll-target="#molecularnodes.entities.OXDNA.add_style">add_style</a></li>
+  <li><a href="#molecularnodes.entities.OXDNA.create_object" id="toc-molecularnodes.entities.OXDNA.create_object" class="nav-link" data-scroll-target="#molecularnodes.entities.OXDNA.create_object">create_object</a></li>
+  <li><a href="#molecularnodes.entities.OXDNA.get_view" id="toc-molecularnodes.entities.OXDNA.get_view" class="nav-link" data-scroll-target="#molecularnodes.entities.OXDNA.get_view">get_view</a></li>
+  <li><a href="#molecularnodes.entities.OXDNA.reset_playback" id="toc-molecularnodes.entities.OXDNA.reset_playback" class="nav-link" data-scroll-target="#molecularnodes.entities.OXDNA.reset_playback">reset_playback</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -601,8 +608,218 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.OXDNA.add_style">add_style</a></td>
+<td>Add a visual style to the trajectory.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.OXDNA.create_object">create_object</a></td>
+<td>Create and initialize Blender object for trajectory.</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.OXDNA.get_view">get_view</a></td>
+<td>Get the 3D bounding box of a selection within the trajectory</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.OXDNA.reset_playback">reset_playback</a></td>
+<td>Set the playback settings to their default values</td>
+</tr>
+</tbody>
+</table>
+<section id="molecularnodes.entities.OXDNA.add_style" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.OXDNA.add_style">add_style</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>entities.OXDNA.add_style(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">'spheres'</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'common'</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    material<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Add a visual style to the trajectory.</p>
+<section id="parameters-1" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>style</td>
+<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.GeometryNodeTree.html#bpy.types.GeometryNodeTree">GeometryNodeTree</a> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td>The style to apply to the trajectory. Can be a GeometryNodeTree or a string identifying a predefined style (e.g., “spheres”, “sticks”, “ball_stick”). Default is “spheres”.</td>
+<td><code class="custom-string">'spheres'</code></td>
+</tr>
+<tr class="even">
+<td>color</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
+<td>The coloring scheme to apply. Can be “common” (element-based coloring), “chain”, “residue”, or other supported schemes. If None, no coloring is applied. Default is “common”.</td>
+<td><code class="custom-string">'common'</code></td>
+</tr>
+<tr class="odd">
+<td>selection</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | None</td>
+<td>Apply the style only to atoms matching this selection. Can be: - A string referring to an existing boolean attribute on the trajectory - A AtomGroup object defining a selection criteria - None to apply to all atoms (default)</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+<tr class="even">
+<td>material</td>
+<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Material.html#bpy.types.Material">Material</a> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
+<td>The material to apply to the styled atoms. Can be a Blender Material object, a string with a material name, or None to use default materials. Default is None.</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+<tr class="odd">
+<td>name</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
+<td>The label for this style</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="../../api/reference/Trajectory.html#molecularnodes.Trajectory">Trajectory</a></td>
+<td>Returns self for method chaining.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises" class="level4 doc-section doc-section-raises">
+<h4 class="doc-section doc-section-raises anchored" data-anchor-id="raises">Raises</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></td>
+<td>If an unsupported style string is passed</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes" class="level4 doc-section doc-section-notes">
+<h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h4>
+<p>If a selection is provided, it will be evaluated and stored as a new named attribute on the trajectory with an automatically generated name (sel_N).</p>
+</section>
+</section>
+<section id="molecularnodes.entities.OXDNA.create_object" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.OXDNA.create_object">create_object</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.OXDNA.create_object(name<span class="op">=</span><span class="st">'NewUniverseObject'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create and initialize Blender object for trajectory.</p>
+<p>Creates mesh, computes attributes, sets up modifiers, registers with MolecularNodes.</p>
+<section id="parameters-2" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>name</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td>Name for the Blender object</td>
+<td><code>"NewUniverseObject"</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-1" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Object.html#bpy.types.Object">Object</a></td>
+<td>Created Blender object</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.entities.OXDNA.get_view" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.OXDNA.get_view">get_view</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>entities.OXDNA.get_view(selection<span class="op">=</span><span class="va">None</span>, frame<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Get the 3D bounding box of a selection within the trajectory</p>
+<section id="parameters-3" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>selection</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a></td>
+<td>A selection phrase or AtomGroup When not specified, the whole entity is considered</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+<tr class="even">
+<td>frame</td>
+<td><a href="https://docs.python.org/3/library/functions.html#int">int</a> | None</td>
+<td>Frame number of trajectory to use for calculating bounds. When not specified, current trajectory frame is used</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.entities.OXDNA.reset_playback" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.OXDNA.reset_playback">reset_playback</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>entities.OXDNA.reset_playback()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Set the playback settings to their default values</p>
 
 
+</section>
 </section>
 </section>
 
@@ -1013,8 +1230,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../api/reference/entities.trajectory.selections.SelectionManager.html" class="pagination-link" aria-label="entities.trajectory.selections.SelectionManager">
-        <span class="nav-page-text">entities.trajectory.selections.SelectionManager</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="pagination-link" aria-label="entities.trajectory.SelectionManager">
+        <span class="nav-page-text">entities.trajectory.SelectionManager</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

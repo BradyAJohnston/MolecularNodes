@@ -329,14 +329,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.SelectionManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.SelectionManager</span></a>
+  <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.SelectionManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.Selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.Selection</span></a>
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
   </div>
 </li>
       </ul>
@@ -538,7 +538,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#molecularnodes.Molecule.centre_molecule" id="toc-molecularnodes.Molecule.centre_molecule" class="nav-link" data-scroll-target="#molecularnodes.Molecule.centre_molecule">centre_molecule</a></li>
   <li><a href="#molecularnodes.Molecule.create_object" id="toc-molecularnodes.Molecule.create_object" class="nav-link" data-scroll-target="#molecularnodes.Molecule.create_object">create_object</a></li>
   <li><a href="#molecularnodes.Molecule.fetch" id="toc-molecularnodes.Molecule.fetch" class="nav-link" data-scroll-target="#molecularnodes.Molecule.fetch">fetch</a></li>
+  <li><a href="#molecularnodes.Molecule.get_view" id="toc-molecularnodes.Molecule.get_view" class="nav-link" data-scroll-target="#molecularnodes.Molecule.get_view">get_view</a></li>
   <li><a href="#molecularnodes.Molecule.load" id="toc-molecularnodes.Molecule.load" class="nav-link" data-scroll-target="#molecularnodes.Molecule.load">load</a></li>
+  <li><a href="#molecularnodes.Molecule.set_frame" id="toc-molecularnodes.Molecule.set_frame" class="nav-link" data-scroll-target="#molecularnodes.Molecule.set_frame">set_frame</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -621,8 +623,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Fetch a molecule from the RCSB database.</td>
 </tr>
 <tr class="even">
+<td><a href="#molecularnodes.Molecule.get_view">get_view</a></td>
+<td>Get the 3D bounding box of the entity object</td>
+</tr>
+<tr class="odd">
 <td><a href="#molecularnodes.Molecule.load">load</a></td>
 <td>Load a molecule from a file.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.Molecule.set_frame">set_frame</a></td>
+<td>Update the underlying data to correspond to changes in the scene frame.</td>
 </tr>
 </tbody>
 </table>
@@ -868,9 +878,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.Molecule.get_view" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.Molecule.get_view">get_view</h3>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Molecule.get_view()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Get the 3D bounding box of the entity object</p>
+</section>
 <section id="molecularnodes.Molecule.load" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.Molecule.load">load</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Molecule.load(file_path, name<span class="op">=</span><span class="va">None</span>, remove_solvent<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Molecule.load(file_path, name<span class="op">=</span><span class="va">None</span>, remove_solvent<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Load a molecule from a file.</p>
 <section id="parameters-3" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
@@ -927,9 +942,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="notes-1" class="level4 doc-section doc-section-notes">
 <h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes-1">Notes</h4>
 <p>Supports various file formats including .cif, .bcif, .pdb, .sdf, and .mol</p>
-
-
 </section>
+</section>
+<section id="molecularnodes.Molecule.set_frame" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.Molecule.set_frame">set_frame</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Molecule.set_frame(frame)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Update the underlying data to correspond to changes in the scene frame.</p>
+<p>This method should be implemented by subclasses to update the entity’s data based on the given frame number. This can include updating positions and performing other necessary calculations.</p>
+<p>Args: frame (int): The frame number to update the entity’s data to.</p>
+<p>Raises: NotImplementedError: If the method is not implemented by a subclass.</p>
+
+
 </section>
 </section>
 </section>

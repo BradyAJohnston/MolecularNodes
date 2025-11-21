@@ -329,14 +329,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.SelectionManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.SelectionManager</span></a>
+  <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.SelectionManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.Selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.Selection</span></a>
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
   </div>
 </li>
       </ul>
@@ -534,6 +534,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
   <ul class="collapse">
   <li><a href="#molecularnodes.entities.Ensemble.create_object" id="toc-molecularnodes.entities.Ensemble.create_object" class="nav-link" data-scroll-target="#molecularnodes.entities.Ensemble.create_object">create_object</a></li>
+  <li><a href="#molecularnodes.entities.Ensemble.get_view" id="toc-molecularnodes.entities.Ensemble.get_view" class="nav-link" data-scroll-target="#molecularnodes.entities.Ensemble.get_view">get_view</a></li>
+  <li><a href="#molecularnodes.entities.Ensemble.set_frame" id="toc-molecularnodes.entities.Ensemble.set_frame" class="nav-link" data-scroll-target="#molecularnodes.entities.Ensemble.set_frame">set_frame</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -562,6 +564,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><a href="#molecularnodes.entities.Ensemble.instance_collection">instance_collection</a></td>
 <td>The instances of the ensemble.</td>
 </tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.Ensemble.styles">styles</a></td>
+<td>Get the styles in the tree.</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -578,6 +584,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td><a href="#molecularnodes.entities.Ensemble.create_object">create_object</a></td>
 <td>Create a 3D object for the ensemble.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.Ensemble.get_view">get_view</a></td>
+<td>Get the 3D bounding box of the entity object</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.Ensemble.set_frame">set_frame</a></td>
+<td>Update the underlying data to correspond to changes in the scene frame.</td>
 </tr>
 </tbody>
 </table>
@@ -639,9 +653,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="notes" class="level4 doc-section doc-section-notes">
 <h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h4>
 <p>Creates a data object which stores all of the required instancing information. If there are molecules to be instanced, they are also created in their own data collection.</p>
-
-
 </section>
+</section>
+<section id="molecularnodes.entities.Ensemble.get_view" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Ensemble.get_view">get_view</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.Ensemble.get_view()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Get the 3D bounding box of the entity object</p>
+</section>
+<section id="molecularnodes.entities.Ensemble.set_frame" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.Ensemble.set_frame">set_frame</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>entities.Ensemble.set_frame(frame)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Update the underlying data to correspond to changes in the scene frame.</p>
+<p>This method should be implemented by subclasses to update the entity’s data based on the given frame number. This can include updating positions and performing other necessary calculations.</p>
+<p>Args: frame (int): The frame number to update the entity’s data to.</p>
+<p>Raises: NotImplementedError: If the method is not implemented by a subclass.</p>
+
+
 </section>
 </section>
 </section>

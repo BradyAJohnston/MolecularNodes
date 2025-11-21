@@ -329,14 +329,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.SelectionManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.SelectionManager</span></a>
+  <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.SelectionManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.Selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.Selection</span></a>
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
   </div>
 </li>
       </ul>
@@ -566,7 +566,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Different styles or representations can be added to Trajectories.</p>
 <section id="setup-molecular-nodes" class="level2">
 <h2 class="anchored" data-anchor-id="setup-molecular-nodes">Setup Molecular Nodes</h2>
-<div id="550a83cc" class="cell" data-execution_count="1">
+<div id="dcaa277d" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> DCD, PSF, TPR, XTC</span>
@@ -578,7 +578,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="add-trajectory" class="level2">
 <h2 class="anchored" data-anchor-id="add-trajectory">Add Trajectory</h2>
 <p>A style can be specified when adding the trajectory to Blender as follows:</p>
-<div id="4d5cafa1" class="cell" data-execution_count="2">
+<div id="ef810e4a" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> mn.Trajectory(u).add_style(mn.StyleRibbon(quality<span class="op">=</span><span class="dv">4</span>, backbone_radius <span class="op">=</span> <span class="fl">0.5</span>))</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -625,17 +625,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </ul></li>
 <li><code>name</code> param to give a name to the style</li>
 </ul>
-<div id="c181e09d" class="cell" data-execution_count="3">
+<div id="eedbbe14" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add spheres style to resid 1 and 129</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>t.add_style(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    mn.StyleSpheres(geometry<span class="op">=</span><span class="st">"Instance"</span>, subdivisions<span class="op">=</span><span class="dv">4</span>),</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="st">"resid 1 129"</span>,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0x86c018508&gt;</code></pre>
+<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0xb242f6d08&gt;</code></pre>
 </div>
 </div>
-<div id="548df1c6" class="cell" data-execution_count="4">
+<div id="55f8469c" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -647,16 +647,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="a07f6727" class="cell" data-execution_count="5">
+<div id="99fdce99" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add surface style for resids between 100 and 150 with transparent material</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>t.add_style(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">"surface"</span>, selection<span class="op">=</span><span class="st">"resid 100:150"</span>, material<span class="op">=</span><span class="st">"MN Transparent Outline"</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0x86c018508&gt;</code></pre>
+<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0xb242f6d08&gt;</code></pre>
 </div>
 </div>
-<div id="96f1c4a6" class="cell" data-execution_count="6">
+<div id="c35d3e56" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -668,21 +668,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="8e69d5f0" class="cell" data-execution_count="7">
+<div id="5f25b0b6" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add a ball and style for resids 180:200</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>t.add_style(mn.StyleBallAndStick(quality<span class="op">=</span><span class="dv">4</span>), selection<span class="op">=</span>u.select_atoms(<span class="st">"resid 180:200"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/Users/brady/git/MolecularNodes/.venv/lib/python3.11/site-packages/MDAnalysis/core/groups.py:3536: UserWarning: Empty string to select atoms, empty group returned.
-  warnings.warn(</code></pre>
-</div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0x86c018508&gt;</code></pre>
+<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0xb242f6d08&gt;</code></pre>
 </div>
 </div>
-<div id="c8a2e64a" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="45983a36" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -691,17 +687,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="bb54557b" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add surface style for resids 40:50 with transparent uniform color</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>t.add_style(style<span class="op">=</span><span class="st">"surface"</span>, selection<span class="op">=</span><span class="st">"resid 40:50"</span>, color<span class="op">=</span>(<span class="fl">0.162</span>, <span class="fl">0.624</span>, <span class="fl">0.196</span>, <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="aeb6c25f" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add surface style for resids 40:50 with transparent uniform color</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>t.add_style(style<span class="op">=</span><span class="st">"surface"</span>, selection<span class="op">=</span><span class="st">"resid 40:50"</span>, color<span class="op">=</span>(<span class="fl">0.162</span>, <span class="fl">0.624</span>, <span class="fl">0.196</span>, <span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0x86c018508&gt;</code></pre>
+<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0xb242f6d08&gt;</code></pre>
 </div>
 </div>
-<div id="a807d16f" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="d8003130" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -710,21 +706,21 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="74b09c61" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a sticks style instance</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> mn.nodes.styles.StyleSticks()</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set radius to 0.1</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>s.radius <span class="op">=</span> <span class="fl">0.1</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># add style with a style instance</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>t.add_style(style<span class="op">=</span>s, selection<span class="op">=</span><span class="st">"resid 40:50"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="51d6574e" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a sticks style instance</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> mn.nodes.styles.StyleSticks()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set radius to 0.1</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>s.radius <span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># add style with a style instance</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>t.add_style(style<span class="op">=</span>s, selection<span class="op">=</span><span class="st">"resid 40:50"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0x86c018508&gt;</code></pre>
+<pre><code>&lt;Trajectory, `universe`: &lt;Universe with 3341 atoms&gt;, `object`: &lt;bpy_struct, Object("NewUniverseObject") at 0xb242f6d08&gt;</code></pre>
 </div>
 </div>
-<div id="99bbf228" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cd6f6e80" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -737,36 +733,36 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="access-styles" class="level2">
 <h2 class="anchored" data-anchor-id="access-styles">Access Styles</h2>
 <p>Styles added to a trajectory can be accessed using the styles interface. This interface allows access to all the style specific parameters (Geometry Node inputs).</p>
-<div id="fdfa981d" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> t.styles:</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="887b792a" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> t.styles:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(s)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Ribbon object at 0x15e067f50&gt;
-&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Spheres object at 0x15df21910&gt;
-&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Surface object at 0x15df21ad0&gt;
-&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Ball and Stick object at 0x15df20310&gt;
-&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Surface.001 object at 0x15e067990&gt;
-&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Sticks object at 0x158463610&gt;</code></pre>
+<pre><code>&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Ribbon object at 0x15d88a550&gt;
+&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Spheres object at 0x159d43410&gt;
+&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Surface object at 0x159d30d50&gt;
+&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Ball and Stick object at 0x139048450&gt;
+&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Surface.001 object at 0x10a034b10&gt;
+&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Sticks object at 0x12a2efa90&gt;</code></pre>
 </div>
 </div>
-<div id="0ac7d723" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># access the first style - cartoon of the trajectory</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> t.styles[<span class="dv">0</span>]</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="014ba4b5" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># access the first style - cartoon of the trajectory</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> t.styles[<span class="dv">0</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Ribbon at 0x15df28790&gt;</code></pre>
+<pre><code>&lt;molecularnodes.nodes.geometry.DynamicStyleInterface_Ribbon at 0x15d893150&gt;</code></pre>
 </div>
 </div>
-<div id="086414fb" class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># access the last style - sticks resid 40:50</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> t.styles[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set the sticks radius to 0.3</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>s.sticks_radius <span class="op">=</span> <span class="fl">0.3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="675f7556" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># access the last style - sticks resid 40:50</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> t.styles[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set the sticks radius to 0.3</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>s.sticks_radius <span class="op">=</span> <span class="fl">0.3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c1303bd8" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="31ba39ee" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -779,15 +775,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="remove-styles" class="level2">
 <h2 class="anchored" data-anchor-id="remove-styles">Remove Styles</h2>
 <p>Styles can be removed using the <code>remove</code> method of the style interface.</p>
-<div id="5afcb596" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove last two styles</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>t.styles[<span class="op">-</span><span class="dv">1</span>].remove()</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>t.styles[<span class="op">-</span><span class="dv">1</span>].remove()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="717db70c" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove last two styles</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>t.styles[<span class="op">-</span><span class="dv">1</span>].remove()</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>t.styles[<span class="op">-</span><span class="dv">1</span>].remove()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="706b9e20" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="9e3e0755" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># frame trajectory and render</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(t)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">

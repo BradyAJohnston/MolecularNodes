@@ -329,14 +329,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.SelectionManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.SelectionManager</span></a>
+  <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.SelectionManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.selections.Selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.selections.Selection</span></a>
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
   </div>
 </li>
       </ul>
@@ -531,6 +531,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#molecularnodes.StyleRibbon" id="toc-molecularnodes.StyleRibbon" class="nav-link active" data-scroll-target="#molecularnodes.StyleRibbon">StyleRibbon</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <ul class="collapse">
+  <li><a href="#molecularnodes.StyleRibbon.update_style_node" id="toc-molecularnodes.StyleRibbon.update_style_node" class="nav-link" data-scroll-target="#molecularnodes.StyleRibbon.update_style_node">update_style_node</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -665,8 +669,51 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#molecularnodes.StyleRibbon.update_style_node">update_style_node</a></td>
+<td>Update the Blender node inputs with values from this style’s attributes.</td>
+</tr>
+</tbody>
+</table>
+<section id="molecularnodes.StyleRibbon.update_style_node" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.StyleRibbon.update_style_node">update_style_node</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>StyleRibbon.update_style_node(node_style)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Update the Blender node inputs with values from this style’s attributes.</p>
+<section id="parameters-1" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>node_style</td>
+<td><a href="https://docs.blender.org/api/current/bpy.types.GeometryNodeGroup.html#bpy.types.GeometryNodeGroup">GeometryNodeGroup</a></td>
+<td>The Blender GeometryNodeGroup to update</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
+</section>
 </section>
 </section>
 
