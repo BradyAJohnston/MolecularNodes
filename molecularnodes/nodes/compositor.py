@@ -1,4 +1,5 @@
 import bpy
+from ..blender import IS_BLENDER_5
 
 
 # Default 5.x compositor node tree
@@ -51,8 +52,12 @@ def mn_compositor_node_tree():
     # node Alpha Over
     alpha_over = mn_compositor.nodes.new("CompositorNodeAlphaOver")
     alpha_over.name = "Alpha Over"
-    # Fac
-    alpha_over.inputs["Fac"].default_value = 1.0
+
+    # Factor
+    if IS_BLENDER_5:
+        alpha_over.inputs["Factor"].default_value = 1.0
+    else:
+        alpha_over.inputs["Fac"].default_value = 1.0
 
     # Set locations
     group_output.location = (380.0, 20.0)
@@ -67,10 +72,19 @@ def mn_compositor_node_tree():
     alpha_over.width, alpha_over.height = 140.0, 100.0
 
     # initialize mn_compositor links
-    # alpha_over.Image -> group_output.Image
-    mn_compositor.links.new(alpha_over.outputs[0], group_output.inputs[0])
-    # image.Image -> alpha_over.Image
-    mn_compositor.links.new(image.outputs[0], alpha_over.inputs[2])
-    # group_input.Image -> alpha_over.Image
-    mn_compositor.links.new(group_input.outputs[0], alpha_over.inputs[1])
+    if IS_BLENDER_5:
+        sockets = (
+            (alpha_over.outputs["Image"], group_output.inputs["Image"]),
+            (image.outputs["Image"], alpha_over.inputs["Foreground"]),
+            (group_input.outputs["Image"], alpha_over.inputs["Background"]),
+        )
+        for socket_pair in sockets:
+            mn_compositor.links.new(*socket_pair)
+    else:
+        # alpha_over.Image -> group_output.Image
+        mn_compositor.links.new(alpha_over.outputs[0], group_output.inputs[0])
+        # image.Image -> alpha_over.Image
+        mn_compositor.links.new(image.outputs[0], alpha_over.inputs[2])
+        # group_input.Image -> alpha_over.Image
+        mn_compositor.links.new(group_input.outputs[0], alpha_over.inputs[1])
     return mn_compositor
