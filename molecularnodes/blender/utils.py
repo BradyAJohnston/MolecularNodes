@@ -3,6 +3,8 @@ from pathlib import Path
 import bmesh
 import bpy
 
+IS_BLENDER_5 = bpy.app.version[0] >= 5
+
 
 def path_resolve(path: str | Path) -> Path:
     if isinstance(path, str):
