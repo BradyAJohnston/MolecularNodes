@@ -123,9 +123,7 @@ def annotations_node_tree():
     # remove set_curve_radius node
     node_group.nodes.remove(set_curve_radius)
     # mesh_to_curve.Curve -> curve_to_mesh.Curve
-    node_group.links.new(
-        mesh_to_curve.outputs["Curve"], curve_to_mesh.inputs["Curve"]
-    )
+    node_group.links.new(mesh_to_curve.outputs["Curve"], curve_to_mesh.inputs["Curve"])
     # thickness_attribute.Attribute -> curve_to_mesh.Scale
     node_group.links.new(
         thickness_attribute.outputs["Attribute"], curve_to_mesh.inputs["Scale"]

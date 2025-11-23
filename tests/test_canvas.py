@@ -119,7 +119,7 @@ def test_frame_view(canvas, universe):
 
 
 def test_compositor_setup(canvas):
-    if bpy.app.version >= (5, 0, 0):
+    if mn.blender.IS_BLENDER_5:
         node_tree = canvas.scene.compositing_node_group
         output_node_name = "Group Output"
     else:

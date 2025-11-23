@@ -1,4 +1,5 @@
 import bpy
+from ..blender import IS_BLENDER_5
 from ..nodes.arrange import arrange_tree
 from ..nodes.compositor import default_5x_compositor_node_tree, mn_compositor_node_tree
 
@@ -7,7 +8,7 @@ mn_compositor_node_name = "MN Compositor"
 
 
 def setup_compositor(scene: bpy.types.Scene):
-    if bpy.app.version >= (5, 0, 0):
+    if IS_BLENDER_5:
         node_tree = scene.compositing_node_group
         use_nodes = True
     else:
@@ -27,7 +28,7 @@ def setup_compositor(scene: bpy.types.Scene):
             return
     else:
         # no node tree, create one
-        if bpy.app.version >= (5, 0, 0):
+        if IS_BLENDER_5:
             # Staring 5.x compositor node trees can be re-used
             # Technically we don't have to create a new one if we import from
             # assets, but this is the safest when generating from code
@@ -53,7 +54,7 @@ def setup_compositor(scene: bpy.types.Scene):
     mn_compositor_node = nodes[mn_compositor_node_name]
     # insert MN Compositor right before the Composite node
     # add "Composite" node to node tree if not present
-    if bpy.app.version >= (5, 0, 0):
+    if IS_BLENDER_5:
         if "Group Output" not in nodes:
             nodes.new(type="NodeGroupOutput")
         output_node = nodes["Group Output"]
