@@ -279,11 +279,13 @@ class TestTrajectory:
         traj.reset_playback()
         uuid = traj.uuid
         bpy.context.scene.frame_set(2)
-        
+
         # Add selections to test PyCapsule handling
         traj.selections.from_string("protein", name="protein_sel")
-        traj.selections.from_string("around 3.0 resid 1", name="dynamic_sel", updating=True)
-        
+        traj.selections.from_string(
+            "around 3.0 resid 1", name="dynamic_sel", updating=True
+        )
+
         filepath = str(tmp_path / "test.blend")
 
         assert not os.path.exists(session.stashpath(filepath))
@@ -294,15 +296,15 @@ class TestTrajectory:
                 pytest.fail(f"Session save failed with PyCapsule error: {e}")
             else:
                 raise
-            
+
         assert os.path.exists(filepath)
         assert os.path.exists(session.stashpath(filepath))
         del traj
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
         traj = mn.session.get_session().trajectories[uuid]
-        
-        # Verify selections were restored  
+
+        # Verify selections were restored
         assert "protein_sel" in traj.list_attributes()
         assert "dynamic_sel" in traj.list_attributes()
 
@@ -413,36 +415,38 @@ class TestTrajectory:
     def test_trajectory_pickle_no_pycapsule_error(self, universe):
         """Test that Trajectory objects can be pickled without PyCapsule errors."""
         traj = mn.entities.Trajectory(universe, name="TestPickleTrajectory")
-        
+
         # Add selections and calculations
         traj.selections.from_string("protein", name="protein_sel")
-        traj.selections.from_string("around 5.0 resid 1", name="around_sel", updating=True)
-        traj.calculations['center_of_mass'] = dummy_calculation_for_pickle_test
-        
+        traj.selections.from_string(
+            "around 5.0 resid 1", name="around_sel", updating=True
+        )
+        traj.calculations["center_of_mass"] = dummy_calculation_for_pickle_test
+
         with tempfile.NamedTemporaryFile() as tmp_file:
             try:
                 pickle.dump(traj, tmp_file)
                 tmp_file.flush()
-                
+
                 tmp_file.seek(0)
                 restored_traj = pickle.load(tmp_file)
-                
+
                 # Verify restoration
                 assert restored_traj.name == "TestPickleTrajectory"
-                assert hasattr(restored_traj, 'universe')
-                assert hasattr(restored_traj, 'frame_manager')
-                assert hasattr(restored_traj, 'selections')
-                assert hasattr(restored_traj, 'annotations')
-                assert hasattr(restored_traj, 'calculations')
-                
+                assert hasattr(restored_traj, "universe")
+                assert hasattr(restored_traj, "frame_manager")
+                assert hasattr(restored_traj, "selections")
+                assert hasattr(restored_traj, "annotations")
+                assert hasattr(restored_traj, "calculations")
+
                 # Verify universe restoration
-                assert hasattr(restored_traj.universe, 'atoms')
+                assert hasattr(restored_traj.universe, "atoms")
                 assert restored_traj.universe.atoms.n_atoms == universe.atoms.n_atoms
-                
+
                 # Verify circular references
                 assert restored_traj.frame_manager.trajectory is restored_traj
                 assert restored_traj.selections.trajectory is restored_traj
-                
+
             except TypeError as e:
                 if "cannot pickle 'PyCapsule' object" in str(e):
                     pytest.fail(f"PyCapsule pickle error not fixed: {e}")
@@ -452,27 +456,27 @@ class TestTrajectory:
     def test_trajectory_pickle_deserialization_failure(self, universe):
         """Test that trajectory deserialization fails fast with clear errors when files are missing."""
         traj = mn.entities.Trajectory(universe, name="TestFailedDeserialization")
-        
+
         # Pickle the trajectory
         with tempfile.NamedTemporaryFile() as tmp_file:
             pickle.dump(traj, tmp_file)
             tmp_file.flush()
             tmp_file.seek(0)
-            
+
             # Manually corrupt the pickled data to simulate missing/invalid file paths
             # by modifying the pickled trajectory to reference non-existent files
             pickled_data = pickle.load(tmp_file)
-            
+
             # Create a new state dict with invalid file paths
             state = pickled_data.__getstate__()
-            state['_universe_topology'] = '/nonexistent/path/topology.pdb'
-            state['_universe_trajectory'] = '/nonexistent/path/trajectory.xtc'
-            
+            state["_universe_topology"] = "/nonexistent/path/topology.pdb"
+            state["_universe_trajectory"] = "/nonexistent/path/trajectory.xtc"
+
             # Attempt to restore - this should raise RuntimeError, not create broken object
             new_traj = mn.entities.Trajectory.__new__(mn.entities.Trajectory)
             with pytest.raises(RuntimeError) as exc_info:
                 new_traj.__setstate__(state)
-            
+
             # Verify the error message is descriptive
             error_msg = str(exc_info.value)
             assert "Failed to restore Trajectory from saved session" in error_msg
