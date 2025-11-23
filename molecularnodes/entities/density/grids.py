@@ -206,14 +206,7 @@ class Grids(Density):
         """
 
         bpy.utils.expose_bundled_modules()
-
-        is_pyopenvdb = False
-        if bpy.app.version >= (4, 4, 0):
-            import openvdb as vdb  # type: ignore
-        else:
-            import pyopenvdb as vdb  # type: ignore
-
-            is_pyopenvdb = True
+        import openvdb as vdb  # type: ignore
 
         file_path = self.path_to_vdb(file, center=center, invert=invert)
 
@@ -274,12 +267,8 @@ class Grids(Density):
             offset = np.array(gobj.origin)
 
         # apply transformations
-        if is_pyopenvdb:
-            vdb_grid.transform.scale(np.array(gobj.delta) * world_scale)
-            vdb_grid.transform.translate(offset * world_scale)
-        else:
-            vdb_grid.transform.preScale(np.array(gobj.delta) * world_scale)
-            vdb_grid.transform.postTranslate(offset * world_scale)
+        vdb_grid.transform.preScale(np.array(gobj.delta) * world_scale)
+        vdb_grid.transform.postTranslate(offset * world_scale)
 
         # Set some metadata for the vdb file, so we can check if it's already
         # been converted correctly
