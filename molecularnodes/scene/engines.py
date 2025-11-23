@@ -1,6 +1,7 @@
 import warnings
 from abc import ABC
 import bpy
+from ..blender import IS_BLENDER_5
 from .render import enable_optimal_gpu
 
 
@@ -18,7 +19,7 @@ class RenderEngine(ABC):
 class EEVEE(RenderEngine):
     def __init__(self, samples: int = 64, raytracing: bool = True):
         # TODO: remove this check when Blender 5.0 is the minimum version
-        if bpy.app.version >= (5, 0, 0):
+        if IS_BLENDER_5:
             self._name = "BLENDER_EEVEE"
         else:
             self._name = "BLENDER_EEVEE_NEXT"

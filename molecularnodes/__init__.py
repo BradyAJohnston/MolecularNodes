@@ -1,4 +1,4 @@
-from . import assets, blender, color, converters, download, nodes, session, ui
+from . import assets, blender, color, converters, download, nodes, session, ui, utils
 from .assets import template
 from .entities import Molecule, MoleculeSelector, Trajectory
 from .nodes import material
@@ -40,4 +40,5 @@ __all__ = [
     "StyleSpheres",
     "StyleSticks",
     "StyleSurface",
+    "utils",
 ]

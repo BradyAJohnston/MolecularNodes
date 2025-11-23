@@ -391,6 +391,7 @@ def create_material(
     thin_film_ior: float = 1.3,
 ) -> bpy.types.Material:
     """Create a Blender material from provided shader properties."""
+    from ..blender import IS_BLENDER_5
 
     key_map = {
         "Base Color": base_color,
@@ -434,7 +435,7 @@ def create_material(
 
     mat = bpy.data.materials.new(name)
 
-    if bpy.app.version < (5, 0, 0):
+    if not IS_BLENDER_5:
         mat.use_nodes = True
 
     tree = mat.node_tree
