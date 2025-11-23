@@ -1,5 +1,4 @@
 schema_version = "1.0.0"
-
 id = "molecularnodes"
 version = "4.5.6"
 name = "Molecular Nodes"
@@ -7,6 +6,7 @@ tagline = "A toolbox for molecular import and animation in Blender"
 maintainer = "Brady Johnston<brady.johnston@me.com>"
 type = "add-on"
 website = "https://bradyajohnston.github.io/MolecularNodes"
+blender_version_min = "4.5.0"
 platforms = [
 	"windows-x64",
 	"linux-x64",
@@ -15,13 +15,12 @@ platforms = [
 ]
 tags = [
 	"Geometry Nodes",
-	"Import-Export"
+	"Import-Export",
 ]
-blender_version_min = "4.5.0"
 license = [
-  "SPDX:GPL-3.0-or-later"
+	"SPDX:GPL-3.0-or-later",
 ]
-copyright =[
+copyright = [
 	"2022 Brady Johnston",
 ]
 
@@ -114,3 +113,4 @@ wheels = [
 [permissions]
 network = "Downloading structural data from the PDB and AFPDB"
 files = "Importing data files from disk and caching downloads"
+

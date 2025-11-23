@@ -48,8 +48,7 @@ jobs:
             version: ${{ matrix.version }}
         - name: Build extension
           run: |
-            BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
-            uv run --extra build build.py --blender-path "${BLENDER_PATH}"
+            blender -b -P build.py
             mkdir artifact
             mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
         - name: Upload extension artifact
