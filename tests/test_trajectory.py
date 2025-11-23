@@ -280,14 +280,12 @@ class TestTrajectory:
         uuid = traj.uuid
         bpy.context.scene.frame_set(2)
         
-        # Add selections and calculations to test the PyCapsule fix
+        # Add selections to test PyCapsule handling
         traj.selections.from_string("protein", name="protein_sel")
         traj.selections.from_string("around 3.0 resid 1", name="dynamic_sel", updating=True)
         
         filepath = str(tmp_path / "test.blend")
 
-        # test that we can save the file and it is created only after saving
-        # This should not fail with "cannot pickle 'PyCapsule' object" error
         assert not os.path.exists(session.stashpath(filepath))
         try:
             bpy.ops.wm.save_as_mainfile(filepath=filepath)
@@ -304,7 +302,7 @@ class TestTrajectory:
 
         traj = mn.session.get_session().trajectories[uuid]
         
-        # Verify selections were restored
+        # Verify selections were restored  
         assert "protein_sel" in traj.list_attributes()
         assert "dynamic_sel" in traj.list_attributes()
 
@@ -413,34 +411,23 @@ class TestTrajectory:
         mn.Trajectory(u)
 
     def test_trajectory_pickle_no_pycapsule_error(self, universe):
-        """Test that Trajectory objects can be pickled without PyCapsule errors.
-        
-        This test verifies the fix for the issue where Trajectory objects
-        containing MDAnalysis Universe objects with PyCapsule references
-        could not be pickled, causing session save failures.
-        """
-        # Create a trajectory with various components that could contain PyCapsules
+        """Test that Trajectory objects can be pickled without PyCapsule errors."""
         traj = mn.entities.Trajectory(universe, name="TestPickleTrajectory")
         
-        # Add selections which create AtomGroups that might contain PyCapsules
+        # Add selections and calculations
         traj.selections.from_string("protein", name="protein_sel")
         traj.selections.from_string("around 5.0 resid 1", name="around_sel", updating=True)
-        
-        # Add a calculation function (optional, to test calculations dict)
         traj.calculations['center_of_mass'] = dummy_calculation_for_pickle_test
         
-        # Test that the trajectory can be pickled successfully
         with tempfile.NamedTemporaryFile() as tmp_file:
             try:
-                # This should not raise a "cannot pickle 'PyCapsule' object" error
                 pickle.dump(traj, tmp_file)
                 tmp_file.flush()
                 
-                # Test that it can be unpickled successfully
                 tmp_file.seek(0)
                 restored_traj = pickle.load(tmp_file)
                 
-                # Verify the restored trajectory has the expected attributes
+                # Verify restoration
                 assert restored_traj.name == "TestPickleTrajectory"
                 assert hasattr(restored_traj, 'universe')
                 assert hasattr(restored_traj, 'frame_manager')
@@ -448,13 +435,11 @@ class TestTrajectory:
                 assert hasattr(restored_traj, 'annotations')
                 assert hasattr(restored_traj, 'calculations')
                 
-                # Verify the universe was restored
-                # Note: If universe restoration fails, __setstate__ now raises RuntimeError
-                # instead of setting universe to None, so we expect a valid universe here
+                # Verify universe restoration
                 assert hasattr(restored_traj.universe, 'atoms')
                 assert restored_traj.universe.atoms.n_atoms == universe.atoms.n_atoms
                 
-                # Verify circular references were restored
+                # Verify circular references
                 assert restored_traj.frame_manager.trajectory is restored_traj
                 assert restored_traj.selections.trajectory is restored_traj
                 
@@ -462,7 +447,6 @@ class TestTrajectory:
                 if "cannot pickle 'PyCapsule' object" in str(e):
                     pytest.fail(f"PyCapsule pickle error not fixed: {e}")
                 else:
-                    # Re-raise if it's a different TypeError
                     raise
 
     def test_trajectory_pickle_deserialization_failure(self, universe):
