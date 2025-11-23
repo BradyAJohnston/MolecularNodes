@@ -4,15 +4,16 @@ import os
 import re
 import subprocess
 import sys
+import tomllib
 from dataclasses import dataclass
 from typing import List, Union
-import tomllib
 
 
 def run_python(args: str | List[str]):
     # When running in Blender, use Blender's Python executable
     try:
         import bpy
+
         python = bpy.app.binary_path_python
     except (ImportError, AttributeError):
         # Fallback to regular Python executable
@@ -138,7 +139,7 @@ def update_toml_whls(platforms):
             # Define array fields and section fields
             array_fields = ["wheels", "platforms", "license", "tags", "copyright"]
             section_fields = ["permissions"]
-            
+
             # Write basic fields first
             for key, value in manifest.items():
                 if key in array_fields + section_fields:
@@ -146,36 +147,36 @@ def update_toml_whls(platforms):
                 if isinstance(value, str):
                     f.write(f'{key} = "{value}"\n')
                 elif isinstance(value, bool):
-                    f.write(f'{key} = {str(value).lower()}\n')
+                    f.write(f"{key} = {str(value).lower()}\n")
                 elif isinstance(value, (int, float)):
-                    f.write(f'{key} = {value}\n')
-            
+                    f.write(f"{key} = {value}\n")
+
             # Write array fields
             for array_field in ["platforms", "tags", "license", "copyright"]:
                 if array_field in manifest:
-                    f.write(f'{array_field} = [\n')
+                    f.write(f"{array_field} = [\n")
                     for item in manifest[array_field]:
                         f.write(f'\t"{item}",\n')
-                    f.write(']\n')
-            
+                    f.write("]\n")
+
             # Write wheels array separately (longer, goes at end)
             if "wheels" in manifest:
-                f.write('\nwheels = [\n')
+                f.write("\nwheels = [\n")
                 for wheel in manifest["wheels"]:
                     wheel_path = wheel.replace("\\\\", "/")
                     f.write(f'\t"{wheel_path}",\n')
-                f.write(']\n')
-            
+                f.write("]\n")
+
             # Write section fields (like [permissions])
             for section_name in section_fields:
                 if section_name in manifest:
-                    f.write(f'\n[{section_name}]\n')
+                    f.write(f"\n[{section_name}]\n")
                     section_data = manifest[section_name]
                     if isinstance(section_data, dict):
                         for key, value in section_data.items():
                             f.write(f'{key} = "{value}"\n')
-                    f.write('\n')
-    
+                    f.write("\n")
+
     write_toml_manifest(manifest, TOML_PATH)
 
 
@@ -199,26 +200,41 @@ def build_extension(split: bool = True, blender_path: str = None) -> None:
     # When running inside Blender, use subprocess with current Blender executable
     try:
         import bpy
+
         blender_path = bpy.app.binary_path
         print(f"\nBuilding extension using current Blender instance: {blender_path}")
-        
+
         # Use subprocess to call Blender's extension build command
         if split:
-            subprocess.run([
-                blender_path, "--command", "extension", "build",
-                "--split-platforms", 
-                "--source-dir", "molecularnodes", 
-                "--output-dir", "."
-            ])
+            subprocess.run(
+                [
+                    blender_path,
+                    "--command",
+                    "extension",
+                    "build",
+                    "--split-platforms",
+                    "--source-dir",
+                    "molecularnodes",
+                    "--output-dir",
+                    ".",
+                ]
+            )
         else:
-            subprocess.run([
-                blender_path, "--command", "extension", "build",
-                "--source-dir", "molecularnodes", 
-                "--output-dir", "."
-            ])
+            subprocess.run(
+                [
+                    blender_path,
+                    "--command",
+                    "extension",
+                    "build",
+                    "--source-dir",
+                    "molecularnodes",
+                    "--output-dir",
+                    ".",
+                ]
+            )
         print("Extension built successfully")
         return
-        
+
     except (ImportError, AttributeError):
         # Fallback to subprocess if not in Blender
         pass
@@ -227,6 +243,7 @@ def build_extension(split: bool = True, blender_path: str = None) -> None:
     if not blender_path:
         try:
             import bpy
+
             blender_path = bpy.app.binary_path
         except (ImportError, AttributeError):
             pass
@@ -773,17 +790,17 @@ def build(
 
 def parse_blender_args():
     """Parse arguments when run through Blender -P script.
-    
+
     Blender's sys.argv format: [blender_executable, -b, -P, script_name, -- script_args...]
     """
     # Find the -- separator that marks script arguments
     try:
-        separator_index = sys.argv.index('--')
-        script_args = sys.argv[separator_index + 1:]
+        separator_index = sys.argv.index("--")
+        script_args = sys.argv[separator_index + 1 :]
     except ValueError:
         # No -- found, no script arguments
         script_args = []
-    
+
     parser = argparse.ArgumentParser(
         description="Build Molecular Nodes Blender extension"
     )
@@ -813,8 +830,9 @@ def parse_blender_args():
         action="store_true",
         help="Skip download, verify all required packages exist, then update manifest and build",
     )
-    
+
     return parser.parse_args(script_args)
+
 
 def main():
     args = parse_blender_args()
