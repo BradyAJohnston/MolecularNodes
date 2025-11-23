@@ -19,6 +19,11 @@ pytestmark = [
 ]
 
 
+def dummy_calculation_for_pickle_test(universe):
+    """Module-level function for testing calculations pickling."""
+    return universe.atoms.positions.mean(axis=0)
+
+
 class TestTrajectory:
     @pytest.fixture(scope="module")
     def universe(self):
@@ -422,9 +427,7 @@ class TestTrajectory:
         traj.selections.from_string("around 5.0 resid 1", name="around_sel", updating=True)
         
         # Add a calculation function (optional, to test calculations dict)
-        def dummy_calculation(universe):
-            return universe.atoms.positions.mean(axis=0)
-        traj.calculations['center_of_mass'] = dummy_calculation
+        traj.calculations['center_of_mass'] = dummy_calculation_for_pickle_test
         
         # Test that the trajectory can be pickled successfully
         with tempfile.NamedTemporaryFile() as tmp_file:
@@ -445,10 +448,11 @@ class TestTrajectory:
                 assert hasattr(restored_traj, 'annotations')
                 assert hasattr(restored_traj, 'calculations')
                 
-                # Verify the universe was restored (if file paths were available)
-                if restored_traj.universe is not None:
-                    assert hasattr(restored_traj.universe, 'atoms')
-                    assert restored_traj.universe.atoms.n_atoms == universe.atoms.n_atoms
+                # Verify the universe was restored
+                # Note: If universe restoration fails, __setstate__ now raises RuntimeError
+                # instead of setting universe to None, so we expect a valid universe here
+                assert hasattr(restored_traj.universe, 'atoms')
+                assert restored_traj.universe.atoms.n_atoms == universe.atoms.n_atoms
                 
                 # Verify circular references were restored
                 assert restored_traj.frame_manager.trajectory is restored_traj
@@ -460,6 +464,37 @@ class TestTrajectory:
                 else:
                     # Re-raise if it's a different TypeError
                     raise
+
+    def test_trajectory_pickle_deserialization_failure(self, universe):
+        """Test that trajectory deserialization fails fast with clear errors when files are missing."""
+        traj = mn.entities.Trajectory(universe, name="TestFailedDeserialization")
+        
+        # Pickle the trajectory
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            pickle.dump(traj, tmp_file)
+            tmp_file.flush()
+            tmp_file.seek(0)
+            
+            # Manually corrupt the pickled data to simulate missing/invalid file paths
+            # by modifying the pickled trajectory to reference non-existent files
+            pickled_data = pickle.load(tmp_file)
+            
+            # Create a new state dict with invalid file paths
+            state = pickled_data.__getstate__()
+            state['_universe_topology'] = '/nonexistent/path/topology.pdb'
+            state['_universe_trajectory'] = '/nonexistent/path/trajectory.xtc'
+            
+            # Attempt to restore - this should raise RuntimeError, not create broken object
+            new_traj = mn.entities.Trajectory.__new__(mn.entities.Trajectory)
+            with pytest.raises(RuntimeError) as exc_info:
+                new_traj.__setstate__(state)
+            
+            # Verify the error message is descriptive
+            error_msg = str(exc_info.value)
+            assert "Failed to restore Trajectory from saved session" in error_msg
+            assert "Could not recreate MDAnalysis Universe" in error_msg
+            assert "/nonexistent/path/topology.pdb" in error_msg
+            assert "/nonexistent/path/trajectory.xtc" in error_msg
 
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
