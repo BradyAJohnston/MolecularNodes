@@ -41,9 +41,17 @@ For writing code, I highly recommend using VSCode and the [Blender VS Code](http
 
 > **Important** First Time Building
 > 
-> Run the `build.py` to download and setup required packages for the first time.
+> Run the `build.py` to download and setup required packages for the first time. 
+
+`blender` is shorthand for the Blender executable. Depending on your OS and installation method, you may need to provide the full path to the Blender executable such as `/path/to/blender` or `C:\Path\To\blender.exe`.
+
+Packages are sourced from the `uv.lock` file. To properly install inside of Blender we have to download the `.whl` files to `molecularnodes/wheels/` and ensure the `blender_manifest.toml` is up to date. This is all handled inside of the `build.py` script. There are options to just download (`--download-only`) or just build the `.zip` files (`--build-only`). 
+
 ```py
-blender -b -P build.py
+blender -b -P build.py -- -help # show help for build.py
+blender -b -P build.py -- -download-only # download required packages
+blender -b -P build.py -- -build-only # build the .zip files
+blender -b -P build.py # download and build
 ```
 
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
@@ -246,6 +254,8 @@ source .venv/bin/activate
 
 or prefix any further commands with `uv run`, e.g. `uv run pytest -v`.
 
+> **Warning** `biotite.setup_ccd`
+> For a reason I can't yet figure out, when using `uv` to run commands sometimes `biotite` loses track of some files. You may get errors related to CCD and running this cmomand will fix them: ```uv run python -m biotite.setup_ccd```
 
 ### Building with `conda` (or `mamba`) and `poetry`
 
@@ -277,12 +287,18 @@ When changing something that _should_ change the output of the snapshots, we end
 Based on the current snapshot method, I can't think of of a better way to handle this.
 
 ## Writing and Building Docs
+
 To build the documentation, [`Quarto`](https://quarto.org) is used. The docs can be built and previewed with the following line which launches a live preview of the docs.
+
+The first time it previews the documentation all code will be executed, which includes rendering of 3D images so it can take several minutes to build the first time. Subsequent builds will be much faster as only changed code will be re-executed.
 
 With [your dev environment](#building-a-dev-environment):
 
 ```bash
-python docs/generate.py
+cd docs
+python generate.py
+quartodoc build
+quartodoc interlinks
 quarto preview
 ```
 
