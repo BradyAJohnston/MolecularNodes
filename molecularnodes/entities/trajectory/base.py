@@ -642,6 +642,58 @@ class Trajectory(MolecularEntity):
 
         return self
 
+    def __getstate__(self):
+        """Custom serialization to handle MDAnalysis Universe objects."""
+        state = self.__dict__.copy()
+        
+        # Store universe file paths instead of the universe object itself
+        if hasattr(self, 'universe'):
+            # Store the topology and trajectory file paths
+            state['_universe_topology'] = getattr(self.universe, 'filename', None)
+            state['_universe_trajectory'] = getattr(self.universe.trajectory, 'filename', None)
+            # Remove the unpicklable universe object
+            del state['universe']
+        
+        # Handle circular references and objects containing PyCapsules
+        # Remove them temporarily and recreate after unpickling
+        if 'frame_manager' in state:
+            del state['frame_manager']
+        if 'selections' in state:
+            del state['selections']
+        if 'annotations' in state:
+            del state['annotations']
+        if 'calculations' in state:
+            # calculations dict may contain AtomGroups with PyCapsules
+            del state['calculations']
+        
+        return state
+
+    def __setstate__(self, state):
+        """Custom deserialization to recreate MDAnalysis Universe objects."""
+        # Restore the universe from file paths if available
+        if '_universe_topology' in state:
+            topology = state.pop('_universe_topology')
+            trajectory = state.pop('_universe_trajectory')
+            if topology and trajectory:
+                try:
+                    self.universe = mda.Universe(topology, trajectory)
+                except Exception as e:
+                    logger.warning(f"Failed to recreate Universe from {topology}, {trajectory}: {e}")
+                    # Create a minimal placeholder universe if restoration fails
+                    self.universe = None
+        
+        # Restore the rest of the state
+        self.__dict__.update(state)
+        
+        if not hasattr(self, 'frame_manager'):
+            self.frame_manager = FrameManager(self)
+        if not hasattr(self, 'selections'):
+            self.selections = SelectionManager(self)
+        if not hasattr(self, 'annotations'):
+            self.annotations = TrajectoryAnnotationManager(self)
+        if not hasattr(self, 'calculations'):
+            self.calculations = {}
+
     def _get_3d_bbox(self, selection: mda.AtomGroup | None) -> list[tuple]:
         """Get the 3D bounding box vertices of atoms in an AtomGroup"""
         if selection is None:
