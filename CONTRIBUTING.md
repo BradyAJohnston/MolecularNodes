@@ -39,7 +39,7 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
-> **Important** First Time Building
+> [!IMPORTANT] First Time Building
 > 
 > Run the `build.py` to download and setup required packages for the first time. 
 
@@ -254,7 +254,8 @@ source .venv/bin/activate
 
 or prefix any further commands with `uv run`, e.g. `uv run pytest -v`.
 
-> **Warning** `biotite.setup_ccd`
+> [!NOTE] `biotite.setup_ccd`
+>
 > For a reason I can't yet figure out, when using `uv` to run commands sometimes `biotite` loses track of some files. You may get errors related to CCD and running this cmomand will fix them: ```uv run python -m biotite.setup_ccd```
 
 ### Building with `conda` (or `mamba`) and `poetry`
