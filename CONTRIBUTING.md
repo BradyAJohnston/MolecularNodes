@@ -40,8 +40,7 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
 > [!IMPORTANT] 
-> First Time Building
-> Run the `build.py` to download and setup required packages for the first time. 
+> For the first time building, run the `build.py` to download and setup required packages for the first time. 
 
 `blender` is shorthand for the Blender executable. Depending on your OS and installation method, you may need to provide the full path to the Blender executable such as `/path/to/blender` or `C:\Path\To\blender.exe`.
 
@@ -255,8 +254,9 @@ source .venv/bin/activate
 or prefix any further commands with `uv run`, e.g. `uv run pytest -v`.
 
 > [!NOTE]
-> `biotite.setup_ccd`
-> For a reason I can't yet figure out, when using `uv` to run commands sometimes `biotite` loses track of some files. You may get errors related to CCD and running this cmomand will fix them: ```uv run python -m biotite.setup_ccd```
+> For a reason I can't yet figure out, when using `uv` to run commands sometimes `biotite` loses track of some files. You may get errors related to CCD and running this cmomand will fix them: 
+> 
+> ```uv run python -m biotite.setup_ccd```
 
 ### Building with `conda` (or `mamba`) and `poetry`
 
