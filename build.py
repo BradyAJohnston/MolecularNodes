@@ -6,11 +6,17 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from typing import List, Union
-import tomlkit
+import tomllib
 
 
 def run_python(args: str | List[str]):
-    python = os.path.realpath(sys.executable)
+    # When running in Blender, use Blender's Python executable
+    try:
+        import bpy
+        python = bpy.app.binary_path_python
+    except (ImportError, AttributeError):
+        # Fallback to regular Python executable
+        python = os.path.realpath(sys.executable)
 
     if isinstance(args, str):
         args = [python] + args.split(" ")
@@ -47,8 +53,8 @@ macos_arm = Platform(pypi_suffix="macosx_12_0_arm64", metadata="macos-arm64")
 macos_intel = Platform(pypi_suffix="macosx_10_16_x86_64", metadata="macos-x64")
 
 
-with open(PYPROJ_PATH, "r") as file:
-    pyproj = tomlkit.parse(file.read())
+with open(PYPROJ_PATH, "rb") as file:
+    pyproj = tomllib.load(file)
     required_packages = pyproj["project"]["dependencies"]
 
 
@@ -114,8 +120,8 @@ def update_toml_whls(platforms):
         os.remove(whl)
 
     # Load the TOML file
-    with open(TOML_PATH, "r") as file:
-        manifest = tomlkit.parse(file.read())
+    with open(TOML_PATH, "rb") as file:
+        manifest = tomllib.load(file)
 
     # Update the wheels list with the remaining wheel files
     manifest["wheels"] = [f"./wheels/{os.path.basename(whl)}" for whl in to_keep]
@@ -126,14 +132,51 @@ def update_toml_whls(platforms):
     manifest["platforms"] = [p.metadata for p in platforms]
 
     # Write the updated TOML file
-    with open(TOML_PATH, "w") as file:
-        file.write(
-            tomlkit.dumps(manifest)
-            .replace('["', '[\n\t"')
-            .replace("\\\\", "/")
-            .replace('", "', '",\n\t"')
-            .replace('"]', '",\n]')
-        )
+    def write_toml_manifest(manifest, file_path):
+        """Write manifest dict as TOML with proper formatting."""
+        with open(file_path, "w") as f:
+            # Define array fields and section fields
+            array_fields = ["wheels", "platforms", "license", "tags", "copyright"]
+            section_fields = ["permissions"]
+            
+            # Write basic fields first
+            for key, value in manifest.items():
+                if key in array_fields + section_fields:
+                    continue
+                if isinstance(value, str):
+                    f.write(f'{key} = "{value}"\n')
+                elif isinstance(value, bool):
+                    f.write(f'{key} = {str(value).lower()}\n')
+                elif isinstance(value, (int, float)):
+                    f.write(f'{key} = {value}\n')
+            
+            # Write array fields
+            for array_field in ["platforms", "tags", "license", "copyright"]:
+                if array_field in manifest:
+                    f.write(f'{array_field} = [\n')
+                    for item in manifest[array_field]:
+                        f.write(f'\t"{item}",\n')
+                    f.write(']\n')
+            
+            # Write wheels array separately (longer, goes at end)
+            if "wheels" in manifest:
+                f.write('\nwheels = [\n')
+                for wheel in manifest["wheels"]:
+                    wheel_path = wheel.replace("\\\\", "/")
+                    f.write(f'\t"{wheel_path}",\n')
+                f.write(']\n')
+            
+            # Write section fields (like [permissions])
+            for section_name in section_fields:
+                if section_name in manifest:
+                    f.write(f'\n[{section_name}]\n')
+                    section_data = manifest[section_name]
+                    if isinstance(section_data, dict):
+                        for key, value in section_data.items():
+                            f.write(f'{key} = "{value}"\n')
+                    f.write('\n')
+    
+    write_toml_manifest(manifest, TOML_PATH)
 
 
 def clean_files(suffix: str = ".blend1") -> None:
@@ -147,13 +190,43 @@ def build_extension(split: bool = True, blender_path: str = None) -> None:
 
     Args:
         split: Whether to build separate packages for each platform
-        blender_path: Path to Blender executable. If None, tries to get from bpy module.
+        blender_path: Path to Blender executable. If None, uses current Blender instance.
     """
-    # Try to find Blender executable
+    # Clean up files before building
+    for suffix in [".blend1", ".MNSession"]:
+        clean_files(suffix=suffix)
+
+    # When running inside Blender, use subprocess with current Blender executable
+    try:
+        import bpy
+        blender_path = bpy.app.binary_path
+        print(f"\nBuilding extension using current Blender instance: {blender_path}")
+        
+        # Use subprocess to call Blender's extension build command
+        if split:
+            subprocess.run([
+                blender_path, "--command", "extension", "build",
+                "--split-platforms", 
+                "--source-dir", "molecularnodes", 
+                "--output-dir", "."
+            ])
+        else:
+            subprocess.run([
+                blender_path, "--command", "extension", "build",
+                "--source-dir", "molecularnodes", 
+                "--output-dir", "."
+            ])
+        print("Extension built successfully")
+        return
+        
+    except (ImportError, AttributeError):
+        # Fallback to subprocess if not in Blender
+        pass
+
+    # Fallback: try to find Blender executable for subprocess
     if not blender_path:
         try:
             import bpy
-
             blender_path = bpy.app.binary_path
         except (ImportError, AttributeError):
             pass
@@ -165,13 +238,10 @@ def build_extension(split: bool = True, blender_path: str = None) -> None:
         print(
             "  1. Run: blender --command extension build --split-platforms --source-dir molecularnodes --output-dir ."
         )
-        print("  2. Re-run with: --blender-path /path/to/blender")
+        print("  2. Re-run with blender -b -P build.py")
         return
 
     print(f"\nBuilding extension using Blender at: {blender_path}")
-
-    for suffix in [".blend1", ".MNSession"]:
-        clean_files(suffix=suffix)
 
     if split:
         subprocess.run(
@@ -194,10 +264,8 @@ def get_all_dependencies_from_lock(package_name: str = "molecularnodes") -> set:
     Returns:
         A set of all package names (including transitive dependencies)
     """
-    with open(UVLOCK_PATH, "r") as f:
-        content = f.read()
-
-    lock_data = tomlkit.parse(content)
+    with open(UVLOCK_PATH, "rb") as f:
+        lock_data = tomllib.load(f)
 
     # Build a dependency graph
     dep_graph = {}
@@ -236,10 +304,8 @@ def parse_uv_lock_for_packages(package_names: set = None) -> dict:
     Returns:
         Dict mapping package name to {version, wheels: {filename: url}}
     """
-    with open(UVLOCK_PATH, "r") as f:
-        content = f.read()
-
-    lock_data = tomlkit.parse(content)
+    with open(UVLOCK_PATH, "rb") as f:
+        lock_data = tomllib.load(f)
     package_info_map = {}
 
     for package in lock_data.get("package", []):
@@ -432,8 +498,8 @@ def download_wheels_from_manifest(clean: bool = True, max_workers: int = 8) -> N
     os.makedirs(WHL_PATH, exist_ok=True)
 
     # Load the manifest to get the list of wheels
-    with open(TOML_PATH, "r") as file:
-        manifest = tomlkit.parse(file.read())
+    with open(TOML_PATH, "rb") as file:
+        manifest = tomllib.load(file)
 
     wheels_in_manifest = manifest.get("wheels", [])
 
@@ -660,7 +726,6 @@ def build(
     platform,
     use_lock: bool = True,
     skip_download: bool = False,
-    blender_path: str = None,
 ) -> None:
     """Build the extension.
 
@@ -668,7 +733,6 @@ def build(
         platform: Platform or list of platforms to build for
         use_lock: If True, use uv.lock as source of truth. If False, use pip download.
         skip_download: If True, skip download and verify wheels exist before building.
-        blender_path: Path to Blender executable for building extension.
     """
     # Packages that Blender already provides
     packages_to_exclude = {
@@ -704,10 +768,22 @@ def build(
             download_whls(platform)
 
     update_toml_whls(platform)
-    build_extension(blender_path=blender_path)
+    build_extension()
 
 
-def main():
+def parse_blender_args():
+    """Parse arguments when run through Blender -P script.
+    
+    Blender's sys.argv format: [blender_executable, -b, -P, script_name, -- script_args...]
+    """
+    # Find the -- separator that marks script arguments
+    try:
+        separator_index = sys.argv.index('--')
+        script_args = sys.argv[separator_index + 1:]
+    except ValueError:
+        # No -- found, no script arguments
+        script_args = []
+    
     parser = argparse.ArgumentParser(
         description="Build Molecular Nodes Blender extension"
     )
@@ -737,13 +813,11 @@ def main():
         action="store_true",
         help="Skip download, verify all required packages exist, then update manifest and build",
     )
-    parser.add_argument(
-        "--blender-path",
-        type=str,
-        help="Path to Blender executable (required for building extension)",
-    )
+    
+    return parser.parse_args(script_args)
 
-    args = parser.parse_args()
+def main():
+    args = parse_blender_args()
 
     if args.download_only:
         print("Mode: Download wheels from uv.lock (download only)")
@@ -773,7 +847,6 @@ def main():
             build_platforms,
             use_lock=use_lock,
             skip_download=args.build_only,
-            blender_path=args.blender_path,
         )
 
 
