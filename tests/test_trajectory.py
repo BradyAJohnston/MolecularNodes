@@ -1,5 +1,7 @@
 import itertools
 import os
+import pickle
+import tempfile
 import bpy
 import databpy
 import MDAnalysis as mda
@@ -15,6 +17,11 @@ pytestmark = [
         "ignore:.*Unknown masses are set to.*:PendingDeprecationWarning"
     ),
 ]
+
+
+def dummy_calculation_for_pickle_test(universe):
+    """Module-level function for testing calculations pickling."""
+    return universe.atoms.positions.mean(axis=0)
 
 
 class TestTrajectory:
@@ -272,17 +279,34 @@ class TestTrajectory:
         traj.reset_playback()
         uuid = traj.uuid
         bpy.context.scene.frame_set(2)
+
+        # Add selections to test PyCapsule handling
+        traj.selections.from_string("protein", name="protein_sel")
+        traj.selections.from_string(
+            "around 3.0 resid 1", name="dynamic_sel", updating=True
+        )
+
         filepath = str(tmp_path / "test.blend")
 
-        # test that we can save the file and it is created only after saving
         assert not os.path.exists(session.stashpath(filepath))
-        bpy.ops.wm.save_as_mainfile(filepath=filepath)
+        try:
+            bpy.ops.wm.save_as_mainfile(filepath=filepath)
+        except Exception as e:
+            if "cannot pickle 'PyCapsule' object" in str(e):
+                pytest.fail(f"Session save failed with PyCapsule error: {e}")
+            else:
+                raise
+
         assert os.path.exists(filepath)
         assert os.path.exists(session.stashpath(filepath))
         del traj
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
         traj = mn.session.get_session().trajectories[uuid]
+
+        # Verify selections were restored
+        assert "protein_sel" in traj.list_attributes()
+        assert "dynamic_sel" in traj.list_attributes()
 
         verts_frame_0 = traj.named_attribute("position")
         bpy.context.scene.frame_set(3)
@@ -387,6 +411,78 @@ class TestTrajectory:
         ethanol_smiles = "CCO"
         u = mda.Universe.from_smiles(ethanol_smiles)
         mn.Trajectory(u)
+
+    def test_trajectory_pickle_no_pycapsule_error(self, universe):
+        """Test that Trajectory objects can be pickled without PyCapsule errors."""
+        traj = mn.entities.Trajectory(universe, name="TestPickleTrajectory")
+
+        # Add selections and calculations
+        traj.selections.from_string("protein", name="protein_sel")
+        traj.selections.from_string(
+            "around 5.0 resid 1", name="around_sel", updating=True
+        )
+        traj.calculations["center_of_mass"] = dummy_calculation_for_pickle_test
+
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            try:
+                pickle.dump(traj, tmp_file)
+                tmp_file.flush()
+
+                tmp_file.seek(0)
+                restored_traj = pickle.load(tmp_file)
+
+                # Verify restoration
+                assert restored_traj.name == "TestPickleTrajectory"
+                assert hasattr(restored_traj, "universe")
+                assert hasattr(restored_traj, "frame_manager")
+                assert hasattr(restored_traj, "selections")
+                assert hasattr(restored_traj, "annotations")
+                assert hasattr(restored_traj, "calculations")
+
+                # Verify universe restoration
+                assert hasattr(restored_traj.universe, "atoms")
+                assert restored_traj.universe.atoms.n_atoms == universe.atoms.n_atoms
+
+                # Verify circular references
+                assert restored_traj.frame_manager.trajectory is restored_traj
+                assert restored_traj.selections.trajectory is restored_traj
+
+            except TypeError as e:
+                if "cannot pickle 'PyCapsule' object" in str(e):
+                    pytest.fail(f"PyCapsule pickle error not fixed: {e}")
+                else:
+                    raise
+
+    def test_trajectory_pickle_deserialization_failure(self, universe):
+        """Test that trajectory deserialization fails fast with clear errors when files are missing."""
+        traj = mn.entities.Trajectory(universe, name="TestFailedDeserialization")
+
+        # Pickle the trajectory
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            pickle.dump(traj, tmp_file)
+            tmp_file.flush()
+            tmp_file.seek(0)
+
+            # Manually corrupt the pickled data to simulate missing/invalid file paths
+            # by modifying the pickled trajectory to reference non-existent files
+            pickled_data = pickle.load(tmp_file)
+
+            # Create a new state dict with invalid file paths
+            state = pickled_data.__getstate__()
+            state["_universe_topology"] = "/nonexistent/path/topology.pdb"
+            state["_universe_trajectory"] = "/nonexistent/path/trajectory.xtc"
+
+            # Attempt to restore - this should raise RuntimeError, not create broken object
+            new_traj = mn.entities.Trajectory.__new__(mn.entities.Trajectory)
+            with pytest.raises(RuntimeError) as exc_info:
+                new_traj.__setstate__(state)
+
+            # Verify the error message is descriptive
+            error_msg = str(exc_info.value)
+            assert "Failed to restore Trajectory from saved session" in error_msg
+            assert "Could not recreate MDAnalysis Universe" in error_msg
+            assert "/nonexistent/path/topology.pdb" in error_msg
+            assert "/nonexistent/path/trajectory.xtc" in error_msg
 
 
 @pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])

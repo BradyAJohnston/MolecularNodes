@@ -103,6 +103,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     assert not np.allclose(pos_2, traj_op.position)
     assert not np.allclose(pos_2, traj_func.position)
 
+
 def test_op_residues_selection_custom():
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")

@@ -642,6 +642,85 @@ class Trajectory(MolecularEntity):
 
         return self
 
+    def __getstate__(self):
+        """Custom serialization to handle MDAnalysis Universe objects."""
+        state = self.__dict__.copy()
+
+        # Store universe file paths for restoration
+        if hasattr(self, "universe") and self.universe is not None:
+            try:
+                topology_filename = getattr(self.universe, "filename", None)
+                trajectory_filename = getattr(
+                    self.universe.trajectory, "filename", None
+                )
+
+                if topology_filename is not None:
+                    state["_universe_topology"] = topology_filename
+                if trajectory_filename is not None:
+                    state["_universe_trajectory"] = trajectory_filename
+
+            except AttributeError as e:
+                logger.warning(
+                    f"Could not extract file paths from universe during serialization: {e}"
+                )
+
+            del state["universe"]
+
+        # Remove objects with circular references or PyCapsules
+        if "frame_manager" in state:
+            del state["frame_manager"]
+        if "selections" in state:
+            del state["selections"]
+        if "annotations" in state:
+            del state["annotations"]
+        if "calculations" in state:
+            # Preserve picklable calculations
+            preserved_calculations = {}
+            for name, calc_func in state["calculations"].items():
+                try:
+                    import pickle
+
+                    pickle.dumps(calc_func)
+                    preserved_calculations[name] = calc_func
+                except (TypeError, AttributeError):
+                    logger.debug(f"Skipping unpicklable calculation function: {name}")
+
+            if preserved_calculations:
+                state["_preserved_calculations"] = preserved_calculations
+            del state["calculations"]
+
+        return state
+
+    def __setstate__(self, state):
+        """Custom deserialization to recreate MDAnalysis Universe objects."""
+        # Restore universe from saved file paths
+        if "_universe_topology" in state:
+            topology = state.pop("_universe_topology")
+            trajectory = state.pop("_universe_trajectory")
+            if topology and trajectory:
+                try:
+                    self.universe = mda.Universe(topology, trajectory)
+                except Exception as e:
+                    raise RuntimeError(
+                        f"Failed to restore Trajectory from saved session. "
+                        f"Could not recreate MDAnalysis Universe from topology '{topology}' "
+                        f"and trajectory '{trajectory}'. "
+                        f"The files may have been moved, deleted, or corrupted. "
+                        f"Original error: {e}"
+                    ) from e
+
+        self.__dict__.update(state)
+
+        # Recreate objects with circular references
+        if not hasattr(self, "frame_manager"):
+            self.frame_manager = FrameManager(self)
+        if not hasattr(self, "selections"):
+            self.selections = SelectionManager(self)
+        if not hasattr(self, "annotations"):
+            self.annotations = TrajectoryAnnotationManager(self)
+        if not hasattr(self, "calculations"):
+            self.calculations = state.pop("_preserved_calculations", {})
+
     def _get_3d_bbox(self, selection: mda.AtomGroup | None) -> list[tuple]:
         """Get the 3D bounding box vertices of atoms in an AtomGroup"""
         if selection is None:
