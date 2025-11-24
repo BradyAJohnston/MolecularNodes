@@ -527,6 +527,8 @@ class Trajectory(MolecularEntity):
             self._update_calculations()
             # update annotation object
             self.annotations._update_annotation_object()
+            # update periodic box nodes
+            self._update_box()
         finally:
             self._updating_in_progress = False
 
@@ -554,6 +556,17 @@ class Trajectory(MolecularEntity):
             Scene frame number
         """
         self.position = self.frame_manager.get_positions_at_frame(frame)
+
+    def _update_box(self) -> None:
+        """Update any Periodic Box nodes in the geometry node tree."""
+        mod = self.object.modifiers.get('MolecularNodes')
+        gp = mod.node_group
+        print(gp)
+        for node in gp.nodes:
+            if node.label == "Periodic Box":
+                if node.inputs['Update with trajectory'].default_value:
+                    node.inputs['a, b, c Lengths'].default_value = self.universe.trajectory.ts.dimensions[0:3]
+                    node.inputs['alpha, beta, gamma Angles'].default_value = self.universe.trajectory.ts.dimensions[3:6]
 
     def __repr__(self) -> str:
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
