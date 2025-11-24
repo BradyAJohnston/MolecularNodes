@@ -655,9 +655,9 @@ class Trajectory(MolecularEntity):
                 )
 
                 if topology_filename is not None:
-                    state["_universe_topology"] = topology_filename
+                    state["_universe_topology"] = str(topology_filename)
                 if trajectory_filename is not None:
-                    state["_universe_trajectory"] = trajectory_filename
+                    state["_universe_trajectory"] = str(trajectory_filename)
 
             except AttributeError as e:
                 logger.warning(
