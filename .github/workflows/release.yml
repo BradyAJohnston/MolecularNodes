@@ -12,28 +12,20 @@ concurrency:
 
 jobs:
   build-and-draft-release:
-    runs-on: macos-14
+    runs-on: macos-latest
     permissions:
       contents: write
       discussions: write
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          enable-cache: true
-
+      - uses: actions/checkout@v5
       - uses: BradyAJohnston/setup-blender@v5
         with:
           version: 4.5
 
       - name: Build Extension
         run: |
-          # Use new build script with uv.lock as source of truth
-          BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
-          uv run --extra build build.py --blender-path "${BLENDER_PATH}"
+          blender -b -P build.py
 
       - name: Create Draft Release
         run: |

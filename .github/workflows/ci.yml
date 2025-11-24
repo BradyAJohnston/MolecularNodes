@@ -17,7 +17,7 @@ jobs:
       name: Check code style
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
         - uses: astral-sh/ruff-action@v3
         - name: Check code formatting
           run: ruff format --diff
@@ -33,7 +33,7 @@ jobs:
       env:
         ADDON_NAME: molecularnodes
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
         - uses: SebRollen/toml-action@v1.2.0
           id: read_manifest
           with:
@@ -68,7 +68,7 @@ jobs:
           matrix:
             os: [ubuntu-latest, macos-latest]
       steps:
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v5
           - name: Install uv
             uses: astral-sh/setup-uv@v5
           - name: Install molecularnodes
@@ -132,7 +132,7 @@ jobs:
       env:
         ADDON_NAME: molecularnodes
       steps:
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v5
           - uses: BradyAJohnston/setup-blender@v5
             with:
               version: ${{ matrix.version }}
@@ -166,7 +166,7 @@ jobs:
       runs-on: self-hosted
       permissions: write-all
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
         - name: Install uv
           uses: astral-sh/setup-uv@v6
           with:

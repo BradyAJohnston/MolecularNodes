@@ -13,27 +13,22 @@ concurrency:
 jobs:
     build-extension:
         name: Build Extension
-        runs-on: macos-14
+        runs-on: macos-latest
         env:
           ADDON_NAME: molecularnodes
         steps:
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v5
           - uses: SebRollen/toml-action@v1.2.0
             id: read_manifest
             with:
               file: '${{ env.ADDON_NAME }}/blender_manifest.toml'
               field: 'version'
-          - name: Install uv
-            uses: astral-sh/setup-uv@v5
-            with:
-              enable-cache: true
           - uses: BradyAJohnston/setup-blender@v5
             with:
               version: 4.5
           - name: Build extension
             run: |
-              BLENDER_PATH=$(command -v blender | sed 's/^.*alias.*=//;s/^[[:space:]]*//')
-              uv run --extra build build.py --blender-path "${BLENDER_PATH}"
+              blender -b -P build.py
               mkdir artifact
               mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
           - name: Upload extension artifact
@@ -56,7 +51,7 @@ jobs:
         env:
           ADDON_NAME: molecularnodes
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: BradyAJohnston/setup-blender@v5
               with:
                 version: ${{ matrix.version }}
