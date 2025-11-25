@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
 import bpy
 import numpy as np
 from bpy.app.handlers import persistent
 from PIL import Image
 from .annotations.utils import render_annotations
 from .scene.compositor import annotations_image
+
+if TYPE_CHECKING:
+    from .session import MNSession
 
 
 # this update function requires a self and context input, as funcitons with these inputs
@@ -49,6 +53,14 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     Any changes needed before the rendering of a frame need to go in here
 
     """
+    if not hasattr(scene, "MNSession"):
+        return
+    session: MNSession = scene.MNSession  # type: ignore
+    if len(session.entities) == 0:
+        return
+    if not any([len(e.annotations) for e in session.entities.values()]):
+        return
+
     # frame_change_pre is supposed to be called before render_pre
     # however, that doesn't seem to be the case
     # update entities here to ensure annotations match entity frame
