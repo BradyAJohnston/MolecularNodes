@@ -1,8 +1,13 @@
 import inspect
 import types
 import typing
+from typing import TYPE_CHECKING
 import bpy
 from PIL import Image
+
+if TYPE_CHECKING:
+    from ..entities.trajectory import TrajectoryAnnotationManager
+    from ..session import MNSession
 
 
 def get_all_class_annotations(cls) -> dict:
@@ -54,12 +59,12 @@ def render_annotations(
     scene: bpy.types.Scene, render_scale: float, image: Image, image_scale: float
 ) -> None:
     """Render annotations of all entities to an image"""
-    session = scene.MNSession
+    session: MNSession = scene.MNSession  # type: ignore
     session.prune()  # remove any invalid session entities
     for entity in session.entities.values():
         if not hasattr(entity, "annotations"):
             continue
-        manager = entity.annotations
+        manager: TrajectoryAnnotationManager = entity.annotations
         manager._enable_render_mode(scene, render_scale, image, image_scale)
         manager._draw_annotations()
         manager._disable_render_mode()
