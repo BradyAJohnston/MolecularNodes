@@ -1,10 +1,13 @@
 import inspect
 import types
 import typing
+from typing import TYPE_CHECKING
 import bpy
 from PIL import Image
-from ..entities.trajectory import TrajectoryAnnotationManager
-from ..session import MNSession
+
+if TYPE_CHECKING:
+    from ..entities.trajectory import TrajectoryAnnotationManager
+    from ..session import MNSession
 
 
 def get_all_class_annotations(cls) -> dict:

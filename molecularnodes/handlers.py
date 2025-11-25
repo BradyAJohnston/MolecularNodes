@@ -1,10 +1,13 @@
+from typing import TYPE_CHECKING
 import bpy
 import numpy as np
 from bpy.app.handlers import persistent
 from PIL import Image
 from .annotations.utils import render_annotations
 from .scene.compositor import annotations_image
-from .session import MNSession
+
+if TYPE_CHECKING:
+    from .session import MNSession
 
 
 # this update function requires a self and context input, as funcitons with these inputs
