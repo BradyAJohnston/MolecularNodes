@@ -903,8 +903,8 @@ ensemble:
   - name: Periodic Image
     description: >-
       Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice indices.
-  - label: Replicate Trajectory
-    name: Replicate Trajectory
+  - label: Periodic Array
+    name: Periodic Array
     description: >-
       Replicate the trajectory across periodic boundaries.
 DNA:

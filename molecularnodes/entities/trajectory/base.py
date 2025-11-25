@@ -562,7 +562,7 @@ class Trajectory(MolecularEntity):
         mod = self.object.modifiers.get("MolecularNodes")
         gp = mod.node_group
         for node in gp.nodes:
-            if node.label == "Periodic Box" or node.label == "Replicate Trajectory":
+            if node.label == "Periodic Box" or node.label == "Periodic Array":
                 if node.inputs["Update"].default_value:
                     dims = self.universe.trajectory.ts.dimensions
                     node.inputs["a"].default_value = dims[0]
