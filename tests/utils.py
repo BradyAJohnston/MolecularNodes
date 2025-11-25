@@ -1,3 +1,4 @@
+import bpy
 import numpy as np
 from syrupy.extensions.amber import AmberSnapshotExtension
 
@@ -24,3 +25,26 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
                 data, precision=1, threshold=2e3, floatmode="maxprec_equal"
             )
         return super().serialize(data, **kwargs)
+
+
+# https://docs.blender.org/api/4.5/bpy.types.GeometrySet.html
+
+
+def get_geometry_set(
+    obj: bpy.types.Object, context: None | bpy.types.Context = None
+) -> bpy.types.GeometrySet:  # type: ignore
+    if not context:
+        context = bpy.context
+
+    depsgraph = context.view_layer.depsgraph  # type: ignore
+    if depsgraph is None:
+        raise ValueError
+
+    ob_eval = depsgraph.id_eval_get(obj)
+    geom: bpy.types.GeometrySet = ob_eval.evaluated_geometry()  # type: ignore
+
+    return geom
+
+
+def geometry_set_to_dict(geom_set: bpy.types.GeometrySet) -> dict:
+    return {}
