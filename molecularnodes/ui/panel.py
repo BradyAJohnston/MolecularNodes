@@ -649,7 +649,7 @@ class MN_PT_Entities(bpy.types.Panel):
         # display entity type of the selected entity
         uuid = props.entities[props.entities_active_index].name
         entity = context.scene.MNSession.get(uuid)
-        if not entity:
+        if entity is None:
             return
         row = layout.row()
         row.prop(entity.object.mn, "entity_type")

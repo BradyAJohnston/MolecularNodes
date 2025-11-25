@@ -426,10 +426,12 @@ def style_density_iso_surface_node_group():
     # node Only Contours Switch
     only_contours_switch = style_density_iso_surface.nodes.new("GeometryNodeSwitch")
     only_contours_switch.name = "Only Contours Switch"
+    only_contours_switch.input_type = "GEOMETRY"
 
     # node Visibility
     visibility = style_density_iso_surface.nodes.new("GeometryNodeSwitch")
     visibility.name = "Visibility"
+    visibility.input_type = "GEOMETRY"
 
     # Set parents
     compare_y_positive.parent = frame_y
