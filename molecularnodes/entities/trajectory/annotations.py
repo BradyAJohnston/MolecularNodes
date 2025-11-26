@@ -385,7 +385,7 @@ class UniverseInfo(TrajectoryAnnotation):
         params = self.interface
         u = self.trajectory.universe
         text = ""
-        if params.show_frame:
+        if params.show_frame and u.trajectory.n_frames is not None:
             text = f"Frame : {u.trajectory.frame} / {u.trajectory.n_frames - 1}"
         if params.show_topology and isinstance(u.filename, (str, Path)):
             text = text + "|Topology : " + os.path.basename(u.filename)
