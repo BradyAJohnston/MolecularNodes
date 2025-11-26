@@ -2,10 +2,13 @@ import random
 import bpy
 import numpy as np
 import pytest
+import MDAnalysis as mda
+from MDAnalysisData.yiip_equilibrium import fetch_yiip_equilibrium_short
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import codes, data_dir
 from .utils import NumpySnapshotExtension
+from typing import Any
 
 random.seed(6)
 
@@ -330,3 +333,24 @@ def test_reuse_node_group():
     assert n_nodes == len(tree.nodes)
     mn.Molecule.fetch("4ozs")
     assert n_nodes == len(tree.nodes)
+
+
+def test_periodic_array():
+    data = fetch_yiip_equilibrium_short()
+    traj = mn.Trajectory.load(data.topology, data.trajectory)
+    mn.nodes.nodes.insert_last_node(
+        group=traj.tree, node=mn.nodes.nodes.add_custom(traj.tree, "Periodic Array")
+    )
+
+    def get_defaults(node) -> list[Any]:
+        return [i.default_value for i in node.inputs if hasattr(i, "default_value")]
+
+    node = traj.tree.nodes["Periodic Array"]
+    bpy.context.scene.frame_set(1)
+    defaults_0 = get_defaults(node)
+    bpy.context.scene.frame_set(10)
+    defaults_10 = get_defaults(node)
+
+    bpy.ops.wm.save_as_mainfile(filepath="/Users/brady/Desktop/example.blend")
+    print(list(zip(defaults_0, defaults_10)))
+    assert not all([x == y for x, y in zip(defaults_0, defaults_10)])

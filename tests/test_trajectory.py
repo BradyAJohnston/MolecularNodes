@@ -485,10 +485,10 @@ class TestTrajectory:
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
 
-@pytest.mark.parametrize("toplogy", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
-def test_martini(snapshot, toplogy):
+@pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
+def test_martini(snapshot, topology):
     universe = mda.Universe(
-        data_dir / "martini" / toplogy, data_dir / "martini/pent/PENT2_100frames.xtc"
+        data_dir / "martini" / topology, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
     traj = mn.entities.Trajectory(universe)
     bpy.context.scene.frame_set(0)

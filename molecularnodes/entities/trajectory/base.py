@@ -480,7 +480,7 @@ class Trajectory(MolecularEntity):
         style: str | None = "spheres",
         selection: str | None = None,
         create_object: bool = True,
-    ):
+    ) -> "Trajectory":
         u = mda.Universe(topology, coordinates)
         traj = cls(u, name=name, create_object=create_object)
         if style:
