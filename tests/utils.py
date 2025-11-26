@@ -177,9 +177,7 @@ class GeometrySet:
         filtered_attrs = {
             k: v for k, v in instances.attributes.items() if k != "position"
         }
-        lines.extend(
-            self._summarize_attributes(filtered_attrs, "  Attributes", 50)
-        )
+        lines.extend(self._summarize_attributes(filtered_attrs, "  Attributes", 50))
         return lines
 
     def _summarize_curves(self) -> list[str]:
