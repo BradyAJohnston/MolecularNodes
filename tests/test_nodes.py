@@ -7,7 +7,7 @@ from MDAnalysisData.yiip_equilibrium import fetch_yiip_equilibrium_short
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import codes, data_dir
-from .utils import NumpySnapshotExtension
+from .utils import NumpySnapshotExtension, GeometrySet
 from typing import Any
 
 random.seed(6)
@@ -335,7 +335,7 @@ def test_reuse_node_group():
     assert n_nodes == len(tree.nodes)
 
 
-def test_periodic_array():
+def test_periodic_array(snapshot):
     data = fetch_yiip_equilibrium_short()
     traj = mn.Trajectory.load(data.topology, data.trajectory)
     mn.nodes.nodes.insert_last_node(
@@ -354,3 +354,4 @@ def test_periodic_array():
     bpy.ops.wm.save_as_mainfile(filepath="/Users/brady/Desktop/example.blend")
     print(list(zip(defaults_0, defaults_10)))
     assert not all([x == y for x, y in zip(defaults_0, defaults_10)])
+    assert snapshot == GeometrySet(traj.object)
