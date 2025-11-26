@@ -1,8 +1,8 @@
 import bpy
-from bpy.types import Object, Context, Depsgraph
-import numpy as np
-from syrupy.extensions.amber import AmberSnapshotExtension
 import databpy as db
+import numpy as np
+from bpy.types import Context, Depsgraph, Object
+from syrupy.extensions.amber import AmberSnapshotExtension
 
 
 # we create a custom snapshot comparison class, which can handle numpy arrays

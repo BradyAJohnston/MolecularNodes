@@ -1,4 +1,3 @@
-import databpy as db
 import molecularnodes as mn
 from .utils import GeometrySet
 
