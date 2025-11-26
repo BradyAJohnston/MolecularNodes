@@ -1,14 +1,13 @@
 import random
+from typing import Any
 import bpy
 import numpy as np
 import pytest
-import MDAnalysis as mda
 from MDAnalysisData.yiip_equilibrium import fetch_yiip_equilibrium_short
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import codes, data_dir
-from .utils import NumpySnapshotExtension, GeometrySet
-from typing import Any
+from .utils import GeometrySet, NumpySnapshotExtension
 
 random.seed(6)
 
