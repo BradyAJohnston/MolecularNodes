@@ -64,7 +64,7 @@ class GeometrySet:
 
         if dtype_kind == "f":
             arr = np.where(np.isnan(arr) | np.isinf(arr), 0, arr)
-            arr = np.where(np.abs(arr) < 1e-10, 0, arr)
+            arr = np.where(np.abs(arr) < 1e-8, 0, arr)
             arr = np.where(np.abs(arr) > 1e10, 0, arr)
 
         unique = np.unique(arr)
