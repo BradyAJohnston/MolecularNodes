@@ -561,14 +561,14 @@ class Trajectory(MolecularEntity):
         """Update any Periodic Box nodes in the geometry node tree."""
         dimensions = self.universe.trajectory.ts.dimensions
         names = ["a", "b", "c", "alpha", "beta", "gamma"]
+        nodes_to_update = ["Periodic Box", "Periodic Array"]
         for node in self.tree.nodes:
-            nodes_to_update = ["Periodic Box", "Periodic Array"]
-            if not isinstance(node, bpy.types.GeometryNodeGroup):
-                continue
-            if node.node_tree is None or node.node_tree.name not in nodes_to_update:
-                continue
-
-            if not node.inputs["Update"].default_value:  # type: ignore
+            if (
+                not isinstance(node, bpy.types.GeometryNodeGroup)
+                or node.node_tree is None
+                or node.node_tree.name not in nodes_to_update
+                or not node.inputs["Update"].default_value  # type: ignore
+            ):
                 continue
 
             for name, value in zip(names, dimensions):
