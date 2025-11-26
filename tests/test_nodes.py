@@ -350,7 +350,6 @@ def test_periodic_array(snapshot):
     bpy.context.scene.frame_set(10)
     defaults_10 = get_defaults(node)
 
-    bpy.ops.wm.save_as_mainfile(filepath="/Users/brady/Desktop/example.blend")
     print(list(zip(defaults_0, defaults_10)))
     assert not all([x == y for x, y in zip(defaults_0, defaults_10)])
     assert snapshot == GeometrySet(traj.object)
