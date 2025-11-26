@@ -559,18 +559,20 @@ class Trajectory(MolecularEntity):
 
     def _update_box(self) -> None:
         """Update any Periodic Box nodes in the geometry node tree."""
-        mod = self.object.modifiers.get("MolecularNodes")
-        gp = mod.node_group
-        for node in gp.nodes:
-            if node.label == "Periodic Box" or node.label == "Periodic Array":
-                if node.inputs["Update"].default_value:
-                    dims = self.universe.trajectory.ts.dimensions
-                    node.inputs["a"].default_value = dims[0]
-                    node.inputs["b"].default_value = dims[1]
-                    node.inputs["c"].default_value = dims[2]
-                    node.inputs["alpha"].default_value = dims[3]
-                    node.inputs["beta"].default_value = dims[4]
-                    node.inputs["gamma"].default_value = dims[5]
+        dimensions = self.universe.trajectory.ts.dimensions
+        names = ["a", "b", "c", "alpha", "beta", "gamma"]
+        for node in self.tree.nodes:
+            nodes_to_update = ["Periodic Box", "Periodic Array"]
+            if not isinstance(node, bpy.types.GeometryNodeGroup):
+                continue
+            if node.node_tree is None or node.node_tree.name not in nodes_to_update:
+                continue
+
+            if not node.inputs["Update"].default_value:  # type: ignore
+                continue
+
+            for name, value in zip(names, dimensions):
+                node.inputs[name].default_value = value
 
     def __repr__(self) -> str:
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
