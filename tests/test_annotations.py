@@ -235,7 +235,7 @@ class TestAnnotations:
         with pytest.raises(ValueError):
             t1.annotations._remove_annotation_by_uuid("InvalidUUID")
 
-    def test_annotation_ops(self, universe):
+    def test_annotation_ops_md(self, universe):
         t1 = mn.Trajectory(universe)
         assert len(t1.annotations) == 0
         # add annotation operator
@@ -248,6 +248,34 @@ class TestAnnotations:
             "EXEC_DEFAULT", uuid=t1.uuid, annotation_uuid=a1._uuid
         )
         assert len(t1.annotations) == 0
+
+    def test_annotation_ops_molecule(self):
+        mol = mn.Molecule.load(data_dir / "1cd3.cif")
+        assert len(mol.annotations) == 0
+        # add annotation operator
+        # first annotation type due to no invoke - must have no required inputs
+        bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=mol.uuid)
+        assert len(mol.annotations) == 1
+        a1 = mol.annotations[0]
+        # remove annotation operator
+        bpy.ops.mn.remove_annotation(
+            "EXEC_DEFAULT", uuid=mol.uuid, annotation_uuid=a1._uuid
+        )
+        assert len(mol.annotations) == 0
+
+    def test_annotation_ops_density(self, density_file):
+        d1 = mn.entities.density.load(density_file)
+        assert len(d1.annotations) == 0
+        # add annotation operator
+        # first annotation type due to no invoke - must have no required inputs
+        bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=d1.uuid)
+        assert len(d1.annotations) == 1
+        a1 = d1.annotations[0]
+        # remove annotation operator
+        bpy.ops.mn.remove_annotation(
+            "EXEC_DEFAULT", uuid=d1.uuid, annotation_uuid=a1._uuid
+        )
+        assert len(d1.annotations) == 0
 
     def test_trajectory_annotation_atom_info(self, universe):
         t1 = mn.Trajectory(universe)

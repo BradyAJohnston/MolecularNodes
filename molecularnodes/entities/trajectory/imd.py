@@ -144,3 +144,7 @@ class StreamingTrajectory(Trajectory):
             traj.add_style(style=style, selection=selection)
 
         return traj
+
+    def _get_annotation_entity_type(self) -> str:
+        "Interna: Re-use the annotations for Trajectory entity"
+        return EntityType.MD.value

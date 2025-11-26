@@ -445,3 +445,7 @@ class OXDNA(Trajectory):
                 )
             except KeyError as e:
                 print(e)
+
+    def _get_annotation_entity_type(self) -> str:
+        "Interna: Re-use the annotations for Trajectory entity"
+        return EntityType.MD.value
