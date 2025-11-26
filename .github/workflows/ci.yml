@@ -78,13 +78,21 @@ jobs:
             timeout-minutes: 5
             continue-on-error: true
             run: |
-              uv run pytest -n auto -k "not density" --junitxml=test-results-1.xml || echo "TEST_RESULT_1=$?" >> $GITHUB_ENV
+              uv run pytest -n auto -k "not density" --junitxml=test-results-1.xml --image-snapshot-save-diff || echo "TEST_RESULT_1=$?" >> $GITHUB_ENV
 
           - name: Run Tests "density"
             timeout-minutes: 3
             continue-on-error: true
             run: |
-              uv run pytest -k density --junitxml=test-results-2.xml || echo "TEST_RESULT_2=$?" >> $GITHUB_ENV
+              uv run pytest -k density --junitxml=test-results-2.xml --image-snapshot-save-diff || echo "TEST_RESULT_2=$?" >> $GITHUB_ENV
+
+          - name: Upload Image Diff Artifacts
+            if: failure()
+            uses: actions/upload-artifact@v4
+            with:
+              name: image-diffs-${{ matrix.os }}
+              retention-days: 7
+              path: tests/__image_snapshots__/__diff_output__/
 
           - name: Check Test Results
             run: |
