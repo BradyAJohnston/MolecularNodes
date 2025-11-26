@@ -5,10 +5,6 @@ from bpy.types import Context, Depsgraph, Object
 from syrupy.extensions.amber import AmberSnapshotExtension
 
 
-# we create a custom snapshot comparison class, which can handle numpy arrays
-# and compare them properly. The class will serialize the numpy arrays into lists
-# and when comparing them, reads the list back into a numpy array for comparison
-# it checks for 'isclose' for floats and otherwise looks for absolute comparison
 class NumpySnapshotExtension(AmberSnapshotExtension):
     def __init__(self):
         super().__init__()
@@ -47,37 +43,116 @@ class GeometrySet:
     def instances(self):
         return self.geom.instances_pointcloud()
 
-    def instance_info(self):
-        return {
-            x: db.Attribute(self.instances.attributes[x])
-            for x in ["instance_transform", ".reference_index"]
-        }
+    def _format_attribute(self, attr: db.Attribute, max_display: int = 5) -> str:
+        arr = attr.as_array()
+        unique = np.unique(arr)
+        n_unique = len(unique)
 
-    def mesh_info(self):
-        mesh = self.geom.mesh
-        # print("\n".join(dir(mesh)))
-        string = "{} vertices, {} edges, {} polygons".format(
-            len(mesh.vertices), len(mesh.edges), len(mesh.polygons)
-        )
-        return string
+        parts = [f"shape={arr.shape}, atype={attr.atype.value}"]
+
+        if n_unique == 1:
+            parts.append(f"constant={unique[0]:.3f}")
+        elif n_unique <= max_display:
+            parts.append(f"unique={n_unique}, values={list(unique)}")
+        else:
+            parts.append(f"unique={n_unique}")
+            if arr.dtype.kind in ["i", "f"]:
+                parts.append(f"range=[{arr.min():.3g}, {arr.max():.3g}]")
+
+        return ", ".join(parts)
+
+    def _summarize_attributes(
+        self, attributes_dict, label: str, max_attrs: int = 50
+    ) -> list[str]:
+        if not attributes_dict:
+            return []
+
+        lines = [f"\n{label}:"]
+        attr_names = [
+            name for name in attributes_dict.keys() if not name.startswith(".")
+        ]
+        attr_names.sort()
+
+        for name in attr_names[:max_attrs]:
+            attr = db.Attribute(attributes_dict[name])
+            lines.append(f"  {name}: {self._format_attribute(attr)}")
+
+        if len(attr_names) > max_attrs:
+            lines.append(f"  ... and {len(attr_names) - max_attrs} more attributes")
+
+        return lines
 
     def __repr__(self):
-        string = "\n".join(
-            [
-                str(x)
-                for x in [
-                    "Mesh name: {}".format(self.geom.mesh.name),
-                    "Mesh: {}".format(self.mesh_info()),
-                    "Mesh Base: {}".format(self.geom.mesh_base),
-                    "Pointcloud: {}".format(self.geom.pointcloud),
-                    "Grease Pencil: {}".format(self.geom.grease_pencil),
-                    "Curves: {}".format(self.geom.curves),
-                    "Volumes: {}".format(self.geom.volume),
-                    "Instances: {} points with {} unique values".format(
-                        len(self.instance_info()["instance_transform"]),
-                        len(np.unique(self.instance_info()[".reference_index"])),
-                    ),
-                ]
-            ]
-        )
-        return string
+        lines = []
+
+        mesh = self.geom.mesh
+        if mesh:
+            lines.append(f"Mesh: {mesh.name}")
+            lines.append(
+                f"  Geometry: {len(mesh.vertices)} verts, {len(mesh.edges)} edges, {len(mesh.polygons)} polys"
+            )
+            lines.extend(self._summarize_attributes(mesh.attributes, "  Attributes"))
+
+        pointcloud = self.geom.pointcloud
+        if pointcloud:
+            if "position" in pointcloud.attributes:
+                n_points = len(db.Attribute(pointcloud.attributes["position"]))
+            else:
+                n_points = 0
+            lines.append(f"\nPointcloud: {n_points} points")
+            lines.extend(
+                self._summarize_attributes(pointcloud.attributes, "  Attributes")
+            )
+
+        instances = self.instances
+        if instances:
+            if "position" in instances.attributes:
+                n_points = len(db.Attribute(instances.attributes["position"]))
+            else:
+                n_points = 0
+
+            if n_points > 0:
+                lines.append(f"\nInstances: {n_points} points")
+
+                if "instance_transform" in instances.attributes:
+                    transform_attr = db.Attribute(
+                        instances.attributes["instance_transform"]
+                    )
+                    transforms = transform_attr.as_array()
+                    lines.append(
+                        f"  Transforms: shape={transforms.shape}, dtype={transforms.dtype.name}"
+                    )
+
+                    n_show = min(50, transforms.shape[0])
+                    for i in range(n_show):
+                        transform = transforms[i]
+                        lines.append(f"    Transform[{i}]:")
+                        for row_idx in range(4):
+                            row = transform[row_idx]
+                            row_str = f"      [{row[0]:7.3f}, {row[1]:7.3f}, {row[2]:7.3f}, {row[3]:7.3f}]"
+                            lines.append(row_str)
+
+                    if transforms.shape[0] > n_show:
+                        lines.append(
+                            f"    ... and {transforms.shape[0] - n_show} more transforms"
+                        )
+
+            if ".reference_index" in instances.attributes:
+                ref_attr = db.Attribute(instances.attributes[".reference_index"])
+                ref_arr = ref_attr.as_array()
+                n_unique = len(np.unique(ref_arr))
+                lines.append(f"  Unique instances: {n_unique}")
+            lines.extend(
+                self._summarize_attributes(instances.attributes, "  Attributes", 8)
+            )
+
+        if self.geom.curves:
+            lines.append(f"\nCurves: present")
+
+        if self.geom.volume:
+            lines.append(f"\nVolume: present")
+
+        if self.geom.grease_pencil:
+            lines.append(f"\nGrease Pencil: present")
+
+        return "\n".join(lines)

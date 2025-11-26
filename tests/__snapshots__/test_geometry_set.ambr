@@ -1,11 +1,206 @@
 # serializer version: 1
 # name: test_get_set
-  Mesh name: 1BNA
-  Mesh: 1608 vertices, 3192 edges, 1588 polygons
-  Mesh Base: <bpy_struct, Mesh("1BNA") at 0xacf175508>
-  Pointcloud: None
-  Grease Pencil: None
-  Curves: None
-  Volumes: None
-  Instances: 24 points with 1 unique values
+  Mesh: 1BNA
+    Geometry: 1608 verts, 3192 edges, 1588 polys
+  
+    Attributes:
+    Color: shape=(1588, 4), atype=FLOAT_COLOR, unique=2, values=[0.20190106, 1.0]
+    atom_id: shape=(1608,), atype=INT, unique=134, range=[3, 470]
+    atom_name: shape=(1608,), atype=INT, constant=55.000
+    atomic_number: shape=(1608,), atype=INT, constant=6.000
+    b_factor: shape=(1608,), atype=FLOAT, unique=134, range=[25, 72.5]
+    bond_type: shape=(1608,), atype=INT, constant=1.000
+    chain_id: shape=(1608,), atype=INT, unique=2, values=[0, 1]
+    charge: shape=(1608,), atype=FLOAT, constant=0.163
+    entity_id: shape=(1608,), atype=INT, constant=0.000
+    is_alpha_carbon: shape=(1608,), atype=BOOLEAN, constant=0.000
+    is_backbone: shape=(1608,), atype=BOOLEAN, constant=1.000
+    is_carb: shape=(1608,), atype=BOOLEAN, constant=0.000
+    is_hetero: shape=(1608,), atype=BOOLEAN, constant=0.000
+    is_nucleic: shape=(1608,), atype=BOOLEAN, constant=1.000
+    is_peptide: shape=(1608,), atype=BOOLEAN, constant=0.000
+    is_side_chain: shape=(1608,), atype=BOOLEAN, constant=0.000
+    is_solvent: shape=(1608,), atype=BOOLEAN, constant=0.000
+    lipophobicity: shape=(1608,), atype=FLOAT, constant=0.020
+    mass: shape=(1608,), atype=FLOAT, unique=2, values=[12.010699, 12.0107]
+    material_index: shape=(1588,), atype=INT, constant=0.000
+    occupancy: shape=(1608,), atype=FLOAT, constant=1.000
+    position: shape=(1608, 3), atype=FLOAT_VECTOR, unique=4824, range=[-0.12, 0.355]
+    res_id: shape=(1608,), atype=INT, unique=24, range=[1, 24]
+    res_name: shape=(1608,), atype=INT, unique=4, values=[30, 31, 32, 33]
+    sharp_edge: shape=(3192,), atype=BOOLEAN, unique=2, values=[False, True]
+    ures_id: shape=(1608,), atype=INT, unique=24, range=[0, 23]
+    vdw_radii: shape=(1608,), atype=FLOAT, constant=0.017
+  
+  Instances: 24 points
+    Transforms: shape=(24, 4, 4), dtype=float32
+      Transform[0]:
+        [ -0.827,   0.495,  -0.265,   0.000]
+        [  0.003,  -0.468,  -0.884,   0.000]
+        [ -0.562,  -0.732,   0.386,   0.000]
+        [  0.200,   0.327,   0.241,   1.000]
+      Transform[1]:
+        [ -0.461,   0.838,  -0.294,   0.000]
+        [ -0.100,  -0.378,  -0.921,   0.000]
+        [ -0.882,  -0.395,   0.258,   0.000]
+        [  0.235,   0.277,   0.223,   1.000]
+      Transform[2]:
+        [  0.406,   0.790,  -0.459,   0.000]
+        [ -0.097,  -0.462,  -0.881,   0.000]
+        [ -0.909,   0.403,  -0.111,   0.000]
+        [  0.235,   0.222,   0.202,   1.000]
+      Transform[3]:
+        [  0.576,   0.676,  -0.459,   0.000]
+        [ -0.320,  -0.330,  -0.888,   0.000]
+        [ -0.752,   0.659,   0.027,   0.000]
+        [  0.214,   0.170,   0.185,   1.000]
+      Transform[4]:
+        [  0.927,   0.058,  -0.371,   0.000]
+        [ -0.334,  -0.326,  -0.885,   0.000]
+        [ -0.172,   0.944,  -0.283,   0.000]
+        [  0.167,   0.141,   0.170,   1.000]
+      Transform[5]:
+        [  0.832,  -0.529,  -0.169,   0.000]
+        [ -0.330,  -0.226,  -0.917,   0.000]
+        [  0.446,   0.818,  -0.362,   0.000]
+        [  0.111,   0.146,   0.144,   1.000]
+      Transform[6]:
+        [  0.142,  -0.988,   0.056,   0.000]
+        [ -0.306,  -0.097,  -0.947,   0.000]
+        [  0.941,   0.117,  -0.316,   0.000]
+        [  0.082,   0.176,   0.106,   1.000]
+      Transform[7]:
+        [ -0.383,  -0.920,   0.082,   0.000]
+        [ -0.186,  -0.010,  -0.982,   0.000]
+        [  0.905,  -0.391,  -0.168,   0.000]
+        [  0.070,   0.212,   0.064,   1.000]
+      Transform[8]:
+        [ -0.858,  -0.509,   0.074,   0.000]
+        [ -0.103,   0.028,  -0.994,   0.000]
+        [  0.504,  -0.860,  -0.077,   0.000]
+        [  0.089,   0.249,   0.025,   1.000]
+      Transform[9]:
+        [ -0.953,  -0.225,   0.203,   0.000]
+        [ -0.153,  -0.219,  -0.964,   0.000]
+        [  0.261,  -0.950,   0.174,   0.000]
+        [  0.120,   0.261,  -0.028,   1.000]
+      Transform[10]:
+        [ -0.792,   0.578,  -0.198,   0.000]
+        [  0.195,  -0.069,  -0.978,   0.000]
+        [ -0.579,  -0.813,  -0.058,   0.000]
+        [  0.162,   0.259,  -0.055,   1.000]
+      Transform[11]:
+        [ -0.554,   0.815,  -0.170,   0.000]
+        [ -0.012,  -0.212,  -0.977,   0.000]
+        [ -0.832,  -0.540,   0.127,   0.000]
+        [  0.197,   0.222,  -0.093,   1.000]
+      Transform[12]:
+        [ -0.995,   0.090,  -0.048,   0.000]
+        [ -0.039,   0.100,   0.994,   0.000]
+        [  0.094,   0.991,  -0.096,   0.000]
+        [  0.097,   0.111,  -0.095,   1.000]
+      Transform[13]:
+        [ -0.954,  -0.198,   0.227,   0.000]
+        [  0.210,   0.105,   0.972,   0.000]
+        [ -0.216,   0.975,  -0.059,   0.000]
+        [  0.151,   0.110,  -0.067,   1.000]
+      Transform[14]:
+        [ -0.306,  -0.889,   0.341,   0.000]
+        [  0.276,   0.260,   0.925,   0.000]
+        [ -0.911,   0.377,   0.166,   0.000]
+        [  0.189,   0.140,  -0.035,   1.000]
+      Transform[15]:
+        [ -0.036,  -0.913,   0.405,   0.000]
+        [  0.096,   0.401,   0.911,   0.000]
+        [ -0.995,   0.072,   0.073,   0.000]
+        [  0.217,   0.183,  -0.010,   1.000]
+      Transform[16]:
+        [  0.619,  -0.736,   0.275,   0.000]
+        [  0.055,   0.391,   0.919,   0.000]
+        [ -0.784,  -0.553,   0.283,   0.000]
+        [  0.201,   0.238,   0.005,   1.000]
+      Transform[17]:
+        [  0.973,  -0.223,   0.057,   0.000]
+        [  0.026,   0.353,   0.935,   0.000]
+        [ -0.228,  -0.909,   0.350,   0.000]
+        [  0.160,   0.270,   0.034,   1.000]
+      Transform[18]:
+        [  0.816,   0.561,  -0.136,   0.000]
+        [ -0.065,   0.324,   0.944,   0.000]
+        [  0.574,  -0.762,   0.301,   0.000]
+        [  0.118,   0.272,   0.073,   1.000]
+      Transform[19]:
+        [  0.372,   0.908,  -0.192,   0.000]
+        [ -0.032,   0.220,   0.975,   0.000]
+        [  0.928,  -0.357,   0.110,   0.000]
+        [  0.087,   0.251,   0.117,   1.000]
+      Transform[20]:
+        [ -0.262,   0.953,  -0.149,   0.000]
+        [  0.090,   0.178,   0.980,   0.000]
+        [  0.961,   0.244,  -0.133,   0.000]
+        [  0.081,   0.216,   0.165,   1.000]
+      Transform[21]:
+        [ -0.468,   0.841,  -0.270,   0.000]
+        [  0.232,   0.412,   0.881,   0.000]
+        [  0.853,   0.350,  -0.388,   0.000]
+        [  0.094,   0.196,   0.220,   1.000]
+      Transform[22]:
+        [ -0.935,   0.289,   0.205,   0.000]
+        [  0.290,   0.290,   0.912,   0.000]
+        [  0.204,   0.912,  -0.355,   0.000]
+        [  0.131,   0.176,   0.256,   1.000]
+      Transform[23]:
+        [ -0.922,  -0.148,   0.358,   0.000]
+        [  0.279,   0.388,   0.879,   0.000]
+        [ -0.269,   0.910,  -0.316,   0.000]
+        [  0.182,   0.185,   0.288,   1.000]
+    Unique instances: 1
+  
+    Attributes:
+    Color: shape=(24, 4), atype=FLOAT_COLOR, unique=2, values=[0.20190106, 1.0]
+    atom_id: shape=(24,), atype=INT, unique=24, range=[3, 470]
+    atom_name: shape=(24,), atype=INT, constant=55.000
+    atomic_number: shape=(24,), atype=INT, constant=6.000
+    b_factor: shape=(24,), atype=FLOAT, unique=24, range=[25, 72.5]
+    bond_type: shape=(24,), atype=INT, constant=1.000
+    chain_id: shape=(24,), atype=INT, unique=2, values=[0, 1]
+    charge: shape=(24,), atype=FLOAT, constant=0.163
+    ... and 18 more attributes
+# ---
+# name: test_spheres_style
+  Mesh: 1BNA
+    Geometry: 0 verts, 0 edges, 0 polys
+  
+    Attributes:
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Pointcloud: 486 points
+  
+    Attributes:
+    Color: shape=(486, 4), atype=FLOAT_COLOR, unique=9, range=[0.16, 1]
+    atom_id: shape=(486,), atype=INT, unique=486, range=[1, 486]
+    atom_name: shape=(486,), atype=INT, unique=27, range=[50, 77]
+    atomic_number: shape=(486,), atype=INT, unique=4, values=[6, 7, 8, 15]
+    b_factor: shape=(486,), atype=FLOAT, unique=468, range=[8.73, 79]
+    bond_type: shape=(486,), atype=INT, unique=5, values=[1, 2, 4, 5, 6]
+    chain_id: shape=(486,), atype=INT, unique=2, values=[0, 1]
+    charge: shape=(486,), atype=FLOAT, unique=51, range=[-0.977, 1.17]
+    entity_id: shape=(486,), atype=INT, constant=0.000
+    is_alpha_carbon: shape=(486,), atype=BOOLEAN, constant=0.000
+    is_backbone: shape=(486,), atype=BOOLEAN, unique=2, values=[False, True]
+    is_carb: shape=(486,), atype=BOOLEAN, constant=0.000
+    is_hetero: shape=(486,), atype=BOOLEAN, constant=0.000
+    is_nucleic: shape=(486,), atype=BOOLEAN, constant=1.000
+    is_peptide: shape=(486,), atype=BOOLEAN, constant=0.000
+    is_side_chain: shape=(486,), atype=BOOLEAN, unique=2, values=[False, True]
+    is_solvent: shape=(486,), atype=BOOLEAN, constant=0.000
+    lipophobicity: shape=(486,), atype=FLOAT, unique=19, range=[-1.66, 0.45]
+    mass: shape=(486,), atype=FLOAT, unique=4, values=[12.0107, 14.0067, 15.9994, 30.97376]
+    occupancy: shape=(486,), atype=FLOAT, constant=1.000
+    position: shape=(486, 3), atype=FLOAT_VECTOR, unique=1423, range=[-0.114, 0.342]
+    radius: shape=(486,), atype=FLOAT, unique=4, values=[0.01216, 0.0124, 0.013600001, 0.0144]
+    res_id: shape=(486,), atype=INT, unique=24, range=[1, 24]
+    res_name: shape=(486,), atype=INT, unique=4, values=[30, 31, 32, 33]
+    ures_id: shape=(486,), atype=INT, unique=24, range=[0, 23]
+    vdw_radii: shape=(486,), atype=FLOAT, unique=4, values=[0.0152, 0.0155, 0.017, 0.018]
 # ---
