@@ -60,9 +60,13 @@ class GeometrySet:
 
     def _format_attribute(self, attr: db.Attribute, max_display: int = 5) -> str:
         arr = attr.as_array()
+        dtype_kind = arr.dtype.kind
+
+        if dtype_kind == "f":
+            arr = np.where(np.abs(arr) < 1e-10, 0, arr)
+
         unique = np.unique(arr)
         n_unique = len(unique)
-        dtype_kind = arr.dtype.kind
 
         parts = [f"shape={arr.shape}, atype={attr.atype.value}"]
 
