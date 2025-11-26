@@ -649,7 +649,7 @@ class MN_PT_Entities(bpy.types.Panel):
         # display entity type of the selected entity
         uuid = props.entities[props.entities_active_index].name
         entity = context.scene.MNSession.get(uuid)
-        if not entity:
+        if entity is None:
             return
         row = layout.row()
         row.prop(entity.object.mn, "entity_type")
@@ -1007,7 +1007,7 @@ class MN_PT_Annotations(bpy.types.Panel):
         row = box.row()
         row.prop(item, "type")
         row.enabled = False
-        entity_annotation_type = f"{entity._mn_entity_type}_{item.type}"
+        entity_annotation_type = f"{entity._get_annotation_entity_type()}_{item.type}"
         inputs = getattr(item, entity_annotation_type, None)
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:

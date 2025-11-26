@@ -23,7 +23,9 @@ logger = logging.getLogger(__name__)
 
 def _ag_to_bool(ag: AtomGroup) -> np.ndarray:
     """Convert AtomGroup to boolean mask for the entire universe."""
-    return np.isin(ag.universe.atoms.ix, ag.ix).astype(bool)
+    mask = np.zeros(ag.universe.atoms.n_atoms, dtype=bool)
+    mask[ag.ix] = True
+    return mask
 
 
 # ============================================================================
