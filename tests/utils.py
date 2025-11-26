@@ -43,6 +43,11 @@ class GeometrySet:
     def instances(self):
         return self.geom.instances_pointcloud()
 
+    def _get_point_count(self, attributes) -> int:
+        if "position" in attributes:
+            return len(db.Attribute(attributes["position"]))
+        return 0
+
     def _format_attribute(self, attr: db.Attribute, max_display: int = 5) -> str:
         arr = attr.as_array()
         unique = np.unique(arr)
@@ -60,6 +65,27 @@ class GeometrySet:
                 parts.append(f"range=[{arr.min():.3g}, {arr.max():.3g}]")
 
         return ", ".join(parts)
+
+    def _format_transform_matrix(
+        self, transforms: np.ndarray, max_show: int = 50
+    ) -> list[str]:
+        lines = [
+            f"  Transforms: shape={transforms.shape}, dtype={transforms.dtype.name}"
+        ]
+
+        n_show = min(max_show, transforms.shape[0])
+        for i in range(n_show):
+            transform = transforms[i]
+            lines.append(f"    Transform[{i}]:")
+            for row_idx in range(4):
+                row = transform[row_idx]
+                row_str = f"      [{row[0]:7.3f}, {row[1]:7.3f}, {row[2]:7.3f}, {row[3]:7.3f}]"
+                lines.append(row_str)
+
+        if transforms.shape[0] > n_show:
+            lines.append(f"    ... and {transforms.shape[0] - n_show} more transforms")
+
+        return lines
 
     def _summarize_attributes(
         self, attributes_dict, label: str, max_attrs: int = 50
@@ -82,77 +108,76 @@ class GeometrySet:
 
         return lines
 
+    def _summarize_mesh(self) -> list[str]:
+        mesh = self.geom.mesh
+        if not mesh:
+            return []
+
+        lines = [
+            f"Mesh: {mesh.name}",
+            f"  Geometry: {len(mesh.vertices)} verts, {len(mesh.edges)} edges, {len(mesh.polygons)} polys",
+        ]
+        lines.extend(self._summarize_attributes(mesh.attributes, "  Attributes"))
+        return lines
+
+    def _summarize_pointcloud(self) -> list[str]:
+        pointcloud = self.geom.pointcloud
+        if not pointcloud:
+            return []
+
+        n_points = self._get_point_count(pointcloud.attributes)
+        lines = [f"\nPointcloud: {n_points} points"]
+        lines.extend(self._summarize_attributes(pointcloud.attributes, "  Attributes"))
+        return lines
+
+    def _summarize_instances(self) -> list[str]:
+        instances = self.instances
+        if not instances:
+            return []
+
+        n_points = self._get_point_count(instances.attributes)
+        if n_points == 0:
+            return []
+
+        lines = [f"\nInstances: {n_points} points"]
+
+        if "instance_transform" in instances.attributes:
+            transform_attr = db.Attribute(instances.attributes["instance_transform"])
+            transforms = transform_attr.as_array()
+            lines.extend(self._format_transform_matrix(transforms))
+
+        if ".reference_index" in instances.attributes:
+            ref_attr = db.Attribute(instances.attributes[".reference_index"])
+            ref_arr = ref_attr.as_array()
+            n_unique = len(np.unique(ref_arr))
+            lines.append(f"  Unique instances: {n_unique}")
+
+        lines.extend(
+            self._summarize_attributes(instances.attributes, "  Attributes", 8)
+        )
+        return lines
+
+    def _summarize_curves(self) -> list[str]:
+        if self.geom.curves:
+            return ["\nCurves: present"]
+        return []
+
+    def _summarize_volume(self) -> list[str]:
+        if self.geom.volume:
+            return ["\nVolume: present"]
+        return []
+
+    def _summarize_grease_pencil(self) -> list[str]:
+        if self.geom.grease_pencil:
+            return ["\nGrease Pencil: present"]
+        return []
+
     def __repr__(self):
         lines = []
-
-        mesh = self.geom.mesh
-        if mesh:
-            lines.append(f"Mesh: {mesh.name}")
-            lines.append(
-                f"  Geometry: {len(mesh.vertices)} verts, {len(mesh.edges)} edges, {len(mesh.polygons)} polys"
-            )
-            lines.extend(self._summarize_attributes(mesh.attributes, "  Attributes"))
-
-        pointcloud = self.geom.pointcloud
-        if pointcloud:
-            if "position" in pointcloud.attributes:
-                n_points = len(db.Attribute(pointcloud.attributes["position"]))
-            else:
-                n_points = 0
-            lines.append(f"\nPointcloud: {n_points} points")
-            lines.extend(
-                self._summarize_attributes(pointcloud.attributes, "  Attributes")
-            )
-
-        instances = self.instances
-        if instances:
-            if "position" in instances.attributes:
-                n_points = len(db.Attribute(instances.attributes["position"]))
-            else:
-                n_points = 0
-
-            if n_points > 0:
-                lines.append(f"\nInstances: {n_points} points")
-
-                if "instance_transform" in instances.attributes:
-                    transform_attr = db.Attribute(
-                        instances.attributes["instance_transform"]
-                    )
-                    transforms = transform_attr.as_array()
-                    lines.append(
-                        f"  Transforms: shape={transforms.shape}, dtype={transforms.dtype.name}"
-                    )
-
-                    n_show = min(50, transforms.shape[0])
-                    for i in range(n_show):
-                        transform = transforms[i]
-                        lines.append(f"    Transform[{i}]:")
-                        for row_idx in range(4):
-                            row = transform[row_idx]
-                            row_str = f"      [{row[0]:7.3f}, {row[1]:7.3f}, {row[2]:7.3f}, {row[3]:7.3f}]"
-                            lines.append(row_str)
-
-                    if transforms.shape[0] > n_show:
-                        lines.append(
-                            f"    ... and {transforms.shape[0] - n_show} more transforms"
-                        )
-
-            if ".reference_index" in instances.attributes:
-                ref_attr = db.Attribute(instances.attributes[".reference_index"])
-                ref_arr = ref_attr.as_array()
-                n_unique = len(np.unique(ref_arr))
-                lines.append(f"  Unique instances: {n_unique}")
-            lines.extend(
-                self._summarize_attributes(instances.attributes, "  Attributes", 8)
-            )
-
-        if self.geom.curves:
-            lines.append("\nCurves: present")
-
-        if self.geom.volume:
-            lines.append("\nVolume: present")
-
-        if self.geom.grease_pencil:
-            lines.append("\nGrease Pencil: present")
-
+        lines.extend(self._summarize_mesh())
+        lines.extend(self._summarize_pointcloud())
+        lines.extend(self._summarize_instances())
+        lines.extend(self._summarize_curves())
+        lines.extend(self._summarize_volume())
+        lines.extend(self._summarize_grease_pencil())
         return "\n".join(lines)
