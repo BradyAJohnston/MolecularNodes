@@ -190,7 +190,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         remove_solvent: bool = True,
         cache: Path | str | None = download.CACHE_DIR,
         database: str = "rcsb",
-    ):
+    ) -> "Molecule":
         """
         Fetch a molecule from the RCSB database.
 
@@ -298,7 +298,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         assembly: bool = False,
         material: bpy.types.Material | str | None = None,
         name: str | None = None,
-    ):
+    ) -> "Molecule":
         """
         Add a visual style to the molecule.
 
