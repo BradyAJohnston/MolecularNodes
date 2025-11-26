@@ -1,0 +1,11 @@
+# serializer version: 1
+# name: test_get_set
+  Mesh name: 1BNA
+  Mesh: 1608 vertices, 3192 edges, 1588 polygons
+  Mesh Base: <bpy_struct, Mesh("1BNA") at 0xacf175508>
+  Pointcloud: None
+  Grease Pencil: None
+  Curves: None
+  Volumes: None
+  Instances: 24 points with 1 unique values
+# ---

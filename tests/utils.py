@@ -1,6 +1,8 @@
 import bpy
+from bpy.types import Object, Context, Depsgraph
 import numpy as np
 from syrupy.extensions.amber import AmberSnapshotExtension
+import databpy as db
 
 
 # we create a custom snapshot comparison class, which can handle numpy arrays
@@ -30,21 +32,52 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
 # https://docs.blender.org/api/4.5/bpy.types.GeometrySet.html
 
 
-def get_geometry_set(
-    obj: bpy.types.Object, context: None | bpy.types.Context = None
-) -> bpy.types.GeometrySet:  # type: ignore
-    if not context:
-        context = bpy.context
+class GeometrySet:
+    def __init__(self, obj: Object, context: None | Context = None):
+        self.obj = obj
+        self.context = context if isinstance(context, Context) else bpy.context
+        depsgraph: Depsgraph = self.context.view_layer.depsgraph
+        if depsgraph is None:
+            raise ValueError
 
-    depsgraph = context.view_layer.depsgraph  # type: ignore
-    if depsgraph is None:
-        raise ValueError
+        self.eval_obj = depsgraph.id_eval_get(self.obj)
+        self.geom = self.eval_obj.evaluated_geometry()
 
-    ob_eval = depsgraph.id_eval_get(obj)
-    geom: bpy.types.GeometrySet = ob_eval.evaluated_geometry()  # type: ignore
+    @property
+    def instances(self):
+        return self.geom.instances_pointcloud()
 
-    return geom
+    def instance_info(self):
+        return {
+            x: db.Attribute(self.instances.attributes[x])
+            for x in ["instance_transform", ".reference_index"]
+        }
 
+    def mesh_info(self):
+        mesh = self.geom.mesh
+        # print("\n".join(dir(mesh)))
+        string = "{} vertices, {} edges, {} polygons".format(
+            len(mesh.vertices), len(mesh.edges), len(mesh.polygons)
+        )
+        return string
 
-def geometry_set_to_dict(geom_set: bpy.types.GeometrySet) -> dict:
-    return {}
+    def __repr__(self):
+        string = "\n".join(
+            [
+                str(x)
+                for x in [
+                    "Mesh name: {}".format(self.geom.mesh.name),
+                    "Mesh: {}".format(self.mesh_info()),
+                    "Mesh Base: {}".format(self.geom.mesh_base),
+                    "Pointcloud: {}".format(self.geom.pointcloud),
+                    "Grease Pencil: {}".format(self.geom.grease_pencil),
+                    "Curves: {}".format(self.geom.curves),
+                    "Volumes: {}".format(self.geom.volume),
+                    "Instances: {} points with {} unique values".format(
+                        len(self.instance_info()["instance_transform"]),
+                        len(np.unique(self.instance_info()[".reference_index"])),
+                    ),
+                ]
+            ]
+        )
+        return string
