@@ -48,21 +48,36 @@ class GeometrySet:
             return len(db.Attribute(attributes["position"]))
         return 0
 
+    def _format_value(self, value, dtype_kind: str) -> str:
+        if dtype_kind == "b":
+            return str(bool(value))
+        elif dtype_kind == "i":
+            return str(int(value))
+        elif dtype_kind == "f":
+            return f"{value:.3g}"
+        else:
+            return str(value)
+
     def _format_attribute(self, attr: db.Attribute, max_display: int = 5) -> str:
         arr = attr.as_array()
         unique = np.unique(arr)
         n_unique = len(unique)
+        dtype_kind = arr.dtype.kind
 
         parts = [f"shape={arr.shape}, atype={attr.atype.value}"]
 
         if n_unique == 1:
-            parts.append(f"constant={unique[0]:.3f}")
+            formatted_val = self._format_value(unique[0], dtype_kind)
+            parts.append(f"constant={formatted_val}")
         elif n_unique <= max_display:
-            parts.append(f"unique={n_unique}, values={list(unique)}")
+            formatted_values = [self._format_value(v, dtype_kind) for v in unique]
+            parts.append(f"unique={n_unique}, values={formatted_values}")
         else:
             parts.append(f"unique={n_unique}")
-            if arr.dtype.kind in ["i", "f"]:
-                parts.append(f"range=[{arr.min():.3g}, {arr.max():.3g}]")
+            if dtype_kind in ["i", "f"]:
+                min_val = self._format_value(arr.min(), dtype_kind)
+                max_val = self._format_value(arr.max(), dtype_kind)
+                parts.append(f"range=[{min_val}, {max_val}]")
 
         return ", ".join(parts)
 
@@ -150,10 +165,11 @@ class GeometrySet:
             ref_attr = db.Attribute(instances.attributes[".reference_index"])
             ref_arr = ref_attr.as_array()
             n_unique = len(np.unique(ref_arr))
-            lines.append(f"  Unique instances: {n_unique}")
+            lines.append(f"  Unique instances: {n_unique}; {ref_arr}")
+            lines.append(f"  Instance references: {self.geom.instance_references()}")
 
         lines.extend(
-            self._summarize_attributes(instances.attributes, "  Attributes", 8)
+            self._summarize_attributes(instances.attributes, "  Attributes", 50)
         )
         return lines
 

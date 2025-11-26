@@ -4,31 +4,31 @@
     Geometry: 1608 verts, 3192 edges, 1588 polys
   
     Attributes:
-    Color: shape=(1588, 4), atype=FLOAT_COLOR, unique=2, values=[0.20190106, 1.0]
+    Color: shape=(1588, 4), atype=FLOAT_COLOR, unique=2, values=['0.202', '1']
     atom_id: shape=(1608,), atype=INT, unique=134, range=[3, 470]
-    atom_name: shape=(1608,), atype=INT, constant=55.000
-    atomic_number: shape=(1608,), atype=INT, constant=6.000
+    atom_name: shape=(1608,), atype=INT, constant=55
+    atomic_number: shape=(1608,), atype=INT, constant=6
     b_factor: shape=(1608,), atype=FLOAT, unique=134, range=[25, 72.5]
-    bond_type: shape=(1608,), atype=INT, constant=1.000
-    chain_id: shape=(1608,), atype=INT, unique=2, values=[0, 1]
+    bond_type: shape=(1608,), atype=INT, constant=1
+    chain_id: shape=(1608,), atype=INT, unique=2, values=['0', '1']
     charge: shape=(1608,), atype=FLOAT, constant=0.163
-    entity_id: shape=(1608,), atype=INT, constant=0.000
-    is_alpha_carbon: shape=(1608,), atype=BOOLEAN, constant=0.000
-    is_backbone: shape=(1608,), atype=BOOLEAN, constant=1.000
-    is_carb: shape=(1608,), atype=BOOLEAN, constant=0.000
-    is_hetero: shape=(1608,), atype=BOOLEAN, constant=0.000
-    is_nucleic: shape=(1608,), atype=BOOLEAN, constant=1.000
-    is_peptide: shape=(1608,), atype=BOOLEAN, constant=0.000
-    is_side_chain: shape=(1608,), atype=BOOLEAN, constant=0.000
-    is_solvent: shape=(1608,), atype=BOOLEAN, constant=0.000
-    lipophobicity: shape=(1608,), atype=FLOAT, constant=0.020
-    mass: shape=(1608,), atype=FLOAT, unique=2, values=[12.010699, 12.0107]
-    material_index: shape=(1588,), atype=INT, constant=0.000
-    occupancy: shape=(1608,), atype=FLOAT, constant=1.000
+    entity_id: shape=(1608,), atype=INT, constant=0
+    is_alpha_carbon: shape=(1608,), atype=BOOLEAN, constant=False
+    is_backbone: shape=(1608,), atype=BOOLEAN, constant=True
+    is_carb: shape=(1608,), atype=BOOLEAN, constant=False
+    is_hetero: shape=(1608,), atype=BOOLEAN, constant=False
+    is_nucleic: shape=(1608,), atype=BOOLEAN, constant=True
+    is_peptide: shape=(1608,), atype=BOOLEAN, constant=False
+    is_side_chain: shape=(1608,), atype=BOOLEAN, constant=False
+    is_solvent: shape=(1608,), atype=BOOLEAN, constant=False
+    lipophobicity: shape=(1608,), atype=FLOAT, constant=0.02
+    mass: shape=(1608,), atype=FLOAT, unique=2, values=['12', '12']
+    material_index: shape=(1588,), atype=INT, constant=0
+    occupancy: shape=(1608,), atype=FLOAT, constant=1
     position: shape=(1608, 3), atype=FLOAT_VECTOR, unique=4824, range=[-0.12, 0.355]
     res_id: shape=(1608,), atype=INT, unique=24, range=[1, 24]
-    res_name: shape=(1608,), atype=INT, unique=4, values=[30, 31, 32, 33]
-    sharp_edge: shape=(3192,), atype=BOOLEAN, unique=2, values=[False, True]
+    res_name: shape=(1608,), atype=INT, unique=4, values=['30', '31', '32', '33']
+    sharp_edge: shape=(3192,), atype=BOOLEAN, unique=2, values=['False', 'True']
     ures_id: shape=(1608,), atype=INT, unique=24, range=[0, 23]
     vdw_radii: shape=(1608,), atype=FLOAT, constant=0.017
   
@@ -154,18 +154,36 @@
         [  0.279,   0.388,   0.879,   0.000]
         [ -0.269,   0.910,  -0.316,   0.000]
         [  0.182,   0.185,   0.288,   1.000]
-    Unique instances: 1
+    Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 8 verts, 12 edges, 6 faces, 24 corners>]
   
     Attributes:
-    Color: shape=(24, 4), atype=FLOAT_COLOR, unique=2, values=[0.20190106, 1.0]
+    Color: shape=(24, 4), atype=FLOAT_COLOR, unique=2, values=['0.202', '1']
     atom_id: shape=(24,), atype=INT, unique=24, range=[3, 470]
-    atom_name: shape=(24,), atype=INT, constant=55.000
-    atomic_number: shape=(24,), atype=INT, constant=6.000
+    atom_name: shape=(24,), atype=INT, constant=55
+    atomic_number: shape=(24,), atype=INT, constant=6
     b_factor: shape=(24,), atype=FLOAT, unique=24, range=[25, 72.5]
-    bond_type: shape=(24,), atype=INT, constant=1.000
-    chain_id: shape=(24,), atype=INT, unique=2, values=[0, 1]
+    bond_type: shape=(24,), atype=INT, constant=1
+    chain_id: shape=(24,), atype=INT, unique=2, values=['0', '1']
     charge: shape=(24,), atype=FLOAT, constant=0.163
-    ... and 18 more attributes
+    entity_id: shape=(24,), atype=INT, constant=0
+    instance_transform: shape=(24, 4, 4), atype=FLOAT4X4, unique=290, range=[-0.995, 1]
+    is_alpha_carbon: shape=(24,), atype=BOOLEAN, constant=False
+    is_backbone: shape=(24,), atype=BOOLEAN, constant=True
+    is_carb: shape=(24,), atype=BOOLEAN, constant=False
+    is_hetero: shape=(24,), atype=BOOLEAN, constant=False
+    is_nucleic: shape=(24,), atype=BOOLEAN, constant=True
+    is_peptide: shape=(24,), atype=BOOLEAN, constant=False
+    is_side_chain: shape=(24,), atype=BOOLEAN, constant=True
+    is_solvent: shape=(24,), atype=BOOLEAN, constant=False
+    lipophobicity: shape=(24,), atype=FLOAT, constant=0.02
+    mass: shape=(24,), atype=FLOAT, constant=12
+    occupancy: shape=(24,), atype=FLOAT, constant=1
+    position: shape=(24, 3), atype=FLOAT_VECTOR, constant=0
+    res_id: shape=(24,), atype=INT, unique=24, range=[1, 24]
+    res_name: shape=(24,), atype=INT, unique=4, values=['30', '31', '32', '33']
+    ures_id: shape=(24,), atype=INT, unique=24, range=[0, 23]
+    vdw_radii: shape=(24,), atype=FLOAT, constant=0.017
 # ---
 # name: test_spheres_style
   Mesh: 1BNA
@@ -180,27 +198,27 @@
     Color: shape=(486, 4), atype=FLOAT_COLOR, unique=9, range=[0.16, 1]
     atom_id: shape=(486,), atype=INT, unique=486, range=[1, 486]
     atom_name: shape=(486,), atype=INT, unique=27, range=[50, 77]
-    atomic_number: shape=(486,), atype=INT, unique=4, values=[6, 7, 8, 15]
+    atomic_number: shape=(486,), atype=INT, unique=4, values=['6', '7', '8', '15']
     b_factor: shape=(486,), atype=FLOAT, unique=468, range=[8.73, 79]
-    bond_type: shape=(486,), atype=INT, unique=5, values=[1, 2, 4, 5, 6]
-    chain_id: shape=(486,), atype=INT, unique=2, values=[0, 1]
+    bond_type: shape=(486,), atype=INT, unique=5, values=['1', '2', '4', '5', '6']
+    chain_id: shape=(486,), atype=INT, unique=2, values=['0', '1']
     charge: shape=(486,), atype=FLOAT, unique=51, range=[-0.977, 1.17]
-    entity_id: shape=(486,), atype=INT, constant=0.000
-    is_alpha_carbon: shape=(486,), atype=BOOLEAN, constant=0.000
-    is_backbone: shape=(486,), atype=BOOLEAN, unique=2, values=[False, True]
-    is_carb: shape=(486,), atype=BOOLEAN, constant=0.000
-    is_hetero: shape=(486,), atype=BOOLEAN, constant=0.000
-    is_nucleic: shape=(486,), atype=BOOLEAN, constant=1.000
-    is_peptide: shape=(486,), atype=BOOLEAN, constant=0.000
-    is_side_chain: shape=(486,), atype=BOOLEAN, unique=2, values=[False, True]
-    is_solvent: shape=(486,), atype=BOOLEAN, constant=0.000
+    entity_id: shape=(486,), atype=INT, constant=0
+    is_alpha_carbon: shape=(486,), atype=BOOLEAN, constant=False
+    is_backbone: shape=(486,), atype=BOOLEAN, unique=2, values=['False', 'True']
+    is_carb: shape=(486,), atype=BOOLEAN, constant=False
+    is_hetero: shape=(486,), atype=BOOLEAN, constant=False
+    is_nucleic: shape=(486,), atype=BOOLEAN, constant=True
+    is_peptide: shape=(486,), atype=BOOLEAN, constant=False
+    is_side_chain: shape=(486,), atype=BOOLEAN, unique=2, values=['False', 'True']
+    is_solvent: shape=(486,), atype=BOOLEAN, constant=False
     lipophobicity: shape=(486,), atype=FLOAT, unique=19, range=[-1.66, 0.45]
-    mass: shape=(486,), atype=FLOAT, unique=4, values=[12.0107, 14.0067, 15.9994, 30.97376]
-    occupancy: shape=(486,), atype=FLOAT, constant=1.000
+    mass: shape=(486,), atype=FLOAT, unique=4, values=['12', '14', '16', '31']
+    occupancy: shape=(486,), atype=FLOAT, constant=1
     position: shape=(486, 3), atype=FLOAT_VECTOR, unique=1423, range=[-0.114, 0.342]
-    radius: shape=(486,), atype=FLOAT, unique=4, values=[0.01216, 0.0124, 0.013600001, 0.0144]
+    radius: shape=(486,), atype=FLOAT, unique=4, values=['0.0122', '0.0124', '0.0136', '0.0144']
     res_id: shape=(486,), atype=INT, unique=24, range=[1, 24]
-    res_name: shape=(486,), atype=INT, unique=4, values=[30, 31, 32, 33]
+    res_name: shape=(486,), atype=INT, unique=4, values=['30', '31', '32', '33']
     ures_id: shape=(486,), atype=INT, unique=24, range=[0, 23]
-    vdw_radii: shape=(486,), atype=FLOAT, unique=4, values=[0.0152, 0.0155, 0.017, 0.018]
+    vdw_radii: shape=(486,), atype=FLOAT, unique=4, values=['0.0152', '0.0155', '0.017', '0.018']
 # ---
