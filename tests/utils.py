@@ -174,8 +174,11 @@ class GeometrySet:
             lines.append(f"  Unique instances: {n_unique}; {ref_arr}")
             lines.append(f"  Instance references: {self.geom.instance_references()}")
 
+        filtered_attrs = {
+            k: v for k, v in instances.attributes.items() if k != "position"
+        }
         lines.extend(
-            self._summarize_attributes(instances.attributes, "  Attributes", 50)
+            self._summarize_attributes(filtered_attrs, "  Attributes", 50)
         )
         return lines
 

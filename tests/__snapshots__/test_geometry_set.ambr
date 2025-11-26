@@ -179,7 +179,6 @@
     lipophobicity: shape=(24,), atype=FLOAT, constant=0.02
     mass: shape=(24,), atype=FLOAT, constant=12
     occupancy: shape=(24,), atype=FLOAT, constant=1
-    position: shape=(24, 3), atype=FLOAT_VECTOR, constant=0
     res_id: shape=(24,), atype=INT, unique=24, range=[1, 24]
     res_name: shape=(24,), atype=INT, unique=4, values=['30', '31', '32', '33']
     ures_id: shape=(24,), atype=INT, unique=24, range=[0, 23]
