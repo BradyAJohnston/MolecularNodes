@@ -1,7 +1,7 @@
-import molecularnodes as mn
-from .utils import GeometrySet
 import databpy as db
 import numpy as np
+import molecularnodes as mn
+from .utils import GeometrySet
 
 
 def test_get_set(snapshot):

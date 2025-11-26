@@ -147,12 +147,12 @@ class GeometrySet:
             )
 
         if self.geom.curves:
-            lines.append(f"\nCurves: present")
+            lines.append("\nCurves: present")
 
         if self.geom.volume:
-            lines.append(f"\nVolume: present")
+            lines.append("\nVolume: present")
 
         if self.geom.grease_pencil:
-            lines.append(f"\nGrease Pencil: present")
+            lines.append("\nGrease Pencil: present")
 
         return "\n".join(lines)
