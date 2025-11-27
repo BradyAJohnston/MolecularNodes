@@ -147,8 +147,6 @@ def add_style_branch(
 
     if name is not None:
         node_style.label = name
-    else:
-        node_style.label = node_style.name
 
     return node_style
 
