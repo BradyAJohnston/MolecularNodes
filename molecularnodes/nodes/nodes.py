@@ -210,7 +210,7 @@ def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
         try:
             tree = bpy.data.node_groups[tree]
         except KeyError:
-            tree = append(tree)
+            tree = append(tree)  # type: ignore
 
     swap_tree(node=node, tree=tree)
 
@@ -381,8 +381,6 @@ def create_starting_nodes_density(
     if threshold_range is not None:
         items_tree[key].min_value = threshold_range[0]
         items_tree[key].max_value = threshold_range[1]
-    # set the label to match node name
-    node_density.label = node_density.name
 
     # add the join geometry node to keep this consistent with style interface
     node_join = group.nodes.new("GeometryNodeJoinGeometry")

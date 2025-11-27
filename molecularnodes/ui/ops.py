@@ -50,7 +50,6 @@ def _add_node(node_name, context, show_options=False, material="default"):
     node.node_tree = bpy.data.node_groups[node_name]
     node.width = nodes.NODE_WIDTH
     node.show_options = show_options
-    node.label = node_name
     node.name = node_name
 
     # if added node has a 'Material' input, set it to the default MN material

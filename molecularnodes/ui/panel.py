@@ -733,7 +733,8 @@ class MN_UL_StylesList(bpy.types.UIList):
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            col.prop(item, "label", text="", emboss=False)
+            col.label(text=item.label if item.label != "" else item.name)
+
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
                 hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
