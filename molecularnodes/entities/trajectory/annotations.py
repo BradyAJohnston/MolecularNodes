@@ -1,6 +1,6 @@
-import os
 import typing
 from pathlib import Path
+from typing import TYPE_CHECKING
 from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
@@ -8,6 +8,8 @@ from ...annotations.manager import BaseAnnotationManager
 from ..annotations import Label2D, Label3D
 from ..base import EntityType
 
+if TYPE_CHECKING:
+    from .. import StreamingTrajectory, Trajectory
 __all__ = [
     "TrajectoryAnnotation",
     "TrajectoryAnnotationManager",
@@ -40,7 +42,7 @@ class TrajectoryAnnotation(BaseAnnotation):
 
     def __init__(self, trajectory):
         # Allow access to the trajectory entity within the annotations
-        self.trajectory = trajectory
+        self.trajectory: StreamingTrajectory | Trajectory = trajectory
         super().__init__()
 
 
@@ -387,25 +389,26 @@ class UniverseInfo(TrajectoryAnnotation):
         text = ""
         topology_filename = u.filename
         trajectory_filename = u.trajectory.filename
-        streaming = isinstance(
-            trajectory_filename, str
-        ) and trajectory_filename.startswith("imd://")
+        is_streaming: bool = self.trajectory._mn_entity_type == "md-streaming"
         if params.show_frame:
-            if streaming:
-                text = f"Frame : {u.trajectory.frame}"
+            frame = str(u.trajectory.frame)
+            if not is_streaming:
+                frame += f" / {u.trajectory.n_frames - 1}"
+            text += "Frame : " + frame
+
+        if params.show_topology:
+            text += "|Topology : " + Path(topology_filename).name
+        if params.show_trajectory:
+            if is_streaming:
+                traj_name = str(trajectory_filename)
             else:
-                text = f"Frame : {u.trajectory.frame} / {u.trajectory.n_frames - 1}"
-        if params.show_topology and isinstance(topology_filename, (str, Path)):
-            text = text + "|Topology : " + os.path.basename(topology_filename)
-        if params.show_trajectory and isinstance(trajectory_filename, (str, Path)):
-            if streaming:
-                text = text + "|Trajectory : " + trajectory_filename
-            else:
-                text = text + "|Trajectory : " + os.path.basename(trajectory_filename)
+                traj_name = str(Path(trajectory_filename).name)
+
+            text += "|Trajectory : " + traj_name
         if params.show_atoms:
-            text = text + "|Atoms : " + str(u.trajectory.n_atoms)
+            text += "|Atoms : " + str(u.trajectory.n_atoms)
         if params.custom_text != "":
-            text = text + "|" + params.custom_text
+            text += "|" + params.custom_text
         # Draw text at normalized coordinates wrt viewport / render
         self.draw_text_2d_norm(params.location, text)
 
