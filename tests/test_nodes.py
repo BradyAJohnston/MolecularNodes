@@ -335,9 +335,9 @@ def test_reuse_node_group():
 
 
 def _insert_periodic_array(traj):
-    mn.nodes.nodes.insert_last_node(
-        group=traj.tree, node=mn.nodes.nodes.add_custom(traj.tree, "Periodic Array")
-    )
+    node = mn.nodes.nodes.add_custom(traj.tree, "Periodic Array")
+    mn.nodes.nodes.insert_last_node(group=traj.tree, node=node)
+    return node
 
 
 def _get_node_defaults(node) -> list[Any]:
@@ -353,20 +353,24 @@ def _get_node_defaults(node) -> list[Any]:
     return defaults
 
 
-def test_periodic_array(snapshot):
-    traj = mn.Trajectory.load(GRO, XTC)
-    _insert_periodic_array(traj)
+def test_periodic_array(snapshot, tmp_path):
+    traj = mn.Trajectory.load(GRO, XTC, selection="protein")
+    node = _insert_periodic_array(traj)
 
-    node = traj.tree.nodes["Periodic Array"]
     traj.set_frame(1)
     defaults_0 = _get_node_defaults(node)
     traj.set_frame(10)
     defaults_10 = _get_node_defaults(node)
 
-    assert not all([x == y for x, y in zip(defaults_0, defaults_10)])
+    dim_idx = slice(1, 7)
+    assert not all([x == y for x, y in zip(defaults_0[dim_idx], defaults_10[dim_idx])])
     # the unit cell dimensions ar currently inputs 1..7 for the node as it is setup so
     # we just subset those and check it matches the universe
-    assert np.allclose(defaults_10[1:7], traj.universe.trajectory.ts.dimensions)
+    assert np.allclose(defaults_10[dim_idx], traj.universe.trajectory.ts.dimensions)
+
+    # for some reason we need to trigger a proper re-evaluation of the GN node tree
+    # by saving to a temp file #TODO: look into and try to fix this
+    bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "example.blend"))
     assert snapshot == GeometrySet(traj.object)
 
 
@@ -374,10 +378,9 @@ def test_periodic_array(snapshot):
 # update the positions and _attempt_ to update the periodic box but fail not do so quietly
 # and everything remains 0
 def test_periodic_array_no_dimensions():
-    traj = mn.Trajectory.load(PSF, DCD)
-    _insert_periodic_array(traj)
+    traj = mn.Trajectory.load(PSF, DCD, selection="protein")
+    node = _insert_periodic_array(traj)
 
-    node = traj.tree.nodes["Periodic Array"]
     traj.set_frame(1)
     defaults_0 = _get_node_defaults(node)
     traj.set_frame(frame=10)
