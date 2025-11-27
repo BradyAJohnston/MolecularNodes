@@ -3,7 +3,7 @@ from typing import Any
 import bpy
 import numpy as np
 import pytest
-from MDAnalysisData.yiip_equilibrium import fetch_yiip_equilibrium_short
+from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import codes, data_dir
@@ -334,22 +334,54 @@ def test_reuse_node_group():
     assert n_nodes == len(tree.nodes)
 
 
-def test_periodic_array(snapshot):
-    data = fetch_yiip_equilibrium_short()
-    traj = mn.Trajectory.load(data.topology, data.trajectory)
+def _insert_periodic_array(traj):
     mn.nodes.nodes.insert_last_node(
         group=traj.tree, node=mn.nodes.nodes.add_custom(traj.tree, "Periodic Array")
     )
 
-    def get_defaults(node) -> list[Any]:
-        return [i.default_value for i in node.inputs if hasattr(i, "default_value")]
+
+def _get_node_defaults(node) -> list[Any]:
+    defaults = []
+    for input in node.inputs:
+        if not hasattr(input, "default_value"):
+            continue
+        default = input.default_value
+        if isinstance(default, float):
+            default = round(default, 3)
+        defaults.append(default)
+
+    return defaults
+
+
+def test_periodic_array(snapshot):
+    traj = mn.Trajectory.load(GRO, XTC)
+    _insert_periodic_array(traj)
 
     node = traj.tree.nodes["Periodic Array"]
-    bpy.context.scene.frame_set(1)
-    defaults_0 = get_defaults(node)
-    bpy.context.scene.frame_set(10)
-    defaults_10 = get_defaults(node)
+    traj.set_frame(1)
+    defaults_0 = _get_node_defaults(node)
+    traj.set_frame(10)
+    defaults_10 = _get_node_defaults(node)
 
-    print(list(zip(defaults_0, defaults_10)))
     assert not all([x == y for x, y in zip(defaults_0, defaults_10)])
+    # the unit cell dimensions ar currently inputs 1..7 for the node as it is setup so
+    # we just subset those and check it matches the universe
+    assert np.allclose(defaults_10[1:7], traj.universe.trajectory.ts.dimensions)
     assert snapshot == GeometrySet(traj.object)
+
+
+# this topology doesn't have any dimension information so it should just
+# update the positions and _attempt_ to update the periodic box but fail not do so quietly
+# and everything remains 0
+def test_periodic_array_no_dimensions():
+    traj = mn.Trajectory.load(PSF, DCD)
+    _insert_periodic_array(traj)
+
+    node = traj.tree.nodes["Periodic Array"]
+    traj.set_frame(1)
+    defaults_0 = _get_node_defaults(node)
+    traj.set_frame(frame=10)
+    defaults_10 = _get_node_defaults(node)
+
+    assert defaults_0 == defaults_10
+    assert defaults_0[1:7] == [0] * 6

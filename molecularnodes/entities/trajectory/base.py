@@ -559,7 +559,9 @@ class Trajectory(MolecularEntity):
 
     def _update_box(self) -> None:
         """Update any Periodic Box nodes in the geometry node tree."""
-        dimensions = self.universe.trajectory.ts.dimensions
+        dimensions: tuple[float] | None = self.universe.trajectory.ts.dimensions
+        if dimensions is None:
+            return
         names = ["a", "b", "c", "alpha", "beta", "gamma"]
         nodes_to_update = ["Periodic Box", "Periodic Array"]
         for node in self.tree.nodes:
