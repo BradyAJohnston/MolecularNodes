@@ -549,12 +549,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>This is how we can add styles or representations of our molecular data, so we can actually see something.</p>
-<div id="61661d2c" class="cell" data-execution_count="1">
+<div id="1d88b677" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> mn.Canvas(resolution<span class="op">=</span>(<span class="dv">860</span>, <span class="dv">540</span>), transparent<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="a98893b1" class="cell" data-execution_count="2">
+<div id="07e678bb" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>codes <span class="op">=</span> [<span class="st">"4ozs"</span>, <span class="st">"8H1B"</span>, <span class="st">"8U8W"</span>]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>styles <span class="op">=</span> [</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    mn.StyleCartoon(),</span>
@@ -595,7 +595,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="0d5c7f53" class="cell" data-execution_count="3">
+<div id="afda62ba" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    mn.Molecule.fetch(<span class="st">"8H1B"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">"cartoon"</span>, material <span class="op">=</span> mn.material.AmbientOcclusion())</span>
@@ -616,7 +616,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="13971f01" class="cell" data-execution_count="4">
+<div id="72573d5f" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.styles[<span class="dv">0</span>].remove()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -627,7 +627,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="a1dbd0f8" class="cell" data-execution_count="5">
+<div id="1727d6d3" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    mol</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">'ribbon'</span>, selection<span class="op">=</span><span class="st">"is_peptide"</span>)</span>
@@ -646,7 +646,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="88054fd1" class="cell" data-execution_count="6">
+<div id="702678dd" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cv.clear()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cv.engine <span class="op">=</span> mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
@@ -665,7 +665,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="f492776b" class="cell" data-execution_count="7">
+<div id="6581e741" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cv.frame_view(mol, (<span class="op">-</span><span class="fl">3.14</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">

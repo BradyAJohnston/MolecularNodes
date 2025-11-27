@@ -637,7 +637,7 @@ Python Versions
 <section id="molecules" class="level2">
 <h2 class="anchored" data-anchor-id="molecules">Molecules</h2>
 <p>To get started, with import the module start a new scene be creating out <a href="../api/reference/Canvas.html#molecularnodes.Canvas"><code>Canvas</code></a> object. This object is how we change settings for how the scene will render and other related settings sich as resolution.</p>
-<div id="2aea2a7a" class="cell" data-execution_count="1">
+<div id="40364241" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>), resolution<span class="op">=</span>(<span class="dv">720</span>, <span class="dv">480</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -646,7 +646,7 @@ Python Versions
 <h3 class="anchored" data-anchor-id="add-a-molecule">Add a <code>Molecule</code></h3>
 <p>The <a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>mn.Molecule</code></a> can take a <code>AtomArray</code> from the <code>biotite</code> package directly, or it has the <a href="../api/reference/Molecule.html#molecularnodes.Molecule.fetch"><code>mn.Molecule.fetch</code></a> and <a href="../api/reference/Molecule.html#molecularnodes.Molecule.load"><code>mn.Molecule.load</code></a> class methods to download directly from the PDB or load a local file.</p>
 <p>After loading the molecule, to be able to see anything we must first add a style. Then we can frame the camera on the object and take a snapshot.</p>
-<div id="6e5f5316" class="cell" data-execution_count="2">
+<div id="15eaec74" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"4ozs"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mol.add_style(mn.StyleCartoon())</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>canvas.frame_object(mol)</span>
@@ -659,7 +659,7 @@ Python Versions
 </div>
 </div>
 </div>
-<div id="3cfb34e7" class="cell" data-execution_count="3">
+<div id="09f7aca4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>canvas.background <span class="op">=</span> (<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>canvas.camera.lens <span class="op">=</span> <span class="dv">130</span></span>
@@ -677,7 +677,7 @@ Python Versions
 </div>
 </div>
 </div>
-<div id="6516956c" class="cell" data-execution_count="4">
+<div id="a9ac27bc" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>canvas.frame_view(mol, (<span class="op">-</span><span class="fl">3.14</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -688,7 +688,7 @@ Python Versions
 </div>
 </div>
 </div>
-<div id="05643e38" class="cell" data-execution_count="5">
+<div id="4978cb8c" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>canvas.engine <span class="op">=</span> <span class="st">"eevee"</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas.resolution <span class="op">=</span> (<span class="dv">800</span>, <span class="dv">800</span>)</span>
@@ -710,7 +710,7 @@ Python Versions
 </section>
 <section id="trajectories" class="level2">
 <h2 class="anchored" data-anchor-id="trajectories">Trajectories</h2>
-<div id="12bd2cdf" class="cell" data-execution_count="6">
+<div id="afd4254a" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> PSF, DCD</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysisData <span class="im">import</span> datasets</span>
@@ -770,7 +770,7 @@ Figure&nbsp;2: Selectively apply the style using an MDAnalysis selection string.
 </div>
 </div>
 </div>
-<div id="01495480" class="cell" data-execution_count="9">
+<div id="e29311ef" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>rot <span class="op">=</span> [transformations.rotate.rotateby(<span class="dv">90</span>,direction<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>],point<span class="op">=</span>np.zeros(<span class="dv">3</span>))]</span>
@@ -791,7 +791,7 @@ Figure&nbsp;2: Selectively apply the style using an MDAnalysis selection string.
 <section id="coloring-atoms-based-on-computed-values" class="level3">
 <h3 class="anchored" data-anchor-id="coloring-atoms-based-on-computed-values">Coloring Atoms Based on Computed Values</h3>
 <p>Run analysis and compute values.</p>
-<div id="047bd20e" class="cell" data-execution_count="10">
+<div id="0718fdc4" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>adk <span class="op">=</span> datasets.fetch_adk_equilibrium()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(adk.topology, adk.trajectory)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -808,14 +808,14 @@ Figure&nbsp;2: Selectively apply the style using an MDAnalysis selection string.
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    residue.atoms.tempfactors <span class="op">=</span> r_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Compute a numpy array of color values <code>(Red, Green, Blue, Alpha)</code> that we can then store on the mesh object inside of Blender that will be used for coloring in the final render.</p>
-<div id="d616a8e4" class="cell" data-execution_count="11">
+<div id="92440205" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>viridis <span class="op">=</span> cm.get_cmap(<span class="st">'inferno'</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">=</span> u.atoms.tempfactors</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">/=</span> col_array.<span class="bu">max</span>()</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">=</span> viridis(col_array)</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>col_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/var/folders/hv/p74ngqjd2b145nyxd54yx5kw0000gn/T/ipykernel_25553/3304747087.py:1: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
+<pre><code>/var/folders/hv/p74ngqjd2b145nyxd54yx5kw0000gn/T/ipykernel_44083/3304747087.py:1: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed in 3.11. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap()`` or ``pyplot.get_cmap()`` instead.
   viridis = cm.get_cmap('inferno')</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="11">
@@ -881,7 +881,7 @@ Figure&nbsp;3: We can compute custom color values and then use those in the fina
 <section id="a-sub-selection-of-atoms" class="level3">
 <h3 class="anchored" data-anchor-id="a-sub-selection-of-atoms">A sub-selection of atoms</h3>
 <p>When adding a style, we can ensure it is only applied to some selection of atoms. The <code>selection</code> can be an <code>AtomGroup</code> or a string. In this case we pass an <code>AtomGroup</code> and the selection is only applied to those atoms from the group.</p>
-<div id="b38573fe" class="cell" data-execution_count="13">
+<div id="ea87204b" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>adk <span class="op">=</span> datasets.fetch_adk_equilibrium()</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(adk.topology, adk.trajectory)</span>

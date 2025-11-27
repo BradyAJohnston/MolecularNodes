@@ -339,6 +339,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#mn_assembly_" id="toc-mn_assembly_" class="nav-link" data-scroll-target="#mn_assembly_">MN_assembly_</a></li>
   <li><a href="#mn_assembly_center" id="toc-mn_assembly_center" class="nav-link" data-scroll-target="#mn_assembly_center">MN_assembly_center</a></li>
   <li><a href="#ensemble-instance" id="toc-ensemble-instance" class="nav-link" data-scroll-target="#ensemble-instance">Ensemble Instance</a></li>
+  <li><a href="#periodic-array" id="toc-periodic-array" class="nav-link" data-scroll-target="#periodic-array">Periodic Array</a></li>
+  <li><a href="#periodic-box" id="toc-periodic-box" class="nav-link" data-scroll-target="#periodic-box">Periodic Box</a></li>
+  <li><a href="#periodic-image" id="toc-periodic-image" class="nav-link" data-scroll-target="#periodic-image">Periodic Image</a></li>
+  <li><a href="#lattice-grid" id="toc-lattice-grid" class="nav-link" data-scroll-target="#lattice-grid">Lattice Grid</a></li>
   <li><a href="#starfile-instances" id="toc-starfile-instances" class="nav-link" data-scroll-target="#starfile-instances">Starfile Instances</a></li>
   <li><a href="#rotation-relion" id="toc-rotation-relion" class="nav-link" data-scroll-target="#rotation-relion">Rotation RELION</a></li>
   <li><a href="#rotation-cistem" id="toc-rotation-cistem" class="nav-link" data-scroll-target="#rotation-cistem">Rotation cisTEM</a></li>
@@ -570,9 +574,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="starfile-instances" class="level2">
-<h2 class="anchored" data-anchor-id="starfile-instances">Starfile Instances</h2>
-<p>Instance an object onto the given starfile points</p>
+<section id="periodic-array" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-array">Periodic Array</h2>
+<p>Replicate the trajectory across periodic boundaries.</p>
 <section id="outputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
 <table class="caption-top table">
@@ -596,6 +600,340 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="inputs-3" class="level3">
 <h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: center;"><em>None</em></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-bool">Update</code></td>
+<td style="text-align: center;">True</td>
+<td>Update the box lengths and angles with the simulation</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">a</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">b</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">c</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">beta</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">gamma</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">X</code></td>
+<td style="text-align: center;">3</td>
+<td>Number of images along the a vector</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Y</code></td>
+<td style="text-align: center;">3</td>
+<td>Number of images along the b vector</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Z</code></td>
+<td style="text-align: center;">3</td>
+<td>Number of images along the c vector</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="periodic-box" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-box">Periodic Box</h2>
+<p>Get the box vectors for a trajectory’s periodic simulation box. These vectors can be used to create periodic images of the trajectory</p>
+<section id="outputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">A</code></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">B</code></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-vector">C</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-bool">Update</code></td>
+<td style="text-align: center;">True</td>
+<td>Update the box lengths and angles with the simulation</td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">a</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">b</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">c</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">alpha</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-float">beta</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-float">gamma</code></td>
+<td style="text-align: center;">0.0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="periodic-image" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-image">Periodic Image</h2>
+<p>Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice indices.</p>
+<section id="outputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Points</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">A</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">B</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">C</code></td>
+<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Image A</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Image B</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Image C</code></td>
+<td style="text-align: center;">0</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="lattice-grid" class="level2">
+<h2 class="anchored" data-anchor-id="lattice-grid">Lattice Grid</h2>
+<p>Create a grid of lattice points based on the periodic box vectors.</p>
+<section id="outputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Grid</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 76%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Socket</th>
+<th style="text-align: center;">Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-vector">A</code></td>
+<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-vector">B</code></td>
+<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-vector">C</code></td>
+<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">X</code></td>
+<td style="text-align: center;">3</td>
+<td>Number of images along the a vector</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-int">Y</code></td>
+<td style="text-align: center;">3</td>
+<td>Number of images along the b vector</td>
+</tr>
+<tr class="even">
+<td><code class="custom-int">Z</code></td>
+<td style="text-align: center;">3</td>
+<td>Number of images along the c vector</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="starfile-instances" class="level2">
+<h2 class="anchored" data-anchor-id="starfile-instances">Starfile Instances</h2>
+<p>Instance an object onto the given starfile points</p>
+<section id="outputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 90%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Socket</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level3">
+<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -642,8 +980,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="rotation-relion" class="level2">
 <h2 class="anchored" data-anchor-id="rotation-relion">Rotation RELION</h2>
 <p>A rotation calculated from relevant columns of a RELION .star file</p>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<section id="outputs-8" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
@@ -671,8 +1009,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="rotation-cistem" class="level2">
 <h2 class="anchored" data-anchor-id="rotation-cistem">Rotation cisTEM</h2>
 <p>A rotation calculated from relevant columns of a cisTEM .star file</p>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<section id="outputs-9" class="level3">
+<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 90%">
