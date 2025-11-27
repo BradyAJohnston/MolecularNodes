@@ -1,11 +1,13 @@
 import random
+from typing import Any
 import bpy
 import numpy as np
 import pytest
+from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import codes, data_dir
-from .utils import NumpySnapshotExtension
+from .utils import GeometrySet, NumpySnapshotExtension
 
 random.seed(6)
 
@@ -330,3 +332,59 @@ def test_reuse_node_group():
     assert n_nodes == len(tree.nodes)
     mn.Molecule.fetch("4ozs")
     assert n_nodes == len(tree.nodes)
+
+
+def _insert_periodic_array(traj):
+    node = mn.nodes.nodes.add_custom(traj.tree, "Periodic Array")
+    mn.nodes.nodes.insert_last_node(group=traj.tree, node=node)
+    return node
+
+
+def _get_node_defaults(node) -> list[Any]:
+    defaults = []
+    for input in node.inputs:
+        if not hasattr(input, "default_value"):
+            continue
+        default = input.default_value
+        if isinstance(default, float):
+            default = round(default, 3)
+        defaults.append(default)
+
+    return defaults
+
+
+def test_periodic_array(snapshot, tmp_path):
+    traj = mn.Trajectory.load(GRO, XTC, selection="protein")
+    node = _insert_periodic_array(traj)
+
+    traj.set_frame(1)
+    defaults_0 = _get_node_defaults(node)
+    traj.set_frame(10)
+    defaults_10 = _get_node_defaults(node)
+
+    dim_idx = slice(1, 7)
+    assert not all([x == y for x, y in zip(defaults_0[dim_idx], defaults_10[dim_idx])])
+    # the unit cell dimensions ar currently inputs 1..7 for the node as it is setup so
+    # we just subset those and check it matches the universe
+    assert np.allclose(defaults_10[dim_idx], traj.universe.trajectory.ts.dimensions)
+
+    # for some reason we need to trigger a proper re-evaluation of the GN node tree
+    # by saving to a temp file #TODO: look into and try to fix this
+    bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "example.blend"))
+    assert snapshot == GeometrySet(traj.object)
+
+
+# this topology doesn't have any dimension information so it should just
+# update the positions and _attempt_ to update the periodic box but fail not do so quietly
+# and everything remains 0
+def test_periodic_array_no_dimensions():
+    traj = mn.Trajectory.load(PSF, DCD, selection="protein")
+    node = _insert_periodic_array(traj)
+
+    traj.set_frame(1)
+    defaults_0 = _get_node_defaults(node)
+    traj.set_frame(frame=10)
+    defaults_10 = _get_node_defaults(node)
+
+    assert defaults_0 == defaults_10
+    assert defaults_0[1:7] == [0] * 6

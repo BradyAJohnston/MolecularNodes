@@ -883,6 +883,21 @@ ensemble:
     description: >-
       Instance the items of an ensemble onto the given points
   - type: break
+  - label: Periodic Array
+    name: Periodic Array
+    description: >-
+      Replicate the trajectory across periodic boundaries.
+  - name: Periodic Box
+    description: >-
+      Get the box vectors for a trajectory's periodic simulation box. These vectors can be used to create periodic 
+      images of the trajectory
+  - name: Periodic Image
+    description: >-
+      Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice indices.
+  - name: Lattice Grid
+    description: >-
+      Create a grid of lattice points based on the periodic box vectors.
+  - type: break
   - name: Starfile Instances
     description: >-
       Instance an object onto the given starfile points
@@ -892,7 +907,6 @@ ensemble:
   - name: Rotation cisTEM
     description: >-
       A rotation calculated from relevant columns of a cisTEM .star file
-
 DNA:
   title: DNA
   items:

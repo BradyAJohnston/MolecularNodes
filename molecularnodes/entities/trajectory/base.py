@@ -480,7 +480,7 @@ class Trajectory(MolecularEntity):
         style: str | None = "spheres",
         selection: str | None = None,
         create_object: bool = True,
-    ):
+    ) -> "Trajectory":
         u = mda.Universe(topology, coordinates)
         traj = cls(u, name=name, create_object=create_object)
         if style:
@@ -527,6 +527,8 @@ class Trajectory(MolecularEntity):
             self._update_calculations()
             # update annotation object
             self.annotations._update_annotation_object()
+            # update periodic box nodes
+            self._update_box()
         finally:
             self._updating_in_progress = False
 
@@ -554,6 +556,25 @@ class Trajectory(MolecularEntity):
             Scene frame number
         """
         self.position = self.frame_manager.get_positions_at_frame(frame)
+
+    def _update_box(self) -> None:
+        """Update any Periodic Box nodes in the geometry node tree."""
+        dimensions: tuple[float] | None = self.universe.trajectory.ts.dimensions
+        if dimensions is None:
+            return
+        names = ["a", "b", "c", "alpha", "beta", "gamma"]
+        nodes_to_update = ["Periodic Box", "Periodic Array"]
+        for node in self.tree.nodes:
+            if (
+                not isinstance(node, bpy.types.GeometryNodeGroup)
+                or node.node_tree is None
+                or node.node_tree.name not in nodes_to_update
+                or not node.inputs["Update"].default_value  # type: ignore
+            ):
+                continue
+
+            for name, value in zip(names, dimensions):
+                node.inputs[name].default_value = value
 
     def __repr__(self) -> str:
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
