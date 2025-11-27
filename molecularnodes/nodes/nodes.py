@@ -112,6 +112,16 @@ def add_selection(group, sel_name, input_list, field="chain_id"):
     return sel_node
 
 
+def get_selection(node: bpy.types.GeometryNode) -> bpy.types.GeometryNode | None:
+    sel_input = node.inputs.get("Selection")
+    if not sel_input:
+        return None
+    try:
+        return sel_input.links[0].from_socket.node  # type: ignore
+    except (KeyError, IndexError):
+        return None
+
+
 def get_output(group) -> bpy.types.GeometryNode:
     return group.nodes[
         bpy.app.translations.pgettext_data(
@@ -708,23 +718,30 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode
     return node_join
 
 
+def last_node(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
+    return get_output(tree).inputs[0].links[0].from_socket.node  # type: ignore
+
+
+def node_previous(node):
+    return node.inputs[0].links[0].from_socket.node
+
+
 def final_join(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
     """
     Get the last JoinGeometry node in the tree.
     """
     output = get_output(tree)
-    if "Assembly" in output.inputs[0].links[0].from_socket.node.name:
-        if (
-            output.inputs[0].from_socket.node.inputs[0].links[0].from_socket.node.name
-            == "GeometryNodeJoinGeometry"
-        ):
-            return output.inputs[0].from_socket.node.inputs[0].from_socket.node  # type: ignore
+    current = last_node(tree)
     try:
-        linked = output.inputs[0].links[0].from_socket.node  # type: ignore
-        if linked.bl_idname == "GeometryNodeJoinGeometry":
-            return linked
-        else:
-            return insert_join_last(tree)
+        while True:
+            if current.bl_idname == "GeometryNodeGroupInput":
+                raise RuntimeError
+            if current.bl_idname == "GeometryNodeJoinGeometry":
+                return current
+            current = node_previous(current)
+
+    except RuntimeError:
+        return insert_join_last(tree)
     except IndexError:
         return insert_join_last(tree)
 

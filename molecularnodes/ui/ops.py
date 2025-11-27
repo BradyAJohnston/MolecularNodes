@@ -249,6 +249,22 @@ class MN_OT_Node_Swap(Operator):
         return {"FINISHED"}
 
 
+class MN_OT_Node_Swap_Style_Menu(Operator):
+    bl_idname = "mn.node_swap_style_menu"
+    bl_label = "Swap Style"
+    bl_description = "Swap the style node currently used"
+
+    node_items: EnumProperty(items=STYLE_ITEMS)  # type: ignore
+    name_tree: StringProperty()  # type: ignore
+    name_node: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_node]
+        print(f"{node=}")
+        nodes.swap(node, tree=nodes.styles_mapping[self.node_items])
+        return {"FINISHED"}
+
+
 class MN_OT_Change_Color(Operator):
     bl_idname = "mn.change_color"
     bl_label = "Color"
@@ -795,7 +811,7 @@ class MN_OT_Add_Style(Operator):
 
     bl_idname = "mn.add_style"
     bl_label = "Add Style"
-    bl_description = "Add new style to entity"
+    bl_description = "Add new style to Fpointntity"
 
     uuid: StringProperty()  # type: ignore
 
@@ -1055,6 +1071,7 @@ CLASSES = [
     MN_OT_iswitch_custom,
     MN_OT_Change_Color,
     MN_OT_Node_Swap,
+    MN_OT_Node_Swap_Style_Menu,
     MN_OT_Import_Fetch,
     MN_OT_Import_OxDNA_Trajectory,
     MN_OT_Import_Trajectory,

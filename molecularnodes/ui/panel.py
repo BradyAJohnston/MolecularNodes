@@ -6,6 +6,7 @@ from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
 from ..session import get_session
 from .pref import addon_preferences
+from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
 
 
@@ -724,6 +725,8 @@ class MN_UL_StylesList(bpy.types.UIList):
         index=0,
         flt_flag=0,
     ):
+        item: bpy.types.GeometryNode = item
+        layout: bpy.types.UILayout = layout
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
@@ -733,7 +736,9 @@ class MN_UL_StylesList(bpy.types.UIList):
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            col.prop(item, "label", text="", emboss=False)
+            # label: str = item.label
+            # col.prop(item, "label", text="", emboss=False)
+            col.label(text=item.label if item.label != "" else item.name)
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
                 hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
@@ -770,6 +775,15 @@ class MN_UL_StylesList(bpy.types.UIList):
                 ordered[i] = index
                 index += 1
         return filtered, ordered
+
+
+def panel_selection_node(
+    layout: bpy.types.UILayout, node: bpy.types.GeometryNode, entity
+):
+    sel_node = nodes.get_selection(node)
+    attr_name = sel_node.inputs[0].default_value
+    item: TrajectorySelectionItem = entity.selections.ui_items[attr_name]
+    layout.prop(item, "string")
 
 
 class MN_PT_Styles(bpy.types.Panel):
@@ -844,43 +858,54 @@ class MN_PT_Styles(bpy.types.Panel):
         if not valid_selection:
             return
 
-        box = layout.box()
-        row = box.row()
         style_node = node_group.nodes[styles_active_index]
-
-        panels = {}
-        for item in style_node.node_tree.interface.items_tree.values():
-            if item.item_type == "PANEL":
-                header = None
-                if item.parent.name and item.parent.name in panels:
-                    panel = panels[item.parent.name]
-                    if panel:
-                        header, panel = panel.panel(item.name, default_closed=False)
-                else:
-                    header, panel = box.panel(item.name, default_closed=False)
-                if header:
-                    header.label(text=item.name)
-                panels[item.name] = panel
-            elif item.name == "Selection":
-                continue
-            else:
-                if item.in_out != "INPUT":
-                    continue
-                if item.name in ("Visible"):
-                    continue
-                input = style_node.inputs[item.identifier]
-                if not hasattr(input, "default_value"):
-                    continue
-                row = None
-                if item.parent.name and item.parent.name in panels:
-                    panel = panels[item.parent.name]
-                    if panel:
-                        row = panel.row()
-                else:
-                    row = box.row()
-                if row:
-                    row.prop(data=input, property="default_value", text=input.name)
+        box = layout.column()
         row = box.row()
+
+        op = box.row().operator_menu_enum(
+            operator="mn.node_swap_style_menu",
+            property="node_items",
+            text=style_node.name.strip("Style"),
+        )
+        op.name_tree = style_node.id_data.name
+        op.name_node = style_node.name
+
+        panel_selection_node(box, style_node, entity)
+
+        box.template_node_inputs(style_node)
+
+        # panels = {}
+        # for item in style_node.node_tree.interface.items_tree.values():
+        #     if item.item_type == "PANEL":
+        #         header = None
+        #         if item.parent.name and item.parent.name in panels:
+        #             panel = panels[item.parent.name]
+        #             if panel:
+        #                 header, panel = panel.panel(item.name, default_closed=False)
+        #         else:
+        #             header, panel = box.panel(item.name, default_closed=False)
+        #         if header:
+        #             header.label(text=item.name)
+        #         panels[item.name] = panel
+        #     elif item.name == "Selection":
+        #         continue
+        #     else:
+        #         if item.in_out != "INPUT":
+        #             continue
+        #         if item.name in ("Visible"):
+        #             continue
+        #         input = style_node.inputs[item.identifier]
+        #         if not hasattr(input, "default_value"):
+        #             continue
+        #         row = None
+        #         try:
+        #             panel = panels[item.parent.name]
+        #             row = panel.row()
+        #         except (KeyError, AttributeError):
+        #             row = box.row()
+
+        #         row.prop(data=input, property="default_value", text=input.name)
+        # row = box.row()
 
 
 class MN_UL_AnnotationsList(bpy.types.UIList):
