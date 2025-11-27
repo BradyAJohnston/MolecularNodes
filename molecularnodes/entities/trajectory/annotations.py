@@ -385,12 +385,23 @@ class UniverseInfo(TrajectoryAnnotation):
         params = self.interface
         u = self.trajectory.universe
         text = ""
-        if params.show_frame and u.trajectory.n_frames is not None:
-            text = f"Frame : {u.trajectory.frame} / {u.trajectory.n_frames - 1}"
-        if params.show_topology and isinstance(u.filename, (str, Path)):
-            text = text + "|Topology : " + os.path.basename(u.filename)
-        if params.show_trajectory and isinstance(u.trajectory.filename, (str, Path)):
-            text = text + "|Trajectory : " + os.path.basename(u.trajectory.filename)
+        topology_filename = u.filename
+        trajectory_filename = u.trajectory.filename
+        streaming = isinstance(
+            trajectory_filename, str
+        ) and trajectory_filename.startswith("imd://")
+        if params.show_frame:
+            if streaming:
+                text = f"Frame : {u.trajectory.frame}"
+            else:
+                text = f"Frame : {u.trajectory.frame} / {u.trajectory.n_frames - 1}"
+        if params.show_topology and isinstance(topology_filename, (str, Path)):
+            text = text + "|Topology : " + os.path.basename(topology_filename)
+        if params.show_trajectory and isinstance(trajectory_filename, (str, Path)):
+            if streaming:
+                text = text + "|Trajectory : " + trajectory_filename
+            else:
+                text = text + "|Trajectory : " + os.path.basename(trajectory_filename)
         if params.show_atoms:
             text = text + "|Atoms : " + str(u.trajectory.n_atoms)
         if params.custom_text != "":
