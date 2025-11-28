@@ -95,7 +95,7 @@ def create_property_interface(
 ) -> property:
     """Create a property() interface for a blender property"""
 
-    nbattr = f"_{attr}"  # non blender property
+    nbattr = f"_custom_{attr}"  # non blender property
 
     def _prop():
         # Returns blender property - either annotation input or common property

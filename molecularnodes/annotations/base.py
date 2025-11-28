@@ -1007,6 +1007,58 @@ class BaseAnnotation(metaclass=ABCMeta):
         objects["shade_smooth"].append(params.mesh_shade_smooth)
         self._add_material_to_geometry(objects, params.mesh_material)
 
+    def draw_bpy_image(
+        self, pos_2d: Vector, image: bpy.types.Image, scale: float = 1.0
+    ) -> None:
+        """
+        Draw an image from bpy.data.images at the given 2D position (normalized
+        co-ordinates) of Viewport.
+
+        Parameters
+        ----------
+        pos_2d: Vector
+            Normalized co-ordinates (0 - 1). (0, 0) is at bottom left.
+            Bottom left of the image is placed at this position
+
+        image: bpy.types.Image
+            An image from bpy.data.images to draw at specified position
+
+        scale: float
+            Scale of the image to draw
+
+        """
+        if not isinstance(image, bpy.types.Image):
+            raise ValueError("image needs to be from bpy.data.images")
+        if self._render_mode:
+            return
+        if self.geometry:
+            return
+        if pos_2d is None:
+            return
+        for comp in pos_2d:
+            if not (0.0 <= comp <= 1.0):
+                return
+        texture = gpu.texture.from_image(image)
+        shader = gpu.shader.from_builtin("IMAGE")
+        pos_x, pos_y = pos_2d
+        x = pos_x * self.viewport_width
+        y = pos_y * self.viewport_height
+        width, height = image.size
+        x1 = x + (width * scale)
+        y1 = y + (height * scale)
+        batch = batch_for_shader(
+            shader,
+            "TRI_FAN",
+            {
+                "pos": ((x, y), (x1, y), (x1, y1), (x, y1)),
+                "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1)),
+            },
+        )
+        shader.bind()
+        shader.uniform_sampler("image", texture)
+        gpu.state.blend_set("ALPHA")
+        batch.draw(shader)
+
     def _draw_cone(
         self,
         location: Vector,
