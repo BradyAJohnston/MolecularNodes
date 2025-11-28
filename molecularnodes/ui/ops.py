@@ -260,7 +260,6 @@ class MN_OT_Node_Swap_Style_Menu(Operator):
 
     def execute(self, context: Context):
         node = bpy.data.node_groups[self.name_tree].nodes[self.name_node]
-        print(f"{node=}")
         nodes.swap(node, tree=nodes.styles_mapping[self.node_items])
         return {"FINISHED"}
 
@@ -759,6 +758,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style,
+                selection="all",
             )
         else:
             traj = Trajectory.load(
@@ -766,6 +766,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style if self.setup_nodes else None,
+                selection="all",
             )
 
         context.view_layer.objects.active = traj.object

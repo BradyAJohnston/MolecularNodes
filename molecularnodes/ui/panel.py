@@ -1,5 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
+from numpy.lib.arraysetops import isin
 from ..entities import StreamingTrajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
@@ -332,6 +333,26 @@ def ui_from_node(
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 
+def selection_string_input(layout: bpy.types.UILayout, item: TrajectorySelectionItem):
+    col = layout.column(align=False)
+    col.prop(item, "string")
+
+    # disable editing for immutable selections
+    # disable modifying updating and periodic
+    if item.from_atomgroup:
+        col.enabled = False
+
+    if item.message != "":
+        box = col.box()
+        box.label(text="Invalid Selection", icon="ERROR")
+        box.label(text=item.message)
+        box.alert = True
+        op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
+        op.url = (
+            "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
+        )
+
+
 def panel_md_properties(layout, context):
     obj = context.active_object
     session = get_session()
@@ -405,24 +426,7 @@ def panel_md_properties(layout, context):
     if obj.mn_trajectory_selections:
         item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
 
-        col = layout.column(align=False)
-        row = col.row()
-        col.prop(item, "string")
-
-        # disable editing for immutable selections
-        # disable modifying updating and periodic
-        if item.from_atomgroup:
-            col.enabled = False
-
-        if item.message != "":
-            box = col.box()
-            box.label(text="Invalid Selection", icon="ERROR")
-            box.label(text=item.message)
-            box.alert = True
-            op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
-            op.url = (
-                "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
-            )
+        selection_string_input(col, item)
 
 
 def panel_object(layout, context):
@@ -781,9 +785,12 @@ def panel_selection_node(
     layout: bpy.types.UILayout, node: bpy.types.GeometryNode, entity
 ):
     sel_node = nodes.get_selection(node)
+    if sel_node is None:
+        return
+    assert isinstance(sel_node, bpy.types.GeometryNodeInputNamedAttribute)
     attr_name = sel_node.inputs[0].default_value
     item: TrajectorySelectionItem = entity.selections.ui_items[attr_name]
-    layout.prop(item, "string")
+    selection_string_input(layout, item)
 
 
 class MN_PT_Styles(bpy.types.Panel):
@@ -860,52 +867,54 @@ class MN_PT_Styles(bpy.types.Panel):
 
         style_node = node_group.nodes[styles_active_index]
         box = layout.column()
-        row = box.row()
 
-        op = box.row().operator_menu_enum(
+        panel_selection_node(box, style_node, entity)
+        row = box.row()
+        row.label(text="Style")
+        op = row.operator_menu_enum(
             operator="mn.node_swap_style_menu",
             property="node_items",
-            text=style_node.name.strip("Style"),
+            text=style_node.name.replace("Style ", ""),
         )
         op.name_tree = style_node.id_data.name
         op.name_node = style_node.name
+        box.separator()
 
-        panel_selection_node(box, style_node, entity)
+        # box.template_node_inputs(style_node)
 
-        box.template_node_inputs(style_node)
-
-        # panels = {}
-        # for item in style_node.node_tree.interface.items_tree.values():
-        #     if item.item_type == "PANEL":
-        #         header = None
-        #         if item.parent.name and item.parent.name in panels:
-        #             panel = panels[item.parent.name]
-        #             if panel:
-        #                 header, panel = panel.panel(item.name, default_closed=False)
-        #         else:
-        #             header, panel = box.panel(item.name, default_closed=False)
-        #         if header:
-        #             header.label(text=item.name)
-        #         panels[item.name] = panel
-        #     elif item.name == "Selection":
-        #         continue
-        #     else:
-        #         if item.in_out != "INPUT":
-        #             continue
-        #         if item.name in ("Visible"):
-        #             continue
-        #         input = style_node.inputs[item.identifier]
-        #         if not hasattr(input, "default_value"):
-        #             continue
-        #         row = None
-        #         try:
-        #             panel = panels[item.parent.name]
-        #             row = panel.row()
-        #         except (KeyError, AttributeError):
-        #             row = box.row()
-
-        #         row.prop(data=input, property="default_value", text=input.name)
-        # row = box.row()
+        panels = {}
+        for item in style_node.node_tree.interface.items_tree.values():
+            if item.item_type == "PANEL":
+                header = None
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
+                        header, panel = panel.panel(item.name, default_closed=False)
+                else:
+                    header, panel = box.panel(item.name, default_closed=False)
+                if header:
+                    header.label(text=item.name)
+                panels[item.name] = panel
+            elif item.name == "Selection":
+                continue
+            else:
+                if item.in_out != "INPUT":
+                    continue
+                if item.name in ("Visible"):
+                    continue
+                input = style_node.inputs[item.identifier]
+                if not hasattr(input, "default_value"):
+                    continue
+                row = None
+                if item.parent.name and item.parent.name in panels:
+                    panel = panels[item.parent.name]
+                    if panel:
+                        row = panel.row()
+                else:
+                    row = box.row()
+                if row:
+                    row.prop(data=input, property="default_value", text=input.name)
+        row = box.row()
 
 
 class MN_UL_AnnotationsList(bpy.types.UIList):
