@@ -426,7 +426,7 @@ def panel_md_properties(layout, context):
     if obj.mn_trajectory_selections:
         item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
 
-        selection_string_input(col, item)
+        selection_string_input(layout, item)
 
 
 def panel_object(layout, context):
