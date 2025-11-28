@@ -1043,6 +1043,30 @@ class BaseAnnotation(metaclass=ABCMeta):
         pos_x, pos_y = pos_2d
         x = pos_x * self.viewport_width
         y = pos_y * self.viewport_height
+        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+            # camera view mode in 3D viewport
+            zoom_factor, camera_view_width, camera_view_height = (
+                self._get_camera_view_info()
+            )
+            # offsets are based off the center of the viewport
+            camera_offset_x = self._rv3d.view_camera_offset[0]
+            camera_offset_y = self._rv3d.view_camera_offset[1]
+            # calculate the origin (bottom left) of the camera view
+            camera_view_x0 = (
+                (self.viewport_width / 2)
+                - (camera_view_width / 2)
+                - (camera_offset_x * self.viewport_width * 2 * zoom_factor)
+            )
+            camera_view_y0 = (
+                (self.viewport_height / 2)
+                - (camera_view_height / 2)
+                - (camera_offset_y * self.viewport_height * 2 * zoom_factor)
+            )
+            # calculate the actual position with respect to the camera view origin
+            x = camera_view_x0 + (pos_x * camera_view_width)
+            y = camera_view_y0 + (pos_y * camera_view_height)
+            scale *= camera_view_width / self._scene.render.resolution_x
+
         width, height = image.size
         x1 = x + (width * scale)
         y1 = y + (height * scale)
