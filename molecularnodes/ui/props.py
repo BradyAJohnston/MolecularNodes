@@ -430,6 +430,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
+
     __slots__ = []
 
     name: StringProperty(  # type: ignore
