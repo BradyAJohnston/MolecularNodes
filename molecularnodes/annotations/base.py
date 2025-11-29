@@ -1029,8 +1029,6 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         if not isinstance(image, bpy.types.Image):
             raise ValueError("image needs to be from bpy.data.images")
-        if self._render_mode:
-            return
         if self.geometry:
             return
         if pos_2d is None:
@@ -1038,11 +1036,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         for comp in pos_2d:
             if not (0.0 <= comp <= 1.0):
                 return
-        texture = gpu.texture.from_image(image)
-        shader = gpu.shader.from_builtin("IMAGE")
+
         pos_x, pos_y = pos_2d
         x = pos_x * self.viewport_width
         y = pos_y * self.viewport_height
+        # adjust viewport position for camera view mode
         if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
             # camera view mode in 3D viewport
             zoom_factor, camera_view_width, camera_view_height = (
@@ -1070,6 +1068,25 @@ class BaseAnnotation(metaclass=ABCMeta):
         width, height = image.size
         x1 = x + (width * scale)
         y1 = y + (height * scale)
+
+        if self._render_mode:
+            # convert bpy image to PIL image
+            pil_image = self.bpy_image_to_pil_image(image)
+            render_width, render_height = self._image.size
+            scale *= render_width / self._scene.render.resolution_x
+            width = int(width * scale)
+            height = int(height * scale)
+            x = int(pos_x * render_width)
+            y = int(pos_y * render_height)
+            # scale based on the render resolution
+            scaled_image = pil_image.resize((width, height))
+            # position based on the render image size
+            self._image.paste(scaled_image, (x, render_height - y - height))
+            pil_image.close()
+            scaled_image.close()
+            return
+
+        shader = gpu.shader.from_builtin("IMAGE")
         batch = batch_for_shader(
             shader,
             "TRI_FAN",
@@ -1079,9 +1096,72 @@ class BaseAnnotation(metaclass=ABCMeta):
             },
         )
         shader.bind()
-        shader.uniform_sampler("image", texture)
+        shader.uniform_sampler("image", gpu.texture.from_image(image))
         gpu.state.blend_set("ALPHA")
         batch.draw(shader)
+
+    def bpy_image_to_pil_image(self, bpy_image: bpy.types.Image) -> Image.Image:
+        """
+        Convert Blender image to PIL image
+
+        Parameters
+        ----------
+        bpy_image: bpy.types.Image
+            Blender image
+
+        Returns
+        -------
+        Image.Image
+            PIL Image
+
+        """
+        if not isinstance(bpy_image, bpy.types.Image):
+            raise ValueError("bpy_image needs to be of type bpy.types.Image")
+        width, height = bpy_image.size
+        pixels_array = np.asarray(bpy_image.pixels)
+        pixels_reshaped = pixels_array.reshape((height, width, 4))
+        pixels_flipped = np.flipud(pixels_reshaped)
+        pixels_uint8 = (pixels_flipped * 255).astype(np.uint8)
+        return Image.fromarray(pixels_uint8, "RGBA")
+
+    def pil_image_to_bpy_image(
+        self, pil_image: Image.Image, name: str = "PIL Image"
+    ) -> bpy.types.Image:
+        """
+        Convert PIL image to Blender image
+
+        Parameters
+        ----------
+        pil_image: Image.Image
+            PIL Image
+
+        name: str
+            Name of the bpy.data.images data block.
+            Using an exisiting name will re-use the data block,
+            whereas using a new name will create a new image data block.
+
+        Returns
+        -------
+        bpy.types.Image
+            Blender Image
+
+        """
+        if not isinstance(pil_image, Image.Image):
+            raise ValueError("pil_image needs to be of type PIL.Image.Image")
+        image_rgba = pil_image.convert("RGBA")
+        pixels_uint8 = np.asarray(image_rgba)
+        pixels_flipped = np.flipud(pixels_uint8)
+        pixels_array = (pixels_flipped.astype(np.float32) / 255.0).ravel()
+        height, width, _ = pixels_uint8.shape
+        if name in bpy.data.images:
+            bpy_image = bpy.data.images[name]
+            bpy_image.scale(width, height)
+        else:
+            bpy_image = bpy.data.images.new(
+                name=name, width=width, height=height, alpha=True
+            )
+        bpy_image.pixels = pixels_array
+        return bpy_image
 
     def _draw_cone(
         self,
