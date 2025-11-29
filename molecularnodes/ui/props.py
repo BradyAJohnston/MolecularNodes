@@ -67,6 +67,7 @@ def _entities_active_index_callback(self, context: bpy.context) -> None:  # type
 class EntityProperties(bpy.types.PropertyGroup):
     # name property is implicit and is set to uuid for find lookups
     # type value is one of EntityType enum
+    __slots__ = ["type", "visible"]
     type: StringProperty(name="Entity Type", default="")  # type: ignore
     visible: BoolProperty(
         name="visible",

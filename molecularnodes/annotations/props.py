@@ -81,6 +81,9 @@ def create_annotation_type_inputs(
     attributes["__annotations__"]["uuid"] = StringProperty()
     # add a boolean to indicate if validations succeeded
     attributes["__annotations__"]["valid_inputs"] = BoolProperty(default=True)
+    # add slots to declare attributes
+    attributes["__slots__"] = list(py_annotations.keys())
+    # create and return new AnnotationInputs class
     AnnotationInputs = type("AnnotationInputs", (bpy.types.PropertyGroup,), attributes)
     return AnnotationInputs
 
