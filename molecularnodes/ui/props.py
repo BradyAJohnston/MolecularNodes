@@ -67,7 +67,7 @@ def _entities_active_index_callback(self, context: bpy.context) -> None:  # type
 class EntityProperties(bpy.types.PropertyGroup):
     # name property is implicit and is set to uuid for find lookups
     # type value is one of EntityType enum
-    __slots__ = ["type", "visible"]
+    __slots__ = []
     type: StringProperty(name="Entity Type", default="")  # type: ignore
     visible: BoolProperty(
         name="visible",
@@ -79,6 +79,7 @@ class EntityProperties(bpy.types.PropertyGroup):
 
 
 class MolecularNodesSceneProperties(PropertyGroup):
+    __slots__ = []
     entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
     entities_active_index: IntProperty(
         name="Active entity index",
@@ -303,6 +304,7 @@ def _update_annotations_visibility(self, context):
 
 
 class MolecularNodesObjectProperties(PropertyGroup):
+    __slots__ = []
     styles_active_index: IntProperty(default=-1)  # type: ignore
     annotations_active_index: IntProperty(default=-1)  # type: ignore
     annotations_next_index: IntProperty(default=0)  # type: ignore
@@ -428,6 +430,7 @@ class MolecularNodesObjectProperties(PropertyGroup):
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
+    __slots__ = []
 
     name: StringProperty(  # type: ignore
         name="Attribute Name",

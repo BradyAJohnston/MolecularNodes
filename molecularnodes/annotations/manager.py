@@ -209,7 +209,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 bpy.props.PointerProperty(type=AnnotationInputs)
             )
         # add slots to declare annotation type attributes
-        AnnotationProperties.__slots__ = list(BaseAnnotationManager._classes.keys())
+        AnnotationProperties.__slots__ = []
         # Re-register the new AnnotationProperties class
         bpy.utils.register_class(AnnotationProperties)
         # Re-assign the annotation properties to Object - old data is retained
