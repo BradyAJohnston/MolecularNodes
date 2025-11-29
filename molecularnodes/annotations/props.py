@@ -156,6 +156,8 @@ def _update_annotation_object(self, context):
 class BaseAnnotationProperties(bpy.types.PropertyGroup):
     """Base annotation properties"""
 
+    __slots__ = []
+
     # annotation name (label)
     label: StringProperty()  # type: ignore
 

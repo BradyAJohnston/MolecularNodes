@@ -6,7 +6,6 @@ from bpy.props import (  # type: ignore
     IntProperty,
     StringProperty,
 )
-from bpy.types import PropertyGroup  # type: ignore
 from databpy.object import LinkedObjectError
 from ..blender.utils import set_object_visibility
 from ..handlers import _update_entities
@@ -78,7 +77,7 @@ class EntityProperties(bpy.types.PropertyGroup):
     )  # type: ignore
 
 
-class MolecularNodesSceneProperties(PropertyGroup):
+class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
     entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
     entities_active_index: IntProperty(
@@ -303,7 +302,7 @@ def _update_annotations_visibility(self, context):
         entity.annotations._update_annotation_object()
 
 
-class MolecularNodesObjectProperties(PropertyGroup):
+class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     __slots__ = []
     styles_active_index: IntProperty(default=-1)  # type: ignore
     annotations_active_index: IntProperty(default=-1)  # type: ignore

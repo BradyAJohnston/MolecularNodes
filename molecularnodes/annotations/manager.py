@@ -190,8 +190,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     @classmethod
     def _update_annotation_props(cls, annotation_class: BaseAnnotation):
         """Update annotation properties attached to Object"""
+        attributes = {"__slots__": []}
         AnnotationProperties = type(
-            "AnnotationProperties", (BaseAnnotationProperties,), {}
+            "AnnotationProperties", (BaseAnnotationProperties,), attributes
         )
         # Add each annotation type inputs as a pointer to a separate property group
         for annotation_type, annotation_class in BaseAnnotationManager._classes.items():
@@ -208,8 +209,6 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             AnnotationProperties.__annotations__[annotation_type] = (
                 bpy.props.PointerProperty(type=AnnotationInputs)
             )
-        # add slots to declare annotation type attributes
-        AnnotationProperties.__slots__ = []
         # Re-register the new AnnotationProperties class
         bpy.utils.register_class(AnnotationProperties)
         # Re-assign the annotation properties to Object - old data is retained
