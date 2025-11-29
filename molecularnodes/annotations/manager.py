@@ -190,8 +190,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     @classmethod
     def _update_annotation_props(cls, annotation_class: BaseAnnotation):
         """Update annotation properties attached to Object"""
+        attributes = {"__slots__": []}
         AnnotationProperties = type(
-            "AnnotationProperties", (BaseAnnotationProperties,), {}
+            "AnnotationProperties", (BaseAnnotationProperties,), attributes
         )
         # Add each annotation type inputs as a pointer to a separate property group
         for annotation_type, annotation_class in BaseAnnotationManager._classes.items():
