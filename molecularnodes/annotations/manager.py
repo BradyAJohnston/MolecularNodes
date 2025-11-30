@@ -38,7 +38,7 @@ def _validate_annotation_update(self, context, attr):
     interface = entity.annotations._interfaces.get(self.uuid)
     instance = interface._instance
     # delete non blender attribute as blender attribute updated
-    nbattr = f"_{attr}"
+    nbattr = f"_custom_{attr}"
     if hasattr(instance, nbattr):
         delattr(instance, nbattr)
     try:
