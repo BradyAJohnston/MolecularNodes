@@ -153,7 +153,7 @@ def add_style_branch(
 
 def get_final_style_nodes(
     tree: bpy.types.GeometryNodeTree,
-) -> List[bpy.types.Node | None]:
+) -> List[bpy.types.GeometryNodeGroup]:
     """
     Get the final style nodes in the tree.
     """
