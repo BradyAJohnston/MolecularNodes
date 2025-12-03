@@ -39,16 +39,19 @@ def create_annotation_type_inputs(
             )
         elif stype is bool:
             prop = BoolProperty(
+                description=attr,
                 default=getattr(annotation_class, attr, False),
                 update=_create_update_callback(update_callback, attr),
             )
         elif stype is int:
             prop = IntProperty(
+                description=attr,
                 default=getattr(annotation_class, attr, 0),
                 update=_create_update_callback(update_callback, attr),
             )
         elif stype is float:
             prop = FloatProperty(
+                description=attr,
                 default=getattr(annotation_class, attr, 0.0),
                 update=_create_update_callback(update_callback, attr),
             )
@@ -74,6 +77,16 @@ def create_annotation_type_inputs(
                 default=getattr(annotation_class, attr, default),
                 update=_create_update_callback(update_callback, attr),
             )
+        elif hasattr(stype, "__name__") and stype.__name__ == "list":
+            if str(stype) == "list[str]":
+                items_list = getattr(annotation_class, attr, None)
+                if isinstance(items_list, list) and items_list:
+                    items = [(item, item, item) for item in items_list]
+                    prop = EnumProperty(description=attr, items=items)
+                else:
+                    continue
+            else:
+                continue
         else:
             continue
         attributes["__annotations__"][attr] = prop
@@ -138,7 +151,12 @@ def create_property_interface(
                     if value not in bpy.data.materials:
                         raise ValueError(f"No material with name '{value}'")
                     value = bpy.data.materials[value]
-            setattr(_prop(), attr, value)
+            if isinstance(value, list) and value:
+                # for list[str] (i.e., EnumProperty types), set default to
+                # the first value of the list
+                setattr(_prop(), attr, value[0])
+            else:
+                setattr(_prop(), attr, value)
             # clear any corresponding non blender property
             if hasattr(instance, nbattr):
                 delattr(instance, nbattr)
