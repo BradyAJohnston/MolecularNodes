@@ -883,6 +883,8 @@ class MN_PT_Styles(bpy.types.Panel):
                 input = style_node.inputs[item.identifier]
                 if not hasattr(input, "default_value"):
                     continue
+                if input.is_inactive:
+                    continue
                 row = None
                 if item.parent.name and item.parent.name in panels:
                     panel = panels[item.parent.name]
