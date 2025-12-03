@@ -820,7 +820,7 @@ class MN_PT_Styles(bpy.types.Panel):
         entities_active_index: int = scene.mn.entities_active_index
         uuid: str = scene.mn.entities[entities_active_index].name
         entity = get_session().get(uuid)
-        if not entity:
+        if entity is None:
             return
         node_group = entity.node_group
         if node_group is None:
