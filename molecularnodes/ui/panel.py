@@ -597,14 +597,29 @@ class MN_UL_EntitiesList(bpy.types.UIList):
             layout.label(text="", icon=custom_icon)
 
     def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
         items = getattr(data, propname)
-        filtered = [self.bitflag_filter_item] * len(items)
+        # Filter valid entities
+        sort_data = []
+        filtered = [0] * len(items)
         for i, item in enumerate(items):
             try:
-                _ = context.scene.MNSession.get(item.name).name
+                name = context.scene.MNSession.get(item.name).name
+                sort_data.append((i, name))
+                if (
+                    not self.filter_name
+                    or bool(self.filter_name.lower() in name.lower())
+                    is not self.use_filter_invert
+                ):
+                    filtered[i] |= self.bitflag_filter_item
             except (LinkedObjectError, AttributeError):
-                filtered[i] &= ~self.bitflag_filter_item
-        return filtered, []
+                sort_data.append((i, ""))
+        # Sort
+        ordered = []
+        if self.use_filter_sort_alpha:
+            ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
+        return filtered, ordered
 
 
 class MN_PT_Entities(bpy.types.Panel):
@@ -710,7 +725,7 @@ class MN_UL_StylesList(bpy.types.UIList):
     UIList of styles for an entity
     """
 
-    seqno = 1
+    style_nodes = None
 
     def draw_item(
         self,
@@ -727,8 +742,7 @@ class MN_UL_StylesList(bpy.types.UIList):
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            seqno = f"{self.seqno}. "
-            MN_UL_StylesList.seqno += 1
+            seqno = f"{MN_UL_StylesList.style_nodes.index(item) + 1}"
             split = row.split(factor=0.1)
             col = split.column()
             col.label(text=seqno)
@@ -744,32 +758,29 @@ class MN_UL_StylesList(bpy.types.UIList):
             layout.label(text="", icon=custom_icon)
 
     def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
         items = getattr(data, propname)
-        helper_funcs = bpy.types.UI_UL_list
-        filtered = []
-        # Filtering by name
-        if self.filter_name:
-            filtered = helper_funcs.filter_items_by_name(
-                self.filter_name,
-                self.bitflag_filter_item,
-                items,
-                "label",
-                reverse=False,
-            )
-        if not filtered:
-            filtered = [self.bitflag_filter_item] * len(items)
+        # Filter only style nodes
+        sort_data = []
+        filtered = [0] * len(items)
         style_nodes = get_final_style_nodes(data)
-        ordered = [-1] * len(items)
         for i, item in enumerate(items):
             if item in style_nodes:
-                ordered[i] = style_nodes.index(item)
+                name = item.label
+                sort_data.append((i, name))
+                if (
+                    not self.filter_name
+                    or bool(self.filter_name.lower() in name.lower())
+                    is not self.use_filter_invert
+                ):
+                    filtered[i] |= self.bitflag_filter_item
             else:
-                filtered[i] &= ~self.bitflag_filter_item
-        index = len(style_nodes)
-        for i, item in enumerate(items):
-            if ordered[i] == -1:
-                ordered[i] = index
-                index += 1
+                sort_data.append((i, ""))
+        # Sort
+        ordered = []
+        if self.use_filter_sort_alpha:
+            ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
         return filtered, ordered
 
 
@@ -819,7 +830,7 @@ class MN_PT_Styles(bpy.types.Panel):
 
         layout = self.layout
         row = layout.row()
-        MN_UL_StylesList.seqno = 1
+        MN_UL_StylesList.style_nodes = style_nodes
         row.template_list(
             "MN_UL_StylesList",
             "styles_list",
@@ -872,6 +883,8 @@ class MN_PT_Styles(bpy.types.Panel):
                 input = style_node.inputs[item.identifier]
                 if not hasattr(input, "default_value"):
                     continue
+                if input.is_inactive:
+                    continue
                 row = None
                 if item.parent.name and item.parent.name in panels:
                     panel = panels[item.parent.name]
@@ -918,21 +931,25 @@ class MN_UL_AnnotationsList(bpy.types.UIList):
     def filter_items(self, context, data, propname):
         if data is None:
             return [], []
-        items = getattr(data, propname)
         helper_funcs = bpy.types.UI_UL_list
+        items = getattr(data, propname)
+        # Filter
         filtered = []
-        # Filtering by name
         if self.filter_name:
             filtered = helper_funcs.filter_items_by_name(
                 self.filter_name,
                 self.bitflag_filter_item,
                 items,
                 "label",
-                reverse=False,
+                reverse=self.use_filter_invert,
             )
         if not filtered:
             filtered = [self.bitflag_filter_item] * len(items)
-        return filtered, []
+        # Sort
+        ordered = []
+        if self.use_filter_sort_alpha:
+            ordered = helper_funcs.sort_items_by_name(items, "label")
+        return filtered, ordered
 
 
 class MN_PT_Annotations(bpy.types.Panel):
