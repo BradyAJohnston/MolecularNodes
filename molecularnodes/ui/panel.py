@@ -730,7 +730,7 @@ class MN_UL_StylesList(bpy.types.UIList):
     def draw_item(
         self,
         context,
-        layout,
+        layout: bpy.types.UILayout,
         data,
         item,
         icon,
@@ -747,7 +747,13 @@ class MN_UL_StylesList(bpy.types.UIList):
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            col.label(text=item.label if item.label != "" else item.name)
+            col.prop(
+                data=item,
+                property="label",
+                placeholder=item.name,
+                text="",
+                emboss=False,
+            )
 
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
