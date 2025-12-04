@@ -1,5 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
+from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
@@ -902,7 +903,7 @@ class MN_PT_Styles(bpy.types.Panel):
                     row = layout.row()
                 if row:
                     is_expanded = False
-                    if input.type == "MENU":
+                    if input.type == "MENU" and IS_BLENDER_5:
                         row.label(text=item.name)
                         is_expanded: bool = item.id_data.interface.items_tree[
                             item.identifier
