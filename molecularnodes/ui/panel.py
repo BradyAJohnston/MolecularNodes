@@ -748,13 +748,7 @@ class MN_UL_StylesList(bpy.types.UIList):
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            col.prop(
-                data=item,
-                property="label",
-                placeholder=item.name,
-                text="",
-                emboss=False,
-            )
+            col.prop(item, "label", placeholder=item.name, text="", emboss=False)
 
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
