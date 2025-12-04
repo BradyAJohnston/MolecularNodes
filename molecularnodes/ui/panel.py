@@ -1053,7 +1053,8 @@ class MN_PT_Annotations(bpy.types.Panel):
                 if prop_name in ("uuid", "valid_inputs"):
                     continue
                 row = box.row()
-                if hasattr(instance, f"_{prop_name}"):
+                nbattr = f"_custom_{prop_name}"  # non blender property
+                if hasattr(instance, nbattr):
                     # indicate use of non blender property in draw
                     row.label(icon="ERROR")
                     row.alert = True

@@ -38,7 +38,7 @@ class TrajectoryAnnotation(BaseAnnotation):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # Auto-register any sub classes with the annotation manager
-        TrajectoryAnnotationManager.register(cls)
+        TrajectoryAnnotationManager.register_class(cls)
 
     def __init__(self, trajectory):
         # Allow access to the trajectory entity within the annotations
