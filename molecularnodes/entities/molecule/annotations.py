@@ -22,7 +22,7 @@ class MoleculeAnnotation(BaseAnnotation):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # Auto-register any sub classes with the annotation manager
-        MoleculeAnnotationManager.register(cls)
+        MoleculeAnnotationManager.register_class(cls)
 
     def __init__(self, molecule):
         # Allow access to the molecule entity within the annotations

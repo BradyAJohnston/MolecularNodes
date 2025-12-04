@@ -23,7 +23,7 @@ class DensityAnnotation(BaseAnnotation):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # Auto-register any sub classes with the annotation manager
-        DensityAnnotationManager.register(cls)
+        DensityAnnotationManager.register_class(cls)
 
     def __init__(self, density):
         # Allow access to the density entity within the annotations
