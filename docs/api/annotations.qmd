@@ -439,7 +439,7 @@ class CustomAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
         params.text_size = 20
 
     # optional validate method
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         # validate any input params that change (either through API or GUI)
         # return True if validation succeeds else False or raise an Exception
         params = self.interface
@@ -488,12 +488,12 @@ ca.visible = False
 
 ### Unregister a custom annotation
 
-Custom annotations get automatically registered with the [](`~mn.entities.trajectory.annotations.TrajectoryAnnotationManager`). They can be manually unregistered and re-registered using the [](`~mn.annotations.manager.BaseAnnotationManager.unregister`) and [](`~mn.annotations.manager.BaseAnnotationManager.register`) methods if required.
+Custom annotations get automatically registered with the [](`~mn.entities.trajectory.annotations.TrajectoryAnnotationManager`). They can be manually unregistered and re-registered using the [](`~mn.annotations.manager.BaseAnnotationManager.unregister_type`) and [](`~mn.annotations.manager.BaseAnnotationManager.register_class`) methods if required.
 
 ```{python}
 # unregister the annotation
 manager = mn.entities.trajectory.TrajectoryAnnotationManager
-manager.unregister(CustomAnnotation)
+manager.unregister_type("custom_annotation")
 ```
 
 ### Drawing utilities

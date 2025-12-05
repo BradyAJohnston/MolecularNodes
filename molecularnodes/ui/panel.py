@@ -1,5 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
+from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
@@ -747,13 +748,7 @@ class MN_UL_StylesList(bpy.types.UIList):
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            col.prop(
-                data=item,
-                property="label",
-                placeholder=item.name,
-                text="",
-                emboss=False,
-            )
+            col.prop(item, "label", placeholder=item.name, text="", emboss=False)
 
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
@@ -902,7 +897,7 @@ class MN_PT_Styles(bpy.types.Panel):
                     row = layout.row()
                 if row:
                     is_expanded = False
-                    if input.type == "MENU":
+                    if input.type == "MENU" and IS_BLENDER_5:
                         row.label(text=item.name)
                         is_expanded: bool = item.id_data.interface.items_tree[
                             item.identifier
@@ -1059,7 +1054,8 @@ class MN_PT_Annotations(bpy.types.Panel):
                 if prop_name in ("uuid", "valid_inputs"):
                     continue
                 row = box.row()
-                if hasattr(instance, f"_{prop_name}"):
+                nbattr = f"_custom_{prop_name}"  # non blender property
+                if hasattr(instance, nbattr):
                     # indicate use of non blender property in draw
                     row.label(icon="ERROR")
                     row.alert = True

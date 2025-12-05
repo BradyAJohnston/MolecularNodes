@@ -212,6 +212,9 @@ def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
         except KeyError:
             tree = append(tree)  # type: ignore
 
+    # only change the label if not customized
+    if node.label == node.node_tree.name:
+        node.label = tree.name
     swap_tree(node=node, tree=tree)
 
 
@@ -279,6 +282,8 @@ def add_custom(
 ) -> bpy.types.GeometryNodeGroup:
     node: bpy.types.GeometryNodeGroup = group.nodes.new("GeometryNodeGroup")  # type: ignore
     node.node_tree = append(name, link=link)
+    # set the label to the node tree name by default
+    node.label = node.node_tree.name
 
     # if there is an input socket called 'Material', assign it to the base MN material
     # if another material is supplied, use that instead.
@@ -381,6 +386,8 @@ def create_starting_nodes_density(
     if threshold_range is not None:
         items_tree[key].min_value = threshold_range[0]
         items_tree[key].max_value = threshold_range[1]
+    # set the label to match node name
+    node_density.label = node_density.name
 
     # add the join geometry node to keep this consistent with style interface
     node_join = group.nodes.new("GeometryNodeJoinGeometry")
