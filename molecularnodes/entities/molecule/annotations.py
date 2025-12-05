@@ -75,11 +75,12 @@ class MoleculeInfo(MoleculeAnnotation):
         params = self.interface
         params.text_align = "left"
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        x, y = params.location
-        if (not 0 <= x <= 1) or (not 0 <= y <= 1):
-            raise ValueError("Normalized coordinates should lie between 0 and 1")
+        if input_name == "location":
+            x, y = params.location
+            if (not 0 <= x <= 1) or (not 0 <= y <= 1):
+                raise ValueError("Normalized coordinates should lie between 0 and 1")
         return True
 
     def draw(self) -> None:

@@ -439,7 +439,7 @@ class CustomAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
         params.text_size = 20
 
     # optional validate method
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         # validate any input params that change (either through API or GUI)
         # return True if validation succeeds else False or raise an Exception
         params = self.interface

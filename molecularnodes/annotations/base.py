@@ -87,7 +87,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._image = None
         self._image_scale = 1
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         """
         Optional method to validate annotation inputs
         This is called during annotation creation and any time the inputs change
@@ -96,6 +96,12 @@ class BaseAnnotation(metaclass=ABCMeta):
 
         Note: This method gets called when any inputs change, so updating values
         in here will lead to a recursive loop and should not be done.
+
+        Parameters
+        ----------
+        input_name: str or None, required
+            The input name update that trigged this validation callback.
+            When no specific input name is available, None is passed.
 
         """
         return True
