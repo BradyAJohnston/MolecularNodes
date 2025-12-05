@@ -42,7 +42,7 @@ def _validate_annotation_update(self, context, attr):
     if hasattr(instance, nbattr):
         delattr(instance, nbattr)
     try:
-        if not instance.validate():
+        if not instance.validate(attr):
             raise ValueError(f"Invalid input {attr}")
     except Exception as exception:
         self.valid_inputs = False
@@ -349,7 +349,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 if value is not None:
                     setattr(interface.__class__, attr, value)
             # validate
-            if not annotation_instance.validate():
+            if not annotation_instance.validate(None):
                 raise ValueError("Invalid annotation inputs")
         # only after all validations pass start doing real stuff like creating
         # properties and adding to the interface list

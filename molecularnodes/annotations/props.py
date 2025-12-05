@@ -125,7 +125,7 @@ def create_property_interface(
             # not a supported blender type property
             # set a non blender property and validate
             setattr(instance, nbattr, value)
-            instance.validate()
+            instance.validate(nbattr)
             if instance._ready:
                 # update annotation object
                 entity.annotations._update_annotation_object()
