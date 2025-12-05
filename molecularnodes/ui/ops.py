@@ -48,6 +48,8 @@ def _add_node(node_name, context, show_options=False, material="default"):
     )
     node = context.active_node
     node.node_tree = bpy.data.node_groups[node_name]
+    # set the label to the node tree name by default
+    node.label = node.node_tree.name
     node.width = nodes.NODE_WIDTH
     node.show_options = show_options
     node.name = node_name

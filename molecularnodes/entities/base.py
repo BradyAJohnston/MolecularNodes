@@ -43,7 +43,7 @@ class MolecularEntity(
         self._world_scale = 0.01
 
     @property
-    def node_group(self) -> bpy.types.NodeTree | None:
+    def node_group(self) -> bpy.types.GeometryNodeTree | None:
         if "MolecularNodes" in self.object.modifiers:
             return _get_gn_modifier(self.object, "MolecularNodes").node_group
         return None

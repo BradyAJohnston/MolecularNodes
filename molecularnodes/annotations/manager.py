@@ -38,11 +38,11 @@ def _validate_annotation_update(self, context, attr):
     interface = entity.annotations._interfaces.get(self.uuid)
     instance = interface._instance
     # delete non blender attribute as blender attribute updated
-    nbattr = f"_{attr}"
+    nbattr = f"_custom_{attr}"
     if hasattr(instance, nbattr):
         delattr(instance, nbattr)
     try:
-        if not instance.validate():
+        if not instance.validate(attr):
             raise ValueError(f"Invalid input {attr}")
     except Exception as exception:
         self.valid_inputs = False
@@ -131,7 +131,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         self._scene = None
 
     @classmethod
-    def register(cls, annotation_class) -> None:
+    def register_class(cls, annotation_class) -> None:
         """
         Register an annotation class
 
@@ -217,18 +217,16 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         )
 
     @classmethod
-    def unregister(cls, annotation_class) -> None:
+    def unregister_type(cls, annotation_type) -> None:
         """
-        Unregister a registered annotation class
+        Unregister a registered annotation type
 
-        This method removes the annotation class from the entity speicific
+        This method removes the annotation type from the entity speicific
         class registry and removes the 'add_<>' method from the manager
 
         """
-        annotation_type = annotation_class.annotation_type
         if annotation_type not in cls._classes:
-            raise ValueError(f"{annotation_class} is not registered")
-        cls._validate_annotation_class(annotation_class)
+            raise ValueError(f"{annotation_type} is not registered")
         # Delete from Entity class specific registry
         del cls._classes[annotation_type]
         # Delete from all annotation classes
@@ -351,7 +349,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 if value is not None:
                     setattr(interface.__class__, attr, value)
             # validate
-            if not annotation_instance.validate():
+            if not annotation_instance.validate(None):
                 raise ValueError("Invalid annotation inputs")
         # only after all validations pass start doing real stuff like creating
         # properties and adding to the interface list

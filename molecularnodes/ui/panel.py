@@ -1,5 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
+from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
@@ -730,7 +731,7 @@ class MN_UL_StylesList(bpy.types.UIList):
     def draw_item(
         self,
         context,
-        layout,
+        layout: bpy.types.UILayout,
         data,
         item,
         icon,
@@ -747,7 +748,7 @@ class MN_UL_StylesList(bpy.types.UIList):
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            col.label(text=item.label if item.label != "" else item.name)
+            col.prop(item, "label", placeholder=item.name, text="", emboss=False)
 
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
@@ -815,20 +816,23 @@ class MN_PT_Styles(bpy.types.Panel):
 
     def draw(self, context):
         scene = context.scene
-        entities_active_index = scene.mn.entities_active_index
-        uuid = scene.mn.entities[entities_active_index].name
-        entity = scene.MNSession.get(uuid)
+        layout = self.layout
+        assert layout is not None
+        entities_active_index: int = scene.mn.entities_active_index
+        uuid: str = scene.mn.entities[entities_active_index].name
+        entity = get_session().get(uuid)
+        if entity is None:
+            return
         node_group = entity.node_group
         if node_group is None:
             return
-        styles_active_index = entity.object.mn.styles_active_index
+        styles_active_index: int = entity.object.mn.styles_active_index  # type: ignore
         valid_selection = False
         style_nodes = get_final_style_nodes(node_group)
         if 0 <= styles_active_index < len(node_group.nodes):
             if node_group.nodes[styles_active_index] in style_nodes:
                 valid_selection = True
 
-        layout = self.layout
         row = layout.row()
         MN_UL_StylesList.style_nodes = style_nodes
         row.template_list(
@@ -836,7 +840,7 @@ class MN_PT_Styles(bpy.types.Panel):
             "styles_list",
             node_group,
             "nodes",
-            entity.object.mn,
+            entity.object.mn,  # type: ignore
             "styles_active_index",
             rows=3,
         )
@@ -848,17 +852,16 @@ class MN_PT_Styles(bpy.types.Panel):
             row = col.row()
             op = row.operator("mn.remove_style", icon="REMOVE", text="")
             if valid_selection:
-                op.uuid = uuid
-                op.style_node_index = styles_active_index
+                op.uuid: str = uuid
+                op.style_node_index: int = styles_active_index
             else:
                 row.enabled = False
 
         if not valid_selection:
             return
 
-        box = layout.box()
-        row = box.row()
-        style_node = node_group.nodes[styles_active_index]
+        row = layout.row()
+        style_node: bpy.types.GeometryNodeGroup = node_group.nodes[styles_active_index]
 
         panels = {}
         for item in style_node.node_tree.interface.items_tree.values():
@@ -869,7 +872,7 @@ class MN_PT_Styles(bpy.types.Panel):
                     if panel:
                         header, panel = panel.panel(item.name, default_closed=False)
                 else:
-                    header, panel = box.panel(item.name, default_closed=False)
+                    header, panel = layout.panel(item.name, default_closed=False)
                 if header:
                     header.label(text=item.name)
                 panels[item.name] = panel
@@ -880,7 +883,7 @@ class MN_PT_Styles(bpy.types.Panel):
                     continue
                 if item.name in ("Visible"):
                     continue
-                input = style_node.inputs[item.identifier]
+                input: bpy.types.NodeGroupInput = style_node.inputs[item.identifier]
                 if not hasattr(input, "default_value"):
                     continue
                 if input.is_inactive:
@@ -891,10 +894,22 @@ class MN_PT_Styles(bpy.types.Panel):
                     if panel:
                         row = panel.row()
                 else:
-                    row = box.row()
+                    row = layout.row()
                 if row:
-                    row.prop(data=input, property="default_value", text=input.name)
-        row = box.row()
+                    is_expanded = False
+                    if input.type == "MENU" and IS_BLENDER_5:
+                        row.label(text=item.name)
+                        is_expanded: bool = item.id_data.interface.items_tree[
+                            item.identifier
+                        ].menu_expanded
+
+                    row.prop(
+                        data=input,
+                        property="default_value",
+                        text=input.name,
+                        expand=is_expanded,
+                    )
+        row = layout.row()
 
 
 class MN_UL_AnnotationsList(bpy.types.UIList):
@@ -1039,7 +1054,8 @@ class MN_PT_Annotations(bpy.types.Panel):
                 if prop_name in ("uuid", "valid_inputs"):
                     continue
                 row = box.row()
-                if hasattr(instance, f"_{prop_name}"):
+                nbattr = f"_custom_{prop_name}"  # non blender property
+                if hasattr(instance, nbattr):
                     # indicate use of non blender property in draw
                     row.label(icon="ERROR")
                     row.alert = True
