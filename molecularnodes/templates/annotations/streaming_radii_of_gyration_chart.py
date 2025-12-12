@@ -1,4 +1,5 @@
 import io
+from collections import deque
 from uuid import uuid1
 import bpy
 import matplotlib
@@ -27,10 +28,12 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
     selection: str | AtomGroup = "resid 1"
     text: str = ""
 
+    max_values: int = 100
     location: tuple[float, float] = (0.025, 0.05)
     scale: float = 0.75
 
     def defaults(self):
+        params = self.interface
         plt.rcParams.update(
             {
                 # white with alpha = 30%
@@ -39,8 +42,8 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
                 "savefig.facecolor": (1.0, 1.0, 1.0, 0.3),
             }
         )
-        self._steps = []
-        self._rogs = []
+        self._steps = deque(maxlen=params.max_values)
+        self._rogs = deque(maxlen=params.max_values)
         self._prev_step = None
         self._chart_name = str(uuid1())
 
@@ -71,9 +74,9 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
         # setup text
         self._title = f"Radii of Gyration of '{label}'"
         # reset values
-        if input_name == "selection":
-            self._steps = []
-            self._rogs = []
+        if input_name in ("selection", "max_values"):
+            self._steps = deque(maxlen=params.max_values)
+            self._rogs = deque(maxlen=params.max_values)
             self._prev_step = None
         elif input_name == "text":
             self._prev_step = None

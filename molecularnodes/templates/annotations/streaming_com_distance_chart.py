@@ -1,4 +1,5 @@
 import io
+from collections import deque
 from uuid import uuid1
 import bpy
 import matplotlib
@@ -28,6 +29,7 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
     text1: str = ""
     text2: str = ""
 
+    max_values: int = 100
     location: tuple[float, float] = (0.025, 0.05)
     scale: float = 0.75
 
@@ -43,8 +45,8 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
         params = self.interface
         params.line_arrow_size = 0.07
         params.text_offset_y = 5
-        self._steps = []
-        self._distances = []
+        self._steps = deque(maxlen=params.max_values)
+        self._distances = deque(maxlen=params.max_values)
         self._prev_step = None
         self._chart_name = str(uuid1())
 
@@ -88,9 +90,9 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
         self._label2 = label2
         self._title = f"Distance between '{label1}' and '{label2}'"
         # reset values
-        if input_name in ("selection1", "selection2"):
-            self._steps = []
-            self._distances = []
+        if input_name in ("selection1", "selection2", "max_values"):
+            self._steps = deque(maxlen=params.max_values)
+            self._distances = deque(maxlen=params.max_values)
             self._prev_step = None
         elif input_name in ("text1", "text2"):
             self._prev_step = None
