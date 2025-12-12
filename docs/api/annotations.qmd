@@ -495,6 +495,23 @@ Custom annotations get automatically registered with the [](`~mn.entities.trajec
 manager = mn.entities.trajectory.TrajectoryAnnotationManager
 manager.unregister_type("custom_annotation")
 ```
+### Input types
+
+Custom annotations can specify inputs that become automatically available to both the API and the GUI. For example, `selection` and `bool_param` are inputs for the custom annotation example above. Inputs are specified as class attributes with a Python annotation that specifies its type. In the example above, `selection` is of type `str` and `bool_param` is of type `bool`.
+
+Here are the supported types and their representation in Blender GUI:
+
+| Type | Representation in Blender GUI |
+|:---|:---|
+|`str`|String input|
+|`bool`|Boolean checkbox|
+|`int`|Integer input|
+|`float`|Float input|
+|`tuple[float, float]`|A vector input in 2 dimensions|
+|`tuple[float, float, float]`|A vector input in 3 dimensions|
+|`tuple[float, float, float, float]`|A vector input in 4 dimensions. Input names that contain the word "color" will become Color selections|
+|`list[str]`|An Enumeration drowpdown|
+
 
 ### Drawing utilities
 
