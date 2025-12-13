@@ -518,7 +518,9 @@ Text, lines and meshes drawn in custom annotations can be controlled by the same
 
 Here is an example within a custom annotation that draws two 3D circles, the first with a hardcoded color value and the second with a custom input color:
 
-```pseudo
+```{python}
+#| eval: false
+
     ...
     # custom line color input
     line_color_input: tuple[float, float, float, float] = (1, 1, 1, 1)
