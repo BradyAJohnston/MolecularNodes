@@ -3254,8 +3254,23 @@ SACCHARIDE_REPRESENTATION = {
 
 # partially taken from here: https://computecanada.github.io/molmodsim-md-theory-lesson-novice/09-water_models/index.html
 # and here: https://github.com/BradyAJohnston/MolecularNodes/issues/1051
-RESNAMES_SOLVENT: tuple = ("W", "PW", "TIP3", "TIP4", "SPC", "SPE", "OPC", "OPC3")
-NAMES_SOLVENT: tuple = ("OW", "HW1", "HW2")
+RESNAMES_SOLVENT: tuple = (
+    "OPC",
+    "OPC3",
+    "PW",
+    "SOL"
+    "SPC",
+    "SPE",
+    "TIP3",
+    "TIP4",
+    "W",
+    "WAT",
+    )
+NAMES_SOLVENT: tuple = (
+    "HW1",
+    "HW2",
+    "OW",
+    )
 
 # Lipid names to match against for the `is_lipid` attribute
 RESNAMES_LIPID = (
