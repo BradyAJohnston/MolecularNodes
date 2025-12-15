@@ -495,6 +495,48 @@ Custom annotations get automatically registered with the [](`~mn.entities.trajec
 manager = mn.entities.trajectory.TrajectoryAnnotationManager
 manager.unregister_type("custom_annotation")
 ```
+### Input types
+
+Custom annotations can specify inputs that become automatically available to both the API and the GUI. For example, `selection` and `bool_param` are inputs for the custom annotation example above. Inputs are specified as class attributes with a Python annotation that specifies its type. In the example above, `selection` is of type `str` and `bool_param` is of type `bool`.
+
+Here are the supported types and their representation in Blender GUI:
+
+| Type | Representation in Blender GUI |
+|:---|:---|
+|`str`|String input|
+|`bool`|Boolean checkbox|
+|`int`|Integer input|
+|`float`|Float input|
+|`tuple[float, float]`|A vector input in 2 dimensions|
+|`tuple[float, float, float]`|A vector input in 3 dimensions|
+|`tuple[float, float, float, float]`|A vector input in 4 dimensions. Input names that contain the word "color" will become Color selections|
+|`list[str]`|An Enumeration drowpdown|
+
+### Param overrides
+
+Text, lines and meshes drawn in custom annotations can be controlled by the same params as described in the [Common Annotations Params](#common-annotation-params) section above. Custom annotations can also override these parameters to either hardcode specific values or allow additional customization though separate inputs. This can be done by passing the `overrides` keyword param to any of the drawing utilities and specify a dictionary of the parameters to override along with their values.
+
+Here is an example within a custom annotation that draws two 3D circles, the first with a hardcoded color value and the second with a custom input color:
+
+```python
+    ...
+    # custom line color input
+    line_color_input: tuple[float, float, float, float] = (1, 1, 1, 1)
+    ...
+    self.draw_circle_3d(
+        center,
+        radius,
+        normal_vector,
+        overrides={"line_color": (1.0, 0.498, 0.055, 1)},
+    )
+    self.draw_circle_3d(
+        center,
+        radius * 2,
+        normal_vector,
+        overrides={"line_color": self.interface.line_color_input},
+    )
+    ...
+```
 
 ### Drawing utilities
 

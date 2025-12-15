@@ -16,6 +16,7 @@ from bpy.app.handlers import frame_change_pre, load_post, render_pre, save_post
 from bpy.props import CollectionProperty, PointerProperty
 from .. import session
 from ..handlers import render_pre_handler, update_entities
+from ..templates import register_templates_menu, unregister_templates_menu
 from ..utils import add_current_module_to_path
 from . import node_menu, ops, panel, pref, props
 
@@ -73,6 +74,7 @@ def register():
     # bpy.types.Object.mn_annotations is dynamically created and updated based
     # on different annotation types. It has to be a top level property to avoid
     # AttributeError: '_PropertyDeferred' object has no attribute '...'
+    register_templates_menu()
 
     _is_registered = True
 
@@ -100,5 +102,6 @@ def unregister():
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore
     del bpy.types.Object.mn_annotations  # type: ignore
+    unregister_templates_menu()
 
     _is_registered = False
