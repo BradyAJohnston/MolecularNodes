@@ -24,6 +24,7 @@ from ...nodes.styles import (
     StyleBase,
 )
 from ...utils import (
+    count_value_changes,
     temp_override_property,
 )
 from ..base import EntityType, MolecularEntity
@@ -300,6 +301,9 @@ class Trajectory(MolecularEntity):
     def _compute_res_id(self) -> np.ndarray:
         return self.atoms.resids
 
+    def _compute_ures_id(self) -> np.ndarray:
+        return count_value_changes(self.atoms.resids, self._compute_chain_id_int())
+
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
 
@@ -389,6 +393,7 @@ class Trajectory(MolecularEntity):
             "vdw_radii": self._compute_vdw_radii,
             "mass": self._compute_mass,
             "res_id": self._compute_res_id,
+            "ures_id": self._compute_ures_id,
             "segid": self._compute_segindices,
             "res_name": self._compute_res_name_int,
             "atom_id": self._compute_atom_id,
