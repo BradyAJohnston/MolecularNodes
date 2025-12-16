@@ -3,7 +3,8 @@ from uuid import uuid1
 import bpy
 import matplotlib
 import matplotlib.pyplot as plt
-from MDAnalysis.analysis import rms
+import numpy as np
+from MDAnalysis.analysis import helix_analysis as hel
 from PIL import Image
 import molecularnodes as mn
 
@@ -13,16 +14,27 @@ matplotlib.use("Agg")
 # Unregister previous class if any while debugging / iterating code
 if hasattr(
     mn.entities.trajectory.TrajectoryAnnotationManager,
-    "add_rmsd_chart",
+    "add_helix_analysis",
 ):
-    mn.entities.trajectory.TrajectoryAnnotationManager.unregister_type("rmsd_chart")
+    mn.entities.trajectory.TrajectoryAnnotationManager.unregister_type("helix_analysis")
 
 
-class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
-    annotation_type = "rmsd_chart"
+class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
+    annotation_type = "helix_analysis"
 
-    selection: str = "protein"
-    text: str = ""
+    # selection has to be atleast 9 residues
+    selection: str = "name CA and resnum 161-187"
+    chart: list[str] = [
+        "local_twists",
+        "local_bends",
+        "local_heights",
+        "local_nres_per_turn",
+        "local_origins",
+        "local_axes",
+        "local_helix_directions",
+        "local_screw_angles",
+        "global_axis",
+    ]
 
     location: tuple[float, float] = (0.025, 0.05)
     scale: float = 0.75
@@ -46,14 +58,11 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
         if type(self.trajectory) is not mn.entities.trajectory.Trajectory:
             raise ValueError("This annotation requires a Trajectory entity")
 
-        label = params.text
         # check selection
         if isinstance(params.selection, str):
             # check if selection phrase is valid
             # mda throws exception if invalid
             u.select_atoms(params.selection)
-            if not label:
-                label = params.selection
         else:
             raise ValueError(f"Need str. Got {type(params.selection)}")
 
@@ -61,24 +70,18 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
         if input_name in (None, "selection"):
             # save current frame
             current_frame = u.trajectory.frame
-            # calculate RMSD
-            # From: https://userguide.mdanalysis.org/stable/examples/analysis/alignment_and_rms/rmsd.html#RMSD-of-a-Universe-with-multiple-selections
-            R = rms.RMSD(
-                u,  # universe to align
-                u,  # reference universe or atomgroup
-                select=params.selection,  # group to superimpose and calculate RMSD
-                ref_frame=0,
-            )  # frame index of the reference
-            R.run()
-            self._frames = R.results.rmsd[:, 0]
-            self._rmsd_values = R.results.rmsd[:, 2]
+            # Helix analysis using HELNAL
+            # From: https://userguide.mdanalysis.org/stable/examples/analysis/structure/helanal.html
+            self._h = hel.HELANAL(u, select=params.selection).run()
+            if not self._h.results.summary:
+                raise ValueError("Invalid selection phrase for helix analysis")
+            self._prev_frame = None
             # restore current frame
             u.trajectory[current_frame]
-        # setup text
-        self._title = f"RMSD of '{label}'"
-        # reset values
-        if input_name in ("selection", "text"):
+        # recreate chart if chart type changes
+        if input_name in (None, "chart"):
             self._prev_frame = None
+
         return True
 
     def draw(self) -> None:
@@ -91,11 +94,17 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
             chart_image = bpy.data.images[self._chart_name]
         else:
             # create plot and save to buffer
-            plt.plot(self._frames, self._rmsd_values)
-            plt.scatter(frame, self._rmsd_values[frame], c="r", s=100, zorder=1)
-            plt.ylabel("RMSD (Å)")
+            results = getattr(self._h.results, params.chart)
+            mean_values = results.mean(axis=1)
+            plt.plot(mean_values)
+            if isinstance(mean_values[frame], np.ndarray):
+                for v in mean_values[frame]:
+                    plt.scatter(frame, v, c="r", s=100, zorder=1)
+            else:
+                plt.scatter(frame, mean_values[frame], c="r", s=100, zorder=1)
+            plt.title(params.chart)
+            plt.ylabel("Average value")
             plt.xlabel("Frame")
-            plt.title(self._title)
             plt.grid(True)
             buf = io.BytesIO()
             plt.savefig(buf, format="png", dpi=100)
