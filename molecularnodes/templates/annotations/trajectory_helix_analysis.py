@@ -63,16 +63,17 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
         if type(self.trajectory) is not mn.entities.trajectory.Trajectory:
             raise ValueError("This annotation requires a Trajectory entity")
 
-        # check selection
-        if isinstance(params.selection, str):
-            # check if selection phrase is valid
-            # mda throws exception if invalid
-            self._ag = u.select_atoms(params.selection)
-        else:
-            raise ValueError(f"Need str. Got {type(params.selection)}")
-
         # run analysis initially or when selection input changes
-        if input_name in (None, "selection"):
+        if input_name in (None, "selection") or self._h is None:
+            # check selection
+            if isinstance(params.selection, str):
+                # check if selection phrase is valid
+                # mda throws exception if invalid
+                self._ag = u.select_atoms(params.selection)
+            else:
+                self._h = None
+                raise ValueError(f"Need str. Got {type(params.selection)}")
+
             # save current frame
             current_frame = u.trajectory.frame
             # Helix analysis using HELNAL
@@ -81,6 +82,7 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
             # restore current frame
             u.trajectory[current_frame]
             if not self._h.results.summary:
+                self._h = None
                 raise ValueError("Invalid selection phrase for helix analysis")
             self._prev_frame = None
         # recreate chart if chart type changes
@@ -121,9 +123,6 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
 
         # draw bpy image
         self.draw_bpy_image(params.location, chart_image, params.scale)
-        # update previous frame
-        self._prev_frame = frame
-
         # show local axis if enabled
         if params.show_local_axes:
             local_origins = self._h.results.local_origins[frame]
@@ -144,3 +143,5 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
                 v2_arrow=True,
                 overrides={"line_arrow_size": 0.1},
             )
+        # update previous frame
+        self._prev_frame = frame
