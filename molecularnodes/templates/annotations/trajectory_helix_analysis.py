@@ -36,6 +36,11 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
         "global_axis",
     ]
 
+    show_local_axes: bool = False
+    show_global_axis: bool = False
+    local_axes_length: float = 1.0
+    global_axis_length: float = -15.0
+
     location: tuple[float, float] = (0.025, 0.05)
     scale: float = 0.75
 
@@ -62,7 +67,7 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
         if isinstance(params.selection, str):
             # check if selection phrase is valid
             # mda throws exception if invalid
-            u.select_atoms(params.selection)
+            self._ag = u.select_atoms(params.selection)
         else:
             raise ValueError(f"Need str. Got {type(params.selection)}")
 
@@ -73,11 +78,11 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
             # Helix analysis using HELNAL
             # From: https://userguide.mdanalysis.org/stable/examples/analysis/structure/helanal.html
             self._h = hel.HELANAL(u, select=params.selection).run()
+            # restore current frame
+            u.trajectory[current_frame]
             if not self._h.results.summary:
                 raise ValueError("Invalid selection phrase for helix analysis")
             self._prev_frame = None
-            # restore current frame
-            u.trajectory[current_frame]
         # recreate chart if chart type changes
         if input_name in (None, "chart"):
             self._prev_frame = None
@@ -118,3 +123,24 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
         self.draw_bpy_image(params.location, chart_image, params.scale)
         # update previous frame
         self._prev_frame = frame
+
+        # show local axis if enabled
+        if params.show_local_axes:
+            local_origins = self._h.results.local_origins[frame]
+            local_axes = self._h.results.local_axes[frame]
+            for i, local_axis in enumerate(local_axes):
+                self.draw_line_3d(
+                    v1=local_origins[i],
+                    v2=(local_origins[i] + (local_axis * params.local_axes_length)),
+                    v2_arrow=True,
+                )
+        # show global axis if enabled
+        if params.show_global_axis:
+            local_origins = self._h.results.local_origins[frame]
+            global_axis = self._h.results.global_axis[frame]
+            self.draw_line_3d(
+                v1=local_origins[0],
+                v2=(local_origins[0] + (global_axis * params.global_axis_length)),
+                v2_arrow=True,
+                overrides={"line_arrow_size": 0.1},
+            )
