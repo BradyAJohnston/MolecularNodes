@@ -30,7 +30,7 @@ class Label2D(BaseAnnotation):
 
     def draw(self) -> None:
         params = self.interface
-        self.draw_text_2d_norm(params.location, params.text)
+        self.draw_text_2d(params.location, params.text)
 
 
 class Label3D(BaseAnnotation):

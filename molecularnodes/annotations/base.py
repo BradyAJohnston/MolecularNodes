@@ -156,9 +156,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         self._draw_text(pos_3d, text, is3d=True, overrides=overrides)
 
-    def draw_text_2d_norm(
-        self, pos_2d: Vector, text: str, overrides: dict = None
-    ) -> None:
+    def draw_text_2d(self, pos_2d: Vector, text: str, overrides: dict = None) -> None:
         """
         Draw text at a given 2D position (normalized co-ordinates) of Viewport.
 
@@ -176,56 +174,10 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         if self.geometry:
             return
-        if pos_2d is None:
-            return
-        for comp in pos_2d:
-            if not (0.0 <= comp <= 1.0):
-                return
-        pos_x, pos_y = pos_2d
-        new_x = pos_x * self.viewport_width
-        new_y = pos_y * self.viewport_height
         if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
-            # camera view mode in 3D viewport
-            zoom_factor, camera_view_width, camera_view_height = (
-                self._get_camera_view_info()
-            )
-            # offsets are based off the center of the viewport
-            camera_offset_x = self._rv3d.view_camera_offset[0]
-            camera_offset_y = self._rv3d.view_camera_offset[1]
-            # calculate the origin (bottom left) of the camera view
-            camera_view_x0 = (
-                (self.viewport_width / 2)
-                - (camera_view_width / 2)
-                - (camera_offset_x * self.viewport_width * 2 * zoom_factor)
-            )
-            camera_view_y0 = (
-                (self.viewport_height / 2)
-                - (camera_view_height / 2)
-                - (camera_offset_y * self.viewport_height * 2 * zoom_factor)
-            )
-            # calculate the actual position with respect to the camera view origin
-            new_x = camera_view_x0 + (pos_x * camera_view_width)
-            new_y = camera_view_y0 + (pos_y * camera_view_height)
-        self._draw_text((new_x, new_y), text, is3d=False, overrides=overrides)
-
-    def draw_text_2d(self, pos_2d: Vector, text: str, overrides: dict = None) -> None:
-        """
-        Draw text at a given 2D position (in pixels) of Viewport.
-
-        Parameters
-        ----------
-        pos_2d: Vector
-            Co-ordinates in pixels. (0, 0) is at bottom left
-
-        text: str
-            Text to display. '|' as multi-line separator
-
-        overrides: dict, optional
-            Optional dictionary to override common annotation params
-
-        """
-        if self.geometry:
-            return
+            pos_2d = self._get_camera_view_coords(pos_2d)
+        else:
+            pos_2d = self._get_viewport_coords(pos_2d)
         self._draw_text(pos_2d, text, is3d=False, overrides=overrides)
 
     def _draw_text(
@@ -429,15 +381,17 @@ class BaseAnnotation(metaclass=ABCMeta):
         overrides: dict = None,
     ) -> None:
         """
-        Draw a line between two points in 2D viewport space
+        Draw a line between two points (normalized co-ordinates) in 2D viewport space
 
         Parameters
         ----------
         v1: Vector
-            2D co-ordinates of the first point
+            2D co-ordinates of the first point.
+            Normalized co-ordinate (0 - 1). (0, 0) is at bottom left
 
         v2: Vector
-            2D co-ordinates of the second point
+            2D co-ordinates of the second point.
+            Normalized co-ordinate (0 - 1). (0, 0) is at bottom left
 
         v1_text: str, optional
             Optional text to display at v1
@@ -458,6 +412,14 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        if self.geometry:
+            return
+        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+            v1 = self._get_camera_view_coords(v1)
+            v2 = self._get_camera_view_coords(v2)
+        else:
+            v1 = self._get_viewport_coords(v1)
+            v2 = self._get_viewport_coords(v2)
         self._draw_line(
             v1,
             v2,
@@ -493,7 +455,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         center: Vector,
         radius: float,
-        normal: Vector,
+        normal: Vector | None = None,
         angle: float = 360.0,
         start_dv: Vector = None,
         c_arrow: bool = False,
@@ -513,7 +475,8 @@ class BaseAnnotation(metaclass=ABCMeta):
             The radius of the circle
 
         normal: Vector
-            The normal vector of the plane on which the cirle is to be drawn
+            The normal vector of the plane on which the cirle is to be drawn.
+            When None, the circle is drawn in the viewport plane
 
         angle: float, optional
             An angle less than 360 for partial circle (arc) - in degrees
@@ -534,9 +497,100 @@ class BaseAnnotation(metaclass=ABCMeta):
             Optional dictionary to override common annotation params
 
         """
+        self._draw_circle(
+            center,
+            radius,
+            normal,
+            angle,
+            start_dv,
+            c_arrow,
+            cc_arrow,
+            is3d=True,
+            overrides=overrides,
+        )
+
+    def draw_circle_2d(
+        self,
+        center: Vector,
+        radius: float,
+        angle: float = 360.0,
+        start_dv: Vector = None,
+        c_arrow: bool = False,
+        cc_arrow: bool = False,
+        overrides: dict = None,
+    ):
+        """
+        Draw a circle around a 2D point (normalized coordinate) in the viewport space
+
+        Parameters
+        ----------
+        center: Vector
+            A 2D co-ordinate of the center.
+            Normalized co-ordinate (0 - 1). (0, 0) is at bottom left
+
+        radius: float
+            The radius of the circle
+
+        angle: float, optional
+            An angle less than 360 for partial circle (arc) - in degrees
+            Default is 360 degrees
+
+        start_dv: Vector, optional
+            The direction vector along which to start the circle (arc)
+            If not provided, a random point in the circle plane is chosen
+
+        c_arrow: bool, optional
+            Whether to display clockwise arrow. Default is False
+
+        cc_arrow: bool, optional
+            Whether to display counter clockwise arrow. Default is False
+
+        overrides: dict, optional
+            Optional dictionary to override common annotation params
+
+        """
+        if self.geometry:
+            return
+        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+            center = self._get_camera_view_coords(center)
+            _, camera_view_width, _ = self._get_camera_view_info()
+            radius *= camera_view_width / self._scene.render.resolution_x
+        else:
+            center = self._get_viewport_coords(center)
+        self._draw_circle(
+            center,
+            radius,
+            None,
+            angle,
+            start_dv,
+            c_arrow,
+            cc_arrow,
+            is3d=False,
+            overrides=overrides,
+        )
+
+    def _draw_circle(
+        self,
+        center: Vector,
+        radius: float,
+        normal: Vector | None = None,
+        angle: float = 360.0,
+        start_dv: Vector = None,
+        c_arrow: bool = False,
+        cc_arrow: bool = False,
+        is3d: bool = False,
+        overrides: dict = None,
+    ):
+        """Internal: Draw circle 3D or 2D"""
         # convert to vectors
         if not isinstance(center, Vector):
             center = Vector(center)
+        if is3d:
+            if normal is None:
+                normal = self._get_viewport_normal(center)
+        else:
+            center = Vector((center[0], center[1], 0))
+            normal = Vector((0, 0, -1))
         if not isinstance(normal, Vector):
             normal = Vector(normal)
         # get a point in the circle plane to start the circle
@@ -560,7 +614,7 @@ class BaseAnnotation(metaclass=ABCMeta):
                     p2,
                     v1_arrow=True,
                     arrow_plane_pt=start,
-                    is3d=True,
+                    is3d=is3d,
                     overrides=overrides,
                 )
             elif i == n_steps - 1 and c_arrow:
@@ -569,11 +623,11 @@ class BaseAnnotation(metaclass=ABCMeta):
                     p2,
                     v2_arrow=True,
                     arrow_plane_pt=start,
-                    is3d=True,
+                    is3d=is3d,
                     overrides=overrides,
                 )
             else:
-                self._draw_line(p1, p2, is3d=True, overrides=overrides)
+                self._draw_line(p1, p2, is3d=is3d, overrides=overrides)
             p1 = p2.copy()
 
     def draw_sphere(
@@ -1037,38 +1091,12 @@ class BaseAnnotation(metaclass=ABCMeta):
             raise ValueError("image needs to be from bpy.data.images")
         if self.geometry:
             return
-        if pos_2d is None:
-            return
-        for comp in pos_2d:
-            if not (0.0 <= comp <= 1.0):
-                return
-
         pos_x, pos_y = pos_2d
-        x = pos_x * self.viewport_width
-        y = pos_y * self.viewport_height
+        x, y = self._get_viewport_coords(pos_2d)
         # adjust viewport position for camera view mode
         if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
-            # camera view mode in 3D viewport
-            zoom_factor, camera_view_width, camera_view_height = (
-                self._get_camera_view_info()
-            )
-            # offsets are based off the center of the viewport
-            camera_offset_x = self._rv3d.view_camera_offset[0]
-            camera_offset_y = self._rv3d.view_camera_offset[1]
-            # calculate the origin (bottom left) of the camera view
-            camera_view_x0 = (
-                (self.viewport_width / 2)
-                - (camera_view_width / 2)
-                - (camera_offset_x * self.viewport_width * 2 * zoom_factor)
-            )
-            camera_view_y0 = (
-                (self.viewport_height / 2)
-                - (camera_view_height / 2)
-                - (camera_offset_y * self.viewport_height * 2 * zoom_factor)
-            )
-            # calculate the actual position with respect to the camera view origin
-            x = camera_view_x0 + (pos_x * camera_view_width)
-            y = camera_view_y0 + (pos_y * camera_view_height)
+            x, y = self._get_camera_view_coords(pos_2d)
+            _, camera_view_width, _ = self._get_camera_view_info()
             scale *= camera_view_width / self._scene.render.resolution_x
 
         width, height = image.size
@@ -1367,6 +1395,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         is3d: bool = False,
         overrides: dict = None,
     ) -> None:
+        """Internal: Draw arrow ends"""
         params = _get_params(self.interface, overrides)
         draw_3d_arrow_overlay = False
         if params.line_mode == "mesh_and_overlay":
@@ -1503,6 +1532,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._dist_range = max_dist - min_dist
 
     def _get_camera_view_info(self):
+        """Internal: Get 3D viewport camera view details"""
         # camera view mode in 3D viewport
         zoom = self._rv3d.view_camera_zoom
         # From: BKE_screen_view3d_zoom_to_fac in blender/blenkernel/intern/screen.cc
@@ -1567,3 +1597,48 @@ class BaseAnnotation(metaclass=ABCMeta):
             )
         else:
             return None
+
+    def _get_viewport_normal(self, pos_3d: Vector) -> Vector | None:
+        """Internal: Get the viewport normal"""
+        if self._render_mode:
+            return self._scene.camera.matrix_world.to_3x3().col[2]
+        elif self._rv3d is not None and self._region is not None:
+            if not isinstance(pos_3d, Vector):
+                pos_3d = Vector(pos_3d)
+            pos_2d = self._get_2d_point(pos_3d)
+            return view3d_utils.region_2d_to_vector_3d(self._region, self._rv3d, pos_2d)
+        else:
+            return None
+
+    def _get_viewport_coords(self, pos_2d: Vector) -> Vector:
+        """Internal: Get actual viewport coords from normalized coords"""
+        pos_x, pos_y = pos_2d
+        pos_x *= self.viewport_width
+        pos_y *= self.viewport_height
+        return Vector((pos_x, pos_y))
+
+    def _get_camera_view_coords(self, pos_2d: Vector) -> Vector:
+        """Internal: Get coords with respect to camera view"""
+        pos_x, pos_y = pos_2d
+        # camera view mode in 3D viewport
+        zoom_factor, camera_view_width, camera_view_height = (
+            self._get_camera_view_info()
+        )
+        # offsets are based off the center of the viewport
+        camera_offset_x = self._rv3d.view_camera_offset[0]
+        camera_offset_y = self._rv3d.view_camera_offset[1]
+        # calculate the origin (bottom left) of the camera view
+        camera_view_x0 = (
+            (self.viewport_width / 2)
+            - (camera_view_width / 2)
+            - (camera_offset_x * self.viewport_width * 2 * zoom_factor)
+        )
+        camera_view_y0 = (
+            (self.viewport_height / 2)
+            - (camera_view_height / 2)
+            - (camera_offset_y * self.viewport_height * 2 * zoom_factor)
+        )
+        # calculate the actual position with respect to the camera view origin
+        pos_x = camera_view_x0 + (pos_x * camera_view_width)
+        pos_y = camera_view_y0 + (pos_y * camera_view_height)
+        return Vector((pos_x, pos_y))
