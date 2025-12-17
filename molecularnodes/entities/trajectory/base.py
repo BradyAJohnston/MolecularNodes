@@ -24,6 +24,7 @@ from ...nodes.styles import (
     StyleBase,
 )
 from ...utils import (
+    count_value_changes,
     temp_override_property,
 )
 from ..base import EntityType, MolecularEntity
@@ -300,6 +301,9 @@ class Trajectory(MolecularEntity):
     def _compute_res_id(self) -> np.ndarray:
         return self.atoms.resids
 
+    def _compute_ures_id(self) -> np.ndarray:
+        return count_value_changes(self.atoms.resids, self._compute_chain_id_int())
+
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
 
@@ -348,7 +352,12 @@ class Trajectory(MolecularEntity):
             return np.repeat(int(-1), len(self))
 
     def _compute_is_lipid(self) -> np.ndarray:
-        return np.isin(self.atoms.resnames, data.lipid_names)
+        return np.isin(self.atoms.resnames, data.RESNAMES_LIPID)
+
+    def _compute_is_solvent(self) -> np.ndarray:
+        resname_is_solvent = np.isin(self.atoms.resnames, data.RESNAMES_SOLVENT)
+        name_is_solvent = np.isin(self.atoms.names, data.NAMES_SOLVENT)
+        return np.logical_or(resname_is_solvent, name_is_solvent)
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
@@ -384,6 +393,7 @@ class Trajectory(MolecularEntity):
             "vdw_radii": self._compute_vdw_radii,
             "mass": self._compute_mass,
             "res_id": self._compute_res_id,
+            "ures_id": self._compute_ures_id,
             "segid": self._compute_segindices,
             "res_name": self._compute_res_name_int,
             "atom_id": self._compute_atom_id,
@@ -393,9 +403,9 @@ class Trajectory(MolecularEntity):
             "chain_id": self._compute_chain_id_int,
             "atom_types": self._compute_atom_type_int,
             "atom_name": self._compute_atom_name_int,
-            "is_backbone": "backbone or nucleicbackbone or name BB",
             "is_alpha_carbon": "name CA or name BB",
-            "is_solvent": "name OW or name HW1 or name HW2 or resname W or resname PW",
+            "is_backbone": "backbone or nucleicbackbone or name BB",
+            "is_solvent": self._compute_is_solvent,
             "is_nucleic": "nucleic",
             "is_lipid": self._compute_is_lipid,
             "is_peptide": "protein or (name BB SC*)",
@@ -417,6 +427,7 @@ class Trajectory(MolecularEntity):
                     name=name,
                 )
             except (mda.NoDataError, AttributeError) as e:
+                print(f"{e=}")
                 logger.debug(f"Skipping attribute '{name}': {e}")
             except Exception as e:
                 logger.warning(f"Failed to compute attribute '{name}': {e}")

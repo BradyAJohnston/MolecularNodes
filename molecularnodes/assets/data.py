@@ -15,6 +15,7 @@
 # this dict is used to convert element symbol to atomic number, vdw_radii, and
 # mass values
 
+
 elements = {
     "H": {
         "atomic_number": 1,
@@ -3251,8 +3252,28 @@ SACCHARIDE_REPRESENTATION = {
     None: ("h", "black"),
 }
 
+# partially taken from here: https://computecanada.github.io/molmodsim-md-theory-lesson-novice/09-water_models/index.html
+# and here: https://github.com/BradyAJohnston/MolecularNodes/issues/1051
+RESNAMES_SOLVENT: tuple = (
+    "OPC",
+    "OPC3",
+    "PW",
+    "SOL"
+    "SPC",
+    "SPE",
+    "TIP3",
+    "TIP4",
+    "W",
+    "WAT",
+    )
+NAMES_SOLVENT: tuple = (
+    "HW1",
+    "HW2",
+    "OW",
+    )
+
 # Lipid names to match against for the `is_lipid` attribute
-lipid_names = (
+RESNAMES_LIPID = (
     "23SM",
     "CDL1",
     "CDL2",
