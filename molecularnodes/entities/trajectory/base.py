@@ -427,7 +427,6 @@ class Trajectory(MolecularEntity):
                     name=name,
                 )
             except (mda.NoDataError, AttributeError) as e:
-                print(f"{e=}")
                 logger.debug(f"Skipping attribute '{name}': {e}")
             except Exception as e:
                 logger.warning(f"Failed to compute attribute '{name}': {e}")
