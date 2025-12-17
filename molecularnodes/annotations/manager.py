@@ -342,6 +342,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         setattr(annotation_instance, "_invalid_inputs", [])
         # dict of invalid input messages
         setattr(annotation_instance, "_invalid_input_messages", {})
+        # draw error string if any
+        setattr(annotation_instance, "_draw_error", None)
         # call the validate method in the annotation class if specified for
         # any annotation specific custom validation
         if hasattr(annotation_instance, "validate") and callable(
@@ -601,8 +603,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             # handle exceptions to allow other annotations to be drawn
             try:
                 interface._instance.draw()
-            except Exception:
-                pass
+                interface._instance._draw_error = None
+            except Exception as e:
+                interface._instance._draw_error = str(e)
         # check and return geometry if present
         if get_geometry and geometry != empty_geometry:
             return geometry

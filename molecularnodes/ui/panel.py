@@ -1044,6 +1044,11 @@ class MN_PT_Annotations(bpy.types.Panel):
         inputs = getattr(item, entity_annotation_type, None)
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
+            if instance._draw_error is not None:
+                row = box.row()
+                row.alert = True
+                row.label(text=instance._draw_error, icon="ERROR")
+
             for prop_name in inputs.__annotations__.keys():
                 if prop_name == "uuid":
                     continue
