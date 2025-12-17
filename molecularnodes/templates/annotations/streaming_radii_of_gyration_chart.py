@@ -136,7 +136,17 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
 
         if params.show_circles and self._com is not None:
             # draw circles with corresponding matplotlib series default colors
-            # #ff7f0e (Orange), #2ca02c (Green), #d62728 (Red)
+            # #1f77b4 (Blue), #ff7f0e (Orange), #2ca02c (Green), #d62728 (Red)
+            # overall
+            self.draw_circle_3d(
+                self._com,
+                self._rog[0],
+                overrides={
+                    "line_color": (0.122, 0.467, 0.706, 1),
+                    "mesh_color": (0.122, 0.467, 0.706, 1),
+                },
+            )
+            # along x-axis
             self.draw_circle_3d(
                 self._com,
                 self._rog[1],
@@ -146,6 +156,7 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
                     "mesh_color": (1.0, 0.498, 0.055, 1),
                 },
             )
+            # along y-axis
             self.draw_circle_3d(
                 self._com,
                 self._rog[2],
@@ -155,6 +166,7 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
                     "mesh_color": (0.173, 0.627, 0.173, 1),
                 },
             )
+            # along z-axis
             self.draw_circle_3d(
                 self._com,
                 self._rog[3],
