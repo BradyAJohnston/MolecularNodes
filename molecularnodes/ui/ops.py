@@ -949,7 +949,7 @@ def _register_temp_annotation_add_op(entity):
             inputs = getattr(self.props, entity_annotation_type, None)
             if inputs is not None:
                 for prop_name in inputs.__annotations__.keys():
-                    if prop_name in ("uuid", "valid_inputs"):
+                    if prop_name == "uuid":
                         continue
                     layout.prop(inputs, prop_name)
 
