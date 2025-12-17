@@ -92,8 +92,6 @@ def create_annotation_type_inputs(
         attributes["__annotations__"][attr] = prop
     # add the uuid to the annotation for lookup during update callback
     attributes["__annotations__"]["uuid"] = StringProperty()
-    # add a boolean to indicate if validations succeeded
-    attributes["__annotations__"]["valid_inputs"] = BoolProperty(default=True)
     # add slots to declare attributes
     attributes["__slots__"] = []
     # create and return new AnnotationInputs class
