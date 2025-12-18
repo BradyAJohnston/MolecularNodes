@@ -243,14 +243,13 @@ class FrameManager:
         if n_frames is None:
             # Streaming trajectory - just return current frame
             return np.array([frame], dtype=np.int64)
-
         
         frames = frames_to_average(
             frame,
             n_frames,
             average=self.trajectory.average,
         )
-
+        
         # Clamp frames to valid range
         frames = frames[(frames >= 0) & (frames < n_frames)]
 
