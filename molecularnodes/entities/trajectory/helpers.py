@@ -255,7 +255,6 @@ class FrameManager:
 
         return frames
 
-
     def update_position_cache(self, frame: int, cache_ahead: bool = True) -> None:
         """Update the position cache for the current frame.
 
