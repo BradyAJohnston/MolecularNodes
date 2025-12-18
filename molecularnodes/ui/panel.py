@@ -216,6 +216,7 @@ def panel_trajectory(layout, scene):
     op.name = scene.mn.import_md_name
     op.style = scene.mn.import_style
     op.setup_nodes = scene.mn.import_node_setup
+    op.use_dssp = scene.mn.import_md_use_dssp
     col.separator()
     col.prop(scene.mn, "import_md_topology")
     col.prop(scene.mn, "import_md_trajectory")
@@ -227,6 +228,8 @@ def panel_trajectory(layout, scene):
     col = row.column()
     col.prop(scene.mn, "import_style")
     col.enabled = scene.mn.import_node_setup
+    row = layout.row()
+    row.prop(scene.mn, "import_md_use_dssp")
 
 
 def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
@@ -386,6 +389,10 @@ def panel_md_properties(layout, context):
     row.prop(obj.mn, "correct_periodic")
     row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
+
+    if traj._using_dssp:
+        row = layout.row()
+        row.prop(obj.mn, "dssp_type")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()

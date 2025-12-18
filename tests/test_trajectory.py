@@ -484,6 +484,22 @@ class TestTrajectory:
             assert "/nonexistent/path/topology.pdb" in error_msg
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
+    def test_dssp(self, snapshot, universe):
+        t1 = mn.Trajectory(universe, use_dssp=False).add_style(
+            "cartoon", selection="all"
+        )
+        with pytest.raises(databpy.NamedAttributeError):
+            _ = t1.named_attribute("sec_struct")
+        t2 = mn.Trajectory(universe, use_dssp=True).add_style(
+            "cartoon", selection="all"
+        )
+        avg_sec_struct = t2.named_attribute("sec_struct")
+        assert snapshot == avg_sec_struct
+        # change dssp type to per-frame from the default of average
+        t2.dssp_type = "per_frame"
+        t2.set_frame(1)
+        assert not np.allclose(avg_sec_struct, t2.named_attribute("sec_struct"))
+
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, topology):

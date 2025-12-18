@@ -12,6 +12,7 @@ import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
+from MDAnalysis.analysis.dssp import DSSP, translate
 from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
@@ -77,6 +78,8 @@ class Trajectory(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
+    dssp_type : str
+        Average or per frame secondary structure
 
     Examples
     --------
@@ -101,6 +104,7 @@ class Trajectory(MolecularEntity):
     average = IntObjectMNProperty("average", validate_fn=_validate_non_negative)
     correct_periodic = BoolObjectMNProperty("correct_periodic")
     interpolate = BoolObjectMNProperty("interpolate")
+    dssp_type = StringObjectMNProperty("dssp_type")
 
     _mn_frame = BoolObjectMNProperty("frame_hidden")
     _mn_styles_active_index = IntObjectMNProperty(
@@ -118,6 +122,7 @@ class Trajectory(MolecularEntity):
         name: str = "NewUniverseObject",
         world_scale: float = 0.01,
         create_object: bool = True,
+        use_dssp: bool = False,
     ):
         """Initialize Trajectory from MDAnalysis Universe.
 
@@ -131,6 +136,8 @@ class Trajectory(MolecularEntity):
             Scale factor from Angstroms to Blender units
         create_object : bool, default=True
             Whether to immediately create the Blender object
+        use_dssp : bool, default=True
+            Whether to use DSSP to assign secondary structure
 
         Notes
         -----
@@ -144,6 +151,9 @@ class Trajectory(MolecularEntity):
         self._updating_in_progress = False
         self.annotations = TrajectoryAnnotationManager(self)
         self.frame_manager = FrameManager(self)
+        self._using_dssp = False
+        if use_dssp:
+            self._setup_dssp()
         if create_object:
             self.create_object(name=name)
 
@@ -229,6 +239,33 @@ class Trajectory(MolecularEntity):
         except Exception as e:
             logger.warning(f"Failed to compute elements, using placeholder 'X': {e}")
             return np.repeat("X", len(self))
+
+    def _calculate_sec_struct(self, universe) -> np.ndarray:
+        ss_map = {"H": 1, "E": 2, "-": 3}
+        attribute_data = np.zeros(len(universe.atoms))
+        for i, resid in enumerate(self._dssp_run.results.resids):
+            residue = universe.residues[resid - 1]
+            if self.dssp_type == "average":
+                value = ss_map[self._dssp_mean[i]]
+            else:
+                value = ss_map[self._dssp_run.results.dssp[self.uframe][i]]
+            attribute_data[residue.atoms.indices] = value
+        return attribute_data
+
+    def _setup_dssp(self) -> None:
+        try:
+            # From: https://docs.mdanalysis.org/stable/documentation_pages/analysis/dssp.html
+            self._dssp_run = DSSP(self.universe).run()
+            self._dssp_mean = translate(
+                self._dssp_run.results.dssp_ndarray.mean(axis=0)
+            )
+            self.calculations["sec_struct"] = self._calculate_sec_struct
+            self._using_dssp = True
+        except Exception:
+            # DSSP only works for protein selections, hence the try / except
+            # From the above doc:
+            #     "For DSSP to work properly, your atoms must represent a protein"
+            pass
 
     def _compute_elements(self) -> np.ndarray:
         """Return cached elements (for backwards compatibility)"""
@@ -490,9 +527,10 @@ class Trajectory(MolecularEntity):
         style: str | None = "spheres",
         selection: str | None = None,
         create_object: bool = True,
+        use_dssp: bool = False,
     ) -> "Trajectory":
         u = mda.Universe(topology, coordinates)
-        traj = cls(u, name=name, create_object=create_object)
+        traj = cls(u, name=name, create_object=create_object, use_dssp=use_dssp)
         if style:
             traj.add_style(style=style, selection=selection)
         return traj
