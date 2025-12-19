@@ -322,11 +322,11 @@ class TestTrajectory:
         session = mn.session.get_session()
         # test defaults
         t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.tree.nodes) == 8
         session.remove_trajectory(t1)
         # test add_trajectory with non-default style
         t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.tree.nodes) == 8
         session.remove_trajectory(t1)
         # test add_trajectory with no style
         t1 = mn.Trajectory(universe)
@@ -339,7 +339,7 @@ class TestTrajectory:
             t1.add_style(style="invalid")
         # test adding new style
         t1.add_style(style="cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.tree.nodes) == 8
         # test add_style with selection string
         selection = "resid 1:10"
         t1.add_style(style="ribbon", selection=selection)
@@ -362,7 +362,7 @@ class TestTrajectory:
     ):
         session = mn.session.get_session()
         t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.tree.nodes) == 8
         assert len(t1.styles) == 1
         # add new style
         t1.add_style(style="cartoon")
@@ -485,20 +485,22 @@ class TestTrajectory:
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
     def test_dssp(self, snapshot, universe):
-        t1 = mn.Trajectory(universe, use_dssp=False).add_style(
-            "cartoon", selection="all"
-        )
-        with pytest.raises(databpy.NamedAttributeError):
-            _ = t1.named_attribute("sec_struct")
-        t2 = mn.Trajectory(universe, use_dssp=True).add_style(
-            "cartoon", selection="all"
-        )
-        avg_sec_struct = t2.named_attribute("sec_struct")
+        t = mn.Trajectory(universe).add_style("cartoon", selection="all")
+        # default dssp is per-frame
+        t.set_frame(1)
+        frame_sec_struct = t.named_attribute("sec_struct")
+        assert snapshot == frame_sec_struct
+        # change dssp to average
+        t.dssp = "average"
+        avg_sec_struct = t.named_attribute("sec_struct")
         assert snapshot == avg_sec_struct
-        # change dssp type to per-frame from the default of average
-        t2.dssp_type = "per_frame"
-        t2.set_frame(1)
-        assert not np.allclose(avg_sec_struct, t2.named_attribute("sec_struct"))
+        assert not np.allclose(frame_sec_struct, avg_sec_struct)
+        # change dssp to none
+        t.dssp = "none"
+        no_sec_struct = t.named_attribute("sec_struct")
+        assert snapshot == no_sec_struct
+        assert not np.allclose(no_sec_struct, frame_sec_struct)
+        assert not np.allclose(no_sec_struct, avg_sec_struct)
 
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])

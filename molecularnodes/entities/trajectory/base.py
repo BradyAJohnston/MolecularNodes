@@ -78,8 +78,8 @@ class Trajectory(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
-    dssp_type : str
-        Average or per frame secondary structure
+    dssp : str
+        Per frame, average or no secondary structure
 
     Examples
     --------
@@ -104,7 +104,7 @@ class Trajectory(MolecularEntity):
     average = IntObjectMNProperty("average", validate_fn=_validate_non_negative)
     correct_periodic = BoolObjectMNProperty("correct_periodic")
     interpolate = BoolObjectMNProperty("interpolate")
-    dssp_type = StringObjectMNProperty("dssp_type")
+    dssp = StringObjectMNProperty("dssp")
 
     _mn_frame = BoolObjectMNProperty("frame_hidden")
     _mn_styles_active_index = IntObjectMNProperty(
@@ -122,7 +122,6 @@ class Trajectory(MolecularEntity):
         name: str = "NewUniverseObject",
         world_scale: float = 0.01,
         create_object: bool = True,
-        use_dssp: bool = False,
     ):
         """Initialize Trajectory from MDAnalysis Universe.
 
@@ -136,8 +135,6 @@ class Trajectory(MolecularEntity):
             Scale factor from Angstroms to Blender units
         create_object : bool, default=True
             Whether to immediately create the Blender object
-        use_dssp : bool, default=True
-            Whether to use DSSP to assign secondary structure
 
         Notes
         -----
@@ -151,9 +148,7 @@ class Trajectory(MolecularEntity):
         self._updating_in_progress = False
         self.annotations = TrajectoryAnnotationManager(self)
         self.frame_manager = FrameManager(self)
-        self._using_dssp = False
-        if use_dssp:
-            self._setup_dssp()
+        self._setup_dssp()
         if create_object:
             self.create_object(name=name)
 
@@ -241,31 +236,51 @@ class Trajectory(MolecularEntity):
             return np.repeat("X", len(self))
 
     def _calculate_sec_struct(self, universe) -> np.ndarray:
+        no_sec_struct = np.full(len(universe.atoms), 3, dtype=float)
+        if self.dssp == "none" or self._DSSP is None:
+            return no_sec_struct
+        frame = universe.trajectory.frame
+        if self._dssp_mean is None:
+            if self.dssp == "average":
+                try:
+                    self._dssp_run = self._DSSP.run()
+                    self._dssp_mean = translate(
+                        self._dssp_run.results.dssp_ndarray.mean(axis=0)
+                    )
+                except Exception as e:
+                    logger.debug(f"Failed to run full DSSP: {e}")
+            else:
+                try:
+                    self._dssp_run = self._DSSP.run(frames=[frame])
+                except Exception as e:
+                    logger.debug(f"Failed to run DSSP for frame {frame}: {e}")
+            # restore current frame
+            universe.trajectory[frame]
+        # ensure we have dssp run results (full or single frame)
+        if self._dssp_run is None:
+            return no_sec_struct
+        # create attribute data
         ss_map = {"H": 1, "E": 2, "-": 3}
         attribute_data = np.zeros(len(universe.atoms))
         for i, resid in enumerate(self._dssp_run.results.resids):
             residue = universe.residues[resid - 1]
-            if self.dssp_type == "average":
+            if self.dssp == "average":
                 value = ss_map[self._dssp_mean[i]]
             else:
-                value = ss_map[self._dssp_run.results.dssp[self.uframe][i]]
+                index = 0 if self._dssp_mean is None else frame
+                value = ss_map[self._dssp_run.results.dssp[index][i]]
             attribute_data[residue.atoms.indices] = value
         return attribute_data
 
     def _setup_dssp(self) -> None:
         try:
-            # From: https://docs.mdanalysis.org/stable/documentation_pages/analysis/dssp.html
-            self._dssp_run = DSSP(self.universe).run()
-            self._dssp_mean = translate(
-                self._dssp_run.results.dssp_ndarray.mean(axis=0)
-            )
-            self.calculations["sec_struct"] = self._calculate_sec_struct
-            self._using_dssp = True
-        except Exception:
-            # DSSP only works for protein selections, hence the try / except
-            # From the above doc:
-            #     "For DSSP to work properly, your atoms must represent a protein"
-            pass
+            self._DSSP = DSSP(self.universe)
+        except Exception as e:
+            self._DSSP = None
+            logger.warning(f"Failed to setup DSSP: {e}")
+        self._dssp_run = None
+        self._dssp_mean = None
+        self.calculations["sec_struct"] = self._calculate_sec_struct
 
     def _compute_elements(self) -> np.ndarray:
         """Return cached elements (for backwards compatibility)"""
@@ -525,12 +540,11 @@ class Trajectory(MolecularEntity):
         coordinates: Path | str,
         name: str = "NewTrajectory",
         style: str | None = "spheres",
-        selection: str | None = None,
+        selection: str = "all",
         create_object: bool = True,
-        use_dssp: bool = False,
     ) -> "Trajectory":
         u = mda.Universe(topology, coordinates)
-        traj = cls(u, name=name, create_object=create_object, use_dssp=use_dssp)
+        traj = cls(u, name=name, create_object=create_object)
         if style:
             traj.add_style(style=style, selection=selection)
         return traj
@@ -631,7 +645,7 @@ class Trajectory(MolecularEntity):
         self,
         style: StyleBase | str = "spheres",
         color: str | None = "common",
-        selection: str | AtomGroup | None = None,
+        selection: str | AtomGroup = "all",
         material: bpy.types.Material | str | None = None,
         name: str | None = None,
     ) -> "Trajectory":
@@ -650,11 +664,11 @@ class Trajectory(MolecularEntity):
             "chain", "residue", or other supported schemes. If None, no coloring
             is applied. Default is "common".
 
-        selection : str | AtomGroup | None, optional
+        selection : str | AtomGroup, optional
             Apply the style only to atoms matching this selection. Can be:
             - A string referring to an existing boolean attribute on the trajectory
             - A AtomGroup object defining a selection criteria
-            - None to apply to all atoms (default)
+            - Default is to apply to all atoms
 
         material : bpy.types.Material | str | None, optional
             The material to apply to the styled atoms. Can be a Blender Material object,
@@ -746,6 +760,8 @@ class Trajectory(MolecularEntity):
             # Preserve picklable calculations
             preserved_calculations = {}
             for name, calc_func in state["calculations"].items():
+                if name == "sec_struct":
+                    continue
                 try:
                     import pickle
 

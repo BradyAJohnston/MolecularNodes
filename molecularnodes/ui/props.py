@@ -209,11 +209,6 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         default="NewTrajectory",
         maxlen=0,
     )
-    import_md_use_dssp: BoolProperty(  # type: ignore
-        name="Use DSSP",
-        description="Assign secondary structure using the DSSP algorithm",
-        default=False,
-    )
     import_density_invert: BoolProperty(  # type: ignore
         name="Invert Data",
         description="Invert the values in the map. Low becomes high, high becomes low.",
@@ -430,13 +425,16 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         subtype="FILE_PATH",
         default="",
     )
-    dssp_type: EnumProperty(  # type: ignore
-        name="DSSP Type",
-        description="Average or per-frame secondary structure",
+    dssp: EnumProperty(  # type: ignore
+        name="DSSP",
+        description="Per frame, average or no secondary structure",
         items=(
+            ("per-frame", "Per Frame", "Secondary structure calculated per frame"),
             ("average", "Average", "Average secondary structure across all frames"),
-            ("per_frame", "Per Frame", "Secondary structure calculated per frame"),
+            ("none", "None", "Do not show secondary structures"),
         ),
+        default="per-frame",
+        update=_update_entities,
     )
 
 

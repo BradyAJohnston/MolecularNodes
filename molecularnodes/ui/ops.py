@@ -734,11 +734,6 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         description="Add nodes to the scene to load the trajectory",
         default=True,
     )
-    use_dssp: BoolProperty(  # type: ignore
-        name="Use DSSP",
-        description="Assign secondary structure using the DSSP algorithm",
-        default=False,
-    )
 
     def execute(self, context):
         topology = path_resolve(self.topology)
@@ -757,7 +752,6 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style if self.setup_nodes else None,
-                use_dssp=self.use_dssp,
             )
 
         context.view_layer.objects.active = traj.object
@@ -839,7 +833,7 @@ class MN_OT_Add_Style(Operator):
     selection: StringProperty(
         name="Selection",
         description="Selection for which the style applies",
-        default="",
+        default="all",
     )  # type: ignore
 
     name: StringProperty(

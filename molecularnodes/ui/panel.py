@@ -216,7 +216,6 @@ def panel_trajectory(layout, scene):
     op.name = scene.mn.import_md_name
     op.style = scene.mn.import_style
     op.setup_nodes = scene.mn.import_node_setup
-    op.use_dssp = scene.mn.import_md_use_dssp
     col.separator()
     col.prop(scene.mn, "import_md_topology")
     col.prop(scene.mn, "import_md_trajectory")
@@ -228,8 +227,6 @@ def panel_trajectory(layout, scene):
     col = row.column()
     col.prop(scene.mn, "import_style")
     col.enabled = scene.mn.import_node_setup
-    row = layout.row()
-    row.prop(scene.mn, "import_md_use_dssp")
 
 
 def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
@@ -390,9 +387,9 @@ def panel_md_properties(layout, context):
     row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
-    if traj._using_dssp:
+    if traj._dssp_run is not None:
         row = layout.row()
-        row.prop(obj.mn, "dssp_type")
+        row.prop(obj.mn, "dssp")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
@@ -715,7 +712,8 @@ class MN_PT_trajectory(bpy.types.Panel):
         active_index = scene.mn.entities_active_index
         uuid = scene.mn.entities[active_index].name
         # Use the object corresponding to the entity
-        object = scene.MNSession.get(uuid).object
+        traj = scene.MNSession.get(uuid)
+        object = traj.object
         props = object.mn
         row = layout.row()
         label = "This trajectory has " + str(props.n_frames) + " frames"
@@ -726,6 +724,9 @@ class MN_PT_trajectory(bpy.types.Panel):
         row = box.row()
         row.prop(props, "frame")
         box.enabled = not props.update_with_scene
+        if traj._dssp_run is not None:
+            row = layout.row()
+            row.prop(props, "dssp")
 
 
 class MN_UL_StylesList(bpy.types.UIList):
