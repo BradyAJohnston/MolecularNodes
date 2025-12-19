@@ -263,7 +263,7 @@ class Trajectory(MolecularEntity):
         ss_map = {"H": 1, "E": 2, "-": 3}
         attribute_data = np.zeros(len(universe.atoms))
         for i, resid in enumerate(self._dssp_run.results.resids):
-            residue = universe.residues[resid - 1]
+            residue = universe.residues[universe.residues.resids == resid]
             if self.dssp == "average":
                 value = ss_map[self._dssp_mean[i]]
             else:
