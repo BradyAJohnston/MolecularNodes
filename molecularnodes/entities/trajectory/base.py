@@ -259,18 +259,20 @@ class Trajectory(MolecularEntity):
         # ensure we have dssp run results (full or single frame)
         if self._dssp_run is None:
             return no_sec_struct
+        # calculate resindices corresponding to dssp resids
+        if self._dssp_resindices is None:
+            mask = np.isin(universe.residues.resids, self._dssp_run.results.resids)
+            self._dssp_resindices = universe.residues.resindices[mask]
         # create attribute data
-        ss_map = {"H": 1, "E": 2, "-": 3}
+        if self.dssp == "average":
+            dssp_chars = self._dssp_mean
+        else:
+            index = 0 if self._dssp_mean is None else frame
+            dssp_chars = self._dssp_run.results.dssp[index]
+        dssp_ints = self._dssp_vmap(dssp_chars)
         attribute_data = np.zeros(len(universe.atoms))
-        for i, resid in enumerate(self._dssp_run.results.resids):
-            residue = universe.residues[universe.residues.resids == resid]
-            if self.dssp == "average":
-                value = ss_map[self._dssp_mean[i]]
-            else:
-                index = 0 if self._dssp_mean is None else frame
-                value = ss_map[self._dssp_run.results.dssp[index][i]]
-            attribute_data[residue.atoms.indices] = value
-        return attribute_data
+        attribute_data[self._dssp_resindices] = dssp_ints
+        return attribute_data[universe.atoms.resindices]
 
     def _setup_dssp(self) -> None:
         try:
@@ -280,6 +282,8 @@ class Trajectory(MolecularEntity):
             logger.warning(f"Failed to setup DSSP: {e}")
         self._dssp_run = None
         self._dssp_mean = None
+        self._dssp_resindices = None
+        self._dssp_vmap = np.vectorize({"H": 1, "E": 2, "-": 3}.get)
         self.calculations["sec_struct"] = self._calculate_sec_struct
 
     def _compute_elements(self) -> np.ndarray:
