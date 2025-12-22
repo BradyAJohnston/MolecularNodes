@@ -236,7 +236,7 @@ class Trajectory(MolecularEntity):
             return np.repeat("X", len(self))
 
     def _calculate_sec_struct(self, universe) -> np.ndarray:
-        no_sec_struct = np.full(len(universe.atoms), 3, dtype=float)
+        no_sec_struct = np.full(len(universe.atoms), 3, dtype=int)
         if self.dssp == "none" or self._DSSP is None:
             return no_sec_struct
         frame = universe.trajectory.frame
@@ -270,7 +270,7 @@ class Trajectory(MolecularEntity):
             index = 0 if self._dssp_mean is None else frame
             dssp_chars = self._dssp_run.results.dssp[index]
         dssp_ints = self._dssp_vmap(dssp_chars)
-        attribute_data = np.zeros(len(universe.atoms))
+        attribute_data = np.zeros(len(universe.atoms), dtype=int)
         attribute_data[self._dssp_resindices] = dssp_ints
         return attribute_data[universe.atoms.resindices]
 
