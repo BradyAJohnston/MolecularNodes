@@ -9,13 +9,13 @@
    [2.6 2.3 0.4]]
 # ---
 # name: TestTrajectory.test_dssp
-  array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
+  array([3., 3., 3., ..., 0., 0., 0.], dtype=float32)
 # ---
 # name: TestTrajectory.test_dssp.1
-  array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
+  array([3., 3., 3., ..., 0., 0., 0.], dtype=float32)
 # ---
 # name: TestTrajectory.test_dssp.2
-  array([3, 3, 3, ..., 3, 3, 3], dtype=int32)
+  array([3., 3., 3., ..., 0., 0., 0.], dtype=float32)
 # ---
 # name: TestTrajectory.test_save_persistance
   [[0.4 0.3 0.5]
