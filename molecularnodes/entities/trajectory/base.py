@@ -236,7 +236,14 @@ class Trajectory(MolecularEntity):
             return np.repeat("X", len(self))
 
     def _calculate_sec_struct(self, universe) -> np.ndarray:
-        no_sec_struct = np.full(len(universe.atoms), 3, dtype=float)
+        no_sec_struct = np.full(len(universe.atoms), 3, dtype=int)
+        if not self._dssp_init:
+            try:
+                self._DSSP = DSSP(universe)
+            except Exception as e:
+                self._DSSP = None
+                logger.warning(f"Failed to setup DSSP: {e}")
+            self._dssp_init = True
         if self.dssp == "none" or self._DSSP is None:
             return no_sec_struct
         frame = universe.trajectory.frame
@@ -255,7 +262,8 @@ class Trajectory(MolecularEntity):
                 except Exception as e:
                     logger.debug(f"Failed to run DSSP for frame {frame}: {e}")
             # restore current frame
-            universe.trajectory[frame]
+            if self._entity_type != EntityType.MD_STREAMING:
+                universe.trajectory[frame]
         # ensure we have dssp run results (full or single frame)
         if self._dssp_run is None:
             return no_sec_struct
@@ -270,18 +278,15 @@ class Trajectory(MolecularEntity):
             index = 0 if self._dssp_mean is None else frame
             dssp_chars = self._dssp_run.results.dssp[index]
         dssp_ints = self._dssp_vmap(dssp_chars)
-        attribute_data = np.zeros(len(universe.atoms))
+        attribute_data = np.zeros(len(universe.atoms), dtype=int)
         attribute_data[self._dssp_resindices] = dssp_ints
         return attribute_data[universe.atoms.resindices]
 
     def _setup_dssp(self) -> None:
-        try:
-            self._DSSP = DSSP(self.universe)
-        except Exception as e:
-            self._DSSP = None
-            logger.warning(f"Failed to setup DSSP: {e}")
+        self._DSSP = None
         self._dssp_run = None
         self._dssp_mean = None
+        self._dssp_init = False
         self._dssp_resindices = None
         self._dssp_vmap = np.vectorize({"H": 1, "E": 2, "-": 3}.get)
         self.calculations["sec_struct"] = self._calculate_sec_struct

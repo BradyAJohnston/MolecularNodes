@@ -429,11 +429,21 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         name="DSSP",
         description="Per frame, average or no secondary structure",
         items=(
+            ("none", "None", "Do not show secondary structures"),
             ("per-frame", "Per Frame", "Secondary structure calculated per frame"),
             ("average", "Average", "Average secondary structure across all frames"),
-            ("none", "None", "Do not show secondary structures"),
         ),
-        default="per-frame",
+        default="none",
+        update=_update_entities,
+    )
+    dssp_streaming: EnumProperty(  # type: ignore
+        name="DSSP",
+        description="Per frame or no secondary structure",
+        items=(
+            ("none", "None", "Do not show secondary structures"),
+            ("per-frame", "Per Frame", "Secondary structure calculated per frame"),
+        ),
+        default="none",
         update=_update_entities,
     )
 

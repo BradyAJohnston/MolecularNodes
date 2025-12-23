@@ -387,9 +387,12 @@ def panel_md_properties(layout, context):
     row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
-    if traj._dssp_run is not None:
+    if traj._entity_type == EntityType.MD:
         row = layout.row()
         row.prop(obj.mn, "dssp")
+    elif traj._entity_type == EntityType.MD_STREAMING:
+        row = layout.row()
+        row.prop(obj.mn, "dssp_streaming")
 
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
@@ -698,6 +701,7 @@ class MN_PT_trajectory(bpy.types.Panel):
         try:
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
                 EntityType.MD_OXDNA.value,
             )
         except (LinkedObjectError, AttributeError):
@@ -715,18 +719,22 @@ class MN_PT_trajectory(bpy.types.Panel):
         traj = scene.MNSession.get(uuid)
         object = traj.object
         props = object.mn
-        row = layout.row()
-        label = "This trajectory has " + str(props.n_frames) + " frames"
-        row.label(text=label)
-        row = layout.row()
-        row.prop(props, "update_with_scene")
-        box = layout.box()
-        row = box.row()
-        row.prop(props, "frame")
-        box.enabled = not props.update_with_scene
-        if traj._dssp_run is not None:
+        if traj._entity_type != EntityType.MD_STREAMING:
+            row = layout.row()
+            label = "This trajectory has " + str(props.n_frames) + " frames"
+            row.label(text=label)
+            row = layout.row()
+            row.prop(props, "update_with_scene")
+            box = layout.box()
+            row = box.row()
+            row.prop(props, "frame")
+            box.enabled = not props.update_with_scene
+        if traj._entity_type == EntityType.MD:
             row = layout.row()
             row.prop(props, "dssp")
+        elif traj._entity_type == EntityType.MD_STREAMING:
+            row = layout.row()
+            row.prop(props, "dssp_streaming")
 
 
 class MN_UL_StylesList(bpy.types.UIList):

@@ -486,19 +486,21 @@ class TestTrajectory:
 
     def test_dssp(self, snapshot, universe):
         t = mn.Trajectory(universe).add_style("cartoon", selection="all")
-        # default dssp is per-frame
+        # default dssp is none
         t.set_frame(1)
-        frame_sec_struct = t.named_attribute("sec_struct")
+        no_sec_struct = t["sec_struct"]
+        assert snapshot == no_sec_struct
+        # change dssp to per-frame
+        t.dssp = "per-frame"
+        frame_sec_struct = t["sec_struct"]
         assert snapshot == frame_sec_struct
         # change dssp to average
         t.dssp = "average"
-        avg_sec_struct = t.named_attribute("sec_struct")
+        avg_sec_struct = t["sec_struct"]
         assert snapshot == avg_sec_struct
+        # frame and average should be different
         assert not np.allclose(frame_sec_struct, avg_sec_struct)
-        # change dssp to none
-        t.dssp = "none"
-        no_sec_struct = t.named_attribute("sec_struct")
-        assert snapshot == no_sec_struct
+        # frame and average different from none
         assert not np.allclose(no_sec_struct, frame_sec_struct)
         assert not np.allclose(no_sec_struct, avg_sec_struct)
 
