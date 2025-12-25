@@ -3,11 +3,14 @@ from bpy.props import (  # type: ignore
     BoolProperty,
     CollectionProperty,
     EnumProperty,
+    FloatProperty,
     IntProperty,
+    PointerProperty,
     StringProperty,
 )
 from databpy.object import LinkedObjectError
 from ..blender.utils import set_object_visibility
+from ..entities.base import EntityType
 from ..handlers import _update_entities
 from ..session import get_entity
 from .style import STYLE_ITEMS
@@ -74,6 +77,82 @@ class EntityProperties(bpy.types.PropertyGroup):
         default=True,
         get=_get_entity_visibility,
         set=_set_entity_visibility,
+    )  # type: ignore
+
+
+def _update_dssp_display_option(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    if entity is None:
+        return
+    if entity._entity_type == EntityType.MD_STREAMING:
+        display_option = getattr(self, "display_option_streaming")
+    else:
+        display_option = getattr(self, "display_option")
+    # call none and per-frame directly
+    if display_option == "none":
+        entity.dssp.show_none()
+        _update_entities(self, context)
+    elif display_option == "per-frame":
+        entity.dssp.show_per_frame()
+        _update_entities(self, context)
+    else:
+        self.applied = False
+
+
+def _update_dssp_applied(self, context):
+    if self.applied:
+        _update_entities(self, context)
+
+
+class DSSPProperties(bpy.types.PropertyGroup):
+    display_option: EnumProperty(  # type: ignore
+        name="Display",
+        description="Options to display secondary structures",
+        items=(
+            ("none", "None", "Do not show secondary structures"),
+            ("per-frame", "Per Frame", "Secondary structures calculated per frame"),
+            (
+                "sliding-window-average",
+                "Sliding Window Average",
+                "Average secondary structures of a sliding window of frames",
+            ),
+            (
+                "trajectory-average",
+                "Trajectory Average",
+                "Average secondary structures across all frames",
+            ),
+        ),
+        default="none",
+        update=_update_dssp_display_option,
+    )
+    display_option_streaming: EnumProperty(  # type: ignore
+        name="Display",
+        description="Options to display secondary structures",
+        items=(
+            ("none", "None", "Do not show secondary structures"),
+            ("per-frame", "Per Frame", "Secondary structures calculated per frame"),
+        ),
+        default="none",
+        update=_update_dssp_display_option,
+    )
+    window_size: IntProperty(
+        name="Window Size",
+        description="Number of frames in the sliding window",
+        min=1,
+        default=5,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    threshold: FloatProperty(
+        name="Threshold",
+        description="Threshold fraction of frames for trajectory average",
+        min=0.0,
+        max=1.0,
+        default=0.5,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    applied: BoolProperty(
+        default=True,
+        update=_update_dssp_applied,
     )  # type: ignore
 
 
@@ -425,27 +504,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         subtype="FILE_PATH",
         default="",
     )
-    dssp: EnumProperty(  # type: ignore
-        name="DSSP",
-        description="Per frame, average or no secondary structure",
-        items=(
-            ("none", "None", "Do not show secondary structures"),
-            ("per-frame", "Per Frame", "Secondary structure calculated per frame"),
-            ("average", "Average", "Average secondary structure across all frames"),
-        ),
-        default="none",
-        update=_update_entities,
-    )
-    dssp_streaming: EnumProperty(  # type: ignore
-        name="DSSP",
-        description="Per frame or no secondary structure",
-        items=(
-            ("none", "None", "Do not show secondary structures"),
-            ("per-frame", "Per Frame", "Secondary structure calculated per frame"),
-        ),
-        default="none",
-        update=_update_entities,
-    )
+    dssp: PointerProperty(type=DSSPProperties)  # type: ignore
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
@@ -568,6 +627,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 CLASSES = [
     EntityProperties,
+    DSSPProperties,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly

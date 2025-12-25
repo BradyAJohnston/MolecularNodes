@@ -387,13 +387,6 @@ def panel_md_properties(layout, context):
     row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
-    if traj._entity_type == EntityType.MD:
-        row = layout.row()
-        row.prop(obj.mn, "dssp")
-    elif traj._entity_type == EntityType.MD_STREAMING:
-        row = layout.row()
-        row.prop(obj.mn, "dssp_streaming")
-
     layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
     row = layout.row()
     row = row.split(factor=0.9)
@@ -729,12 +722,70 @@ class MN_PT_trajectory(bpy.types.Panel):
             row = box.row()
             row.prop(props, "frame")
             box.enabled = not props.update_with_scene
+
+
+class MN_PT_trajectory_dssp(bpy.types.Panel):
+    """
+    Panel for trajectory dssp details
+    """
+
+    bl_idname = "MN_PT_trajectory_dssp"
+    bl_label = "DSSP"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[active_index].name
+        # Use the object corresponding to the entity
+        traj = scene.MNSession.get(uuid)
+        if traj.dssp._DSSP is None:
+            row = layout.row()
+            op = row.operator("mn.dssp_init")
+            op.uuid = uuid
+            return
+        props = traj.object.mn.dssp
+        # display options
         if traj._entity_type == EntityType.MD:
             row = layout.row()
-            row.prop(props, "dssp")
+            row.prop(props, "display_option")
         elif traj._entity_type == EntityType.MD_STREAMING:
             row = layout.row()
-            row.prop(props, "dssp_streaming")
+            row.prop(props, "display_option_streaming")
+        # display option specific params
+        if props.display_option == "sliding-window-average":
+            row = layout.row()
+            row.prop(props, "window_size")
+        elif props.display_option == "trajectory-average":
+            row = layout.row()
+            row.prop(props, "threshold")
+        # apply button
+        if props.display_option in ("sliding-window-average", "trajectory-average"):
+            row = layout.row()
+            op = row.operator("mn.dssp_apply")
+            op.uuid = uuid
+            op.window_size = props.window_size
+            op.threshold = props.threshold
+            row.enabled = not props.applied
 
 
 class MN_UL_StylesList(bpy.types.UIList):
@@ -1152,6 +1203,7 @@ CLASSES = [
     MN_UL_EntitiesList,
     MN_PT_Entities,
     MN_PT_trajectory,
+    MN_PT_trajectory_dssp,
     MN_UL_StylesList,
     MN_PT_Styles,
     MN_UL_AnnotationsList,

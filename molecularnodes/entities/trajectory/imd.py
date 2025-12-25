@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Optional
 import MDAnalysis as mda
 from ..base import EntityType
-from ..utilities import StringObjectMNProperty
 from .base import Trajectory
 
 logger = logging.getLogger(__name__)
@@ -71,7 +70,6 @@ class StreamingTrajectory(Trajectory):
     """
 
     _entity_type = EntityType.MD_STREAMING
-    dssp = StringObjectMNProperty("dssp_streaming")
 
     def __init__(
         self,

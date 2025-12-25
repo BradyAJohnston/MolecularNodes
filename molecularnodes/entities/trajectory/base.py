@@ -104,7 +104,6 @@ class Trajectory(MolecularEntity):
     average = IntObjectMNProperty("average", validate_fn=_validate_non_negative)
     correct_periodic = BoolObjectMNProperty("correct_periodic")
     interpolate = BoolObjectMNProperty("interpolate")
-    dssp = StringObjectMNProperty("dssp")
 
     _mn_frame = BoolObjectMNProperty("frame_hidden")
     _mn_styles_active_index = IntObjectMNProperty(
@@ -148,7 +147,7 @@ class Trajectory(MolecularEntity):
         self._updating_in_progress = False
         self.annotations = TrajectoryAnnotationManager(self)
         self.frame_manager = FrameManager(self)
-        self._setup_dssp()
+        self.dssp = DSSPManager(self)
         if create_object:
             self.create_object(name=name)
 
@@ -234,62 +233,6 @@ class Trajectory(MolecularEntity):
         except Exception as e:
             logger.warning(f"Failed to compute elements, using placeholder 'X': {e}")
             return np.repeat("X", len(self))
-
-    def _calculate_sec_struct(self, universe) -> np.ndarray:
-        no_sec_struct = np.full(len(universe.atoms), 3, dtype=int)
-        if not self._dssp_init:
-            try:
-                self._DSSP = DSSP(universe)
-            except Exception as e:
-                self._DSSP = None
-                logger.warning(f"Failed to setup DSSP: {e}")
-            self._dssp_init = True
-        if self.dssp == "none" or self._DSSP is None:
-            return no_sec_struct
-        frame = universe.trajectory.frame
-        if self._dssp_mean is None:
-            if self.dssp == "average":
-                try:
-                    self._dssp_run = self._DSSP.run()
-                    self._dssp_mean = translate(
-                        self._dssp_run.results.dssp_ndarray.mean(axis=0)
-                    )
-                except Exception as e:
-                    logger.debug(f"Failed to run full DSSP: {e}")
-            else:
-                try:
-                    self._dssp_run = self._DSSP.run(frames=[frame])
-                except Exception as e:
-                    logger.debug(f"Failed to run DSSP for frame {frame}: {e}")
-            # restore current frame
-            if self._entity_type != EntityType.MD_STREAMING:
-                universe.trajectory[frame]
-        # ensure we have dssp run results (full or single frame)
-        if self._dssp_run is None:
-            return no_sec_struct
-        # calculate resindices corresponding to dssp resids
-        if self._dssp_resindices is None:
-            mask = np.isin(universe.residues.resids, self._dssp_run.results.resids)
-            self._dssp_resindices = universe.residues.resindices[mask]
-        # create attribute data
-        if self.dssp == "average":
-            dssp_chars = self._dssp_mean
-        else:
-            index = 0 if self._dssp_mean is None else frame
-            dssp_chars = self._dssp_run.results.dssp[index]
-        dssp_ints = self._dssp_vmap(dssp_chars)
-        attribute_data = np.zeros(len(universe.atoms), dtype=int)
-        attribute_data[self._dssp_resindices] = dssp_ints
-        return attribute_data[universe.atoms.resindices]
-
-    def _setup_dssp(self) -> None:
-        self._DSSP = None
-        self._dssp_run = None
-        self._dssp_mean = None
-        self._dssp_init = False
-        self._dssp_resindices = None
-        self._dssp_vmap = np.vectorize({"H": 1, "E": 2, "-": 3}.get)
-        self.calculations["sec_struct"] = self._calculate_sec_struct
 
     def _compute_elements(self) -> np.ndarray:
         """Return cached elements (for backwards compatibility)"""
@@ -549,7 +492,7 @@ class Trajectory(MolecularEntity):
         coordinates: Path | str,
         name: str = "NewTrajectory",
         style: str | None = "spheres",
-        selection: str = "all",
+        selection: str | None = None,
         create_object: bool = True,
     ) -> "Trajectory":
         u = mda.Universe(topology, coordinates)
@@ -654,7 +597,7 @@ class Trajectory(MolecularEntity):
         self,
         style: StyleBase | str = "spheres",
         color: str | None = "common",
-        selection: str | AtomGroup = "all",
+        selection: str | AtomGroup | None = None,
         material: bpy.types.Material | str | None = None,
         name: str | None = None,
     ) -> "Trajectory":
@@ -673,11 +616,11 @@ class Trajectory(MolecularEntity):
             "chain", "residue", or other supported schemes. If None, no coloring
             is applied. Default is "common".
 
-        selection : str | AtomGroup, optional
+        selection : str | AtomGroup | None, optional
             Apply the style only to atoms matching this selection. Can be:
             - A string referring to an existing boolean attribute on the trajectory
             - A AtomGroup object defining a selection criteria
-            - Default is to apply to all atoms
+            - None to apply to all atoms (default)
 
         material : bpy.types.Material | str | None, optional
             The material to apply to the styled atoms. Can be a Blender Material object,
@@ -765,6 +708,8 @@ class Trajectory(MolecularEntity):
             del state["selections"]
         if "annotations" in state:
             del state["annotations"]
+        if "dssp" in state:
+            del state["dssp"]
         if "calculations" in state:
             # Preserve picklable calculations
             preserved_calculations = {}
@@ -812,6 +757,8 @@ class Trajectory(MolecularEntity):
             self.selections = SelectionManager(self)
         if not hasattr(self, "annotations"):
             self.annotations = TrajectoryAnnotationManager(self)
+        if not hasattr(self, "dssp"):
+            self.dssp = DSSPManager(self)
         if not hasattr(self, "calculations"):
             self.calculations = state.pop("_preserved_calculations", {})
 
@@ -880,3 +827,185 @@ class Trajectory(MolecularEntity):
 
             # return the 3D bounding box vertices of the selected AtomGroup
             return self._get_3d_bbox(atom_group)
+
+
+class DSSPManager:
+    """
+    DSSP Manager for trajectories
+
+    Show secondary structures computed using MDAnalysis.analysis.dssp
+    """
+
+    def __init__(self, entity: MolecularEntity):
+        self._entity = entity
+        self._DSSP = None
+        self._dssp_run = None
+        self._trajectory_average = None
+        self._dssp_resindices = None
+        self._dssp_vmap = np.vectorize({"H": 1, "E": 2, "-": 3}.get)
+        self._props = None
+        self._display_option = "none"
+        self._window_size = 5
+        self._no_sec_struct = None
+
+    def _set_dssp_resindices(self, resids: list) -> None:
+        """Internal: Set resindices for DSSP resids"""
+        if self._dssp_resindices is None:
+            universe = self._entity.universe
+            mask = np.isin(universe.residues.resids, resids)
+            self._dssp_resindices = universe.residues.resindices[mask]
+
+    def _get_sliding_window_indices(self, index: int) -> None:
+        """Internal: Get sliding window indices based on current index"""
+        half = self._window_size // 2
+        indices = np.arange(index - half, index + half + 1)
+        n = self._entity.universe.trajectory.n_frames
+        mask = (indices >= 0) & (indices < n)
+        return indices[mask]
+
+    def _run_dssp(self, window: list) -> DSSP:
+        """Internal: Run DSSP for a subset of frames"""
+        trajectory = self._entity.universe.trajectory
+        # save current frame
+        current_frame = trajectory.frame
+        try:
+            dssp_run = self._DSSP.run(frames=window)
+        except Exception as e:
+            dssp_run = None
+            logger.debug(f"Failed to run DSSP for frames {window}: {e}")
+        # restore current frame
+        if self._entity._entity_type != EntityType.MD_STREAMING:
+            trajectory[current_frame]
+        return dssp_run
+
+    def _calculate_sec_struct(self, universe: mda.Universe) -> np.ndarray:
+        """Internal: Calculate secondary structures on frame change event"""
+        if self._display_option == "none" or self._DSSP is None:
+            return self._no_sec_struct
+        # run dssp if required
+        dssp_run = self._dssp_run
+        frame = universe.trajectory.frame
+        if self._display_option == "per-frame":
+            if self._trajectory_average is None:
+                dssp_run = self._run_dssp([frame])
+        elif self._display_option == "sliding-window-average":
+            frames = self._get_sliding_window_indices(frame)
+            dssp_run = self._run_dssp(frames)
+        # ensure we have dssp run results (per-frame or sliding window or full)
+        if dssp_run is None:
+            return self._no_sec_struct
+        # set resindices corresponding to dssp resids
+        self._set_dssp_resindices(dssp_run.results.resids)
+        # create attribute data
+        if self._display_option == "trajectory-average":
+            dssp_chars = self._trajectory_average
+        elif self._display_option == "sliding-window-average":
+            index = np.argmax(frames == frame)
+            dssp_chars = dssp_run.results.dssp[index]
+        else:  # per-frame
+            index = 0 if self._trajectory_average is None else frame
+            dssp_chars = dssp_run.results.dssp[index]
+        dssp_ints = self._dssp_vmap(dssp_chars)
+        attribute_data = np.zeros(len(universe.atoms), dtype=int)
+        attribute_data[self._dssp_resindices] = dssp_ints
+        return attribute_data[universe.atoms.resindices]
+
+    @property
+    def _display_option_prop(self):
+        """Internal: Getter for display option property"""
+        if self._entity._entity_type == EntityType.MD_STREAMING:
+            return self._props.display_option_streaming
+        else:
+            return self._props.display_option
+
+    @_display_option_prop.setter
+    def _display_option_prop(self, value: str) -> None:
+        """Internal: Setter for display option property"""
+        if self._entity._entity_type == EntityType.MD_STREAMING:
+            self._props.display_option_streaming = value
+        else:
+            self._props.display_option = value
+
+    def _ensure_init(self) -> None:
+        """Internal: Ensure DSSP is initialized"""
+        if self._DSSP is None:
+            raise ValueError("DSSP is not initialized")
+
+    def _ensure_no_streaming(self) -> None:
+        """Internal: Ensure non streaming trajectory"""
+        if self._entity._entity_type == EntityType.MD_STREAMING:
+            raise ValueError("This does not apply for streamed trajectories")
+
+    def _set_display_option(self, option: str) -> None:
+        """Internal: Set the display option"""
+        self._display_option = option
+        if self._display_option_prop != option:
+            self._display_option_prop = option
+
+    def init(self) -> None:
+        """
+        Initialize DSSP
+        """
+        if self._DSSP is not None:
+            raise ValueError("DSSP already initialized")
+        universe = self._entity.universe
+        self._DSSP = DSSP(universe)
+        self._entity.calculations["sec_struct"] = self._calculate_sec_struct
+        self._props = self._entity.object.mn.dssp
+        # calculate no secondary structs attribute
+        # protein - 3 (loop), rest - 0 (none)
+        protein_resindices = universe.select_atoms("protein").residues.resindices
+        no_sec_struct = np.zeros(len(universe.atoms), dtype=int)
+        no_sec_struct[protein_resindices] = 3
+        self._no_sec_struct = no_sec_struct[universe.atoms.resindices]
+
+    def show_none(self) -> None:
+        """
+        Do not show secondary structures
+        """
+        self._ensure_init()
+        self._set_display_option("none")
+
+    def show_per_frame(self) -> None:
+        """
+        Show secondary structures calculated per frame
+        """
+        self._ensure_init()
+        self._set_display_option("per-frame")
+
+    def show_sliding_window_average(self, window_size: int = 5) -> None:
+        """
+        Show average secondary structures of a sliding window of frames
+
+        Parameters
+        ----------
+        window_size: int, optional
+            Size of the sliding window
+        """
+        self._ensure_init()
+        self._ensure_no_streaming()
+        self._window_size = window_size
+        self._set_display_option("sliding-window-average")
+        self._props.window_size = window_size
+        self._props.applied = True
+
+    def show_trajectory_average(self, threshold: float = 0.5) -> None:
+        """
+        Show average secondary structures across all frames
+
+        Parameters
+        ----------
+        threshold: float, optional
+            Threshold to compare the mean against [0.0 - 1.0]
+        """
+        self._ensure_init()
+        self._ensure_no_streaming()
+        if self._dssp_run is None:
+            self._dssp_run = self._DSSP.run()
+        self._trajectory_average = translate(
+            self._dssp_run.results.dssp_ndarray.mean(axis=0) > threshold
+        )
+        self._set_dssp_resindices(self._dssp_run.results.resids)
+        self._set_display_option("trajectory-average")
+        self._props.threshold = threshold
+        self._props.applied = True

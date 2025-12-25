@@ -10,13 +10,17 @@
 # ---
 # name: TestTrajectory.test_dssp
   AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(10273,), dtype=int32)
-  array([3, 3, 3, ..., 3, 3, 3], dtype=int32)
+  array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
 # ---
 # name: TestTrajectory.test_dssp.1
   AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(10273,), dtype=int32)
   array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
 # ---
 # name: TestTrajectory.test_dssp.2
+  AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(10273,), dtype=int32)
+  array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
+# ---
+# name: TestTrajectory.test_dssp.3
   AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(10273,), dtype=int32)
   array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
 # ---
@@ -100,26 +104,22 @@
   array([12, 12, 12, ..., -1, -1, -1], dtype=int32)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].19
-  AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
-  array([3, 3, 3, ..., 3, 3, 3], dtype=int32)
+  AttributeArray(name='segid', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
+  array([0, 0, 0, ..., 5, 5, 5], dtype=int32)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].2
   AttributeArray(name='atom_name', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([-1, -1, -1, ..., -1, -1, -1], dtype=int32)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].20
-  AttributeArray(name='segid', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
-  array([0, 0, 0, ..., 5, 5, 5], dtype=int32)
-# ---
-# name: test_martini[pent/TOPOL2.pdb].21
   AttributeArray(name='sharp_face', object='NewUniverseObject', mesh='NewUniverseObject', domain=FACE, type=BOOLEAN, shape=(0,), dtype=bool)
   array([], dtype=bool)
 # ---
-# name: test_martini[pent/TOPOL2.pdb].22
+# name: test_martini[pent/TOPOL2.pdb].21
   AttributeArray(name='ures_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([   0,    0,    1, ..., 5407, 5408, 5409], dtype=int32)
 # ---
-# name: test_martini[pent/TOPOL2.pdb].23
+# name: test_martini[pent/TOPOL2.pdb].22
   AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
   array([0.0192, 0.018 , 0.0192, ..., 0.0155, 0.0155, 0.0155], dtype=float32)
 # ---
@@ -220,22 +220,18 @@
   array([12, 12, 12, ..., -1, -1, -1], dtype=int32)
 # ---
 # name: test_martini[pent/prot_ion.tpr].21
-  AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
-  array([3, 3, 3, ..., 3, 3, 3], dtype=int32)
-# ---
-# name: test_martini[pent/prot_ion.tpr].22
   AttributeArray(name='segid', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([0, 0, 0, ..., 0, 0, 0], dtype=int32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].23
+# name: test_martini[pent/prot_ion.tpr].22
   AttributeArray(name='sharp_face', object='NewUniverseObject', mesh='NewUniverseObject', domain=FACE, type=BOOLEAN, shape=(0,), dtype=bool)
   array([], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].24
+# name: test_martini[pent/prot_ion.tpr].23
   AttributeArray(name='ures_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([   0,    0,    1, ..., 5407, 5408, 5409], dtype=int32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].25
+# name: test_martini[pent/prot_ion.tpr].24
   AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
   array([0.0192, 0.018 , 0.0192, ..., 0.01  , 0.01  , 0.01  ], dtype=float32)
 # ---
