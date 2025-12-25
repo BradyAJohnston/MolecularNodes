@@ -17,7 +17,7 @@ class DSSPManager:
     def __init__(self, entity: MolecularEntity):
         self._entity = entity
         self._DSSP = None
-        self._dssp_run = None
+        self._dssp_results = None
         self._trajectory_average = None
         self._dssp_resindices = None
         self._dssp_vmap = np.vectorize({"H": 1, "E": 2, "-": 3}.get)
@@ -47,41 +47,41 @@ class DSSPManager:
         # save current frame
         current_frame = trajectory.frame
         try:
-            dssp_run = self._DSSP.run(frames=window)
+            dssp_results = self._DSSP.run(frames=window).results
         except Exception as e:
-            dssp_run = None
+            dssp_results = None
             logger.debug(f"Failed to run DSSP for frames {window}: {e}")
         # restore current frame
         if self._entity._entity_type != EntityType.MD_STREAMING:
             trajectory[current_frame]
-        return dssp_run
+        return dssp_results
 
     def _calculate_sec_struct(self, universe: mda.Universe) -> np.ndarray:
         """Internal: Calculate secondary structures on frame change event"""
         if self._display_option == "none" or self._DSSP is None:
             return self._no_sec_struct
         # run dssp if required
-        dssp_run = self._dssp_run
+        dssp_results = self._dssp_results
         frame = universe.trajectory.frame
         if self._display_option == "per-frame":
             if self._trajectory_average is None:
-                dssp_run = self._run_dssp([frame])
+                dssp_results = self._run_dssp([frame])
         elif self._display_option == "sliding-window-average":
             frames = self._get_sliding_window_indices(frame)
-            dssp_run = self._run_dssp(frames)
+            dssp_results = self._run_dssp(frames)
         # ensure we have dssp run results (per-frame or sliding window or full)
-        if dssp_run is None:
+        if dssp_results is None:
             return self._no_sec_struct
         # set resindices corresponding to dssp resids
-        self._set_dssp_resindices(dssp_run.results.resids)
+        self._set_dssp_resindices(dssp_results.resids)
         # create attribute data
         if self._display_option == "trajectory-average":
             dssp_chars = self._trajectory_average
         elif self._display_option == "sliding-window-average":
-            dssp_chars = translate(dssp_run.results.dssp_ndarray.mean(axis=0))
+            dssp_chars = translate(dssp_results.dssp_ndarray.mean(axis=0))
         else:  # per-frame
             index = 0 if self._trajectory_average is None else frame
-            dssp_chars = dssp_run.results.dssp[index]
+            dssp_chars = dssp_results.dssp[index]
         dssp_ints = self._dssp_vmap(dssp_chars)
         attribute_data = np.zeros(len(universe.atoms), dtype=int)
         attribute_data[self._dssp_resindices] = dssp_ints
@@ -177,12 +177,12 @@ class DSSPManager:
         """
         self._ensure_init()
         self._ensure_no_streaming()
-        if self._dssp_run is None:
-            self._dssp_run = self._DSSP.run()
+        if self._dssp_results is None:
+            self._dssp_results = self._DSSP.run().results.copy()
         self._trajectory_average = translate(
-            self._dssp_run.results.dssp_ndarray.mean(axis=0) > threshold
+            self._dssp_results.dssp_ndarray.mean(axis=0) > threshold
         )
-        self._set_dssp_resindices(self._dssp_run.results.resids)
+        self._set_dssp_resindices(self._dssp_results.resids)
         self._set_display_option("trajectory-average")
         self._props.threshold = threshold
         self._props.applied = True
