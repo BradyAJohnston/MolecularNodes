@@ -78,8 +78,8 @@ class Trajectory(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
-    dssp : str
-        Per frame, average or no secondary structure
+    dssp : DSSPManager
+        A DSSP Manager to compute and show secondary structures
 
     Examples
     --------
@@ -900,8 +900,7 @@ class DSSPManager:
         if self._display_option == "trajectory-average":
             dssp_chars = self._trajectory_average
         elif self._display_option == "sliding-window-average":
-            index = np.argmax(frames == frame)
-            dssp_chars = dssp_run.results.dssp[index]
+            dssp_chars = translate(dssp_run.results.dssp_ndarray.mean(axis=0))
         else:  # per-frame
             index = 0 if self._trajectory_average is None else frame
             dssp_chars = dssp_run.results.dssp[index]
