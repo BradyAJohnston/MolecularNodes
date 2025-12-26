@@ -190,10 +190,12 @@ class DSSPManager:
                 self._dssp_results.dssp_ndarray.mean(axis=0) > threshold
             )
             self._props.threshold = threshold
+            self._props.apply_threshold = True
         else:
             self._trajectory_average = translate(
                 self._dssp_results.dssp_ndarray.mean(axis=0)
             )
+            self._props.apply_threshold = False
         self._set_dssp_resindices(self._dssp_results.resids)
         self._set_display_option("trajectory-average")
         self._props.applied = True
