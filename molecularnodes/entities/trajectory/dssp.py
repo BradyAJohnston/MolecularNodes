@@ -24,6 +24,7 @@ class DSSPManager:
         self._props = None
         self._display_option = "none"
         self._window_size = 5
+        self._threshold = None
         self._no_sec_struct = None
 
     def _set_dssp_resindices(self, resids: list) -> None:
@@ -135,6 +136,9 @@ class DSSPManager:
         no_sec_struct = np.zeros(len(universe.atoms), dtype=int)
         no_sec_struct[protein_resindices] = 3
         self._no_sec_struct = no_sec_struct[universe.atoms.resindices]
+        # set and apply default
+        self._set_display_option("none")
+        self._props.applied = True
 
     def show_none(self) -> None:
         """
@@ -157,7 +161,7 @@ class DSSPManager:
         Parameters
         ----------
         window_size: int, optional
-            Size of the sliding window
+            Size of the sliding window, default is 5 frames
         """
         self._ensure_init()
         self._ensure_no_streaming()
@@ -166,23 +170,30 @@ class DSSPManager:
         self._props.window_size = window_size
         self._props.applied = True
 
-    def show_trajectory_average(self, threshold: float = 0.5) -> None:
+    def show_trajectory_average(self, threshold: float | None = None) -> None:
         """
         Show average secondary structures across all frames
 
         Parameters
         ----------
         threshold: float, optional
-            Threshold to compare the mean against [0.0 - 1.0]
+            Threshold to compare the mean against [0.0 - 1.0].
+            When None, no threshold comparison is made
         """
         self._ensure_init()
         self._ensure_no_streaming()
+        self._threshold = threshold
         if self._dssp_results is None:
             self._dssp_results = self._DSSP.run().results.copy()
-        self._trajectory_average = translate(
-            self._dssp_results.dssp_ndarray.mean(axis=0) > threshold
-        )
+        if threshold is not None:
+            self._trajectory_average = translate(
+                self._dssp_results.dssp_ndarray.mean(axis=0) > threshold
+            )
+            self._props.threshold = threshold
+        else:
+            self._trajectory_average = translate(
+                self._dssp_results.dssp_ndarray.mean(axis=0)
+            )
         self._set_dssp_resindices(self._dssp_results.resids)
         self._set_display_option("trajectory-average")
-        self._props.threshold = threshold
         self._props.applied = True

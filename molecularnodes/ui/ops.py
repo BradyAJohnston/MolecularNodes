@@ -1057,7 +1057,7 @@ class MN_OT_DSSP_init(Operator):
     """
 
     bl_idname = "mn.dssp_init"
-    bl_label = "Initialize DSSP"
+    bl_label = "Initialize"
     bl_description = "Initialize DSSP analysis for trajectory"
 
     uuid: StringProperty()  # type: ignore
@@ -1076,11 +1076,12 @@ class MN_OT_DSSP_apply(Operator):
     """
 
     bl_idname = "mn.dssp_apply"
-    bl_label = "Apply changes"
+    bl_label = "Apply"
     bl_description = "Apply changed DSSP options"
 
     uuid: StringProperty()  # type: ignore
     window_size: IntProperty()  # type: ignore
+    apply_threshold: BoolProperty()  # type: ignore
     threshold: FloatProperty()  # type: ignore
 
     def execute(self, context: Context):
@@ -1091,7 +1092,39 @@ class MN_OT_DSSP_apply(Operator):
         if props.display_option == "sliding-window-average":
             entity.dssp.show_sliding_window_average(window_size=self.window_size)
         elif props.display_option == "trajectory-average":
-            entity.dssp.show_trajectory_average(threshold=self.threshold)
+            if self.apply_threshold:
+                entity.dssp.show_trajectory_average(threshold=self.threshold)
+            else:
+                entity.dssp.show_trajectory_average()
+        return {"FINISHED"}
+
+
+class MN_OT_DSSP_cancel(Operator):
+    """
+    Operator to cancel and restore current DSSP options
+    """
+
+    bl_idname = "mn.dssp_cancel"
+    bl_label = "Cancel"
+    bl_description = "Restore current DSSP options"
+
+    uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        props = entity.object.mn.dssp
+        props.cancelling = True
+        props.display_option = entity.dssp._display_option
+        props.window_size = entity.dssp._window_size
+        if entity.dssp._threshold is not None:
+            props.threshold = entity.dssp._threshold
+            props.apply_threshold = True
+        else:
+            props.apply_threshold = False
+        props.applied = True
+        props.cancelling = False
         return {"FINISHED"}
 
 
@@ -1119,4 +1152,5 @@ CLASSES = [
     MN_OT_Setup_Compositor,
     MN_OT_DSSP_init,
     MN_OT_DSSP_apply,
+    MN_OT_DSSP_cancel,
 ]

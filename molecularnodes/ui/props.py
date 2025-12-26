@@ -82,7 +82,7 @@ class EntityProperties(bpy.types.PropertyGroup):
 
 def _update_dssp_display_option(self, context):
     entity = context.scene.MNSession.get(self.id_data.uuid)
-    if entity is None:
+    if entity is None or self.cancelling:
         return
     if entity._entity_type == EntityType.MD_STREAMING:
         display_option = getattr(self, "display_option_streaming")
@@ -142,6 +142,12 @@ class DSSPProperties(bpy.types.PropertyGroup):
         default=5,
         update=_update_dssp_display_option,
     )  # type: ignore
+    apply_threshold: BoolProperty(
+        name="Apply Threshold",
+        description="Apply a threshold comparison to calculated mean",
+        default=False,
+        update=_update_dssp_display_option,
+    )  # type: ignore
     threshold: FloatProperty(
         name="Threshold",
         description="Threshold fraction of frames for trajectory average",
@@ -154,6 +160,7 @@ class DSSPProperties(bpy.types.PropertyGroup):
         default=True,
         update=_update_dssp_applied,
     )  # type: ignore
+    cancelling: BoolProperty(default=False)  # type: ignore
 
 
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):

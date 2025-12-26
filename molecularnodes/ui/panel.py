@@ -777,15 +777,24 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
             row.prop(props, "window_size")
         elif props.display_option == "trajectory-average":
             row = layout.row()
-            row.prop(props, "threshold")
+            row.prop(props, "apply_threshold", text="")
+            col = row.column()
+            col.prop(props, "threshold")
+            col.enabled = props.apply_threshold
         # apply button
         if props.display_option in ("sliding-window-average", "trajectory-average"):
             row = layout.row()
-            op = row.operator("mn.dssp_apply")
+            split = row.split(factor=0.5)
+            col = split.column()
+            op = col.operator("mn.dssp_apply")
             op.uuid = uuid
             op.window_size = props.window_size
+            op.apply_threshold = props.apply_threshold
             op.threshold = props.threshold
-            row.enabled = not props.applied
+            col.enabled = not props.applied
+            col = split.column()
+            op = col.operator("mn.dssp_cancel")
+            op.uuid = uuid
 
 
 class MN_UL_StylesList(bpy.types.UIList):
