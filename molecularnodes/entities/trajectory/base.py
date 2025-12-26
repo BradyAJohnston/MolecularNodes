@@ -35,6 +35,7 @@ from ..utilities import (
     _validate_non_negative,
 )
 from .annotations import TrajectoryAnnotationManager
+from .dssp import DSSPManager
 from .helpers import FrameManager, _ag_to_bool
 from .selections import SelectionManager
 
@@ -77,6 +78,8 @@ class Trajectory(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
+    dssp : DSSPManager
+        A DSSP Manager to compute and show secondary structures
 
     Examples
     --------
@@ -144,6 +147,7 @@ class Trajectory(MolecularEntity):
         self._updating_in_progress = False
         self.annotations = TrajectoryAnnotationManager(self)
         self.frame_manager = FrameManager(self)
+        self.dssp = DSSPManager(self)
         if create_object:
             self.create_object(name=name)
 
@@ -704,10 +708,14 @@ class Trajectory(MolecularEntity):
             del state["selections"]
         if "annotations" in state:
             del state["annotations"]
+        if "dssp" in state:
+            del state["dssp"]
         if "calculations" in state:
             # Preserve picklable calculations
             preserved_calculations = {}
             for name, calc_func in state["calculations"].items():
+                if name == "sec_struct":
+                    continue
                 try:
                     import pickle
 
@@ -749,6 +757,8 @@ class Trajectory(MolecularEntity):
             self.selections = SelectionManager(self)
         if not hasattr(self, "annotations"):
             self.annotations = TrajectoryAnnotationManager(self)
+        if not hasattr(self, "dssp"):
+            self.dssp = DSSPManager(self)
         if not hasattr(self, "calculations"):
             self.calculations = state.pop("_preserved_calculations", {})
 

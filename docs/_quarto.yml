@@ -138,6 +138,7 @@ quartodoc:
     contents:
     - Trajectory
     - entities.trajectory.SelectionManager
+    - entities.trajectory.DSSPManager
     - entities.StreamingTrajectory
 
   - title: Styles
