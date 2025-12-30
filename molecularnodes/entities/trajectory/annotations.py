@@ -420,7 +420,7 @@ class UniverseInfo(TrajectoryAnnotation):
         if params.custom_text != "":
             text += "|" + params.custom_text
         # Draw text at normalized coordinates wrt viewport / render
-        self.draw_text_2d_norm(params.location, text)
+        self.draw_text_2d(params.location, text)
 
 
 class SimulationBox(TrajectoryAnnotation):

@@ -45,9 +45,13 @@ def _validate_annotation_update(self, context, attr):
         if not instance.validate(attr):
             raise ValueError(f"Invalid input {attr}")
     except Exception as exception:
-        self.valid_inputs = False
+        if attr not in instance._invalid_inputs:
+            instance._invalid_inputs.append(attr)
+            instance._invalid_input_messages[attr] = str(exception)
         raise exception
-    self.valid_inputs = True
+    if attr in instance._invalid_inputs:
+        instance._invalid_inputs.remove(attr)
+        instance._invalid_input_messages[attr]
     if instance._ready:
         # update annotation object
         entity.annotations._update_annotation_object()
@@ -334,6 +338,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         setattr(annotation_instance, "interface", interface)
         # instance is ready only after all the property interfaces are created
         setattr(annotation_instance, "_ready", False)
+        # array of invalid inputs
+        setattr(annotation_instance, "_invalid_inputs", [])
+        # dict of invalid input messages
+        setattr(annotation_instance, "_invalid_input_messages", {})
+        # draw error string if any
+        setattr(annotation_instance, "_draw_error", None)
         # call the validate method in the annotation class if specified for
         # any annotation specific custom validation
         if hasattr(annotation_instance, "validate") and callable(
@@ -385,14 +395,6 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         inputs = getattr(prop, entity_annotation_type, None)
         if inputs is not None:
             inputs.uuid = uuid  # add annotation uuid for lookup in update callback
-            # link to the valid inputs property for use in draw handler
-            prop_interface = create_property_interface(
-                self._entity,
-                uuid,
-                "valid_inputs",
-                annotation_type=entity_annotation_type,
-            )
-            setattr(interface.__class__, "_valid_inputs", prop_interface)
             # all annotation inputs as defined in class
             for attr, atype in py_annotations.items():
                 # name is a special case that is already added above
@@ -580,7 +582,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             if not interface.visible:
                 continue
             # annotations input validity
-            if not getattr(interface, "_valid_inputs", True):
+            if interface._instance._invalid_inputs:
                 continue
             interface._instance.geometry = None
             if get_geometry:
@@ -601,8 +603,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             # handle exceptions to allow other annotations to be drawn
             try:
                 interface._instance.draw()
-            except Exception:
-                pass
+                interface._instance._draw_error = None
+            except Exception as e:
+                interface._instance._draw_error = str(e)
         # check and return geometry if present
         if get_geometry and geometry != empty_geometry:
             return geometry

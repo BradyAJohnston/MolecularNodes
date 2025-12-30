@@ -43,8 +43,8 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
         params = self.interface
         u = self.trajectory.universe
 
-        if isinstance(self.trajectory, mn.entities.trajectory.StreamingTrajectory):
-            raise ValueError("This annotation requires a regular Trajectory")
+        if type(self.trajectory) is not mn.entities.trajectory.Trajectory:
+            raise ValueError("This annotation requires a Trajectory entity")
 
         label = params.text
         # check selection
@@ -56,21 +56,24 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
                 label = params.selection
         else:
             raise ValueError(f"Need str. Got {type(params.selection)}")
-        # save current frame
-        current_frame = u.trajectory.frame
-        # calculate RMSD
-        # From: https://userguide.mdanalysis.org/stable/examples/analysis/alignment_and_rms/rmsd.html#RMSD-of-a-Universe-with-multiple-selections
-        R = rms.RMSD(
-            u,  # universe to align
-            u,  # reference universe or atomgroup
-            select=params.selection,  # group to superimpose and calculate RMSD
-            ref_frame=0,
-        )  # frame index of the reference
-        R.run()
-        self._frames = R.results.rmsd[:, 0]
-        self._rmsd_values = R.results.rmsd[:, 2]
-        # restore current frame
-        u.trajectory[current_frame]
+
+        # run analysis initially or when selection input changes
+        if input_name in (None, "selection"):
+            # save current frame
+            current_frame = u.trajectory.frame
+            # calculate RMSD
+            # From: https://userguide.mdanalysis.org/stable/examples/analysis/alignment_and_rms/rmsd.html#RMSD-of-a-Universe-with-multiple-selections
+            R = rms.RMSD(
+                u,  # universe to align
+                u,  # reference universe or atomgroup
+                select=params.selection,  # group to superimpose and calculate RMSD
+                ref_frame=0,
+            )  # frame index of the reference
+            R.run()
+            self._frames = R.results.rmsd[:, 0]
+            self._rmsd_values = R.results.rmsd[:, 2]
+            # restore current frame
+            u.trajectory[current_frame]
         # setup text
         self._title = f"RMSD of '{label}'"
         # reset values

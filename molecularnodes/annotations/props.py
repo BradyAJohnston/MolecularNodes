@@ -82,7 +82,11 @@ def create_annotation_type_inputs(
                 items_list = getattr(annotation_class, attr, None)
                 if isinstance(items_list, list) and items_list:
                     items = [(item, item, item) for item in items_list]
-                    prop = EnumProperty(description=attr, items=items)
+                    prop = EnumProperty(
+                        description=attr,
+                        items=items,
+                        update=_create_update_callback(update_callback, attr),
+                    )
                 else:
                     continue
             else:
@@ -92,8 +96,6 @@ def create_annotation_type_inputs(
         attributes["__annotations__"][attr] = prop
     # add the uuid to the annotation for lookup during update callback
     attributes["__annotations__"]["uuid"] = StringProperty()
-    # add a boolean to indicate if validations succeeded
-    attributes["__annotations__"]["valid_inputs"] = BoolProperty(default=True)
     # add slots to declare attributes
     attributes["__slots__"] = []
     # create and return new AnnotationInputs class

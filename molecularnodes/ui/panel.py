@@ -1044,14 +1044,13 @@ class MN_PT_Annotations(bpy.types.Panel):
         inputs = getattr(item, entity_annotation_type, None)
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
-            if not inputs.valid_inputs:
-                col = layout.column()
-                box = col.box()
-                box.label(text="Invalid inputs", icon="ERROR")
-                box.alert = True
+            if instance._draw_error is not None:
+                row = box.row()
+                row.alert = True
+                row.label(text=instance._draw_error, icon="ERROR")
 
             for prop_name in inputs.__annotations__.keys():
-                if prop_name in ("uuid", "valid_inputs"):
+                if prop_name == "uuid":
                     continue
                 row = box.row()
                 nbattr = f"_custom_{prop_name}"  # non blender property
@@ -1059,7 +1058,16 @@ class MN_PT_Annotations(bpy.types.Panel):
                     # indicate use of non blender property in draw
                     row.label(icon="ERROR")
                     row.alert = True
-                row.prop(inputs, prop_name)
+                if prop_name not in instance._invalid_inputs:
+                    row.prop(inputs, prop_name)
+                else:
+                    row.alert = True
+                    row.prop(inputs, prop_name)
+                    row = box.row()
+                    row.alert = True
+                    row.label(
+                        text=instance._invalid_input_messages[prop_name], icon="ERROR"
+                    )
 
         # Add all the common annotation params within the 'Options' panel
         header, panel = box.panel("annotation_options", default_closed=True)
