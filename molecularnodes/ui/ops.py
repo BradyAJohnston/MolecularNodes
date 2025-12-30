@@ -1080,20 +1080,17 @@ class MN_OT_DSSP_apply(Operator):
     bl_description = "Apply changed DSSP options"
 
     uuid: StringProperty()  # type: ignore
-    window_size: IntProperty()  # type: ignore
-    apply_threshold: BoolProperty()  # type: ignore
-    threshold: FloatProperty()  # type: ignore
+    apply_ta_threshold: BoolProperty()  # type: ignore
+    ta_threshold: FloatProperty()  # type: ignore
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
         if entity is None:
             return {"CANCELLED"}
         props = entity.object.mn.dssp
-        if props.display_option == "sliding-window-average":
-            entity.dssp.show_sliding_window_average(window_size=self.window_size)
-        elif props.display_option == "trajectory-average":
-            if self.apply_threshold:
-                entity.dssp.show_trajectory_average(threshold=self.threshold)
+        if props.display_option == "trajectory-average":
+            if self.apply_ta_threshold:
+                entity.dssp.show_trajectory_average(threshold=self.ta_threshold)
             else:
                 entity.dssp.show_trajectory_average()
         return {"FINISHED"}
@@ -1118,11 +1115,16 @@ class MN_OT_DSSP_cancel(Operator):
         props.cancelling = True
         props.display_option = entity.dssp._display_option
         props.window_size = entity.dssp._window_size
-        if entity.dssp._threshold is not None:
-            props.threshold = entity.dssp._threshold
-            props.apply_threshold = True
+        if entity.dssp._sw_threshold is not None:
+            props.sw_threshold = entity.dssp._sw_threshold
+            props.apply_sw_threshold = True
         else:
-            props.apply_threshold = False
+            props.apply_sw_threshold = False
+        if entity.dssp._ta_threshold is not None:
+            props.ta_threshold = entity.dssp._ta_threshold
+            props.apply_ta_threshold = True
+        else:
+            props.apply_ta_threshold = False
         props.applied = True
         props.cancelling = False
         return {"FINISHED"}

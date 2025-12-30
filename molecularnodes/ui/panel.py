@@ -775,22 +775,26 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
         if props.display_option == "sliding-window-average":
             row = layout.row()
             row.prop(props, "window_size")
+            row = layout.row()
+            row.prop(props, "apply_sw_threshold", text="")
+            col = row.column()
+            col.prop(props, "sw_threshold")
+            col.enabled = props.apply_sw_threshold
         elif props.display_option == "trajectory-average":
             row = layout.row()
-            row.prop(props, "apply_threshold", text="")
+            row.prop(props, "apply_ta_threshold", text="")
             col = row.column()
-            col.prop(props, "threshold")
-            col.enabled = props.apply_threshold
+            col.prop(props, "ta_threshold")
+            col.enabled = props.apply_ta_threshold
         # apply button
-        if props.display_option in ("sliding-window-average", "trajectory-average"):
+        if props.display_option == "trajectory-average":
             row = layout.row()
             split = row.split(factor=0.5)
             col = split.column()
             op = col.operator("mn.dssp_apply")
             op.uuid = uuid
-            op.window_size = props.window_size
-            op.apply_threshold = props.apply_threshold
-            op.threshold = props.threshold
+            op.apply_ta_threshold = props.apply_ta_threshold
+            op.ta_threshold = props.ta_threshold
             col.enabled = not props.applied
             col = split.column()
             op = col.operator("mn.dssp_cancel")

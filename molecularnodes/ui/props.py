@@ -95,6 +95,10 @@ def _update_dssp_display_option(self, context):
     elif display_option == "per-frame":
         entity.dssp.show_per_frame()
         _update_entities(self, context)
+    elif display_option == "sliding-window-average":
+        sw_threshold = self.sw_threshold if self.apply_sw_threshold else None
+        entity.dssp.show_sliding_window_average(self.window_size, sw_threshold)
+        _update_entities(self, context)
     else:
         self.applied = False
 
@@ -139,18 +143,35 @@ class DSSPProperties(bpy.types.PropertyGroup):
         name="Window Size",
         description="Number of frames in the sliding window",
         min=1,
+        soft_max=10,
         default=5,
         update=_update_dssp_display_option,
     )  # type: ignore
-    apply_threshold: BoolProperty(
+    apply_sw_threshold: BoolProperty(
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
     )  # type: ignore
-    threshold: FloatProperty(
+    sw_threshold: FloatProperty(
+        name="Threshold",
+        description="Threshold fraction of frames for sliding window average",
+        subtype="FACTOR",
+        min=0.0,
+        max=1.0,
+        default=0.5,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    apply_ta_threshold: BoolProperty(
+        name="Apply Threshold",
+        description="Apply a threshold comparison to calculated mean",
+        default=False,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    ta_threshold: FloatProperty(
         name="Threshold",
         description="Threshold fraction of frames for trajectory average",
+        subtype="FACTOR",
         min=0.0,
         max=1.0,
         default=0.5,

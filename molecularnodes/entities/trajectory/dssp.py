@@ -24,7 +24,8 @@ class DSSPManager:
         self._props = None
         self._display_option = "none"
         self._window_size = 5
-        self._threshold = None
+        self._ta_threshold = None
+        self._sw_threshold = None
         self._no_sec_struct = None
 
     def _set_dssp_resindices(self, resids: list) -> None:
@@ -79,7 +80,12 @@ class DSSPManager:
         if self._display_option == "trajectory-average":
             dssp_chars = self._trajectory_average
         elif self._display_option == "sliding-window-average":
-            dssp_chars = translate(dssp_results.dssp_ndarray.mean(axis=0))
+            if self._sw_threshold is not None:
+                dssp_chars = translate(
+                    dssp_results.dssp_ndarray.mean(axis=0) > self._sw_threshold
+                )
+            else:
+                dssp_chars = translate(dssp_results.dssp_ndarray.mean(axis=0))
         else:  # per-frame
             index = 0 if self._trajectory_average is None else frame
             dssp_chars = dssp_results.dssp[index]
@@ -87,6 +93,11 @@ class DSSPManager:
         attribute_data = np.zeros(len(universe.atoms), dtype=int)
         attribute_data[self._dssp_resindices] = dssp_ints
         return attribute_data[universe.atoms.resindices]
+
+    def _set_prop(self, name: str, value: any) -> None:
+        """Internal: Set the property value only when different"""
+        if getattr(self._props, name) != value:
+            setattr(self._props, name, value)
 
     @property
     def _display_option_prop(self):
@@ -100,9 +111,9 @@ class DSSPManager:
     def _display_option_prop(self, value: str) -> None:
         """Internal: Setter for display option property"""
         if self._entity._entity_type == EntityType.MD_STREAMING:
-            self._props.display_option_streaming = value
+            self._set_prop("display_option_streaming", value)
         else:
-            self._props.display_option = value
+            self._set_prop("display_option", value)
 
     def _ensure_init(self) -> None:
         """Internal: Ensure DSSP is initialized"""
@@ -154,7 +165,9 @@ class DSSPManager:
         self._ensure_init()
         self._set_display_option("per-frame")
 
-    def show_sliding_window_average(self, window_size: int = 5) -> None:
+    def show_sliding_window_average(
+        self, window_size: int = 5, threshold: float | None = None
+    ) -> None:
         """
         Show average secondary structures of a sliding window of frames
 
@@ -162,13 +175,22 @@ class DSSPManager:
         ----------
         window_size: int, optional
             Size of the sliding window, default is 5 frames
+
+        threshold: float, optional
+            Threshold to compare the mean against [0.0 - 1.0].
+            When None, no threshold comparison is made
         """
         self._ensure_init()
         self._ensure_no_streaming()
         self._window_size = window_size
+        self._sw_threshold = threshold
         self._set_display_option("sliding-window-average")
-        self._props.window_size = window_size
-        self._props.applied = True
+        self._set_prop("window_size", window_size)
+        if threshold is not None:
+            self._set_prop("sw_threshold", threshold)
+            self._set_prop("apply_sw_threshold", True)
+        else:
+            self._set_prop("apply_sw_threshold", False)
 
     def show_trajectory_average(self, threshold: float | None = None) -> None:
         """
@@ -182,20 +204,20 @@ class DSSPManager:
         """
         self._ensure_init()
         self._ensure_no_streaming()
-        self._threshold = threshold
+        self._ta_threshold = threshold
         if self._dssp_results is None:
             self._dssp_results = self._DSSP.run().results.copy()
         if threshold is not None:
             self._trajectory_average = translate(
                 self._dssp_results.dssp_ndarray.mean(axis=0) > threshold
             )
-            self._props.threshold = threshold
-            self._props.apply_threshold = True
+            self._set_prop("ta_threshold", threshold)
+            self._set_prop("apply_ta_threshold", True)
         else:
             self._trajectory_average = translate(
                 self._dssp_results.dssp_ndarray.mean(axis=0)
             )
-            self._props.apply_threshold = False
+            self._set_prop("apply_ta_threshold", False)
         self._set_dssp_resindices(self._dssp_results.resids)
         self._set_display_option("trajectory-average")
         self._props.applied = True
