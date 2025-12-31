@@ -520,6 +520,18 @@ class TestTrajectory:
         assert not np.allclose(no_sec_struct, sw_sec_struct)
         assert not np.allclose(no_sec_struct, avg_sec_struct)
 
+    def test_reload_operator(self, universe):
+        traj = mn.entities.Trajectory(universe)
+        traj.add_style("cartoon")
+        obj_name = traj.name
+        session = mn.session.get_session()
+        session.entities.pop(traj.uuid)
+
+        bpy.data.objects[obj_name].select_set(True)
+        bpy.ops.mn.reload_trajectory()
+
+        assert len(session.entities) == 1
+
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, topology):
