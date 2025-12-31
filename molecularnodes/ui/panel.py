@@ -877,9 +877,20 @@ class MN_PT_Styles(bpy.types.Panel):
         if not valid_selection:
             return
 
-        box = layout.box()
-        row = box.row()
         style_node = node_group.nodes[styles_active_index]
+
+        col = layout.column()
+        panel_selection_node(col, style_node, entity)
+        row = col.row()
+        row.label(text="Style")
+        op = row.operator_menu_enum(
+            operator="mn.node_swap_style_menu",
+            property="node_items",
+            text=style_node.name.replace("Style ", ""),
+        )
+        op.name_tree = style_node.id_data.name
+        op.name_node = style_node.name
+        col.separator()
 
         panels = {}
         for item in style_node.node_tree.interface.items_tree.values():
