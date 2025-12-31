@@ -206,6 +206,8 @@ The input parameters for this annotation are:
 
 - `location` - Normalized 2d location (0.0 - 1.0) to show the info wrt viewport / render
 - `show_frame` - Whether or not to show the frame number of the trajectory
+- `show_time` - Whether or not to show the timestep time
+- `show_step` - Whether or not to show the timestep step
 - `show_topology` - Whether or not to show the topology filename
 - `show_trajectory` - Whether or not to show the trajectory filename
 - `show_atoms` - Whether or not to show the number of atoms in the universe
