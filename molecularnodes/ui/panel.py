@@ -694,6 +694,7 @@ class MN_PT_trajectory(bpy.types.Panel):
         try:
             return scene.MNSession.get(uuid).object.mn.entity_type in (
                 EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
                 EntityType.MD_OXDNA.value,
             )
         except (LinkedObjectError, AttributeError):
@@ -708,17 +709,96 @@ class MN_PT_trajectory(bpy.types.Panel):
         active_index = scene.mn.entities_active_index
         uuid = scene.mn.entities[active_index].name
         # Use the object corresponding to the entity
-        object = scene.MNSession.get(uuid).object
+        traj = scene.MNSession.get(uuid)
+        object = traj.object
         props = object.mn
-        row = layout.row()
-        label = "This trajectory has " + str(props.n_frames) + " frames"
-        row.label(text=label)
-        row = layout.row()
-        row.prop(props, "update_with_scene")
-        box = layout.box()
-        row = box.row()
-        row.prop(props, "frame")
-        box.enabled = not props.update_with_scene
+        if traj._entity_type != EntityType.MD_STREAMING:
+            row = layout.row()
+            label = "This trajectory has " + str(props.n_frames) + " frames"
+            row.label(text=label)
+            row = layout.row()
+            row.prop(props, "update_with_scene")
+            box = layout.box()
+            row = box.row()
+            row.prop(props, "frame")
+            box.enabled = not props.update_with_scene
+
+
+class MN_PT_trajectory_dssp(bpy.types.Panel):
+    """
+    Panel for trajectory dssp details
+    """
+
+    bl_idname = "MN_PT_trajectory_dssp"
+    bl_label = "DSSP"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible only if entity selected is a trajectory"""
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        if active_index == -1:
+            return False
+        uuid = scene.mn.entities[active_index].name
+        try:
+            return scene.MNSession.get(uuid).object.mn.entity_type in (
+                EntityType.MD.value,
+                EntityType.MD_STREAMING.value,
+            )
+        except (LinkedObjectError, AttributeError):
+            return False
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+        active_index = scene.mn.entities_active_index
+        uuid = scene.mn.entities[active_index].name
+        # Use the object corresponding to the entity
+        traj = scene.MNSession.get(uuid)
+        if traj.dssp._DSSP is None:
+            row = layout.row()
+            op = row.operator("mn.dssp_init")
+            op.uuid = uuid
+            return
+        props = traj.object.mn.dssp
+        # display options
+        if traj._entity_type == EntityType.MD:
+            row = layout.row()
+            row.prop(props, "display_option")
+        elif traj._entity_type == EntityType.MD_STREAMING:
+            row = layout.row()
+            row.prop(props, "display_option_streaming")
+        # display option specific params
+        if props.display_option == "sliding-window-average":
+            row = layout.row()
+            row.prop(props, "window_size")
+            row = layout.row()
+            row.prop(props, "apply_sw_threshold", text="")
+            col = row.column()
+            col.prop(props, "sw_threshold")
+            col.enabled = props.apply_sw_threshold
+        elif props.display_option == "trajectory-average":
+            row = layout.row()
+            row.prop(props, "apply_ta_threshold", text="")
+            col = row.column()
+            col.prop(props, "ta_threshold")
+            col.enabled = props.apply_ta_threshold
+        # apply button
+        if props.display_option == "trajectory-average":
+            row = layout.row()
+            split = row.split(factor=0.5)
+            col = split.column()
+            op = col.operator("mn.dssp_apply")
+            op.uuid = uuid
+            op.apply_ta_threshold = props.apply_ta_threshold
+            op.ta_threshold = props.ta_threshold
+            col.enabled = not props.applied
+            col = split.column()
+            op = col.operator("mn.dssp_cancel")
+            op.uuid = uuid
 
 
 class MN_UL_StylesList(bpy.types.UIList):
@@ -1136,6 +1216,7 @@ CLASSES = [
     MN_UL_EntitiesList,
     MN_PT_Entities,
     MN_PT_trajectory,
+    MN_PT_trajectory_dssp,
     MN_UL_StylesList,
     MN_PT_Styles,
     MN_UL_AnnotationsList,
