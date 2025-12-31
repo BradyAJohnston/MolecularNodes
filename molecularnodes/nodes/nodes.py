@@ -735,7 +735,7 @@ def final_join(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
     """
     Get the last JoinGeometry node in the tree.
     """
-    output = get_output(tree)
+    # output = get_output(tree)
     current = last_node(tree)
     try:
         while True:
