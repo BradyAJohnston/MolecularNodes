@@ -148,7 +148,7 @@ class DSSPManager:
         no_sec_struct[protein_resindices] = 3
         self._no_sec_struct = no_sec_struct[universe.atoms.resindices]
         # set and apply default
-        self._set_display_option("none")
+        self._set_display_option("per-frame")
         self._props.applied = True
 
     def show_none(self) -> None:

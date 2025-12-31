@@ -126,7 +126,7 @@ class DSSPProperties(bpy.types.PropertyGroup):
                 "Average secondary structures across all frames",
             ),
         ),
-        default="none",
+        default="per-frame",
         update=_update_dssp_display_option,
     )
     display_option_streaming: EnumProperty(  # type: ignore
@@ -136,7 +136,7 @@ class DSSPProperties(bpy.types.PropertyGroup):
             ("none", "None", "Do not show secondary structures"),
             ("per-frame", "Per Frame", "Secondary structures calculated per frame"),
         ),
-        default="none",
+        default="per-frame",
         update=_update_dssp_display_option,
     )
     window_size: IntProperty(
