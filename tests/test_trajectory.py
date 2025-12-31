@@ -484,6 +484,18 @@ class TestTrajectory:
             assert "/nonexistent/path/topology.pdb" in error_msg
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
+    def test_reload_operator(self, universe):
+        traj = mn.entities.Trajectory(universe)
+        traj.add_style("cartoon")
+        obj_name = traj.name
+        session = mn.session.get_session()
+        session.entities.pop(traj.uuid)
+
+        bpy.data.objects[obj_name].select_set(True)
+        bpy.ops.mn.reload_trajectory()
+
+        assert len(session.entities) == 1
+
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, topology):

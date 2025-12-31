@@ -692,7 +692,9 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
         elif "streaming" in obj.mn.entity_type:
             traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
         else:
-            traj = Trajectory.load(path_topo, path_traj, create_object=False)
+            traj = Trajectory.load(
+                path_topo, path_traj, style=None, create_object=False
+            )
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
