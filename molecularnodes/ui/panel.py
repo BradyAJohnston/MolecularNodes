@@ -1,7 +1,8 @@
+from bpy.types import UILayout
 import bpy
 from databpy.object import LinkedObjectError
 from ..blender import IS_BLENDER_5
-from ..entities import StreamingTrajectory, density, trajectory
+from ..entities import StreamingTrajectory, density, trajectory, Trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
@@ -9,6 +10,7 @@ from ..session import get_session
 from .pref import addon_preferences
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
+from bpy.types import Context
 
 
 def panel_wwpdb(layout, scene):
@@ -353,25 +355,15 @@ def selection_string_input(layout: bpy.types.UILayout, item: TrajectorySelection
         )
 
 
-def panel_md_properties(layout, context):
-    obj = context.active_object
-    session = get_session()
-    traj: trajectory.Trajectory = session.match(obj)
-    traj_is_linked = bool(traj)
-    if traj is not None and not isinstance(traj, trajectory.Trajectory):
-        raise TypeError(f"Expected a trajectory, got {type(traj)}")
-
-    col = layout.column()
-    col.enabled = False
-    if not traj_is_linked:
-        col.enabled = True
-        col.label(text="Object not linked to a trajectory, please reload one")
-        col.prop(obj.mn, "filepath_topology")
-        col.prop(obj.mn, "filepath_trajectory")
-        col.operator("mn.reload_trajectory")
-        return None
-
-    layout.label(text="Trajectory Playback", icon="OPTIONS")
+def layout_trajectory_playback(
+    layout: UILayout, traj: Trajectory, panel: bool = True
+) -> None:
+    if panel:
+        header, layout = layout.panel(idname="layout_playback")
+        header.label(text="Trajectory Playback", icon="OPTIONS")
+        if layout is None:
+            return
+    obj = traj.object
     is_streaming = isinstance(traj, StreamingTrajectory)
 
     if is_streaming:
@@ -408,7 +400,16 @@ def panel_md_properties(layout, context):
     row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
-    layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+
+def layout_selection_manage(
+    layout: UILayout, traj: Trajectory, panel: bool = True
+) -> None:
+    if panel:
+        header, layout = layout.panel(idname="selection_panel")
+        header.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+        if layout is None:
+            return
+    obj = traj.object
     row = layout.row()
     row = row.split(factor=0.9)
     row.template_list(
@@ -427,6 +428,28 @@ def panel_md_properties(layout, context):
         item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
 
         selection_string_input(layout, item)
+
+
+def panel_md_properties(layout, context):
+    obj = context.active_object
+    session = get_session()
+    traj: trajectory.Trajectory = session.match(obj)
+    traj_is_linked = bool(traj)
+    if traj is not None and not isinstance(traj, trajectory.Trajectory):
+        raise TypeError(f"Expected a trajectory, got {type(traj)}")
+
+    col = layout.column()
+    col.enabled = False
+    if not traj_is_linked:
+        col.enabled = True
+        col.label(text="Object not linked to a trajectory, please reload one")
+        col.prop(obj.mn, "filepath_topology")
+        col.prop(obj.mn, "filepath_trajectory")
+        col.operator("mn.reload_trajectory")
+        return None
+
+    layout_trajectory_playback(layout, traj)
+    layout_selection_manage(layout, traj)
 
 
 def panel_object(layout, context):
@@ -705,7 +728,7 @@ class MN_PT_trajectory(bpy.types.Panel):
             return False
 
     def draw(self, context):
-        layout = self.layout
+        layout: UILayout = self.layout
         # To enable the animatate dot next to property in UI
         # layout.use_property_split = True
         # layout.use_property_decorate = True
@@ -714,18 +737,26 @@ class MN_PT_trajectory(bpy.types.Panel):
         uuid = scene.mn.entities[active_index].name
         # Use the object corresponding to the entity
         traj = scene.MNSession.get(uuid)
+
+        layout_trajectory_playback(layout, traj, panel=False)
+        return
+
         object = traj.object
         props = object.mn
-        if traj._entity_type != EntityType.MD_STREAMING:
-            row = layout.row()
-            label = "This trajectory has " + str(props.n_frames) + " frames"
-            row.label(text=label)
-            row = layout.row()
-            row.prop(props, "update_with_scene")
-            box = layout.box()
-            row = box.row()
-            row.prop(props, "frame")
-            box.enabled = not props.update_with_scene
+
+        if traj._entity_type == EntityType.MD_STREAMING:
+            return
+
+        label = "This trajectory has " + str(props.n_frames) + " frames"
+        layout.label(text=label)
+        layout.prop(props, "update_with_scene")
+        row = layout.row()
+        row.prop(props, "frame")
+        row.enabled = not props.update_with_scene
+        col = layout.column(align=True)
+        col.prop(props, "average")
+        col.prop(props, "subframes")
+        col.prop(props, "offset")
 
 
 class MN_PT_trajectory_dssp(bpy.types.Panel):
@@ -975,6 +1006,8 @@ class MN_PT_Styles(bpy.types.Panel):
         panels = {}
         header, layout = layout.panel(idname="style_properties")
         header.label(text="Geometry")
+        if layout is None:
+            return
 
         for item in style_node.node_tree.interface.items_tree.values():
             if item.item_type == "PANEL":
