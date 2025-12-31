@@ -1,8 +1,8 @@
-from bpy.types import UILayout
 import bpy
+from bpy.types import UILayout
 from databpy.object import LinkedObjectError
 from ..blender import IS_BLENDER_5
-from ..entities import StreamingTrajectory, density, trajectory, Trajectory
+from ..entities import StreamingTrajectory, Trajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
@@ -10,7 +10,6 @@ from ..session import get_session
 from .pref import addon_preferences
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
-from bpy.types import Context
 
 
 def panel_wwpdb(layout, scene):
