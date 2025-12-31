@@ -484,6 +484,42 @@ class TestTrajectory:
             assert "/nonexistent/path/topology.pdb" in error_msg
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
+    def test_dssp(self, snapshot, universe):
+        t = mn.Trajectory(universe).add_style("cartoon")
+        # test no sec_struct attribute without initializing dssp
+        with pytest.raises(
+            KeyError,
+            match='key "sec_struct" not found',
+        ):
+            t["sec_struct"]
+        # initialize dssp
+        t.dssp.init()
+        # default dssp is per-frame
+        t.set_frame(1)
+        frame_sec_struct = t["sec_struct"]
+        # change dssp to none
+        t.dssp.show_none()
+        no_sec_struct = t["sec_struct"]
+        assert not np.allclose(frame_sec_struct, no_sec_struct)
+        assert snapshot == no_sec_struct
+        # change dssp to sliding-window-average
+        t.dssp.show_sliding_window_average(window_size=5)
+        sw_sec_struct = t["sec_struct"]
+        assert snapshot == sw_sec_struct
+        # change dssp to trajectory-average
+        t.dssp.show_trajectory_average(threshold=0.5)
+        avg_sec_struct = t["sec_struct"]
+        assert snapshot == avg_sec_struct
+        # per-frame, sliding-window-average and trajectory-average
+        # should all be different from each other
+        assert not np.allclose(frame_sec_struct, sw_sec_struct)
+        assert not np.allclose(sw_sec_struct, avg_sec_struct)
+        # per-frame, sliding-window-average and trajectory-average
+        # should all be different from none
+        assert not np.allclose(no_sec_struct, frame_sec_struct)
+        assert not np.allclose(no_sec_struct, sw_sec_struct)
+        assert not np.allclose(no_sec_struct, avg_sec_struct)
+
     def test_reload_operator(self, universe):
         traj = mn.entities.Trajectory(universe)
         traj.add_style("cartoon")
