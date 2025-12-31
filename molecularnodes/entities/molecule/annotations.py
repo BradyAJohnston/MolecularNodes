@@ -22,7 +22,7 @@ class MoleculeAnnotation(BaseAnnotation):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # Auto-register any sub classes with the annotation manager
-        MoleculeAnnotationManager.register(cls)
+        MoleculeAnnotationManager.register_class(cls)
 
     def __init__(self, molecule):
         # Allow access to the molecule entity within the annotations
@@ -75,11 +75,12 @@ class MoleculeInfo(MoleculeAnnotation):
         params = self.interface
         params.text_align = "left"
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        x, y = params.location
-        if (not 0 <= x <= 1) or (not 0 <= y <= 1):
-            raise ValueError("Normalized coordinates should lie between 0 and 1")
+        if input_name == "location":
+            x, y = params.location
+            if (not 0 <= x <= 1) or (not 0 <= y <= 1):
+                raise ValueError("Normalized coordinates should lie between 0 and 1")
         return True
 
     def draw(self) -> None:
@@ -97,7 +98,7 @@ class MoleculeInfo(MoleculeAnnotation):
         if params.custom_text != "":
             text = text + "|" + params.custom_text
         # Draw text at normalized coordinates wrt viewport / render
-        self.draw_text_2d_norm(params.location, text)
+        self.draw_text_2d(params.location, text)
 
 
 class Label2D(MoleculeAnnotation, Label2D):

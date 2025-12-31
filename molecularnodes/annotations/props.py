@@ -39,16 +39,19 @@ def create_annotation_type_inputs(
             )
         elif stype is bool:
             prop = BoolProperty(
+                description=attr,
                 default=getattr(annotation_class, attr, False),
                 update=_create_update_callback(update_callback, attr),
             )
         elif stype is int:
             prop = IntProperty(
+                description=attr,
                 default=getattr(annotation_class, attr, 0),
                 update=_create_update_callback(update_callback, attr),
             )
         elif stype is float:
             prop = FloatProperty(
+                description=attr,
                 default=getattr(annotation_class, attr, 0.0),
                 update=_create_update_callback(update_callback, attr),
             )
@@ -74,13 +77,28 @@ def create_annotation_type_inputs(
                 default=getattr(annotation_class, attr, default),
                 update=_create_update_callback(update_callback, attr),
             )
+        elif hasattr(stype, "__name__") and stype.__name__ == "list":
+            if str(stype) == "list[str]":
+                items_list = getattr(annotation_class, attr, None)
+                if isinstance(items_list, list) and items_list:
+                    items = [(item, item, item) for item in items_list]
+                    prop = EnumProperty(
+                        description=attr,
+                        items=items,
+                        update=_create_update_callback(update_callback, attr),
+                    )
+                else:
+                    continue
+            else:
+                continue
         else:
             continue
         attributes["__annotations__"][attr] = prop
     # add the uuid to the annotation for lookup during update callback
     attributes["__annotations__"]["uuid"] = StringProperty()
-    # add a boolean to indicate if validations succeeded
-    attributes["__annotations__"]["valid_inputs"] = BoolProperty(default=True)
+    # add slots to declare attributes
+    attributes["__slots__"] = []
+    # create and return new AnnotationInputs class
     AnnotationInputs = type("AnnotationInputs", (bpy.types.PropertyGroup,), attributes)
     return AnnotationInputs
 
@@ -95,7 +113,7 @@ def create_property_interface(
 ) -> property:
     """Create a property() interface for a blender property"""
 
-    nbattr = f"_{attr}"  # non blender property
+    nbattr = f"_custom_{attr}"  # non blender property
 
     def _prop():
         # Returns blender property - either annotation input or common property
@@ -122,7 +140,7 @@ def create_property_interface(
             # not a supported blender type property
             # set a non blender property and validate
             setattr(instance, nbattr, value)
-            instance.validate()
+            instance.validate(nbattr)
             if instance._ready:
                 # update annotation object
                 entity.annotations._update_annotation_object()
@@ -135,7 +153,12 @@ def create_property_interface(
                     if value not in bpy.data.materials:
                         raise ValueError(f"No material with name '{value}'")
                     value = bpy.data.materials[value]
-            setattr(_prop(), attr, value)
+            if isinstance(value, list) and value:
+                # for list[str] (i.e., EnumProperty types), set default to
+                # the first value of the list
+                setattr(_prop(), attr, value[0])
+            else:
+                setattr(_prop(), attr, value)
             # clear any corresponding non blender property
             if hasattr(instance, nbattr):
                 delattr(instance, nbattr)
@@ -152,6 +175,8 @@ def _update_annotation_object(self, context):
 
 class BaseAnnotationProperties(bpy.types.PropertyGroup):
     """Base annotation properties"""
+
+    __slots__ = []
 
     # annotation name (label)
     label: StringProperty()  # type: ignore

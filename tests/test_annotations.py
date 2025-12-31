@@ -104,14 +104,14 @@ class TestAnnotations:
 
         # test presence of annotation_type
         with pytest.raises(ValueError):
-            manager.register(TestAnnotation)
+            manager.register_class(TestAnnotation)
 
         class TestAnnotation:
             annotation_type = "test_annotation"
 
         # test not an annotation class
         with pytest.raises(ValueError):
-            manager.register(TestAnnotation)
+            manager.register_class(TestAnnotation)
 
         # test no draw method
         with pytest.raises(ValueError):
@@ -124,7 +124,7 @@ class TestAnnotations:
 
         # test unregister exceptions
         with pytest.raises(ValueError):
-            manager.unregister(TestAnnotation)
+            manager.unregister_type("test_annotation")
 
         class TestAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
             annotation_type = "test_annotation"
@@ -145,11 +145,11 @@ class TestAnnotations:
         assert "test_annotation" in manager._classes
         assert hasattr(manager, "add_test_annotation")
         # test unregister
-        manager.unregister(TestAnnotation)
+        manager.unregister_type("test_annotation")
         assert "test_annotation" not in manager._classes
         assert not hasattr(manager, "add_test_annotation")
         # test register
-        manager.register(TestAnnotation)
+        manager.register_class(TestAnnotation)
         assert "test_annotation" in manager._classes
         assert hasattr(manager, "add_test_annotation")
         # test add

@@ -48,6 +48,8 @@ def _add_node(node_name, context, show_options=False, material="default"):
     )
     node = context.active_node
     node.node_tree = bpy.data.node_groups[node_name]
+    # set the label to the node tree name by default
+    node.label = node.node_tree.name
     node.width = nodes.NODE_WIDTH
     node.show_options = show_options
     node.name = node_name
@@ -705,7 +707,9 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
         elif "streaming" in obj.mn.entity_type:
             traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
         else:
-            traj = Trajectory.load(path_topo, path_traj, create_object=False)
+            traj = Trajectory.load(
+                path_topo, path_traj, style=None, create_object=False
+            )
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
@@ -964,7 +968,7 @@ def _register_temp_annotation_add_op(entity):
             inputs = getattr(self.props, entity_annotation_type, None)
             if inputs is not None:
                 for prop_name in inputs.__annotations__.keys():
-                    if prop_name in ("uuid", "valid_inputs"):
+                    if prop_name == "uuid":
                         continue
                     layout.prop(inputs, prop_name)
 

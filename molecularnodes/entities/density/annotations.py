@@ -23,7 +23,7 @@ class DensityAnnotation(BaseAnnotation):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # Auto-register any sub classes with the annotation manager
-        DensityAnnotationManager.register(cls)
+        DensityAnnotationManager.register_class(cls)
 
     def __init__(self, density):
         # Allow access to the density entity within the annotations
@@ -88,11 +88,12 @@ class DensityInfo(DensityAnnotation):
         params = self.interface
         params.text_align = "left"
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        x, y = params.location
-        if (not 0 <= x <= 1) or (not 0 <= y <= 1):
-            raise ValueError("Normalized coordinates should lie between 0 and 1")
+        if input_name in (None, "location"):
+            x, y = params.location
+            if (not 0 <= x <= 1) or (not 0 <= y <= 1):
+                raise ValueError("Normalized coordinates should lie between 0 and 1")
         return True
 
     def draw(self) -> None:
@@ -119,7 +120,7 @@ class DensityInfo(DensityAnnotation):
         if params.custom_text != "":
             text = text + "|" + params.custom_text
         # Draw text at normalized coordinates wrt viewport / render
-        self.draw_text_2d_norm(params.location, text)
+        self.draw_text_2d(params.location, text)
 
 
 class DensityGridAxes(DensityAnnotation):

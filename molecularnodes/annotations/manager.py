@@ -38,16 +38,20 @@ def _validate_annotation_update(self, context, attr):
     interface = entity.annotations._interfaces.get(self.uuid)
     instance = interface._instance
     # delete non blender attribute as blender attribute updated
-    nbattr = f"_{attr}"
+    nbattr = f"_custom_{attr}"
     if hasattr(instance, nbattr):
         delattr(instance, nbattr)
     try:
-        if not instance.validate():
+        if not instance.validate(attr):
             raise ValueError(f"Invalid input {attr}")
     except Exception as exception:
-        self.valid_inputs = False
+        if attr not in instance._invalid_inputs:
+            instance._invalid_inputs.append(attr)
+            instance._invalid_input_messages[attr] = str(exception)
         raise exception
-    self.valid_inputs = True
+    if attr in instance._invalid_inputs:
+        instance._invalid_inputs.remove(attr)
+        instance._invalid_input_messages[attr]
     if instance._ready:
         # update annotation object
         entity.annotations._update_annotation_object()
@@ -131,7 +135,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         self._scene = None
 
     @classmethod
-    def register(cls, annotation_class) -> None:
+    def register_class(cls, annotation_class) -> None:
         """
         Register an annotation class
 
@@ -190,8 +194,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     @classmethod
     def _update_annotation_props(cls, annotation_class: BaseAnnotation):
         """Update annotation properties attached to Object"""
+        attributes = {"__slots__": []}
         AnnotationProperties = type(
-            "AnnotationProperties", (BaseAnnotationProperties,), {}
+            "AnnotationProperties", (BaseAnnotationProperties,), attributes
         )
         # Add each annotation type inputs as a pointer to a separate property group
         for annotation_type, annotation_class in BaseAnnotationManager._classes.items():
@@ -216,18 +221,16 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         )
 
     @classmethod
-    def unregister(cls, annotation_class) -> None:
+    def unregister_type(cls, annotation_type) -> None:
         """
-        Unregister a registered annotation class
+        Unregister a registered annotation type
 
-        This method removes the annotation class from the entity speicific
+        This method removes the annotation type from the entity speicific
         class registry and removes the 'add_<>' method from the manager
 
         """
-        annotation_type = annotation_class.annotation_type
         if annotation_type not in cls._classes:
-            raise ValueError(f"{annotation_class} is not registered")
-        cls._validate_annotation_class(annotation_class)
+            raise ValueError(f"{annotation_type} is not registered")
         # Delete from Entity class specific registry
         del cls._classes[annotation_type]
         # Delete from all annotation classes
@@ -335,6 +338,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         setattr(annotation_instance, "interface", interface)
         # instance is ready only after all the property interfaces are created
         setattr(annotation_instance, "_ready", False)
+        # array of invalid inputs
+        setattr(annotation_instance, "_invalid_inputs", [])
+        # dict of invalid input messages
+        setattr(annotation_instance, "_invalid_input_messages", {})
+        # draw error string if any
+        setattr(annotation_instance, "_draw_error", None)
         # call the validate method in the annotation class if specified for
         # any annotation specific custom validation
         if hasattr(annotation_instance, "validate") and callable(
@@ -350,7 +359,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 if value is not None:
                     setattr(interface.__class__, attr, value)
             # validate
-            if not annotation_instance.validate():
+            if not annotation_instance.validate(None):
                 raise ValueError("Invalid annotation inputs")
         # only after all validations pass start doing real stuff like creating
         # properties and adding to the interface list
@@ -386,14 +395,6 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         inputs = getattr(prop, entity_annotation_type, None)
         if inputs is not None:
             inputs.uuid = uuid  # add annotation uuid for lookup in update callback
-            # link to the valid inputs property for use in draw handler
-            prop_interface = create_property_interface(
-                self._entity,
-                uuid,
-                "valid_inputs",
-                annotation_type=entity_annotation_type,
-            )
-            setattr(interface.__class__, "_valid_inputs", prop_interface)
             # all annotation inputs as defined in class
             for attr, atype in py_annotations.items():
                 # name is a special case that is already added above
@@ -581,7 +582,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             if not interface.visible:
                 continue
             # annotations input validity
-            if not getattr(interface, "_valid_inputs", True):
+            if interface._instance._invalid_inputs:
                 continue
             interface._instance.geometry = None
             if get_geometry:
@@ -602,8 +603,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             # handle exceptions to allow other annotations to be drawn
             try:
                 interface._instance.draw()
-            except Exception:
-                pass
+                interface._instance._draw_error = None
+            except Exception as e:
+                interface._instance._draw_error = str(e)
         # check and return geometry if present
         if get_geometry and geometry != empty_geometry:
             return geometry

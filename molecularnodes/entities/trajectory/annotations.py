@@ -38,7 +38,7 @@ class TrajectoryAnnotation(BaseAnnotation):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # Auto-register any sub classes with the annotation manager
-        TrajectoryAnnotationManager.register(cls)
+        TrajectoryAnnotationManager.register_class(cls)
 
     def __init__(self, trajectory):
         # Allow access to the trajectory entity within the annotations
@@ -93,17 +93,18 @@ class AtomInfo(TrajectoryAnnotation):
         params.text_size = 16
         params.text_color = (1, 1, 1, 1)
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        universe = self.trajectory.universe
-        if isinstance(params.selection, str):
-            # check if selection phrase is valid
-            # mda throws exception if invalid
-            self.atom_group = universe.select_atoms(params.selection)
-        elif isinstance(params.selection, AtomGroup):
-            self.atom_group = params.selection
-        else:
-            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection)}")
+        if input_name in (None, "selection"):
+            if isinstance(params.selection, str):
+                # check if selection phrase is valid
+                # mda throws exception if invalid
+                universe = self.trajectory.universe
+                self.atom_group = universe.select_atoms(params.selection)
+            elif isinstance(params.selection, AtomGroup):
+                self.atom_group = params.selection
+            else:
+                raise ValueError(f"Need str or AtomGroup. Got {type(params.selection)}")
         return True
 
     def draw(self) -> None:
@@ -147,17 +148,18 @@ class COM(TrajectoryAnnotation):
         # show a default pointer
         params.line_pointer_length = 2
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        universe = self.trajectory.universe
-        if isinstance(params.selection, str):
-            # check if selection phrase is valid
-            # mda throws exception if invalid
-            self.atom_group = universe.select_atoms(params.selection)
-        elif isinstance(params.selection, AtomGroup):
-            self.atom_group = params.selection
-        else:
-            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection)}")
+        if input_name in (None, "selection"):
+            if isinstance(params.selection, str):
+                # check if selection phrase is valid
+                # mda throws exception if invalid
+                universe = self.trajectory.universe
+                self.atom_group = universe.select_atoms(params.selection)
+            elif isinstance(params.selection, AtomGroup):
+                self.atom_group = params.selection
+            else:
+                raise ValueError(f"Need str or AtomGroup. Got {type(params.selection)}")
         return True
 
     def draw(self) -> None:
@@ -199,27 +201,33 @@ class COMDistance(TrajectoryAnnotation):
         params = self.interface
         params.line_arrow_size = 0.1
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
         universe = self.trajectory.universe
-        # check selection 1
-        if isinstance(params.selection1, str):
-            # check if selection phrase is valid
-            # mda throws exception if invalid
-            self.atom_group1 = universe.select_atoms(params.selection1)
-        elif isinstance(params.selection1, AtomGroup):
-            self.atom_group1 = params.selection1
-        else:
-            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection1)}")
-        # check selection 2
-        if isinstance(params.selection2, str):
-            # check if selection phrase is valid
-            # mda throws exception if invalid
-            self.atom_group2 = universe.select_atoms(params.selection2)
-        elif isinstance(params.selection2, AtomGroup):
-            self.atom_group2 = params.selection2
-        else:
-            raise ValueError(f"Need str or AtomGroup. Got {type(params.selection2)}")
+        if input_name in (None, "selection1"):
+            # check selection 1
+            if isinstance(params.selection1, str):
+                # check if selection phrase is valid
+                # mda throws exception if invalid
+                self.atom_group1 = universe.select_atoms(params.selection1)
+            elif isinstance(params.selection1, AtomGroup):
+                self.atom_group1 = params.selection1
+            else:
+                raise ValueError(
+                    f"Need str or AtomGroup. Got {type(params.selection1)}"
+                )
+        if input_name in (None, "selection2"):
+            # check selection 2
+            if isinstance(params.selection2, str):
+                # check if selection phrase is valid
+                # mda throws exception if invalid
+                self.atom_group2 = universe.select_atoms(params.selection2)
+            elif isinstance(params.selection2, AtomGroup):
+                self.atom_group2 = params.selection2
+            else:
+                raise ValueError(
+                    f"Need str or AtomGroup. Got {type(params.selection2)}"
+                )
         return True
 
     def draw(self) -> None:
@@ -269,11 +277,12 @@ class CanonicalDihedrals(TrajectoryAnnotation):
         params.line_arrow_size = 10.0
         params.mesh_thickness = 0.1
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        universe = self.trajectory.universe
-        # verify residue in universe - raises exception if invalid
-        self.residue = universe.residues[params.resid - 1]
+        if input_name in (None, "resid"):
+            universe = self.trajectory.universe
+            # verify residue in universe - raises exception if invalid
+            self.residue = universe.residues[params.resid - 1]
         return True
 
     def _get_start_dv(self, dihedral: list) -> Vector:
@@ -349,6 +358,12 @@ class UniverseInfo(TrajectoryAnnotation):
     show_frame: bool
         Whether or not to show the frame number
 
+    show_time: bool
+        Whether or not to show the timestep time
+
+    show_step: bool
+        Whether or not to show the timestep step
+
     show_topology: bool
         Whether or not to show the topology filename
 
@@ -367,6 +382,8 @@ class UniverseInfo(TrajectoryAnnotation):
 
     location: tuple[float, float] = (0.025, 0.05)
     show_frame: bool = True
+    show_time: bool = True
+    show_step: bool = True
     show_topology: bool = True
     show_trajectory: bool = True
     show_atoms: bool = True
@@ -376,11 +393,12 @@ class UniverseInfo(TrajectoryAnnotation):
         params = self.interface
         params.text_align = "left"
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        x, y = params.location
-        if (not 0 <= x <= 1) or (not 0 <= y <= 1):
-            raise ValueError("Normalized coordinates should lie between 0 and 1")
+        if input_name in (None, "location"):
+            x, y = params.location
+            if (not 0 <= x <= 1) or (not 0 <= y <= 1):
+                raise ValueError("Normalized coordinates should lie between 0 and 1")
         return True
 
     def draw(self) -> None:
@@ -395,7 +413,12 @@ class UniverseInfo(TrajectoryAnnotation):
             if not is_streaming:
                 frame += f" / {u.trajectory.n_frames - 1}"
             text += "Frame : " + frame
-
+        if params.show_time:
+            if "time" in u.trajectory.ts.data:
+                text += f"|Time : {u.trajectory.ts.data['time']:.2f}"
+        if params.show_step:
+            if "step" in u.trajectory.ts.data:
+                text += f"|Step : {u.trajectory.ts.data['step']}"
         if params.show_topology:
             text += "|Topology : " + Path(topology_filename).name
         if params.show_trajectory:
@@ -410,7 +433,7 @@ class UniverseInfo(TrajectoryAnnotation):
         if params.custom_text != "":
             text += "|" + params.custom_text
         # Draw text at normalized coordinates wrt viewport / render
-        self.draw_text_2d_norm(params.location, text)
+        self.draw_text_2d(params.location, text)
 
 
 class SimulationBox(TrajectoryAnnotation):

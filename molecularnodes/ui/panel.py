@@ -1,6 +1,6 @@
 import bpy
 from databpy.object import LinkedObjectError
-from numpy.lib.arraysetops import isin
+from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
@@ -602,14 +602,29 @@ class MN_UL_EntitiesList(bpy.types.UIList):
             layout.label(text="", icon=custom_icon)
 
     def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
         items = getattr(data, propname)
-        filtered = [self.bitflag_filter_item] * len(items)
+        # Filter valid entities
+        sort_data = []
+        filtered = [0] * len(items)
         for i, item in enumerate(items):
             try:
-                _ = context.scene.MNSession.get(item.name).name
+                name = context.scene.MNSession.get(item.name).name
+                sort_data.append((i, name))
+                if (
+                    not self.filter_name
+                    or bool(self.filter_name.lower() in name.lower())
+                    is not self.use_filter_invert
+                ):
+                    filtered[i] |= self.bitflag_filter_item
             except (LinkedObjectError, AttributeError):
-                filtered[i] &= ~self.bitflag_filter_item
-        return filtered, []
+                sort_data.append((i, ""))
+        # Sort
+        ordered = []
+        if self.use_filter_sort_alpha:
+            ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
+        return filtered, ordered
 
 
 class MN_PT_Entities(bpy.types.Panel):
@@ -715,12 +730,12 @@ class MN_UL_StylesList(bpy.types.UIList):
     UIList of styles for an entity
     """
 
-    seqno = 1
+    style_nodes = None
 
     def draw_item(
         self,
         context,
-        layout,
+        layout: bpy.types.UILayout,
         data,
         item,
         icon,
@@ -734,15 +749,12 @@ class MN_UL_StylesList(bpy.types.UIList):
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            seqno = f"{self.seqno}. "
-            MN_UL_StylesList.seqno += 1
+            seqno = f"{MN_UL_StylesList.style_nodes.index(item) + 1}"
             split = row.split(factor=0.1)
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            # label: str = item.label
-            # col.prop(item, "label", text="", emboss=False)
-            col.label(text=item.label if item.label != "" else item.name)
+            col.prop(item, "label", text="", emboss=False)
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
                 hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
@@ -752,32 +764,29 @@ class MN_UL_StylesList(bpy.types.UIList):
             layout.label(text="", icon=custom_icon)
 
     def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
         items = getattr(data, propname)
-        helper_funcs = bpy.types.UI_UL_list
-        filtered = []
-        # Filtering by name
-        if self.filter_name:
-            filtered = helper_funcs.filter_items_by_name(
-                self.filter_name,
-                self.bitflag_filter_item,
-                items,
-                "label",
-                reverse=False,
-            )
-        if not filtered:
-            filtered = [self.bitflag_filter_item] * len(items)
+        # Filter only style nodes
+        sort_data = []
+        filtered = [0] * len(items)
         style_nodes = get_final_style_nodes(data)
-        ordered = [-1] * len(items)
         for i, item in enumerate(items):
             if item in style_nodes:
-                ordered[i] = style_nodes.index(item)
+                name = item.label
+                sort_data.append((i, name))
+                if (
+                    not self.filter_name
+                    or bool(self.filter_name.lower() in name.lower())
+                    is not self.use_filter_invert
+                ):
+                    filtered[i] |= self.bitflag_filter_item
             else:
-                filtered[i] &= ~self.bitflag_filter_item
-        index = len(style_nodes)
-        for i, item in enumerate(items):
-            if ordered[i] == -1:
-                ordered[i] = index
-                index += 1
+                sort_data.append((i, ""))
+        # Sort
+        ordered = []
+        if self.use_filter_sort_alpha:
+            ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
         return filtered, ordered
 
 
@@ -824,28 +833,31 @@ class MN_PT_Styles(bpy.types.Panel):
 
     def draw(self, context):
         scene = context.scene
-        entities_active_index = scene.mn.entities_active_index
-        uuid = scene.mn.entities[entities_active_index].name
-        entity = scene.MNSession.get(uuid)
+        layout = self.layout
+        assert layout is not None
+        entities_active_index: int = scene.mn.entities_active_index
+        uuid: str = scene.mn.entities[entities_active_index].name
+        entity = get_session().get(uuid)
+        if entity is None:
+            return
         node_group = entity.node_group
         if node_group is None:
             return
-        styles_active_index = entity.object.mn.styles_active_index
+        styles_active_index: int = entity.object.mn.styles_active_index  # type: ignore
         valid_selection = False
         style_nodes = get_final_style_nodes(node_group)
         if 0 <= styles_active_index < len(node_group.nodes):
             if node_group.nodes[styles_active_index] in style_nodes:
                 valid_selection = True
 
-        layout = self.layout
         row = layout.row()
-        MN_UL_StylesList.seqno = 1
+        MN_UL_StylesList.style_nodes = style_nodes
         row.template_list(
             "MN_UL_StylesList",
             "styles_list",
             node_group,
             "nodes",
-            entity.object.mn,
+            entity.object.mn,  # type: ignore
             "styles_active_index",
             rows=3,
         )
@@ -857,30 +869,17 @@ class MN_PT_Styles(bpy.types.Panel):
             row = col.row()
             op = row.operator("mn.remove_style", icon="REMOVE", text="")
             if valid_selection:
-                op.uuid = uuid
-                op.style_node_index = styles_active_index
+                op.uuid: str = uuid
+                op.style_node_index: int = styles_active_index
             else:
                 row.enabled = False
 
         if not valid_selection:
             return
 
-        style_node = node_group.nodes[styles_active_index]
-        box = layout.column()
-
-        panel_selection_node(box, style_node, entity)
+        box = layout.box()
         row = box.row()
-        row.label(text="Style")
-        op = row.operator_menu_enum(
-            operator="mn.node_swap_style_menu",
-            property="node_items",
-            text=style_node.name.replace("Style ", ""),
-        )
-        op.name_tree = style_node.id_data.name
-        op.name_node = style_node.name
-        box.separator()
-
-        # box.template_node_inputs(style_node)
+        style_node = node_group.nodes[styles_active_index]
 
         panels = {}
         for item in style_node.node_tree.interface.items_tree.values():
@@ -891,7 +890,7 @@ class MN_PT_Styles(bpy.types.Panel):
                     if panel:
                         header, panel = panel.panel(item.name, default_closed=False)
                 else:
-                    header, panel = box.panel(item.name, default_closed=False)
+                    header, panel = layout.panel(item.name, default_closed=False)
                 if header:
                     header.label(text=item.name)
                 panels[item.name] = panel
@@ -902,8 +901,10 @@ class MN_PT_Styles(bpy.types.Panel):
                     continue
                 if item.name in ("Visible"):
                     continue
-                input = style_node.inputs[item.identifier]
+                input: bpy.types.NodeGroupInput = style_node.inputs[item.identifier]
                 if not hasattr(input, "default_value"):
+                    continue
+                if input.is_inactive:
                     continue
                 row = None
                 if item.parent.name and item.parent.name in panels:
@@ -911,10 +912,22 @@ class MN_PT_Styles(bpy.types.Panel):
                     if panel:
                         row = panel.row()
                 else:
-                    row = box.row()
+                    row = layout.row()
                 if row:
-                    row.prop(data=input, property="default_value", text=input.name)
-        row = box.row()
+                    is_expanded = False
+                    if input.type == "MENU" and IS_BLENDER_5:
+                        row.label(text=item.name)
+                        is_expanded: bool = item.id_data.interface.items_tree[
+                            item.identifier
+                        ].menu_expanded
+
+                    row.prop(
+                        data=input,
+                        property="default_value",
+                        text=input.name,
+                        expand=is_expanded,
+                    )
+        row = layout.row()
 
 
 class MN_UL_AnnotationsList(bpy.types.UIList):
@@ -951,21 +964,25 @@ class MN_UL_AnnotationsList(bpy.types.UIList):
     def filter_items(self, context, data, propname):
         if data is None:
             return [], []
-        items = getattr(data, propname)
         helper_funcs = bpy.types.UI_UL_list
+        items = getattr(data, propname)
+        # Filter
         filtered = []
-        # Filtering by name
         if self.filter_name:
             filtered = helper_funcs.filter_items_by_name(
                 self.filter_name,
                 self.bitflag_filter_item,
                 items,
                 "label",
-                reverse=False,
+                reverse=self.use_filter_invert,
             )
         if not filtered:
             filtered = [self.bitflag_filter_item] * len(items)
-        return filtered, []
+        # Sort
+        ordered = []
+        if self.use_filter_sort_alpha:
+            ordered = helper_funcs.sort_items_by_name(items, "label")
+        return filtered, ordered
 
 
 class MN_PT_Annotations(bpy.types.Panel):
@@ -1045,21 +1062,30 @@ class MN_PT_Annotations(bpy.types.Panel):
         inputs = getattr(item, entity_annotation_type, None)
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
-            if not inputs.valid_inputs:
-                col = layout.column()
-                box = col.box()
-                box.label(text="Invalid inputs", icon="ERROR")
-                box.alert = True
+            if instance._draw_error is not None:
+                row = box.row()
+                row.alert = True
+                row.label(text=instance._draw_error, icon="ERROR")
 
             for prop_name in inputs.__annotations__.keys():
-                if prop_name in ("uuid", "valid_inputs"):
+                if prop_name == "uuid":
                     continue
                 row = box.row()
-                if hasattr(instance, f"_{prop_name}"):
+                nbattr = f"_custom_{prop_name}"  # non blender property
+                if hasattr(instance, nbattr):
                     # indicate use of non blender property in draw
                     row.label(icon="ERROR")
                     row.alert = True
-                row.prop(inputs, prop_name)
+                if prop_name not in instance._invalid_inputs:
+                    row.prop(inputs, prop_name)
+                else:
+                    row.alert = True
+                    row.prop(inputs, prop_name)
+                    row = box.row()
+                    row.alert = True
+                    row.label(
+                        text=instance._invalid_input_messages[prop_name], icon="ERROR"
+                    )
 
         # Add all the common annotation params within the 'Options' panel
         header, panel = box.panel("annotation_options", default_closed=True)

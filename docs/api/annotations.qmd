@@ -206,6 +206,8 @@ The input parameters for this annotation are:
 
 - `location` - Normalized 2d location (0.0 - 1.0) to show the info wrt viewport / render
 - `show_frame` - Whether or not to show the frame number of the trajectory
+- `show_time` - Whether or not to show the timestep time
+- `show_step` - Whether or not to show the timestep step
 - `show_topology` - Whether or not to show the topology filename
 - `show_trajectory` - Whether or not to show the trajectory filename
 - `show_atoms` - Whether or not to show the number of atoms in the universe
@@ -439,7 +441,7 @@ class CustomAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
         params.text_size = 20
 
     # optional validate method
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         # validate any input params that change (either through API or GUI)
         # return True if validation succeeds else False or raise an Exception
         params = self.interface
@@ -466,6 +468,18 @@ class CustomAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
             self.draw_text_3d(atom.position, atom.name)
 ```
 
+#### The [](`~molecularnodes.annotations.base.BaseAnnotation.defaults`) method
+
+This method is called only once when the annotation instance is created. Common annotation param defaults and other initializations that need to be done once can be setup in this method.
+
+#### The [](`~molecularnodes.annotations.base.BaseAnnotation.validate`) method
+
+This method is called during annotation creation and every time an annotation input changes (both through the API and GUI). This method can raise and exception or return `False` when validation fails. On successful validations, this method should return `True`. In addition to validations, any values that require resetting due to input changes can be done in this method.
+
+#### The [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) method
+
+This is the main draw method of the annotation that gets called multiple times as part of Blender's 3D viewport draw handler and during rendering. It is important to only do the minimum required drawing stuff in this method to avoid viewport lag. The [](`~molecularnodes.annotations.base.BaseAnnotation.defaults`) and [](`~molecularnodes.annotations.base.BaseAnnotation.validate`) methods above can be used to setup all the required analysis classes and results that can be displayed in this method.
+
 ### Add the custom annotation
 
 ```{python}
@@ -488,12 +502,54 @@ ca.visible = False
 
 ### Unregister a custom annotation
 
-Custom annotations get automatically registered with the [](`~mn.entities.trajectory.annotations.TrajectoryAnnotationManager`). They can be manually unregistered and re-registered using the [](`~mn.annotations.manager.BaseAnnotationManager.unregister`) and [](`~mn.annotations.manager.BaseAnnotationManager.register`) methods if required.
+Custom annotations get automatically registered with the [](`~mn.entities.trajectory.annotations.TrajectoryAnnotationManager`). They can be manually unregistered and re-registered using the [](`~mn.annotations.manager.BaseAnnotationManager.unregister_type`) and [](`~mn.annotations.manager.BaseAnnotationManager.register_class`) methods if required.
 
 ```{python}
 # unregister the annotation
 manager = mn.entities.trajectory.TrajectoryAnnotationManager
-manager.unregister(CustomAnnotation)
+manager.unregister_type("custom_annotation")
+```
+### Input types
+
+Custom annotations can specify inputs that become automatically available to both the API and the GUI. For example, `selection` and `bool_param` are inputs for the custom annotation example above. Inputs are specified as class attributes with a Python annotation that specifies its type. In the example above, `selection` is of type `str` and `bool_param` is of type `bool`.
+
+Here are the supported types and their representation in Blender GUI:
+
+| Type | Representation in Blender GUI |
+|:---|:---|
+|`str`|String input|
+|`bool`|Boolean checkbox|
+|`int`|Integer input|
+|`float`|Float input|
+|`tuple[float, float]`|A vector input in 2 dimensions|
+|`tuple[float, float, float]`|A vector input in 3 dimensions|
+|`tuple[float, float, float, float]`|A vector input in 4 dimensions. Input names that contain the word "color" will become Color selections|
+|`list[str]`|An Enumeration drowpdown|
+
+### Param overrides
+
+Text, lines and meshes drawn in custom annotations can be controlled by the same params as described in the [Common Annotations Params](#common-annotation-params) section above. Custom annotations can also override these parameters to either hardcode specific values or allow additional customization though separate inputs. This can be done by passing the `overrides` keyword param to any of the drawing utilities and specify a dictionary of the parameters to override along with their values.
+
+Here is an example within a custom annotation that draws two 3D circles, the first with a hardcoded color value and the second with a custom input color:
+
+```python
+    ...
+    # custom line color input
+    line_color_input: tuple[float, float, float, float] = (1, 1, 1, 1)
+    ...
+    self.draw_circle_3d(
+        center,
+        radius,
+        normal_vector,
+        overrides={"line_color": (1.0, 0.498, 0.055, 1)},
+    )
+    self.draw_circle_3d(
+        center,
+        radius * 2,
+        normal_vector,
+        overrides={"line_color": self.interface.line_color_input},
+    )
+    ...
 ```
 
 ### Drawing utilities
@@ -503,11 +559,11 @@ Custom annotations can use the drawing utilities available from the base annotat
 The following utility methods are currently available:
 
 - [](`~molecularnodes.annotations.base.BaseAnnotation.distance`) - Distance between two vectors
-- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_text_2d`) - Draw text at a given 2D position (in pixels) of Viewport
-- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm`) - Draw text at a given 2D position (normalized co-ordinates) of Viewport.
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_text_2d`) - Draw text at a given 2D position (normalized co-ordinates) of Viewport.
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_text_3d`) - Draw text at a given 3D position
-- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_line_2d`) - Draw a line between two points in 2D viewport space
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_line_2d`) - Draw a line between two points (normalized co-ordinates) in 2D viewport space
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_line_3d`) - Draw a line between two points in 3D space
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_circle_2d`) - Draw a circle around a 2D point (normalized coordinate) in the viewport space
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d`) - Draw a circle around a 3D point in the plane perpendicular to the given normal
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_sphere`) - Draw a sphere object at a 3D point
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_cone`) - Draw a cone object along an axis
@@ -517,5 +573,9 @@ The following utility methods are currently available:
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_triclinic_cell`) - Draw a triclinic cell
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_wigner_seitz_cell`) - Draw a compact Wigner-Seitz cell
 - [](`~molecularnodes.annotations.base.BaseAnnotation.draw_bmesh`) - Draw a generic Blender BMesh
+- [](`~molecularnodes.annotations.base.BaseAnnotation.draw_bpy_image`) - Draw an image from bpy.data.images at the given 2D position (normalized co-ordinates) of Viewport.
+- [](`~molecularnodes.annotations.base.BaseAnnotation.bpy_image_to_pil_image`) - Convert Blender image to PIL image
+- [](`~molecularnodes.annotations.base.BaseAnnotation.pil_image_to_bpy_image`) - Convert PIL image to Blender image
 
-These methods can be used within the `draw` method of a custom annotation. Please see the API reference for [](`mn.annotations.base`) for details about these methods.
+These methods can be used within the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) method of a custom annotation. Please see the API reference for [](`mn.annotations.base`) for details about these methods.
+

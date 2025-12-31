@@ -21,7 +21,7 @@ from ...utils import (
 logger = logging.getLogger(__name__)
 
 
-def _ag_to_bool(ag: AtomGroup) -> np.ndarray:
+def _ag_to_bool(ag: AtomGroup) -> np.typing.NDArray[np.bool_]:
     """Convert AtomGroup to boolean mask for the entire universe."""
     mask = np.zeros(ag.universe.atoms.n_atoms, dtype=bool)
     mask[ag.ix] = True
@@ -244,11 +244,16 @@ class FrameManager:
             # Streaming trajectory - just return current frame
             return np.array([frame], dtype=np.int64)
 
-        return frames_to_average(
+        frames = frames_to_average(
             frame,
             n_frames,
             average=self.trajectory.average,
         )
+
+        # Clamp frames to valid range
+        frames = frames[(frames >= 0) & (frames < n_frames)]
+
+        return frames
 
     def update_position_cache(self, frame: int, cache_ahead: bool = True) -> None:
         """Update the position cache for the current frame.

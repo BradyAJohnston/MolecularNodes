@@ -20,16 +20,17 @@ class Label2D(BaseAnnotation):
     text: str
     location: tuple[float, float] = (0.5, 0.5)
 
-    def validate(self) -> bool:
+    def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        x, y = params.location
-        if (not 0 <= x <= 1) or (not 0 <= y <= 1):
-            raise ValueError("Normalized coordinates should lie between 0 and 1")
+        if input_name in (None, "location"):
+            x, y = params.location
+            if (not 0 <= x <= 1) or (not 0 <= y <= 1):
+                raise ValueError("Normalized coordinates should lie between 0 and 1")
         return True
 
     def draw(self) -> None:
         params = self.interface
-        self.draw_text_2d_norm(params.location, params.text)
+        self.draw_text_2d(params.location, params.text)
 
 
 class Label3D(BaseAnnotation):

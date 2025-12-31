@@ -222,6 +222,9 @@ def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
         except KeyError:
             tree = append(tree)  # type: ignore
 
+    # only change the label if not customized
+    if node.label == node.node_tree.name:
+        node.label = tree.name
     swap_tree(node=node, tree=tree)
 
 
@@ -289,6 +292,8 @@ def add_custom(
 ) -> bpy.types.GeometryNodeGroup:
     node: bpy.types.GeometryNodeGroup = group.nodes.new("GeometryNodeGroup")  # type: ignore
     node.node_tree = append(name, link=link)
+    # set the label to the node tree name by default
+    node.label = node.node_tree.name
 
     # if there is an input socket called 'Material', assign it to the base MN material
     # if another material is supplied, use that instead.
