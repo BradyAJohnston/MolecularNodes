@@ -252,6 +252,21 @@ class MN_OT_Node_Swap(Operator):
         return {"FINISHED"}
 
 
+class MN_OT_Node_Swap_Style_Menu(Operator):
+    bl_idname = "mn.node_swap_style_menu"
+    bl_label = "Swap Style"
+    bl_description = "Swap the style node currently used"
+
+    node_items: EnumProperty(items=STYLE_ITEMS)  # type: ignore
+    name_tree: StringProperty()  # type: ignore
+    name_node: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_node]
+        nodes.swap(node, tree=nodes.styles_mapping[self.node_items])
+        return {"FINISHED"}
+
+
 class MN_OT_Change_Color(Operator):
     bl_idname = "mn.change_color"
     bl_label = "Color"
@@ -748,6 +763,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style,
+                selection="all",
             )
         else:
             traj = Trajectory.load(
@@ -755,6 +771,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style if self.setup_nodes else None,
+                selection="all",
             )
 
         context.view_layer.objects.active = traj.object
@@ -800,7 +817,7 @@ class MN_OT_Add_Style(Operator):
 
     bl_idname = "mn.add_style"
     bl_label = "Add Style"
-    bl_description = "Add new style to entity"
+    bl_description = "Add new style to Fpointntity"
 
     uuid: StringProperty()  # type: ignore
 
@@ -836,7 +853,7 @@ class MN_OT_Add_Style(Operator):
     selection: StringProperty(
         name="Selection",
         description="Selection for which the style applies",
-        default="",
+        default="all",
     )  # type: ignore
 
     name: StringProperty(
@@ -1139,6 +1156,7 @@ CLASSES = [
     MN_OT_iswitch_custom,
     MN_OT_Change_Color,
     MN_OT_Node_Swap,
+    MN_OT_Node_Swap_Style_Menu,
     MN_OT_Import_Fetch,
     MN_OT_Import_OxDNA_Trajectory,
     MN_OT_Import_Trajectory,
