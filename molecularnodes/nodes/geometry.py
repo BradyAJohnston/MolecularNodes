@@ -18,8 +18,8 @@ from .nodes import (
     NODE_SPACING,
     final_join,
     insert_before,
-    loc_between,
     insert_join_last,
+    loc_between,
 )
 from .styles import StyleBase
 
