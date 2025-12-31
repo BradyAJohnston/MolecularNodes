@@ -358,6 +358,12 @@ class UniverseInfo(TrajectoryAnnotation):
     show_frame: bool
         Whether or not to show the frame number
 
+    show_time: bool
+        Whether or not to show the timestep time
+
+    show_step: bool
+        Whether or not to show the timestep step
+
     show_topology: bool
         Whether or not to show the topology filename
 
@@ -376,6 +382,8 @@ class UniverseInfo(TrajectoryAnnotation):
 
     location: tuple[float, float] = (0.025, 0.05)
     show_frame: bool = True
+    show_time: bool = True
+    show_step: bool = True
     show_topology: bool = True
     show_trajectory: bool = True
     show_atoms: bool = True
@@ -405,7 +413,12 @@ class UniverseInfo(TrajectoryAnnotation):
             if not is_streaming:
                 frame += f" / {u.trajectory.n_frames - 1}"
             text += "Frame : " + frame
-
+        if params.show_time:
+            if "time" in u.trajectory.ts.data:
+                text += f"|Time : {u.trajectory.ts.data['time']:.2f}"
+        if params.show_step:
+            if "step" in u.trajectory.ts.data:
+                text += f"|Step : {u.trajectory.ts.data['step']}"
         if params.show_topology:
             text += "|Topology : " + Path(topology_filename).name
         if params.show_trajectory:
