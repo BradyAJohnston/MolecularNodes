@@ -886,7 +886,7 @@ class MN_PT_Styles(bpy.types.Panel):
         op = row.operator_menu_enum(
             operator="mn.node_swap_style_menu",
             property="node_items",
-            text=style_node.name.replace("Style ", ""),
+            text=style_node.node_tree.name.replace("Style ", ""),
         )
         op.name_tree = style_node.id_data.name
         op.name_node = style_node.name

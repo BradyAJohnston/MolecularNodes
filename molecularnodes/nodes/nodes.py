@@ -717,14 +717,18 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode
                     node_join.inputs[0],
                 )
     except IndexError:
-        pass
+        link(node_join.outputs[0], node_output.inputs[0])
 
     link(node_join.outputs[0], tree.nodes["Group Output"].inputs[0])
     return node_join
 
 
 def last_node(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
-    return get_output(tree).inputs[0].links[0].from_socket.node  # type: ignore
+    output = get_output(tree)
+    try:
+        return output.inputs[0].links[0].from_socket.node  # type: ignore
+    except IndexError:
+        return output
 
 
 def node_previous(node):
@@ -744,11 +748,9 @@ def final_join(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
             if current.bl_idname == "GeometryNodeJoinGeometry":
                 return current
             current = node_previous(current)
-
-    except RuntimeError:
-        return insert_join_last(tree)
-    except IndexError:
-        return insert_join_last(tree)
+    except (RuntimeError, IndexError):
+        pass
+        # insert_join_last(tree)
 
 
 def loc_between(a: bpy.types.GeometryNode, b: bpy.types.GeometryNode, t=0.5) -> Vector:

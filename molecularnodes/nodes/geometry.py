@@ -1,6 +1,7 @@
 from typing import List, Sequence
 import bpy
 from bpy.types import Node  # type: ignore
+from databpy.nodes import get_output
 from mathutils import Vector  # type: ignore
 from . import nodes
 from .arrange import arrange_tree
@@ -18,6 +19,7 @@ from .nodes import (
     final_join,
     insert_before,
     loc_between,
+    insert_join_last,
 )
 from .styles import StyleBase
 
@@ -93,6 +95,8 @@ def add_style_branch(
     link = tree.links.new
     input = nodes.get_input(tree)
     node_join = final_join(tree)
+    if node_join is None:
+        node_join = insert_join_last(tree)
 
     current_min_y = min(node.location[1] for node in tree.nodes)
     ypos = current_min_y - 200
@@ -157,7 +161,11 @@ def get_final_style_nodes(
     """
     Get the final style nodes in the tree.
     """
-    links: bpy.types.NodeLinks = final_join(tree).inputs[0].links  # type: ignore
+    try:
+        links: bpy.types.NodeLinks = final_join(tree).inputs[0].links  # type: ignore
+    except AttributeError:
+        links = get_output(tree).inputs[0].links
+
     return [
         link.from_socket.node  # type: ignore
         for link in reversed(links)
