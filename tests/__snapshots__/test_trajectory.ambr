@@ -20,10 +20,6 @@
   AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(10273,), dtype=int32)
   array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
 # ---
-# name: TestTrajectory.test_dssp.3
-  AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(10273,), dtype=int32)
-  array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
-# ---
 # name: TestTrajectory.test_save_persistance
   [[0.4 0.3 0.5]
    [0.4 0.3 0.5]

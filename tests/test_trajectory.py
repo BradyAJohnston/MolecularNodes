@@ -494,18 +494,14 @@ class TestTrajectory:
             t["sec_struct"]
         # initialize dssp
         t.dssp.init()
-        # default dssp is none
+        # default dssp is per-frame
         t.set_frame(1)
-        no_sec_struct_default = t["sec_struct"]
+        frame_sec_struct = t["sec_struct"]
         # change dssp to none
         t.dssp.show_none()
         no_sec_struct = t["sec_struct"]
-        assert np.allclose(no_sec_struct_default, no_sec_struct)
+        assert not np.allclose(frame_sec_struct, no_sec_struct)
         assert snapshot == no_sec_struct
-        # change dssp to per-frame
-        t.dssp.show_per_frame()
-        frame_sec_struct = t["sec_struct"]
-        assert snapshot == frame_sec_struct
         # change dssp to sliding-window-average
         t.dssp.show_sliding_window_average(window_size=5)
         sw_sec_struct = t["sec_struct"]
