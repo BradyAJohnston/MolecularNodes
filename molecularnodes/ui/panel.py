@@ -973,6 +973,9 @@ class MN_PT_Styles(bpy.types.Panel):
         col.separator()
 
         panels = {}
+        header, layout = layout.panel(idname="style_properties")
+        header.label(text="Geometry")
+
         for item in style_node.node_tree.interface.items_tree.values():
             if item.item_type == "PANEL":
                 header = None
@@ -1119,6 +1122,7 @@ class MN_PT_Annotations(bpy.types.Panel):
         row.prop(object.mn, "annotations_visible", text="Visible")
 
         row = layout.row()
+
         MN_UL_AnnotationsList.seqno = 1
         row.template_list(
             "MN_UL_AnnotationsList",
