@@ -86,10 +86,11 @@ class Grids(Density):
 
                 # The OpenVDB Python API expects array in Z, Y, X order by default.
                 # mrcfile returns data with shape (nz, ny, nx), which matches that order.
+                # We also swap the X and Z axes of the numpy array when constructing the Grid below.
                 delta = np.array([vx, vy, vz], dtype=float)
                 origin = np.array([ox, oy, oz], dtype=float)
 
-                return Grid(mrc.data, origin=origin, delta=delta, metadata=metadata)
+                return Grid(np.swapaxes(mrc.data, 0, 2), origin=origin, delta=delta, metadata=metadata)
         except Exception as e:
             # Re-raise the original parsing error with context from fallback
             raise RuntimeError(
