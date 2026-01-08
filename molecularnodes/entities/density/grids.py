@@ -90,7 +90,12 @@ class Grids(Density):
                 delta = np.array([vx, vy, vz], dtype=float)
                 origin = np.array([ox, oy, oz], dtype=float)
 
-                return Grid(np.swapaxes(mrc.data, 0, 2), origin=origin, delta=delta, metadata=metadata)
+                return Grid(
+                    grid=np.swapaxes(mrc.data, 0, 2),
+                    origin=origin,
+                    delta=delta,
+                    metadata=metadata,
+                )
         except Exception as e:
             # Re-raise the original parsing error with context from fallback
             raise RuntimeError(
