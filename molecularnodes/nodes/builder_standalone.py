@@ -1,13 +1,17 @@
+"""
+Standalone Node Builder for testing in Blender.
+
+Copy this entire file into Blender's text editor and run it to test the API.
+"""
+
 from __future__ import annotations
-from typing import ClassVar, Iterable, TYPE_CHECKING
+from typing import ClassVar, TYPE_CHECKING
+from dataclasses import dataclass
 import bpy
 import numpy as np
 from bpy.types import (
-    GeometryNode,
     GeometryNodeTree,
     Node,
-    NodeGroupInput,
-    NodeGroupOutput,
     Nodes,
     NodeSocket,
     NodeSocketBool,
@@ -18,22 +22,85 @@ from bpy.types import (
 from mathutils import Quaternion, Vector
 from molecularnodes.nodes.arrange import arrange_tree
 
-if TYPE_CHECKING:
-    from molecularnodes.nodes.sockets import SocketBase
 
-GEO_NODE_NAMES = (
-    f"GeometryNode{name}"
-    for name in (
-        "SetPosition",
-        "TransformGeometry",
-        "GroupInput",
-        "GroupOutput",
-        "MeshToPoints",
-        "PointsToVertices",
-    )
-)
+# ============================================================================
+# Socket Definition Classes
+# ============================================================================
 
-# POSSIBLE_NODE_NAMES = "GeometryNode"
+@dataclass
+class SocketBase:
+    """Base class for all socket definitions."""
+
+    name: str
+    bl_socket_type: str = ""
+    description: str = ""
+
+
+@dataclass
+class SocketGeometry(SocketBase):
+    """Geometry socket - holds mesh, curve, point cloud, or volume data."""
+
+    bl_socket_type: str = "NodeSocketGeometry"
+
+
+@dataclass
+class SocketBoolean(SocketBase):
+    """Boolean socket - true/false value."""
+
+    default: bool = False
+    bl_socket_type: str = "NodeSocketBool"
+
+
+@dataclass
+class SocketVector(SocketBase):
+    """Vector socket - 3D vector (X, Y, Z)."""
+
+    default: tuple[float, float, float] = (0.0, 0.0, 0.0)
+    min_value: tuple[float, float, float] | None = None
+    max_value: tuple[float, float, float] | None = None
+    bl_socket_type: str = "NodeSocketVector"
+
+
+@dataclass
+class SocketFloat(SocketBase):
+    """Float socket - single floating point value."""
+
+    default: float = 0.0
+    min_value: float | None = None
+    max_value: float | None = None
+    bl_socket_type: str = "NodeSocketFloat"
+
+
+@dataclass
+class SocketInt(SocketBase):
+    """Integer socket - whole number value."""
+
+    default: int = 0
+    min_value: int | None = None
+    max_value: int | None = None
+    bl_socket_type: str = "NodeSocketInt"
+
+
+@dataclass
+class SocketString(SocketBase):
+    """String socket - text value."""
+
+    default: str = ""
+    bl_socket_type: str = "NodeSocketString"
+
+
+@dataclass
+class SocketColor(SocketBase):
+    """Color socket - RGBA color value."""
+
+    default: tuple[float, float, float, float] = (1.0, 1.0, 1.0, 1.0)
+    bl_socket_type: str = "NodeSocketColor"
+
+
+# ============================================================================
+# Helper Functions
+# ============================================================================
+
 LINKABLE = "Node | NodeSocket | NodeBuilder"
 TYPE_INPUT_VECTOR = "NodeSocketVector | Vector | NodeBuilder | list[float] | tuple[float, float, float] | None"
 TYPE_INPUT_ROTATION = "NodeSocketRotation | Quaternion | NodeBuilder | list[float] | tuple[float, float, float, float] | None"
@@ -74,6 +141,10 @@ def target_socket(node: LINKABLE) -> NodeSocket:
         raise TypeError(f"Unsupported type: {type(node)}")
 
 
+# ============================================================================
+# Socket Accessor Classes
+# ============================================================================
+
 class SocketAccessor:
     """Provides named access to tree input or output sockets.
 
@@ -103,11 +174,10 @@ class SocketAccessor:
             node = self._tree._output_node()
 
         # Return a NodeBuilder wrapping this specific socket access
-        # We create a wrapper that will connect the right socket
         return SocketNodeBuilder(node, socket_name, self._direction)
 
 
-class SocketNodeBuilder(NodeBuilder):
+class SocketNodeBuilder:
     """Special NodeBuilder for accessing specific sockets on input/output nodes."""
 
     def __init__(self, node: Node, socket_name: str, direction: str):
@@ -116,6 +186,10 @@ class SocketNodeBuilder(NodeBuilder):
         self._tree = TreeBuilder(node.id_data)  # type: ignore
         self._socket_name = socket_name
         self._direction = direction
+
+    @property
+    def tree(self) -> "TreeBuilder":
+        return self._tree
 
     @property
     def default_output(self) -> NodeSocket:
@@ -135,6 +209,26 @@ class SocketNodeBuilder(NodeBuilder):
             # Input nodes don't have inputs, this shouldn't be called
             return self.node.inputs[0]
 
+    def __rshift__(self, other: "NodeBuilder") -> "NodeBuilder":
+        """Chain nodes using >> operator."""
+        # Try to find Geometry sockets first, fall back to default
+        try:
+            self_out = self.node.outputs.get("Geometry") or self.default_output
+        except (KeyError, IndexError):
+            self_out = self.default_output
+
+        try:
+            other_in = other.node.inputs.get("Geometry") or other.default_input
+        except (KeyError, IndexError):
+            other_in = other.default_input
+
+        self.tree.link(self_out, other_in)
+        return other
+
+
+# ============================================================================
+# TreeBuilder
+# ============================================================================
 
 class TreeBuilder:
     _active_tree: ClassVar["TreeBuilder | None"] = None
@@ -258,6 +352,10 @@ class TreeBuilder:
             socket.description = socket_def.description
 
 
+# ============================================================================
+# NodeBuilder
+# ============================================================================
+
 class NodeBuilder:
     node: Node
     _tree: "TreeBuilder"
@@ -355,6 +453,10 @@ class NodeBuilder:
         return other
 
 
+# ============================================================================
+# Example Node Classes (manually defined for now)
+# ============================================================================
+
 class TransformGeometry(NodeBuilder):
     name = "GeometryNodeTransform"
 
@@ -418,13 +520,12 @@ class Vector(NodeBuilder):
         node.vector = value
 
 
-# Example usage demonstrating the >> operator, context manager, and interface API
-
+# ============================================================================
+# Example Usage
+# ============================================================================
 
 def example():
     """Demonstrates building a node tree with the new API."""
-    from molecularnodes.nodes.sockets import SocketGeometry, SocketBoolean, SocketVector
-
     tree = TreeBuilder("ExampleTree")
 
     # Define interface with typed socket classes
@@ -457,8 +558,6 @@ def example():
 
 def example_multi_socket():
     """Example with multiple input/output sockets."""
-    from molecularnodes.nodes.sockets import SocketGeometry, SocketBoolean, SocketInt
-
     tree = TreeBuilder("MultiSocketExample")
 
     tree.interface(
@@ -485,6 +584,11 @@ def example_multi_socket():
     return tree
 
 
-# Uncomment to test when running in Blender
-# example()
-# example_multi_socket()
+# ============================================================================
+# Run Examples
+# ============================================================================
+
+if __name__ == "__main__":
+    # Uncomment to test
+    example()
+    # example_multi_socket()
