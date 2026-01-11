@@ -1,21 +1,13 @@
 from __future__ import annotations
-from typing import ClassVar, Iterable, TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 import bpy
 import numpy as np
 from bpy.types import (
-    GeometryNode,
     GeometryNodeTree,
     Node,
-    NodeGroupInput,
-    NodeGroupOutput,
     Nodes,
     NodeSocket,
-    NodeSocketBool,
-    NodeSocketMenu,
-    NodeSocketRotation,
-    NodeSocketVector,
 )
-from mathutils import Quaternion, Vector
 from molecularnodes.nodes.arrange import arrange_tree
 
 if TYPE_CHECKING:
@@ -55,7 +47,7 @@ def source_socket(node: LINKABLE) -> NodeSocket:
         return node
     elif isinstance(node, Node):
         return node.outputs[0]
-    elif hasattr(node, 'default_output'):
+    elif hasattr(node, "default_output"):
         # NodeBuilder or SocketNodeBuilder
         return node.default_output
     else:
@@ -67,76 +59,16 @@ def target_socket(node: LINKABLE) -> NodeSocket:
         return node
     elif isinstance(node, Node):
         return node.inputs[0]
-    elif hasattr(node, 'default_input'):
+    elif hasattr(node, "default_input"):
         # NodeBuilder or SocketNodeBuilder
         return node.default_input
     else:
         raise TypeError(f"Unsupported type: {type(node)}")
 
 
-class SocketAccessor:
-    """Provides named access to tree input or output sockets.
-
-    Usage:
-        tree.inputs.geometry  # Access "Geometry" input socket
-        tree.outputs.result   # Access "Result" output socket
-    """
-
-    def __init__(self, tree: "TreeBuilder", direction: str):
-        self._tree = tree
-        self._direction = direction  # 'INPUT' or 'OUTPUT'
-
-    def __getattr__(self, name: str) -> "NodeBuilder":
-        """Access a socket by normalized name.
-
-        Example:
-            tree.inputs.geometry -> accesses "Geometry" socket
-            tree.inputs.my_socket -> accesses "My Socket" socket
-        """
-        # Convert attribute name to socket name
-        socket_name = denormalize_name(name)
-
-        # Get the appropriate node
-        if self._direction == "INPUT":
-            node = self._tree._input_node()
-        else:
-            node = self._tree._output_node()
-
-        # Return a NodeBuilder wrapping this specific socket access
-        # We create a wrapper that will connect the right socket
-        return SocketNodeBuilder(node, socket_name, self._direction)
-
-
-class SocketNodeBuilder(NodeBuilder):
-    """Special NodeBuilder for accessing specific sockets on input/output nodes."""
-
-    def __init__(self, node: Node, socket_name: str, direction: str):
-        # Don't call super().__init__ - we already have a node
-        self.node = node
-        self._tree = TreeBuilder(node.id_data)  # type: ignore
-        self._socket_name = socket_name
-        self._direction = direction
-
-    @property
-    def default_output(self) -> NodeSocket:
-        """Return the specific named output socket."""
-        if self._direction == "INPUT":
-            return self.node.outputs[self._socket_name]
-        else:
-            # Output nodes don't have outputs, this shouldn't be called
-            return self.node.outputs[0]
-
-    @property
-    def default_input(self) -> NodeSocket:
-        """Return the specific named input socket."""
-        if self._direction == "OUTPUT":
-            return self.node.inputs[self._socket_name]
-        else:
-            # Input nodes don't have inputs, this shouldn't be called
-            return self.node.inputs[0]
-
-
 class TreeBuilder:
+    """Builder for creating Blender geometry node trees with a clean Python API."""
+
     _active_tree: ClassVar["TreeBuilder | None"] = None
     just_added: "Node | None" = None
 
@@ -259,33 +191,30 @@ class TreeBuilder:
 
 
 class NodeBuilder:
+    """Base class for all geometry node wrappers."""
+
     node: Node
     _tree: "TreeBuilder"
     name: str
 
-    def __init__(self, tree: "TreeBuilder | Node | None" = None):
-        # If no tree provided, use active tree from context
+    def __init__(self):
+        # Get active tree from context manager
+        tree = TreeBuilder._active_tree
         if tree is None:
-            tree = TreeBuilder._active_tree
-            if tree is None:
-                raise RuntimeError(
-                    "NodeBuilder must be used within a TreeBuilder context manager "
-                    "or tree must be provided explicitly"
-                )
+            raise RuntimeError(
+                f"Node '{self.__class__.__name__}' must be created within a TreeBuilder context manager.\n"
+                f"Usage:\n"
+                f"  with tree:\n"
+                f"      node = {self.__class__.__name__}()\n"
+            )
 
-        if isinstance(tree, TreeBuilder):
-            self._tree = tree
-            if hasattr(self.__class__, "name") and self.__class__.name is not None:
-                self.node = self._tree.add(self.__class__.name)
-            else:
-                raise ValueError(
-                    f"Class {self.__class__.__name__} must define a 'name' attribute"
-                )
-        elif isinstance(tree, Node):  # Check if it's a Blender node type
-            self._tree = TreeBuilder(tree.id_data)  # type: ignore
-            self.node = tree
+        self._tree = tree
+        if hasattr(self.__class__, "name") and self.__class__.name is not None:
+            self.node = self._tree.add(self.__class__.name)
         else:
-            raise TypeError(f"Expected TreeBuilder or Node, got {type(tree)}")
+            raise ValueError(
+                f"Class {self.__class__.__name__} must define a 'name' attribute"
+            )
 
     @property
     def tree(self) -> "TreeBuilder":
@@ -355,136 +284,63 @@ class NodeBuilder:
         return other
 
 
-class TransformGeometry(NodeBuilder):
-    name = "GeometryNodeTransform"
+class SocketNodeBuilder(NodeBuilder):
+    """Special NodeBuilder for accessing specific sockets on input/output nodes."""
 
-    def __init__(
-        self,
-        tree: "TreeBuilder | None" = None,
-        method: "NodeSocketMenu | None" = None,
-        translation: TYPE_INPUT_VECTOR = None,
-        rotation: TYPE_INPUT_ROTATION = None,
-        scale: TYPE_INPUT_VECTOR = None,
-    ):
-        super().__init__(tree)
-        self._establish_links(
-            method=method, translation=translation, rotation=rotation, scale=scale
-        )
-
-
-class SetPosition(NodeBuilder):
-    name = "GeometryNodeSetPosition"
-
-    def __init__(
-        self,
-        tree: "TreeBuilder | None" = None,
-        selection: TYPE_INPUT_BOOLEAN = None,
-        position: TYPE_INPUT_VECTOR = None,
-        offset: TYPE_INPUT_VECTOR = None,
-    ):
-        super().__init__(tree)
-        self._establish_links(selection=selection, position=position, offset=offset)
-
-
-class Position(NodeBuilder):
-    name = "GeometryNodeInputPosition"
+    def __init__(self, node: Node, socket_name: str, direction: str):
+        # Don't call super().__init__ - we already have a node
+        self.node = node
+        self._tree = TreeBuilder(node.id_data)  # type: ignore
+        self._socket_name = socket_name
+        self._direction = direction
 
     @property
-    def position(self):
-        return self.node.outputs["Position"]
-
-
-class Vector(NodeBuilder):
-    name = "FunctionNodeInputVector"
-
-    def __init__(
-        self,
-        tree: "TreeBuilder | None" = None,
-        value: "Vector | list[float] | tuple[float, float, float]" = (0.0, 0.0, 0.0),
-    ):
-        super().__init__(tree)
-        if value is None:
-            return
-        self.value = value
+    def default_output(self) -> NodeSocket:
+        """Return the specific named output socket."""
+        if self._direction == "INPUT":
+            return self.node.outputs[self._socket_name]
+        else:
+            # Output nodes don't have outputs, this shouldn't be called
+            return self.node.outputs[0]
 
     @property
-    def value(self) -> Vector:
-        node: bpy.types.FunctionNodeInputVector = self.node
-        return node.vector
-
-    @value.setter
-    def value(self, value: "Vector | list[float] | tuple[float, float, float]"):
-        node: bpy.types.FunctionNodeInputVector = self.node
-        node.vector = value
-
-
-# Example usage demonstrating the >> operator, context manager, and interface API
+    def default_input(self) -> NodeSocket:
+        """Return the specific named input socket."""
+        if self._direction == "OUTPUT":
+            return self.node.inputs[self._socket_name]
+        else:
+            # Input nodes don't have inputs, this shouldn't be called
+            return self.node.inputs[0]
 
 
-def example():
-    """Demonstrates building a node tree with the new API."""
-    from molecularnodes.nodes.sockets import SocketGeometry, SocketBoolean, SocketVector
+class SocketAccessor:
+    """Provides named access to tree input or output sockets.
 
-    tree = TreeBuilder("ExampleTree")
+    Usage:
+        tree.inputs.geometry  # Access "Geometry" input socket
+        tree.outputs.result   # Access "Result" output socket
+    """
 
-    # Define interface with typed socket classes
-    tree.interface(
-        inputs=[
-            SocketGeometry(name="Geometry"),
-            SocketBoolean(name="Selection", default=True),
-            SocketVector(name="Offset", default=(1.0, 2.0, 3.0)),
-        ],
-        outputs=[
-            SocketGeometry(name="Geometry"),
-        ],
-    )
+    def __init__(self, tree: "TreeBuilder", direction: str):
+        self._tree = tree
+        self._direction = direction  # 'INPUT' or 'OUTPUT'
 
-    with tree:
-        # No need to pass tree parameter - uses active tree from context
-        pos = Position()
+    def __getattr__(self, name: str) -> "NodeBuilder":
+        """Access a socket by normalized name.
 
-        # Chain nodes with >> operator
-        # Access specific sockets by name: tree.inputs.geometry, tree.outputs.geometry
-        (
-            tree.inputs.geometry
-            >> SetPosition(position=pos)
-            >> TransformGeometry(translation=(0, 0, 1))
-            >> tree.outputs.geometry
-        )
+        Example:
+            tree.inputs.geometry -> accesses "Geometry" socket
+            tree.inputs.my_socket -> accesses "My Socket" socket
+        """
+        # Convert attribute name to socket name
+        socket_name = denormalize_name(name)
 
-    return tree
+        # Get the appropriate node
+        if self._direction == "INPUT":
+            node = self._tree._input_node()
+        else:
+            node = self._tree._output_node()
 
-
-def example_multi_socket():
-    """Example with multiple input/output sockets."""
-    from molecularnodes.nodes.sockets import SocketGeometry, SocketBoolean, SocketInt
-
-    tree = TreeBuilder("MultiSocketExample")
-
-    tree.interface(
-        inputs=[
-            SocketGeometry(name="Geometry"),
-            SocketBoolean(name="Selection", default=True),
-        ],
-        outputs=[
-            SocketGeometry(name="Geometry"),
-            SocketInt(name="Count"),
-        ],
-    )
-
-    with tree:
-        # Access multiple named sockets
-        (
-            tree.inputs.geometry
-            >> SetPosition(selection=tree.inputs.selection)
-            >> tree.outputs.geometry
-        )
-
-        # Could also connect to tree.outputs.count if we had a node that outputs count
-
-    return tree
-
-
-# Uncomment to test when running in Blender
-# example()
-# example_multi_socket()
+        # Return a NodeBuilder wrapping this specific socket access
+        # We create a wrapper that will connect the right socket
+        return SocketNodeBuilder(node, socket_name, self._direction)
