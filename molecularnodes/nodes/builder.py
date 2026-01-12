@@ -47,9 +47,9 @@ def source_socket(node: LINKABLE) -> NodeSocket:
         return node
     elif isinstance(node, Node):
         return node.outputs[0]
-    elif hasattr(node, "default_output"):
+    elif hasattr(node, "_default_output_socket"):
         # NodeBuilder or SocketNodeBuilder
-        return node.default_output
+        return node._default_output_socket
     else:
         raise TypeError(f"Unsupported type: {type(node)}")
 
@@ -59,9 +59,9 @@ def target_socket(node: LINKABLE) -> NodeSocket:
         return node
     elif isinstance(node, Node):
         return node.inputs[0]
-    elif hasattr(node, "default_input"):
+    elif hasattr(node, "_default_input_socket"):
         # NodeBuilder or SocketNodeBuilder
-        return node.default_input
+        return node._default_input_socket
     else:
         raise TypeError(f"Unsupported type: {type(node)}")
 
@@ -361,22 +361,20 @@ class SocketNodeBuilder(NodeBuilder):
         self._direction = direction
 
     @property
-    def default_output(self) -> NodeSocket:
+    def _default_output_socket(self) -> NodeSocket:
         """Return the specific named output socket."""
         if self._direction == "INPUT":
             return self.node.outputs[self._socket_name]
         else:
-            # Output nodes don't have outputs, this shouldn't be called
-            return self.node.outputs[0]
+            raise ValueError("Output nodes don't have outputs")
 
     @property
-    def default_input(self) -> NodeSocket:
+    def _default_input_socket(self) -> NodeSocket:
         """Return the specific named input socket."""
         if self._direction == "OUTPUT":
             return self.node.inputs[self._socket_name]
         else:
-            # Input nodes don't have inputs, this shouldn't be called
-            return self.node.inputs[0]
+            raise ValueError("Input nodes don't have inputs")
 
 
 class SocketAccessor:
