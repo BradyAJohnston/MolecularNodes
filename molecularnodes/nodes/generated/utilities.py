@@ -264,32 +264,6 @@ class HashValue(NodeBuilder):
         return self.node.outputs["Hash"]
 
 
-class RandomValue(NodeBuilder):
-    """Random Value node"""
-
-    name = "FunctionNodeRandomValue"
-
-    def __init__(
-        self,
-        min_001: float | LINKABLE | None = None,
-        max_001: float | LINKABLE | None = None,
-        id: int | LINKABLE | None = None,
-        seed: int | LINKABLE | None = None,
-        data_type: str | None = None,
-    ):
-        super().__init__()
-        self._establish_links(
-            **{"Min_001": min_001, "Max_001": max_001, "ID": id, "Seed": seed}
-        )
-        if data_type is not None:
-            self.node.data_type = data_type
-
-    @property
-    def value(self) -> NodeSocket:
-        """Output socket: Value"""
-        return self.node.outputs["Value"]
-
-
 class SeparateColor(NodeBuilder):
     """Separate Color node"""
 
@@ -800,43 +774,6 @@ class Math(NodeBuilder):
     def value(self) -> NodeSocket:
         """Output socket: Value"""
         return self.node.outputs["Value"]
-
-
-class Mix(NodeBuilder):
-    """Mix values by a factor"""
-
-    name = "ShaderNodeMix"
-
-    def __init__(
-        self,
-        factor_float: LINKABLE | None = None,
-        a_float: float | LINKABLE | None = None,
-        b_float: float | LINKABLE | None = None,
-        data_type: str | None = None,
-        factor_mode: str | None = None,
-        blend_type: str | None = None,
-        clamp_factor: bool | None = None,
-        clamp_result: bool | None = None,
-    ):
-        super().__init__()
-        self._establish_links(
-            **{"Factor_Float": factor_float, "A_Float": a_float, "B_Float": b_float}
-        )
-        if data_type is not None:
-            self.node.data_type = data_type
-        if factor_mode is not None:
-            self.node.factor_mode = factor_mode
-        if blend_type is not None:
-            self.node.blend_type = blend_type
-        if clamp_factor is not None:
-            self.node.clamp_factor = clamp_factor
-        if clamp_result is not None:
-            self.node.clamp_result = clamp_result
-
-    @property
-    def result(self) -> NodeSocket:
-        """Output socket: Result"""
-        return self.node.outputs["Result"]
 
 
 class SeparateXyz(NodeBuilder):

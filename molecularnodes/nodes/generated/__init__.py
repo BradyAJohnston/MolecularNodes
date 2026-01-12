@@ -4,5 +4,6 @@ from .attribute import *
 from .curve import *
 from .geometry import *
 from .input import *
+from .manually_specified import *
 from .mesh import *
 from .utilities import *

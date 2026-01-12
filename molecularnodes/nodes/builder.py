@@ -200,6 +200,9 @@ class NodeBuilder:
     _tree: "TreeBuilder"
     name: str
     _link_target: str | None = None  # Track which input should receive links
+    _from_socket: NodeSocket | None = None
+    _default_input_id: str | None = None
+    _default_output_id: str | None = None
 
     def __init__(self):
         # Get active tree from context manager
@@ -231,11 +234,33 @@ class NodeBuilder:
 
     @property
     def default_input(self) -> NodeSocket:
+        if self._default_input_id is not None:
+            return self.node.inputs[self._input_idx(self._default_input_id)]
         return self.node.inputs[0]
 
     @property
     def default_output(self) -> NodeSocket:
+        if self._default_output_id is not None:
+            return self.node.outputs[self._output_idx(self._default_output_id)]
         return self.node.outputs[0]
+
+    def _input_idx(self, identifier: str) -> int:
+        # currently there is a Blender bug that is preventing the lookup of sockets from identifiers on some
+        # nodes but not others
+        # This currently fails:
+        #
+        # node = bpy.data.node_groups["Geometry Nodes"].nodes['Mix']
+        # node.inputs[node.inputs[0].identifier]
+        #
+        # This should succeed because it should be able to lookup the socket by identifier
+        # so instead we have to convert the identifier to an index and then lookup the socket
+        # from the index instead
+        input_ids = [input.identifier for input in self.node.inputs]
+        return input_ids.index(identifier)
+
+    def _output_idx(self, identifier: str) -> int:
+        output_ids = [output.identifier for output in self.node.outputs]
+        return output_ids.index(identifier)
 
     def link(self, source: LINKABLE, target: LINKABLE):
         self.tree.link(source_socket(source), target_socket(target))
@@ -248,25 +273,33 @@ class NodeBuilder:
             try:
                 self.link(source, self.node.inputs[input])
             except KeyError:
-                input = input.replace("_", " ").title()
-                self.link(source, self.node.inputs[input])
+                self.link(source, self.node.inputs[self._input_idx(input)])
         else:
             self.link(source, input)
 
     def _establish_links(self, **kwargs):
+        input_ids = [input.identifier for input in self.node.inputs]
         for name, value in kwargs.items():
             if value is None:
                 continue
+
             if value is ...:
                 # Ellipsis indicates this input should receive links from >> operator
-                self._link_target = name
-                continue
-            if isinstance(value, (int, float, list, tuple, np.ndarray)):
-                try:
-                    self.node.inputs[name].default_value = value
-                except KeyError:
-                    input = name.replace("_", " ").title()
-                    self.node.inputs[input].default_value = value
+                # which can potentially target multiple inputs on the new node
+                if self._from_socket is not None:
+                    self.link(
+                        self._from_socket, self.node.inputs[self._input_idx(name)]
+                    )
+
+            # we can also provide just a default value for the socket to take if we aren't
+            # providing a socket to link with
+            elif isinstance(value, (int, float, list, tuple, np.ndarray)):
+                if name in input_ids:
+                    input = self.node.inputs[input_ids.index(name)]
+                else:
+                    input = self.node.inputs[name.replace("_", "").capitalize()]
+
+                input.default_value = value
             else:
                 self.link_from(value, name)
 
@@ -287,6 +320,8 @@ class NodeBuilder:
             self_out = self.node.outputs.get("Geometry") or self.default_output
         except (KeyError, IndexError):
             self_out = self.default_output
+
+        other._from_socket = self_out
 
         # Get target socket - use link target if specified by ellipsis
         if other._link_target is not None:

@@ -4,6 +4,7 @@ Tests for the node builder API.
 Tests the TreeBuilder, NodeBuilder, and the >> operator chaining system.
 """
 
+from math import pi
 import bpy
 import pytest
 from numpy.testing import assert_allclose
@@ -456,3 +457,46 @@ def test_math_nodes(maker):
     assert (
         tree.tree.nodes["Math"].inputs[0].links[0].from_node == tree.inputs.value.node
     )
+
+
+def test_nodes():
+    tree = TreeBuilder()
+    tree.interface(outputs=[sockets.SocketGeometry("Geometry")])
+
+    with tree:
+        _ = (
+            n.Points(1_000, position=n.RandomValue.vector_())
+            >> n.PointsToCurves(curve_group_id=n.RandomValue.integer_(min=0, max=10))
+            >> n.CurveToMesh(profile_curve=n.CurveCircle(12, radius=0.1))
+            >> tree.outputs.geometry
+        )
+
+
+def test_mix_node():
+    tree = TreeBuilder()
+    tree.interface(
+        inputs=[sockets.SocketInt("Count", min_value=0, max_value=100, default=50)],
+        outputs=[sockets.SocketGeometry("Instances")],
+    )
+
+    with tree:
+        rotation = n.RandomValue.vector_(
+            (-pi, -pi, -pi), (pi, pi, pi)
+        ) >> n.Mix.rotation_(
+            ..., (0, 0, 1), factor=n.RandomValue.float_(seed=n.Index())
+        )
+
+        _ = (
+            n.Points(tree.inputs.count, position=n.RandomValue.vector_())
+            >> n.InstanceOnPoints(
+                instance=n.Cube(),
+                rotation=rotation,
+            )
+            >> n.TranslateInstances(translation=(0.0, 0.1, 0.0))
+            >> tree.outputs.instances
+        )
+
+    # some nodes with different data types have a different output for each data type
+    # so for rotation the socket is the 4th output - this will change in the future
+    # with raibow sockets eventually
+    assert len(rotation.node.outputs[3].links) == 1
