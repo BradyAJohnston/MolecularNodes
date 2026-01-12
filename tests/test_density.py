@@ -126,7 +126,7 @@ def test_fallback_reading():
 
 def test_fallback_transforms():
     def evaluated_obj(file):
-        density = mn.entities.density.load(file)
+        density = mn.entities.density.load(file, overwrite=True)
         return mn.blender.mesh.evaluate_using_mesh(density.object)
 
     space_group_one = evaluated_obj(data_dir / "62270-small_sg1.mrc")
