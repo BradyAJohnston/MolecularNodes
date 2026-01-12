@@ -22,13 +22,15 @@ from ..builder import NodeBuilder, TreeBuilder
 # Type aliases for node inputs
 LINKABLE = "NodeSocket | NodeBuilder | Any"
 TYPE_INPUT_VECTOR = "tuple[float, float, float] | NodeSocket | NodeBuilder | None"
-TYPE_INPUT_ROTATION = "tuple[float, float, float, float] | NodeSocket | NodeBuilder | None"
+TYPE_INPUT_ROTATION = (
+    "tuple[float, float, float, float] | NodeSocket | NodeBuilder | None"
+)
 TYPE_INPUT_BOOLEAN = "bool | NodeSocket | NodeBuilder | None"
-
 
 
 class Arc(NodeBuilder):
     """Generate a poly spline arc"""
+
     name = "GeometryNodeCurveArc"
 
     def __init__(
@@ -39,90 +41,104 @@ class Arc(NodeBuilder):
         sweep_angle: LINKABLE | None = None,
         connect_center: TYPE_INPUT_BOOLEAN = None,
         invert_arc: TYPE_INPUT_BOOLEAN = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            resolution=resolution, radius=radius, start_angle=start_angle, sweep_angle=sweep_angle, connect_center=connect_center, invert_arc=invert_arc
+            **{
+                "Resolution": resolution,
+                "Radius": radius,
+                "Start Angle": start_angle,
+                "Sweep Angle": sweep_angle,
+                "Connect Center": connect_center,
+                "Invert Arc": invert_arc,
+            }
         )
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class EndpointSelection(NodeBuilder):
     """Provide a selection for an arbitrary number of endpoints in each spline"""
+
     name = "GeometryNodeCurveEndpointSelection"
 
     def __init__(
         self,
         start_size: int | LINKABLE | None = None,
-        end_size: int | LINKABLE | None = None
+        end_size: int | LINKABLE | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            start_size=start_size, end_size=end_size
-        )
+        self._establish_links(**{"Start Size": start_size, "End Size": end_size})
 
     @property
     def selection(self) -> NodeSocket:
         """Output socket: Selection"""
         return self.node.outputs["Selection"]
+
 
 class HandleTypeSelection(NodeBuilder):
     """Provide a selection based on the handle types of Bézier control points"""
+
     name = "GeometryNodeCurveHandleTypeSelection"
 
-    def __init__(
-        self,
-        handle_type: str | None = None,
-        mode: str | None = None
-    ):
+    def __init__(self, handle_type: str | None = None, mode: str | None = None):
         super().__init__()
 
+        if handle_type is not None:
+            self.node.handle_type = handle_type
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def selection(self) -> NodeSocket:
         """Output socket: Selection"""
         return self.node.outputs["Selection"]
 
+
 class CurveLength(NodeBuilder):
     """Retrieve the length of all splines added together"""
+
     name = "GeometryNodeCurveLength"
 
     def __init__(self, curve: LINKABLE = None):
         super().__init__()
-        self._establish_links(
-            curve=curve
-        )
+        self._establish_links(**{"Curve": curve})
 
     @property
     def length(self) -> NodeSocket:
         """Output socket: Length"""
         return self.node.outputs["Length"]
 
+
 class CurveOfPoint(NodeBuilder):
     """Retrieve the curve a control point is part of"""
+
     name = "GeometryNodeCurveOfPoint"
 
     def __init__(self, point_index: int | LINKABLE | None = None):
         super().__init__()
-        self._establish_links(
-            point_index=point_index
-        )
+        self._establish_links(**{"Point Index": point_index})
 
     @property
     def curve_index(self) -> NodeSocket:
         """Output socket: Curve Index"""
         return self.node.outputs["Curve Index"]
+
     @property
     def index_in_curve(self) -> NodeSocket:
         """Output socket: Index in Curve"""
         return self.node.outputs["Index in Curve"]
 
+
 class BézierSegment(NodeBuilder):
     """Generate a 2D Bézier spline from the given control points and handles"""
+
     name = "GeometryNodeCurvePrimitiveBezierSegment"
 
     def __init__(
@@ -132,80 +148,96 @@ class BézierSegment(NodeBuilder):
         start_handle: LINKABLE | None = None,
         end_handle: LINKABLE | None = None,
         end: LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            resolution=resolution, start=start, start_handle=start_handle, end_handle=end_handle, end=end
+            **{
+                "Resolution": resolution,
+                "Start": start,
+                "Start Handle": start_handle,
+                "End Handle": end_handle,
+                "End": end,
+            }
         )
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class CurveCircle(NodeBuilder):
     """Generate a poly spline circle"""
+
     name = "GeometryNodeCurvePrimitiveCircle"
 
     def __init__(
         self,
         resolution: int | LINKABLE | None = None,
         radius: LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            resolution=resolution, radius=radius
-        )
+        self._establish_links(**{"Resolution": resolution, "Radius": radius})
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class CurveLine(NodeBuilder):
     """Generate a poly spline line with two points"""
+
     name = "GeometryNodeCurvePrimitiveLine"
 
     def __init__(
         self,
         start: LINKABLE | None = None,
         end: LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            start=start, end=end
-        )
+        self._establish_links(**{"Start": start, "End": end})
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class Quadrilateral(NodeBuilder):
     """Generate a polygon with four points"""
+
     name = "GeometryNodeCurvePrimitiveQuadrilateral"
 
     def __init__(
         self,
         width: LINKABLE | None = None,
         height: LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            width=width, height=height
-        )
+        self._establish_links(**{"Width": width, "Height": height})
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class QuadraticBézier(NodeBuilder):
     """Generate a poly spline in a parabola shape with control points positions"""
+
     name = "GeometryNodeCurveQuadraticBezier"
 
     def __init__(
@@ -213,11 +245,11 @@ class QuadraticBézier(NodeBuilder):
         resolution: LINKABLE | None = None,
         start: LINKABLE | None = None,
         middle: LINKABLE | None = None,
-        end: LINKABLE | None = None
+        end: LINKABLE | None = None,
     ):
         super().__init__()
         self._establish_links(
-            resolution=resolution, start=start, middle=middle, end=end
+            **{"Resolution": resolution, "Start": start, "Middle": middle, "End": end}
         )
 
     @property
@@ -225,8 +257,10 @@ class QuadraticBézier(NodeBuilder):
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class SetHandleType(NodeBuilder):
     """Set the handle type for the control points of a Bézier curve"""
+
     name = "GeometryNodeCurveSetHandles"
 
     def __init__(
@@ -234,20 +268,24 @@ class SetHandleType(NodeBuilder):
         curve: LINKABLE = None,
         selection: TYPE_INPUT_BOOLEAN = None,
         handle_type: str | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            curve=curve, selection=selection
-        )
+        self._establish_links(**{"Curve": curve, "Selection": selection})
+        if handle_type is not None:
+            self.node.handle_type = handle_type
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class Spiral(NodeBuilder):
     """Generate a poly spline in a spiral shape"""
+
     name = "GeometryNodeCurveSpiral"
 
     def __init__(
@@ -257,11 +295,18 @@ class Spiral(NodeBuilder):
         start_radius: LINKABLE | None = None,
         end_radius: LINKABLE | None = None,
         height: LINKABLE | None = None,
-        reverse: TYPE_INPUT_BOOLEAN = None
+        reverse: TYPE_INPUT_BOOLEAN = None,
     ):
         super().__init__()
         self._establish_links(
-            resolution=resolution, rotations=rotations, start_radius=start_radius, end_radius=end_radius, height=height, reverse=reverse
+            **{
+                "Resolution": resolution,
+                "Rotations": rotations,
+                "Start Radius": start_radius,
+                "End Radius": end_radius,
+                "Height": height,
+                "Reverse": reverse,
+            }
         )
 
     @property
@@ -269,28 +314,32 @@ class Spiral(NodeBuilder):
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class SetSplineType(NodeBuilder):
     """Change the type of curves"""
+
     name = "GeometryNodeCurveSplineType"
 
     def __init__(
         self,
         curve: LINKABLE = None,
         selection: TYPE_INPUT_BOOLEAN = None,
-        spline_type: str | None = None
+        spline_type: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            curve=curve, selection=selection
-        )
+        self._establish_links(**{"Curve": curve, "Selection": selection})
+        if spline_type is not None:
+            self.node.spline_type = spline_type
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class Star(NodeBuilder):
     """Generate a poly spline in a star pattern by connecting alternating points of two circles"""
+
     name = "GeometryNodeCurveStar"
 
     def __init__(
@@ -298,67 +347,84 @@ class Star(NodeBuilder):
         points: LINKABLE | None = None,
         inner_radius: LINKABLE | None = None,
         outer_radius: LINKABLE | None = None,
-        twist: LINKABLE | None = None
+        twist: LINKABLE | None = None,
     ):
         super().__init__()
         self._establish_links(
-            points=points, inner_radius=inner_radius, outer_radius=outer_radius, twist=twist
+            **{
+                "Points": points,
+                "Inner Radius": inner_radius,
+                "Outer Radius": outer_radius,
+                "Twist": twist,
+            }
         )
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
+
     @property
     def outer_points(self) -> NodeSocket:
         """Output socket: Outer Points"""
         return self.node.outputs["Outer Points"]
 
+
 class CurveToPoints(NodeBuilder):
     """Generate a point cloud by sampling positions along curves"""
+
     name = "GeometryNodeCurveToPoints"
 
     def __init__(
         self,
         curve: LINKABLE = None,
         count: int | LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            curve=curve, count=count
-        )
+        self._establish_links(**{"Curve": curve, "Count": count})
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def points(self) -> NodeSocket:
         """Output socket: Points"""
         return self.node.outputs["Points"]
+
     @property
     def tangent(self) -> NodeSocket:
         """Output socket: Tangent"""
         return self.node.outputs["Tangent"]
+
     @property
     def normal(self) -> NodeSocket:
         """Output socket: Normal"""
         return self.node.outputs["Normal"]
+
     @property
     def rotation(self) -> NodeSocket:
         """Output socket: Rotation"""
         return self.node.outputs["Rotation"]
 
+
 class CurvesToGreasePencil(NodeBuilder):
     """Convert the curves in each top-level instance into Grease Pencil layer"""
+
     name = "GeometryNodeCurvesToGreasePencil"
 
     def __init__(
         self,
         curves: LINKABLE = None,
         selection: TYPE_INPUT_BOOLEAN = None,
-        instances_as_layers: TYPE_INPUT_BOOLEAN = None
+        instances_as_layers: TYPE_INPUT_BOOLEAN = None,
     ):
         super().__init__()
         self._establish_links(
-            curves=curves, selection=selection, instances_as_layers=instances_as_layers
+            **{
+                "Curves": curves,
+                "Selection": selection,
+                "Instances as Layers": instances_as_layers,
+            }
         )
 
     @property
@@ -366,34 +432,40 @@ class CurvesToGreasePencil(NodeBuilder):
         """Output socket: Grease Pencil"""
         return self.node.outputs["Grease Pencil"]
 
+
 class DeformCurvesOnSurface(NodeBuilder):
     """Translate and rotate curves based on changes between the object's original and evaluated surface mesh"""
+
     name = "GeometryNodeDeformCurvesOnSurface"
 
     def __init__(self, curves: LINKABLE = None):
         super().__init__()
-        self._establish_links(
-            curves=curves
-        )
+        self._establish_links(**{"Curves": curves})
 
     @property
     def curves(self) -> NodeSocket:
         """Output socket: Curves"""
         return self.node.outputs["Curves"]
 
+
 class EdgePathsToCurves(NodeBuilder):
     """Output curves following paths across mesh edges"""
+
     name = "GeometryNodeEdgePathsToCurves"
 
     def __init__(
         self,
         mesh: LINKABLE = None,
         start_vertices: TYPE_INPUT_BOOLEAN = None,
-        next_vertex_index: int | LINKABLE | None = None
+        next_vertex_index: int | LINKABLE | None = None,
     ):
         super().__init__()
         self._establish_links(
-            mesh=mesh, start_vertices=start_vertices, next_vertex_index=next_vertex_index
+            **{
+                "Mesh": mesh,
+                "Start Vertices": start_vertices,
+                "Next Vertex Index": next_vertex_index,
+            }
         )
 
     @property
@@ -401,28 +473,32 @@ class EdgePathsToCurves(NodeBuilder):
         """Output socket: Curves"""
         return self.node.outputs["Curves"]
 
+
 class FillCurve(NodeBuilder):
     """Generate a mesh on the XY plane with faces on the inside of input curves"""
+
     name = "GeometryNodeFillCurve"
 
     def __init__(
         self,
         curve: LINKABLE = None,
         group_id: int | LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            curve=curve, group_id=group_id
-        )
+        self._establish_links(**{"Curve": curve, "Group ID": group_id})
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self.node.outputs["Mesh"]
 
+
 class FilletCurve(NodeBuilder):
     """Round corners by generating circular arcs on each control point"""
+
     name = "GeometryNodeFilletCurve"
 
     def __init__(
@@ -430,31 +506,39 @@ class FilletCurve(NodeBuilder):
         curve: LINKABLE = None,
         radius: LINKABLE | None = None,
         limit_radius: TYPE_INPUT_BOOLEAN = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            curve=curve, radius=radius, limit_radius=limit_radius
+            **{"Curve": curve, "Radius": radius, "Limit Radius": limit_radius}
         )
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class GreasePencilToCurves(NodeBuilder):
     """Convert Grease Pencil layers into curve instances"""
+
     name = "GeometryNodeGreasePencilToCurves"
 
     def __init__(
         self,
         grease_pencil: LINKABLE = None,
         selection: TYPE_INPUT_BOOLEAN = None,
-        layers_as_instances: TYPE_INPUT_BOOLEAN = None
+        layers_as_instances: TYPE_INPUT_BOOLEAN = None,
     ):
         super().__init__()
         self._establish_links(
-            grease_pencil=grease_pencil, selection=selection, layers_as_instances=layers_as_instances
+            **{
+                "Grease Pencil": grease_pencil,
+                "Selection": selection,
+                "Layers as Instances": layers_as_instances,
+            }
         )
 
     @property
@@ -462,40 +546,44 @@ class GreasePencilToCurves(NodeBuilder):
         """Output socket: Curves"""
         return self.node.outputs["Curves"]
 
+
 class CurveHandlePositions(NodeBuilder):
     """Retrieve the position of each Bézier control point's handles"""
+
     name = "GeometryNodeInputCurveHandlePositions"
 
     def __init__(self, relative: TYPE_INPUT_BOOLEAN = None):
         super().__init__()
-        self._establish_links(
-            relative=relative
-        )
+        self._establish_links(**{"Relative": relative})
 
     @property
     def left(self) -> NodeSocket:
         """Output socket: Left"""
         return self.node.outputs["Left"]
+
     @property
     def right(self) -> NodeSocket:
         """Output socket: Right"""
         return self.node.outputs["Right"]
 
+
 class CurveTilt(NodeBuilder):
     """Retrieve the angle at each control point used to twist the curve's normal around its tangent"""
+
     name = "GeometryNodeInputCurveTilt"
 
     def __init__(self):
         super().__init__()
-
 
     @property
     def tilt(self) -> NodeSocket:
         """Output socket: Tilt"""
         return self.node.outputs["Tilt"]
 
+
 class InterpolateCurves(NodeBuilder):
     """Generate new curves on points by interpolating between existing curves"""
+
     name = "GeometryNodeInterpolateCurves"
 
     def __init__(
@@ -506,86 +594,102 @@ class InterpolateCurves(NodeBuilder):
         points: LINKABLE = None,
         point_up: TYPE_INPUT_VECTOR = None,
         point_group_id: int | LINKABLE | None = None,
-        max_neighbors: int | LINKABLE | None = None
+        max_neighbors: int | LINKABLE | None = None,
     ):
         super().__init__()
         self._establish_links(
-            guide_curves=guide_curves, guide_up=guide_up, guide_group_id=guide_group_id, points=points, point_up=point_up, point_group_id=point_group_id, max_neighbors=max_neighbors
+            **{
+                "Guide Curves": guide_curves,
+                "Guide Up": guide_up,
+                "Guide Group ID": guide_group_id,
+                "Points": points,
+                "Point Up": point_up,
+                "Point Group ID": point_group_id,
+                "Max Neighbors": max_neighbors,
+            }
         )
 
     @property
     def curves(self) -> NodeSocket:
         """Output socket: Curves"""
         return self.node.outputs["Curves"]
+
     @property
     def closest_index(self) -> NodeSocket:
         """Output socket: Closest Index"""
         return self.node.outputs["Closest Index"]
+
     @property
     def closest_weight(self) -> NodeSocket:
         """Output socket: Closest Weight"""
         return self.node.outputs["Closest Weight"]
 
+
 class OffsetPointInCurve(NodeBuilder):
     """Offset a control point index within its curve"""
+
     name = "GeometryNodeOffsetPointInCurve"
 
     def __init__(
         self,
         point_index: int | LINKABLE | None = None,
-        offset: int | LINKABLE | None = None
+        offset: int | LINKABLE | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            point_index=point_index, offset=offset
-        )
+        self._establish_links(**{"Point Index": point_index, "Offset": offset})
 
     @property
     def is_valid_offset(self) -> NodeSocket:
         """Output socket: Is Valid Offset"""
         return self.node.outputs["Is Valid Offset"]
+
     @property
     def point_index(self) -> NodeSocket:
         """Output socket: Point Index"""
         return self.node.outputs["Point Index"]
 
+
 class PointsOfCurve(NodeBuilder):
     """Retrieve a point index within a curve"""
+
     name = "GeometryNodePointsOfCurve"
 
     def __init__(
         self,
         curve_index: int | LINKABLE | None = None,
         weights: float | LINKABLE | None = None,
-        sort_index: int | LINKABLE | None = None
+        sort_index: int | LINKABLE | None = None,
     ):
         super().__init__()
         self._establish_links(
-            curve_index=curve_index, weights=weights, sort_index=sort_index
+            **{"Curve Index": curve_index, "Weights": weights, "Sort Index": sort_index}
         )
 
     @property
     def point_index(self) -> NodeSocket:
         """Output socket: Point Index"""
         return self.node.outputs["Point Index"]
+
     @property
     def total(self) -> NodeSocket:
         """Output socket: Total"""
         return self.node.outputs["Total"]
 
+
 class PointsToCurves(NodeBuilder):
     """Split all points to curve by its group ID and reorder by weight"""
+
     name = "GeometryNodePointsToCurves"
 
     def __init__(
         self,
         points: LINKABLE = None,
         curve_group_id: int | LINKABLE | None = None,
-        weight: float | LINKABLE | None = None
+        weight: float | LINKABLE | None = None,
     ):
         super().__init__()
         self._establish_links(
-            points=points, curve_group_id=curve_group_id, weight=weight
+            **{"Points": points, "Curve Group ID": curve_group_id, "Weight": weight}
         )
 
     @property
@@ -593,8 +697,10 @@ class PointsToCurves(NodeBuilder):
         """Output socket: Curves"""
         return self.node.outputs["Curves"]
 
+
 class ResampleCurve(NodeBuilder):
     """Generate a poly spline for each input spline"""
+
     name = "GeometryNodeResampleCurve"
 
     def __init__(
@@ -603,39 +709,41 @@ class ResampleCurve(NodeBuilder):
         selection: TYPE_INPUT_BOOLEAN = None,
         count: int | LINKABLE | None = None,
         mode: str | None = None,
-        keep_last_segment: bool | None = None
+        keep_last_segment: bool | None = None,
     ):
         super().__init__()
         self._establish_links(
-            curve=curve, selection=selection, count=count
+            **{"Curve": curve, "Selection": selection, "Count": count}
         )
+        if mode is not None:
+            self.node.mode = mode
+        if keep_last_segment is not None:
+            self.node.keep_last_segment = keep_last_segment
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
+
 
 class ReverseCurve(NodeBuilder):
     """Change the direction of curves by swapping their start and end data"""
+
     name = "GeometryNodeReverseCurve"
 
-    def __init__(
-        self,
-        curve: LINKABLE = None,
-        selection: TYPE_INPUT_BOOLEAN = None
-    ):
+    def __init__(self, curve: LINKABLE = None, selection: TYPE_INPUT_BOOLEAN = None):
         super().__init__()
-        self._establish_links(
-            curve=curve, selection=selection
-        )
+        self._establish_links(**{"Curve": curve, "Selection": selection})
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class SampleCurve(NodeBuilder):
     """Retrieve data from a point on a curve at a certain distance from its start"""
+
     name = "GeometryNodeSampleCurve"
 
     def __init__(
@@ -646,32 +754,48 @@ class SampleCurve(NodeBuilder):
         curve_index: int | LINKABLE | None = None,
         mode: str | None = None,
         use_all_curves: bool | None = None,
-        data_type: str | None = None
+        data_type: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            curves=curves, value=value, factor=factor, curve_index=curve_index
+            **{
+                "Curves": curves,
+                "Value": value,
+                "Factor": factor,
+                "Curve Index": curve_index,
+            }
         )
+        if mode is not None:
+            self.node.mode = mode
+        if use_all_curves is not None:
+            self.node.use_all_curves = use_all_curves
+        if data_type is not None:
+            self.node.data_type = data_type
 
     @property
     def value(self) -> NodeSocket:
         """Output socket: Value"""
         return self.node.outputs["Value"]
+
     @property
     def position(self) -> NodeSocket:
         """Output socket: Position"""
         return self.node.outputs["Position"]
+
     @property
     def tangent(self) -> NodeSocket:
         """Output socket: Tangent"""
         return self.node.outputs["Tangent"]
+
     @property
     def normal(self) -> NodeSocket:
         """Output socket: Normal"""
         return self.node.outputs["Normal"]
 
+
 class SetHandlePositions(NodeBuilder):
     """Set the positions for the handles of Bézier curves"""
+
     name = "GeometryNodeSetCurveHandlePositions"
 
     def __init__(
@@ -680,51 +804,62 @@ class SetHandlePositions(NodeBuilder):
         selection: TYPE_INPUT_BOOLEAN = None,
         position: TYPE_INPUT_VECTOR = None,
         offset: LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            curve=curve, selection=selection, position=position, offset=offset
+            **{
+                "Curve": curve,
+                "Selection": selection,
+                "Position": position,
+                "Offset": offset,
+            }
         )
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class SetCurveNormal(NodeBuilder):
     """Set the evaluation mode for curve normals"""
+
     name = "GeometryNodeSetCurveNormal"
 
     def __init__(
         self,
         curve: LINKABLE = None,
         selection: TYPE_INPUT_BOOLEAN = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            curve=curve, selection=selection
-        )
+        self._establish_links(**{"Curve": curve, "Selection": selection})
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class SetCurveRadius(NodeBuilder):
     """Set the radius of the curve at each control point"""
+
     name = "GeometryNodeSetCurveRadius"
 
     def __init__(
         self,
         curve: LINKABLE = None,
         selection: TYPE_INPUT_BOOLEAN = None,
-        radius: LINKABLE | None = None
+        radius: LINKABLE | None = None,
     ):
         super().__init__()
         self._establish_links(
-            curve=curve, selection=selection, radius=radius
+            **{"Curve": curve, "Selection": selection, "Radius": radius}
         )
 
     @property
@@ -732,28 +867,30 @@ class SetCurveRadius(NodeBuilder):
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class SetCurveTilt(NodeBuilder):
     """Set the tilt angle at each curve control point"""
+
     name = "GeometryNodeSetCurveTilt"
 
     def __init__(
         self,
         curve: LINKABLE = None,
         selection: TYPE_INPUT_BOOLEAN = None,
-        tilt: LINKABLE | None = None
+        tilt: LINKABLE | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            curve=curve, selection=selection, tilt=tilt
-        )
+        self._establish_links(**{"Curve": curve, "Selection": selection, "Tilt": tilt})
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class StringToCurves(NodeBuilder):
     """Generate a paragraph of text with a specific font, using a curve instance to store each character"""
+
     name = "GeometryNodeStringToCurves"
 
     def __init__(
@@ -767,47 +904,62 @@ class StringToCurves(NodeBuilder):
         overflow: str | None = None,
         align_x: str | None = None,
         align_y: str | None = None,
-        pivot_mode: str | None = None
+        pivot_mode: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            string=string, size=size, character_spacing=character_spacing, word_spacing=word_spacing, line_spacing=line_spacing, text_box_width=text_box_width
+            **{
+                "String": string,
+                "Size": size,
+                "Character Spacing": character_spacing,
+                "Word Spacing": word_spacing,
+                "Line Spacing": line_spacing,
+                "Text Box Width": text_box_width,
+            }
         )
+        if overflow is not None:
+            self.node.overflow = overflow
+        if align_x is not None:
+            self.node.align_x = align_x
+        if align_y is not None:
+            self.node.align_y = align_y
+        if pivot_mode is not None:
+            self.node.pivot_mode = pivot_mode
 
     @property
     def curve_instances(self) -> NodeSocket:
         """Output socket: Curve Instances"""
         return self.node.outputs["Curve Instances"]
+
     @property
     def line(self) -> NodeSocket:
         """Output socket: Line"""
         return self.node.outputs["Line"]
+
     @property
     def pivot_point(self) -> NodeSocket:
         """Output socket: Pivot Point"""
         return self.node.outputs["Pivot Point"]
 
+
 class SubdivideCurve(NodeBuilder):
     """Dividing each curve segment into a specified number of pieces"""
+
     name = "GeometryNodeSubdivideCurve"
 
-    def __init__(
-        self,
-        curve: LINKABLE = None,
-        cuts: int | LINKABLE | None = None
-    ):
+    def __init__(self, curve: LINKABLE = None, cuts: int | LINKABLE | None = None):
         super().__init__()
-        self._establish_links(
-            curve=curve, cuts=cuts
-        )
+        self._establish_links(**{"Curve": curve, "Cuts": cuts})
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
 class TrimCurve(NodeBuilder):
     """Shorten curves by removing portions at the start or end"""
+
     name = "GeometryNodeTrimCurve"
 
     def __init__(
@@ -816,15 +968,52 @@ class TrimCurve(NodeBuilder):
         selection: TYPE_INPUT_BOOLEAN = None,
         start: LINKABLE | None = None,
         end: LINKABLE | None = None,
-        mode: str | None = None
+        mode: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            curve=curve, selection=selection, start=start, end=end
+            **{"Curve": curve, "Selection": selection, "Start": start, "End": end}
         )
+        if mode is not None:
+            self.node.mode = mode
 
     @property
     def curve(self) -> NodeSocket:
         """Output socket: Curve"""
         return self.node.outputs["Curve"]
 
+
+class FloatCurve(NodeBuilder):
+    """Map an input float to a curve and outputs a float value"""
+
+    name = "ShaderNodeFloatCurve"
+
+    def __init__(
+        self, factor: LINKABLE | None = None, value: float | LINKABLE | None = None
+    ):
+        super().__init__()
+        self._establish_links(**{"Factor": factor, "Value": value})
+
+    @property
+    def value(self) -> NodeSocket:
+        """Output socket: Value"""
+        return self.node.outputs["Value"]
+
+
+class RgbCurves(NodeBuilder):
+    """Apply color corrections for each color channel"""
+
+    name = "ShaderNodeRGBCurve"
+
+    def __init__(
+        self,
+        fac: LINKABLE | None = None,
+        color: tuple[float, float, float, float] | LINKABLE | None = None,
+    ):
+        super().__init__()
+        self._establish_links(**{"Fac": fac, "Color": color})
+
+    @property
+    def color(self) -> NodeSocket:
+        """Output socket: Color"""
+        return self.node.outputs["Color"]

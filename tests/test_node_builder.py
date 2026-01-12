@@ -5,15 +5,11 @@ Tests the TreeBuilder, NodeBuilder, and the >> operator chaining system.
 """
 
 import bpy
-from molecularnodes.nodes import generated as no
+import pytest
+from numpy.testing import assert_allclose
+from molecularnodes.nodes import generated as n
 from molecularnodes.nodes import sockets
 from molecularnodes.nodes.builder import TreeBuilder
-
-# Convenience aliases for commonly used nodes
-Position = no.Position
-SetPosition = no.SetPosition
-TransformGeometry = no.TransformGeometry
-BoundingBox = no.BoundingBox
 
 
 class TestTreeBuilder:
@@ -98,7 +94,7 @@ class TestContextManager:
 
         with tree:
             # Should be able to create nodes without passing tree
-            pos = Position()
+            pos = n.Position()
             assert pos.node is not None
             assert pos.tree == tree
 
@@ -111,8 +107,8 @@ class TestContextManager:
         )
 
         with tree:
-            node1 = Position()
-            node2 = SetPosition()
+            node1 = n.Position()
+            node2 = n.SetPosition()
 
             # Both nodes should be in the same tree
             assert node1.tree == tree
@@ -133,8 +129,8 @@ class TestOperatorChaining:
         )
 
         with tree:
-            pos = Position()
-            set_pos = SetPosition()
+            pos = n.Position()
+            set_pos = n.SetPosition()
 
             # Chain with >> operator
             result = pos >> set_pos
@@ -156,10 +152,10 @@ class TestOperatorChaining:
 
         with tree:
             # Chain multiple nodes
-            (
+            _ = (
                 tree.inputs.geometry
-                >> SetPosition()
-                >> TransformGeometry(translation=(0, 0, 1))
+                >> n.SetPosition()
+                >> n.TransformGeometry(translation=(0, 0, 1))
                 >> tree.outputs.geometry
             )
 
@@ -234,12 +230,10 @@ class TestExamples:
         )
 
         with tree:
-            pos = Position()
-
-            (
+            _ = (
                 tree.inputs.geometry
-                >> SetPosition(position=pos)
-                >> TransformGeometry(translation=(0, 0, 1))
+                >> n.SetPosition(position=n.Position())
+                >> n.TransformGeometry(translation=(0, 0, 1))
                 >> tree.outputs.geometry
             )
 
@@ -265,9 +259,9 @@ class TestExamples:
 
         with tree:
             # Access multiple named sockets
-            (
+            _ = (
                 tree.inputs.geometry
-                >> SetPosition(selection=tree.inputs.selection)
+                >> n.SetPosition(selection=tree.inputs.selection)
                 >> tree.outputs.geometry
             )
 
@@ -297,7 +291,7 @@ class TestGeneratedNodes:
         )
 
         with tree:
-            pos = Position()
+            pos = n.Position()
             assert pos.node is not None
             assert pos.node.bl_idname == "GeometryNodeInputPosition"
 
@@ -310,8 +304,8 @@ class TestGeneratedNodes:
         )
 
         with tree:
-            pos = Position()
-            set_pos = SetPosition(position=pos)
+            pos = n.Position()
+            set_pos = n.SetPosition(position=pos)
 
             assert set_pos.node is not None
             assert set_pos.node.bl_idname == "GeometryNodeSetPosition"
@@ -328,7 +322,7 @@ class TestGeneratedNodes:
         )
 
         with tree:
-            transform = TransformGeometry(translation=(1, 2, 3))
+            transform = n.TransformGeometry(translation=(1, 2, 3))
 
             assert transform.node is not None
             assert transform.node.bl_idname == "GeometryNodeTransform"
@@ -342,7 +336,7 @@ class TestGeneratedNodes:
         )
 
         with tree:
-            bbox = BoundingBox()
+            bbox = n.BoundingBox()
 
             # Test output property accessors
             assert hasattr(bbox, "bounding_box")
@@ -367,11 +361,11 @@ class TestComplexWorkflow:
         )
 
         with tree:
-            pos = Position()
+            pos = n.Position()
 
             # Use the same position node in multiple places
-            _set_pos1 = SetPosition(position=pos, offset=(1, 0, 0))
-            _set_pos2 = SetPosition(position=pos, offset=(0, 1, 0))
+            _set_pos1 = n.SetPosition(position=pos, offset=(1, 0, 0))
+            _set_pos2 = n.SetPosition(position=pos, offset=(0, 1, 0))
 
             # Both should reference the same position node
             assert len(pos.node.outputs[0].links) == 2
@@ -389,10 +383,10 @@ class TestComplexWorkflow:
         )
 
         with tree:
-            (
+            _ = (
                 tree.inputs.geometry
-                >> SetPosition(selection=tree.inputs.selection)
-                >> TransformGeometry(translation=tree.inputs.translation)
+                >> n.SetPosition(selection=tree.inputs.selection)
+                >> n.TransformGeometry(translation=tree.inputs.translation)
                 >> tree.outputs.geometry
             )
 
@@ -404,3 +398,61 @@ class TestComplexWorkflow:
         assert len(group_input_node.outputs["Geometry"].links) > 0
         assert len(group_input_node.outputs["Selection"].links) > 0
         assert len(group_input_node.outputs["Translation"].links) > 0
+
+
+def create_tree_chain():
+    tree = TreeBuilder("MathTest")
+    tree.interface(
+        inputs=[sockets.SocketFloat(name="Value")],
+        outputs=[sockets.SocketFloat(name="Result")],
+    )
+
+    with tree:
+        _ = (
+            tree.inputs.value
+            >> n.Math.add_(..., 0.1)
+            >> n.VectorMath.multiply_(..., (2.0, 2.0, 2.0))
+            >> tree.outputs.result
+        )
+
+    return tree
+
+
+def create_tree():
+    tree = TreeBuilder("MathTest")
+    tree.interface(
+        inputs=[sockets.SocketFloat(name="Value")],
+        outputs=[sockets.SocketFloat(name="Result")],
+    )
+
+    with tree:
+        final = n.VectorMath.multiply_(
+            n.Math.add_(tree.inputs.value, 0.1), (2.0, 2.0, 2.0)
+        )
+
+        final >> tree.outputs.result
+
+    return tree
+
+
+@pytest.mark.parametrize("maker", [create_tree_chain, create_tree])
+def test_math_nodes(maker):
+    """Test math nodes."""
+    tree = maker()
+    # Verify all inputs are used
+    node_input = tree.tree.nodes.get("Group Input")
+    assert node_input is not None
+
+    # check the default values have been property set
+    assert_allclose(tree.tree.nodes["Math"].inputs[0].default_value, 0.5)
+    assert_allclose(tree.tree.nodes["Math"].inputs[1].default_value, 0.1)
+    assert_allclose(tree.nodes["Vector Math"].inputs[0].default_value, (0.0, 0.0, 0.0))
+    assert_allclose(tree.nodes["Vector Math"].inputs[1].default_value, (2.0, 2.0, 2.0))
+
+    # Check that inputs have outgoing links
+    assert len(node_input.outputs["Value"].links) == 1
+    assert len(tree.tree.nodes.get("Group Output").inputs["Result"].links) == 1
+
+    assert (
+        tree.tree.nodes["Math"].inputs[0].links[0].from_node == tree.inputs.value.node
+    )

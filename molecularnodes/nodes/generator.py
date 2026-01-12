@@ -25,6 +25,7 @@ class SocketInfo:
 
     name: str
     identifier: str  # Internal identifier
+    label: str  # Socket label (empty string if no label)
     bl_socket_type: str  # e.g., "NodeSocketGeometry", "NodeSocketFloat"
     socket_type: str  # e.g., "GEOMETRY", "FLOAT", "VECTOR"
     is_output: bool
@@ -70,6 +71,17 @@ def normalize_name(name: str) -> str:
         normalized = f"input_{normalized}"
 
     return normalized
+
+
+def get_socket_param_name(socket: SocketInfo, use_identifier: bool = False) -> str:
+    """Get the best parameter name for a socket, preferring label over name."""
+    # Use label if available and non-empty, otherwise fallback to name
+    # if sockets all use the same label name, we need to drop back to using the iden
+    if use_identifier:
+        return normalize_name(socket.identifier)
+    else:
+        display_name = socket.label if socket.label else socket.name
+        return normalize_name(display_name)
 
 
 def python_class_name(name: str) -> str:
@@ -145,6 +157,34 @@ def introspect_node(node_type: type) -> NodeInfo | None:
             category = "Input"
         elif "Utility" in bl_idname or "Math" in bl_idname:
             category = "Utilities"
+        elif bl_idname.startswith("ShaderNode"):
+            # Shader nodes used in geometry contexts
+            if bl_idname in [
+                "ShaderNodeMath",
+                "ShaderNodeVectorMath",
+                "ShaderNodeClamp",
+                "ShaderNodeMapRange",
+                "ShaderNodeMix",
+                "ShaderNodeInvert",
+            ]:
+                category = "Utilities"
+            elif bl_idname in [
+                "ShaderNodeCombineXYZ",
+                "ShaderNodeSeparateXYZ",
+                "ShaderNodeCombineColor",
+                "ShaderNodeSeparateColor",
+            ]:
+                category = "Utilities"
+            elif bl_idname in ["ShaderNodeRGB", "ShaderNodeValue"]:
+                category = "Input"
+            else:
+                category = "Utilities"  # Default for other shader nodes
+        elif bl_idname.startswith("FunctionNode"):
+            # Function nodes
+            if "Input" in bl_idname:
+                category = "Input"
+            else:
+                category = "Utilities"
 
         # Extract input sockets
         inputs = []
@@ -155,6 +195,7 @@ def introspect_node(node_type: type) -> NodeInfo | None:
             socket_info = SocketInfo(
                 name=socket.name,
                 identifier=socket.identifier,
+                label=getattr(socket, "label", ""),  # Capture socket label
                 bl_socket_type=type(socket).__name__,
                 socket_type=socket.type,
                 is_output=False,
@@ -185,6 +226,7 @@ def introspect_node(node_type: type) -> NodeInfo | None:
             socket_info = SocketInfo(
                 name=socket.name,
                 identifier=socket.identifier,
+                label=getattr(socket, "label", ""),  # Capture socket label
                 bl_socket_type=type(socket).__name__,
                 socket_type=socket.type,
                 is_output=True,
@@ -240,6 +282,76 @@ def introspect_node(node_type: type) -> NodeInfo | None:
         return None
 
 
+def generate_enum_class_methods(node_info: NodeInfo) -> str:
+    """Generate @classmethod convenience methods for enum operations."""
+    methods = []
+
+    # Find the main operation enum (usually contains "operation" in name)
+    operation_enum = None
+    for prop in node_info.properties:
+        if prop.prop_type == "ENUM" and (
+            "operation" in prop.identifier.lower() or prop.identifier == "type"
+        ):
+            operation_enum = prop
+            break
+
+    if not operation_enum:
+        return ""
+
+    class_name = python_class_name(node_info.name)
+
+    # Generate method for each enum value
+    for enum_id, enum_name in operation_enum.enum_items:
+        method_name = enum_id.lower()
+
+        # Add underscore suffix to avoid Python keyword conflicts
+        method_name = f"{method_name}_"
+
+        # Skip invalid method names
+        if not method_name.replace("_", "").isalnum():
+            continue
+
+        # Generate method signature based on node inputs (excluding operation socket)
+        input_params = ["cls"]
+        call_params = []
+
+        all_labels = [socket.label for socket in node_info.inputs]
+        sockets_use_same_name = all(label == all_labels[0] for label in all_labels)
+        for socket in node_info.inputs:
+            # Use label-based parameter naming
+            param_name = get_socket_param_name(socket, sockets_use_same_name)
+            if (
+                param_name
+                and param_name != ""
+                and param_name != normalize_name(operation_enum.identifier)
+            ):
+                type_hint = get_socket_type_hint(socket)
+                input_params.append(f"{param_name}: {type_hint} = None")
+                call_params.append(f"{param_name}={param_name}")
+
+        params_str = ", ".join(input_params)
+        call_params_str = ", ".join(call_params)
+
+        # Add operation parameter to call
+        operation_param = f'{normalize_name(operation_enum.identifier)}="{enum_id}"'
+        if call_params_str:
+            call_params_str = f"{operation_param}, {call_params_str}"
+        else:
+            call_params_str = operation_param
+
+        method = f'''
+    @classmethod
+    def {method_name}(
+        {params_str}
+    ) -> "{class_name}":
+        """Create {node_info.name} with operation '{enum_name}'."""
+        return cls({call_params_str})'''
+
+        methods.append(method)
+
+    return "".join(methods)
+
+
 def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
     """Generate Python class code for a node.
 
@@ -254,8 +366,10 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
     establish_links_params = []
 
     # Add input sockets as parameters
+    all_labels = [socket.label for socket in node_info.inputs]
+    sockets_use_same_name = all(label == all_labels[0] for label in all_labels)
     for socket in node_info.inputs:
-        param_name = normalize_name(socket.name)
+        param_name = get_socket_param_name(socket, sockets_use_same_name)
 
         # Skip unnamed sockets (dynamic sockets that users can drag into)
         # TODO: Support dynamic multi-input sockets properly
@@ -265,7 +379,7 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
 
         type_hint = get_socket_type_hint(socket)
         init_params.append(f"{param_name}: {type_hint} = None")
-        establish_links_params.append(param_name)
+        establish_links_params.append((param_name, socket))
 
     # Add properties as parameters
     for prop in node_info.properties:
@@ -287,28 +401,57 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
     else:
         init_signature = "(" + ", ".join(init_params) + ")"
 
-    # Build establish_links call
+    # Build establish_links call - map parameter names to socket identifiers
     establish_call = ""
     if establish_links_params:
-        establish_call = f"""        self._establish_links(
-            {", ".join(f"{p}={p}" for p in establish_links_params)}
-        )"""
+        # Create mapping of parameter names to socket identifiers for _establish_links
+        link_mappings = []
+        for param_name, socket in establish_links_params:
+            # Use socket identifier as key (which maps to the actual blender socket)
+            # parameter name as value
+            link_mappings.append(f'"{socket.identifier}": {param_name}')
+
+        if link_mappings:
+            establish_call = f"""        self._establish_links(**{{
+            {", ".join(link_mappings)}
+        }})"""
+
+    # Build property setting calls
+    property_calls = []
+    for prop in node_info.properties:
+        param_name = normalize_name(prop.identifier)
+        property_calls.append(f"""        if {param_name} is not None:
+            self.node.{prop.identifier} = {param_name}""")
+
+    property_setting = "\n".join(property_calls) if property_calls else ""
 
     # Generate output properties
     output_properties = []
+    used_output_names = set()
     for socket in node_info.outputs:
+        # Use socket identifier if name would conflict, otherwise use name
         prop_name = normalize_name(socket.name)
+        if prop_name in used_output_names:
+            prop_name = (
+                normalize_name(socket.identifier)
+                if socket.identifier
+                else f"{prop_name}_{socket.identifier}"
+            )
 
         # Skip unnamed sockets (dynamic output sockets)
         # TODO: Support dynamic multi-output sockets properly
         if not prop_name or prop_name.strip() == "":
             continue
 
+        used_output_names.add(prop_name)
         output_properties.append(f'''
     @property
     def {prop_name}(self) -> NodeSocket:
         """Output socket: {socket.name}"""
         return self.node.outputs["{socket.name}"]''')
+
+    # Generate enum convenience methods
+    enum_methods = generate_enum_class_methods(node_info)
 
     # Build class
     class_code = f'''
@@ -319,6 +462,8 @@ class {class_name}(NodeBuilder):
     def __init__{init_signature}:
         super().__init__()
 {establish_call}
+{property_setting}
+{enum_methods}
 {"".join(output_properties)}
 '''
 
@@ -326,8 +471,47 @@ class {class_name}(NodeBuilder):
 
 
 def get_all_geometry_nodes() -> list[type]:
-    """Get all registered geometry node types from Blender."""
-    geometry_nodes = []
+    """Get all registered geometry node types from Blender, including useful shader and function nodes."""
+
+    # Useful shader nodes that work well in geometry node trees
+    USEFUL_SHADER_NODES = [
+        "ShaderNodeMath",
+        "ShaderNodeVectorMath",
+        "ShaderNodeMix",
+        "ShaderNodeClamp",
+        "ShaderNodeMapRange",
+        "ShaderNodeCombineXYZ",
+        "ShaderNodeSeparateXYZ",
+        "ShaderNodeRGB",
+        "ShaderNodeValue",
+        "ShaderNodeCombineColor",
+        "ShaderNodeSeparateColor",
+        "ShaderNodeInvert",
+        "ShaderNodeGamma",
+        "ShaderNodeBrightContrast",
+        "ShaderNodeHueSaturation",
+        "ShaderNodeRGBToBW",
+        "ShaderNodeFloatCurve",
+        "ShaderNodeRGBCurve",
+    ]
+
+    # Useful function nodes for utilities
+    USEFUL_FUNCTION_NODES = [
+        "FunctionNodeCompare",
+        "FunctionNodeBooleanMath",
+        "FunctionNodeFloatToInt",
+        "FunctionNodeRandomValue",
+        "FunctionNodeCombineColor",
+        "FunctionNodeSeparateColor",
+        "FunctionNodeHashValue",
+        "FunctionNodeInputBool",
+        "FunctionNodeInputColor",
+        "FunctionNodeInputInt",
+        "FunctionNodeInputString",
+        "FunctionNodeInputVector",
+    ]
+
+    all_nodes = []
 
     for attr_name in dir(bpy.types):
         node_type = getattr(bpy.types, attr_name)
@@ -339,8 +523,12 @@ def get_all_geometry_nodes() -> list[type]:
         if not issubclass(node_type, bpy.types.Node):
             continue
 
-        # Only include geometry nodes
-        if not attr_name.startswith("GeometryNode"):
+        # Include geometry nodes and useful shader/function nodes
+        if not (
+            attr_name.startswith("GeometryNode")
+            or attr_name in USEFUL_SHADER_NODES
+            or attr_name in USEFUL_FUNCTION_NODES
+        ):
             continue
 
         # Check if it's actually registered
@@ -350,12 +538,12 @@ def get_all_geometry_nodes() -> list[type]:
         except AttributeError:
             continue
 
-        geometry_nodes.append(node_type)
+        all_nodes.append(node_type)
 
     # Sort by name for consistent output
-    geometry_nodes.sort(key=lambda x: x.__name__)
+    all_nodes.sort(key=lambda x: x.__name__)
 
-    return geometry_nodes
+    return all_nodes
 
 
 def generate_file_header() -> str:

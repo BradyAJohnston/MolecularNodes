@@ -8,7 +8,7 @@ from bpy.types import (
     Nodes,
     NodeSocket,
 )
-from molecularnodes.nodes.arrange import arrange_tree
+from .arrange import arrange_tree
 
 if TYPE_CHECKING:
     from molecularnodes.nodes.sockets import SocketBase
@@ -199,6 +199,7 @@ class NodeBuilder:
     node: Node
     _tree: "TreeBuilder"
     name: str
+    _link_target: str | None = None  # Track which input should receive links
 
     def __init__(self):
         # Get active tree from context manager
@@ -212,6 +213,7 @@ class NodeBuilder:
             )
 
         self._tree = tree
+        self._link_target = None
         if hasattr(self.__class__, "name") and self.__class__.name is not None:
             self.node = self._tree.add(self.__class__.name)
         else:
@@ -255,6 +257,10 @@ class NodeBuilder:
         for name, value in kwargs.items():
             if value is None:
                 continue
+            if value is ...:
+                # Ellipsis indicates this input should receive links from >> operator
+                self._link_target = name
+                continue
             if isinstance(value, (int, float, list, tuple, np.ndarray)):
                 try:
                     self.node.inputs[name].default_value = value
@@ -265,23 +271,37 @@ class NodeBuilder:
                 self.link_from(value, name)
 
     def __rshift__(self, other: "NodeBuilder") -> "NodeBuilder":
-        """Chain nodes using >> operator. Links geometry output to geometry input.
+        """Chain nodes using >> operator. Links output to input.
 
         Usage:
             node1 >> node2 >> node3
+            tree.inputs.value >> Math.add_(..., 0.1) >> tree.outputs.result
+
+        If the target node has an ellipsis placeholder (...), links to that specific input.
+        Otherwise, tries to find Geometry sockets first, then falls back to default.
 
         Returns the right-hand node to enable continued chaining.
         """
-        # Try to find Geometry sockets first, fall back to default
+        # Get source socket
         try:
             self_out = self.node.outputs.get("Geometry") or self.default_output
         except (KeyError, IndexError):
             self_out = self.default_output
 
-        try:
-            other_in = other.node.inputs.get("Geometry") or other.default_input
-        except (KeyError, IndexError):
-            other_in = other.default_input
+        # Get target socket - use link target if specified by ellipsis
+        if other._link_target is not None:
+            try:
+                other_in = other.node.inputs[other._link_target]
+            except KeyError:
+                # Try with title case if direct access fails
+                target_name = other._link_target.replace("_", " ").title()
+                other_in = other.node.inputs[target_name]
+        else:
+            # Default behavior - try Geometry first, then default input
+            try:
+                other_in = other.node.inputs.get("Geometry") or other.default_input
+            except (KeyError, IndexError):
+                other_in = other.default_input
 
         self.tree.link(self_out, other_in)
         return other

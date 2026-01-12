@@ -22,44 +22,47 @@ from ..builder import NodeBuilder, TreeBuilder
 # Type aliases for node inputs
 LINKABLE = "NodeSocket | NodeBuilder | Any"
 TYPE_INPUT_VECTOR = "tuple[float, float, float] | NodeSocket | NodeBuilder | None"
-TYPE_INPUT_ROTATION = "tuple[float, float, float, float] | NodeSocket | NodeBuilder | None"
+TYPE_INPUT_ROTATION = (
+    "tuple[float, float, float, float] | NodeSocket | NodeBuilder | None"
+)
 TYPE_INPUT_BOOLEAN = "bool | NodeSocket | NodeBuilder | None"
-
 
 
 class DomainSize(NodeBuilder):
     """Retrieve the number of elements in a geometry for each attribute domain"""
+
     name = "GeometryNodeAttributeDomainSize"
 
-    def __init__(
-        self,
-        geometry: LINKABLE = None,
-        component: str | None = None
-    ):
+    def __init__(self, geometry: LINKABLE = None, component: str | None = None):
         super().__init__()
-        self._establish_links(
-            geometry=geometry
-        )
+        self._establish_links(**{"Geometry": geometry})
+        if component is not None:
+            self.node.component = component
 
     @property
     def point_count(self) -> NodeSocket:
         """Output socket: Point Count"""
         return self.node.outputs["Point Count"]
+
     @property
     def edge_count(self) -> NodeSocket:
         """Output socket: Edge Count"""
         return self.node.outputs["Edge Count"]
+
     @property
     def face_count(self) -> NodeSocket:
         """Output socket: Face Count"""
         return self.node.outputs["Face Count"]
+
     @property
     def face_corner_count(self) -> NodeSocket:
         """Output socket: Face Corner Count"""
         return self.node.outputs["Face Corner Count"]
 
+
 class AttributeStatistic(NodeBuilder):
     """Calculate statistics about a data set from a field evaluated on a geometry"""
+
     name = "GeometryNodeAttributeStatistic"
 
     def __init__(
@@ -68,48 +71,61 @@ class AttributeStatistic(NodeBuilder):
         selection: TYPE_INPUT_BOOLEAN = None,
         attribute: float | LINKABLE | None = None,
         data_type: str | None = None,
-        domain: str | None = None
+        domain: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            geometry=geometry, selection=selection, attribute=attribute
+            **{"Geometry": geometry, "Selection": selection, "Attribute": attribute}
         )
+        if data_type is not None:
+            self.node.data_type = data_type
+        if domain is not None:
+            self.node.domain = domain
 
     @property
     def mean(self) -> NodeSocket:
         """Output socket: Mean"""
         return self.node.outputs["Mean"]
+
     @property
     def median(self) -> NodeSocket:
         """Output socket: Median"""
         return self.node.outputs["Median"]
+
     @property
     def sum(self) -> NodeSocket:
         """Output socket: Sum"""
         return self.node.outputs["Sum"]
+
     @property
     def min(self) -> NodeSocket:
         """Output socket: Min"""
         return self.node.outputs["Min"]
+
     @property
     def max(self) -> NodeSocket:
         """Output socket: Max"""
         return self.node.outputs["Max"]
+
     @property
     def range(self) -> NodeSocket:
         """Output socket: Range"""
         return self.node.outputs["Range"]
+
     @property
     def standard_deviation(self) -> NodeSocket:
         """Output socket: Standard Deviation"""
         return self.node.outputs["Standard Deviation"]
+
     @property
     def variance(self) -> NodeSocket:
         """Output socket: Variance"""
         return self.node.outputs["Variance"]
 
+
 class BlurAttribute(NodeBuilder):
     """Mix attribute values of neighboring elements"""
+
     name = "GeometryNodeBlurAttribute"
 
     def __init__(
@@ -117,83 +133,95 @@ class BlurAttribute(NodeBuilder):
         value: float | LINKABLE | None = None,
         iterations: int | LINKABLE | None = None,
         weight: LINKABLE | None = None,
-        data_type: str | None = None
+        data_type: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            value=value, iterations=iterations, weight=weight
+            **{"Value": value, "Iterations": iterations, "Weight": weight}
         )
+        if data_type is not None:
+            self.node.data_type = data_type
 
     @property
     def value(self) -> NodeSocket:
         """Output socket: Value"""
         return self.node.outputs["Value"]
 
+
 class CaptureAttribute(NodeBuilder):
     """Store the result of a field on a geometry and output the data as a node socket. Allows remembering or interpolating data as the geometry changes, such as positions before deformation"""
+
     name = "GeometryNodeCaptureAttribute"
 
     def __init__(
         self,
         geometry: LINKABLE = None,
+        __extend__: LINKABLE | None = None,
         active_index: int | None = None,
-        domain: str | None = None
+        domain: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            geometry=geometry
-        )
+        self._establish_links(**{"Geometry": geometry, "__extend__": __extend__})
+        if active_index is not None:
+            self.node.active_index = active_index
+        if domain is not None:
+            self.node.domain = domain
 
     @property
     def geometry(self) -> NodeSocket:
         """Output socket: Geometry"""
         return self.node.outputs["Geometry"]
 
+
 class NamedAttribute(NodeBuilder):
     """Retrieve the data of a specified attribute"""
+
     name = "GeometryNodeInputNamedAttribute"
 
     def __init__(
-        self,
-        name: str | LINKABLE | None = None,
-        data_type: str | None = None
+        self, name: str | LINKABLE | None = None, data_type: str | None = None
     ):
         super().__init__()
-        self._establish_links(
-            name=name
-        )
+        self._establish_links(**{"Name": name})
+        if data_type is not None:
+            self.node.data_type = data_type
 
     @property
     def attribute(self) -> NodeSocket:
         """Output socket: Attribute"""
         return self.node.outputs["Attribute"]
+
     @property
     def exists(self) -> NodeSocket:
         """Output socket: Exists"""
         return self.node.outputs["Exists"]
 
+
 class RemoveNamedAttribute(NodeBuilder):
     """Delete an attribute with a specified name from a geometry. Typically used to optimize performance"""
+
     name = "GeometryNodeRemoveAttribute"
 
     def __init__(
         self,
         geometry: LINKABLE = None,
         name: str | LINKABLE | None = None,
-        pattern_mode: str | None = None
+        pattern_mode: str | None = None,
     ):
         super().__init__()
-        self._establish_links(
-            geometry=geometry, name=name
-        )
+        self._establish_links(**{"Geometry": geometry, "Name": name})
+        if pattern_mode is not None:
+            self.node.pattern_mode = pattern_mode
 
     @property
     def geometry(self) -> NodeSocket:
         """Output socket: Geometry"""
         return self.node.outputs["Geometry"]
 
+
 class StoreNamedAttribute(NodeBuilder):
     """Store the result of a field on a geometry as an attribute with the specified name"""
+
     name = "GeometryNodeStoreNamedAttribute"
 
     def __init__(
@@ -203,15 +231,23 @@ class StoreNamedAttribute(NodeBuilder):
         name: str | LINKABLE | None = None,
         value: float | LINKABLE | None = None,
         data_type: str | None = None,
-        domain: str | None = None
+        domain: str | None = None,
     ):
         super().__init__()
         self._establish_links(
-            geometry=geometry, selection=selection, name=name, value=value
+            **{
+                "Geometry": geometry,
+                "Selection": selection,
+                "Name": name,
+                "Value": value,
+            }
         )
+        if data_type is not None:
+            self.node.data_type = data_type
+        if domain is not None:
+            self.node.domain = domain
 
     @property
     def geometry(self) -> NodeSocket:
         """Output socket: Geometry"""
         return self.node.outputs["Geometry"]
-
