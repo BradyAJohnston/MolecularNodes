@@ -90,12 +90,15 @@ class TreeBuilder:
         return self
 
     def __exit__(self, *args):
-        arrange_tree(self.tree)
+        self.arrange()
         TreeBuilder._active_tree = None
 
     @property
     def nodes(self) -> Nodes:
         return self.tree.nodes
+
+    def arrange(self):
+        arrange_tree(self.tree)
 
     def _input_node(self) -> Node:
         """Get or create the Group Input node."""
