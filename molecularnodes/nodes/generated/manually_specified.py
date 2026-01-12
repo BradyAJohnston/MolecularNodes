@@ -3,6 +3,7 @@ Some of the nodes need to be manually specified because they are a bit tricky to
 """
 
 from __future__ import annotations
+from asyncio import sleep
 from types import ClassMethodDescriptorType
 from mathutils import Vector
 from ..builder import NodeBuilder, NodeSocket
@@ -42,7 +43,7 @@ class RandomValue(NodeBuilder):
     @property
     def value(self) -> NodeSocket:
         """Output socket: Value"""
-        return self.node.outputs["Value"]
+        return self._default_output_socket
 
     @classmethod
     def float_(
@@ -52,11 +53,11 @@ class RandomValue(NodeBuilder):
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE = 1,
     ) -> NodeBuilder:
-        node = cls(
+        buidler = cls(
             Min_001=min, Max_001=max, id=id, seed=seed, data_type=DataTypes.FLOAT
         )
-        node._default_output_id = "Value_001"
-        return node
+        buidler._default_output_id = "Value_001"
+        return buidler
 
     @classmethod
     def integer_(
@@ -66,9 +67,11 @@ class RandomValue(NodeBuilder):
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE = 1,
     ) -> NodeBuilder:
-        node = cls(Min_002=min, Max_002=max, id=id, seed=seed, data_type=DataTypes.INT)
-        node._default_output_id = "Value_002"
-        return node
+        buidler = cls(
+            Min_002=min, Max_002=max, id=id, seed=seed, data_type=DataTypes.INT
+        )
+        buidler._default_output_id = "Value_002"
+        return buidler
 
     @classmethod
     def boolean_(
@@ -77,9 +80,11 @@ class RandomValue(NodeBuilder):
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE = 1,
     ) -> NodeBuilder:
-        node = cls(Probability=probability, id=id, seed=seed, data_type=DataTypes.BOOL)
-        node._default_output_id = "Value_003"
-        return node
+        builder = cls(
+            Probability=probability, id=id, seed=seed, data_type=DataTypes.BOOL
+        )
+        builder._default_output_id = "Value_003"
+        return builder
 
     @classmethod
     def vector_(
@@ -89,9 +94,9 @@ class RandomValue(NodeBuilder):
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE = 1,
     ) -> NodeBuilder:
-        node = cls(Min=min, Max=max, id=id, seed=seed, data_type=DataTypes.VECTOR)
-        node._default_output_id = "Value"
-        return node
+        buidler = cls(Min=min, Max=max, id=id, seed=seed, data_type=DataTypes.VECTOR)
+        buidler._default_output_id = "Value"
+        return buidler
 
 
 class Mix(NodeBuilder):
@@ -109,7 +114,7 @@ class Mix(NodeBuilder):
     @property
     def result(self) -> NodeSocket:
         """Output socket: Result"""
-        return self.node.outputs["Result"]
+        return self._default_output_socket
 
     @classmethod
     def float_(
@@ -118,14 +123,14 @@ class Mix(NodeBuilder):
         a: float | LINKABLE = 0.0,
         b: float | LINKABLE = 0.0,
         clamp_factor: bool | LINKABLE = True,
-    ) -> NodeBuilder:
-        node = cls(
+    ) -> Mix:
+        builder = cls(
             Factor_Float=factor, A_Float=a, B_Float=b, id=id, data_type=DataTypes.FLOAT
         )
-        node._default_input_id = "A_Float"
-        node._default_output_id = "Result_Float"
-        node.node.clamp_factor = clamp_factor
-        return node
+        builder._default_input_id = "A_Float"
+        builder._default_output_id = "Result_Float"
+        builder.node.clamp_factor = clamp_factor
+        return builder
 
     @classmethod
     def vector_(
@@ -135,10 +140,10 @@ class Mix(NodeBuilder):
         b: tuple[float, float, float] | list[float] | LINKABLE = (1.0, 1.0, 1.0),
         clamp_factor: bool | LINKABLE = True,
         factor_mode: str = "uniform",
-    ) -> NodeBuilder:
+    ) -> Mix:
         match factor_mode:
             case "uniform":
-                node = cls(
+                builder = cls(
                     Factor_Float=factor,
                     A_Vector=a,
                     B_Vector=b,
@@ -146,7 +151,7 @@ class Mix(NodeBuilder):
                     data_type=DataTypes.VECTOR,
                 )
             case "non_uniform":
-                node = cls(
+                builder = cls(
                     Factor_Vector=factor,
                     A_Vector=a,
                     B_Vector=b,
@@ -156,10 +161,10 @@ class Mix(NodeBuilder):
             case _:
                 raise ValueError(f"Invalid factor mode: {factor_mode}")
 
-        node._default_input_id = "A_Vector"
-        node._default_output_id = "Result_Vector"
-        node.node.clamp_factor = clamp_factor
-        return node
+        builder._default_input_id = "A_Vector"
+        builder._default_output_id = "Result_Vector"
+        builder.node.clamp_factor = clamp_factor
+        return builder
 
     @classmethod
     def color_(
@@ -170,20 +175,20 @@ class Mix(NodeBuilder):
         blend_type: str = "add",
         clamp_factor: bool = True,
         clamp_result: bool = True,
-    ) -> NodeBuilder:
-        node = cls(
+    ) -> Mix:
+        builder = cls(
             Factor_Float=factor,
             A_Color=a,
             B_Color=b,
             id=id,
             data_type=DataTypes.COLOR,
         )
-        node._default_input_id = "A_Color"
-        node._default_output_id = "Result_Color"
-        node.node.blend_type = blend_type.capitalize()
-        node.node.clamp_factor = clamp_factor
-        node.node.clamp_result = clamp_result
-        return node
+        builder._default_input_id = "A_Color"
+        builder._default_output_id = "Result_Color"
+        builder.node.blend_type = blend_type.capitalize()
+        builder.node.clamp_factor = clamp_factor
+        builder.node.clamp_result = clamp_result
+        return builder
 
     @classmethod
     def rotation_(
@@ -192,14 +197,14 @@ class Mix(NodeBuilder):
         b: tuple[float, float, float, float] | list[float] | LINKABLE | None = None,
         factor: float | LINKABLE = 0.5,
         clamp_factor: bool = True,
-    ) -> NodeBuilder:
-        node = cls(
+    ) -> Mix:
+        builder = cls(
             Factor_Float=factor,
             A_Rotation=a,
             B_Rotation=b,
             data_type=DataTypes.ROTATION,
         )
-        node._default_input_id = "A_Rotation"
-        node._default_output_id = "Result_Rotation"
-        node.node.clamp_factor = clamp_factor
-        return node
+        builder._default_input_id = "A_Rotation"
+        builder._default_output_id = "Result_Rotation"
+        builder.node.clamp_factor = clamp_factor
+        return builder

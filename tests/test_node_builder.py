@@ -488,10 +488,7 @@ def test_mix_node():
 
         _ = (
             n.Points(tree.inputs.count, position=n.RandomValue.vector_())
-            >> n.InstanceOnPoints(
-                instance=n.Cube(),
-                rotation=rotation,
-            )
+            >> n.InstanceOnPoints(instance=n.Cube(), rotation=rotation)
             >> n.TranslateInstances(translation=(0.0, 0.1, 0.0))
             >> tree.outputs.instances
         )
