@@ -1,13 +1,12 @@
 import itertools
 import bpy
+import databpy
 import numpy as np
 import pytest
-import databpy
 from databpy import ObjectTracker
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
-from .emdb_pooch import fetch_emdb_map
 from .utils import NumpySnapshotExtension
 
 
@@ -123,6 +122,7 @@ def test_density_load_dx(density_file_dx):
 # this test fails without the fallback using mrcfile
 def test_fallback_reading():
     mn.entities.density.load(data_dir / "62270-small_sg0.mrc")
+
 
 def test_fallback_transforms():
     def evaluated_obj(file):
