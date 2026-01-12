@@ -480,10 +480,10 @@ def test_mix_node():
     )
 
     with tree:
-        rotation = n.RandomValue.vector_(
-            (-pi, -pi, -pi), (pi, pi, pi)
-        ) >> n.Mix.rotation_(
-            ..., (0, 0, 1), factor=n.RandomValue.float_(seed=n.Index())
+        rotation = n.Mix.rotation_(
+            n.RandomValue.vector_((-pi, -pi, -pi), (pi, pi, pi)),
+            (0, 0, 1),
+            factor=n.RandomValue.float_(seed=n.Index()),
         )
 
         _ = (

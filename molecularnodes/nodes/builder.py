@@ -70,9 +70,12 @@ class TreeBuilder:
     """Builder for creating Blender geometry node trees with a clean Python API."""
 
     _active_tree: ClassVar["TreeBuilder | None"] = None
+    _previous_tree: ClassVar["TreeBuilder | None"] = None
     just_added: "Node | None" = None
 
-    def __init__(self, tree: "GeometryNodeTree | str | None" = None):
+    def __init__(
+        self, tree: "GeometryNodeTree | str | None" = None, arrange: bool = True
+    ):
         if isinstance(tree, str):
             self.tree = bpy.data.node_groups.new(tree, "GeometryNodeTree")
         elif tree is None:
@@ -86,12 +89,15 @@ class TreeBuilder:
         self.outputs = SocketAccessor(self, "OUTPUT")
 
     def __enter__(self):
+        TreeBuilder._previous_tree = TreeBuilder._active_tree
         TreeBuilder._active_tree = self
         return self
 
     def __exit__(self, *args):
-        self.arrange()
-        TreeBuilder._active_tree = None
+        if self.arrange:
+            self.arrange()
+        TreeBuilder._active_tree = TreeBuilder._previous_tree
+        TreeBuilder._previous_tree = None
 
     @property
     def nodes(self) -> Nodes:
@@ -233,13 +239,13 @@ class NodeBuilder:
         self._tree = value
 
     @property
-    def default_input(self) -> NodeSocket:
+    def _default_input_socket(self) -> NodeSocket:
         if self._default_input_id is not None:
             return self.node.inputs[self._input_idx(self._default_input_id)]
         return self.node.inputs[0]
 
     @property
-    def default_output(self) -> NodeSocket:
+    def _default_output_socket(self) -> NodeSocket:
         if self._default_output_id is not None:
             return self.node.outputs[self._output_idx(self._default_output_id)]
         return self.node.outputs[0]
@@ -266,7 +272,7 @@ class NodeBuilder:
         self.tree.link(source_socket(source), target_socket(target))
 
     def link_to(self, target: LINKABLE):
-        self.tree.link(self.default_output, target_socket(target))
+        self.tree.link(self._default_output_socket, target_socket(target))
 
     def link_from(self, source: LINKABLE, input: "LINKABLE | str"):
         if isinstance(input, str):
@@ -317,9 +323,9 @@ class NodeBuilder:
         """
         # Get source socket
         try:
-            self_out = self.node.outputs.get("Geometry") or self.default_output
+            self_out = self.node.outputs.get("Geometry") or self._default_output_socket
         except (KeyError, IndexError):
-            self_out = self.default_output
+            self_out = self._default_output_socket
 
         other._from_socket = self_out
 
@@ -334,9 +340,11 @@ class NodeBuilder:
         else:
             # Default behavior - try Geometry first, then default input
             try:
-                other_in = other.node.inputs.get("Geometry") or other.default_input
+                other_in = (
+                    other.node.inputs.get("Geometry") or other._default_input_socket
+                )
             except (KeyError, IndexError):
-                other_in = other.default_input
+                other_in = other._default_input_socket
 
         self.tree.link(self_out, other_in)
         return other
