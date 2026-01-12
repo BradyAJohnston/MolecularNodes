@@ -53,9 +53,7 @@ class RandomValue(NodeBuilder):
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE = 1,
     ) -> NodeBuilder:
-        buidler = cls(
-            Min_001=min, Max_001=max, id=id, seed=seed, data_type=DataTypes.FLOAT
-        )
+        buidler = cls(Min_001=min, Max_001=max, id=id, seed=seed, data_type="FLOAT")
         buidler._default_output_id = "Value_001"
         return buidler
 
@@ -94,7 +92,7 @@ class RandomValue(NodeBuilder):
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE = 1,
     ) -> NodeBuilder:
-        buidler = cls(Min=min, Max=max, id=id, seed=seed, data_type=DataTypes.VECTOR)
+        buidler = cls(Min=min, Max=max, id=id, seed=seed, data_type="FLOAT_VECTOR")
         buidler._default_output_id = "Value"
         return buidler
 
@@ -104,8 +102,16 @@ class Mix(NodeBuilder):
 
     name = "ShaderNodeMix"
 
-    def __init__(self, data_type: str | None = None, **kwargs):
+    def __init__(
+        self,
+        default_input_id: str,
+        default_output_id: str,
+        data_type: str | None = None,
+        **kwargs,
+    ):
         super().__init__()
+        self._default_input_id = default_input_id
+        self._default_output_id = default_output_id
         self.node.data_type = data_type
         key_args = {}
         key_args.update(kwargs)
@@ -125,10 +131,13 @@ class Mix(NodeBuilder):
         clamp_factor: bool | LINKABLE = True,
     ) -> Mix:
         builder = cls(
-            Factor_Float=factor, A_Float=a, B_Float=b, id=id, data_type=DataTypes.FLOAT
+            default_input_id="A_Float",
+            default_output_id="Result_Float",
+            Factor_Float=factor,
+            A_Float=a,
+            B_Float=b,
+            data_type=DataTypes.FLOAT,
         )
-        builder._default_input_id = "A_Float"
-        builder._default_output_id = "Result_Float"
         builder.node.clamp_factor = clamp_factor
         return builder
 
@@ -144,25 +153,25 @@ class Mix(NodeBuilder):
         match factor_mode:
             case "uniform":
                 builder = cls(
+                    default_input_id="A_Vector",
+                    default_output_id="Result_Vector",
                     Factor_Float=factor,
                     A_Vector=a,
                     B_Vector=b,
-                    id=id,
                     data_type=DataTypes.VECTOR,
                 )
             case "non_uniform":
                 builder = cls(
+                    default_input_id="A_Vector",
+                    default_output_id="Result_Vector",
                     Factor_Vector=factor,
                     A_Vector=a,
                     B_Vector=b,
-                    id=id,
                     data_type=DataTypes.VECTOR,
                 )
             case _:
                 raise ValueError(f"Invalid factor mode: {factor_mode}")
 
-        builder._default_input_id = "A_Vector"
-        builder._default_output_id = "Result_Vector"
         builder.node.clamp_factor = clamp_factor
         return builder
 
@@ -177,14 +186,13 @@ class Mix(NodeBuilder):
         clamp_result: bool = True,
     ) -> Mix:
         builder = cls(
+            default_input_id="A_Color",
+            default_output_id="Result_Color",
             Factor_Float=factor,
             A_Color=a,
             B_Color=b,
-            id=id,
             data_type=DataTypes.COLOR,
         )
-        builder._default_input_id = "A_Color"
-        builder._default_output_id = "Result_Color"
         builder.node.blend_type = blend_type.capitalize()
         builder.node.clamp_factor = clamp_factor
         builder.node.clamp_result = clamp_result
@@ -199,12 +207,12 @@ class Mix(NodeBuilder):
         clamp_factor: bool = True,
     ) -> Mix:
         builder = cls(
+            default_input_id="A_Rotation",
+            default_output_id="Result_Rotation",
             Factor_Float=factor,
             A_Rotation=a,
             B_Rotation=b,
             data_type=DataTypes.ROTATION,
         )
-        builder._default_input_id = "A_Rotation"
-        builder._default_output_id = "Result_Rotation"
         builder.node.clamp_factor = clamp_factor
         return builder

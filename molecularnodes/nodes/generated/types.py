@@ -11,7 +11,17 @@ class DataTypes:
     FLOAT = "FLOAT"
     INT = "INT"
     BOOL = "BOOL"
-    VECTOR = "FLOAT_VECTOR"
+    VECTOR = "VECTOR"
+    ROTATION = "ROTATION"
+    COLOR = "RGBA"
+    RGBA = "RGBA"
+
+
+class AttributeTypes:
+    FLOAT = "FLOAT_VECTOR"
+    INT = "INT"
+    BOOL = "BOOL"
+    VECTOR = "VECTOR"
     ROTATION = "ROTATION"
     COLOR = "RGBA"
     RGBA = "RGBA"

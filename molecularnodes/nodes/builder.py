@@ -1,4 +1,5 @@
 from __future__ import annotations
+import warnings
 from typing import TYPE_CHECKING, ClassVar
 import bpy
 import numpy as np
@@ -122,6 +123,15 @@ class TreeBuilder:
 
     def link(self, socket1: NodeSocket, socket2: NodeSocket):
         self.tree.links.new(socket1, socket2)
+        if any(socket.is_inactive for socket in [socket1, socket2]):
+            # the warning message should report which sockets from which nodes were linked and which were innactive
+            for socket in [socket1, socket2]:
+                if socket.is_inactive:
+                    message = f"Socket {socket.name} from node {socket.node.name} is inactive."
+                    message += f" It is linked to socket {socket2.name} from node {socket2.node.name}."
+                    message += " This link will be created by Blender but ignored when evaluated."
+                    message += f"Socket type: {socket.bl_idname}"
+                    raise RuntimeError(message)
 
     def add(self, name: str) -> Node:
         self.just_added = self.tree.nodes.new(name)  # type: ignore
@@ -223,7 +233,7 @@ class NodeBuilder:
 
         self._tree = tree
         self._link_target = None
-        if hasattr(self.__class__, "name") and self.__class__.name is not None:
+        if self.__class__.name is not None:
             self.node = self._tree.add(self.__class__.name)
         else:
             raise ValueError(
@@ -299,15 +309,16 @@ class NodeBuilder:
 
             # we can also provide just a default value for the socket to take if we aren't
             # providing a socket to link with
-            elif isinstance(value, (int, float, list, tuple, np.ndarray)):
+            elif isinstance(value, (NodeBuilder, SocketNodeBuilder, NodeSocket, Node)):
+                print("Linking from", value, "to", name)
+                self.link_from(value, name)
+            else:
                 if name in input_ids:
                     input = self.node.inputs[input_ids.index(name)]
+                    input.default_value = value
                 else:
                     input = self.node.inputs[name.replace("_", "").capitalize()]
-
-                input.default_value = value
-            else:
-                self.link_from(value, name)
+                    input.default_value = value
 
     def __rshift__(self, other: "NodeBuilder") -> "NodeBuilder":
         """Chain nodes using >> operator. Links output to input.

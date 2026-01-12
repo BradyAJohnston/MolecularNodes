@@ -497,3 +497,16 @@ def test_mix_node():
     # so for rotation the socket is the 4th output - this will change in the future
     # with raibow sockets eventually
     assert len(rotation.node.outputs[3].links) == 1
+
+
+def test_warning_innactive_socket():
+    "Raises an error because we want to not let a user silently link sockets that won't do anything"
+    with TreeBuilder():
+        pos = n.Position()
+        mix = n.Mix.vector_()
+        # this works because by default we link to the currently active vector sockets
+        pos >> mix
+        # this now fails because we try to link to the innactive float sockets
+        mix._default_input_id = "A_Float"
+        with pytest.raises(RuntimeError):
+            pos >> mix
