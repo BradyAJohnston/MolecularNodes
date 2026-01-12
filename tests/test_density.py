@@ -1,12 +1,12 @@
 import itertools
 import bpy
+import databpy
 import numpy as np
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
-from .emdb_pooch import fetch_emdb_map
 from .utils import NumpySnapshotExtension
 
 
@@ -121,4 +121,18 @@ def test_density_load_dx(density_file_dx):
 
 # this test fails without the fallback using mrcfile
 def test_fallback_reading():
-    mn.entities.density.load(fetch_emdb_map(48397))
+    mn.entities.density.load(data_dir / "62270-small_sg0.mrc")
+
+
+def test_fallback_transforms():
+    def evaluated_obj(file):
+        density = mn.entities.density.load(file, overwrite=True)
+        return mn.blender.mesh.evaluate_using_mesh(density.object)
+
+    space_group_one = evaluated_obj(data_dir / "62270-small_sg1.mrc")
+    space_group_zero = evaluated_obj(data_dir / "62270-small_sg0.mrc")
+
+    pos_default = databpy.AttributeArray(space_group_one, "position")
+    pos_chimerax = databpy.AttributeArray(space_group_zero, "position")
+
+    assert np.allclose(pos_default, pos_chimerax)
