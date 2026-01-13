@@ -13,6 +13,9 @@ from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from ..blender import mesh
+from . import generated as n
+from . import sockets
+from .builder import TreeBuilder
 from .material import assign_material
 from .style_density_iso_surface import style_density_iso_surface_node_group
 
@@ -93,10 +96,14 @@ def set_selection(group, node, selection):
 
 
 def create_debug_group(name="MolecularNodesDebugGroup"):
-    group = new_tree(name=name, fallback=False)
-    info = group.nodes.new("GeometryNodeObjectInfo")
-    group.links.new(info.outputs["Geometry"], group.nodes["Group Output"].inputs[0])
-    return group
+    with TreeBuilder(name) as tree:
+        tree.interface(
+            inputs=[sockets.SocketObject("Object")],
+            outputs=[sockets.SocketGeometry("Geometry")],
+        )
+        tree.inputs.object >> n.ObjectInfo() >> tree.outputs.geometry
+
+    return tree.tree
 
 
 def add_selection(group, sel_name, input_list, field="chain_id"):

@@ -1,8 +1,6 @@
 from __future__ import annotations
-import warnings
 from typing import TYPE_CHECKING, ClassVar
 import bpy
-import numpy as np
 from bpy.types import (
     GeometryNodeTree,
     Node,

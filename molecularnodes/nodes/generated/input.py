@@ -17,7 +17,7 @@ KNOWN LIMITATIONS:
 from __future__ import annotations
 from typing import Any
 from bpy.types import NodeSocket
-from ..builder import NodeBuilder, TreeBuilder
+from ..builder import NodeBuilder
 
 # Type aliases for node inputs
 LINKABLE = "NodeSocket | NodeBuilder | Any"
