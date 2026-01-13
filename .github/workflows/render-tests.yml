@@ -1,0 +1,78 @@
+name: GPU Render Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["*"]
+  workflow_dispatch:
+
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-tests:
+    name: Image Rendering Tests
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install molecularnodes
+        run: |
+          uv sync --all-extras
+
+      - name: Run Image Snapshot Tests
+        id: tests
+        timeout-minutes: 10
+        continue-on-error: true
+        run: |
+          uv run pytest -v -m image_snapshot --image-snapshot-save-diff --html=report.html --self-contained-html --junitxml=test-results.xml
+
+      - name: Upload Image Diff Artifacts
+        if: steps.tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-diffs-gpu
+          retention-days: 7
+          path: |
+            tests/__image_snapshots__/*.diff.png
+            tests/__image_snapshots__/*.new.png
+
+      - name: Upload HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          retention-days: 7
+          path: report.html
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-gpu
+          retention-days: 7
+          path: test-results.xml
+
+      - name: Run reg-actions
+        if: always()
+        uses: reg-viz/reg-actions@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          image-directory-path: "tests/__image_snapshots__"
+          artifact-name: "visual-regression-report"
+          comment-report-format: "table"
+          retention-days: 7
+
+      - name: Fail if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
