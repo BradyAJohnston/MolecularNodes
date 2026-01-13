@@ -276,6 +276,14 @@ class NodeBuilder:
         output_ids = [output.identifier for output in self.node.outputs]
         return output_ids.index(identifier)
 
+    def _input(self, identifier: str) -> NodeSocket:
+        """Input socket: Vector"""
+        return self.node.inputs[self._input_idx(identifier)]
+
+    def _output(self, identifier: str) -> NodeSocket:
+        """Output socket: Vector"""
+        return self.node.outputs[self._output_idx(identifier)]
+
     def link(self, source: LINKABLE, target: LINKABLE):
         self.tree.link(source_socket(source), target_socket(target))
 

@@ -11,6 +11,7 @@ from numpy.testing import assert_allclose
 from molecularnodes.nodes import generated as n
 from molecularnodes.nodes import sockets
 from molecularnodes.nodes.builder import TreeBuilder
+from molecularnodes.nodes.generated.manually_specified import BooleanMath
 
 
 class TestTreeBuilder:
@@ -411,7 +412,7 @@ def create_tree_chain():
     with tree:
         _ = (
             tree.inputs.value
-            >> n.Math.add_(..., 0.1)
+            >> n.Math.add(..., 0.1)
             >> n.VectorMath.multiply_(..., (2.0, 2.0, 2.0))
             >> tree.outputs.result
         )
@@ -428,7 +429,7 @@ def create_tree():
 
     with tree:
         final = n.VectorMath.multiply_(
-            n.Math.add_(tree.inputs.value, 0.1), (2.0, 2.0, 2.0)
+            n.Math.add(tree.inputs.value, 0.1), (2.0, 2.0, 2.0)
         )
 
         final >> tree.outputs.result
@@ -465,8 +466,8 @@ def test_nodes():
 
     with tree:
         _ = (
-            n.Points(1_000, position=n.RandomValue.vector_())
-            >> n.PointsToCurves(curve_group_id=n.RandomValue.integer_(min=0, max=10))
+            n.Points(1_000, position=n.RandomValue.vector())
+            >> n.PointsToCurves(curve_group_id=n.RandomValue.integer(min=0, max=10))
             >> n.CurveToMesh(profile_curve=n.CurveCircle(12, radius=0.1))
             >> tree.outputs.geometry
         )
@@ -480,15 +481,28 @@ def test_mix_node():
     )
 
     with tree:
-        rotation = n.Mix.rotation_(
-            n.RandomValue.vector_((-pi, -pi, -pi), (pi, pi, pi)),
+        rotation = n.Mix.rotation(
+            n.RandomValue.vector((-pi, -pi, -pi), (pi, pi, pi)),
             (0, 0, 1),
-            factor=n.RandomValue.float_(seed=n.Index()),
+            factor=n.RandomValue.float(seed=n.Index()),
+        )
+
+        selection = (
+            n.RandomValue.boolean(probability=0.3)
+            >> n.BooleanMath.l_not()
+            >> n.BooleanMath.l_and(n.RandomValue.boolean(probability=0.3))
+            >> n.BooleanMath.l_or(n.RandomValue.boolean(probability=0.3))
+            >> n.BooleanMath.l_equal(n.RandomValue.boolean(probability=0.3))
+            >> n.BooleanMath.l_not()
         )
 
         _ = (
-            n.Points(tree.inputs.count, position=n.RandomValue.vector_())
-            >> n.InstanceOnPoints(instance=n.Cube(), rotation=rotation)
+            n.Points(tree.inputs.count, position=n.RandomValue.vector())
+            >> n.InstanceOnPoints(
+                selection=selection,
+                instance=n.Cube(),
+                rotation=rotation,
+            )
             >> n.TranslateInstances(translation=(0.0, 0.1, 0.0))
             >> tree.outputs.instances
         )
@@ -497,13 +511,14 @@ def test_mix_node():
     # so for rotation the socket is the 4th output - this will change in the future
     # with raibow sockets eventually
     assert len(rotation.node.outputs[3].links) == 1
+    assert len(tree.nodes) == 17
 
 
 def test_warning_innactive_socket():
     "Raises an error because we want to not let a user silently link sockets that won't do anything"
     with TreeBuilder():
         pos = n.Position()
-        mix = n.Mix.vector_()
+        mix = n.Mix.vector()
         # this works because by default we link to the currently active vector sockets
         pos >> mix
         # this now fails because we try to link to the innactive float sockets

@@ -4,39 +4,25 @@ Some of the nodes need to be manually specified because they are a bit tricky to
 
 from __future__ import annotations
 import bpy
+from bpy.types import NodeSocketFloat
 from typing_extensions import Literal
 from ..builder import NodeBuilder, NodeSocket
 from . import types
-from .types import (
-    LINKABLE,
-    TYPE_INPUT_VECTOR,
-    DataTypes,
-)
+from .types import LINKABLE, TYPE_INPUT_BOOLEAN, TYPE_INPUT_VECTOR
 
-
-class SocketAccessor:
-    def __init__(self, node_builder: NodeBuilder):
-        self._builder = node_builder
-
-    @property
-    def _inputs(self):
-        return self._builder.node.inputs
-
-    @property
-    def _outputs(self):
-        return self._builder.node.outputs
+_RANDOM_VALUE_DATA_TYPES = Literal["FLOAT", "INT", "BOOLEAN", "FLOAT_VECTOR"]
 
 
 class RandomValue(NodeBuilder):
     """Random Value node"""
 
     name = "FunctionNodeRandomValue"
-
+    node: bpy.types.FunctionNodeRandomValue
     _default_input_id = "ID"
 
     def __init__(
         self,
-        data_type: Literal["FLOAT", "INT", "BOOL", "FLOAT_VECTOR"],
+        data_type: _RANDOM_VALUE_DATA_TYPES,
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE | None = None,
         **kwargs,
@@ -52,9 +38,62 @@ class RandomValue(NodeBuilder):
         self._establish_links(**key_args)
 
     @property
-    def value(self) -> NodeSocket:
+    def data_type(self) -> _RANDOM_VALUE_DATA_TYPES:
+        return self.node.data_type  # type: ignore
+
+    @data_type.setter
+    def data_type(self, value: _RANDOM_VALUE_DATA_TYPES):
+        self.node.data_type = value
+
+    @property
+    def o_value(self) -> NodeSocket:
         """Output socket: Value"""
-        return self._default_output_socket
+        match self.data_type:
+            case "FLOAT":
+                return self._output("Value_001")
+            case "INT":
+                return self._output("Value_002")
+            case "BOOLEAN":
+                return self._output("Value_003")
+            case "FLOAT_VECTOR":
+                return self._output("Value")
+
+    def i_min(self) -> NodeSocket:
+        """Input socket: Minimum"""
+        match self.data_type:
+            case "FLOAT":
+                return self._input("Min_001")
+            case "INT":
+                return self._input("Min_002")
+            case "BOOLEAN":
+                raise ValueError(
+                    f"Boolean data type does not support minimum value, use 'Probability'"
+                )
+            case "FLOAT_VECTOR":
+                return self._input("Min")
+
+    def i_max(self) -> NodeSocket:
+        """Input socket: Maximum"""
+        match self.data_type:
+            case "FLOAT":
+                return self._input("Max_001")
+            case "INT":
+                return self._input("Max_002")
+            case "BOOLEAN":
+                raise ValueError(
+                    f"Boolean data type does not support maximum value, use 'Probability'"
+                )
+            case "FLOAT_VECTOR":
+                return self._input("Max")
+
+    def i_probability(self) -> NodeSocket:
+        """Input socket: Probability"""
+        if self.data_type != "BOOLEAN":
+            raise ValueError(
+                f"Probability socket is only supported for boolean data types, not for data type: {self.data_type}"
+            )
+
+        return self._input("Probability")
 
     @classmethod
     def float(
@@ -87,7 +126,7 @@ class RandomValue(NodeBuilder):
         id: int | LINKABLE | None = None,
         seed: int | LINKABLE = 1,
     ) -> NodeBuilder:
-        builder = cls(Probability=probability, id=id, seed=seed, data_type="BOOL")
+        builder = cls(Probability=probability, id=id, seed=seed, data_type="BOOLEAN")
         builder._default_output_id = "Value_003"
         return builder
 
@@ -115,53 +154,27 @@ class SeparateXYZ(NodeBuilder):
         self._establish_links(**{"Vector": vector})
 
     @property
-    def inputs(self) -> SocketAccessor:
-        class SeparateXYZInputsAccessor(SocketAccessor):
-            _builder: SeparateXYZ
-
-            @property
-            def vector(self) -> NodeSocket:
-                """Input socket: Vector"""
-                return self._inputs["Vector"]
-
-        return SeparateXYZInputsAccessor(self)
+    def i_vector(self) -> NodeSocket:
+        """Input socket: Vector"""
+        return self._input("Vector")
 
     @property
-    def outputs(self) -> SocketAccessor:
-        class SeparateXYZOutputsAccessor(SocketAccessor):
-            _builder: SeparateXYZ
-
-            @property
-            def x(self) -> NodeSocket:
-                """Output socket: X"""
-                return self._outputs["X"]
-
-            @property
-            def y(self) -> NodeSocket:
-                """Output socket: Y"""
-                return self._outputs["Y"]
-
-            @property
-            def z(self) -> NodeSocket:
-                """Output socket: Z"""
-                return self._outputs["Z"]
-
-        return SeparateXYZOutputsAccessor(self)
-
-    @property
-    def x(self) -> NodeSocket:
+    def o_x(self) -> NodeSocket:
         """Output socket: X"""
-        return self.node.outputs["X"]
+        return self._output("X")
 
     @property
-    def y(self) -> NodeSocket:
+    def o_y(self) -> NodeSocket:
         """Output socket: Y"""
-        return self.node.outputs["Y"]
+        return self._output("Y")
 
     @property
-    def z(self) -> NodeSocket:
+    def o_z(self) -> NodeSocket:
         """Output socket: Z"""
-        return self.node.outputs["Z"]
+        return self._output("Z")
+
+
+_MIX_VALUE_DATA_TYPES = Literal["FLOAT", "VECTOR", "COLOR", "ROTATION"]
 
 
 class Mix(NodeBuilder):
@@ -172,7 +185,7 @@ class Mix(NodeBuilder):
 
     def __init__(
         self,
-        data_type: Literal["FLOAT", "VECTOR", "COLOR", "ROTATION"] = "FLOAT",
+        data_type: _MIX_VALUE_DATA_TYPES = "FLOAT",
         **kwargs,
     ):
         super().__init__()
@@ -188,11 +201,11 @@ class Mix(NodeBuilder):
         return self.node.data_type
 
     @data_type.setter
-    def data_type(self, value: Literal["FLOAT", "VECTOR", "RGBA", "ROTATION"]):
-        self.node.data_type = value
+    def data_type(self, value: _MIX_VALUE_DATA_TYPES):
+        self.node.data_type = value  # type: ignore
 
     @property
-    def factor_mode(self) -> str:
+    def factor_mode(self) -> Literal["UNIFORM", "NON_UNIFORM"]:
         return self.node.factor_mode
 
     @factor_mode.setter
@@ -200,47 +213,45 @@ class Mix(NodeBuilder):
         self.node.factor_mode = value
 
     @property
-    def outputs(self) -> SocketAccessor:
-        class MixOutputAccessor(SocketAccessor):
-            _builder: Mix
-
-            @property
-            def result(self) -> NodeSocket:
-                """Output socket: Result"""
-                return self._builder._default_output_socket
-
-        return MixOutputAccessor(self)
+    def o_result(self) -> NodeSocket:
+        """Output socket: Result"""
+        return self._default_output_socket
 
     @property
-    def inputs(self) -> SocketAccessor:
-        class MixInputAccessor(SocketAccessor):
-            _builder: Mix
+    def i_factor(self) -> NodeSocket:
+        """Input socket: Factor"""
+        match self.data_type:
+            case "FLOAT":
+                name = "Factor_Float"
+            case "VECTOR":
+                name = (
+                    "Factor_Float" if self.factor_mode == "UNIFORM" else "Factor_Vector"
+                )
+            case "RGBA":
+                name = "Factor_Color"
+            case "ROTATION":
+                name = "Factor_Rotation"
+            case _:
+                raise ValueError(f"Unsupported data type: {self.data_type}")
 
-            @property
-            def factor(self) -> NodeSocket:
-                """Input socket: Factor"""
-                match self._builder.data_type:
-                    case "FLOAT":
-                        name = "Factor_Float"
-                    case "VECTOR":
-                        name = (
-                            "Factor_Vector"
-                            if self._builder.factor_mode == "NON_UNIFORM"
-                            else "Factor_Float"
-                        )
-                    case "RGBA":
-                        name = "Factor_Color"
-                    case "ROTATION":
-                        name = "Factor_Rotation"
-                    case _:
-                        raise ValueError(
-                            f"Unsupported data type: {self._builder.data_type}"
-                        )
+        idx = self._input_idx(name)
+        return self.node.inputs[idx]
 
-                name = self._builder._input_idx(name)
-                return self._builder.node.inputs[f"Factor_{name}"]
+    @property
+    def i_value_a(self) -> NodeSocket:
+        """Input socket: Value A"""
+        type_name = "Color" if self.data_type == "RGBA" else self.data_type
+        name = f"A_{type_name}"
+        idx = self._input_idx(name)
+        return self.node.inputs[idx]
 
-        return MixInputAccessor(self)
+    @property
+    def i_value_b(self) -> NodeSocket:
+        """Input socket: Value B"""
+        type_name = "Color" if self.data_type == "RGBA" else self.data_type
+        name = f"B_{type_name}"
+        idx = self._input_idx(name)
+        return self.node.inputs[idx]
 
     @classmethod
     def float(
@@ -254,7 +265,7 @@ class Mix(NodeBuilder):
             Factor_Float=factor,
             A_Float=a,
             B_Float=b,
-            data_type=DataTypes.FLOAT,
+            data_type="COLOR",
         )
         builder.node.clamp_factor = clamp_factor
         return builder
@@ -274,17 +285,15 @@ class Mix(NodeBuilder):
                     Factor_Float=factor,
                     A_Vector=a,
                     B_Vector=b,
-                    data_type=DataTypes.VECTOR,
+                    data_type="VECTOR",
                 )
             case "NON_UNIFORM":
                 builder = cls(
                     Factor_Vector=factor,
                     A_Vector=a,
                     B_Vector=b,
-                    data_type=DataTypes.VECTOR,
+                    data_type="VECTOR",
                 )
-            case _:
-                raise ValueError(f"Invalid factor mode: {factor_mode}")
 
         builder.node.clamp_factor = clamp_factor
         return builder
@@ -303,7 +312,7 @@ class Mix(NodeBuilder):
             Factor_Float=factor,
             A_Color=a,
             B_Color=b,
-            data_type=DataTypes.COLOR,
+            data_type="COLOR",
         )
         builder.node.blend_type = blend_type.capitalize()
         builder.node.clamp_factor = clamp_factor
@@ -322,7 +331,7 @@ class Mix(NodeBuilder):
             Factor_Float=factor,
             A_Rotation=a,
             B_Rotation=b,
-            data_type=DataTypes.ROTATION,
+            data_type="ROTATION",
         )
         builder.node.clamp_factor = clamp_factor
         return builder
@@ -335,48 +344,50 @@ class Math(NodeBuilder):
     node: bpy.types.ShaderNodeMath  # type: ignore
 
     def __init__(
-        self, operation: types.NodeMathItems, use_clamp: bool | None = None, **kwargs
+        self,
+        operation: types.NodeMathItems = "ADD",
+        use_clamp: bool = False,
+        **kwargs,
     ):
         super().__init__()
-        if operation is not None:
-            self.node.operation = operation
-        if use_clamp is not None:
-            self.node.use_clamp = use_clamp
+        self.operation = operation
+        self.use_clamp = use_clamp
         self._establish_links(**kwargs)
 
     @property
-    def outputs(self) -> SocketAccessor:
-        class MathOutputs(SocketAccessor):
-            @property
-            def value(self):
-                return self._outputs["Value"]
+    def operation(self) -> types.NodeMathItems:
+        return self.node.operation
 
-        return MathOutputs(self)
-
-    @property
-    def inputs(self) -> SocketAccessor:
-        class MathInputs(SocketAccessor):
-            @property
-            def value(self):
-                return self._inputs["Value"]
-
-            @property
-            def value_001(self):
-                return self._inputs["Value_001"]
-
-            @property
-            def value_002(self):
-                return self._inputs["Value_002"]
-
-        return MathInputs(self)
+    @operation.setter
+    def operation(self, value: types.NodeMathItems):
+        self.node.operation = value
 
     @property
-    def use_clamp(self):
+    def use_clamp(self) -> bool:
         return self.node.use_clamp
 
     @use_clamp.setter
     def use_clamp(self, value: bool):
         self.node.use_clamp = value
+
+    @property
+    def o_value(self) -> NodeSocketFloat:
+        return self._output("Value")  # type: ignore
+
+    def _input(self, identifier: str) -> NodeSocketFloat:
+        return self._input(identifier)
+
+    @property
+    def i_value(self) -> NodeSocketFloat:
+        return self._input("Value")
+
+    @property
+    def i_value_001(self) -> NodeSocketFloat:
+        return self._input("Value_001")
+
+    @property
+    def i_value_002(self) -> NodeSocketFloat:
+        return self._input("Value_002")
 
     @classmethod
     def add(
@@ -730,3 +741,112 @@ class Math(NodeBuilder):
     ) -> "Math":
         """Create Math with operation 'To Degrees'."""
         return cls(operation="DEGREES", Value=radians)
+
+
+class BooleanMath(NodeBuilder):
+    """Boolean Math node"""
+
+    name = "FunctionNodeBooleanMath"
+    node: bpy.types.FunctionNodeBooleanMath
+
+    def __init__(self, operation: types.NodeBooleanMathItems = "AND", **kwargs):
+        super().__init__()
+        self.operator = operation
+        self._establish_links(**kwargs)
+
+    @property
+    def operation(self) -> types.NodeBooleanMathItems:
+        return self.node.operation
+
+    @operation.setter
+    def operation(self, value: types.NodeBooleanMathItems):
+        self.node.operation = value
+
+    @property
+    def i_boolean(self) -> bpy.types.NodeSocketBool:
+        return self._input("Boolean")  # type: ignore
+
+    @property
+    def i_boolean_001(self) -> bpy.types.NodeSocketBool:
+        return self._input("Boolean_001")  # type: ignore
+
+    @property
+    def o_boolean(self) -> bpy.types.NodeSocketBool:
+        return self._output("Boolean")  # type: ignore
+
+    @classmethod
+    def l_and(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'AND'."""
+        return cls(operation="AND", Boolean=boolean, Boolean_001=boolean_001)
+
+    @classmethod
+    def l_or(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'OR'."""
+        return cls(operation="OR", Boolean=boolean, Boolean_001=boolean_001)
+
+    @classmethod
+    def l_not(cls, boolean: TYPE_INPUT_BOOLEAN = False) -> "BooleanMath":
+        """Create Boolean Math with operation 'NOT'."""
+        return cls(operation="NOT", Boolean=boolean)
+
+    @classmethod
+    def l_not_and(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'NAND'."""
+        return cls(operation="NAND", Boolean=boolean, Boolean_001=boolean_001)
+
+    @classmethod
+    def l_nor(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'NOR'."""
+        return cls(operation="NOR", Boolean=boolean, Boolean_001=boolean_001)
+
+    @classmethod
+    def l_equal(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'XNOR'."""
+        return cls(operation="XNOR", Boolean=boolean, Boolean_001=boolean_001)
+
+    @classmethod
+    def l_not_equal(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'XOR'."""
+        return cls(operation="XOR", Boolean=boolean, Boolean_001=boolean_001)
+
+    @classmethod
+    def l_imply(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'IMPLY'."""
+        return cls(operation="IMPLY", Boolean=boolean, Boolean_001=boolean_001)
+
+    @classmethod
+    def l_subtract(
+        cls,
+        boolean: TYPE_INPUT_BOOLEAN = False,
+        boolean_001: TYPE_INPUT_BOOLEAN = False,
+    ) -> "BooleanMath":
+        """Create Boolean Math with operation 'NIMPLY'."""
+        return cls(operation="NIMPLY", Boolean=boolean, Boolean_001=boolean_001)
