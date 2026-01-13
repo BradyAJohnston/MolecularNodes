@@ -15,22 +15,20 @@ KNOWN LIMITATIONS:
 """
 
 from __future__ import annotations
-from bpy.types import NodeSocket
-from ..builder import NodeBuilder
+import bpy
+from typing import Any
+from typing_extensions import Literal
+from ..builder import NodeBuilder, NodeSocket
+from . import types
+from .types import LINKABLE, TYPE_INPUT_BOOLEAN, TYPE_INPUT_VECTOR
 
-# Type aliases for node inputs
-LINKABLE = "NodeSocket | NodeBuilder | Any"
-TYPE_INPUT_VECTOR = "tuple[float, float, float] | NodeSocket | NodeBuilder | None"
-TYPE_INPUT_ROTATION = (
-    "tuple[float, float, float, float] | NodeSocket | NodeBuilder | None"
-)
-TYPE_INPUT_BOOLEAN = "bool | NodeSocket | NodeBuilder | None"
 
 
 class CombineColor(NodeBuilder):
     """Combine Color node"""
-
+    
     name = "FunctionNodeCombineColor"
+    node: bpy.types.FunctionNodeCombineColor
 
     def __init__(
         self,
@@ -38,36 +36,70 @@ class CombineColor(NodeBuilder):
         green: LINKABLE | None = None,
         blue: LINKABLE | None = None,
         alpha: LINKABLE | None = None,
-        mode: str | None = None,
+        mode: Literal['RGB', 'HSV', 'HSL'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(
-            **{"Red": red, "Green": green, "Blue": blue, "Alpha": alpha}
-        )
+        key_args = {
+            "Red": red, "Green": green, "Blue": blue, "Alpha": alpha
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if mode is not None:
             self.node.mode = mode
 
-    @property
-    def color(self) -> NodeSocket:
-        """Output socket: Color"""
-        return self.node.outputs["Color"]
 
+    @property
+    def i_red(self) -> NodeSocket:
+        """Input socket: Red"""
+        return self._input("Red")
+    @property
+    def i_green(self) -> NodeSocket:
+        """Input socket: Green"""
+        return self._input("Green")
+    @property
+    def i_blue(self) -> NodeSocket:
+        """Input socket: Blue"""
+        return self._input("Blue")
+    @property
+    def i_alpha(self) -> NodeSocket:
+        """Input socket: Alpha"""
+        return self._input("Alpha")
+
+    @property
+    def o_color(self) -> bpy.types.NodeSocketColor:
+        """Output socket: Color"""
+        return self._output("Color")
+
+    @property  
+    def mode(self) -> Literal['RGB', 'HSV', 'HSL']:
+        return self.node.mode
+        
+    @mode.setter
+    def mode(self, value: Literal['RGB', 'HSV', 'HSL']):
+        self.node.mode = value
 
 class Compare(NodeBuilder):
     """Compare node"""
-
+    
     name = "FunctionNodeCompare"
+    node: bpy.types.FunctionNodeCompare
 
     def __init__(
         self,
         a: float | LINKABLE | None = None,
         b: float | LINKABLE | None = None,
-        operation: str | None = None,
-        data_type: str | None = None,
-        mode: str | None = None,
+        operation: Literal['LESS_THAN', 'LESS_EQUAL', 'GREATER_THAN', 'GREATER_EQUAL', 'EQUAL', 'NOT_EQUAL', 'BRIGHTER', 'DARKER'] | None = None,
+        data_type: Literal['FLOAT', 'INT', 'BOOLEAN', 'VECTOR', 'ROTATION', 'MATRIX', 'STRING', 'MENU', 'RGBA', 'OBJECT', 'IMAGE', 'GEOMETRY', 'COLLECTION', 'TEXTURE', 'MATERIAL', 'BUNDLE', 'CLOSURE'] | None = None,
+        mode: Literal['ELEMENT', 'LENGTH', 'AVERAGE', 'DOT_PRODUCT', 'DIRECTION'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(**{"A": a, "B": b})
+        key_args = {
+            "A": a, "B": b
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if operation is not None:
             self.node.operation = operation
         if data_type is not None:
@@ -76,171 +108,298 @@ class Compare(NodeBuilder):
             self.node.mode = mode
 
     @classmethod
-    def less_than_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def lessthan(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Less Than'."""
         return cls(operation="LESS_THAN", a=a, b=b)
-
     @classmethod
-    def less_equal_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def lessequal(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Less Than or Equal'."""
         return cls(operation="LESS_EQUAL", a=a, b=b)
-
     @classmethod
-    def greater_than_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def greaterthan(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Greater Than'."""
         return cls(operation="GREATER_THAN", a=a, b=b)
-
     @classmethod
-    def greater_equal_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def greaterequal(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Greater Than or Equal'."""
         return cls(operation="GREATER_EQUAL", a=a, b=b)
-
     @classmethod
-    def equal_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def equal(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Equal'."""
         return cls(operation="EQUAL", a=a, b=b)
-
     @classmethod
-    def not_equal_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def notequal(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Not Equal'."""
         return cls(operation="NOT_EQUAL", a=a, b=b)
-
     @classmethod
-    def brighter_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def brighter(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Brighter'."""
         return cls(operation="BRIGHTER", a=a, b=b)
-
     @classmethod
-    def darker_(
-        cls, a: float | LINKABLE | None = None, b: float | LINKABLE | None = None
+    def darker(
+        cls,
+        a: float | LINKABLE | None = None,
+        b: float | LINKABLE | None = None
     ) -> "Compare":
         """Create Compare with operation 'Darker'."""
         return cls(operation="DARKER", a=a, b=b)
 
     @property
-    def result(self) -> NodeSocket:
-        """Output socket: Result"""
-        return self.node.outputs["Result"]
+    def i_a(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: A"""
+        return self._input("A")
+    @property
+    def i_b(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: B"""
+        return self._input("B")
 
+    @property
+    def o_result(self) -> bpy.types.NodeSocketBool:
+        """Output socket: Result"""
+        return self._output("Result")
+
+    @property  
+    def operation(self) -> Literal['LESS_THAN', 'LESS_EQUAL', 'GREATER_THAN', 'GREATER_EQUAL', 'EQUAL', 'NOT_EQUAL', 'BRIGHTER', 'DARKER']:
+        return self.node.operation
+        
+    @operation.setter
+    def operation(self, value: Literal['LESS_THAN', 'LESS_EQUAL', 'GREATER_THAN', 'GREATER_EQUAL', 'EQUAL', 'NOT_EQUAL', 'BRIGHTER', 'DARKER']):
+        self.node.operation = value
+    @property  
+    def data_type(self) -> Literal['FLOAT', 'INT', 'BOOLEAN', 'VECTOR', 'ROTATION', 'MATRIX', 'STRING', 'MENU', 'RGBA', 'OBJECT', 'IMAGE', 'GEOMETRY', 'COLLECTION', 'TEXTURE', 'MATERIAL', 'BUNDLE', 'CLOSURE']:
+        return self.node.data_type
+        
+    @data_type.setter
+    def data_type(self, value: Literal['FLOAT', 'INT', 'BOOLEAN', 'VECTOR', 'ROTATION', 'MATRIX', 'STRING', 'MENU', 'RGBA', 'OBJECT', 'IMAGE', 'GEOMETRY', 'COLLECTION', 'TEXTURE', 'MATERIAL', 'BUNDLE', 'CLOSURE']):
+        self.node.data_type = value
+    @property  
+    def mode(self) -> Literal['ELEMENT', 'LENGTH', 'AVERAGE', 'DOT_PRODUCT', 'DIRECTION']:
+        return self.node.mode
+        
+    @mode.setter
+    def mode(self, value: Literal['ELEMENT', 'LENGTH', 'AVERAGE', 'DOT_PRODUCT', 'DIRECTION']):
+        self.node.mode = value
 
 class FloatToInteger(NodeBuilder):
     """Float to Integer node"""
-
+    
     name = "FunctionNodeFloatToInt"
+    node: bpy.types.FunctionNodeFloatToInt
 
     def __init__(
-        self, float: float | LINKABLE | None = None, rounding_mode: str | None = None
+        self,
+        float: float | LINKABLE | None = None,
+        rounding_mode: Literal['ROUND', 'FLOOR', 'CEILING', 'TRUNCATE'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(**{"Float": float})
+        key_args = {
+            "Float": float
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if rounding_mode is not None:
             self.node.rounding_mode = rounding_mode
 
-    @property
-    def integer(self) -> NodeSocket:
-        """Output socket: Integer"""
-        return self.node.outputs["Integer"]
 
+    @property
+    def i_float(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: Float"""
+        return self._input("Float")
+
+    @property
+    def o_integer(self) -> bpy.types.NodeSocketInt:
+        """Output socket: Integer"""
+        return self._output("Integer")
+
+    @property  
+    def rounding_mode(self) -> Literal['ROUND', 'FLOOR', 'CEILING', 'TRUNCATE']:
+        return self.node.rounding_mode
+        
+    @rounding_mode.setter
+    def rounding_mode(self, value: Literal['ROUND', 'FLOOR', 'CEILING', 'TRUNCATE']):
+        self.node.rounding_mode = value
 
 class HashValue(NodeBuilder):
     """Hash Value node"""
-
+    
     name = "FunctionNodeHashValue"
+    node: bpy.types.FunctionNodeHashValue
 
     def __init__(
         self,
         value: int | LINKABLE | None = None,
         seed: int | LINKABLE | None = None,
-        data_type: str | None = None,
+        data_type: Literal['FLOAT', 'INT', 'BOOLEAN', 'VECTOR', 'ROTATION', 'MATRIX', 'STRING', 'MENU', 'RGBA', 'OBJECT', 'IMAGE', 'GEOMETRY', 'COLLECTION', 'TEXTURE', 'MATERIAL', 'BUNDLE', 'CLOSURE'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(**{"Value": value, "Seed": seed})
+        key_args = {
+            "Value": value, "Seed": seed
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if data_type is not None:
             self.node.data_type = data_type
 
-    @property
-    def hash(self) -> NodeSocket:
-        """Output socket: Hash"""
-        return self.node.outputs["Hash"]
 
+    @property
+    def i_value(self) -> bpy.types.NodeSocketInt:
+        """Input socket: Value"""
+        return self._input("Value")
+    @property
+    def i_seed(self) -> bpy.types.NodeSocketInt:
+        """Input socket: Seed"""
+        return self._input("Seed")
+
+    @property
+    def o_hash(self) -> bpy.types.NodeSocketInt:
+        """Output socket: Hash"""
+        return self._output("Hash")
+
+    @property  
+    def data_type(self) -> Literal['FLOAT', 'INT', 'BOOLEAN', 'VECTOR', 'ROTATION', 'MATRIX', 'STRING', 'MENU', 'RGBA', 'OBJECT', 'IMAGE', 'GEOMETRY', 'COLLECTION', 'TEXTURE', 'MATERIAL', 'BUNDLE', 'CLOSURE']:
+        return self.node.data_type
+        
+    @data_type.setter
+    def data_type(self, value: Literal['FLOAT', 'INT', 'BOOLEAN', 'VECTOR', 'ROTATION', 'MATRIX', 'STRING', 'MENU', 'RGBA', 'OBJECT', 'IMAGE', 'GEOMETRY', 'COLLECTION', 'TEXTURE', 'MATERIAL', 'BUNDLE', 'CLOSURE']):
+        self.node.data_type = value
 
 class SeparateColor(NodeBuilder):
     """Separate Color node"""
-
+    
     name = "FunctionNodeSeparateColor"
+    node: bpy.types.FunctionNodeSeparateColor
 
     def __init__(
         self,
         color: tuple[float, float, float, float] | LINKABLE | None = None,
-        mode: str | None = None,
+        mode: Literal['RGB', 'HSV', 'HSL'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(**{"Color": color})
+        key_args = {
+            "Color": color
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if mode is not None:
             self.node.mode = mode
 
+
     @property
-    def red(self) -> NodeSocket:
+    def i_color(self) -> bpy.types.NodeSocketColor:
+        """Input socket: Color"""
+        return self._input("Color")
+
+    @property
+    def o_red(self) -> bpy.types.NodeSocketFloat:
         """Output socket: Red"""
-        return self.node.outputs["Red"]
-
+        return self._output("Red")
     @property
-    def green(self) -> NodeSocket:
+    def o_green(self) -> bpy.types.NodeSocketFloat:
         """Output socket: Green"""
-        return self.node.outputs["Green"]
-
+        return self._output("Green")
     @property
-    def blue(self) -> NodeSocket:
+    def o_blue(self) -> bpy.types.NodeSocketFloat:
         """Output socket: Blue"""
-        return self.node.outputs["Blue"]
-
+        return self._output("Blue")
     @property
-    def alpha(self) -> NodeSocket:
+    def o_alpha(self) -> bpy.types.NodeSocketFloat:
         """Output socket: Alpha"""
-        return self.node.outputs["Alpha"]
+        return self._output("Alpha")
 
+    @property  
+    def mode(self) -> Literal['RGB', 'HSV', 'HSL']:
+        return self.node.mode
+        
+    @mode.setter
+    def mode(self, value: Literal['RGB', 'HSV', 'HSL']):
+        self.node.mode = value
 
 class Clamp(NodeBuilder):
     """Clamp a value between a minimum and a maximum"""
-
+    
     name = "ShaderNodeClamp"
+    node: bpy.types.ShaderNodeClamp
 
     def __init__(
         self,
         value: float | LINKABLE | None = None,
         min: float | LINKABLE | None = None,
         max: float | LINKABLE | None = None,
-        clamp_type: str | None = None,
+        clamp_type: Literal['MINMAX', 'RANGE'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(**{"Value": value, "Min": min, "Max": max})
+        key_args = {
+            "Value": value, "Min": min, "Max": max
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if clamp_type is not None:
             self.node.clamp_type = clamp_type
 
-    @property
-    def result(self) -> NodeSocket:
-        """Output socket: Result"""
-        return self.node.outputs["Result"]
 
+    @property
+    def i_value(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: Value"""
+        return self._input("Value")
+    @property
+    def i_min(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: Min"""
+        return self._input("Min")
+    @property
+    def i_max(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: Max"""
+        return self._input("Max")
+
+    @property
+    def o_result(self) -> bpy.types.NodeSocketFloat:
+        """Output socket: Result"""
+        return self._output("Result")
+
+    @property  
+    def clamp_type(self) -> Literal['MINMAX', 'RANGE']:
+        return self.node.clamp_type
+        
+    @clamp_type.setter
+    def clamp_type(self, value: Literal['MINMAX', 'RANGE']):
+        self.node.clamp_type = value
 
 class MapRange(NodeBuilder):
     """Remap a value from a range to a target range"""
-
+    
     name = "ShaderNodeMapRange"
+    node: bpy.types.ShaderNodeMapRange
 
     def __init__(
         self,
@@ -250,19 +409,16 @@ class MapRange(NodeBuilder):
         to_min: float | LINKABLE | None = None,
         to_max: float | LINKABLE | None = None,
         clamp: bool | None = None,
-        interpolation_type: str | None = None,
-        data_type: str | None = None,
+        interpolation_type: Literal['LINEAR', 'STEPPED', 'SMOOTHSTEP', 'SMOOTHERSTEP'] | None = None,
+        data_type: Literal['FLOAT', 'FLOAT_VECTOR'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(
-            **{
-                "Value": value,
-                "From Min": from_min,
-                "From Max": from_max,
-                "To Min": to_min,
-                "To Max": to_max,
-            }
-        )
+        key_args = {
+            "Value": value, "From Min": from_min, "From Max": from_max, "To Min": to_min, "To Max": to_max
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if clamp is not None:
             self.node.clamp = clamp
         if interpolation_type is not None:
@@ -270,232 +426,329 @@ class MapRange(NodeBuilder):
         if data_type is not None:
             self.node.data_type = data_type
 
-    @property
-    def result(self) -> NodeSocket:
-        """Output socket: Result"""
-        return self.node.outputs["Result"]
 
+    @property
+    def i_value(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: Value"""
+        return self._input("Value")
+    @property
+    def i_from_min(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: From Min"""
+        return self._input("From Min")
+    @property
+    def i_from_max(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: From Max"""
+        return self._input("From Max")
+    @property
+    def i_to_min(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: To Min"""
+        return self._input("To Min")
+    @property
+    def i_to_max(self) -> bpy.types.NodeSocketFloat:
+        """Input socket: To Max"""
+        return self._input("To Max")
+
+    @property
+    def o_result(self) -> bpy.types.NodeSocketFloat:
+        """Output socket: Result"""
+        return self._output("Result")
+
+    @property
+    def clamp(self) -> bool:
+        return self.node.clamp
+        
+    @clamp.setter  
+    def clamp(self, value: bool):
+        self.node.clamp = value
+    @property  
+    def interpolation_type(self) -> Literal['LINEAR', 'STEPPED', 'SMOOTHSTEP', 'SMOOTHERSTEP']:
+        return self.node.interpolation_type
+        
+    @interpolation_type.setter
+    def interpolation_type(self, value: Literal['LINEAR', 'STEPPED', 'SMOOTHSTEP', 'SMOOTHERSTEP']):
+        self.node.interpolation_type = value
+    @property  
+    def data_type(self) -> Literal['FLOAT', 'FLOAT_VECTOR']:
+        return self.node.data_type
+        
+    @data_type.setter
+    def data_type(self, value: Literal['FLOAT', 'FLOAT_VECTOR']):
+        self.node.data_type = value
 
 class VectorMath(NodeBuilder):
     """Perform vector math operation"""
-
+    
     name = "ShaderNodeVectorMath"
+    node: bpy.types.ShaderNodeVectorMath
 
     def __init__(
         self,
         vector: TYPE_INPUT_VECTOR = None,
         vector_001: TYPE_INPUT_VECTOR = None,
-        operation: str | None = None,
+        operation: Literal['ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE', 'MULTIPLY_ADD', 'CROSS_PRODUCT', 'PROJECT', 'REFLECT', 'REFRACT', 'FACEFORWARD', 'DOT_PRODUCT', 'DISTANCE', 'LENGTH', 'SCALE', 'NORMALIZE', 'ABSOLUTE', 'POWER', 'SIGN', 'MINIMUM', 'MAXIMUM', 'FLOOR', 'CEIL', 'FRACTION', 'MODULO', 'WRAP', 'SNAP', 'SINE', 'COSINE', 'TANGENT'] | None = None,
+        **kwargs
     ):
         super().__init__()
-        self._establish_links(**{"Vector": vector, "Vector_001": vector_001})
+        key_args = {
+            "Vector": vector, "Vector_001": vector_001
+        }
+        key_args.update(kwargs)
+        self._establish_links(**key_args)
         if operation is not None:
             self.node.operation = operation
 
     @classmethod
-    def add_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def add(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Add'."""
         return cls(operation="ADD", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def subtract_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def subtract(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Subtract'."""
         return cls(operation="SUBTRACT", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def multiply_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def multiply(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Multiply'."""
         return cls(operation="MULTIPLY", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def divide_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def divide(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Divide'."""
         return cls(operation="DIVIDE", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def multiply_add_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def multiplyadd(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Multiply Add'."""
         return cls(operation="MULTIPLY_ADD", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def cross_product_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def crossproduct(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Cross Product'."""
         return cls(operation="CROSS_PRODUCT", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def project_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def project(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Project'."""
         return cls(operation="PROJECT", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def reflect_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def reflect(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Reflect'."""
         return cls(operation="REFLECT", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def refract_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def refract(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Refract'."""
         return cls(operation="REFRACT", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def faceforward_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def faceforward(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Faceforward'."""
         return cls(operation="FACEFORWARD", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def dot_product_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def dotproduct(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Dot Product'."""
         return cls(operation="DOT_PRODUCT", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def distance_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def distance(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Distance'."""
         return cls(operation="DISTANCE", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def length_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def length(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Length'."""
         return cls(operation="LENGTH", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def scale_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def scale(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Scale'."""
         return cls(operation="SCALE", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def normalize_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def normalize(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Normalize'."""
         return cls(operation="NORMALIZE", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def absolute_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def absolute(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Absolute'."""
         return cls(operation="ABSOLUTE", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def power_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def power(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Power'."""
         return cls(operation="POWER", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def sign_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def sign(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Sign'."""
         return cls(operation="SIGN", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def minimum_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def minimum(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Minimum'."""
         return cls(operation="MINIMUM", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def maximum_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def maximum(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Maximum'."""
         return cls(operation="MAXIMUM", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def floor_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def floor(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Floor'."""
         return cls(operation="FLOOR", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def ceil_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def ceil(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Ceil'."""
         return cls(operation="CEIL", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def fraction_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def fraction(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Fraction'."""
         return cls(operation="FRACTION", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def modulo_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def modulo(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Modulo'."""
         return cls(operation="MODULO", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def wrap_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def wrap(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Wrap'."""
         return cls(operation="WRAP", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def snap_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def snap(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Snap'."""
         return cls(operation="SNAP", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def sine_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def sine(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Sine'."""
         return cls(operation="SINE", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def cosine_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def cosine(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Cosine'."""
         return cls(operation="COSINE", vector=vector, vector_001=vector_001)
-
     @classmethod
-    def tangent_(
-        cls, vector: TYPE_INPUT_VECTOR = None, vector_001: TYPE_INPUT_VECTOR = None
+    def tangent(
+        cls,
+        vector: TYPE_INPUT_VECTOR = None,
+        vector_001: TYPE_INPUT_VECTOR = None
     ) -> "VectorMath":
         """Create Vector Math with operation 'Tangent'."""
         return cls(operation="TANGENT", vector=vector, vector_001=vector_001)
 
     @property
-    def vector(self) -> NodeSocket:
+    def i_vector(self) -> bpy.types.NodeSocketVector:
+        """Input socket: Vector"""
+        return self._input("Vector")
+    @property
+    def i_vector_001(self) -> bpy.types.NodeSocketVector:
+        """Input socket: Vector"""
+        return self._input("Vector_001")
+
+    @property
+    def o_vector(self) -> bpy.types.NodeSocketVector:
         """Output socket: Vector"""
-        return self.node.outputs["Vector"]
+        return self._output("Vector")
+
+    @property  
+    def operation(self) -> Literal['ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE', 'MULTIPLY_ADD', 'CROSS_PRODUCT', 'PROJECT', 'REFLECT', 'REFRACT', 'FACEFORWARD', 'DOT_PRODUCT', 'DISTANCE', 'LENGTH', 'SCALE', 'NORMALIZE', 'ABSOLUTE', 'POWER', 'SIGN', 'MINIMUM', 'MAXIMUM', 'FLOOR', 'CEIL', 'FRACTION', 'MODULO', 'WRAP', 'SNAP', 'SINE', 'COSINE', 'TANGENT']:
+        return self.node.operation
+        
+    @operation.setter
+    def operation(self, value: Literal['ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE', 'MULTIPLY_ADD', 'CROSS_PRODUCT', 'PROJECT', 'REFLECT', 'REFRACT', 'FACEFORWARD', 'DOT_PRODUCT', 'DISTANCE', 'LENGTH', 'SCALE', 'NORMALIZE', 'ABSOLUTE', 'POWER', 'SIGN', 'MINIMUM', 'MAXIMUM', 'FLOOR', 'CEIL', 'FRACTION', 'MODULO', 'WRAP', 'SNAP', 'SINE', 'COSINE', 'TANGENT']):
+        self.node.operation = value
+

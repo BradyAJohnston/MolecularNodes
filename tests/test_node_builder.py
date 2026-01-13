@@ -342,14 +342,14 @@ class TestGeneratedNodes:
             bbox = n.BoundingBox()
 
             # Test output property accessors
-            assert hasattr(bbox, "bounding_box")
-            assert hasattr(bbox, "min")
-            assert hasattr(bbox, "max")
+            assert hasattr(bbox, "o_bounding_box")
+            assert hasattr(bbox, "o_min")
+            assert hasattr(bbox, "o_max")
 
             # They should return sockets
-            assert bbox.bounding_box is not None
-            assert bbox.min is not None
-            assert bbox.max is not None
+            assert bbox.o_bounding_box is not None
+            assert bbox.o_min is not None
+            assert bbox.o_max is not None
 
 
 class TestComplexWorkflow:
@@ -414,7 +414,7 @@ def create_tree_chain():
         _ = (
             tree.inputs.value
             >> n.Math.add(..., 0.1)
-            >> n.VectorMath.multiply_(..., (2.0, 2.0, 2.0))
+            >> n.VectorMath.multiply(..., (2.0, 2.0, 2.0))
             >> tree.outputs.result
         )
 
@@ -429,7 +429,7 @@ def create_tree():
     )
 
     with tree:
-        final = n.VectorMath.multiply_(
+        final = n.VectorMath.multiply(
             n.Math.add(tree.inputs.value, 0.1), (2.0, 2.0, 2.0)
         )
 
