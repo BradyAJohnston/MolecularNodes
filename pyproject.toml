@@ -25,7 +25,17 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 bpy = ["bpy>=4.5.2"]
 jupyter = ["jupyter", "IPython"]
 build = ["tomlkit"]
-dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
+dev = [
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "syrupy",
+    "scipy",
+    "fake-bpy-module",
+    "IPython",
+    "nodepad>=0.2.0"
+]
 test = [
     "bpy>=4.5.2",
     "pytest",
@@ -81,8 +91,8 @@ ignore = [
     "N806",
 
     # 'molecularnodes' when used as a Blender extension may not actually be named
-    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to 
-    # use relative imports: 
+    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to
+    # use relative imports:
     # https://docs.blender.org/manual/en/latest/advanced/extensions/addons.html#extensions-and-namespace
     "TID252", # Prefer absolute imports over relative imports from parent modules
     "N813", # Camelcase `MDAnalysis` imported as lowercase `mda`
