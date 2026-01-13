@@ -14,9 +14,14 @@ Or import and run from Blender's Python console:
 
 from __future__ import annotations
 from dataclasses import dataclass
+from decimal import DefaultContext
 from pathlib import Path
+from turtle import Vec2D
 from typing import Any
 import bpy
+from bpy.types import DATA_PT_CURVES_attributes, bpy_prop_array
+from mathutils import Euler, Vector
+from numpy.ma import isin
 
 
 @dataclass
@@ -67,16 +72,16 @@ def normalize_name(name: str) -> str:
     # Replace spaces, hyphens, and other non-alphanumeric characters with underscores
     normalized = name.lower()
     normalized = "".join(c if c.isalnum() else "_" for c in normalized)
-    
+
     # Remove consecutive underscores and leading/trailing underscores
     while "__" in normalized:
         normalized = normalized.replace("__", "_")
     normalized = normalized.strip("_")
-    
+
     # If the name starts with a digit or is purely numeric, prefix it
     if normalized and (normalized[0].isdigit() or normalized.isdigit()):
         normalized = f"input_{normalized}"
-    
+
     # If the name is empty or only underscores, provide a fallback
     if not normalized or normalized == "_":
         normalized = "input_socket"
@@ -150,7 +155,7 @@ def get_socket_type_annotation(socket_info: SocketInfo) -> str:
         "NodeSocketGeometry": "NodeSocket",
         "NodeSocketBool": "bpy.types.NodeSocketBool",
         "NodeSocketVector": "bpy.types.NodeSocketVector",
-        "NodeSocketRotation": "bpy.types.NodeSocketRotation", 
+        "NodeSocketRotation": "bpy.types.NodeSocketRotation",
         "NodeSocketFloat": "bpy.types.NodeSocketFloat",
         "NodeSocketInt": "bpy.types.NodeSocketInt",
         "NodeSocketString": "bpy.types.NodeSocketString",
@@ -174,7 +179,7 @@ def format_python_value(value: Any) -> str:
         return str(value)
     elif isinstance(value, (int, float)):
         return str(value)
-    elif hasattr(value, '__iter__') and not isinstance(value, str):
+    elif hasattr(value, "__iter__") and not isinstance(value, str):
         # Handle tuples, lists, vectors
         try:
             if len(value) == 3:
@@ -265,10 +270,13 @@ def introspect_node(node_type: type) -> NodeInfo | None:
 
             # Try to get default value
             if hasattr(socket, "default_value"):
-                try:
-                    socket_info.default_value = socket.default_value
-                except (AttributeError, TypeError):
-                    pass
+                # try:
+                value = socket.default_value
+                if isinstance(value, (Euler, Vector, bpy_prop_array)):
+                    value = list(value)
+                socket_info.default_value = value
+                # except (AttributeError, TypeError):
+                #     pass
 
             # Try to get min/max
             if hasattr(socket, "min_value"):
@@ -314,6 +322,7 @@ def introspect_node(node_type: type) -> NodeInfo | None:
                         name=prop.name,
                         prop_type="ENUM",
                         enum_items=enum_items,
+                        default=getattr(node, prop.identifier),
                     )
                 )
             elif prop.type in ["BOOLEAN", "INT", "FLOAT", "STRING"]:
@@ -322,6 +331,7 @@ def introspect_node(node_type: type) -> NodeInfo | None:
                         identifier=prop.identifier,
                         name=prop.name,
                         prop_type=prop.type,
+                        default=prop.default,
                     )
                 )
 
@@ -369,7 +379,7 @@ def generate_enum_class_methods(node_info: NodeInfo) -> str:
         method_name = method_name.replace("_", "")
         if method_name == "and":
             method_name = "l_and"
-        elif method_name == "or":  
+        elif method_name == "or":
             method_name = "l_or"
         elif method_name == "not":
             method_name = "l_not"
@@ -396,7 +406,9 @@ def generate_enum_class_methods(node_info: NodeInfo) -> str:
                 and param_name != normalize_name(operation_enum.identifier)
             ):
                 type_hint = get_socket_type_hint(socket)
-                input_params.append(f"{param_name}: {type_hint} = None")
+                input_params.append(
+                    f"{param_name}: {type_hint} = {socket.default_value}"
+                )
                 # Use the same parameter name as in the constructor
                 call_params.append(f"{param_name}={param_name}")
 
@@ -449,29 +461,46 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
             continue
 
         type_hint = get_socket_type_hint(socket)
-        init_params.append(f"{param_name}: {type_hint} = None")
+
+        if hasattr(socket, "default_value"):
+            default = getattr(socket, "default_value", "None")
+            if isinstance(default, str):
+                default = f'"{default}"'
+        else:
+            default = None
+        init_params.append(f"{param_name}: {type_hint} = {default}")
         establish_links_params.append((param_name, socket))
 
     # Add properties as parameters
     for prop in node_info.properties:
         param_name = normalize_name(prop.identifier)
-        if prop.prop_type == "ENUM" and prop.enum_items:
-            # Create type literal for enum
-            enum_values = [item[0] for item in prop.enum_items]
-            enum_type = f"Literal[{', '.join(repr(val) for val in enum_values)}]"
-            init_params.append(f"{param_name}: {enum_type} | None = None")
-        elif prop.prop_type == "BOOLEAN":
-            init_params.append(f"{param_name}: bool | None = None")
-        elif prop.prop_type == "INT":
-            init_params.append(f"{param_name}: int | None = None")
-        elif prop.prop_type == "FLOAT":
-            init_params.append(f"{param_name}: float | None = None")
-        else:
-            init_params.append(f"{param_name}: Any | None = None")
+        match prop.prop_type:
+            case "ENUM":
+                if prop.enum_items:
+                    # Create type literal for enum
+                    enum_values = [item[0] for item in prop.enum_items]
+                    enum_type = (
+                        f"Literal[{', '.join(repr(val) for val in enum_values)}]"
+                    )
+                    init_params.append(f'{param_name}: {enum_type} = "{prop.default}"')
+            case "BOOLEAN":
+                init_params.append(f"{param_name}: bool  = {prop.default}")
+            case "INT":
+                init_params.append(f"{param_name}: int  = {prop.default}")
+            case "FLOAT":
+                init_params.append(f"{param_name}: float  = {prop.default}")
+            case "STRING":
+                init_params.append(f'{param_name}: str  = "{prop.default}"')
+            case _:
+                init_params.append(f"{param_name}: Any | None = None")
 
     # Format init signature
     if len(init_params) > 2:  # If more than just self
-        init_signature = "(\n        " + ",\n        ".join(init_params) + ",\n        **kwargs\n    )"
+        init_signature = (
+            "(\n        "
+            + ",\n        ".join(init_params)
+            + ",\n        **kwargs\n    )"
+        )
     else:
         init_signature = "(" + ", ".join(init_params) + ", **kwargs)"
 
@@ -509,17 +538,17 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
     for socket in node_info.inputs:
         if not socket.identifier or socket.identifier.strip() == "":
             continue
-            
+
         prop_name = f"i_{normalize_name(socket.name)}"
         if prop_name in used_input_names:
             prop_name = f"i_{normalize_name(socket.identifier)}"
-        
+
         if prop_name in used_input_names:
             continue
-            
+
         used_input_names.add(prop_name)
         socket_type_annotation = get_socket_type_annotation(socket)
-        
+
         input_properties.append(f'''
     @property
     def {prop_name}(self) -> {socket_type_annotation}:
@@ -532,14 +561,14 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
     for socket in node_info.outputs:
         if not socket.identifier or socket.identifier.strip() == "":
             continue
-            
+
         prop_name = f"o_{normalize_name(socket.name)}"
         if prop_name in used_output_names:
             prop_name = f"o_{normalize_name(socket.identifier)}"
-        
+
         if prop_name in used_output_names:
             continue
-            
+
         used_output_names.add(prop_name)
         socket_type_annotation = get_socket_type_annotation(socket)
 
@@ -557,35 +586,39 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
             # Create type literal for enum
             enum_values = [item[0] for item in prop.enum_items]
             enum_type = f"Literal[{', '.join(repr(val) for val in enum_values)}]"
-            property_accessors.append(f'''
-    @property  
+            property_accessors.append(f"""
+    @property
     def {prop_name}(self) -> {enum_type}:
         return self.node.{prop.identifier}
-        
+
     @{prop_name}.setter
     def {prop_name}(self, value: {enum_type}):
-        self.node.{prop.identifier} = value''')
+        self.node.{prop.identifier} = value""")
         elif prop.prop_type == "BOOLEAN":
-            property_accessors.append(f'''
+            property_accessors.append(f"""
     @property
     def {prop_name}(self) -> bool:
         return self.node.{prop.identifier}
-        
-    @{prop_name}.setter  
+
+    @{prop_name}.setter
     def {prop_name}(self, value: bool):
-        self.node.{prop.identifier} = value''')
+        self.node.{prop.identifier} = value""")
 
     # Generate enum convenience methods
     enum_methods = generate_enum_class_methods(node_info)
 
     # Add node type annotation
-    node_type_annotation = f"bpy.types.{node_info.bl_idname}" if node_info.bl_idname.startswith(('Geometry', 'Function', 'Shader')) else "bpy.types.Node"
+    node_type_annotation = (
+        f"bpy.types.{node_info.bl_idname}"
+        if node_info.bl_idname.startswith(("Geometry", "Function", "Shader"))
+        else "bpy.types.Node"
+    )
 
     # Build class
     class_code = f'''
 class {class_name}(NodeBuilder):
     """{node_info.description}"""
-    
+
     name = "{node_info.bl_idname}"
     node: {node_type_annotation}
 
@@ -711,7 +744,7 @@ def get_manually_specified_nodes() -> set[str]:
     """Get the list of manually specified node bl_idnames."""
     manually_specified_nodes = {
         "FunctionNodeRandomValue",
-        "ShaderNodeSeparateXYZ", 
+        "ShaderNodeSeparateXYZ",
         "ShaderNodeCombineXYZ",
         "ShaderNodeMix",
         "ShaderNodeMath",
@@ -746,7 +779,7 @@ def generate_all(output_dir: Path | None = None):
             print(f"  Skipping manually specified node: {node_type.__name__}")
             skipped_count += 1
             continue
-            
+
         node_info = introspect_node(node_type)
         if node_info:
             node_infos.append(node_info)
@@ -764,6 +797,7 @@ def generate_all(output_dir: Path | None = None):
 
     # Generate files by category
     generated_files = []
+    NODES_TO_SKIP = ["Closure", "Simulation", "Repeat", "IndexSwitch", "MenuSwitch"]
     for category, nodes in by_category.items():
         filename = f"{category}.py"
         filepath = output_dir / filename
@@ -775,6 +809,8 @@ def generate_all(output_dir: Path | None = None):
             f.write("\n\n")
 
             for node_info in nodes:
+                if any([n in node_info.name for n in NODES_TO_SKIP]):
+                    continue
                 try:
                     class_code, has_dynamic = generate_node_class(node_info)
                     f.write(class_code)
@@ -792,7 +828,7 @@ def generate_all(output_dir: Path | None = None):
         # Import manually specified nodes first
         f.write("# Import manually specified nodes\n")
         f.write("from .manually_specified import *\n\n")
-        
+
         # Import from all category files
         f.write("# Import auto-generated nodes\n")
         for filename in sorted(generated_files):

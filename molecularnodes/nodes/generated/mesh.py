@@ -23,10 +23,9 @@ from . import types
 from .types import LINKABLE, TYPE_INPUT_BOOLEAN, TYPE_INPUT_VECTOR
 
 
-
 class CurveToMesh(NodeBuilder):
     """Convert curves into a mesh, optionally with a custom profile shape defined by curves"""
-    
+
     name = "GeometryNodeCurveToMesh"
     node: bpy.types.GeometryNodeCurveToMesh
 
@@ -34,31 +33,35 @@ class CurveToMesh(NodeBuilder):
         self,
         curve: LINKABLE = None,
         profile_curve: LINKABLE = None,
-        scale: float | LINKABLE | None = None,
-        fill_caps: TYPE_INPUT_BOOLEAN = None,
-        **kwargs
+        scale: float | LINKABLE | None = 1.0,
+        fill_caps: TYPE_INPUT_BOOLEAN = False,
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Curve": curve, "Profile Curve": profile_curve, "Scale": scale, "Fill Caps": fill_caps
+            "Curve": curve,
+            "Profile Curve": profile_curve,
+            "Scale": scale,
+            "Fill Caps": fill_caps,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_curve(self) -> NodeSocket:
         """Input socket: Curve"""
         return self._input("Curve")
+
     @property
     def i_profile_curve(self) -> NodeSocket:
         """Input socket: Profile Curve"""
         return self._input("Profile Curve")
+
     @property
     def i_scale(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Scale"""
         return self._input("Scale")
+
     @property
     def i_fill_caps(self) -> bpy.types.NodeSocketBool:
         """Input socket: Fill Caps"""
@@ -69,31 +72,29 @@ class CurveToMesh(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
+
 class DualMesh(NodeBuilder):
     """Convert Faces into vertices and vertices into faces"""
-    
+
     name = "GeometryNodeDualMesh"
     node: bpy.types.GeometryNodeDualMesh
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        keep_boundaries: TYPE_INPUT_BOOLEAN = None,
-        **kwargs
+        keep_boundaries: TYPE_INPUT_BOOLEAN = False,
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Mesh": mesh, "Keep Boundaries": keep_boundaries
-        }
+        key_args = {"Mesh": mesh, "Keep Boundaries": keep_boundaries}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_keep_boundaries(self) -> bpy.types.NodeSocketBool:
         """Input socket: Keep Boundaries"""
@@ -104,48 +105,56 @@ class DualMesh(NodeBuilder):
         """Output socket: Dual Mesh"""
         return self._output("Dual Mesh")
 
+
 class ExtrudeMesh(NodeBuilder):
     """Generate new vertices, edges, or faces from selected elements and move them based on an offset while keeping them connected by their boundary"""
-    
+
     name = "GeometryNodeExtrudeMesh"
     node: bpy.types.GeometryNodeExtrudeMesh
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        selection: TYPE_INPUT_BOOLEAN = None,
-        offset: LINKABLE | None = None,
-        offset_scale: float | LINKABLE | None = None,
-        individual: TYPE_INPUT_BOOLEAN = None,
-        mode: Literal['VERTICES', 'EDGES', 'FACES'] | None = None,
-        **kwargs
+        selection: TYPE_INPUT_BOOLEAN = True,
+        offset: LINKABLE | None = [0.0, 0.0, 0.0],
+        offset_scale: float | LINKABLE | None = 1.0,
+        individual: TYPE_INPUT_BOOLEAN = True,
+        mode: Literal["VERTICES", "EDGES", "FACES"] = "FACES",
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Mesh": mesh, "Selection": selection, "Offset": offset, "Offset Scale": offset_scale, "Individual": individual
+            "Mesh": mesh,
+            "Selection": selection,
+            "Offset": offset,
+            "Offset Scale": offset_scale,
+            "Individual": individual,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if mode is not None:
             self.node.mode = mode
 
-
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_selection(self) -> bpy.types.NodeSocketBool:
         """Input socket: Selection"""
         return self._input("Selection")
+
     @property
     def i_offset(self) -> NodeSocket:
         """Input socket: Offset"""
         return self._input("Offset")
+
     @property
     def i_offset_scale(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Offset Scale"""
         return self._input("Offset Scale")
+
     @property
     def i_individual(self) -> bpy.types.NodeSocketBool:
         """Input socket: Individual"""
@@ -155,53 +164,54 @@ class ExtrudeMesh(NodeBuilder):
     def o_mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self._output("Mesh")
+
     @property
     def o_top(self) -> bpy.types.NodeSocketBool:
         """Output socket: Top"""
         return self._output("Top")
+
     @property
     def o_side(self) -> bpy.types.NodeSocketBool:
         """Output socket: Side"""
         return self._output("Side")
 
-    @property  
-    def mode(self) -> Literal['VERTICES', 'EDGES', 'FACES']:
+    @property
+    def mode(self) -> Literal["VERTICES", "EDGES", "FACES"]:
         return self.node.mode
-        
+
     @mode.setter
-    def mode(self, value: Literal['VERTICES', 'EDGES', 'FACES']):
+    def mode(self, value: Literal["VERTICES", "EDGES", "FACES"]):
         self.node.mode = value
+
 
 class GridToMesh(NodeBuilder):
     """Generate a mesh on the "surface" of a volume grid"""
-    
+
     name = "GeometryNodeGridToMesh"
     node: bpy.types.GeometryNodeGridToMesh
 
     def __init__(
         self,
-        grid: float | LINKABLE | None = None,
-        threshold: float | LINKABLE | None = None,
-        adaptivity: LINKABLE | None = None,
-        **kwargs
+        grid: float | LINKABLE | None = 0.0,
+        threshold: float | LINKABLE | None = 0.10000000149011612,
+        adaptivity: LINKABLE | None = 0.0,
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Grid": grid, "Threshold": threshold, "Adaptivity": adaptivity
-        }
+        key_args = {"Grid": grid, "Threshold": threshold, "Adaptivity": adaptivity}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_grid(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Grid"""
         return self._input("Grid")
+
     @property
     def i_threshold(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Threshold"""
         return self._input("Threshold")
+
     @property
     def i_adaptivity(self) -> NodeSocket:
         """Input socket: Adaptivity"""
@@ -212,9 +222,10 @@ class GridToMesh(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
+
 class EdgeAngle(NodeBuilder):
     """The angle between the normals of connected manifold faces"""
-    
+
     name = "GeometryNodeInputMeshEdgeAngle"
     node: bpy.types.GeometryNodeInputMeshEdgeAngle
 
@@ -222,21 +233,20 @@ class EdgeAngle(NodeBuilder):
         super().__init__()
         self._establish_links(**kwargs)
 
-
-
-
     @property
     def o_unsigned_angle(self) -> bpy.types.NodeSocketFloat:
         """Output socket: Unsigned Angle"""
         return self._output("Unsigned Angle")
+
     @property
     def o_signed_angle(self) -> bpy.types.NodeSocketFloat:
         """Output socket: Signed Angle"""
         return self._output("Signed Angle")
 
+
 class EdgeNeighbors(NodeBuilder):
     """Retrieve the number of faces that use each edge as one of their sides"""
-    
+
     name = "GeometryNodeInputMeshEdgeNeighbors"
     node: bpy.types.GeometryNodeInputMeshEdgeNeighbors
 
@@ -244,17 +254,15 @@ class EdgeNeighbors(NodeBuilder):
         super().__init__()
         self._establish_links(**kwargs)
 
-
-
-
     @property
     def o_face_count(self) -> bpy.types.NodeSocketInt:
         """Output socket: Face Count"""
         return self._output("Face Count")
 
+
 class EdgeVertices(NodeBuilder):
     """Retrieve topology information relating to each edge of a mesh"""
-    
+
     name = "GeometryNodeInputMeshEdgeVertices"
     node: bpy.types.GeometryNodeInputMeshEdgeVertices
 
@@ -262,29 +270,30 @@ class EdgeVertices(NodeBuilder):
         super().__init__()
         self._establish_links(**kwargs)
 
-
-
-
     @property
     def o_vertex_index_1(self) -> bpy.types.NodeSocketInt:
         """Output socket: Vertex Index 1"""
         return self._output("Vertex Index 1")
+
     @property
     def o_vertex_index_2(self) -> bpy.types.NodeSocketInt:
         """Output socket: Vertex Index 2"""
         return self._output("Vertex Index 2")
+
     @property
     def o_position_1(self) -> bpy.types.NodeSocketVector:
         """Output socket: Position 1"""
         return self._output("Position 1")
+
     @property
     def o_position_2(self) -> bpy.types.NodeSocketVector:
         """Output socket: Position 2"""
         return self._output("Position 2")
 
+
 class FaceArea(NodeBuilder):
     """Calculate the surface area of a mesh's faces"""
-    
+
     name = "GeometryNodeInputMeshFaceArea"
     node: bpy.types.GeometryNodeInputMeshFaceArea
 
@@ -292,29 +301,23 @@ class FaceArea(NodeBuilder):
         super().__init__()
         self._establish_links(**kwargs)
 
-
-
-
     @property
     def o_area(self) -> bpy.types.NodeSocketFloat:
         """Output socket: Area"""
         return self._output("Area")
 
+
 class IsFacePlanar(NodeBuilder):
     """Retrieve whether all triangles in a face are on the same plane, i.e. whether they have the same normal"""
-    
+
     name = "GeometryNodeInputMeshFaceIsPlanar"
     node: bpy.types.GeometryNodeInputMeshFaceIsPlanar
 
-    def __init__(self, threshold: LINKABLE | None = None, **kwargs):
+    def __init__(self, threshold: LINKABLE | None = 0.009999999776482582, **kwargs):
         super().__init__()
-        key_args = {
-            "Threshold": threshold
-        }
+        key_args = {"Threshold": threshold}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_threshold(self) -> NodeSocket:
@@ -326,9 +329,10 @@ class IsFacePlanar(NodeBuilder):
         """Output socket: Planar"""
         return self._output("Planar")
 
+
 class FaceNeighbors(NodeBuilder):
     """Retrieve topology information relating to each face of a mesh"""
-    
+
     name = "GeometryNodeInputMeshFaceNeighbors"
     node: bpy.types.GeometryNodeInputMeshFaceNeighbors
 
@@ -336,21 +340,20 @@ class FaceNeighbors(NodeBuilder):
         super().__init__()
         self._establish_links(**kwargs)
 
-
-
-
     @property
     def o_vertex_count(self) -> bpy.types.NodeSocketInt:
         """Output socket: Vertex Count"""
         return self._output("Vertex Count")
+
     @property
     def o_face_count(self) -> bpy.types.NodeSocketInt:
         """Output socket: Face Count"""
         return self._output("Face Count")
 
+
 class MeshIsland(NodeBuilder):
     """Retrieve information about separate connected regions in a mesh"""
-    
+
     name = "GeometryNodeInputMeshIsland"
     node: bpy.types.GeometryNodeInputMeshIsland
 
@@ -358,21 +361,20 @@ class MeshIsland(NodeBuilder):
         super().__init__()
         self._establish_links(**kwargs)
 
-
-
-
     @property
     def o_island_index(self) -> bpy.types.NodeSocketInt:
         """Output socket: Island Index"""
         return self._output("Island Index")
+
     @property
     def o_island_count(self) -> bpy.types.NodeSocketInt:
         """Output socket: Island Count"""
         return self._output("Island Count")
 
+
 class VertexNeighbors(NodeBuilder):
     """Retrieve topology information relating to each vertex of a mesh"""
-    
+
     name = "GeometryNodeInputMeshVertexNeighbors"
     node: bpy.types.GeometryNodeInputMeshVertexNeighbors
 
@@ -380,21 +382,20 @@ class VertexNeighbors(NodeBuilder):
         super().__init__()
         self._establish_links(**kwargs)
 
-
-
-
     @property
     def o_vertex_count(self) -> bpy.types.NodeSocketInt:
         """Output socket: Vertex Count"""
         return self._output("Vertex Count")
+
     @property
     def o_face_count(self) -> bpy.types.NodeSocketInt:
         """Output socket: Face Count"""
         return self._output("Face Count")
 
+
 class MeshBoolean(NodeBuilder):
     """Cut, subtract, or join multiple mesh inputs"""
-    
+
     name = "GeometryNodeMeshBoolean"
     node: bpy.types.GeometryNodeMeshBoolean
 
@@ -402,14 +403,12 @@ class MeshBoolean(NodeBuilder):
         self,
         mesh_1: LINKABLE = None,
         mesh_2: LINKABLE = None,
-        operation: Literal['INTERSECT', 'UNION', 'DIFFERENCE'] | None = None,
-        solver: Literal['EXACT', 'FLOAT', 'MANIFOLD'] | None = None,
-        **kwargs
+        operation: Literal["INTERSECT", "UNION", "DIFFERENCE"] = "DIFFERENCE",
+        solver: Literal["EXACT", "FLOAT", "MANIFOLD"] = "FLOAT",
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Mesh 1": mesh_1, "Mesh 2": mesh_2
-        }
+        key_args = {"Mesh 1": mesh_1, "Mesh 2": mesh_2}
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if operation is not None:
@@ -419,25 +418,19 @@ class MeshBoolean(NodeBuilder):
 
     @classmethod
     def intersect(
-        cls,
-        mesh_1: LINKABLE = None,
-        mesh_2: LINKABLE = None
+        cls, mesh_1: LINKABLE = None, mesh_2: LINKABLE = None
     ) -> "MeshBoolean":
         """Create Mesh Boolean with operation 'Intersect'."""
         return cls(operation="INTERSECT", mesh_1=mesh_1, mesh_2=mesh_2)
+
     @classmethod
-    def union(
-        cls,
-        mesh_1: LINKABLE = None,
-        mesh_2: LINKABLE = None
-    ) -> "MeshBoolean":
+    def union(cls, mesh_1: LINKABLE = None, mesh_2: LINKABLE = None) -> "MeshBoolean":
         """Create Mesh Boolean with operation 'Union'."""
         return cls(operation="UNION", mesh_1=mesh_1, mesh_2=mesh_2)
+
     @classmethod
     def difference(
-        cls,
-        mesh_1: LINKABLE = None,
-        mesh_2: LINKABLE = None
+        cls, mesh_1: LINKABLE = None, mesh_2: LINKABLE = None
     ) -> "MeshBoolean":
         """Create Mesh Boolean with operation 'Difference'."""
         return cls(operation="DIFFERENCE", mesh_1=mesh_1, mesh_2=mesh_2)
@@ -446,6 +439,7 @@ class MeshBoolean(NodeBuilder):
     def i_mesh_1(self) -> NodeSocket:
         """Input socket: Mesh 1"""
         return self._input("Mesh 1")
+
     @property
     def i_mesh_2(self) -> NodeSocket:
         """Input socket: Mesh 2"""
@@ -456,48 +450,48 @@ class MeshBoolean(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
-    @property  
-    def operation(self) -> Literal['INTERSECT', 'UNION', 'DIFFERENCE']:
+    @property
+    def operation(self) -> Literal["INTERSECT", "UNION", "DIFFERENCE"]:
         return self.node.operation
-        
+
     @operation.setter
-    def operation(self, value: Literal['INTERSECT', 'UNION', 'DIFFERENCE']):
+    def operation(self, value: Literal["INTERSECT", "UNION", "DIFFERENCE"]):
         self.node.operation = value
-    @property  
-    def solver(self) -> Literal['EXACT', 'FLOAT', 'MANIFOLD']:
+
+    @property
+    def solver(self) -> Literal["EXACT", "FLOAT", "MANIFOLD"]:
         return self.node.solver
-        
+
     @solver.setter
-    def solver(self, value: Literal['EXACT', 'FLOAT', 'MANIFOLD']):
+    def solver(self, value: Literal["EXACT", "FLOAT", "MANIFOLD"]):
         self.node.solver = value
+
 
 class MeshCircle(NodeBuilder):
     """Generate a circular ring of edges"""
-    
+
     name = "GeometryNodeMeshCircle"
     node: bpy.types.GeometryNodeMeshCircle
 
     def __init__(
         self,
-        vertices: int | LINKABLE | None = None,
-        radius: LINKABLE | None = None,
-        fill_type: Literal['NONE', 'NGON', 'TRIANGLE_FAN'] | None = None,
-        **kwargs
+        vertices: int | LINKABLE | None = 32,
+        radius: LINKABLE | None = 1.0,
+        fill_type: Literal["NONE", "NGON", "TRIANGLE_FAN"] = "NONE",
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Vertices": vertices, "Radius": radius
-        }
+        key_args = {"Vertices": vertices, "Radius": radius}
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if fill_type is not None:
             self.node.fill_type = fill_type
 
-
     @property
     def i_vertices(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices"""
         return self._input("Vertices")
+
     @property
     def i_radius(self) -> NodeSocket:
         """Input socket: Radius"""
@@ -508,61 +502,71 @@ class MeshCircle(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
-    @property  
-    def fill_type(self) -> Literal['NONE', 'NGON', 'TRIANGLE_FAN']:
+    @property
+    def fill_type(self) -> Literal["NONE", "NGON", "TRIANGLE_FAN"]:
         return self.node.fill_type
-        
+
     @fill_type.setter
-    def fill_type(self, value: Literal['NONE', 'NGON', 'TRIANGLE_FAN']):
+    def fill_type(self, value: Literal["NONE", "NGON", "TRIANGLE_FAN"]):
         self.node.fill_type = value
+
 
 class Cone(NodeBuilder):
     """Generate a cone mesh"""
-    
+
     name = "GeometryNodeMeshCone"
     node: bpy.types.GeometryNodeMeshCone
 
     def __init__(
         self,
-        vertices: int | LINKABLE | None = None,
-        side_segments: int | LINKABLE | None = None,
-        fill_segments: int | LINKABLE | None = None,
-        radius_top: LINKABLE | None = None,
-        radius_bottom: LINKABLE | None = None,
-        depth: LINKABLE | None = None,
-        fill_type: Literal['NONE', 'NGON', 'TRIANGLE_FAN'] | None = None,
-        **kwargs
+        vertices: int | LINKABLE | None = 32,
+        side_segments: int | LINKABLE | None = 1,
+        fill_segments: int | LINKABLE | None = 1,
+        radius_top: LINKABLE | None = 0.0,
+        radius_bottom: LINKABLE | None = 1.0,
+        depth: LINKABLE | None = 2.0,
+        fill_type: Literal["NONE", "NGON", "TRIANGLE_FAN"] = "NGON",
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Vertices": vertices, "Side Segments": side_segments, "Fill Segments": fill_segments, "Radius Top": radius_top, "Radius Bottom": radius_bottom, "Depth": depth
+            "Vertices": vertices,
+            "Side Segments": side_segments,
+            "Fill Segments": fill_segments,
+            "Radius Top": radius_top,
+            "Radius Bottom": radius_bottom,
+            "Depth": depth,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if fill_type is not None:
             self.node.fill_type = fill_type
 
-
     @property
     def i_vertices(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices"""
         return self._input("Vertices")
+
     @property
     def i_side_segments(self) -> bpy.types.NodeSocketInt:
         """Input socket: Side Segments"""
         return self._input("Side Segments")
+
     @property
     def i_fill_segments(self) -> bpy.types.NodeSocketInt:
         """Input socket: Fill Segments"""
         return self._input("Fill Segments")
+
     @property
     def i_radius_top(self) -> NodeSocket:
         """Input socket: Radius Top"""
         return self._input("Radius Top")
+
     @property
     def i_radius_bottom(self) -> NodeSocket:
         """Input socket: Radius Bottom"""
         return self._input("Radius Bottom")
+
     @property
     def i_depth(self) -> NodeSocket:
         """Input socket: Depth"""
@@ -572,66 +576,75 @@ class Cone(NodeBuilder):
     def o_mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self._output("Mesh")
+
     @property
     def o_top(self) -> bpy.types.NodeSocketBool:
         """Output socket: Top"""
         return self._output("Top")
+
     @property
     def o_bottom(self) -> bpy.types.NodeSocketBool:
         """Output socket: Bottom"""
         return self._output("Bottom")
+
     @property
     def o_side(self) -> bpy.types.NodeSocketBool:
         """Output socket: Side"""
         return self._output("Side")
+
     @property
     def o_uv_map(self) -> bpy.types.NodeSocketVector:
         """Output socket: UV Map"""
         return self._output("UV Map")
 
-    @property  
-    def fill_type(self) -> Literal['NONE', 'NGON', 'TRIANGLE_FAN']:
+    @property
+    def fill_type(self) -> Literal["NONE", "NGON", "TRIANGLE_FAN"]:
         return self.node.fill_type
-        
+
     @fill_type.setter
-    def fill_type(self, value: Literal['NONE', 'NGON', 'TRIANGLE_FAN']):
+    def fill_type(self, value: Literal["NONE", "NGON", "TRIANGLE_FAN"]):
         self.node.fill_type = value
+
 
 class Cube(NodeBuilder):
     """Generate a cuboid mesh with variable side lengths and subdivisions"""
-    
+
     name = "GeometryNodeMeshCube"
     node: bpy.types.GeometryNodeMeshCube
 
     def __init__(
         self,
-        size: LINKABLE | None = None,
-        vertices_x: int | LINKABLE | None = None,
-        vertices_y: int | LINKABLE | None = None,
-        vertices_z: int | LINKABLE | None = None,
-        **kwargs
+        size: LINKABLE | None = [1.0, 1.0, 1.0],
+        vertices_x: int | LINKABLE | None = 2,
+        vertices_y: int | LINKABLE | None = 2,
+        vertices_z: int | LINKABLE | None = 2,
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Size": size, "Vertices X": vertices_x, "Vertices Y": vertices_y, "Vertices Z": vertices_z
+            "Size": size,
+            "Vertices X": vertices_x,
+            "Vertices Y": vertices_y,
+            "Vertices Z": vertices_z,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_size(self) -> NodeSocket:
         """Input socket: Size"""
         return self._input("Size")
+
     @property
     def i_vertices_x(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices X"""
         return self._input("Vertices X")
+
     @property
     def i_vertices_y(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices Y"""
         return self._input("Vertices Y")
+
     @property
     def i_vertices_z(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices Z"""
@@ -641,53 +654,62 @@ class Cube(NodeBuilder):
     def o_mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self._output("Mesh")
+
     @property
     def o_uv_map(self) -> bpy.types.NodeSocketVector:
         """Output socket: UV Map"""
         return self._output("UV Map")
 
+
 class Cylinder(NodeBuilder):
     """Generate a cylinder mesh"""
-    
+
     name = "GeometryNodeMeshCylinder"
     node: bpy.types.GeometryNodeMeshCylinder
 
     def __init__(
         self,
-        vertices: int | LINKABLE | None = None,
-        side_segments: int | LINKABLE | None = None,
-        fill_segments: int | LINKABLE | None = None,
-        radius: LINKABLE | None = None,
-        depth: LINKABLE | None = None,
-        fill_type: Literal['NONE', 'NGON', 'TRIANGLE_FAN'] | None = None,
-        **kwargs
+        vertices: int | LINKABLE | None = 32,
+        side_segments: int | LINKABLE | None = 1,
+        fill_segments: int | LINKABLE | None = 1,
+        radius: LINKABLE | None = 1.0,
+        depth: LINKABLE | None = 2.0,
+        fill_type: Literal["NONE", "NGON", "TRIANGLE_FAN"] = "NGON",
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Vertices": vertices, "Side Segments": side_segments, "Fill Segments": fill_segments, "Radius": radius, "Depth": depth
+            "Vertices": vertices,
+            "Side Segments": side_segments,
+            "Fill Segments": fill_segments,
+            "Radius": radius,
+            "Depth": depth,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if fill_type is not None:
             self.node.fill_type = fill_type
 
-
     @property
     def i_vertices(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices"""
         return self._input("Vertices")
+
     @property
     def i_side_segments(self) -> bpy.types.NodeSocketInt:
         """Input socket: Side Segments"""
         return self._input("Side Segments")
+
     @property
     def i_fill_segments(self) -> bpy.types.NodeSocketInt:
         """Input socket: Fill Segments"""
         return self._input("Fill Segments")
+
     @property
     def i_radius(self) -> NodeSocket:
         """Input socket: Radius"""
         return self._input("Radius")
+
     @property
     def i_depth(self) -> NodeSocket:
         """Input socket: Depth"""
@@ -697,46 +719,47 @@ class Cylinder(NodeBuilder):
     def o_mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self._output("Mesh")
+
     @property
     def o_top(self) -> bpy.types.NodeSocketBool:
         """Output socket: Top"""
         return self._output("Top")
+
     @property
     def o_side(self) -> bpy.types.NodeSocketBool:
         """Output socket: Side"""
         return self._output("Side")
+
     @property
     def o_bottom(self) -> bpy.types.NodeSocketBool:
         """Output socket: Bottom"""
         return self._output("Bottom")
+
     @property
     def o_uv_map(self) -> bpy.types.NodeSocketVector:
         """Output socket: UV Map"""
         return self._output("UV Map")
 
-    @property  
-    def fill_type(self) -> Literal['NONE', 'NGON', 'TRIANGLE_FAN']:
+    @property
+    def fill_type(self) -> Literal["NONE", "NGON", "TRIANGLE_FAN"]:
         return self.node.fill_type
-        
+
     @fill_type.setter
-    def fill_type(self, value: Literal['NONE', 'NGON', 'TRIANGLE_FAN']):
+    def fill_type(self, value: Literal["NONE", "NGON", "TRIANGLE_FAN"]):
         self.node.fill_type = value
+
 
 class FaceGroupBoundaries(NodeBuilder):
     """Find edges on the boundaries between groups of faces with the same ID value"""
-    
+
     name = "GeometryNodeMeshFaceSetBoundaries"
     node: bpy.types.GeometryNodeMeshFaceSetBoundaries
 
-    def __init__(self, face_set: int | LINKABLE | None = None, **kwargs):
+    def __init__(self, face_set: int | LINKABLE | None = 0, **kwargs):
         super().__init__()
-        key_args = {
-            "Face Set": face_set
-        }
+        key_args = {"Face Set": face_set}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_face_group_id(self) -> bpy.types.NodeSocketInt:
@@ -748,41 +771,46 @@ class FaceGroupBoundaries(NodeBuilder):
         """Output socket: Boundary Edges"""
         return self._output("Boundary Edges")
 
+
 class Grid(NodeBuilder):
     """Generate a planar mesh on the XY plane"""
-    
+
     name = "GeometryNodeMeshGrid"
     node: bpy.types.GeometryNodeMeshGrid
 
     def __init__(
         self,
-        size_x: LINKABLE | None = None,
-        size_y: LINKABLE | None = None,
-        vertices_x: int | LINKABLE | None = None,
-        vertices_y: int | LINKABLE | None = None,
-        **kwargs
+        size_x: LINKABLE | None = 1.0,
+        size_y: LINKABLE | None = 1.0,
+        vertices_x: int | LINKABLE | None = 3,
+        vertices_y: int | LINKABLE | None = 3,
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Size X": size_x, "Size Y": size_y, "Vertices X": vertices_x, "Vertices Y": vertices_y
+            "Size X": size_x,
+            "Size Y": size_y,
+            "Vertices X": vertices_x,
+            "Vertices Y": vertices_y,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_size_x(self) -> NodeSocket:
         """Input socket: Size X"""
         return self._input("Size X")
+
     @property
     def i_size_y(self) -> NodeSocket:
         """Input socket: Size Y"""
         return self._input("Size Y")
+
     @property
     def i_vertices_x(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices X"""
         return self._input("Vertices X")
+
     @property
     def i_vertices_y(self) -> bpy.types.NodeSocketInt:
         """Input socket: Vertices Y"""
@@ -792,36 +820,35 @@ class Grid(NodeBuilder):
     def o_mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self._output("Mesh")
+
     @property
     def o_uv_map(self) -> bpy.types.NodeSocketVector:
         """Output socket: UV Map"""
         return self._output("UV Map")
 
+
 class IcoSphere(NodeBuilder):
     """Generate a spherical mesh that consists of equally sized triangles"""
-    
+
     name = "GeometryNodeMeshIcoSphere"
     node: bpy.types.GeometryNodeMeshIcoSphere
 
     def __init__(
         self,
-        radius: LINKABLE | None = None,
-        subdivisions: int | LINKABLE | None = None,
-        **kwargs
+        radius: LINKABLE | None = 1.0,
+        subdivisions: int | LINKABLE | None = 1,
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Radius": radius, "Subdivisions": subdivisions
-        }
+        key_args = {"Radius": radius, "Subdivisions": subdivisions}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_radius(self) -> NodeSocket:
         """Input socket: Radius"""
         return self._input("Radius")
+
     @property
     def i_subdivisions(self) -> bpy.types.NodeSocketInt:
         """Input socket: Subdivisions"""
@@ -831,30 +858,30 @@ class IcoSphere(NodeBuilder):
     def o_mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self._output("Mesh")
+
     @property
     def o_uv_map(self) -> bpy.types.NodeSocketVector:
         """Output socket: UV Map"""
         return self._output("UV Map")
 
+
 class MeshLine(NodeBuilder):
     """Generate vertices in a line and connect them with edges"""
-    
+
     name = "GeometryNodeMeshLine"
     node: bpy.types.GeometryNodeMeshLine
 
     def __init__(
         self,
-        count: int | LINKABLE | None = None,
-        start_location: LINKABLE | None = None,
-        offset: LINKABLE | None = None,
-        mode: Literal['OFFSET', 'END_POINTS'] | None = None,
-        count_mode: Literal['TOTAL', 'RESOLUTION'] | None = None,
-        **kwargs
+        count: int | LINKABLE | None = 10,
+        start_location: LINKABLE | None = [0.0, 0.0, 0.0],
+        offset: LINKABLE | None = [0.0, 0.0, 1.0],
+        mode: Literal["OFFSET", "END_POINTS"] = "OFFSET",
+        count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Count": count, "Start Location": start_location, "Offset": offset
-        }
+        key_args = {"Count": count, "Start Location": start_location, "Offset": offset}
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if mode is not None:
@@ -862,15 +889,16 @@ class MeshLine(NodeBuilder):
         if count_mode is not None:
             self.node.count_mode = count_mode
 
-
     @property
     def i_count(self) -> bpy.types.NodeSocketInt:
         """Input socket: Count"""
         return self._input("Count")
+
     @property
     def i_start_location(self) -> NodeSocket:
         """Input socket: Start Location"""
         return self._input("Start Location")
+
     @property
     def i_offset(self) -> NodeSocket:
         """Input socket: Offset"""
@@ -881,48 +909,48 @@ class MeshLine(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
-    @property  
-    def mode(self) -> Literal['OFFSET', 'END_POINTS']:
+    @property
+    def mode(self) -> Literal["OFFSET", "END_POINTS"]:
         return self.node.mode
-        
+
     @mode.setter
-    def mode(self, value: Literal['OFFSET', 'END_POINTS']):
+    def mode(self, value: Literal["OFFSET", "END_POINTS"]):
         self.node.mode = value
-    @property  
-    def count_mode(self) -> Literal['TOTAL', 'RESOLUTION']:
+
+    @property
+    def count_mode(self) -> Literal["TOTAL", "RESOLUTION"]:
         return self.node.count_mode
-        
+
     @count_mode.setter
-    def count_mode(self, value: Literal['TOTAL', 'RESOLUTION']):
+    def count_mode(self, value: Literal["TOTAL", "RESOLUTION"]):
         self.node.count_mode = value
+
 
 class MeshToCurve(NodeBuilder):
     """Generate a curve from a mesh"""
-    
+
     name = "GeometryNodeMeshToCurve"
     node: bpy.types.GeometryNodeMeshToCurve
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        selection: TYPE_INPUT_BOOLEAN = None,
-        mode: Literal['EDGES', 'FACES'] | None = None,
-        **kwargs
+        selection: TYPE_INPUT_BOOLEAN = True,
+        mode: Literal["EDGES", "FACES"] = "EDGES",
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Mesh": mesh, "Selection": selection
-        }
+        key_args = {"Mesh": mesh, "Selection": selection}
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if mode is not None:
             self.node.mode = mode
 
-
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_selection(self) -> bpy.types.NodeSocketBool:
         """Input socket: Selection"""
@@ -933,49 +961,54 @@ class MeshToCurve(NodeBuilder):
         """Output socket: Curve"""
         return self._output("Curve")
 
-    @property  
-    def mode(self) -> Literal['EDGES', 'FACES']:
+    @property
+    def mode(self) -> Literal["EDGES", "FACES"]:
         return self.node.mode
-        
+
     @mode.setter
-    def mode(self, value: Literal['EDGES', 'FACES']):
+    def mode(self, value: Literal["EDGES", "FACES"]):
         self.node.mode = value
+
 
 class MeshToDensityGrid(NodeBuilder):
     """Create a filled volume grid from a mesh"""
-    
+
     name = "GeometryNodeMeshToDensityGrid"
     node: bpy.types.GeometryNodeMeshToDensityGrid
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        density: float | LINKABLE | None = None,
-        voxel_size: LINKABLE | None = None,
-        gradient_width: LINKABLE | None = None,
-        **kwargs
+        density: float | LINKABLE | None = 1.0,
+        voxel_size: LINKABLE | None = 0.30000001192092896,
+        gradient_width: LINKABLE | None = 0.20000000298023224,
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Mesh": mesh, "Density": density, "Voxel Size": voxel_size, "Gradient Width": gradient_width
+            "Mesh": mesh,
+            "Density": density,
+            "Voxel Size": voxel_size,
+            "Gradient Width": gradient_width,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_density(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Density"""
         return self._input("Density")
+
     @property
     def i_voxel_size(self) -> NodeSocket:
         """Input socket: Voxel Size"""
         return self._input("Voxel Size")
+
     @property
     def i_gradient_width(self) -> NodeSocket:
         """Input socket: Gradient Width"""
@@ -986,43 +1019,49 @@ class MeshToDensityGrid(NodeBuilder):
         """Output socket: Density Grid"""
         return self._output("Density Grid")
 
+
 class MeshToPoints(NodeBuilder):
     """Generate a point cloud from a mesh's vertices"""
-    
+
     name = "GeometryNodeMeshToPoints"
     node: bpy.types.GeometryNodeMeshToPoints
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        selection: TYPE_INPUT_BOOLEAN = None,
-        position: TYPE_INPUT_VECTOR = None,
-        radius: LINKABLE | None = None,
-        mode: Literal['VERTICES', 'EDGES', 'FACES', 'CORNERS'] | None = None,
-        **kwargs
+        selection: TYPE_INPUT_BOOLEAN = True,
+        position: TYPE_INPUT_VECTOR = [0.0, 0.0, 0.0],
+        radius: LINKABLE | None = 0.05000000074505806,
+        mode: Literal["VERTICES", "EDGES", "FACES", "CORNERS"] = "VERTICES",
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Mesh": mesh, "Selection": selection, "Position": position, "Radius": radius
+            "Mesh": mesh,
+            "Selection": selection,
+            "Position": position,
+            "Radius": radius,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if mode is not None:
             self.node.mode = mode
 
-
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_selection(self) -> bpy.types.NodeSocketBool:
         """Input socket: Selection"""
         return self._input("Selection")
+
     @property
     def i_position(self) -> bpy.types.NodeSocketVector:
         """Input socket: Position"""
         return self._input("Position")
+
     @property
     def i_radius(self) -> NodeSocket:
         """Input socket: Radius"""
@@ -1033,44 +1072,43 @@ class MeshToPoints(NodeBuilder):
         """Output socket: Points"""
         return self._output("Points")
 
-    @property  
-    def mode(self) -> Literal['VERTICES', 'EDGES', 'FACES', 'CORNERS']:
+    @property
+    def mode(self) -> Literal["VERTICES", "EDGES", "FACES", "CORNERS"]:
         return self.node.mode
-        
+
     @mode.setter
-    def mode(self, value: Literal['VERTICES', 'EDGES', 'FACES', 'CORNERS']):
+    def mode(self, value: Literal["VERTICES", "EDGES", "FACES", "CORNERS"]):
         self.node.mode = value
+
 
 class MeshToSdfGrid(NodeBuilder):
     """Create a signed distance volume grid from a mesh"""
-    
+
     name = "GeometryNodeMeshToSDFGrid"
     node: bpy.types.GeometryNodeMeshToSDFGrid
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        voxel_size: LINKABLE | None = None,
-        band_width: int | LINKABLE | None = None,
-        **kwargs
+        voxel_size: LINKABLE | None = 0.30000001192092896,
+        band_width: int | LINKABLE | None = 3,
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Mesh": mesh, "Voxel Size": voxel_size, "Band Width": band_width
-        }
+        key_args = {"Mesh": mesh, "Voxel Size": voxel_size, "Band Width": band_width}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_voxel_size(self) -> NodeSocket:
         """Input socket: Voxel Size"""
         return self._input("Voxel Size")
+
     @property
     def i_band_width(self) -> bpy.types.NodeSocketInt:
         """Input socket: Band Width"""
@@ -1081,43 +1119,49 @@ class MeshToSdfGrid(NodeBuilder):
         """Output socket: SDF Grid"""
         return self._output("SDF Grid")
 
+
 class MeshToVolume(NodeBuilder):
     """Create a fog volume with the shape of the input mesh's surface"""
-    
+
     name = "GeometryNodeMeshToVolume"
     node: bpy.types.GeometryNodeMeshToVolume
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        density: float | LINKABLE | None = None,
-        voxel_amount: float | LINKABLE | None = None,
-        interior_band_width: LINKABLE | None = None,
-        resolution_mode: Literal['VOXEL_AMOUNT', 'VOXEL_SIZE'] | None = None,
-        **kwargs
+        density: float | LINKABLE | None = 1.0,
+        voxel_amount: float | LINKABLE | None = 64.0,
+        interior_band_width: LINKABLE | None = 0.20000000298023224,
+        resolution_mode: Literal["VOXEL_AMOUNT", "VOXEL_SIZE"] = "VOXEL_AMOUNT",
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Mesh": mesh, "Density": density, "Voxel Amount": voxel_amount, "Interior Band Width": interior_band_width
+            "Mesh": mesh,
+            "Density": density,
+            "Voxel Amount": voxel_amount,
+            "Interior Band Width": interior_band_width,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if resolution_mode is not None:
             self.node.resolution_mode = resolution_mode
 
-
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_density(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Density"""
         return self._input("Density")
+
     @property
     def i_voxel_amount(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Voxel Amount"""
         return self._input("Voxel Amount")
+
     @property
     def i_interior_band_width(self) -> NodeSocket:
         """Input socket: Interior Band Width"""
@@ -1128,44 +1172,43 @@ class MeshToVolume(NodeBuilder):
         """Output socket: Volume"""
         return self._output("Volume")
 
-    @property  
-    def resolution_mode(self) -> Literal['VOXEL_AMOUNT', 'VOXEL_SIZE']:
+    @property
+    def resolution_mode(self) -> Literal["VOXEL_AMOUNT", "VOXEL_SIZE"]:
         return self.node.resolution_mode
-        
+
     @resolution_mode.setter
-    def resolution_mode(self, value: Literal['VOXEL_AMOUNT', 'VOXEL_SIZE']):
+    def resolution_mode(self, value: Literal["VOXEL_AMOUNT", "VOXEL_SIZE"]):
         self.node.resolution_mode = value
+
 
 class UvSphere(NodeBuilder):
     """Generate a spherical mesh with quads, except for triangles at the top and bottom"""
-    
+
     name = "GeometryNodeMeshUVSphere"
     node: bpy.types.GeometryNodeMeshUVSphere
 
     def __init__(
         self,
-        segments: int | LINKABLE | None = None,
-        rings: int | LINKABLE | None = None,
-        radius: LINKABLE | None = None,
-        **kwargs
+        segments: int | LINKABLE | None = 32,
+        rings: int | LINKABLE | None = 16,
+        radius: LINKABLE | None = 1.0,
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Segments": segments, "Rings": rings, "Radius": radius
-        }
+        key_args = {"Segments": segments, "Rings": rings, "Radius": radius}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_segments(self) -> bpy.types.NodeSocketInt:
         """Input socket: Segments"""
         return self._input("Segments")
+
     @property
     def i_rings(self) -> bpy.types.NodeSocketInt:
         """Input socket: Rings"""
         return self._input("Rings")
+
     @property
     def i_radius(self) -> NodeSocket:
         """Input socket: Radius"""
@@ -1175,30 +1218,35 @@ class UvSphere(NodeBuilder):
     def o_mesh(self) -> NodeSocket:
         """Output socket: Mesh"""
         return self._output("Mesh")
+
     @property
     def o_uv_map(self) -> bpy.types.NodeSocketVector:
         """Output socket: UV Map"""
         return self._output("UV Map")
 
+
 class SetMeshNormal(NodeBuilder):
     """Store a normal vector for each mesh element"""
-    
+
     name = "GeometryNodeSetMeshNormal"
     node: bpy.types.GeometryNodeSetMeshNormal
 
     def __init__(
         self,
         mesh: LINKABLE = None,
-        remove_custom: TYPE_INPUT_BOOLEAN = None,
-        edge_sharpness: TYPE_INPUT_BOOLEAN = None,
-        face_sharpness: TYPE_INPUT_BOOLEAN = None,
-        mode: Literal['SHARPNESS', 'FREE', 'TANGENT_SPACE'] | None = None,
-        domain: Literal['POINT', 'FACE', 'CORNER'] | None = None,
-        **kwargs
+        remove_custom: TYPE_INPUT_BOOLEAN = True,
+        edge_sharpness: TYPE_INPUT_BOOLEAN = False,
+        face_sharpness: TYPE_INPUT_BOOLEAN = False,
+        mode: Literal["SHARPNESS", "FREE", "TANGENT_SPACE"] = "SHARPNESS",
+        domain: Literal["POINT", "FACE", "CORNER"] = "POINT",
+        **kwargs,
     ):
         super().__init__()
         key_args = {
-            "Mesh": mesh, "Remove Custom": remove_custom, "Edge Sharpness": edge_sharpness, "Face Sharpness": face_sharpness
+            "Mesh": mesh,
+            "Remove Custom": remove_custom,
+            "Edge Sharpness": edge_sharpness,
+            "Face Sharpness": face_sharpness,
         }
         key_args.update(kwargs)
         self._establish_links(**key_args)
@@ -1207,19 +1255,21 @@ class SetMeshNormal(NodeBuilder):
         if domain is not None:
             self.node.domain = domain
 
-
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_remove_custom(self) -> bpy.types.NodeSocketBool:
         """Input socket: Remove Custom"""
         return self._input("Remove Custom")
+
     @property
     def i_edge_sharpness(self) -> bpy.types.NodeSocketBool:
         """Input socket: Edge Sharpness"""
         return self._input("Edge Sharpness")
+
     @property
     def i_face_sharpness(self) -> bpy.types.NodeSocketBool:
         """Input socket: Face Sharpness"""
@@ -1230,46 +1280,42 @@ class SetMeshNormal(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
-    @property  
-    def mode(self) -> Literal['SHARPNESS', 'FREE', 'TANGENT_SPACE']:
+    @property
+    def mode(self) -> Literal["SHARPNESS", "FREE", "TANGENT_SPACE"]:
         return self.node.mode
-        
+
     @mode.setter
-    def mode(self, value: Literal['SHARPNESS', 'FREE', 'TANGENT_SPACE']):
+    def mode(self, value: Literal["SHARPNESS", "FREE", "TANGENT_SPACE"]):
         self.node.mode = value
-    @property  
-    def domain(self) -> Literal['POINT', 'FACE', 'CORNER']:
+
+    @property
+    def domain(self) -> Literal["POINT", "FACE", "CORNER"]:
         return self.node.domain
-        
+
     @domain.setter
-    def domain(self, value: Literal['POINT', 'FACE', 'CORNER']):
+    def domain(self, value: Literal["POINT", "FACE", "CORNER"]):
         self.node.domain = value
+
 
 class SubdivideMesh(NodeBuilder):
     """Divide mesh faces into smaller ones without changing the shape or volume, using linear interpolation to place the new vertices"""
-    
+
     name = "GeometryNodeSubdivideMesh"
     node: bpy.types.GeometryNodeSubdivideMesh
 
     def __init__(
-        self,
-        mesh: LINKABLE = None,
-        level: int | LINKABLE | None = None,
-        **kwargs
+        self, mesh: LINKABLE = None, level: int | LINKABLE | None = 1, **kwargs
     ):
         super().__init__()
-        key_args = {
-            "Mesh": mesh, "Level": level
-        }
+        key_args = {"Mesh": mesh, "Level": level}
         key_args.update(kwargs)
         self._establish_links(**key_args)
-
-
 
     @property
     def i_mesh(self) -> NodeSocket:
         """Input socket: Mesh"""
         return self._input("Mesh")
+
     @property
     def i_level(self) -> bpy.types.NodeSocketInt:
         """Input socket: Level"""
@@ -1280,38 +1326,38 @@ class SubdivideMesh(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
+
 class VolumeToMesh(NodeBuilder):
     """Generate a mesh on the "surface" of a volume"""
-    
+
     name = "GeometryNodeVolumeToMesh"
     node: bpy.types.GeometryNodeVolumeToMesh
 
     def __init__(
         self,
         volume: LINKABLE = None,
-        threshold: float | LINKABLE | None = None,
-        adaptivity: LINKABLE | None = None,
-        resolution_mode: Literal['GRID', 'VOXEL_AMOUNT', 'VOXEL_SIZE'] | None = None,
-        **kwargs
+        threshold: float | LINKABLE | None = 0.10000000149011612,
+        adaptivity: LINKABLE | None = 0.0,
+        resolution_mode: Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"] = "GRID",
+        **kwargs,
     ):
         super().__init__()
-        key_args = {
-            "Volume": volume, "Threshold": threshold, "Adaptivity": adaptivity
-        }
+        key_args = {"Volume": volume, "Threshold": threshold, "Adaptivity": adaptivity}
         key_args.update(kwargs)
         self._establish_links(**key_args)
         if resolution_mode is not None:
             self.node.resolution_mode = resolution_mode
 
-
     @property
     def i_volume(self) -> NodeSocket:
         """Input socket: Volume"""
         return self._input("Volume")
+
     @property
     def i_threshold(self) -> bpy.types.NodeSocketFloat:
         """Input socket: Threshold"""
         return self._input("Threshold")
+
     @property
     def i_adaptivity(self) -> NodeSocket:
         """Input socket: Adaptivity"""
@@ -1322,11 +1368,10 @@ class VolumeToMesh(NodeBuilder):
         """Output socket: Mesh"""
         return self._output("Mesh")
 
-    @property  
-    def resolution_mode(self) -> Literal['GRID', 'VOXEL_AMOUNT', 'VOXEL_SIZE']:
+    @property
+    def resolution_mode(self) -> Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"]:
         return self.node.resolution_mode
-        
-    @resolution_mode.setter
-    def resolution_mode(self, value: Literal['GRID', 'VOXEL_AMOUNT', 'VOXEL_SIZE']):
-        self.node.resolution_mode = value
 
+    @resolution_mode.setter
+    def resolution_mode(self, value: Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"]):
+        self.node.resolution_mode = value
