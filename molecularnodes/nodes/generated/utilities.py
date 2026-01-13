@@ -237,26 +237,6 @@ class Clamp(NodeBuilder):
         return self.node.outputs["Result"]
 
 
-class CombineXyz(NodeBuilder):
-    """Create a vector from X, Y, and Z components"""
-
-    name = "ShaderNodeCombineXYZ"
-
-    def __init__(
-        self,
-        x: float | LINKABLE | None = None,
-        y: float | LINKABLE | None = None,
-        z: float | LINKABLE | None = None,
-    ):
-        super().__init__()
-        self._establish_links(**{"X": x, "Y": y, "Z": z})
-
-    @property
-    def vector(self) -> NodeSocket:
-        """Output socket: Vector"""
-        return self.node.outputs["Vector"]
-
-
 class MapRange(NodeBuilder):
     """Remap a value from a range to a target range"""
 

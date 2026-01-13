@@ -174,6 +174,42 @@ class SeparateXYZ(NodeBuilder):
         return self._output("Z")
 
 
+class CombineXYZ(NodeBuilder):
+    """Create a vector from X, Y, and Z components"""
+
+    name = "ShaderNodeCombineXYZ"
+    node: bpy.types.ShaderNodeCombineXYZ  # type: ignore
+
+    def __init__(
+        self,
+        x: float | LINKABLE = 0.0,
+        y: float | LINKABLE = 0.0,
+        z: float | LINKABLE = 0.0,
+    ):
+        super().__init__()
+        self._establish_links(**{"X": x, "Y": y, "Z": z})
+
+    @property
+    def o_vector(self) -> NodeSocket:
+        """Output socket: Vector"""
+        return self._output("Vector")
+
+    @property
+    def i_x(self) -> NodeSocket:
+        """Input socket: X"""
+        return self._input("X")
+
+    @property
+    def i_y(self) -> NodeSocket:
+        """Input socket: Y"""
+        return self._input("Y")
+
+    @property
+    def i_z(self) -> NodeSocket:
+        """Input socket: Z"""
+        return self._input("Z")
+
+
 _MIX_VALUE_DATA_TYPES = Literal["FLOAT", "VECTOR", "COLOR", "ROTATION"]
 
 

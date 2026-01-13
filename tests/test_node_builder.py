@@ -11,6 +11,7 @@ from numpy.testing import assert_allclose
 from molecularnodes.nodes import generated as n
 from molecularnodes.nodes import sockets
 from molecularnodes.nodes.builder import TreeBuilder
+from molecularnodes.nodes.generated.input import Boolean
 from molecularnodes.nodes.generated.manually_specified import BooleanMath
 
 
@@ -490,9 +491,9 @@ def test_mix_node():
         selection = (
             n.RandomValue.boolean(probability=0.3)
             >> n.BooleanMath.l_not()
-            >> n.BooleanMath.l_and(n.RandomValue.boolean(probability=0.3))
-            >> n.BooleanMath.l_or(n.RandomValue.boolean(probability=0.3))
-            >> n.BooleanMath.l_equal(n.RandomValue.boolean(probability=0.3))
+            >> n.BooleanMath.l_and(n.RandomValue.boolean(probability=0.8))
+            >> n.BooleanMath.l_or(n.RandomValue.boolean(probability=0.5))
+            >> n.BooleanMath.l_equal(n.RandomValue.boolean(probability=0.4))
             >> n.BooleanMath.l_not()
         )
 
