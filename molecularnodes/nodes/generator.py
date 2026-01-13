@@ -47,6 +47,7 @@ class PropertyInfo:
     identifier: str
     name: str
     prop_type: str  # 'ENUM', 'BOOLEAN', 'INT', 'FLOAT', etc.
+    subtype: str | None = None
     enum_items: list[tuple[str, str]] | None = None  # [(identifier, name), ...]
     default: Any = None
 
@@ -331,6 +332,7 @@ def introspect_node(node_type: type) -> NodeInfo | None:
                         identifier=prop.identifier,
                         name=prop.name,
                         prop_type=prop.type,
+                        subtype=prop.subtype,
                         default=prop.default,
                     )
                 )
@@ -488,9 +490,9 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
             case "INT":
                 init_params.append(f"{param_name}: int  = {prop.default}")
             case "FLOAT":
-                init_params.append(f"{param_name}: float  = {prop.default}")
+                init_params.append(f"{param_name}: float = {prop.default}")
             case "STRING":
-                init_params.append(f'{param_name}: str  = "{prop.default}"')
+                init_params.append(f'{param_name}: str = "{prop.default}"')
             case _:
                 init_params.append(f"{param_name}: Any | None = None")
 
@@ -518,17 +520,15 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
             establish_call = f"""        key_args = {{
             {", ".join(link_mappings)}
         }}
-        key_args.update(kwargs)
-        self._establish_links(**key_args)"""
+        key_args.update(kwargs)"""
     else:
-        establish_call = "        self._establish_links(**kwargs)"
+        establish_call = "        key_args = kwargs"
 
     # Build property setting calls
     property_calls = []
     for prop in node_info.properties:
         param_name = normalize_name(prop.identifier)
-        property_calls.append(f"""        if {param_name} is not None:
-            self.node.{prop.identifier} = {param_name}""")
+        property_calls.append(f"""        self.{prop.identifier} = {param_name}""")
 
     property_setting = "\n".join(property_calls) if property_calls else ""
 
@@ -594,14 +594,32 @@ def generate_node_class(node_info: NodeInfo) -> tuple[str, bool]:
     @{prop_name}.setter
     def {prop_name}(self, value: {enum_type}):
         self.node.{prop.identifier} = value""")
-        elif prop.prop_type == "BOOLEAN":
+
+        else:
+            match prop.prop_type:
+                case "BOOLEAN":
+                    type = "bool"
+                case "INT":
+                    type = "int"
+                case "FLOAT":
+                    match prop.subtype:
+                        case "XYZ":
+                            type = "list[float, float, float]"
+                        case "COLOR_GAMMA":
+                            type = "list[float, float, float, float]"
+                        case _:
+                            type = "float"
+                case "STRING":
+                    type = "str"
+                case _:
+                    raise ValueError(f"Unsupported property type: {prop.prop_type}")
             property_accessors.append(f"""
     @property
-    def {prop_name}(self) -> bool:
+    def {prop_name}(self) -> {type}:
         return self.node.{prop.identifier}
 
     @{prop_name}.setter
-    def {prop_name}(self, value: bool):
+    def {prop_name}(self, value: {type}):
         self.node.{prop.identifier} = value""")
 
     # Generate enum convenience methods
@@ -626,6 +644,7 @@ class {class_name}(NodeBuilder):
         super().__init__()
 {establish_call}
 {property_setting}
+        self._establish_links(**key_args)
 {enum_methods}
 {"".join(input_properties)}
 {"".join(output_properties)}

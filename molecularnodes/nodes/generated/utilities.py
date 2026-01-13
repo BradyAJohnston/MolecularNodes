@@ -41,9 +41,8 @@ class CombineColor(NodeBuilder):
         super().__init__()
         key_args = {"Red": red, "Green": green, "Blue": blue, "Alpha": alpha}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_red(self) -> NodeSocket:
@@ -126,13 +125,10 @@ class Compare(NodeBuilder):
         super().__init__()
         key_args = {"A": a, "B": b}
         key_args.update(kwargs)
+        self.operation = operation
+        self.data_type = data_type
+        self.mode = mode
         self._establish_links(**key_args)
-        if operation is not None:
-            self.node.operation = operation
-        if data_type is not None:
-            self.node.data_type = data_type
-        if mode is not None:
-            self.node.mode = mode
 
     @classmethod
     def lessthan(
@@ -313,9 +309,8 @@ class FloatToInteger(NodeBuilder):
         super().__init__()
         key_args = {"Float": float}
         key_args.update(kwargs)
+        self.rounding_mode = rounding_mode
         self._establish_links(**key_args)
-        if rounding_mode is not None:
-            self.node.rounding_mode = rounding_mode
 
     @property
     def i_float(self) -> bpy.types.NodeSocketFloat:
@@ -370,9 +365,8 @@ class HashValue(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Seed": seed}
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_value(self) -> bpy.types.NodeSocketInt:
@@ -459,9 +453,8 @@ class SeparateColor(NodeBuilder):
         super().__init__()
         key_args = {"Color": color}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_color(self) -> bpy.types.NodeSocketColor:
@@ -514,9 +507,8 @@ class Clamp(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Min": min, "Max": max}
         key_args.update(kwargs)
+        self.clamp_type = clamp_type
         self._establish_links(**key_args)
-        if clamp_type is not None:
-            self.node.clamp_type = clamp_type
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -576,13 +568,10 @@ class MapRange(NodeBuilder):
             "To Max": to_max,
         }
         key_args.update(kwargs)
+        self.clamp = clamp
+        self.interpolation_type = interpolation_type
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if clamp is not None:
-            self.node.clamp = clamp
-        if interpolation_type is not None:
-            self.node.interpolation_type = interpolation_type
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -689,9 +678,8 @@ class VectorMath(NodeBuilder):
         super().__init__()
         key_args = {"Vector": vector, "Vector_001": vector_001}
         key_args.update(kwargs)
+        self.operation = operation
         self._establish_links(**key_args)
-        if operation is not None:
-            self.node.operation = operation
 
     @classmethod
     def add(

@@ -50,9 +50,8 @@ class Arc(NodeBuilder):
             "Invert Arc": invert_arc,
         }
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_resolution(self) -> NodeSocket:
@@ -113,6 +112,7 @@ class EndpointSelection(NodeBuilder):
         super().__init__()
         key_args = {"Start Size": start_size, "End Size": end_size}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -144,11 +144,10 @@ class HandleTypeSelection(NodeBuilder):
         **kwargs,
     ):
         super().__init__()
-        self._establish_links(**kwargs)
-        if handle_type is not None:
-            self.node.handle_type = handle_type
-        if mode is not None:
-            self.node.mode = mode
+        key_args = kwargs
+        self.handle_type = handle_type
+        self.mode = mode
+        self._establish_links(**key_args)
 
     @property
     def o_selection(self) -> bpy.types.NodeSocketBool:
@@ -182,6 +181,7 @@ class CurveLength(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -205,6 +205,7 @@ class CurveOfPoint(NodeBuilder):
         super().__init__()
         key_args = {"Point Index": point_index}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -248,9 +249,8 @@ class BézierSegment(NodeBuilder):
             "End": end,
         }
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_resolution(self) -> NodeSocket:
@@ -307,9 +307,8 @@ class CurveCircle(NodeBuilder):
         super().__init__()
         key_args = {"Resolution": resolution, "Radius": radius}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_resolution(self) -> bpy.types.NodeSocketInt:
@@ -351,9 +350,8 @@ class CurveLine(NodeBuilder):
         super().__init__()
         key_args = {"Start": start, "End": end}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_start(self) -> NodeSocket:
@@ -397,9 +395,8 @@ class Quadrilateral(NodeBuilder):
         super().__init__()
         key_args = {"Width": width, "Height": height}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_width(self) -> NodeSocket:
@@ -452,6 +449,7 @@ class QuadraticBézier(NodeBuilder):
             "End": end,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -497,11 +495,9 @@ class SetHandleType(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection}
         key_args.update(kwargs)
+        self.handle_type = handle_type
+        self.mode = mode
         self._establish_links(**key_args)
-        if handle_type is not None:
-            self.node.handle_type = handle_type
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -561,6 +557,7 @@ class Spiral(NodeBuilder):
             "Reverse": reverse,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -615,9 +612,8 @@ class SetSplineType(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection}
         key_args.update(kwargs)
+        self.spline_type = spline_type
         self._establish_links(**key_args)
-        if spline_type is not None:
-            self.node.spline_type = spline_type
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -665,6 +661,7 @@ class Star(NodeBuilder):
             "Twist": twist,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -714,9 +711,8 @@ class CurveToPoints(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Count": count}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -777,6 +773,7 @@ class CurvesToGreasePencil(NodeBuilder):
             "Instances as Layers": instances_as_layers,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -810,6 +807,7 @@ class DeformCurvesOnSurface(NodeBuilder):
         super().__init__()
         key_args = {"Curves": curves}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -843,6 +841,7 @@ class EdgePathsToCurves(NodeBuilder):
             "Next Vertex Index": next_vertex_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -882,9 +881,8 @@ class FillCurve(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Group ID": group_id}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -927,9 +925,8 @@ class FilletCurve(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Radius": radius, "Limit Radius": limit_radius}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -980,6 +977,7 @@ class GreasePencilToCurves(NodeBuilder):
             "Layers as Instances": layers_as_instances,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1013,6 +1011,7 @@ class CurveHandlePositions(NodeBuilder):
         super().__init__()
         key_args = {"Relative": relative}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1039,7 +1038,9 @@ class CurveTilt(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_tilt(self) -> bpy.types.NodeSocketFloat:
@@ -1075,6 +1076,7 @@ class InterpolateCurves(NodeBuilder):
             "Max Neighbors": max_neighbors,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1143,6 +1145,7 @@ class OffsetPointInCurve(NodeBuilder):
         super().__init__()
         key_args = {"Point Index": point_index, "Offset": offset}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1186,6 +1189,7 @@ class PointsOfCurve(NodeBuilder):
             "Sort Index": sort_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1234,6 +1238,7 @@ class PointsToCurves(NodeBuilder):
             "Weight": weight,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1275,11 +1280,9 @@ class ResampleCurve(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection, "Count": count}
         key_args.update(kwargs)
+        self.mode = mode
+        self.keep_last_segment = keep_last_segment
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
-        if keep_last_segment is not None:
-            self.node.keep_last_segment = keep_last_segment
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -1330,6 +1333,7 @@ class ReverseCurve(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1387,13 +1391,10 @@ class SampleCurve(NodeBuilder):
             "Curve Index": curve_index,
         }
         key_args.update(kwargs)
+        self.mode = mode
+        self.use_all_curves = use_all_curves
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
-        if use_all_curves is not None:
-            self.node.use_all_curves = use_all_curves
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_curves(self) -> NodeSocket:
@@ -1516,9 +1517,8 @@ class SetHandlePositions(NodeBuilder):
             "Offset": offset,
         }
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -1570,9 +1570,8 @@ class SetCurveNormal(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -1614,6 +1613,7 @@ class SetCurveRadius(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection, "Radius": radius}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1653,6 +1653,7 @@ class SetCurveTilt(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection, "Tilt": tilt}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1716,15 +1717,11 @@ class StringToCurves(NodeBuilder):
             "Text Box Width": text_box_width,
         }
         key_args.update(kwargs)
+        self.overflow = overflow
+        self.align_x = align_x
+        self.align_y = align_y
+        self.pivot_mode = pivot_mode
         self._establish_links(**key_args)
-        if overflow is not None:
-            self.node.overflow = overflow
-        if align_x is not None:
-            self.node.align_x = align_x
-        if align_y is not None:
-            self.node.align_y = align_y
-        if pivot_mode is not None:
-            self.node.pivot_mode = pivot_mode
 
     @property
     def i_string(self) -> bpy.types.NodeSocketString:
@@ -1842,6 +1839,7 @@ class SubdivideCurve(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Cuts": cuts}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1878,9 +1876,8 @@ class TrimCurve(NodeBuilder):
         super().__init__()
         key_args = {"Curve": curve, "Selection": selection, "Start": start, "End": end}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_curve(self) -> NodeSocket:
@@ -1931,6 +1928,7 @@ class FloatCurve(NodeBuilder):
         super().__init__()
         key_args = {"Factor": factor, "Value": value}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1969,6 +1967,7 @@ class RgbCurves(NodeBuilder):
         super().__init__()
         key_args = {"Fac": fac, "Color": color}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property

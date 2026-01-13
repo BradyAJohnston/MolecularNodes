@@ -40,9 +40,8 @@ class DomainSize(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry}
         key_args.update(kwargs)
+        self.component = component
         self._establish_links(**key_args)
-        if component is not None:
-            self.node.component = component
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -120,11 +119,9 @@ class AttributeStatistic(NodeBuilder):
             "Attribute": attribute,
         }
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -267,9 +264,8 @@ class BlurAttribute(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Iterations": iterations, "Weight": weight}
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -352,11 +348,9 @@ class CaptureAttribute(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "__extend__": extend}
         key_args.update(kwargs)
+        self.active_index = active_index
+        self.domain = domain
         self._establish_links(**key_args)
-        if active_index is not None:
-            self.node.active_index = active_index
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -377,6 +371,14 @@ class CaptureAttribute(NodeBuilder):
     def o_input_socket(self) -> NodeSocket:
         """Output socket:"""
         return self._output("__extend__")
+
+    @property
+    def active_index(self) -> int:
+        return self.node.active_index
+
+    @active_index.setter
+    def active_index(self, value: int):
+        self.node.active_index = value
 
     @property
     def domain(
@@ -421,9 +423,8 @@ class NamedAttribute(NodeBuilder):
         super().__init__()
         key_args = {"Name": name}
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_name(self) -> bpy.types.NodeSocketString:
@@ -498,9 +499,8 @@ class RemoveNamedAttribute(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Name": name}
         key_args.update(kwargs)
+        self.pattern_mode = pattern_mode
         self._establish_links(**key_args)
-        if pattern_mode is not None:
-            self.node.pattern_mode = pattern_mode
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -566,11 +566,9 @@ class StoreNamedAttribute(NodeBuilder):
             "Value": value,
         }
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:

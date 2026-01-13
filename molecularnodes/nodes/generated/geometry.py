@@ -42,11 +42,9 @@ class AccumulateField(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Group Index": group_index}
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -111,9 +109,8 @@ class Bake(NodeBuilder):
         super().__init__()
         key_args = {"Item_0": item_0, "__extend__": extend}
         key_args.update(kwargs)
+        self.active_index = active_index
         self._establish_links(**key_args)
-        if active_index is not None:
-            self.node.active_index = active_index
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -135,6 +132,14 @@ class Bake(NodeBuilder):
         """Output socket:"""
         return self._output("__extend__")
 
+    @property
+    def active_index(self) -> int:
+        return self.node.active_index
+
+    @active_index.setter
+    def active_index(self, value: int):
+        self.node.active_index = value
+
 
 class BoundingBox(NodeBuilder):
     """Calculate the limits of a geometry's positions and generate a box mesh with those dimensions"""
@@ -148,6 +153,7 @@ class BoundingBox(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Use Radius": use_radius}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -186,6 +192,7 @@ class CameraInfo(NodeBuilder):
         super().__init__()
         key_args = {"Camera": camera}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -260,9 +267,8 @@ class CollectionInfo(NodeBuilder):
             "Reset Children": reset_children,
         }
         key_args.update(kwargs)
+        self.transform_space = transform_space
         self._establish_links(**key_args)
-        if transform_space is not None:
-            self.node.transform_space = transform_space
 
     @property
     def i_collection(self) -> bpy.types.NodeSocketCollection:
@@ -303,9 +309,8 @@ class CombineBundle(NodeBuilder):
         super().__init__()
         key_args = {"__extend__": extend}
         key_args.update(kwargs)
+        self.active_index = active_index
         self._establish_links(**key_args)
-        if active_index is not None:
-            self.node.active_index = active_index
 
     @property
     def i_input_socket(self) -> NodeSocket:
@@ -316,6 +321,14 @@ class CombineBundle(NodeBuilder):
     def o_bundle(self) -> NodeSocket:
         """Output socket: Bundle"""
         return self._output("Bundle")
+
+    @property
+    def active_index(self) -> int:
+        return self.node.active_index
+
+    @active_index.setter
+    def active_index(self, value: int):
+        self.node.active_index = value
 
 
 class ConvexHull(NodeBuilder):
@@ -328,6 +341,7 @@ class ConvexHull(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -361,6 +375,7 @@ class CornersOfEdge(NodeBuilder):
             "Sort Index": sort_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -409,6 +424,7 @@ class CornersOfFace(NodeBuilder):
             "Sort Index": sort_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -457,6 +473,7 @@ class CornersOfVertex(NodeBuilder):
             "Sort Index": sort_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -504,11 +521,9 @@ class DeleteGeometry(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection}
         key_args.update(kwargs)
+        self.mode = mode
+        self.domain = domain
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -561,9 +576,8 @@ class DistributePointsInGrid(NodeBuilder):
         super().__init__()
         key_args = {"Grid": grid, "Density": density, "Seed": seed}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_grid(self) -> bpy.types.NodeSocketFloat:
@@ -611,9 +625,8 @@ class DistributePointsInVolume(NodeBuilder):
         super().__init__()
         key_args = {"Volume": volume, "Density": density, "Seed": seed}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_volume(self) -> NodeSocket:
@@ -668,11 +681,9 @@ class DistributePointsOnFaces(NodeBuilder):
             "Seed": seed,
         }
         key_args.update(kwargs)
+        self.distribute_method = distribute_method
+        self.use_legacy_normal = use_legacy_normal
         self._establish_links(**key_args)
-        if distribute_method is not None:
-            self.node.distribute_method = distribute_method
-        if use_legacy_normal is not None:
-            self.node.use_legacy_normal = use_legacy_normal
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -745,9 +756,8 @@ class DuplicateElements(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection, "Amount": amount}
         key_args.update(kwargs)
+        self.domain = domain
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -803,6 +813,7 @@ class EdgePathsToSelection(NodeBuilder):
             "Next Vertex Index": next_vertex_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -831,6 +842,7 @@ class EdgesOfCorner(NodeBuilder):
         super().__init__()
         key_args = {"Corner Index": corner_index}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -869,6 +881,7 @@ class EdgesOfVertex(NodeBuilder):
             "Sort Index": sort_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -907,6 +920,7 @@ class EdgesToFaceGroups(NodeBuilder):
         super().__init__()
         key_args = {"Boundary Edges": boundary_edges}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -930,6 +944,7 @@ class FaceOfCorner(NodeBuilder):
         super().__init__()
         key_args = {"Corner Index": corner_index}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -981,11 +996,9 @@ class EvaluateAtIndex(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Index": index}
         key_args.update(kwargs)
+        self.domain = domain
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -1076,11 +1089,9 @@ class FieldAverage(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Group Index": group_index}
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -1143,11 +1154,9 @@ class FieldMinMax(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Group Index": group_index}
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -1223,11 +1232,9 @@ class EvaluateOnDomain(NodeBuilder):
         super().__init__()
         key_args = {"Value": value}
         key_args.update(kwargs)
+        self.domain = domain
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -1313,11 +1320,9 @@ class FieldVariance(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Group Index": group_index}
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -1373,6 +1378,7 @@ class FlipFaces(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Selection": selection}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1418,17 +1424,12 @@ class ForEachGeometryElementOutput(NodeBuilder):
             "__extend__generation": extend_generation,
         }
         key_args.update(kwargs)
+        self.active_input_index = active_input_index
+        self.active_generation_index = active_generation_index
+        self.active_main_index = active_main_index
+        self.domain = domain
+        self.inspection_index = inspection_index
         self._establish_links(**key_args)
-        if active_input_index is not None:
-            self.node.active_input_index = active_input_index
-        if active_generation_index is not None:
-            self.node.active_generation_index = active_generation_index
-        if active_main_index is not None:
-            self.node.active_main_index = active_main_index
-        if domain is not None:
-            self.node.domain = domain
-        if inspection_index is not None:
-            self.node.inspection_index = inspection_index
 
     @property
     def i_input_socket(self) -> NodeSocket:
@@ -1466,6 +1467,30 @@ class ForEachGeometryElementOutput(NodeBuilder):
         return self._output("__extend__generation")
 
     @property
+    def active_input_index(self) -> int:
+        return self.node.active_input_index
+
+    @active_input_index.setter
+    def active_input_index(self, value: int):
+        self.node.active_input_index = value
+
+    @property
+    def active_generation_index(self) -> int:
+        return self.node.active_generation_index
+
+    @active_generation_index.setter
+    def active_generation_index(self, value: int):
+        self.node.active_generation_index = value
+
+    @property
+    def active_main_index(self) -> int:
+        return self.node.active_main_index
+
+    @active_main_index.setter
+    def active_main_index(self, value: int):
+        self.node.active_main_index = value
+
+    @property
     def domain(
         self,
     ) -> Literal["POINT", "EDGE", "FACE", "CORNER", "CURVE", "INSTANCE", "LAYER"]:
@@ -1478,6 +1503,14 @@ class ForEachGeometryElementOutput(NodeBuilder):
     ):
         self.node.domain = value
 
+    @property
+    def inspection_index(self) -> int:
+        return self.node.inspection_index
+
+    @inspection_index.setter
+    def inspection_index(self, value: int):
+        self.node.inspection_index = value
+
 
 class GeometryToInstance(NodeBuilder):
     """Convert each input geometry into an instance, which can be much faster than the Join Geometry node when the inputs are large"""
@@ -1489,6 +1522,7 @@ class GeometryToInstance(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1537,9 +1571,8 @@ class GetNamedGrid(NodeBuilder):
         super().__init__()
         key_args = {"Volume": volume, "Name": name, "Remove": remove}
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_volume(self) -> NodeSocket:
@@ -1641,9 +1674,8 @@ class DialGizmo(NodeBuilder):
             "Radius": radius,
         }
         key_args.update(kwargs)
+        self.color_id = color_id
         self._establish_links(**key_args)
-        if color_id is not None:
-            self.node.color_id = color_id
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -1702,11 +1734,9 @@ class LinearGizmo(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Position": position, "Direction": direction}
         key_args.update(kwargs)
+        self.color_id = color_id
+        self.draw_style = draw_style
         self._establish_links(**key_args)
-        if color_id is not None:
-            self.node.color_id = color_id
-        if draw_style is not None:
-            self.node.draw_style = draw_style
 
     @property
     def i_value(self) -> bpy.types.NodeSocketFloat:
@@ -1770,25 +1800,16 @@ class TransformGizmo(NodeBuilder):
         super().__init__()
         key_args = {"Value": value, "Position": position, "Rotation": rotation}
         key_args.update(kwargs)
+        self.use_translation_x = use_translation_x
+        self.use_translation_y = use_translation_y
+        self.use_translation_z = use_translation_z
+        self.use_rotation_x = use_rotation_x
+        self.use_rotation_y = use_rotation_y
+        self.use_rotation_z = use_rotation_z
+        self.use_scale_x = use_scale_x
+        self.use_scale_y = use_scale_y
+        self.use_scale_z = use_scale_z
         self._establish_links(**key_args)
-        if use_translation_x is not None:
-            self.node.use_translation_x = use_translation_x
-        if use_translation_y is not None:
-            self.node.use_translation_y = use_translation_y
-        if use_translation_z is not None:
-            self.node.use_translation_z = use_translation_z
-        if use_rotation_x is not None:
-            self.node.use_rotation_x = use_rotation_x
-        if use_rotation_y is not None:
-            self.node.use_rotation_y = use_rotation_y
-        if use_rotation_z is not None:
-            self.node.use_rotation_z = use_rotation_z
-        if use_scale_x is not None:
-            self.node.use_scale_x = use_scale_x
-        if use_scale_y is not None:
-            self.node.use_scale_y = use_scale_y
-        if use_scale_z is not None:
-            self.node.use_scale_z = use_scale_z
 
     @property
     def i_value(self) -> NodeSocket:
@@ -1916,9 +1937,8 @@ class GridInfo(NodeBuilder):
         super().__init__()
         key_args = {"Grid": grid}
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_grid(self) -> bpy.types.NodeSocketFloat:
@@ -1993,7 +2013,9 @@ class Group(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
 
 class ImageInfo(NodeBuilder):
@@ -2008,6 +2030,7 @@ class ImageInfo(NodeBuilder):
         super().__init__()
         key_args = {"Image": image, "Frame": frame}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2064,11 +2087,9 @@ class ImageTexture(NodeBuilder):
         super().__init__()
         key_args = {"Image": image, "Vector": vector, "Frame": frame}
         key_args.update(kwargs)
+        self.interpolation = interpolation
+        self.extension = extension
         self._establish_links(**key_args)
-        if interpolation is not None:
-            self.node.interpolation = interpolation
-        if extension is not None:
-            self.node.extension = extension
 
     @property
     def i_image(self) -> bpy.types.NodeSocketImage:
@@ -2127,6 +2148,7 @@ class ImportCsv(NodeBuilder):
         super().__init__()
         key_args = {"Path": path, "Delimiter": delimiter}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2155,6 +2177,7 @@ class ImportObj(NodeBuilder):
         super().__init__()
         key_args = {"Path": path}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2178,6 +2201,7 @@ class ImportPly(NodeBuilder):
         super().__init__()
         key_args = {"Path": path}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2201,6 +2225,7 @@ class ImportStl(NodeBuilder):
         super().__init__()
         key_args = {"Path": path}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2224,6 +2249,7 @@ class ImportText(NodeBuilder):
         super().__init__()
         key_args = {"Path": path}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2247,6 +2273,7 @@ class ImportVdb(NodeBuilder):
         super().__init__()
         key_args = {"Path": path}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2275,6 +2302,7 @@ class IndexOfNearest(NodeBuilder):
         super().__init__()
         key_args = {"Position": position, "Group ID": group_id}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2339,9 +2367,8 @@ class IndexSwitch(NodeBuilder):
             "__extend__": extend,
         }
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_index(self) -> bpy.types.NodeSocketInt:
@@ -2446,6 +2473,7 @@ class InstanceOnPoints(NodeBuilder):
             "Scale": scale,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2497,7 +2525,9 @@ class InstanceTransform(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_transform(self) -> NodeSocket:
@@ -2528,6 +2558,7 @@ class InstancesToPoints(NodeBuilder):
             "Radius": radius,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2564,7 +2595,9 @@ class IsViewport(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_is_viewport(self) -> bpy.types.NodeSocketBool:
@@ -2582,6 +2615,7 @@ class JoinGeometry(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2605,6 +2639,7 @@ class MaterialSelection(NodeBuilder):
         super().__init__()
         key_args = {"Material": material}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2660,11 +2695,9 @@ class MenuSwitch(NodeBuilder):
             "__extend__": extend,
         }
         key_args.update(kwargs)
+        self.active_index = active_index
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if active_index is not None:
-            self.node.active_index = active_index
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_menu(self) -> NodeSocket:
@@ -2690,6 +2723,14 @@ class MenuSwitch(NodeBuilder):
     def o_output(self) -> NodeSocket:
         """Output socket: Output"""
         return self._output("Output")
+
+    @property
+    def active_index(self) -> int:
+        return self.node.active_index
+
+    @active_index.setter
+    def active_index(self, value: int):
+        self.node.active_index = value
 
     @property
     def data_type(
@@ -2758,9 +2799,8 @@ class MergeByDistance(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection, "Distance": distance}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -2807,9 +2847,8 @@ class MergeLayers(NodeBuilder):
         super().__init__()
         key_args = {"Grease Pencil": grease_pencil, "Selection": selection}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_grease_pencil(self) -> NodeSocket:
@@ -2851,9 +2890,8 @@ class ObjectInfo(NodeBuilder):
         super().__init__()
         key_args = {"Object": object, "As Instance": as_instance}
         key_args.update(kwargs)
+        self.transform_space = transform_space
         self._establish_links(**key_args)
-        if transform_space is not None:
-            self.node.transform_space = transform_space
 
     @property
     def i_object(self) -> bpy.types.NodeSocketObject:
@@ -2914,6 +2952,7 @@ class OffsetCornerInFace(NodeBuilder):
         super().__init__()
         key_args = {"Corner Index": corner_index, "Offset": offset}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2948,6 +2987,7 @@ class Points(NodeBuilder):
         super().__init__()
         key_args = {"Count": count, "Position": position, "Radius": radius}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -2987,6 +3027,7 @@ class PointsToSdfGrid(NodeBuilder):
         super().__init__()
         key_args = {"Points": points, "Radius": radius, "Voxel Size": voxel_size}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -3022,6 +3063,7 @@ class PointsToVertices(NodeBuilder):
         super().__init__()
         key_args = {"Points": points, "Selection": selection}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -3063,9 +3105,8 @@ class PointsToVolume(NodeBuilder):
             "Radius": radius,
         }
         key_args.update(kwargs)
+        self.resolution_mode = resolution_mode
         self._establish_links(**key_args)
-        if resolution_mode is not None:
-            self.node.resolution_mode = resolution_mode
 
     @property
     def i_points(self) -> NodeSocket:
@@ -3124,9 +3165,8 @@ class GeometryProximity(NodeBuilder):
             "Sample Group ID": sample_group_id,
         }
         key_args.update(kwargs)
+        self.target_element = target_element
         self._establish_links(**key_args)
-        if target_element is not None:
-            self.node.target_element = target_element
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -3212,11 +3252,9 @@ class Raycast(NodeBuilder):
             "Ray Length": ray_length,
         }
         key_args.update(kwargs)
+        self.mapping = mapping
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if mapping is not None:
-            self.node.mapping = mapping
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_target_geometry(self) -> NodeSocket:
@@ -3340,6 +3378,7 @@ class RealizeInstances(NodeBuilder):
             "Depth": depth,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -3384,6 +3423,7 @@ class ReplaceMaterial(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Old": old, "New": new}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -3431,6 +3471,7 @@ class RotateInstances(NodeBuilder):
             "Local Space": local_space,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -3480,9 +3521,8 @@ class SdfGridBoolean(NodeBuilder):
         super().__init__()
         key_args = {"Grid 1": grid_1, "Grid 2": grid_2}
         key_args.update(kwargs)
+        self.operation = operation
         self._establish_links(**key_args)
-        if operation is not None:
-            self.node.operation = operation
 
     @classmethod
     def intersect(
@@ -3572,11 +3612,9 @@ class SampleGrid(NodeBuilder):
         super().__init__()
         key_args = {"Grid": grid, "Position": position}
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.interpolation_mode = interpolation_mode
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if interpolation_mode is not None:
-            self.node.interpolation_mode = interpolation_mode
 
     @property
     def i_grid(self) -> bpy.types.NodeSocketFloat:
@@ -3689,9 +3727,8 @@ class SampleGridIndex(NodeBuilder):
         super().__init__()
         key_args = {"Grid": grid, "X": x, "Y": y, "Z": z}
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_grid(self) -> bpy.types.NodeSocketFloat:
@@ -3803,13 +3840,10 @@ class SampleIndex(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Value": value, "Index": index}
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
+        self.clamp = clamp
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
-        if clamp is not None:
-            self.node.clamp = clamp
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -3910,9 +3944,8 @@ class SampleNearest(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Sample Position": sample_position}
         key_args.update(kwargs)
+        self.domain = domain
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -3977,9 +4010,8 @@ class SampleNearestSurface(NodeBuilder):
             "Sample Group ID": sample_group_id,
         }
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -4095,9 +4127,8 @@ class SampleUvSurface(NodeBuilder):
             "Sample UV": sample_uv,
         }
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -4195,11 +4226,9 @@ class ScaleElements(NodeBuilder):
             "Center": center,
         }
         key_args.update(kwargs)
+        self.domain = domain
+        self.scale_mode = scale_mode
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
-        if scale_mode is not None:
-            self.node.scale_mode = scale_mode
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -4267,6 +4296,7 @@ class ScaleInstances(NodeBuilder):
             "Local Space": local_space,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4308,7 +4338,9 @@ class SelfObject(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_self_object(self) -> bpy.types.NodeSocketObject:
@@ -4326,9 +4358,8 @@ class SeparateBundle(NodeBuilder):
         super().__init__()
         key_args = {"Bundle": bundle}
         key_args.update(kwargs)
+        self.active_index = active_index
         self._establish_links(**key_args)
-        if active_index is not None:
-            self.node.active_index = active_index
 
     @property
     def i_bundle(self) -> NodeSocket:
@@ -4339,6 +4370,14 @@ class SeparateBundle(NodeBuilder):
     def o_input_socket(self) -> NodeSocket:
         """Output socket:"""
         return self._output("__extend__")
+
+    @property
+    def active_index(self) -> int:
+        return self.node.active_index
+
+    @active_index.setter
+    def active_index(self, value: int):
+        self.node.active_index = value
 
 
 class SeparateComponents(NodeBuilder):
@@ -4351,6 +4390,7 @@ class SeparateComponents(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4407,9 +4447,8 @@ class SeparateGeometry(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection}
         key_args.update(kwargs)
+        self.domain = domain
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -4454,6 +4493,7 @@ class SetGeometryName(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Name": name}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4500,9 +4540,8 @@ class SetGreasePencilColor(NodeBuilder):
             "Opacity": opacity,
         }
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_grease_pencil(self) -> NodeSocket:
@@ -4553,9 +4592,8 @@ class SetGreasePencilDepth(NodeBuilder):
         super().__init__()
         key_args = {"Grease Pencil": grease_pencil}
         key_args.update(kwargs)
+        self.depth_order = depth_order
         self._establish_links(**key_args)
-        if depth_order is not None:
-            self.node.depth_order = depth_order
 
     @property
     def i_grease_pencil(self) -> NodeSocket:
@@ -4596,6 +4634,7 @@ class SetGreasePencilSoftness(NodeBuilder):
             "Softness": softness,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4635,6 +4674,7 @@ class SetId(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection, "ID": id}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4678,6 +4718,7 @@ class SetInstanceTransform(NodeBuilder):
             "Transform": transform,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4717,6 +4758,7 @@ class SetMaterial(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection, "Material": material}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4760,6 +4802,7 @@ class SetMaterialIndex(NodeBuilder):
             "Material Index": material_index,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4799,6 +4842,7 @@ class SetPointRadius(NodeBuilder):
         super().__init__()
         key_args = {"Points": points, "Selection": selection, "Radius": radius}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4844,6 +4888,7 @@ class SetPosition(NodeBuilder):
             "Offset": offset,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4893,9 +4938,8 @@ class SetShadeSmooth(NodeBuilder):
             "Shade Smooth": shade_smooth,
         }
         key_args.update(kwargs)
+        self.domain = domain
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -4942,6 +4986,7 @@ class SetSplineCyclic(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection, "Cyclic": cyclic}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -4985,6 +5030,7 @@ class SetSplineResolution(NodeBuilder):
             "Resolution": resolution,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -5031,9 +5077,8 @@ class SortElements(NodeBuilder):
             "Sort Weight": sort_weight,
         }
         key_args.update(kwargs)
+        self.domain = domain
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -5077,7 +5122,9 @@ class SplineLength(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_length(self) -> bpy.types.NodeSocketFloat:
@@ -5098,7 +5145,9 @@ class SplineParameter(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_factor(self) -> bpy.types.NodeSocketFloat:
@@ -5128,6 +5177,7 @@ class SplitEdges(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Selection": selection}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -5165,9 +5215,8 @@ class SplitToInstances(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection, "Group ID": group_id}
         key_args.update(kwargs)
+        self.domain = domain
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -5234,9 +5283,8 @@ class StoreNamedGrid(NodeBuilder):
         super().__init__()
         key_args = {"Volume": volume, "Name": name, "Grid": grid}
         key_args.update(kwargs)
+        self.data_type = data_type
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
 
     @property
     def i_volume(self) -> NodeSocket:
@@ -5311,6 +5359,7 @@ class JoinStrings(NodeBuilder):
         super().__init__()
         key_args = {"Delimiter": delimiter, "Strings": strings}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -5362,11 +5411,9 @@ class SubdivisionSurface(NodeBuilder):
             "Limit Surface": limit_surface,
         }
         key_args.update(kwargs)
+        self.uv_smooth = uv_smooth
+        self.boundary_smooth = boundary_smooth
         self._establish_links(**key_args)
-        if uv_smooth is not None:
-            self.node.uv_smooth = uv_smooth
-        if boundary_smooth is not None:
-            self.node.boundary_smooth = boundary_smooth
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -5469,9 +5516,8 @@ class Switch(NodeBuilder):
         super().__init__()
         key_args = {"Switch": switch, "False": false, "True": true}
         key_args.update(kwargs)
+        self.input_type = input_type
         self._establish_links(**key_args)
-        if input_type is not None:
-            self.node.input_type = input_type
 
     @property
     def i_switch(self) -> bpy.types.NodeSocketBool:
@@ -5551,7 +5597,9 @@ class DCursor3(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_location(self) -> NodeSocket:
@@ -5574,9 +5622,9 @@ class ActiveElement(NodeBuilder):
         self, domain: Literal["POINT", "EDGE", "FACE", "LAYER"] = "POINT", **kwargs
     ):
         super().__init__()
-        self._establish_links(**kwargs)
-        if domain is not None:
-            self.node.domain = domain
+        key_args = kwargs
+        self.domain = domain
+        self._establish_links(**key_args)
 
     @property
     def o_index(self) -> bpy.types.NodeSocketInt:
@@ -5605,7 +5653,9 @@ class FaceSet(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_face_set(self) -> bpy.types.NodeSocketInt:
@@ -5626,7 +5676,9 @@ class MousePosition(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_mouse_x(self) -> bpy.types.NodeSocketInt:
@@ -5657,7 +5709,9 @@ class Selection(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_boolean(self) -> bpy.types.NodeSocketBool:
@@ -5686,6 +5740,7 @@ class SetFaceSet(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Selection": selection, "Face Set": face_set}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -5726,11 +5781,9 @@ class SetSelection(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection}
         key_args.update(kwargs)
+        self.domain = domain
+        self.selection_type = selection_type
         self._establish_links(**key_args)
-        if domain is not None:
-            self.node.domain = domain
-        if selection_type is not None:
-            self.node.selection_type = selection_type
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -5787,9 +5840,8 @@ class TransformGeometry(NodeBuilder):
             "Scale": scale,
         }
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -5847,6 +5899,7 @@ class TranslateInstances(NodeBuilder):
             "Local Space": local_space,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -5898,11 +5951,9 @@ class Triangulate(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Selection": selection}
         key_args.update(kwargs)
+        self.quad_method = quad_method
+        self.ngon_method = ngon_method
         self._establish_links(**key_args)
-        if quad_method is not None:
-            self.node.quad_method = quad_method
-        if ngon_method is not None:
-            self.node.ngon_method = ngon_method
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -5971,6 +6022,7 @@ class PackUvIslands(NodeBuilder):
             "Rotate": rotate,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -6022,9 +6074,8 @@ class UvUnwrap(NodeBuilder):
             "Fill Holes": fill_holes,
         }
         key_args.update(kwargs)
+        self.method = method
         self._establish_links(**key_args)
-        if method is not None:
-            self.node.method = method
 
     @property
     def i_selection(self) -> bpy.types.NodeSocketBool:
@@ -6070,6 +6121,7 @@ class VertexOfCorner(NodeBuilder):
         super().__init__()
         key_args = {"Corner Index": corner_index}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -6117,13 +6169,10 @@ class Viewer(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Value": value}
         key_args.update(kwargs)
+        self.data_type = data_type
+        self.domain = domain
+        self.ui_shortcut = ui_shortcut
         self._establish_links(**key_args)
-        if data_type is not None:
-            self.node.data_type = data_type
-        if domain is not None:
-            self.node.domain = domain
-        if ui_shortcut is not None:
-            self.node.ui_shortcut = ui_shortcut
 
     @property
     def i_geometry(self) -> NodeSocket:
@@ -6193,6 +6242,14 @@ class Viewer(NodeBuilder):
     ):
         self.node.domain = value
 
+    @property
+    def ui_shortcut(self) -> int:
+        return self.node.ui_shortcut
+
+    @ui_shortcut.setter
+    def ui_shortcut(self, value: int):
+        self.node.ui_shortcut = value
+
 
 class ViewportTransform(NodeBuilder):
     """Retrieve the view direction and location of the 3D viewport"""
@@ -6202,7 +6259,9 @@ class ViewportTransform(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_projection(self) -> NodeSocket:
@@ -6248,6 +6307,7 @@ class VolumeCube(NodeBuilder):
             "Resolution Z": resolution_z,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -6307,9 +6367,8 @@ class Warning(NodeBuilder):
         super().__init__()
         key_args = {"Show": show, "Message": message}
         key_args.update(kwargs)
+        self.warning_type = warning_type
         self._establish_links(**key_args)
-        if warning_type is not None:
-            self.node.warning_type = warning_type
 
     @property
     def i_show(self) -> bpy.types.NodeSocketBool:

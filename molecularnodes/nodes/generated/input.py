@@ -31,9 +31,9 @@ class Boolean(NodeBuilder):
 
     def __init__(self, boolean: bool = False, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
-        if boolean is not None:
-            self.node.boolean = boolean
+        key_args = kwargs
+        self.boolean = boolean
+        self._establish_links(**key_args)
 
     @property
     def o_boolean(self) -> bpy.types.NodeSocketBool:
@@ -57,14 +57,22 @@ class Color(NodeBuilder):
 
     def __init__(self, value: float = 0.0, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
-        if value is not None:
-            self.node.value = value
+        key_args = kwargs
+        self.value = value
+        self._establish_links(**key_args)
 
     @property
     def o_color(self) -> bpy.types.NodeSocketColor:
         """Output socket: Color"""
         return self._output("Color")
+
+    @property
+    def value(self) -> float:
+        return self.node.value
+
+    @value.setter
+    def value(self, value: float):
+        self.node.value = value
 
 
 class Integer(NodeBuilder):
@@ -75,14 +83,22 @@ class Integer(NodeBuilder):
 
     def __init__(self, integer: int = 1, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
-        if integer is not None:
-            self.node.integer = integer
+        key_args = kwargs
+        self.integer = integer
+        self._establish_links(**key_args)
 
     @property
     def o_integer(self) -> bpy.types.NodeSocketInt:
         """Output socket: Integer"""
         return self._output("Integer")
+
+    @property
+    def integer(self) -> int:
+        return self.node.integer
+
+    @integer.setter
+    def integer(self, value: int):
+        self.node.integer = value
 
 
 class String(NodeBuilder):
@@ -93,14 +109,22 @@ class String(NodeBuilder):
 
     def __init__(self, string: str = "", **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
-        if string is not None:
-            self.node.string = string
+        key_args = kwargs
+        self.string = string
+        self._establish_links(**key_args)
 
     @property
     def o_string(self) -> bpy.types.NodeSocketString:
         """Output socket: String"""
         return self._output("String")
+
+    @property
+    def string(self) -> str:
+        return self.node.string
+
+    @string.setter
+    def string(self, value: str):
+        self.node.string = value
 
 
 class Vector(NodeBuilder):
@@ -111,14 +135,22 @@ class Vector(NodeBuilder):
 
     def __init__(self, vector: float = 0.0, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
-        if vector is not None:
-            self.node.vector = vector
+        key_args = kwargs
+        self.vector = vector
+        self._establish_links(**key_args)
 
     @property
     def o_vector(self) -> bpy.types.NodeSocketVector:
         """Output socket: Vector"""
         return self._output("Vector")
+
+    @property
+    def vector(self) -> list[float, float, float]:
+        return self.node.vector
+
+    @vector.setter
+    def vector(self, value: list[float, float, float]):
+        self.node.vector = value
 
 
 class ForEachGeometryElementInput(NodeBuilder):
@@ -137,6 +169,7 @@ class ForEachGeometryElementInput(NodeBuilder):
         super().__init__()
         key_args = {"Geometry": geometry, "Selection": selection, "__extend__": extend}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -173,7 +206,9 @@ class ActiveCamera(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_active_camera(self) -> bpy.types.NodeSocketObject:
@@ -189,7 +224,9 @@ class Collection(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_collection(self) -> bpy.types.NodeSocketCollection:
@@ -205,7 +242,9 @@ class IsEdgeSmooth(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_smooth(self) -> bpy.types.NodeSocketBool:
@@ -221,7 +260,9 @@ class Id(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_id(self) -> bpy.types.NodeSocketInt:
@@ -237,7 +278,9 @@ class Image(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_image(self) -> bpy.types.NodeSocketImage:
@@ -253,7 +296,9 @@ class Index(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_index(self) -> bpy.types.NodeSocketInt:
@@ -271,6 +316,7 @@ class InstanceBounds(NodeBuilder):
         super().__init__()
         key_args = {"Use Radius": use_radius}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -297,7 +343,9 @@ class InstanceRotation(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_rotation(self) -> bpy.types.NodeSocketRotation:
@@ -313,7 +361,9 @@ class InstanceScale(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_scale(self) -> bpy.types.NodeSocketVector:
@@ -329,7 +379,9 @@ class Material(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_material(self) -> bpy.types.NodeSocketMaterial:
@@ -345,7 +397,9 @@ class MaterialIndex(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_material_index(self) -> bpy.types.NodeSocketInt:
@@ -363,6 +417,7 @@ class NamedLayerSelection(NodeBuilder):
         super().__init__()
         key_args = {"Name": name}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -384,9 +439,9 @@ class Normal(NodeBuilder):
 
     def __init__(self, legacy_corner_normals: bool = False, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
-        if legacy_corner_normals is not None:
-            self.node.legacy_corner_normals = legacy_corner_normals
+        key_args = kwargs
+        self.legacy_corner_normals = legacy_corner_normals
+        self._establish_links(**key_args)
 
     @property
     def o_normal(self) -> bpy.types.NodeSocketVector:
@@ -415,7 +470,9 @@ class Object(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_object(self) -> bpy.types.NodeSocketObject:
@@ -431,7 +488,9 @@ class Position(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_position(self) -> bpy.types.NodeSocketVector:
@@ -447,7 +506,9 @@ class Radius(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_radius(self) -> bpy.types.NodeSocketFloat:
@@ -463,7 +524,9 @@ class SceneTime(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_seconds(self) -> bpy.types.NodeSocketFloat:
@@ -484,7 +547,9 @@ class IsFaceSmooth(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_smooth(self) -> bpy.types.NodeSocketBool:
@@ -507,6 +572,7 @@ class ShortestEdgePaths(NodeBuilder):
         super().__init__()
         key_args = {"End Vertex": end_vertex, "Edge Cost": edge_cost}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -538,7 +604,9 @@ class IsSplineCyclic(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_cyclic(self) -> bpy.types.NodeSocketBool:
@@ -554,7 +622,9 @@ class SplineResolution(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_resolution(self) -> bpy.types.NodeSocketInt:
@@ -570,7 +640,9 @@ class CurveTangent(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_tangent(self) -> bpy.types.NodeSocketVector:
@@ -586,7 +658,9 @@ class Value(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_value(self) -> bpy.types.NodeSocketFloat:

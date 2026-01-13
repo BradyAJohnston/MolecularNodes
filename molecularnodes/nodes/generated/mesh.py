@@ -45,6 +45,7 @@ class CurveToMesh(NodeBuilder):
             "Fill Caps": fill_caps,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -88,6 +89,7 @@ class DualMesh(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Keep Boundaries": keep_boundaries}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -131,9 +133,8 @@ class ExtrudeMesh(NodeBuilder):
             "Individual": individual,
         }
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -200,6 +201,7 @@ class GridToMesh(NodeBuilder):
         super().__init__()
         key_args = {"Grid": grid, "Threshold": threshold, "Adaptivity": adaptivity}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -231,7 +233,9 @@ class EdgeAngle(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_unsigned_angle(self) -> bpy.types.NodeSocketFloat:
@@ -252,7 +256,9 @@ class EdgeNeighbors(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_face_count(self) -> bpy.types.NodeSocketInt:
@@ -268,7 +274,9 @@ class EdgeVertices(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_vertex_index_1(self) -> bpy.types.NodeSocketInt:
@@ -299,7 +307,9 @@ class FaceArea(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_area(self) -> bpy.types.NodeSocketFloat:
@@ -317,6 +327,7 @@ class IsFacePlanar(NodeBuilder):
         super().__init__()
         key_args = {"Threshold": threshold}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -338,7 +349,9 @@ class FaceNeighbors(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_vertex_count(self) -> bpy.types.NodeSocketInt:
@@ -359,7 +372,9 @@ class MeshIsland(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_island_index(self) -> bpy.types.NodeSocketInt:
@@ -380,7 +395,9 @@ class VertexNeighbors(NodeBuilder):
 
     def __init__(self, **kwargs):
         super().__init__()
-        self._establish_links(**kwargs)
+        key_args = kwargs
+
+        self._establish_links(**key_args)
 
     @property
     def o_vertex_count(self) -> bpy.types.NodeSocketInt:
@@ -410,11 +427,9 @@ class MeshBoolean(NodeBuilder):
         super().__init__()
         key_args = {"Mesh 1": mesh_1, "Mesh 2": mesh_2}
         key_args.update(kwargs)
+        self.operation = operation
+        self.solver = solver
         self._establish_links(**key_args)
-        if operation is not None:
-            self.node.operation = operation
-        if solver is not None:
-            self.node.solver = solver
 
     @classmethod
     def intersect(
@@ -483,9 +498,8 @@ class MeshCircle(NodeBuilder):
         super().__init__()
         key_args = {"Vertices": vertices, "Radius": radius}
         key_args.update(kwargs)
+        self.fill_type = fill_type
         self._establish_links(**key_args)
-        if fill_type is not None:
-            self.node.fill_type = fill_type
 
     @property
     def i_vertices(self) -> bpy.types.NodeSocketInt:
@@ -538,9 +552,8 @@ class Cone(NodeBuilder):
             "Depth": depth,
         }
         key_args.update(kwargs)
+        self.fill_type = fill_type
         self._establish_links(**key_args)
-        if fill_type is not None:
-            self.node.fill_type = fill_type
 
     @property
     def i_vertices(self) -> bpy.types.NodeSocketInt:
@@ -628,6 +641,7 @@ class Cube(NodeBuilder):
             "Vertices Z": vertices_z,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -686,9 +700,8 @@ class Cylinder(NodeBuilder):
             "Depth": depth,
         }
         key_args.update(kwargs)
+        self.fill_type = fill_type
         self._establish_links(**key_args)
-        if fill_type is not None:
-            self.node.fill_type = fill_type
 
     @property
     def i_vertices(self) -> bpy.types.NodeSocketInt:
@@ -759,6 +772,7 @@ class FaceGroupBoundaries(NodeBuilder):
         super().__init__()
         key_args = {"Face Set": face_set}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -794,6 +808,7 @@ class Grid(NodeBuilder):
             "Vertices Y": vertices_y,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -842,6 +857,7 @@ class IcoSphere(NodeBuilder):
         super().__init__()
         key_args = {"Radius": radius, "Subdivisions": subdivisions}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -883,11 +899,9 @@ class MeshLine(NodeBuilder):
         super().__init__()
         key_args = {"Count": count, "Start Location": start_location, "Offset": offset}
         key_args.update(kwargs)
+        self.mode = mode
+        self.count_mode = count_mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
-        if count_mode is not None:
-            self.node.count_mode = count_mode
 
     @property
     def i_count(self) -> bpy.types.NodeSocketInt:
@@ -942,9 +956,8 @@ class MeshToCurve(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Selection": selection}
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -992,6 +1005,7 @@ class MeshToDensityGrid(NodeBuilder):
             "Gradient Width": gradient_width,
         }
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1043,9 +1057,8 @@ class MeshToPoints(NodeBuilder):
             "Radius": radius,
         }
         key_args.update(kwargs)
+        self.mode = mode
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -1097,6 +1110,7 @@ class MeshToSdfGrid(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Voxel Size": voxel_size, "Band Width": band_width}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1143,9 +1157,8 @@ class MeshToVolume(NodeBuilder):
             "Interior Band Width": interior_band_width,
         }
         key_args.update(kwargs)
+        self.resolution_mode = resolution_mode
         self._establish_links(**key_args)
-        if resolution_mode is not None:
-            self.node.resolution_mode = resolution_mode
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -1197,6 +1210,7 @@ class UvSphere(NodeBuilder):
         super().__init__()
         key_args = {"Segments": segments, "Rings": rings, "Radius": radius}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1249,11 +1263,9 @@ class SetMeshNormal(NodeBuilder):
             "Face Sharpness": face_sharpness,
         }
         key_args.update(kwargs)
+        self.mode = mode
+        self.domain = domain
         self._establish_links(**key_args)
-        if mode is not None:
-            self.node.mode = mode
-        if domain is not None:
-            self.node.domain = domain
 
     @property
     def i_mesh(self) -> NodeSocket:
@@ -1309,6 +1321,7 @@ class SubdivideMesh(NodeBuilder):
         super().__init__()
         key_args = {"Mesh": mesh, "Level": level}
         key_args.update(kwargs)
+
         self._establish_links(**key_args)
 
     @property
@@ -1344,9 +1357,8 @@ class VolumeToMesh(NodeBuilder):
         super().__init__()
         key_args = {"Volume": volume, "Threshold": threshold, "Adaptivity": adaptivity}
         key_args.update(kwargs)
+        self.resolution_mode = resolution_mode
         self._establish_links(**key_args)
-        if resolution_mode is not None:
-            self.node.resolution_mode = resolution_mode
 
     @property
     def i_volume(self) -> NodeSocket:
