@@ -1,4 +1,3 @@
-from molecularnodes.ui.props import ENTITY_ITEMS
 from pathlib import Path
 import bpy
 import databpy
@@ -11,7 +10,6 @@ from bpy.props import (  # type: ignore
     IntProperty,
     StringProperty,
 )
-from .props import ENTITY_ITEMS, SURFACE_STYLE_ITEMS
 from bpy.types import Context, Operator  # type: ignore
 from .. import entities
 from ..annotations.props import create_annotation_type_inputs
@@ -33,6 +31,7 @@ from ..nodes.geometry import (
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from . import node_info
+from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
 
