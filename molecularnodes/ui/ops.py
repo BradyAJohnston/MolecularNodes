@@ -1,3 +1,4 @@
+from molecularnodes.ui.props import ENTITY_ITEMS
 from pathlib import Path
 import bpy
 import databpy
@@ -10,6 +11,7 @@ from bpy.props import (  # type: ignore
     IntProperty,
     StringProperty,
 )
+from .props import ENTITY_ITEMS, SURFACE_STYLE_ITEMS
 from bpy.types import Context, Operator  # type: ignore
 from .. import entities
 from ..annotations.props import create_annotation_type_inputs
@@ -252,14 +254,26 @@ class MN_OT_Node_Swap(Operator):
         return {"FINISHED"}
 
 
+def _lookup_swap_style_items(self, context: Context | None = None):
+    scene = context.scene
+    entities_active_index: int = scene.mn.entities_active_index
+    uuid: str = scene.mn.entities[entities_active_index].name
+    entity = get_session().get(uuid)
+    print(f"{self}")
+    print(f"{self.name_node=}")
+    return (
+        SURFACE_STYLE_ITEMS if entity._entity_type.value == "density" else STYLE_ITEMS
+    )
+
+
 class MN_OT_Node_Swap_Style_Menu(Operator):
     bl_idname = "mn.node_swap_style_menu"
     bl_label = "Swap Style"
     bl_description = "Swap the style node currently used"
 
-    node_items: EnumProperty(items=STYLE_ITEMS)  # type: ignore
     name_tree: StringProperty()  # type: ignore
     name_node: StringProperty()  # type: ignore
+    node_items: EnumProperty(items=_lookup_swap_style_items)  # type: ignore
 
     def execute(self, context: Context):
         node = bpy.data.node_groups[self.name_tree].nodes[self.name_node]

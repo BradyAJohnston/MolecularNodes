@@ -21,6 +21,40 @@ uuid_property = StringProperty(  # type: ignore
     default="",
 )
 
+ENTITY_ITEMS = (
+    ("None", "None", "Not an MN entity"),
+    ("molecule", "Molecule", "A single molecule"),
+    ("ensemble", "Ensemble", "A collection of molecules"),
+    ("density", "Density", "A density grid"),
+    ("md", "Trajectory", "A molecular dynamics trajectory"),
+    ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
+    (
+        "md-streaming",
+        "Streaming Trajectory",
+        "A streaming IMD molecular dynamics trajectory",
+    ),
+    ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
+    ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
+)
+
+SURFACE_STYLE_ITEMS = (
+    (
+        "density_surface",
+        "Surface",
+        "Style Density Surface",
+    ),
+    # (
+    #     "density_iso_surface",
+    #     "Iso Surface",
+    #     "Style Density ISO Surface",
+    # ),
+    (
+        "density_wire",
+        "Wire",
+        "Style Density Wire",
+    ),
+)
+
 
 def _get_frame(self):
     return self.get("frame", 0)
@@ -431,21 +465,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     entity_type: EnumProperty(  # type: ignore
         name="Entity Type",
         description="How the file was imported, dictating how MN interacts with it",
-        items=(
-            ("None", "None", "Not an MN entity"),
-            ("molecule", "Molecule", "A single molecule"),
-            ("ensemble", "Ensemble", "A collection of molecules"),
-            ("density", "Density", "A density grid"),
-            ("md", "Trajectory", "A molecular dynamics trajectory"),
-            ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
-            (
-                "md-streaming",
-                "Streaming Trajectory",
-                "A streaming IMD molecular dynamics trajectory",
-            ),
-            ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
-            ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
-        ),
+        items=ENTITY_ITEMS,
         default="None",
     )
 

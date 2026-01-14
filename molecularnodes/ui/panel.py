@@ -1150,6 +1150,7 @@ class MN_PT_Annotations(bpy.types.Panel):
         valid_selection = annotations_active_index != -1
 
         layout = self.layout
+        assert layout is not None
         row = layout.row()
         row.prop(object.mn, "annotations_visible", text="Visible")
 
@@ -1181,8 +1182,7 @@ class MN_PT_Annotations(bpy.types.Panel):
             return
 
         item = object.mn_annotations[annotations_active_index]
-        box = layout.box()
-        row = box.row()
+        row = layout.row()
         row.prop(item, "type")
         row.enabled = False
         entity_annotation_type = f"{entity._get_annotation_entity_type()}_{item.type}"
@@ -1190,14 +1190,14 @@ class MN_PT_Annotations(bpy.types.Panel):
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
             if instance._draw_error is not None:
-                row = box.row()
+                row = layout.row()
                 row.alert = True
                 row.label(text=instance._draw_error, icon="ERROR")
 
             for prop_name in inputs.__annotations__.keys():
                 if prop_name == "uuid":
                     continue
-                row = box.row()
+                row = layout.row()
                 nbattr = f"_custom_{prop_name}"  # non blender property
                 if hasattr(instance, nbattr):
                     # indicate use of non blender property in draw
@@ -1208,14 +1208,14 @@ class MN_PT_Annotations(bpy.types.Panel):
                 else:
                     row.alert = True
                     row.prop(inputs, prop_name)
-                    row = box.row()
+                    row = layout.row()
                     row.alert = True
                     row.label(
                         text=instance._invalid_input_messages[prop_name], icon="ERROR"
                     )
 
         # Add all the common annotation params within the 'Options' panel
-        header, panel = box.panel("annotation_options", default_closed=True)
+        header, panel = layout.panel("annotation_options", default_closed=True)
         header.label(text="Options")
 
         if panel:
@@ -1247,8 +1247,6 @@ class MN_PT_Annotations(bpy.types.Panel):
                 elif mesh_panel and prop.identifier.startswith("mesh_"):
                     row = mesh_panel.row()
                     row.prop(item, prop.identifier)
-
-        row = box.row()
 
 
 class MN_PT_Compositor(bpy.types.Panel):
