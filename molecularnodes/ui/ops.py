@@ -31,6 +31,7 @@ from ..nodes.geometry import (
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from . import node_info
+from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
 
@@ -249,6 +250,33 @@ class MN_OT_Node_Swap(Operator):
     def execute(self, context: Context):
         node = context.active_node
         nodes.swap(node, self.node_items)
+        return {"FINISHED"}
+
+
+def _lookup_swap_style_items(self, context: Context | None = None):
+    scene = context.scene
+    entities_active_index: int = scene.mn.entities_active_index
+    uuid: str = scene.mn.entities[entities_active_index].name
+    entity = get_session().get(uuid)
+    print(f"{self}")
+    print(f"{self.name_node=}")
+    return (
+        SURFACE_STYLE_ITEMS if entity._entity_type.value == "density" else STYLE_ITEMS
+    )
+
+
+class MN_OT_Node_Swap_Style_Menu(Operator):
+    bl_idname = "mn.node_swap_style_menu"
+    bl_label = "Swap Style"
+    bl_description = "Swap the style node currently used"
+
+    name_tree: StringProperty()  # type: ignore
+    name_node: StringProperty()  # type: ignore
+    node_items: EnumProperty(items=_lookup_swap_style_items)  # type: ignore
+
+    def execute(self, context: Context):
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_node]
+        nodes.swap(node, tree=nodes.styles_mapping[self.node_items])
         return {"FINISHED"}
 
 
@@ -748,6 +776,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style,
+                selection="all",
             )
         else:
             traj = Trajectory.load(
@@ -755,6 +784,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style if self.setup_nodes else None,
+                selection="all",
             )
 
         context.view_layer.objects.active = traj.object
@@ -800,7 +830,7 @@ class MN_OT_Add_Style(Operator):
 
     bl_idname = "mn.add_style"
     bl_label = "Add Style"
-    bl_description = "Add new style to entity"
+    bl_description = "Add new style to Fpointntity"
 
     uuid: StringProperty()  # type: ignore
 
@@ -836,7 +866,7 @@ class MN_OT_Add_Style(Operator):
     selection: StringProperty(
         name="Selection",
         description="Selection for which the style applies",
-        default="",
+        default="all",
     )  # type: ignore
 
     name: StringProperty(
@@ -1139,6 +1169,7 @@ CLASSES = [
     MN_OT_iswitch_custom,
     MN_OT_Change_Color,
     MN_OT_Node_Swap,
+    MN_OT_Node_Swap_Style_Menu,
     MN_OT_Import_Fetch,
     MN_OT_Import_OxDNA_Trajectory,
     MN_OT_Import_Trajectory,
