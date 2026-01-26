@@ -1,12 +1,14 @@
 import bpy
+from bpy.types import UILayout
 from databpy.object import LinkedObjectError
 from ..blender import IS_BLENDER_5
-from ..entities import StreamingTrajectory, density, trajectory
+from ..entities import StreamingTrajectory, Trajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
 from ..session import get_session
 from .pref import addon_preferences
+from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
 
 
@@ -332,25 +334,35 @@ def ui_from_node(
             col.template_node_view(ntree, node, node.inputs[item.identifier])
 
 
-def panel_md_properties(layout, context):
-    obj = context.active_object
-    session = get_session()
-    traj: trajectory.Trajectory = session.match(obj)
-    traj_is_linked = bool(traj)
-    if traj is not None and not isinstance(traj, trajectory.Trajectory):
-        raise TypeError(f"Expected a trajectory, got {type(traj)}")
+def selection_string_input(layout: bpy.types.UILayout, item: TrajectorySelectionItem):
+    col = layout.column(align=False)
+    col.prop(item, "string")
 
-    col = layout.column()
-    col.enabled = False
-    if not traj_is_linked:
-        col.enabled = True
-        col.label(text="Object not linked to a trajectory, please reload one")
-        col.prop(obj.mn, "filepath_topology")
-        col.prop(obj.mn, "filepath_trajectory")
-        col.operator("mn.reload_trajectory")
-        return None
+    # disable editing for immutable selections
+    # disable modifying updating and periodic
+    if item.from_atomgroup:
+        col.enabled = False
 
-    layout.label(text="Trajectory Playback", icon="OPTIONS")
+    if item.message != "":
+        box = col.box()
+        box.label(text="Invalid Selection", icon="ERROR")
+        box.label(text=item.message)
+        box.alert = True
+        op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
+        op.url = (
+            "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
+        )
+
+
+def layout_trajectory_playback(
+    layout: UILayout, traj: Trajectory, panel: bool = True
+) -> None:
+    if panel:
+        header, layout = layout.panel(idname="layout_playback")
+        header.label(text="Trajectory Playback", icon="OPTIONS")
+        if layout is None:
+            return
+    obj = traj.object
     is_streaming = isinstance(traj, StreamingTrajectory)
 
     if is_streaming:
@@ -387,7 +399,16 @@ def panel_md_properties(layout, context):
     row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
-    layout.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+
+def layout_selection_manage(
+    layout: UILayout, traj: Trajectory, panel: bool = True
+) -> None:
+    if panel:
+        header, layout = layout.panel(idname="selection_panel")
+        header.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+        if layout is None:
+            return
+    obj = traj.object
     row = layout.row()
     row = row.split(factor=0.9)
     row.template_list(
@@ -405,24 +426,29 @@ def panel_md_properties(layout, context):
     if obj.mn_trajectory_selections:
         item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
 
-        col = layout.column(align=False)
-        row = col.row()
-        col.prop(item, "string")
+        selection_string_input(layout, item)
 
-        # disable editing for immutable selections
-        # disable modifying updating and periodic
-        if item.from_atomgroup:
-            col.enabled = False
 
-        if item.message != "":
-            box = col.box()
-            box.label(text="Invalid Selection", icon="ERROR")
-            box.label(text=item.message)
-            box.alert = True
-            op = box.operator("wm.url_open", text="Selection Langauge Docs", icon="URL")
-            op.url = (
-                "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
-            )
+def panel_md_properties(layout, context):
+    obj = context.active_object
+    session = get_session()
+    traj: trajectory.Trajectory = session.match(obj)
+    traj_is_linked = bool(traj)
+    if traj is not None and not isinstance(traj, trajectory.Trajectory):
+        raise TypeError(f"Expected a trajectory, got {type(traj)}")
+
+    col = layout.column()
+    col.enabled = False
+    if not traj_is_linked:
+        col.enabled = True
+        col.label(text="Object not linked to a trajectory, please reload one")
+        col.prop(obj.mn, "filepath_topology")
+        col.prop(obj.mn, "filepath_trajectory")
+        col.operator("mn.reload_trajectory")
+        return None
+
+    layout_trajectory_playback(layout, traj)
+    layout_selection_manage(layout, traj)
 
 
 def panel_object(layout, context):
@@ -701,7 +727,7 @@ class MN_PT_trajectory(bpy.types.Panel):
             return False
 
     def draw(self, context):
-        layout = self.layout
+        layout: UILayout = self.layout
         # To enable the animatate dot next to property in UI
         # layout.use_property_split = True
         # layout.use_property_decorate = True
@@ -710,18 +736,26 @@ class MN_PT_trajectory(bpy.types.Panel):
         uuid = scene.mn.entities[active_index].name
         # Use the object corresponding to the entity
         traj = scene.MNSession.get(uuid)
+
+        layout_trajectory_playback(layout, traj, panel=False)
+        return
+
         object = traj.object
         props = object.mn
-        if traj._entity_type != EntityType.MD_STREAMING:
-            row = layout.row()
-            label = "This trajectory has " + str(props.n_frames) + " frames"
-            row.label(text=label)
-            row = layout.row()
-            row.prop(props, "update_with_scene")
-            box = layout.box()
-            row = box.row()
-            row.prop(props, "frame")
-            box.enabled = not props.update_with_scene
+
+        if traj._entity_type == EntityType.MD_STREAMING:
+            return
+
+        label = "This trajectory has " + str(props.n_frames) + " frames"
+        layout.label(text=label)
+        layout.prop(props, "update_with_scene")
+        row = layout.row()
+        row.prop(props, "frame")
+        row.enabled = not props.update_with_scene
+        col = layout.column(align=True)
+        col.prop(props, "average")
+        col.prop(props, "subframes")
+        col.prop(props, "offset")
 
 
 class MN_PT_trajectory_dssp(bpy.types.Panel):
@@ -820,6 +854,8 @@ class MN_UL_StylesList(bpy.types.UIList):
         index=0,
         flt_flag=0,
     ):
+        item: bpy.types.GeometryNode = item
+        layout: bpy.types.UILayout = layout
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
@@ -828,8 +864,7 @@ class MN_UL_StylesList(bpy.types.UIList):
             col = split.column()
             col.label(text=seqno)
             col = split.column()
-            col.prop(item, "label", placeholder=item.name, text="", emboss=False)
-
+            col.prop(item, "label", text="", emboss=False)
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
                 hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
@@ -863,6 +898,18 @@ class MN_UL_StylesList(bpy.types.UIList):
         if self.use_filter_sort_alpha:
             ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
         return filtered, ordered
+
+
+def panel_selection_node(
+    layout: bpy.types.UILayout, node: bpy.types.GeometryNode, entity
+):
+    sel_node = nodes.get_selection(node)
+    if sel_node is None:
+        return
+    assert isinstance(sel_node, bpy.types.GeometryNodeInputNamedAttribute)
+    attr_name = sel_node.inputs[0].default_value
+    item: TrajectorySelectionItem = entity.selections.ui_items[attr_name]
+    selection_string_input(layout, item)
 
 
 class MN_PT_Styles(bpy.types.Panel):
@@ -940,10 +987,27 @@ class MN_PT_Styles(bpy.types.Panel):
         if not valid_selection:
             return
 
-        row = layout.row()
-        style_node: bpy.types.GeometryNodeGroup = node_group.nodes[styles_active_index]
+        style_node = node_group.nodes[styles_active_index]
+
+        col = layout.column()
+        panel_selection_node(col, style_node, entity)
+        row = col.row()
+        row.label(text="Style")
+        op = row.operator_menu_enum(
+            operator="mn.node_swap_style_menu",
+            property="node_items",
+            text=style_node.node_tree.name.replace("Style ", ""),
+        )
+        op.name_tree = style_node.id_data.name
+        op.name_node = style_node.name
+        col.separator()
 
         panels = {}
+        header, layout = layout.panel(idname="style_properties")
+        header.label(text="Geometry")
+        if layout is None:
+            return
+
         for item in style_node.node_tree.interface.items_tree.values():
             if item.item_type == "PANEL":
                 header = None
@@ -1086,10 +1150,12 @@ class MN_PT_Annotations(bpy.types.Panel):
         valid_selection = annotations_active_index != -1
 
         layout = self.layout
+        assert layout is not None
         row = layout.row()
         row.prop(object.mn, "annotations_visible", text="Visible")
 
         row = layout.row()
+
         MN_UL_AnnotationsList.seqno = 1
         row.template_list(
             "MN_UL_AnnotationsList",
@@ -1116,8 +1182,7 @@ class MN_PT_Annotations(bpy.types.Panel):
             return
 
         item = object.mn_annotations[annotations_active_index]
-        box = layout.box()
-        row = box.row()
+        row = layout.row()
         row.prop(item, "type")
         row.enabled = False
         entity_annotation_type = f"{entity._get_annotation_entity_type()}_{item.type}"
@@ -1125,14 +1190,14 @@ class MN_PT_Annotations(bpy.types.Panel):
         instance = entity.annotations._interfaces.get(inputs.uuid)._instance
         if inputs is not None:
             if instance._draw_error is not None:
-                row = box.row()
+                row = layout.row()
                 row.alert = True
                 row.label(text=instance._draw_error, icon="ERROR")
 
             for prop_name in inputs.__annotations__.keys():
                 if prop_name == "uuid":
                     continue
-                row = box.row()
+                row = layout.row()
                 nbattr = f"_custom_{prop_name}"  # non blender property
                 if hasattr(instance, nbattr):
                     # indicate use of non blender property in draw
@@ -1143,14 +1208,14 @@ class MN_PT_Annotations(bpy.types.Panel):
                 else:
                     row.alert = True
                     row.prop(inputs, prop_name)
-                    row = box.row()
+                    row = layout.row()
                     row.alert = True
                     row.label(
                         text=instance._invalid_input_messages[prop_name], icon="ERROR"
                     )
 
         # Add all the common annotation params within the 'Options' panel
-        header, panel = box.panel("annotation_options", default_closed=True)
+        header, panel = layout.panel("annotation_options", default_closed=True)
         header.label(text="Options")
 
         if panel:
@@ -1182,8 +1247,6 @@ class MN_PT_Annotations(bpy.types.Panel):
                 elif mesh_panel and prop.identifier.startswith("mesh_"):
                     row = mesh_panel.row()
                     row.prop(item, prop.identifier)
-
-        row = box.row()
 
 
 class MN_PT_Compositor(bpy.types.Panel):

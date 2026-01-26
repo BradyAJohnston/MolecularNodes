@@ -112,6 +112,16 @@ def add_selection(group, sel_name, input_list, field="chain_id"):
     return sel_node
 
 
+def get_selection(node: bpy.types.GeometryNode) -> bpy.types.GeometryNode | None:
+    sel_input = node.inputs.get("Selection")
+    if not sel_input:
+        return None
+    try:
+        return sel_input.links[0].from_socket.node  # type: ignore
+    except (KeyError, IndexError):
+        return None
+
+
 def get_output(group) -> bpy.types.GeometryNode:
     return group.nodes[
         bpy.app.translations.pgettext_data(
@@ -386,8 +396,6 @@ def create_starting_nodes_density(
     if threshold_range is not None:
         items_tree[key].min_value = threshold_range[0]
         items_tree[key].max_value = threshold_range[1]
-    # set the label to match node name
-    node_density.label = node_density.name
 
     # add the join geometry node to keep this consistent with style interface
     node_join = group.nodes.new("GeometryNodeJoinGeometry")
@@ -709,31 +717,40 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode
                     node_join.inputs[0],
                 )
     except IndexError:
-        pass
+        link(node_join.outputs[0], node_output.inputs[0])
 
     link(node_join.outputs[0], tree.nodes["Group Output"].inputs[0])
     return node_join
+
+
+def last_node(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
+    output = get_output(tree)
+    try:
+        return output.inputs[0].links[0].from_socket.node  # type: ignore
+    except IndexError:
+        return output
+
+
+def node_previous(node):
+    return node.inputs[0].links[0].from_socket.node
 
 
 def final_join(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
     """
     Get the last JoinGeometry node in the tree.
     """
-    output = get_output(tree)
-    if "Assembly" in output.inputs[0].links[0].from_socket.node.name:
-        if (
-            output.inputs[0].from_socket.node.inputs[0].links[0].from_socket.node.name
-            == "GeometryNodeJoinGeometry"
-        ):
-            return output.inputs[0].from_socket.node.inputs[0].from_socket.node  # type: ignore
+    # output = get_output(tree)
+    current = last_node(tree)
     try:
-        linked = output.inputs[0].links[0].from_socket.node  # type: ignore
-        if linked.bl_idname == "GeometryNodeJoinGeometry":
-            return linked
-        else:
-            return insert_join_last(tree)
-    except IndexError:
-        return insert_join_last(tree)
+        while True:
+            if current.bl_idname == "GeometryNodeGroupInput":
+                raise RuntimeError
+            if current.bl_idname == "GeometryNodeJoinGeometry":
+                return current
+            current = node_previous(current)
+    except (RuntimeError, IndexError):
+        pass
+        # insert_join_last(tree)
 
 
 def loc_between(a: bpy.types.GeometryNode, b: bpy.types.GeometryNode, t=0.5) -> Vector:
