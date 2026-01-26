@@ -12,6 +12,7 @@ dependencies = [
     "PyYAML",
     "imdclient>=0.2.3",
     "ipython>=9.7.0",
+    "pandas<3.0.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11.0"
