@@ -1,10 +1,10 @@
 [project]
 name = "molecularnodes"
-version = "4.5.9"
+version = "4.5.10"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.5.1",
+    "databpy>=0.6.0",
     "mdanalysis>=2.10",
     "biotite>=1.5",
     "mrcfile",
