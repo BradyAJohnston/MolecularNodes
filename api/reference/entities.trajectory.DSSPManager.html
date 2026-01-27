@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>entities.streamingtrajectory – Molecular Nodes</title>
+<title>entities.trajectory.dsspmanager – Molecular Nodes</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,8 +65,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../api/reference/StyleSpheres.html" rel="next">
-<link href="../../api/reference/entities.trajectory.DSSPManager.html" rel="prev">
+<link href="../../api/reference/entities.StreamingTrajectory.html" rel="next">
+<link href="../../api/reference/entities.trajectory.SelectionManager.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -164,7 +164,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/Trajectory.html">Trajectory</a></li><li class="breadcrumb-item"><a href="../../api/reference/entities.StreamingTrajectory.html">entities.StreamingTrajectory</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/Trajectory.html">Trajectory</a></li><li class="breadcrumb-item"><a href="../../api/reference/entities.trajectory.DSSPManager.html">entities.trajectory.DSSPManager</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -335,13 +335,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.DSSPManager.html" class="sidebar-item-text sidebar-link">
+  <a href="../../api/reference/entities.trajectory.DSSPManager.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">entities.trajectory.DSSPManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.StreamingTrajectory</span></a>
   </div>
 </li>
@@ -534,99 +534,31 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#molecularnodes.entities.StreamingTrajectory" id="toc-molecularnodes.entities.StreamingTrajectory" class="nav-link active" data-scroll-target="#molecularnodes.entities.StreamingTrajectory">entities.StreamingTrajectory</a>
+  <li><a href="#molecularnodes.entities.trajectory.DSSPManager" id="toc-molecularnodes.entities.trajectory.DSSPManager" class="nav-link active" data-scroll-target="#molecularnodes.entities.trajectory.DSSPManager">entities.trajectory.DSSPManager</a>
   <ul class="collapse">
-  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
-  <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
   <ul class="collapse">
-  <li><a href="#molecularnodes.entities.StreamingTrajectory.add_style" id="toc-molecularnodes.entities.StreamingTrajectory.add_style" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.add_style">add_style</a></li>
-  <li><a href="#molecularnodes.entities.StreamingTrajectory.create_object" id="toc-molecularnodes.entities.StreamingTrajectory.create_object" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.create_object">create_object</a></li>
-  <li><a href="#molecularnodes.entities.StreamingTrajectory.get_view" id="toc-molecularnodes.entities.StreamingTrajectory.get_view" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.get_view">get_view</a></li>
-  <li><a href="#molecularnodes.entities.StreamingTrajectory.reset_playback" id="toc-molecularnodes.entities.StreamingTrajectory.reset_playback" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.reset_playback">reset_playback</a></li>
-  <li><a href="#molecularnodes.entities.StreamingTrajectory.set_frame" id="toc-molecularnodes.entities.StreamingTrajectory.set_frame" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.set_frame">set_frame</a></li>
+  <li><a href="#molecularnodes.entities.trajectory.DSSPManager.init" id="toc-molecularnodes.entities.trajectory.DSSPManager.init" class="nav-link" data-scroll-target="#molecularnodes.entities.trajectory.DSSPManager.init">init</a></li>
+  <li><a href="#molecularnodes.entities.trajectory.DSSPManager.show_none" id="toc-molecularnodes.entities.trajectory.DSSPManager.show_none" class="nav-link" data-scroll-target="#molecularnodes.entities.trajectory.DSSPManager.show_none">show_none</a></li>
+  <li><a href="#molecularnodes.entities.trajectory.DSSPManager.show_per_frame" id="toc-molecularnodes.entities.trajectory.DSSPManager.show_per_frame" class="nav-link" data-scroll-target="#molecularnodes.entities.trajectory.DSSPManager.show_per_frame">show_per_frame</a></li>
+  <li><a href="#molecularnodes.entities.trajectory.DSSPManager.show_sliding_window_average" id="toc-molecularnodes.entities.trajectory.DSSPManager.show_sliding_window_average" class="nav-link" data-scroll-target="#molecularnodes.entities.trajectory.DSSPManager.show_sliding_window_average">show_sliding_window_average</a></li>
+  <li><a href="#molecularnodes.entities.trajectory.DSSPManager.show_trajectory_average" id="toc-molecularnodes.entities.trajectory.DSSPManager.show_trajectory_average" class="nav-link" data-scroll-target="#molecularnodes.entities.trajectory.DSSPManager.show_trajectory_average">show_trajectory_average</a></li>
   </ul></li>
   </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/Trajectory.html">Trajectory</a></li><li class="breadcrumb-item"><a href="../../api/reference/entities.StreamingTrajectory.html">entities.StreamingTrajectory</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/Trajectory.html">Trajectory</a></li><li class="breadcrumb-item"><a href="../../api/reference/entities.trajectory.DSSPManager.html">entities.trajectory.DSSPManager</a></li></ol></nav></header>
 
 
 
 
-<section id="molecularnodes.entities.StreamingTrajectory" class="level1">
-<h1>entities.StreamingTrajectory</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    universe,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'StreamingTrajectory'</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    create_object<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Trajectory subclass for IMD streaming connections.</p>
-<p>Handles real-time molecular dynamics trajectories streamed via the IMD protocol. Unlike regular trajectories with random frame access, streaming trajectories read frames sequentially as they become available.</p>
-<section id="parameters" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>universe</td>
-<td><code>MDAnalysis</code>.<code>Universe</code></td>
-<td>MDAnalysis Universe with IMD reader</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>Name for the trajectory object, by default “StreamingTrajectory”</td>
-<td><code class="custom-string">'StreamingTrajectory'</code></td>
-</tr>
-<tr class="odd">
-<td>create_object</td>
-<td></td>
-<td>Create the mesh object to be linked to this trajectory</td>
-<td><code class="custom-bool">True</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="attributes" class="level2">
-<h2 class="anchored" data-anchor-id="attributes">Attributes</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.atoms">atoms</a></td>
-<td>All atoms as MDAnalysis AtomGroup.</td>
-</tr>
-<tr class="even">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.n_frames">n_frames</a></td>
-<td>Return None for streaming trajectories (unknown frame count).</td>
-</tr>
-<tr class="odd">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.styles">styles</a></td>
-<td>Get the styles in the tree.</td>
-</tr>
-<tr class="even">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.uframe">uframe</a></td>
-<td>Current frame number in MDAnalysis Universe.</td>
-</tr>
-</tbody>
-</table>
-</section>
+<section id="molecularnodes.entities.trajectory.DSSPManager" class="level1">
+<h1>entities.trajectory.DSSPManager</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>entities.trajectory.DSSPManager(entity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>DSSP Manager for trajectories</p>
+<p>Show secondary structures computed using MDAnalysis.analysis.dssp</p>
 <section id="methods" class="level2">
 <h2 class="anchored" data-anchor-id="methods">Methods</h2>
 <table class="caption-top table">
@@ -638,37 +570,81 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.add_style">add_style</a></td>
-<td>Add a visual style to the trajectory.</td>
+<td><a href="#molecularnodes.entities.trajectory.DSSPManager.init">init</a></td>
+<td>Initialize DSSP</td>
 </tr>
 <tr class="even">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.create_object">create_object</a></td>
-<td>Create and initialize Blender object for trajectory.</td>
+<td><a href="#molecularnodes.entities.trajectory.DSSPManager.show_none">show_none</a></td>
+<td>Do not show secondary structures</td>
 </tr>
 <tr class="odd">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.get_view">get_view</a></td>
-<td>Get the 3D bounding box of a selection within the trajectory</td>
+<td><a href="#molecularnodes.entities.trajectory.DSSPManager.show_per_frame">show_per_frame</a></td>
+<td>Show secondary structures calculated per frame</td>
 </tr>
 <tr class="even">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.reset_playback">reset_playback</a></td>
-<td>Set the playback settings to their default values</td>
+<td><a href="#molecularnodes.entities.trajectory.DSSPManager.show_sliding_window_average">show_sliding_window_average</a></td>
+<td>Show average secondary structures of a sliding window of frames</td>
 </tr>
 <tr class="odd">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.set_frame">set_frame</a></td>
-<td>Update trajectory state for scene frame.</td>
+<td><a href="#molecularnodes.entities.trajectory.DSSPManager.show_trajectory_average">show_trajectory_average</a></td>
+<td>Show average secondary structures across all frames</td>
 </tr>
 </tbody>
 </table>
-<section id="molecularnodes.entities.StreamingTrajectory.add_style" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.add_style">add_style</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.add_style(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    style<span class="op">=</span><span class="st">'spheres'</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'common'</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    material<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Add a visual style to the trajectory.</p>
+<section id="molecularnodes.entities.trajectory.DSSPManager.init" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.trajectory.DSSPManager.init">init</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>entities.trajectory.DSSPManager.init()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Initialize DSSP</p>
+</section>
+<section id="molecularnodes.entities.trajectory.DSSPManager.show_none" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.trajectory.DSSPManager.show_none">show_none</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.trajectory.DSSPManager.show_none()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Do not show secondary structures</p>
+</section>
+<section id="molecularnodes.entities.trajectory.DSSPManager.show_per_frame" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.trajectory.DSSPManager.show_per_frame">show_per_frame</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>entities.trajectory.DSSPManager.show_per_frame()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Show secondary structures calculated per frame</p>
+</section>
+<section id="molecularnodes.entities.trajectory.DSSPManager.show_sliding_window_average" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.trajectory.DSSPManager.show_sliding_window_average">show_sliding_window_average</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>entities.trajectory.DSSPManager.show_sliding_window_average(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    window_size<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    threshold<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Show average secondary structures of a sliding window of frames</p>
+<section id="parameters" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>window_size</td>
+<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td>Size of the sliding window, default is 5 frames</td>
+<td><code>5</code></td>
+</tr>
+<tr class="even">
+<td>threshold</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a> | None</td>
+<td>Threshold to compare the mean against [0.0 - 1.0]. When None, no threshold comparison is made</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.entities.trajectory.DSSPManager.show_trajectory_average" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.trajectory.DSSPManager.show_trajectory_average">show_trajectory_average</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>entities.trajectory.DSSPManager.show_trajectory_average(threshold<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Show average secondary structures across all frames</p>
 <section id="parameters-1" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h4>
 <table class="caption-top table">
@@ -682,193 +658,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>style</td>
-<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.GeometryNodeTree.html#bpy.types.GeometryNodeTree">GeometryNodeTree</a> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>The style to apply to the trajectory. Can be a GeometryNodeTree or a string identifying a predefined style (e.g., “spheres”, “sticks”, “ball_stick”). Default is “spheres”.</td>
-<td><code class="custom-string">'spheres'</code></td>
-</tr>
-<tr class="even">
-<td>color</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
-<td>The coloring scheme to apply. Can be “common” (element-based coloring), “chain”, “residue”, or other supported schemes. If None, no coloring is applied. Default is “common”.</td>
-<td><code class="custom-string">'common'</code></td>
-</tr>
-<tr class="odd">
-<td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | None</td>
-<td>Apply the style only to atoms matching this selection. Can be: - A string referring to an existing boolean attribute on the trajectory - A AtomGroup object defining a selection criteria - None to apply to all atoms (default)</td>
-<td><code class="custom-object">None</code></td>
-</tr>
-<tr class="even">
-<td>material</td>
-<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Material.html#bpy.types.Material">Material</a> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
-<td>The material to apply to the styled atoms. Can be a Blender Material object, a string with a material name, or None to use default materials. Default is None.</td>
-<td><code class="custom-object">None</code></td>
-</tr>
-<tr class="odd">
-<td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
-<td>The label for this style</td>
+<td>threshold</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a> | None</td>
+<td>Threshold to compare the mean against [0.0 - 1.0]. When None, no threshold comparison is made</td>
 <td><code class="custom-object">None</code></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="returns" class="level4 doc-section doc-section-returns">
-<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td><a href="../../api/reference/Trajectory.html#molecularnodes.Trajectory">Trajectory</a></td>
-<td>Returns self for method chaining.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="raises" class="level4 doc-section doc-section-raises">
-<h4 class="doc-section doc-section-raises anchored" data-anchor-id="raises">Raises</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td><a href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></td>
-<td>If an unsupported style string is passed</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="notes" class="level4 doc-section doc-section-notes">
-<h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h4>
-<p>If a selection is provided, it will be evaluated and stored as a new named attribute on the trajectory with an automatically generated name (sel_N).</p>
-</section>
-</section>
-<section id="molecularnodes.entities.StreamingTrajectory.create_object" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.create_object">create_object</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.create_object(name<span class="op">=</span><span class="st">'NewUniverseObject'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Create and initialize Blender object for trajectory.</p>
-<p>Creates mesh, computes attributes, sets up modifiers, registers with MolecularNodes.</p>
-<section id="parameters-2" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>Name for the Blender object</td>
-<td><code>"NewUniverseObject"</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="returns-1" class="level4 doc-section doc-section-returns">
-<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Object.html#bpy.types.Object">Object</a></td>
-<td>Created Blender object</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.entities.StreamingTrajectory.get_view" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.get_view">get_view</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.get_view(selection<span class="op">=</span><span class="va">None</span>, frame<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Get the 3D bounding box of a selection within the trajectory</p>
-<section id="parameters-3" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a></td>
-<td>A selection phrase or AtomGroup When not specified, the whole entity is considered</td>
-<td><code class="custom-object">None</code></td>
-</tr>
-<tr class="even">
-<td>frame</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a> | None</td>
-<td>Frame number of trajectory to use for calculating bounds. When not specified, current trajectory frame is used</td>
-<td><code class="custom-object">None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.entities.StreamingTrajectory.reset_playback" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.reset_playback">reset_playback</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.reset_playback()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Set the playback settings to their default values</p>
-</section>
-<section id="molecularnodes.entities.StreamingTrajectory.set_frame" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.set_frame">set_frame</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.set_frame(frame)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Update trajectory state for scene frame.</p>
-<p>Main entry point called by Blender’s animation system. Updates positions, selections, and calculations with recursion prevention.</p>
-<section id="parameters-4" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>frame</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
-<td>Scene frame number (mapping applied to get Universe frame)</td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="notes-1" class="level4 doc-section doc-section-notes">
-<h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes-1">Notes</h4>
-<p>Typically called automatically by frame change handlers, not user code.</p>
 
 
 </section>
@@ -1278,13 +1074,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../api/reference/entities.trajectory.DSSPManager.html" class="pagination-link" aria-label="entities.trajectory.DSSPManager">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">entities.trajectory.DSSPManager</span>
+      <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="pagination-link" aria-label="entities.trajectory.SelectionManager">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">entities.trajectory.SelectionManager</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../api/reference/StyleSpheres.html" class="pagination-link" aria-label="StyleSpheres">
-        <span class="nav-page-text">StyleSpheres</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../api/reference/entities.StreamingTrajectory.html" class="pagination-link" aria-label="entities.StreamingTrajectory">
+        <span class="nav-page-text">entities.StreamingTrajectory</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -335,6 +335,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.trajectory.DSSPManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.trajectory.DSSPManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.StreamingTrajectory</span></a>
   </div>
@@ -614,59 +620,67 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
+<td><a href="#molecularnodes.annotations.base.BaseAnnotation.bpy_image_to_pil_image">bpy_image_to_pil_image</a></td>
+<td>Convert Blender image to PIL image</td>
+</tr>
+<tr class="even">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.defaults">defaults</a></td>
 <td>Optional method to set default annotation params</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.distance">distance</a></td>
 <td>Distance between two vectors</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw">draw</a></td>
 <td>The main draw method for an annotation</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_bmesh">draw_bmesh</a></td>
 <td>Draw a Blender bmesh</td>
 </tr>
+<tr class="even">
+<td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_bpy_image">draw_bpy_image</a></td>
+<td>Draw an image from bpy.data.images at the given 2D position (normalized</td>
+</tr>
 <tr class="odd">
+<td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_circle_2d">draw_circle_2d</a></td>
+<td>Draw a circle around a 2D point (normalized coordinate) in the viewport space</td>
+</tr>
+<tr class="even">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d">draw_circle_3d</a></td>
 <td>Draw a circle around a 3D point in the plane perpendicular to the</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_cone">draw_cone</a></td>
 <td>Draw a cone</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_cylinder">draw_cylinder</a></td>
 <td>Draw a cylinder</td>
 </tr>
-<tr class="even">
-<td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_line_2d">draw_line_2d</a></td>
-<td>Draw a line between two points in 2D viewport space</td>
-</tr>
 <tr class="odd">
+<td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_line_2d">draw_line_2d</a></td>
+<td>Draw a line between two points (normalized co-ordinates) in 2D viewport space</td>
+</tr>
+<tr class="even">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_line_3d">draw_line_3d</a></td>
 <td>Draw a line between two points in 3D space</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_cylinder">draw_n_sided_cylinder</a></td>
 <td>Draw an n sided cylinder</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_pyramid">draw_n_sided_pyramid</a></td>
 <td>Draw an n sided pyramid</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_sphere">draw_sphere</a></td>
 <td>Draw a sphere</td>
 </tr>
-<tr class="odd">
-<td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d">draw_text_2d</a></td>
-<td>Draw text at a given 2D position (in pixels) of Viewport.</td>
-</tr>
 <tr class="even">
-<td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm">draw_text_2d_norm</a></td>
+<td><a href="#molecularnodes.annotations.base.BaseAnnotation.draw_text_2d">draw_text_2d</a></td>
 <td>Draw text at a given 2D position (normalized co-ordinates) of Viewport.</td>
 </tr>
 <tr class="odd">
@@ -682,22 +696,76 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Draw a Wigner-Seitz cell from triclinic vectors</td>
 </tr>
 <tr class="even">
+<td><a href="#molecularnodes.annotations.base.BaseAnnotation.pil_image_to_bpy_image">pil_image_to_bpy_image</a></td>
+<td>Convert PIL image to Blender image</td>
+</tr>
+<tr class="odd">
 <td><a href="#molecularnodes.annotations.base.BaseAnnotation.validate">validate</a></td>
 <td>Optional method to validate annotation inputs</td>
 </tr>
 </tbody>
 </table>
+<section id="molecularnodes.annotations.base.BaseAnnotation.bpy_image_to_pil_image" class="level5">
+<h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.bpy_image_to_pil_image">bpy_image_to_pil_image</h5>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.bpy_image_to_pil_image(bpy_image)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Convert Blender image to PIL image</p>
+<section id="parameters" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h6>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>bpy_image</td>
+<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Image.html#bpy.types.Image">Image</a></td>
+<td>Blender image</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level6 doc-section doc-section-returns">
+<h6 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h6>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 68%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><code>Image</code>.<code>Image</code></td>
+<td>PIL Image</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.defaults" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.defaults">defaults</h5>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.defaults()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.defaults()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Optional method to set default annotation params This is called only once when the annotation instance is created</p>
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.distance" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.distance">distance</h5>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.distance(v1, v2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.distance(v1, v2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Distance between two vectors</p>
-<section id="parameters" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h6>
+<section id="parameters-1" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -723,8 +791,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="returns" class="level6 doc-section doc-section-returns">
-<h6 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h6>
+<section id="returns-1" class="level6 doc-section doc-section-returns">
+<h6 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -745,15 +813,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw">draw</h5>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The main draw method for an annotation This is called multiple times in the 3D viewport draw handler</p>
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_bmesh" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_bmesh">draw_bmesh</h5>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_bmesh(bm, overrides<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_bmesh(bm, overrides<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a Blender bmesh</p>
-<section id="parameters-1" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h6>
+<section id="parameters-2" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -780,21 +848,129 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.annotations.base.BaseAnnotation.draw_bpy_image" class="level5">
+<h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_bpy_image">draw_bpy_image</h5>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_bpy_image(pos_2d, image, scale<span class="op">=</span><span class="fl">1.0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Draw an image from bpy.data.images at the given 2D position (normalized co-ordinates) of Viewport.</p>
+<section id="parameters-3" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h6>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pos_2d</td>
+<td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a></td>
+<td>Normalized co-ordinates (0 - 1). (0, 0) is at bottom left. Bottom left of the image is placed at this position</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td>image</td>
+<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Image.html#bpy.types.Image">Image</a></td>
+<td>An image from bpy.data.images to draw at specified position</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td>scale</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>Scale of the image to draw</td>
+<td><code>1.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.annotations.base.BaseAnnotation.draw_circle_2d" class="level5">
+<h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_circle_2d">draw_circle_2d</h5>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_circle_2d(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    center,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    radius,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    angle<span class="op">=</span><span class="fl">360.0</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    start_dv<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    c_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    cc_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Draw a circle around a 2D point (normalized coordinate) in the viewport space</p>
+<section id="parameters-4" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h6>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>center</td>
+<td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a></td>
+<td>A 2D co-ordinate of the center. Normalized co-ordinate (0 - 1). (0, 0) is at bottom left</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td>radius</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>The radius of the circle</td>
+<td><em>required</em></td>
+</tr>
+<tr class="odd">
+<td>angle</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
+<td><code>360.0</code></td>
+</tr>
+<tr class="even">
+<td>start_dv</td>
+<td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a></td>
+<td>The direction vector along which to start the circle (arc) If not provided, a random point in the circle plane is chosen</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+<tr class="odd">
+<td>c_arrow</td>
+<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td>Whether to display clockwise arrow. Default is False</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>cc_arrow</td>
+<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td>Whether to display counter clockwise arrow. Default is False</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="odd">
+<td>overrides</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td>Optional dictionary to override common annotation params</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_circle_3d">draw_circle_3d</h5>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_circle_3d(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    center,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    radius,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    normal,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    angle<span class="op">=</span><span class="fl">360.0</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    start_dv<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    c_arrow<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    cc_arrow<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_circle_3d(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    center,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    radius,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    normal<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    angle<span class="op">=</span><span class="fl">360.0</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    start_dv<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    c_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    cc_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a circle around a 3D point in the plane perpendicular to the given normal</p>
-<section id="parameters-2" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h6>
+<section id="parameters-5" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -819,9 +995,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>normal</td>
-<td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a></td>
-<td>The normal vector of the plane on which the cirle is to be drawn</td>
-<td><em>required</em></td>
+<td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a> | None</td>
+<td>The normal vector of the plane on which the cirle is to be drawn. When None, the circle is drawn in the viewport plane</td>
+<td><code class="custom-object">None</code></td>
 </tr>
 <tr class="even">
 <td>angle</td>
@@ -859,17 +1035,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_cone" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_cone">draw_cone</h5>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_cone(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_cone(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a cone</p>
-<section id="parameters-3" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h6>
+<section id="parameters-6" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -922,17 +1098,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_cylinder" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_cylinder">draw_cylinder</h5>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_cylinder(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_cylinder(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a cylinder</p>
-<section id="parameters-4" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h6>
+<section id="parameters-7" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-7">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -985,19 +1161,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_line_2d" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_line_2d">draw_line_2d</h5>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_line_2d(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    v1,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    v2,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    v1_text<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    v2_text<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    mid_text<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    v1_arrow<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    v2_arrow<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Draw a line between two points in 2D viewport space</p>
-<section id="parameters-5" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h6>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_line_2d(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    v1,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    v2,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    v1_text<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    v2_text<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    mid_text<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    v1_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    v2_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Draw a line between two points (normalized co-ordinates) in 2D viewport space</p>
+<section id="parameters-8" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-8">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1011,13 +1187,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td>v1</td>
 <td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a></td>
-<td>2D co-ordinates of the first point</td>
+<td>2D co-ordinates of the first point. Normalized co-ordinate (0 - 1). (0, 0) is at bottom left</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>v2</td>
 <td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a></td>
-<td>2D co-ordinates of the second point</td>
+<td>2D co-ordinates of the second point. Normalized co-ordinate (0 - 1). (0, 0) is at bottom left</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
@@ -1062,19 +1238,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_line_3d" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_line_3d">draw_line_3d</h5>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_line_3d(</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    v1,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    v2,</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    v1_text<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    v2_text<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    mid_text<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    v1_arrow<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    v2_arrow<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_line_3d(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    v1,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    v2,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    v1_text<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    v2_text<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    mid_text<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    v1_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    v2_arrow<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a line between two points in 3D space</p>
-<section id="parameters-6" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h6>
+<section id="parameters-9" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-9">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1139,18 +1315,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_cylinder" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_cylinder">draw_n_sided_cylinder</h5>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_n_sided_cylinder(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    origin<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_n_sided_cylinder(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    origin<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw an n sided cylinder Eg: square, rectangle, triangular prism, cube, cuboid, hexagonal cell etc</p>
-<section id="parameters-7" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-7">Parameters</h6>
+<section id="parameters-10" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-10">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1209,18 +1385,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_pyramid" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_n_sided_pyramid">draw_n_sided_pyramid</h5>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_n_sided_pyramid(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    origin<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_n_sided_pyramid(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    origin<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    cap_ends<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw an n sided pyramid Eg: triangle, prism, square pyramid, pentagonal pyramid, etc</p>
-<section id="parameters-8" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-8">Parameters</h6>
+<section id="parameters-11" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-11">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1279,14 +1455,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_sphere" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_sphere">draw_sphere</h5>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_sphere(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_sphere(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    location<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a sphere</p>
-<section id="parameters-9" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-9">Parameters</h6>
+<section id="parameters-12" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-12">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1321,48 +1497,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_text_2d" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_text_2d">draw_text_2d</h5>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_text_2d(pos_2d, text, overrides<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Draw text at a given 2D position (in pixels) of Viewport.</p>
-<section id="parameters-10" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-10">Parameters</h6>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>pos_2d</td>
-<td><a href="https://docs.blender.org/api/current/mathutils.html#mathutils.Vector">Vector</a></td>
-<td>Co-ordinates in pixels. (0, 0) is at bottom left</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>Text to display. ‘|’ as multi-line separator</td>
-<td><em>required</em></td>
-</tr>
-<tr class="odd">
-<td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
-<td>Optional dictionary to override common annotation params</td>
-<td><code class="custom-object">None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm" class="level5">
-<h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_text_2d_norm">draw_text_2d_norm</h5>
-<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_text_2d_norm(pos_2d, text, overrides<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_text_2d(pos_2d, text, overrides<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw text at a given 2D position (normalized co-ordinates) of Viewport.</p>
-<section id="parameters-11" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-11">Parameters</h6>
+<section id="parameters-13" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-13">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1397,10 +1535,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_text_3d" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_text_3d">draw_text_3d</h5>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_text_3d(pos_3d, text, overrides<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_text_3d(pos_3d, text, overrides<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw text at a given 3D position</p>
-<section id="parameters-12" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-12">Parameters</h6>
+<section id="parameters-14" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-14">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1435,20 +1573,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_triclinic_cell" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_triclinic_cell">draw_triclinic_cell</h5>
-<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_triclinic_cell(</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="fl">10.0</span>,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="fl">10.0</span>,</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="fl">10.0</span>,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">90.0</span>,</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">90.0</span>,</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">90.0</span>,</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    origin<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    show_lattice<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_triclinic_cell(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="fl">10.0</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="fl">10.0</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="fl">10.0</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">90.0</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">90.0</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">90.0</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    origin<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    show_lattice<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a triclinic box based on box vector lengths and angles</p>
-<section id="parameters-13" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-13">Parameters</h6>
+<section id="parameters-15" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-15">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1519,15 +1657,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.draw_wigner_seitz_cell" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.draw_wigner_seitz_cell">draw_wigner_seitz_cell</h5>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_wigner_seitz_cell(</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    triclinic_vectors,</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    center_to_origin<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    show_lattice<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.draw_wigner_seitz_cell(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    triclinic_vectors,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    center_to_origin<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    show_lattice<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    overrides<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Draw a Wigner-Seitz cell from triclinic vectors</p>
-<section id="parameters-14" class="level6 doc-section doc-section-parameters">
-<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-14">Parameters</h6>
+<section id="parameters-16" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-16">Parameters</h6>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1566,13 +1704,88 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.annotations.base.BaseAnnotation.pil_image_to_bpy_image" class="level5">
+<h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.pil_image_to_bpy_image">pil_image_to_bpy_image</h5>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.pil_image_to_bpy_image(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    pil_image,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'PIL Image'</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Convert PIL image to Blender image</p>
+<section id="parameters-17" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-17">Parameters</h6>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>pil_image</td>
+<td><code>Image</code>.<code>Image</code></td>
+<td>PIL Image</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
+<td><code class="custom-string">'PIL Image'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-2" class="level6 doc-section doc-section-returns">
+<h6 class="doc-section doc-section-returns anchored" data-anchor-id="returns-2">Returns</h6>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Image.html#bpy.types.Image">Image</a></td>
+<td>Blender Image</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.annotations.base.BaseAnnotation.validate" class="level5">
 <h5 class="anchored" data-anchor-id="molecularnodes.annotations.base.BaseAnnotation.validate">validate</h5>
-<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.validate()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>annotations.base.BaseAnnotation.validate(input_name<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Optional method to validate annotation inputs This is called during annotation creation and any time the inputs change either through the API or GUI. Can return False or raise an exception when validation fails. Returns True when all validations succeed.</p>
 <p>Note: This method gets called when any inputs change, so updating values in here will lead to a recursive loop and should not be done.</p>
+<section id="parameters-18" class="level6 doc-section doc-section-parameters">
+<h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-18">Parameters</h6>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>input_name</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td>The input name update that trigged this validation callback. When no specific input name is available, None is passed.</td>
+<td><code class="custom-object">None</code></td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 </section>
 </section>
 </section>
