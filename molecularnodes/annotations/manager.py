@@ -65,7 +65,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     annotation classes, instances and interfaces
 
     Entities that need annotation support have to derive from this base class and
-    set the class attribute _entity_type to the entity tpye, the class attribute
+    set the class attribute _entity_type to the entity type, the class attribute
     '_classes' and instance attribute '_interfaces' to empty dictionaries. Derived
     classes will have to pass the entity instance as part of its '__init__' as well.
 
@@ -164,7 +164,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
         # Add a dynamic wrapper to ensure custom signature is retained
         def dynamic_wrapper(cls, annotation_class, **kwargs):
-            return cls._create_annotation_instance(annotation_class, **kwargs)
+            return cls._create_annotation_instance(annotation_class, None, **kwargs)
 
         method = functools.partialmethod(dynamic_wrapper, annotation_class)
         parameters = [
@@ -305,16 +305,16 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             raise ValueError("draw method not found in class")
 
     def _create_annotation_instance(
-        self, annotation_class: BaseAnnotation, **kwargs
+        self, annotation_class: BaseAnnotation, prop=None, **kwargs
     ) -> AnnotationInterface:
         """
         Create annotation instance and return a dynamic Annotation Interface
 
         This is the method that is bound to the 'add_<annotation_type>' methods
         of the manager. This method is responsible for creating the actual
-        annotation instance, creating a Geometry Node with inputs that match the
-        annotation type and creating an interface that binds the properties to
-        the corresponding Annotation Geometry Node inputs.
+        annotation instance, creating properties that match the annotation type
+        and creating an interface that binds the properties to the corresponding
+        annotation instance.
 
         """
         # validations for required and invalid inputs
@@ -363,30 +363,33 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 raise ValueError("Invalid annotation inputs")
         # only after all validations pass start doing real stuff like creating
         # properties and adding to the interface list
-        uuid = str(uuid1())
+        new_prop = prop is None
+        uuid = str(uuid1()) if new_prop else prop.name
         # add the new interface to the entity specific interfaces registry
         self._interfaces[uuid] = interface
         # create a new annotation property
         object = self._entity.object
-        prop = object.mn_annotations.add()
-        # use the instance uuid as name for later lookups using find()
-        prop.name = uuid
-        prop.type = annotation_class.annotation_type
+        if new_prop:
+            prop = object.mn_annotations.add()
+            # use the instance uuid as name for later lookups using find()
+            prop.name = uuid
+            prop.type = annotation_class.annotation_type
         # set the annotations active index for GUI
         object.mn.annotations_active_index = len(object.mn_annotations) - 1
         # add the uuid as internal attribute
         # _uuid will be used to lookup this interface in the interfaces registry
         setattr(interface, "_uuid", uuid)
         # set the annotation name and create property interface
-        value = kwargs.get("name", None)
-        if value is not None:
-            setattr(prop, "label", value)
-        else:
-            if object.mn.annotations_next_index:
-                prop.label = f"Annotation.{object.mn.annotations_next_index:03d}"
+        if new_prop:
+            value = kwargs.get("name", None)
+            if value is not None:
+                setattr(prop, "label", value)
             else:
-                prop.label = "Annotation"
-            object.mn.annotations_next_index += 1
+                if object.mn.annotations_next_index:
+                    prop.label = f"Annotation.{object.mn.annotations_next_index:03d}"
+                else:
+                    prop.label = "Annotation"
+                object.mn.annotations_next_index += 1
         prop_interface = create_property_interface(self._entity, uuid, "label")
         setattr(interface.__class__, "name", prop_interface)
         # iterate though all the annotation inputs, set passed values and
@@ -410,13 +413,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                     entity_annotation_type,
                 )
                 setattr(interface.__class__, attr, prop_interface)
-                # set the input value based on what is passed
-                # if input value is not passed, use the value from the annotation class
-                value = kwargs.get(attr, None)
-                if value is None:
-                    value = getattr(annotation_class, attr, None)
-                if value is not None:
-                    setattr(interface, attr, value)
+                if new_prop:
+                    # set the input value based on what is passed
+                    # if input value is not passed, use the value from the annotation class
+                    value = kwargs.get(attr, None)
+                    if value is None:
+                        value = getattr(annotation_class, attr, None)
+                    if value is not None:
+                        setattr(interface, attr, value)
         # create property interfaces for the common annotation params
         for item in prop.bl_rna.properties:
             if not item.is_runtime:
@@ -446,6 +450,18 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         viewport_tag_redraw()
         # return the newly created dynamic annotation interface
         return interface
+
+    def _restore_annotation_instances_from_props(self) -> None:
+        """
+        Recreate annotation instances from existing properties after unpickling
+        """
+        try:
+            object = self._entity.object
+        except LinkedObjectError:
+            return
+        for prop in object.mn_annotations:
+            annotation_class = self._classes[prop.type]
+            self._create_annotation_instance(annotation_class, prop)
 
     def _remove_annotation_instance(self, instance) -> None:
         """Actual method to remove annotation instance"""
@@ -535,7 +551,10 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # check if object is in current scene
         if self._scene is None:
             self._scene = bpy.context.scene
-        if object.name not in self._scene.objects:
+        try:
+            if object.name not in self._scene.objects:
+                return
+        except ReferenceError:
             return
         if get_geometry:
             # geometry of lines and bmesh objects

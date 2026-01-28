@@ -43,6 +43,7 @@ class DensityAnnotationManager(BaseAnnotationManager):
     def __init__(self, entity):
         super().__init__(entity)
         self._interfaces = {}  # Entity instance specific annotation interfaces
+        self._restore_annotation_instances_from_props()
 
 
 class DensityInfo(DensityAnnotation):
