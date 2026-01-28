@@ -1,5 +1,6 @@
 import os
 import pickle as pk
+from contextlib import chdir
 from typing import Dict, Union
 import bpy
 import MDAnalysis as mda
@@ -317,7 +318,8 @@ def get_entity(context: Context | None = None) -> Molecule | Trajectory | Ensemb
 
 @persistent
 def _pickle(filepath) -> None:
-    get_session().pickle(filepath)
+    with chdir(os.path.dirname(filepath)):
+        get_session().pickle(filepath)
 
 
 @persistent
@@ -350,7 +352,8 @@ def _load(filepath: str, printing: str = "quiet") -> None:
     if filepath == "":
         return None
     try:
-        get_session().load(filepath)
+        with chdir(os.path.dirname(filepath)):
+            get_session().load(filepath)
     except FileNotFoundError:
         if printing == "verbose":
             print("No MNSession found to load for this .blend file.")
