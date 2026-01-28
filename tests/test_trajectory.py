@@ -272,9 +272,13 @@ class TestTrajectory:
         self,
         snapshot_custom: NumpySnapshotExtension,
         tmp_path,
-        universe,
         session: mn.session.MNSession,
     ):
+        # Load a new universe instead of a using the fixture as
+        # this test modifies the filepaths in the universe
+        top = data_dir / "md_ppr/box.gro"
+        traj = data_dir / "md_ppr/first_5_frames.xtc"
+        universe = mda.Universe(top, traj)
         traj = mn.entities.Trajectory(universe)
         traj.reset_playback()
         uuid = traj.uuid

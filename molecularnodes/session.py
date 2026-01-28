@@ -34,30 +34,12 @@ def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
         traj._save_filepaths_on_object()
 
 
-def trim_root_folder(filename):
-    "Remove one of the prefix folders from a filepath"
-    return os.sep.join(filename.split(os.sep)[1:])
-
-
 def make_path_relative(filepath):
     "Take a path and make it relative, in an actually usable way"
     try:
-        filepath = os.path.relpath(filepath)
+        return os.path.relpath(filepath)
     except ValueError:
         return filepath
-
-    # count the number of "../../../" there are to remove
-    n_to_remove = int(filepath.count("..") - 2)
-    # get the filepath without the huge number of "../../../../" at the start
-    sans_relative = filepath.split("..")[-1]
-
-    if n_to_remove < 1:
-        return filepath
-
-    for i in range(n_to_remove):
-        sans_relative = trim_root_folder(sans_relative)
-
-    return f"./{sans_relative}"
 
 
 class MNSession:
