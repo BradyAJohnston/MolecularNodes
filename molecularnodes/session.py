@@ -1,6 +1,5 @@
 import os
 import pickle as pk
-from contextlib import chdir
 from typing import Dict, Union
 import bpy
 import MDAnalysis as mda
@@ -138,6 +137,7 @@ class MNSession:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
 
     def pickle(self, filepath) -> None:
+        os.chdir(os.path.dirname(filepath))
         pickle_path = self.stashpath(filepath)
 
         make_paths_relative(self.trajectories)
@@ -153,6 +153,7 @@ class MNSession:
         print(f"Saved session to: {pickle_path}")
 
     def load(self, filepath) -> None:
+        os.chdir(os.path.dirname(filepath))
         pickle_path = self.stashpath(filepath)
         if not os.path.exists(pickle_path):
             raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
@@ -300,8 +301,7 @@ def get_entity(context: Context | None = None) -> Molecule | Trajectory | Ensemb
 
 @persistent
 def _pickle(filepath) -> None:
-    with chdir(os.path.dirname(filepath)):
-        get_session().pickle(filepath)
+    get_session().pickle(filepath)
 
 
 @persistent
@@ -334,8 +334,7 @@ def _load(filepath: str, printing: str = "quiet") -> None:
     if filepath == "":
         return None
     try:
-        with chdir(os.path.dirname(filepath)):
-            get_session().load(filepath)
+        get_session().load(filepath)
     except FileNotFoundError:
         if printing == "verbose":
             print("No MNSession found to load for this .blend file.")
