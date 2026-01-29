@@ -317,16 +317,18 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         annotation instance.
 
         """
+        new_prop = prop is None
         # validations for required and invalid inputs
         py_annotations = get_all_class_annotations(annotation_class)
-        for attr in py_annotations.keys():
-            if not hasattr(annotation_class, attr) and attr not in kwargs:
-                raise ValueError(f"{attr} is a required parameter")
-        for attr in kwargs.keys():
-            if attr not in py_annotations:
-                raise ValueError(
-                    f"Unknown input {attr}. Valid values are {py_annotations}"
-                )
+        if new_prop:
+            for attr in py_annotations.keys():
+                if not hasattr(annotation_class, attr) and attr not in kwargs:
+                    raise ValueError(f"{attr} is a required parameter")
+            for attr in kwargs.keys():
+                if attr not in py_annotations:
+                    raise ValueError(
+                        f"Unknown input {attr}. Valid values are {py_annotations}"
+                    )
         # create an annotations instance
         annotation_instance = annotation_class(self._entity)
         # create a new dynamic interface class
@@ -338,6 +340,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         setattr(annotation_instance, "interface", interface)
         # instance is ready only after all the property interfaces are created
         setattr(annotation_instance, "_ready", False)
+        setattr(annotation_instance, "_update_props", True)
         # array of invalid inputs
         setattr(annotation_instance, "_invalid_inputs", [])
         # dict of invalid input messages
@@ -353,7 +356,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             for attr in py_annotations.keys():
                 # set the input value based on what is passed
                 # if input value is not passed, use the value from the annotation class
-                value = kwargs.get(attr, None)
+                if new_prop:
+                    value = kwargs.get(attr, None)
+                else:
+                    entity_annotation_type = f"{self._entity_type.value}_{prop.type}"
+                    inputs = getattr(prop, entity_annotation_type, None)
+                    value = None if inputs is None else getattr(inputs, attr, None)
                 if value is None:
                     value = getattr(annotation_class, attr, None)
                 if value is not None:
@@ -363,8 +371,10 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 raise ValueError("Invalid annotation inputs")
         # only after all validations pass start doing real stuff like creating
         # properties and adding to the interface list
-        new_prop = prop is None
         uuid = str(uuid1()) if new_prop else prop.name
+        # add the uuid as internal attribute
+        # _uuid will be used to lookup this interface in the interfaces registry
+        setattr(interface, "_uuid", uuid)
         # add the new interface to the entity specific interfaces registry
         self._interfaces[uuid] = interface
         # create a new annotation property
@@ -374,13 +384,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             # use the instance uuid as name for later lookups using find()
             prop.name = uuid
             prop.type = annotation_class.annotation_type
-        # set the annotations active index for GUI
-        object.mn.annotations_active_index = len(object.mn_annotations) - 1
-        # add the uuid as internal attribute
-        # _uuid will be used to lookup this interface in the interfaces registry
-        setattr(interface, "_uuid", uuid)
-        # set the annotation name and create property interface
-        if new_prop:
+            # set the annotations active index for GUI
+            object.mn.annotations_active_index = len(object.mn_annotations) - 1
+            # set the annotation name
             value = kwargs.get("name", None)
             if value is not None:
                 setattr(prop, "label", value)
@@ -390,7 +396,10 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 else:
                     prop.label = "Annotation"
                 object.mn.annotations_next_index += 1
-        prop_interface = create_property_interface(self._entity, uuid, "label")
+        # create property interface
+        prop_interface = create_property_interface(
+            self._entity, annotation_instance, uuid, "label"
+        )
         setattr(interface.__class__, "name", prop_interface)
         # iterate though all the annotation inputs, set passed values and
         # create property interfaces
@@ -406,10 +415,10 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 stype = get_blender_supported_type(atype)
                 prop_interface = create_property_interface(
                     self._entity,
+                    annotation_instance,
                     uuid,
                     attr,
                     stype,
-                    annotation_instance,
                     entity_annotation_type,
                 )
                 setattr(interface.__class__, attr, prop_interface)
@@ -430,18 +439,25 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 continue
             if item.type == "POINTER" and prop_path != "mesh_material":
                 continue
-            prop_interface = create_property_interface(self._entity, uuid, prop_path)
+            prop_interface = create_property_interface(
+                self._entity, annotation_instance, uuid, prop_path
+            )
             setattr(interface.__class__, prop_path, prop_interface)
         # call the defaults method in the annotation class if specified
         if hasattr(annotation_instance, "defaults") and callable(
             getattr(annotation_instance, "defaults")
         ):
+            if not new_prop:
+                # don't update props during defaults() call for existing ones
+                annotation_instance._update_props = False
             annotation_instance.defaults()
+            annotation_instance._update_props = True
         # material default needs to be set explicitly
-        material = "MN Default"
-        if material not in bpy.data.materials:
-            append_material(material)
-        interface.mesh_material = material
+        if new_prop:
+            material = "MN Default"
+            if material not in bpy.data.materials:
+                append_material(material)
+            interface.mesh_material = material
         # update annotation object
         self._update_annotation_object()
         # mark instance ready for object updates from property callbacks

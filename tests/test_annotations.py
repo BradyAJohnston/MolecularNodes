@@ -549,8 +549,17 @@ class TestAnnotations:
 
     def test_md_pickling(self, universe):
         e = mn.Trajectory(universe, name="TestUniverse")
-        ant = e.annotations.add_universe_info()
-        ant.show_frame = False
+        # no inputs
+        ant1 = e.annotations.add_universe_info()
+        ant1.show_frame = False
+        # optional inputs
+        ant2 = e.annotations.add_atom_info(selection="resid 1")
+        ant2.text_size = 20
+        ant2.text_color = (1.0, 1.0, 0.0, 1.0)
+        # required inputs
+        ant3 = e.annotations.add_canonical_dihedrals(resid=1)
+        # change input
+        ant3.resid = 2
         with tempfile.NamedTemporaryFile() as tmp_file:
             try:
                 # test pickling
@@ -560,9 +569,14 @@ class TestAnnotations:
                 tmp_file.seek(0)
                 re = pickle.load(tmp_file)
                 # verify
-                assert len(re.annotations) == 1
-                ant = re.annotations[0]
-                assert not ant.show_frame
+                assert len(re.annotations) == 3
+                ant1 = re.annotations[0]
+                assert not ant1.show_frame
+                ant2 = re.annotations[1]
+                assert ant2.text_size == 20
+                assert tuple(ant2.text_color) == (1.0, 1.0, 0.0, 1.0)
+                ant3 = re.annotations[2]
+                assert ant3.resid == 2
             except TypeError as ex:
                 if "cannot pickle 'PyCapsule' object" in str(ex):
                     pytest.fail(f"PyCapsule pickle error not fixed: {ex}")
