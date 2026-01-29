@@ -6,6 +6,7 @@ from uuid import uuid1
 import bpy
 import databpy as db
 import numpy as np
+from bpy.app.handlers import persistent  # type: ignore
 from databpy.object import LinkedObjectError
 from mathutils import Vector
 from ..blender import coll
@@ -29,6 +30,11 @@ from .utils import (
     get_view_matrix,
     is_perspective_projection,
 )
+
+
+@persistent
+def _load_pre_handler(filepath: str) -> None:
+    BaseAnnotationManager._clear_draw_handlers()
 
 
 def _validate_annotation_update(self, context, attr):
@@ -78,6 +84,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
     _entity_type = None  # Derived classes need to specify
     _classes = {}  # All annotation classes across all entities
+    _draw_handlers = {}  # All draw handlers across all entities
 
     def __init__(self, entity):
         # Access to the entity to which this manager is attached
@@ -133,6 +140,13 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """Set state when unpickling this object"""
         self.__dict__.update(state)
         self._scene = None
+
+    @classmethod
+    def _clear_draw_handlers(cls) -> None:
+        # clear any existing annotation draw handlers
+        for _, handler in BaseAnnotationManager._draw_handlers.items():
+            bpy.types.SpaceView3D.draw_handler_remove(handler, "WINDOW")
+        BaseAnnotationManager._draw_handlers = {}
 
     @classmethod
     def register_class(cls, annotation_class) -> None:
@@ -511,6 +525,9 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             "WINDOW",
             "POST_PIXEL",
         )
+        BaseAnnotationManager._draw_handlers[self._entity_type.value] = (
+            self._draw_handler
+        )
         self._redraw()
 
     def _draw_handler_remove(self):
@@ -518,6 +535,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             bpy.types.SpaceView3D.draw_handler_remove(self._draw_handler, "WINDOW")
             self._redraw()
             self._draw_handler = None
+            if self._entity_type.value in BaseAnnotationManager._draw_handlers:
+                del BaseAnnotationManager._draw_handlers[self._entity_type.value]
 
     def _redraw(self):
         if self._draw_handler is not None:

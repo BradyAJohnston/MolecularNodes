@@ -12,9 +12,16 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_pre, load_post, render_pre, save_post
+from bpy.app.handlers import (
+    frame_change_pre,
+    load_post,
+    load_pre,
+    render_pre,
+    save_post,
+)
 from bpy.props import CollectionProperty, PointerProperty
 from .. import session
+from ..annotations import manager as annotations_manager
 from ..handlers import render_pre_handler, update_entities
 from ..templates import register_templates_menu, unregister_templates_menu
 from ..utils import add_current_module_to_path
@@ -61,6 +68,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
+    load_pre.append(annotations_manager._load_pre_handler)
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
 
@@ -95,6 +103,7 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
+    load_pre.remove(annotations_manager._load_pre_handler)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
     del bpy.types.Scene.MNSession  # type: ignore
