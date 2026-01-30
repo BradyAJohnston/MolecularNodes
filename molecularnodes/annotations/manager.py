@@ -33,7 +33,7 @@ from .utils import (
 
 
 @persistent
-def _load_pre_handler(filepath: str) -> None:
+def _clear_draw_handlers(filepath: str) -> None:
     BaseAnnotationManager._clear_draw_handlers()
 
 
@@ -489,9 +489,23 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             object = self._entity.object
         except LinkedObjectError:
             return
+        to_remove = []
+        index = -1
         for prop in object.mn_annotations:
-            annotation_class = self._classes[prop.type]
+            index += 1
+            try:
+                annotation_class = self._classes[prop.type]
+            except KeyError:
+                # custom annotations (eg: from templates) might not be
+                # re-registered during a reload. Remove because we cannot
+                # create an instance without the custom class definition
+                to_remove.append(index)
+                continue
             self._create_annotation_instance(annotation_class, prop)
+        if to_remove:
+            for index in to_remove:
+                object.mn_annotations.remove(index)
+            object.mn.annotations_active_index = len(object.mn_annotations) - 1
 
     def _remove_annotation_instance(self, instance) -> None:
         """Actual method to remove annotation instance"""

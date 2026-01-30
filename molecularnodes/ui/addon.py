@@ -68,7 +68,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    load_pre.append(annotations_manager._load_pre_handler)
+    load_pre.append(annotations_manager._clear_draw_handlers)
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
 
@@ -103,7 +103,8 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    load_pre.remove(annotations_manager._load_pre_handler)
+    annotations_manager._clear_draw_handlers(filepath=None)
+    load_pre.remove(annotations_manager._clear_draw_handlers)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
     del bpy.types.Scene.MNSession  # type: ignore
