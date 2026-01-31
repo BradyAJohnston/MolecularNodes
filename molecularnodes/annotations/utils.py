@@ -10,6 +10,14 @@ if TYPE_CHECKING:
     from ..session import MNSession
 
 
+def get_all_subclasses(cls):
+    """Get all subclasses"""
+    subclasses = set(cls.__subclasses__())
+    for s in cls.__subclasses__():
+        subclasses.update(get_all_subclasses(s))
+    return subclasses
+
+
 def get_all_class_annotations(cls) -> dict:
     """Get all the annotations from the class including base classes"""
     all_annotations = {}
