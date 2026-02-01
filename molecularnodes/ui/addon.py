@@ -21,7 +21,6 @@ from bpy.app.handlers import (
 )
 from bpy.props import CollectionProperty, PointerProperty
 from .. import session
-from ..annotations import manager as annotations_manager
 from ..handlers import render_pre_handler, update_entities
 from ..templates import register_templates_menu, unregister_templates_menu
 from ..utils import add_current_module_to_path
@@ -68,7 +67,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
-    load_pre.append(annotations_manager._clear_draw_handlers)
+    load_pre.append(session._remove_draw_handlers)
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
 
@@ -103,8 +102,8 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    annotations_manager._clear_draw_handlers(filepath=None)
-    load_pre.remove(annotations_manager._clear_draw_handlers)
+    session._remove_draw_handlers(filepath=None)
+    load_pre.remove(session._remove_draw_handlers)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
     del bpy.types.Scene.MNSession  # type: ignore
