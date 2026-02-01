@@ -102,10 +102,12 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
-    session._remove_draw_handlers(filepath=None)
     load_pre.remove(session._remove_draw_handlers)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
+
+    session._remove_draw_handlers(filepath=None)
+
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
