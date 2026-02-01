@@ -287,11 +287,6 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     def visible(self, value: bool) -> None:
         """Visibility of all annotations - setter"""
         self._entity.object.mn.annotations_visible = value
-        if value:
-            self._draw_handler_add()
-        else:
-            self._draw_handler_remove()
-        self._update_annotation_object()
         viewport_tag_redraw()
 
     @classmethod
