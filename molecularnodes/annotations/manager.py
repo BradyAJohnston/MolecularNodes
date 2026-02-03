@@ -672,15 +672,19 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     def _create_annotation_object(self):
         """Internal: Create annotation object if it doesn't exist"""
         name = f"MN_an_{self._entity.object.name}"
-        # create an empty object
-        object = db.create_object(name=name, collection=coll.mn())
-        # create geometry nodes modifier
-        object.modifiers.new("MN_Annotations", "NODES")
-        # attach the annotations node tree
-        tree = annotations_node_tree()
-        tree.name = name
-        object.modifiers[0].node_group = tree
-        object.parent = self._entity.object
+        if name in bpy.data.objects:
+            # link to existing object
+            object = bpy.data.objects[name]
+        else:
+            # create an new empty object
+            object = db.create_object(name=name, collection=coll.mn())
+            # create geometry nodes modifier
+            object.modifiers.new("MN_Annotations", "NODES")
+            # attach the annotations node tree
+            tree = annotations_node_tree()
+            tree.name = name
+            object.modifiers[0].node_group = tree
+            object.parent = self._entity.object
         # save the BlenderObject for further updates
         self.bob = db.BlenderObject(object)
 
