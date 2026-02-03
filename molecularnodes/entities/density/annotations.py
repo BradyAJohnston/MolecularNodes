@@ -112,7 +112,11 @@ class DensityInfo(DensityAnnotation):
                 else:
                     text = text + f"|ISO Value: {iso_value:.2f}"
         if params.show_origin:
-            text = text + f"|Origin: {np.round(grid.origin, 2)}"
+            if grid.metadata["center"]:
+                origin = -np.array(grid.grid.shape) * 0.5 * grid.delta
+            else:
+                origin = grid.origin
+            text = text + f"|Origin: {np.round(origin, 2)}"
         if params.show_delta:
             text = text + f"|Delta: {np.round(grid.delta, 2)}"
         if params.show_shape:
