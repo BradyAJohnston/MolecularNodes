@@ -9,6 +9,7 @@ dependencies = [
     "biotite>=1.5",
     "mrcfile",
     "starfile",
+    "PyYAML",
     "imdclient>=0.2.3",
     "ipython>=9.7.0",
     "pandas<3.0.0",
