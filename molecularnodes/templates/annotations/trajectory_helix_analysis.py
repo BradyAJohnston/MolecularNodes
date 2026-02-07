@@ -1,19 +1,14 @@
 import io
 from uuid import uuid1
-import addon_utils
 import bpy
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from MDAnalysis.analysis import helix_analysis as hel
 from PIL import Image
+import molecularnodes as mn
 
-addon_id = "bl_ext.blender_org.molecularnodes"
-is_enabled, is_loaded = addon_utils.check(addon_id)
-if is_enabled and is_loaded:
-    import bl_ext.blender_org.molecularnodes as mn  # type: ignore
-else:
-    import molecularnodes as mn
+mn = mn.utils.load_extension_module()
 
 matplotlib.use("Agg")
 

@@ -1,11 +1,6 @@
-import addon_utils
+import molecularnodes as mn
 
-addon_id = "bl_ext.blender_org.molecularnodes"
-is_enabled, is_loaded = addon_utils.check(addon_id)
-if is_enabled and is_loaded:
-    import bl_ext.blender_org.molecularnodes as mn  # type: ignore
-else:
-    import molecularnodes as mn
+mn = mn.utils.load_extension_module()
 
 mol = mn.Molecule.fetch("4ozs")
 mol.add_style(
