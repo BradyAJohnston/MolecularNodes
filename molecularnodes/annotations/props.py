@@ -105,10 +105,10 @@ def create_annotation_type_inputs(
 
 def create_property_interface(
     entity: MolecularEntity,
+    instance: BaseAnnotation,
     uuid: str,
     attr: str,
     atype: typing.Any = None,
-    instance: BaseAnnotation = None,
     annotation_type: str = None,
 ) -> property:
     """Create a property() interface for a blender property"""
@@ -132,6 +132,8 @@ def create_property_interface(
         return getattr(_prop(), attr)
 
     def setter(self, value):
+        if not instance._update_props:
+            return
         if (
             atype is not None
             and isinstance(atype, type)

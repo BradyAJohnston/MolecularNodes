@@ -52,3 +52,18 @@ class Density(MolecularEntity, metaclass=ABCMeta):
         file_name = name + ".vdb"
         file_path = os.path.join(folder_path, file_name)
         return file_path
+
+    def __getstate__(self):
+        """Custom serialization."""
+        state = self.__dict__.copy()
+        # Remove objects with circular references or PyCapsules
+        if "annotations" in state:
+            del state["annotations"]
+        return state
+
+    def __setstate__(self, state):
+        """Custom deserialization."""
+        self.__dict__.update(state)
+        # Recreate objects with circular references
+        if not hasattr(self, "annotations"):
+            self.annotations = DensityAnnotationManager(self)

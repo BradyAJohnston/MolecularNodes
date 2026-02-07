@@ -451,6 +451,21 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         return f"<Molecule object: {self.name}>"
 
+    def __getstate__(self):
+        """Custom serialization."""
+        state = self.__dict__.copy()
+        # Remove objects with circular references or PyCapsules
+        if "annotations" in state:
+            del state["annotations"]
+        return state
+
+    def __setstate__(self, state):
+        """Custom deserialization."""
+        self.__dict__.update(state)
+        # Recreate objects with circular references
+        if not hasattr(self, "annotations"):
+            self.annotations = MoleculeAnnotationManager(self)
+
 
 class MoleculeSelector:
     """
