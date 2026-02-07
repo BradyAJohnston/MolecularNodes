@@ -1,4 +1,3 @@
-import importlib
 import json
 import os
 import sys
@@ -22,7 +21,7 @@ def load_extension_module():
         if addon.endswith(".molecularnodes"):
             is_enabled, is_loaded = addon_utils.check(addon)
             if is_enabled and is_loaded:
-                return importlib.import_module(addon)
+                return sys.modules[addon]
     # return this parent module
     mn_module_name = __name__.rsplit(".", 1)[0]
     return sys.modules[mn_module_name]
