@@ -9,6 +9,8 @@ from MDAnalysis.core.groups import AtomGroup
 from PIL import Image
 import molecularnodes as mn
 
+mn = mn.utils.load_extension_module()
+
 matplotlib.use("Agg")
 
 # Annotations are auto-registered
