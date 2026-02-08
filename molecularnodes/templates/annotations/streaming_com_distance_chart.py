@@ -26,6 +26,8 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
 
     selection1: str | AtomGroup = "resid 1"
     selection2: str | AtomGroup = "resid 129"
+    periodic: bool = True
+    updating: bool = True
     text1: str = ""
     text2: str = ""
 
@@ -63,7 +65,9 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
         if isinstance(params.selection1, str):
             # check if selection phrase is valid
             # mda throws exception if invalid
-            self._ag1 = u.select_atoms(params.selection1)
+            self._ag1 = u.select_atoms(
+                params.selection1, periodic=params.periodic, updating=params.updating
+            )
             if not label1:
                 label1 = params.selection1
         elif isinstance(params.selection1, AtomGroup):
@@ -76,7 +80,9 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
         if isinstance(params.selection2, str):
             # check if selection phrase is valid
             # mda throws exception if invalid
-            self._ag2 = u.select_atoms(params.selection2)
+            self._ag2 = u.select_atoms(
+                params.selection2, periodic=params.periodic, updating=params.updating
+            )
             if not label2:
                 label2 = params.selection2
         elif isinstance(params.selection2, AtomGroup):
@@ -90,7 +96,13 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
         self._label2 = label2
         self._title = f"Distance between '{label1}' and '{label2}'"
         # reset values
-        if input_name in ("selection1", "selection2", "max_values"):
+        if input_name in (
+            "selection1",
+            "selection2",
+            "periodic",
+            "updating",
+            "max_values",
+        ):
             self._steps = deque(maxlen=params.max_values)
             self._distances = deque(maxlen=params.max_values)
             self._prev_step = None

@@ -26,6 +26,8 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
     annotation_type = "streaming_radii_of_gyration_chart"
 
     selection: str | AtomGroup = "protein"
+    periodic: bool = True
+    updating: bool = True
     text: str = ""
     show_circles: bool = True
 
@@ -63,7 +65,9 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
         if isinstance(params.selection, str):
             # check if selection phrase is valid
             # mda throws exception if invalid
-            self._ag = u.select_atoms(params.selection)
+            self._ag = u.select_atoms(
+                params.selection, periodic=params.periodic, updating=params.updating
+            )
             if not label:
                 label = params.selection
         elif isinstance(params.selection, AtomGroup):
@@ -78,7 +82,7 @@ class StreamingRadiiOfGyrationChart(mn.entities.trajectory.TrajectoryAnnotation)
         # setup text
         self._title = f"Radii of Gyration of '{label}'"
         # reset values
-        if input_name in ("selection", "max_values"):
+        if input_name in ("selection", "periodic", "updating", "max_values"):
             self._steps = deque(maxlen=params.max_values)
             self._rogs = deque(maxlen=params.max_values)
             self._com = None
