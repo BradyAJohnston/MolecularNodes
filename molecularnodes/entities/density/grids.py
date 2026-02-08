@@ -164,6 +164,8 @@ class Grids(Density):
             if gobj.metadata["center"]:
                 origin = -np.array(grid.shape) * 0.5 * gobj.delta
             origin *= self._world_scale
+            # adjust offset because Blender uses cell-centered values
+            origin -= 0.5 * gobj.delta * self._world_scale
             length = grid.shape * gobj.delta * self._world_scale
             x_range = (origin[0], origin[0] + length[0])
             y_range = (origin[1], origin[1] + length[1])
