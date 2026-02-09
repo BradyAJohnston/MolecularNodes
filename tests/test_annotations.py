@@ -1,3 +1,5 @@
+import pickle
+import tempfile
 import bpy
 import MDAnalysis as mda
 import numpy as np
@@ -522,3 +524,83 @@ class TestAnnotations:
         np.testing.assert_allclose(
             color, np.array([(0.0, 1.0, 0.0, 1.0)] * len(color)), rtol=0, atol=0
         )
+
+    def test_molecule_pickling(self):
+        e = mn.Molecule.load(data_dir / "1cd3.cif")
+        ant = e.annotations.add_molecule_info()
+        ant.show_models = False
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            try:
+                # test pickling
+                pickle.dump(e, tmp_file)
+                tmp_file.flush()
+                # test unpickling
+                tmp_file.seek(0)
+                re = pickle.load(tmp_file)
+                # verify
+                assert len(re.annotations) == 1
+                ant = re.annotations[0]
+                assert not ant.show_models
+            except TypeError as ex:
+                if "cannot pickle 'PyCapsule' object" in str(ex):
+                    pytest.fail(f"PyCapsule pickle error not fixed: {ex}")
+                else:
+                    raise
+
+    def test_md_pickling(self, universe):
+        e = mn.Trajectory(universe, name="TestUniverse")
+        # no inputs
+        ant1 = e.annotations.add_universe_info()
+        ant1.show_frame = False
+        # optional inputs
+        ant2 = e.annotations.add_atom_info(selection="resid 1")
+        ant2.text_size = 20
+        ant2.text_color = (1.0, 1.0, 0.0, 1.0)
+        # required inputs
+        ant3 = e.annotations.add_canonical_dihedrals(resid=1)
+        # change input
+        ant3.resid = 2
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            try:
+                # test pickling
+                pickle.dump(e, tmp_file)
+                tmp_file.flush()
+                # test unpickling
+                tmp_file.seek(0)
+                re = pickle.load(tmp_file)
+                # verify
+                assert len(re.annotations) == 3
+                ant1 = re.annotations[0]
+                assert not ant1.show_frame
+                ant2 = re.annotations[1]
+                assert ant2.text_size == 20
+                assert tuple(ant2.text_color) == (1.0, 1.0, 0.0, 1.0)
+                ant3 = re.annotations[2]
+                assert ant3.resid == 2
+            except TypeError as ex:
+                if "cannot pickle 'PyCapsule' object" in str(ex):
+                    pytest.fail(f"PyCapsule pickle error not fixed: {ex}")
+                else:
+                    raise
+
+    def test_density_pickling(self, density_file):
+        e = mn.entities.density.load(density_file)
+        ant = e.annotations.add_density_info()
+        ant.show_filename = False
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            try:
+                # test pickling
+                pickle.dump(e, tmp_file)
+                tmp_file.flush()
+                # test unpickling
+                tmp_file.seek(0)
+                re = pickle.load(tmp_file)
+                # verify
+                assert len(re.annotations) == 1
+                ant = re.annotations[0]
+                assert not ant.show_filename
+            except TypeError as ex:
+                if "cannot pickle 'PyCapsule' object" in str(ex):
+                    pytest.fail(f"PyCapsule pickle error not fixed: {ex}")
+                else:
+                    raise

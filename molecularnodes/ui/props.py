@@ -440,6 +440,10 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
 def _update_annotations_visibility(self, context):
     entity = context.scene.MNSession.get(self.id_data.uuid)
     if entity is not None:
+        if self.annotations_visible:
+            entity.annotations._draw_handler_add()
+        else:
+            entity.annotations._draw_handler_remove()
         entity.annotations._update_annotation_object()
 
 
