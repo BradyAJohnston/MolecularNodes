@@ -207,9 +207,11 @@ def calculate_node_dimensions(
     unconnected_vector_input_count = len(
         list(
             filter(
-                lambda input_socket: input_socket.enabled
-                and input_socket.type == "VECTOR"
-                and socket_input_connection_count[input_socket] == 0,
+                lambda input_socket: (
+                    input_socket.enabled
+                    and input_socket.type == "VECTOR"
+                    and socket_input_connection_count[input_socket] == 0
+                ),
                 node.inputs,
             )
         )

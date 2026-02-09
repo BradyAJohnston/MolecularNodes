@@ -85,6 +85,8 @@ class AtomInfo(TrajectoryAnnotation):
 
     # annotation inputs
     selection: str | AtomGroup = "name CA"
+    periodic: bool = True
+    updating: bool = True
     show_resid: bool = False
     show_segid: bool = False
 
@@ -96,12 +98,14 @@ class AtomInfo(TrajectoryAnnotation):
 
     def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        if input_name in (None, "selection"):
+        if input_name in (None, "selection", "periodic", "updating"):
             if isinstance(params.selection, str):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
                 universe = self.trajectory.universe
-                self.atom_group = universe.select_atoms(params.selection)
+                self.atom_group = universe.select_atoms(
+                    params.selection, periodic=params.periodic, updating=params.updating
+                )
             elif isinstance(params.selection, AtomGroup):
                 self.atom_group = params.selection
             else:
@@ -142,6 +146,8 @@ class COM(TrajectoryAnnotation):
 
     # annotation inputs
     selection: typing.Union[str | AtomGroup] = "protein"
+    periodic: bool = True
+    updating: bool = True
     text: str = "COM"
 
     def defaults(self) -> None:
@@ -151,12 +157,14 @@ class COM(TrajectoryAnnotation):
 
     def validate(self, input_name: str = None) -> bool:
         params = self.interface
-        if input_name in (None, "selection"):
+        if input_name in (None, "selection", "periodic", "updating"):
             if isinstance(params.selection, str):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
                 universe = self.trajectory.universe
-                self.atom_group = universe.select_atoms(params.selection)
+                self.atom_group = universe.select_atoms(
+                    params.selection, periodic=params.periodic, updating=params.updating
+                )
             elif isinstance(params.selection, AtomGroup):
                 self.atom_group = params.selection
             else:
@@ -195,6 +203,8 @@ class COMDistance(TrajectoryAnnotation):
     # annotation inputs
     selection1: str | AtomGroup
     selection2: str | AtomGroup
+    periodic: bool = True
+    updating: bool = True
     text1: str = "COM1"
     text2: str = "COM2"
 
@@ -205,24 +215,32 @@ class COMDistance(TrajectoryAnnotation):
     def validate(self, input_name: str = None) -> bool:
         params = self.interface
         universe = self.trajectory.universe
-        if input_name in (None, "selection1"):
+        if input_name in (None, "selection1", "periodic", "updating"):
             # check selection 1
             if isinstance(params.selection1, str):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
-                self.atom_group1 = universe.select_atoms(params.selection1)
+                self.atom_group1 = universe.select_atoms(
+                    params.selection1,
+                    periodic=params.periodic,
+                    updating=params.updating,
+                )
             elif isinstance(params.selection1, AtomGroup):
                 self.atom_group1 = params.selection1
             else:
                 raise ValueError(
                     f"Need str or AtomGroup. Got {type(params.selection1)}"
                 )
-        if input_name in (None, "selection2"):
+        if input_name in (None, "selection2", "periodic", "updating"):
             # check selection 2
             if isinstance(params.selection2, str):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
-                self.atom_group2 = universe.select_atoms(params.selection2)
+                self.atom_group2 = universe.select_atoms(
+                    params.selection2,
+                    periodic=params.periodic,
+                    updating=params.updating,
+                )
             elif isinstance(params.selection2, AtomGroup):
                 self.atom_group2 = params.selection2
             else:
