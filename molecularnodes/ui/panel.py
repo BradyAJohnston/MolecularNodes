@@ -696,7 +696,10 @@ class MN_PT_Entities(bpy.types.Panel):
         if entity is None:
             return
         row = layout.row()
-        row.prop(entity.object.mn, "entity_type")
+        try:
+            row.prop(entity.object.mn, "entity_type")
+        except LinkedObjectError:
+            pass
         row.enabled = False
 
 

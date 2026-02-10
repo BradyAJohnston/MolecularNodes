@@ -199,8 +199,9 @@ class MNSession:
                 e.annotations._draw_handler_remove()
 
     def add_draw_handlers(self) -> None:
+        self.prune()
         for e in self.entities.values():
-            if hasattr(e, "annotations"):
+            if hasattr(e, "annotations") and e.annotations.visible:
                 e.annotations._draw_handler_add()
 
     def stashpath(self, filepath) -> str:
