@@ -12,7 +12,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_pre, load_post, render_pre, save_post
+from bpy.app.handlers import (
+    frame_change_pre,
+    load_post,
+    load_pre,
+    render_pre,
+    save_post,
+)
 from bpy.props import CollectionProperty, PointerProperty
 from .. import session
 from ..handlers import render_pre_handler, update_entities
@@ -63,6 +69,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
+    load_pre.append(session._remove_draw_handlers)
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
 
@@ -102,8 +109,12 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
+    load_pre.remove(session._remove_draw_handlers)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
+
+    session._remove_draw_handlers(filepath=None)
+
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore

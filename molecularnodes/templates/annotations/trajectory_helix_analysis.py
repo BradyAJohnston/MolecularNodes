@@ -26,6 +26,8 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
 
     # selection has to be atleast 9 residues
     selection: str = "name CA and resnum 161-187"
+    periodic: bool = True
+    updating: bool = True
     chart: list[str] = [
         "local_twists",
         "local_bends",
@@ -66,12 +68,14 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
             raise ValueError("This annotation requires a Trajectory entity")
 
         # run analysis initially or when selection input changes
-        if input_name in (None, "selection") or self._h is None:
+        if input_name in (None, "selection", "periodic", "updating") or self._h is None:
             # check selection
             if isinstance(params.selection, str):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
-                self._ag = u.select_atoms(params.selection)
+                self._ag = u.select_atoms(
+                    params.selection, periodic=params.periodic, updating=params.updating
+                )
             else:
                 self._h = None
                 raise ValueError(f"Need str. Got {type(params.selection)}")

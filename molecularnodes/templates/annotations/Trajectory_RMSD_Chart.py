@@ -24,6 +24,8 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
     annotation_type = "rmsd_chart"
 
     selection: str = "protein"
+    periodic: bool = True
+    updating: bool = True
     text: str = ""
 
     location: tuple[float, float] = (0.025, 0.05)
@@ -53,14 +55,16 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
         if isinstance(params.selection, str):
             # check if selection phrase is valid
             # mda throws exception if invalid
-            u.select_atoms(params.selection)
+            u.select_atoms(
+                params.selection, periodic=params.periodic, updating=params.updating
+            )
             if not label:
                 label = params.selection
         else:
             raise ValueError(f"Need str. Got {type(params.selection)}")
 
         # run analysis initially or when selection input changes
-        if input_name in (None, "selection"):
+        if input_name in (None, "selection", "periodic", "updating"):
             # save current frame
             current_frame = u.trajectory.frame
             # calculate RMSD
