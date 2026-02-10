@@ -86,10 +86,16 @@ class Grids(Density):
 
                 # The OpenVDB Python API expects array in Z, Y, X order by default.
                 # mrcfile returns data with shape (nz, ny, nx), which matches that order.
+                # We also swap the X and Z axes of the numpy array when constructing the Grid below.
                 delta = np.array([vx, vy, vz], dtype=float)
                 origin = np.array([ox, oy, oz], dtype=float)
 
-                return Grid(mrc.data, origin=origin, delta=delta, metadata=metadata)
+                return Grid(
+                    grid=np.swapaxes(mrc.data, 0, 2),
+                    origin=origin,
+                    delta=delta,
+                    metadata=metadata,
+                )
         except Exception as e:
             # Re-raise the original parsing error with context from fallback
             raise RuntimeError(
@@ -158,6 +164,8 @@ class Grids(Density):
             if gobj.metadata["center"]:
                 origin = -np.array(grid.shape) * 0.5 * gobj.delta
             origin *= self._world_scale
+            # adjust offset because Blender uses cell-centered values
+            origin -= 0.5 * gobj.delta * self._world_scale
             length = grid.shape * gobj.delta * self._world_scale
             x_range = (origin[0], origin[0] + length[0])
             y_range = (origin[1], origin[1] + length[1])

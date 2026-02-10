@@ -3,11 +3,14 @@ from bpy.props import (  # type: ignore
     BoolProperty,
     CollectionProperty,
     EnumProperty,
+    FloatProperty,
     IntProperty,
+    PointerProperty,
     StringProperty,
 )
 from databpy.object import LinkedObjectError
 from ..blender.utils import set_object_visibility
+from ..entities.base import EntityType
 from ..handlers import _update_entities
 from ..session import get_entity
 from .style import STYLE_ITEMS
@@ -16,6 +19,40 @@ uuid_property = StringProperty(  # type: ignore
     name="UUID",
     description="Unique ID for referencing the required objects in the MNSession",
     default="",
+)
+
+ENTITY_ITEMS = (
+    ("None", "None", "Not an MN entity"),
+    ("molecule", "Molecule", "A single molecule"),
+    ("ensemble", "Ensemble", "A collection of molecules"),
+    ("density", "Density", "A density grid"),
+    ("md", "Trajectory", "A molecular dynamics trajectory"),
+    ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
+    (
+        "md-streaming",
+        "Streaming Trajectory",
+        "A streaming IMD molecular dynamics trajectory",
+    ),
+    ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
+    ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
+)
+
+SURFACE_STYLE_ITEMS = (
+    (
+        "density_surface",
+        "Surface",
+        "Style Density Surface",
+    ),
+    # (
+    #     "density_iso_surface",
+    #     "Iso Surface",
+    #     "Style Density ISO Surface",
+    # ),
+    (
+        "density_wire",
+        "Wire",
+        "Style Density Wire",
+    ),
 )
 
 
@@ -75,6 +112,110 @@ class EntityProperties(bpy.types.PropertyGroup):
         get=_get_entity_visibility,
         set=_set_entity_visibility,
     )  # type: ignore
+
+
+def _update_dssp_display_option(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    if entity is None or self.cancelling:
+        return
+    if entity._entity_type == EntityType.MD_STREAMING:
+        display_option = getattr(self, "display_option_streaming")
+    else:
+        display_option = getattr(self, "display_option")
+    # call none and per-frame directly
+    if display_option == "none":
+        entity.dssp.show_none()
+        _update_entities(self, context)
+    elif display_option == "per-frame":
+        entity.dssp.show_per_frame()
+        _update_entities(self, context)
+    elif display_option == "sliding-window-average":
+        sw_threshold = self.sw_threshold if self.apply_sw_threshold else None
+        entity.dssp.show_sliding_window_average(self.window_size, sw_threshold)
+        _update_entities(self, context)
+    else:
+        self.applied = False
+
+
+def _update_dssp_applied(self, context):
+    if self.applied:
+        _update_entities(self, context)
+
+
+class DSSPProperties(bpy.types.PropertyGroup):
+    display_option: EnumProperty(  # type: ignore
+        name="Display",
+        description="Options to display secondary structures",
+        items=(
+            ("none", "None", "Do not show secondary structures"),
+            ("per-frame", "Per Frame", "Secondary structures calculated per frame"),
+            (
+                "sliding-window-average",
+                "Sliding Window Average",
+                "Average secondary structures of a sliding window of frames",
+            ),
+            (
+                "trajectory-average",
+                "Trajectory Average",
+                "Average secondary structures across all frames",
+            ),
+        ),
+        default="per-frame",
+        update=_update_dssp_display_option,
+    )
+    display_option_streaming: EnumProperty(  # type: ignore
+        name="Display",
+        description="Options to display secondary structures",
+        items=(
+            ("none", "None", "Do not show secondary structures"),
+            ("per-frame", "Per Frame", "Secondary structures calculated per frame"),
+        ),
+        default="per-frame",
+        update=_update_dssp_display_option,
+    )
+    window_size: IntProperty(
+        name="Window Size",
+        description="Number of frames in the sliding window",
+        min=1,
+        soft_max=10,
+        default=5,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    apply_sw_threshold: BoolProperty(
+        name="Apply Threshold",
+        description="Apply a threshold comparison to calculated mean",
+        default=False,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    sw_threshold: FloatProperty(
+        name="Threshold",
+        description="Threshold fraction of frames for sliding window average",
+        subtype="FACTOR",
+        min=0.0,
+        max=1.0,
+        default=0.5,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    apply_ta_threshold: BoolProperty(
+        name="Apply Threshold",
+        description="Apply a threshold comparison to calculated mean",
+        default=False,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    ta_threshold: FloatProperty(
+        name="Threshold",
+        description="Threshold fraction of frames for trajectory average",
+        subtype="FACTOR",
+        min=0.0,
+        max=1.0,
+        default=0.5,
+        update=_update_dssp_display_option,
+    )  # type: ignore
+    applied: BoolProperty(
+        default=True,
+        update=_update_dssp_applied,
+    )  # type: ignore
+    cancelling: BoolProperty(default=False)  # type: ignore
 
 
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
@@ -299,6 +440,10 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
 def _update_annotations_visibility(self, context):
     entity = context.scene.MNSession.get(self.id_data.uuid)
     if entity is not None:
+        if self.annotations_visible:
+            entity.annotations._draw_handler_add()
+        else:
+            entity.annotations._draw_handler_remove()
         entity.annotations._update_annotation_object()
 
 
@@ -324,21 +469,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     entity_type: EnumProperty(  # type: ignore
         name="Entity Type",
         description="How the file was imported, dictating how MN interacts with it",
-        items=(
-            ("None", "None", "Not an MN entity"),
-            ("molecule", "Molecule", "A single molecule"),
-            ("ensemble", "Ensemble", "A collection of molecules"),
-            ("density", "Density", "A density grid"),
-            ("md", "Trajectory", "A molecular dynamics trajectory"),
-            ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
-            (
-                "md-streaming",
-                "Streaming Trajectory",
-                "A streaming IMD molecular dynamics trajectory",
-            ),
-            ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
-            ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
-        ),
+        items=ENTITY_ITEMS,
         default="None",
     )
 
@@ -425,6 +556,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         subtype="FILE_PATH",
         default="",
     )
+    dssp: PointerProperty(type=DSSPProperties)  # type: ignore
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
@@ -547,6 +679,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 CLASSES = [
     EntityProperties,
+    DSSPProperties,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly

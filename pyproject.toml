@@ -1,10 +1,10 @@
 [project]
 name = "molecularnodes"
-version = "4.5.9"
+version = "4.5.11"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.5.1",
+    "databpy>=0.6.0",
     "mdanalysis>=2.10",
     "biotite>=1.5",
     "mrcfile",
@@ -12,6 +12,7 @@ dependencies = [
     "PyYAML",
     "imdclient>=0.2.3",
     "ipython>=9.7.0",
+    "pandas<3.0.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.11.0"
@@ -22,12 +23,22 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy = ["bpy>=4.5.2"]
+bpy = ["bpy>=4.5.2, <5.1.0"]
 jupyter = ["jupyter", "IPython"]
 build = ["tomlkit"]
-dev = ["pytest", "pytest-cov", "syrupy", "scipy", "fake-bpy-module", "IPython", "nodepad>=0.2.0"]
+dev = [
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "syrupy",
+    "scipy",
+    "fake-bpy-module",
+    "IPython",
+    "nodepad>=0.2.0"
+]
 test = [
-    "bpy>=4.5.2",
+    "bpy>=4.5.2, <5.1.0",
     "pytest",
     "pytest-cov",
     "syrupy",
@@ -81,8 +92,8 @@ ignore = [
     "N806",
 
     # 'molecularnodes' when used as a Blender extension may not actually be named
-    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to 
-    # use relative imports: 
+    # 'molecularnodes' (potentially user_default.molecularnodes for example) so we have to
+    # use relative imports:
     # https://docs.blender.org/manual/en/latest/advanced/extensions/addons.html#extensions-and-namespace
     "TID252", # Prefer absolute imports over relative imports from parent modules
     "N813", # Camelcase `MDAnalysis` imported as lowercase `mda`

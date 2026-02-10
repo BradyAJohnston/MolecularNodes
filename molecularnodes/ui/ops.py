@@ -6,6 +6,7 @@ from bpy.props import (  # type: ignore
     BoolProperty,
     CollectionProperty,
     EnumProperty,
+    FloatProperty,
     IntProperty,
     StringProperty,
 )
@@ -30,6 +31,7 @@ from ..nodes.geometry import (
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from . import node_info
+from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
 
@@ -248,6 +250,33 @@ class MN_OT_Node_Swap(Operator):
     def execute(self, context: Context):
         node = context.active_node
         nodes.swap(node, self.node_items)
+        return {"FINISHED"}
+
+
+def _lookup_swap_style_items(self, context: Context | None = None):
+    scene = context.scene
+    entities_active_index: int = scene.mn.entities_active_index
+    uuid: str = scene.mn.entities[entities_active_index].name
+    entity = get_session().get(uuid)
+    print(f"{self}")
+    print(f"{self.name_node=}")
+    return (
+        SURFACE_STYLE_ITEMS if entity._entity_type.value == "density" else STYLE_ITEMS
+    )
+
+
+class MN_OT_Node_Swap_Style_Menu(Operator):
+    bl_idname = "mn.node_swap_style_menu"
+    bl_label = "Swap Style"
+    bl_description = "Swap the style node currently used"
+
+    name_tree: StringProperty()  # type: ignore
+    name_node: StringProperty()  # type: ignore
+    node_items: EnumProperty(items=_lookup_swap_style_items)  # type: ignore
+
+    def execute(self, context: Context):
+        node = bpy.data.node_groups[self.name_tree].nodes[self.name_node]
+        nodes.swap(node, tree=nodes.styles_mapping[self.node_items])
         return {"FINISHED"}
 
 
@@ -692,7 +721,9 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
         elif "streaming" in obj.mn.entity_type:
             traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
         else:
-            traj = Trajectory.load(path_topo, path_traj, create_object=False)
+            traj = Trajectory.load(
+                path_topo, path_traj, style=None, create_object=False
+            )
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
@@ -745,6 +776,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style,
+                selection="all",
             )
         else:
             traj = Trajectory.load(
@@ -752,6 +784,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 coordinates=coordinates,
                 name=self.name,
                 style=self.style if self.setup_nodes else None,
+                selection="all",
             )
 
         context.view_layer.objects.active = traj.object
@@ -797,7 +830,7 @@ class MN_OT_Add_Style(Operator):
 
     bl_idname = "mn.add_style"
     bl_label = "Add Style"
-    bl_description = "Add new style to entity"
+    bl_description = "Add new style to Fpointntity"
 
     uuid: StringProperty()  # type: ignore
 
@@ -833,7 +866,7 @@ class MN_OT_Add_Style(Operator):
     selection: StringProperty(
         name="Selection",
         description="Selection for which the style applies",
-        default="",
+        default="all",
     )  # type: ignore
 
     name: StringProperty(
@@ -1050,6 +1083,85 @@ class MN_OT_Setup_Compositor(Operator):
         return {"FINISHED"}
 
 
+class MN_OT_DSSP_init(Operator):
+    """
+    Operator to initialize DSSP for trajectories
+    """
+
+    bl_idname = "mn.dssp_init"
+    bl_label = "Initialize"
+    bl_description = "Initialize DSSP analysis for trajectory"
+
+    uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        entity.dssp.init()
+        return {"FINISHED"}
+
+
+class MN_OT_DSSP_apply(Operator):
+    """
+    Operator to apply changed DSSP options
+    """
+
+    bl_idname = "mn.dssp_apply"
+    bl_label = "Apply"
+    bl_description = "Apply changed DSSP options"
+
+    uuid: StringProperty()  # type: ignore
+    apply_ta_threshold: BoolProperty()  # type: ignore
+    ta_threshold: FloatProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        props = entity.object.mn.dssp
+        if props.display_option == "trajectory-average":
+            if self.apply_ta_threshold:
+                entity.dssp.show_trajectory_average(threshold=self.ta_threshold)
+            else:
+                entity.dssp.show_trajectory_average()
+        return {"FINISHED"}
+
+
+class MN_OT_DSSP_cancel(Operator):
+    """
+    Operator to cancel and restore current DSSP options
+    """
+
+    bl_idname = "mn.dssp_cancel"
+    bl_label = "Cancel"
+    bl_description = "Restore current DSSP options"
+
+    uuid: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        props = entity.object.mn.dssp
+        props.cancelling = True
+        props.display_option = entity.dssp._display_option
+        props.window_size = entity.dssp._window_size
+        if entity.dssp._sw_threshold is not None:
+            props.sw_threshold = entity.dssp._sw_threshold
+            props.apply_sw_threshold = True
+        else:
+            props.apply_sw_threshold = False
+        if entity.dssp._ta_threshold is not None:
+            props.ta_threshold = entity.dssp._ta_threshold
+            props.apply_ta_threshold = True
+        else:
+            props.apply_ta_threshold = False
+        props.applied = True
+        props.cancelling = False
+        return {"FINISHED"}
+
+
 CLASSES = [
     MN_OT_Add_Custom_Node_Group,
     MN_OT_Residues_Selection_Custom,
@@ -1057,6 +1169,7 @@ CLASSES = [
     MN_OT_iswitch_custom,
     MN_OT_Change_Color,
     MN_OT_Node_Swap,
+    MN_OT_Node_Swap_Style_Menu,
     MN_OT_Import_Fetch,
     MN_OT_Import_OxDNA_Trajectory,
     MN_OT_Import_Trajectory,
@@ -1072,4 +1185,7 @@ CLASSES = [
     MN_OT_Add_Annotation,
     MN_OT_Remove_Annotation,
     MN_OT_Setup_Compositor,
+    MN_OT_DSSP_init,
+    MN_OT_DSSP_apply,
+    MN_OT_DSSP_cancel,
 ]
