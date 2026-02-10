@@ -16,6 +16,7 @@ from bpy.app.handlers import (
     frame_change_pre,
     load_post,
     load_pre,
+    persistent,
     render_pre,
     save_post,
 )
@@ -36,6 +37,7 @@ all_classes = (
 )
 
 _is_registered = False
+_mn_session = None
 _mn_annotations = None
 
 
@@ -48,9 +50,15 @@ def _test_register():
         register()
 
 
+@persistent
+def _session_restore_draw_handlers():
+    if _mn_session is not None:
+        _mn_session.add_draw_handlers()
+    return None  # execute only once
+
+
 def register():
     global _is_registered
-    global _mn_annotations
 
     if _is_registered:
         return
@@ -73,7 +81,10 @@ def register():
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
 
-    bpy.types.Scene.MNSession = session.MNSession()  # type: ignore
+    if _mn_session is not None:
+        bpy.types.Scene.MNSession = _mn_session
+    else:
+        bpy.types.Scene.MNSession = session.MNSession()
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
     bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)  # type: ignore
     bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)  # type: ignore
@@ -88,12 +99,16 @@ def register():
         # loaded, reuse the saved value
         bpy.types.Object.mn_annotations = _mn_annotations
     register_templates_menu()
+    if _mn_session is not None:
+        # register a run once timer to restore draw handlers
+        bpy.app.timers.register(_session_restore_draw_handlers, first_interval=0.01)
 
     _is_registered = True
 
 
 def unregister():
     global _is_registered
+    global _mn_session
     global _mn_annotations
 
     for op in all_classes:
@@ -115,6 +130,7 @@ def unregister():
 
     session._remove_draw_handlers(filepath=None)
 
+    _mn_session = bpy.types.Scene.MNSession
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
