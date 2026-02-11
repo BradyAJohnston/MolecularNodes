@@ -193,6 +193,17 @@ class MNSession:
 
         print(f"Loaded a MNSession from: {pickle_path}")
 
+    def remove_draw_handlers(self) -> None:
+        for e in self.entities.values():
+            if hasattr(e, "annotations"):
+                e.annotations._draw_handler_remove()
+
+    def add_draw_handlers(self) -> None:
+        self.prune()
+        for e in self.entities.values():
+            if hasattr(e, "annotations") and e.annotations.visible:
+                e.annotations._draw_handler_add()
+
     def stashpath(self, filepath) -> str:
         return f"{filepath}.MNSession"
 
@@ -356,6 +367,11 @@ def _load(filepath: str, printing: str = "quiet") -> None:
             print("No MNSession found to load for this .blend file.")
         else:
             pass
+
+
+@persistent
+def _remove_draw_handlers(filepath: str) -> None:
+    get_session().remove_draw_handlers()
 
 
 class MN_OT_Session_Remove_Item(bpy.types.Operator):

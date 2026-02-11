@@ -335,16 +335,16 @@ def ui_from_node(
 
 
 def selection_string_input(layout: bpy.types.UILayout, item: TrajectorySelectionItem):
-    col = layout.column(align=False)
-    col.prop(item, "string")
+    row = layout.row(align=True)
+    row.prop(item, "string")
 
     # disable editing for immutable selections
     # disable modifying updating and periodic
     if item.from_atomgroup:
-        col.enabled = False
+        row.enabled = False
 
     if item.message != "":
-        box = col.box()
+        box = layout.box()
         box.label(text="Invalid Selection", icon="ERROR")
         box.label(text=item.message)
         box.alert = True
@@ -352,6 +352,8 @@ def selection_string_input(layout: bpy.types.UILayout, item: TrajectorySelection
         op.url = (
             "https://docs.mdanalysis.org/stable/documentation_pages/selections.html"
         )
+
+    return row
 
 
 def layout_trajectory_playback(
@@ -694,7 +696,10 @@ class MN_PT_Entities(bpy.types.Panel):
         if entity is None:
             return
         row = layout.row()
-        row.prop(entity.object.mn, "entity_type")
+        try:
+            row.prop(entity.object.mn, "entity_type")
+        except LinkedObjectError:
+            pass
         row.enabled = False
 
 
@@ -738,24 +743,6 @@ class MN_PT_trajectory(bpy.types.Panel):
         traj = scene.MNSession.get(uuid)
 
         layout_trajectory_playback(layout, traj, panel=False)
-        return
-
-        object = traj.object
-        props = object.mn
-
-        if traj._entity_type == EntityType.MD_STREAMING:
-            return
-
-        label = "This trajectory has " + str(props.n_frames) + " frames"
-        layout.label(text=label)
-        layout.prop(props, "update_with_scene")
-        row = layout.row()
-        row.prop(props, "frame")
-        row.enabled = not props.update_with_scene
-        col = layout.column(align=True)
-        col.prop(props, "average")
-        col.prop(props, "subframes")
-        col.prop(props, "offset")
 
 
 class MN_PT_trajectory_dssp(bpy.types.Panel):
@@ -909,7 +896,9 @@ def panel_selection_node(
     assert isinstance(sel_node, bpy.types.GeometryNodeInputNamedAttribute)
     attr_name = sel_node.inputs[0].default_value
     item: TrajectorySelectionItem = entity.selections.ui_items[attr_name]
-    selection_string_input(layout, item)
+    row = selection_string_input(layout, item)
+    row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
+    row.prop(item, "periodic", icon_only=True, icon="CUBE")
 
 
 class MN_PT_Styles(bpy.types.Panel):
@@ -979,8 +968,8 @@ class MN_PT_Styles(bpy.types.Panel):
             row = col.row()
             op = row.operator("mn.remove_style", icon="REMOVE", text="")
             if valid_selection:
-                op.uuid: str = uuid
-                op.style_node_index: int = styles_active_index
+                op.uuid = uuid
+                op.style_node_index = styles_active_index
             else:
                 row.enabled = False
 
@@ -991,8 +980,8 @@ class MN_PT_Styles(bpy.types.Panel):
 
         col = layout.column()
         panel_selection_node(col, style_node, entity)
-        row = col.row()
-        row.label(text="Style")
+        row = col.split(factor=0.25)
+        row.label(text="Style:")
         op = row.operator_menu_enum(
             operator="mn.node_swap_style_menu",
             property="node_items",
