@@ -7,12 +7,6 @@ import addon_utils
 import bpy
 import numpy as np
 from mathutils import Matrix
-from .assets import ADDON_DIR
-
-
-def add_current_module_to_path():
-    path = str(ADDON_DIR.parent)
-    sys.path.append(path)
 
 
 def load_extension_module():

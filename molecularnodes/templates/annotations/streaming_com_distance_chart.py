@@ -1,14 +1,12 @@
 import io
 from collections import deque
 from uuid import uuid1
+import bl_ext.blender_org.molecularnodes as mn  # type: ignore
 import bpy
 import matplotlib
 import matplotlib.pyplot as plt
 from MDAnalysis.core.groups import AtomGroup
 from PIL import Image
-import molecularnodes as mn
-
-mn = mn.utils.load_extension_module()
 
 matplotlib.use("Agg")
 
