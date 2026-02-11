@@ -1278,7 +1278,7 @@ wheels = [
 
 [[package]]
 name = "molecularnodes"
-version = "4.5.9"
+version = "4.5.11"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
@@ -1343,9 +1343,9 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "biotite", specifier = ">=1.5" },
-    { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.5.2" },
-    { name = "bpy", marker = "extra == 'test'", specifier = ">=4.5.2" },
-    { name = "databpy", specifier = ">=0.5.1" },
+    { name = "bpy", marker = "extra == 'bpy'", specifier = ">=4.5.2,<5.1.0" },
+    { name = "bpy", marker = "extra == 'test'", specifier = ">=4.5.2,<5.1.0" },
+    { name = "databpy", specifier = ">=0.6.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
     { name = "imdclient", specifier = ">=0.2.3" },
     { name = "ipython", specifier = ">=9.7.0" },

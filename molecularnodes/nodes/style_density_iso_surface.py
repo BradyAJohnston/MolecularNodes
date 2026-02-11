@@ -89,6 +89,7 @@ def style_density_iso_surface_node_group():
         socket_type="NodeSocketFloat",
         parent=contours_panel,
     )
+    contour_thickness_socket.subtype = "FACTOR"
     contour_thickness_socket.default_value = 0.1
     contour_thickness_socket.min_value = 0.0
     contour_thickness_socket.max_value = 1.0
@@ -113,6 +114,7 @@ def style_density_iso_surface_node_group():
         socket_type="NodeSocketFloat",
         parent=slicing_panel,
     )
+    slice_left_socket.subtype = "PERCENTAGE"
     slice_left_socket.min_value = 0.0
     slice_left_socket.max_value = 100.0
     slice_left_socket.description = "Slice from left (along X axis)"
@@ -124,6 +126,7 @@ def style_density_iso_surface_node_group():
         socket_type="NodeSocketFloat",
         parent=slicing_panel,
     )
+    slice_right_socket.subtype = "PERCENTAGE"
     slice_right_socket.min_value = 0.0
     slice_right_socket.max_value = 100.0
     slice_right_socket.description = "Slice from right (along X axis)"
@@ -135,6 +138,7 @@ def style_density_iso_surface_node_group():
         socket_type="NodeSocketFloat",
         parent=slicing_panel,
     )
+    slice_front_socket.subtype = "PERCENTAGE"
     slice_front_socket.min_value = 0.0
     slice_front_socket.max_value = 100.0
     slice_front_socket.description = "Slice from front (along Y axis)"
@@ -146,6 +150,7 @@ def style_density_iso_surface_node_group():
         socket_type="NodeSocketFloat",
         parent=slicing_panel,
     )
+    slice_back_socket.subtype = "PERCENTAGE"
     slice_back_socket.min_value = 0.0
     slice_back_socket.max_value = 100.0
     slice_back_socket.description = "Slice fom back (along Y axis)"
@@ -157,6 +162,7 @@ def style_density_iso_surface_node_group():
         socket_type="NodeSocketFloat",
         parent=slicing_panel,
     )
+    slice_top_socket.subtype = "PERCENTAGE"
     slice_top_socket.min_value = 0.0
     slice_top_socket.max_value = 100.0
     slice_top_socket.description = "Slice from top (along Z axis)"
@@ -168,6 +174,7 @@ def style_density_iso_surface_node_group():
         socket_type="NodeSocketFloat",
         parent=slicing_panel,
     )
+    slice_bottom_socket.subtype = "PERCENTAGE"
     slice_bottom_socket.min_value = 0.0
     slice_bottom_socket.max_value = 100.0
     slice_bottom_socket.description = "Slice from bottom (along Z axis)"

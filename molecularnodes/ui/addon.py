@@ -12,7 +12,14 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import bpy
-from bpy.app.handlers import frame_change_pre, load_post, render_pre, save_post
+from bpy.app.handlers import (
+    frame_change_pre,
+    load_post,
+    load_pre,
+    persistent,
+    render_pre,
+    save_post,
+)
 from bpy.props import CollectionProperty, PointerProperty
 from .. import session
 from ..handlers import render_pre_handler, update_entities
@@ -30,6 +37,8 @@ all_classes = (
 )
 
 _is_registered = False
+_mn_session = None
+_mn_annotations = None
 
 
 def _test_register():
@@ -39,6 +48,13 @@ def _test_register():
         print(e)
         unregister()
         register()
+
+
+@persistent
+def _session_restore_draw_handlers():
+    if _mn_session is not None:
+        _mn_session.add_draw_handlers()
+    return None  # execute only once
 
 
 def register():
@@ -61,10 +77,14 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
+    load_pre.append(session._remove_draw_handlers)
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
 
-    bpy.types.Scene.MNSession = session.MNSession()  # type: ignore
+    if _mn_session is not None:
+        bpy.types.Scene.MNSession = _mn_session
+    else:
+        bpy.types.Scene.MNSession = session.MNSession()
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
     bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)  # type: ignore
     bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)  # type: ignore
@@ -74,13 +94,22 @@ def register():
     # bpy.types.Object.mn_annotations is dynamically created and updated based
     # on different annotation types. It has to be a top level property to avoid
     # AttributeError: '_PropertyDeferred' object has no attribute '...'
+    if _mn_annotations is not None:
+        # if the extension is being re-registered and the modules are already
+        # loaded, reuse the saved value
+        bpy.types.Object.mn_annotations = _mn_annotations
     register_templates_menu()
+    if _mn_session is not None:
+        # register a run once timer to restore draw handlers
+        bpy.app.timers.register(_session_restore_draw_handlers, first_interval=0.01)
 
     _is_registered = True
 
 
 def unregister():
     global _is_registered
+    global _mn_session
+    global _mn_annotations
 
     for op in all_classes:
         try:
@@ -95,12 +124,18 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
+    load_pre.remove(session._remove_draw_handlers)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
+
+    session._remove_draw_handlers(filepath=None)
+
+    _mn_session = bpy.types.Scene.MNSession
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore
+    _mn_annotations = bpy.types.Object.mn_annotations
     del bpy.types.Object.mn_annotations  # type: ignore
     unregister_templates_menu()
 
