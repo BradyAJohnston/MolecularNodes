@@ -1,5 +1,6 @@
 import os
 import pickle as pk
+from contextlib import chdir
 from typing import Dict, Union
 import bpy
 import MDAnalysis as mda
@@ -23,20 +24,38 @@ def trim(dictionary: dict):
     return dic
 
 
-def make_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
+def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
         # save linked universe frame
         uframe = traj.uframe
-        traj.universe.load_new(make_path_relative(traj.universe.trajectory.filename))
+        traj.universe.load_new(_make_path_relative(traj.universe.trajectory.filename))
         # restore linked universe frame
         traj.uframe = uframe
         traj._save_filepaths_on_object()
 
 
-def make_path_relative(filepath):
-    "Take a path and make it relative, in an actually usable way"
+def _make_trajectory_paths_absolute(trajectories: Dict[str, Trajectory]) -> None:
+    for key, traj in trajectories.items():
+        # save linked universe frame
+        uframe = traj.uframe
+        traj.universe.load_new(_make_path_absolute(traj.universe.trajectory.filename))
+        # restore linked universe frame
+        traj.uframe = uframe
+        traj._save_filepaths_on_object()
+
+
+def _make_path_relative(filepath):
+    "Take a path and make it relative"
     try:
         return os.path.relpath(filepath)
+    except ValueError:
+        return filepath
+
+
+def _make_path_absolute(filepath):
+    "Take a path and make it absolute"
+    try:
+        return os.path.abspath(filepath)
     except ValueError:
         return filepath
 
@@ -137,23 +156,24 @@ class MNSession:
         return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
 
     def pickle(self, filepath) -> None:
-        os.chdir(os.path.dirname(filepath))
         pickle_path = self.stashpath(filepath)
 
-        make_paths_relative(self.trajectories)
         self.entities = trim(self.entities)
 
         # don't save anything if there is nothing to save
         if self.n_items == 0:
             return None
 
+        _make_trajectory_paths_relative(self.trajectories)
+
         with open(pickle_path, "wb") as f:
             pk.dump(self, f)
+
+        _make_trajectory_paths_absolute(self.trajectories)
 
         print(f"Saved session to: {pickle_path}")
 
     def load(self, filepath) -> None:
-        os.chdir(os.path.dirname(filepath))
         pickle_path = self.stashpath(filepath)
         if not os.path.exists(pickle_path):
             raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
@@ -174,6 +194,8 @@ class MNSession:
 
             for ens in session.ensembles.values():
                 self.register_entity(ens)
+
+        _make_trajectory_paths_absolute(self.trajectories)
 
         print(f"Loaded a MNSession from: {pickle_path}")
 
@@ -301,7 +323,8 @@ def get_entity(context: Context | None = None) -> Molecule | Trajectory | Ensemb
 
 @persistent
 def _pickle(filepath) -> None:
-    get_session().pickle(filepath)
+    with chdir(os.path.dirname(filepath)):
+        get_session().pickle(filepath)
 
 
 @persistent
@@ -334,7 +357,8 @@ def _load(filepath: str, printing: str = "quiet") -> None:
     if filepath == "":
         return None
     try:
-        get_session().load(filepath)
+        with chdir(os.path.dirname(filepath)):
+            get_session().load(filepath)
     except FileNotFoundError:
         if printing == "verbose":
             print("No MNSession found to load for this .blend file.")
