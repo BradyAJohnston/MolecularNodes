@@ -303,6 +303,9 @@ class TestTrajectory:
 
         assert os.path.exists(filepath)
         assert os.path.exists(session.stashpath(filepath))
+        # Rewind the trajectory to force a reopen of file by the reader
+        # Fails if the trajectory paths aren't converted back to abs paths
+        traj.universe.trajectory.rewind()
         del traj
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
@@ -318,6 +321,9 @@ class TestTrajectory:
 
         assert snapshot_custom == verts_frame_4
         assert not np.allclose(verts_frame_0, verts_frame_4)
+        # Rewind the trajectory to force a reopen of file by the reader
+        # Fails if the trajectory paths aren't abs paths after load
+        traj.universe.trajectory.rewind()
 
     def test_add_style(
         self,
