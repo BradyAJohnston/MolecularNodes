@@ -119,8 +119,8 @@ class TestTrajectory:
         assert "mn_is_elastic" in attr_names
 
         attr = obj.data.attributes["mn_is_elastic"]
-        assert attr.domain == "EDGE"
         assert attr.data_type == "BOOLEAN"
+        assert attr.domain == "EDGE"
 
     def test_mn_is_elastic_intra_residue_elastic(self, universe_martini_dna):
         traj = mn.entities.Trajectory(universe_martini_dna)
