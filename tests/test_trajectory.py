@@ -126,8 +126,11 @@ class TestTrajectory:
         traj = mn.entities.Trajectory(universe_martini_dna)
         result = traj._compute_is_elastic_edge()
 
-        assert len(result[not result]) == 40
-        assert len(result[result]) == 747
+        elastic = result.sum()
+        covalent = len(result) - elastic
+
+        assert covalent == 40
+        assert elastic == 747
         assert result.dtype == bool
 
     def test_trajectory_update(self, snapshot, universe):
