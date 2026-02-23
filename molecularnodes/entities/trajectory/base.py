@@ -359,18 +359,6 @@ class Trajectory(MolecularEntity):
         return np.isin(self.atoms.resnames, data.RESNAMES_LIPID)
 
     def _compute_is_elastic_edge(self) -> np.ndarray:
-        """
-        Detect elastic network bonds by measuring bond lengths.
-
-        Returns a boolean array over all bonds where True indicates
-        an elastic network restraint (length > 2.5A) and False
-        indicates a real covalent bond.
-
-        Real covalent bonds in biomolecules are always under 2.0A.
-        Elastic restraints in coarse-grained simulations are typically
-        5-10A. The 2.5A threshold sits safely in the empty gap between
-        both populations.
-        """
         if not hasattr(self.atoms, "bonds") or len(self.atoms.bonds) == 0:
             return np.array([], dtype=bool)
 
@@ -379,6 +367,7 @@ class Trajectory(MolecularEntity):
 
         pos_a = positions[indices[:, 0]]
         pos_b = positions[indices[:, 1]]
+        print(pos_a, pos_b)
         lengths = np.linalg.norm(pos_b - pos_a, axis=1)
 
         return lengths > 2.5
