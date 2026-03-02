@@ -1,4 +1,4 @@
-# 🤖 MDAnalysis AI-generated contributions policy 🤖
+# 🤖 MolecularNodes AI-generated contributions policy 🤖
 
 * Version: **1.1 (2026-02-17)**
 * License: **[CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/)** (Copied as a template from [MDAnalysis AI Policy](https://github.com/MDAnalysis/mdanalysis/blob/develop/AI_POLICY.md))
