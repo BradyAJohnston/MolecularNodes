@@ -26,6 +26,9 @@ def trim(dictionary: dict):
 
 def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
+        # skip streaming trajectories
+        if traj.universe.trajectory.filename.startswith("imd://"):
+            continue
         # save linked universe frame
         uframe = traj.uframe
         traj.universe.load_new(_make_path_relative(traj.universe.trajectory.filename))
@@ -36,6 +39,9 @@ def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None
 
 def _make_trajectory_paths_absolute(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
+        # skip streaming trajectories
+        if traj.universe.trajectory.filename.startswith("imd://"):
+            continue
         # save linked universe frame
         uframe = traj.uframe
         traj.universe.load_new(_make_path_absolute(traj.universe.trajectory.filename))
