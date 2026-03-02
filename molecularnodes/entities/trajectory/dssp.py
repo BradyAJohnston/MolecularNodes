@@ -17,6 +17,7 @@ class DSSPManager:
     def __init__(self, entity: MolecularEntity):
         self._entity = entity
         self._DSSP = None
+        self._protein_residues = None
         self._dssp_results = None
         self._trajectory_average = None
         self._dssp_resindices = None
@@ -31,9 +32,8 @@ class DSSPManager:
     def _set_dssp_resindices(self, resids: list) -> None:
         """Internal: Set resindices for DSSP resids"""
         if self._dssp_resindices is None:
-            universe = self._entity.universe
-            mask = np.isin(universe.residues.resids, resids)
-            self._dssp_resindices = universe.residues.resindices[mask]
+            mask = np.isin(self._protein_residues.resids, resids)
+            self._dssp_resindices = self._protein_residues.resindices[mask]
 
     def _get_sliding_window_indices(self, index: int) -> None:
         """Internal: Get sliding window indices based on current index"""
@@ -143,9 +143,9 @@ class DSSPManager:
         self._props = self._entity.object.mn.dssp
         # calculate no secondary structs attribute
         # protein - 3 (loop), rest - 0 (none)
-        protein_resindices = universe.select_atoms("protein").residues.resindices
+        self._protein_residues = universe.select_atoms("protein").residues
         no_sec_struct = np.zeros(len(universe.atoms), dtype=int)
-        no_sec_struct[protein_resindices] = 3
+        no_sec_struct[self._protein_residues.resindices] = 3
         self._no_sec_struct = no_sec_struct[universe.atoms.resindices]
         # set and apply default
         self._set_display_option("per-frame")
