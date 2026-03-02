@@ -1,6 +1,6 @@
 # 🤖 MolecularNodes AI-generated contributions policy 🤖
 
-* Version: **1.1 (2026-02-17)**
+* Version: **1.0 (2026-03-02)**
 * License: **[CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/)** (Copied as a template from [MDAnalysis AI Policy](https://github.com/MDAnalysis/mdanalysis/blob/develop/AI_POLICY.md))
 
 This document defines the [Molecular Node's](https://github.com/BradyAJohnston/MolecularNodes/) policy regarding AI-generated content.
