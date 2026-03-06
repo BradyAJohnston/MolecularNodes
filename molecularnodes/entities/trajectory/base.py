@@ -32,6 +32,7 @@ from ..utilities import (
     BoolObjectMNProperty,
     IntObjectMNProperty,
     StringObjectMNProperty,
+    _compute_edge_type,
     _validate_non_negative,
 )
 from .annotations import TrajectoryAnnotationManager
@@ -358,20 +359,6 @@ class Trajectory(MolecularEntity):
     def _compute_is_lipid(self) -> np.ndarray:
         return np.isin(self.atoms.resnames, data.RESNAMES_LIPID)
 
-    def _compute_is_elastic_edge(self) -> np.ndarray:
-        if not hasattr(self.atoms, "bonds") or len(self.atoms.bonds) == 0:
-            return np.array([], dtype=bool)
-
-        indices = self.atoms.bonds.indices
-        positions = self.atoms.positions
-
-        pos_a = positions[indices[:, 0]]
-        pos_b = positions[indices[:, 1]]
-        print(pos_a, pos_b)
-        lengths = np.linalg.norm(pos_b - pos_a, axis=1)
-
-        return lengths > 2.5
-
     def _compute_is_solvent(self) -> np.ndarray:
         resname_is_solvent = np.isin(self.atoms.resnames, data.RESNAMES_SOLVENT)
         name_is_solvent = np.isin(self.atoms.names, data.NAMES_SOLVENT)
@@ -470,13 +457,19 @@ class Trajectory(MolecularEntity):
             edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
 
-        is_elastic = self._compute_is_elastic_edge()
-        if len(is_elastic) > 0:
-            self.object.data.attributes.new(
-                name="mn_is_elastic", type="BOOLEAN", domain="EDGE"
+        if hasattr(self.atoms, "bonds") and len(self.atoms.bonds) > 0:
+            bond_types = _compute_edge_type(
+                bonds_array=np.column_stack(
+                    [
+                        self.atoms.bonds.indices,
+                        np.zeros(len(self.atoms.bonds), dtype=int),
+                    ]
+                ),
+                positions=self.atoms.positions,
             )
-            self.object.data.attributes["mn_is_elastic"].data.foreach_set(
-                "value", is_elastic
+            self.object.data.attributes.new(name="bond_type", type="INT", domain="EDGE")
+            self.object.data.attributes["bond_type"].data.foreach_set(
+                "value", bond_types
             )
 
         self._mn_entity_type = self._entity_type.value

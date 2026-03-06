@@ -85,53 +85,49 @@ class TestTrajectory:
         for att in attribute_added:
             assert att in attributes
 
-    def test_is_elastic_edge_no_bonds(self):
-        from MDAnalysis.tests.datafiles import GRO
-
-        u = mda.Universe(GRO)
-        traj = mn.entities.Trajectory(u)
-
-        result = traj._compute_is_elastic_edge()
-        assert isinstance(result, np.ndarray)
-        assert len(result) == 0
-
-    def test_is_elastic_edge_all_atom(self):
-        from MDAnalysis.tests.datafiles import DCD, PSF
-
-        u = mda.Universe(PSF, DCD)
-        traj = mn.entities.Trajectory(u)
-
-        result = traj._compute_is_elastic_edge()
-
-        assert isinstance(result, np.ndarray)
-        assert result.dtype == bool
-        assert len(result) == len(u.atoms.bonds)
-        assert result.sum() == 0
-
-    def test_mn_is_elastic_attribute_on_mesh(self):
+    def test_bond_type_all_atom(self):
         from MDAnalysis.tests.datafiles import DCD, PSF
 
         u = mda.Universe(PSF, DCD)
         traj = mn.entities.Trajectory(u)
 
         obj = traj.object
-        attr_names = [a.name for a in obj.data.attributes]
-        assert "mn_is_elastic" in attr_names
+        attr = obj.data.attributes.get("bond_type")
+        assert attr is not None
 
-        attr = obj.data.attributes["mn_is_elastic"]
-        assert attr.data_type == "BOOLEAN"
-        assert attr.domain == "EDGE"
+        values = [0] * len(obj.data.edges)
+        attr.data.foreach_get("value", values)
+        values = np.array(values)
 
-    def test_mn_is_elastic_intra_residue_elastic(self, universe_martini_dna):
+        assert len(values) == len(u.atoms.bonds)
+        assert (values == 8).sum() == 0
+
+    def test_bond_type_intra_residue_elastic(self, universe_martini_dna):
         traj = mn.entities.Trajectory(universe_martini_dna)
-        result = traj._compute_is_elastic_edge()
 
-        elastic = result.sum()
-        covalent = len(result) - elastic
+        obj = traj.object
+        attr = obj.data.attributes.get("bond_type")
+        assert attr is not None
+
+        values = [0] * len(obj.data.edges)
+        attr.data.foreach_get("value", values)
+        values = np.array(values)
+
+        elastic = (values == 8).sum()
+        covalent = len(values) - elastic
 
         assert covalent == 40
         assert elastic == 747
-        assert result.dtype == bool
+
+    def test_bond_type_no_bonds(self):
+        from MDAnalysis.tests.datafiles import GRO
+
+        u = mda.Universe(GRO)
+        traj = mn.entities.Trajectory(u)
+
+        obj = traj.object
+        attr_names = [a.name for a in obj.data.attributes]
+        assert "bond_type" not in attr_names
 
     def test_trajectory_update(self, snapshot, universe):
         traj = mn.entities.Trajectory(universe, name="TestTrajectoryUpdate")

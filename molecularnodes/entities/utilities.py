@@ -124,6 +124,43 @@ class StringObjectMNProperty(ObjectMNProperty):
         return super().__set__(obj, value)
 
 
+def _compute_edge_type(
+    bonds_array: np.ndarray,
+    positions: np.ndarray,
+    elastic_threshold: float = 2.5,
+) -> np.ndarray:
+    """Compute bond type integers as blender attribute
+
+    Bond Type
+    ---------
+    'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
+    'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
+    'ELASTIC' = 8
+
+    Parameters
+    ----------
+    bonds_array : np.ndarray
+    positions : np.ndarray
+    elastic_threshold : float, default 2.5
+        Bond length in Angstroms above which an edge is considered elastic.
+
+    Returns
+    -------
+    np.ndarray
+
+    """
+    indices = bonds_array[:, :2]
+    bond_types = bonds_array[:, 2].copy().astype(int)
+
+    pos_a = positions[indices[:, 0]]
+    pos_b = positions[indices[:, 1]]
+    lengths = np.linalg.norm(pos_b - pos_a, axis=1)
+
+    bond_types[lengths > elastic_threshold] = 8
+
+    return bond_types
+
+
 def create_object(
     array: AtomArray | AtomArrayStack,
     name="NewObject",
@@ -177,8 +214,12 @@ def create_object(
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
+        bond_types = _compute_edge_type(
+            bonds_array=array.bonds.as_array(),
+            positions=array.coord,
+        )
         bob.store_named_attribute(
-            array.bonds.as_array()[:, 2],
+            bond_types,
             "bond_type",
             domain=db.AttributeDomains.EDGE,
             atype=db.AttributeTypes.INT,
