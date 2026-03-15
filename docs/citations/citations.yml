@@ -1,3 +1,23 @@
+- title: "Unraveling the maturation pathway of a eukaryotic virus through cryo-EM"
+  path: https://www.pnas.org/doi/abs/10.1073/pnas.2420493123
+  image: 
+  doi: https://doi.org/10.1073/pnas.2420493123
+
+- title: "The transitional kinetics between open and closed Rep structures can be tuned by salt via two intermediate states"
+  image: https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/nar/54/2/10.1093_nar_gkaf1483/1/m_gkaf1483figgra1.jpeg
+  doi: https://doi.org/10.1093/nar/gkaf1483
+  path: https://academic.oup.com/nar/article/54/2/gkaf1483/8433883
+
+- title: "Microscopy Nodes: versatile 3D microscopy visualization with Blender"
+  path: https://link.springer.com/content/pdf/10.1038/s44319-025-00654-8.pdf
+  doi: https://doi.org/10.1038/s44319-025-00654-8
+  image: https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs44319-025-00654-8/MediaObjects/44319_2025_654_Figa_HTML.jpg?as=webp
+  
+- title: "Biomolecular condensate architecture of an autophagic cargo at molecular resolution in situ"
+  image: https://www.biorxiv.org/content/biorxiv/early/2026/01/08/2026.01.07.698105/F2.large.jpg
+  path: https://www.biorxiv.org/content/10.64898/2026.01.07.698105v1.full
+  doi: https://doi.org/10.64898/2026.01.07.698105
+
 - title: "Method for Mid-IR Spectroscopy of Extracellular Vesicles at the Subvesicle Level"
   image: https://pubs.acs.org/cms/10.1021/acsmeasuresciau.5c00001/asset/images/medium/tg5c00001_0001.gif
   path: https://pubs.acs.org/doi/full/10.1021/acsmeasuresciau.5c00001
