@@ -162,38 +162,42 @@
   array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].10
+  AttributeArray(name='charge', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
+  array([1., 0., 0., ..., 1., 1., 1.], dtype=float32)
+# ---
+# name: test_martini[pent/prot_ion.tpr].11
   AttributeArray(name='is_alpha_carbon', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
   array([ True, False,  True, ..., False, False, False], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].11
+# name: test_martini[pent/prot_ion.tpr].12
   AttributeArray(name='is_backbone', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
   array([ True, False,  True, ..., False, False, False], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].12
+# name: test_martini[pent/prot_ion.tpr].13
   AttributeArray(name='is_lipid', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
   array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].13
+# name: test_martini[pent/prot_ion.tpr].14
   AttributeArray(name='is_nucleic', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
   array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].14
+# name: test_martini[pent/prot_ion.tpr].15
   AttributeArray(name='is_peptide', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
   array([ True,  True,  True, ..., False, False, False], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].15
+# name: test_martini[pent/prot_ion.tpr].16
   AttributeArray(name='is_solvent', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
   array([False, False, False, ..., False, False, False], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].16
+# name: test_martini[pent/prot_ion.tpr].17
   AttributeArray(name='mass', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
   array([72., 72., 72., ..., 72., 72., 72.], dtype=float32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].17
+# name: test_martini[pent/prot_ion.tpr].18
   AttributeArray(name='occupancy', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
   array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].18
+# name: test_martini[pent/prot_ion.tpr].19
   AttributeArray(name='position', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT_VECTOR, shape=(11350, 3), dtype=float32)
   array([[1.6561999 , 1.3041    , 0.9823001 ],
          [1.6645999 , 1.3149999 , 1.0121001 ],
@@ -203,31 +207,31 @@
          [0.0522    , 0.10690001, 1.1598    ],
          [1.3804001 , 1.7211999 , 1.2453    ]], dtype=float32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].19
-  AttributeArray(name='res_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
-  array([   1,    1,    2, ..., 5408, 5409, 5410], dtype=int32)
-# ---
 # name: test_martini[pent/prot_ion.tpr].2
   AttributeArray(name='.select_vert', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
   array([ True,  True,  True, ...,  True,  True,  True], dtype=bool)
 # ---
 # name: test_martini[pent/prot_ion.tpr].20
+  AttributeArray(name='res_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
+  array([   1,    1,    2, ..., 5408, 5409, 5410], dtype=int32)
+# ---
+# name: test_martini[pent/prot_ion.tpr].21
   AttributeArray(name='res_name', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([12, 12, 12, ..., -1, -1, -1], dtype=int32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].21
+# name: test_martini[pent/prot_ion.tpr].22
   AttributeArray(name='segid', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([0, 0, 0, ..., 0, 0, 0], dtype=int32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].22
+# name: test_martini[pent/prot_ion.tpr].23
   AttributeArray(name='sharp_face', object='NewUniverseObject', mesh='NewUniverseObject', domain=FACE, type=BOOLEAN, shape=(0,), dtype=bool)
   array([], dtype=bool)
 # ---
-# name: test_martini[pent/prot_ion.tpr].23
+# name: test_martini[pent/prot_ion.tpr].24
   AttributeArray(name='ures_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([   0,    0,    1, ..., 5407, 5408, 5409], dtype=int32)
 # ---
-# name: test_martini[pent/prot_ion.tpr].24
+# name: test_martini[pent/prot_ion.tpr].25
   AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
   array([0.0192, 0.018 , 0.0192, ..., 0.01  , 0.01  , 0.01  ], dtype=float32)
 # ---
@@ -252,10 +256,10 @@
   array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
 # ---
 # name: test_martini[pent/prot_ion.tpr].8
-  AttributeArray(name='chain_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
-  array([0, 0, 0, ..., 0, 0, 0], dtype=int32)
+  AttributeArray(name='bond_type', object='NewUniverseObject', mesh='NewUniverseObject', domain=EDGE, type=INT, shape=(35225,), dtype=int32)
+  array([8, 8, 8, ..., 8, 8, 8], dtype=int32)
 # ---
 # name: test_martini[pent/prot_ion.tpr].9
-  AttributeArray(name='charge', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
-  array([1., 0., 0., ..., 1., 1., 1.], dtype=float32)
+  AttributeArray(name='chain_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
+  array([0, 0, 0, ..., 0, 0, 0], dtype=int32)
 # ---

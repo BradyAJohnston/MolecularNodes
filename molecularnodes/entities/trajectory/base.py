@@ -32,6 +32,7 @@ from ..utilities import (
     BoolObjectMNProperty,
     IntObjectMNProperty,
     StringObjectMNProperty,
+    _compute_edge_type,
     _validate_non_negative,
 )
 from .annotations import TrajectoryAnnotationManager
@@ -455,6 +456,21 @@ class Trajectory(MolecularEntity):
             vertices=self._scaled_position,
             edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
+
+        if hasattr(self.atoms, "bonds") and len(self.atoms.bonds) > 0:
+            bond_types = _compute_edge_type(
+                bonds_array=np.column_stack(
+                    [
+                        self.atoms.bonds.indices,
+                        np.zeros(len(self.atoms.bonds), dtype=int),
+                    ]
+                ),
+                positions=self.atoms.positions,
+            )
+            self.object.data.attributes.new(name="bond_type", type="INT", domain="EDGE")
+            self.object.data.attributes["bond_type"].data.foreach_set(
+                "value", bond_types
+            )
 
         self._mn_entity_type = self._entity_type.value
         try:

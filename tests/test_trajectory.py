@@ -33,6 +33,13 @@ class TestTrajectory:
         return u
 
     @pytest.fixture(scope="module")
+    def universe_martini_dna(self):
+        itp = data_dir / "martini/dna_strand/dna.itp"
+        pdb = data_dir / "martini/dna_strand/dna.pdb"
+        u = mda.Universe(str(itp), str(pdb), topology_format="ITP")
+        return u
+
+    @pytest.fixture(scope="module")
     def universe_with_bonds(self):
         top = data_dir / "md_ppr/md.tpr"
         traj = data_dir / "md_ppr/md.gro"
@@ -77,6 +84,50 @@ class TestTrajectory:
         ]
         for att in attribute_added:
             assert att in attributes
+
+    def test_bond_type_all_atom(self):
+        from MDAnalysis.tests.datafiles import DCD, PSF
+
+        u = mda.Universe(PSF, DCD)
+        traj = mn.entities.Trajectory(u)
+
+        obj = traj.object
+        attr = obj.data.attributes.get("bond_type")
+        assert attr is not None
+
+        values = [0] * len(obj.data.edges)
+        attr.data.foreach_get("value", values)
+        values = np.array(values)
+
+        assert len(values) == len(u.atoms.bonds)
+        assert (values == 8).sum() == 0
+
+    def test_bond_type_intra_residue_elastic(self, universe_martini_dna):
+        traj = mn.entities.Trajectory(universe_martini_dna)
+
+        obj = traj.object
+        attr = obj.data.attributes.get("bond_type")
+        assert attr is not None
+
+        values = [0] * len(obj.data.edges)
+        attr.data.foreach_get("value", values)
+        values = np.array(values)
+
+        elastic = (values == 8).sum()
+        covalent = len(values) - elastic
+
+        assert covalent == 40
+        assert elastic == 747
+
+    def test_bond_type_no_bonds(self):
+        from MDAnalysis.tests.datafiles import GRO
+
+        u = mda.Universe(GRO)
+        traj = mn.entities.Trajectory(u)
+
+        obj = traj.object
+        attr_names = [a.name for a in obj.data.attributes]
+        assert "bond_type" not in attr_names
 
     def test_trajectory_update(self, snapshot, universe):
         traj = mn.entities.Trajectory(universe, name="TestTrajectoryUpdate")
