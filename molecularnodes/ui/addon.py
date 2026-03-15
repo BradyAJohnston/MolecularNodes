@@ -24,7 +24,6 @@ from bpy.props import CollectionProperty, PointerProperty
 from .. import session
 from ..handlers import render_pre_handler, update_entities
 from ..templates import register_templates_menu, unregister_templates_menu
-from ..utils import add_current_module_to_path
 from . import node_menu, ops, panel, pref, props
 
 all_classes = (
@@ -70,7 +69,6 @@ def register():
         except Exception as e:
             print(e)
             pass
-    add_current_module_to_path()
     bpy.types.NODE_MT_add.append(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
     bpy.types.NODE_MT_context_menu.prepend(panel.change_style_node_menu)
