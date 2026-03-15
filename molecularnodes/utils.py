@@ -3,14 +3,22 @@ import os
 import sys
 from contextlib import ExitStack
 from typing import List
+import addon_utils
+import bpy
 import numpy as np
 from mathutils import Matrix
-from .assets import ADDON_DIR
 
 
-def add_current_module_to_path():
-    path = str(ADDON_DIR.parent)
-    sys.path.append(path)
+def load_extension_module():
+    # check enabled addons
+    for addon in bpy.context.preferences.addons.keys():
+        if addon.endswith(".molecularnodes"):
+            is_enabled, is_loaded = addon_utils.check(addon)
+            if is_enabled and is_loaded:
+                return sys.modules[addon]
+    # return this parent module
+    mn_module_name = __name__.rsplit(".", 1)[0]
+    return sys.modules[mn_module_name]
 
 
 def fraction(x, y):

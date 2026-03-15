@@ -1,12 +1,12 @@
 import io
 from uuid import uuid1
+import bl_ext.blender_org.molecularnodes as mn  # type: ignore
 import bpy
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from MDAnalysis.analysis import helix_analysis as hel
 from PIL import Image
-import molecularnodes as mn
 
 matplotlib.use("Agg")
 
