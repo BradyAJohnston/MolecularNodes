@@ -467,10 +467,7 @@ class Trajectory(MolecularEntity):
                 ),
                 positions=self.atoms.positions,
             )
-            self.object.data.attributes.new(name="bond_type", type="INT", domain="EDGE")
-            self.object.data.attributes["bond_type"].data.foreach_set(
-                "value", bond_types
-            )
+            self.store_named_attribute(data=bond_types, name="bond_type", domain="EDGE")
 
         self._mn_entity_type = self._entity_type.value
         try:
