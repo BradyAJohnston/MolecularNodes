@@ -1,3 +1,57 @@
+- title: "Unraveling the maturation pathway of a eukaryotic virus through cryo-EM"
+  path: https://www.pnas.org/doi/abs/10.1073/pnas.2420493123
+  image: 
+  doi: https://doi.org/10.1073/pnas.2420493123
+
+- title: "The transitional kinetics between open and closed Rep structures can be tuned by salt via two intermediate states"
+  image: https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/nar/54/2/10.1093_nar_gkaf1483/1/m_gkaf1483figgra1.jpeg
+  doi: https://doi.org/10.1093/nar/gkaf1483
+  path: https://academic.oup.com/nar/article/54/2/gkaf1483/8433883
+
+- title: "Microscopy Nodes: versatile 3D microscopy visualization with Blender"
+  path: https://link.springer.com/content/pdf/10.1038/s44319-025-00654-8.pdf
+  doi: https://doi.org/10.1038/s44319-025-00654-8
+  image: https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs44319-025-00654-8/MediaObjects/44319_2025_654_Figa_HTML.jpg?as=webp
+  
+- title: "Biomolecular condensate architecture of an autophagic cargo at molecular resolution in situ"
+  image: https://www.biorxiv.org/content/biorxiv/early/2026/01/08/2026.01.07.698105/F2.large.jpg
+  path: https://www.biorxiv.org/content/10.64898/2026.01.07.698105v1.full
+  doi: https://doi.org/10.64898/2026.01.07.698105
+
+- title: "In Search of Empty Spheres: 3D Apollonius Diagrams on GPU"
+  path: https://dl.acm.org/doi/epdf/10.1145/3730868
+  doi: https://doi.org/10.1145/3730868
+
+- title: "In situ high-resolution cryo-EM reconstructions from CEMOVIS"
+  path: https://journals.iucr.org/m/issues/2025/04/00/eh5022/eh5022.pdf
+  doi: https://doi.org/10.1107/S2052252525005196
+  image: https://journals.iucr.org/m/issues/2025/04/00/eh5022/eh5022fig2.jpg
+
+- title: "Method for Mid-IR Spectroscopy of Extracellular Vesicles at the Subvesicle Level"
+  path: https://pubs.acs.org/doi/10.1021/acsmeasuresciau.5c00001
+  image: https://pubs.acs.org/cms/10.1021/acsmeasuresciau.5c00001/asset/images/medium/tg5c00001_0007.gif
+  doi: https://doi.org/10.1021/acsmeasuresciau.5c00001
+
+- title: "Recent Advances in the Development and Use of Silk-Based Biomaterials"
+  path: https://www.annualreviews.org/content/journals/10.1146/annurev-matsci-080423-114451
+  doi: https://doi.org/10.1146/annurev-matsci-080423-114451
+  image: https://www.annualreviews.org/docserver/ahah/fulltext/matsci/55/1/mr550307.f1_thmb.png
+
+- title: "Structural and dynamic basis of indirect apoptosis inhibition by Bcl-xL: a case study with Bid"
+  image: https://www.biorxiv.org/content/biorxiv/early/2025/09/04/2025.08.31.673340/F25.large.jpg
+  doi: https://doi.org/10.1101/2025.08.31.673340
+  path: https://www.biorxiv.org/content/10.1101/2025.08.31.673340v1.full
+
+- title: "Method for Mid-IR Spectroscopy of Extracellular Vesicles at the Subvesicle Level"
+  image: https://pubs.acs.org/cms/10.1021/acsmeasuresciau.5c00001/asset/images/medium/tg5c00001_0001.gif
+  path: https://pubs.acs.org/doi/full/10.1021/acsmeasuresciau.5c00001
+  doi: https://doi.org/10.1021/acsmeasuresciau.5c00001
+
+- title: "Non-equilibrium snapshots of ligand efficacy at the μ-opioid receptor"
+  path: https://www.nature.com/articles/s41586-025-10056-4
+  image: https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-025-10056-4/MediaObjects/41586_2025_10056_MOESM3_ESM.mp4
+  doi: https://doi.org/10.1038/s41586-025-10056-4
+
 - title: "Recent Advances in the Development and Use of Silk-Based Biomaterials"
   path: https://www.annualreviews.org/content/journals/10.1146/annurev-matsci-080423-114451
   image: https://www.annualreviews.org/docserver/ahah/fulltext/matsci/55/1/mr550307.f1_thmb.png
@@ -38,7 +92,15 @@
   path: https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/anbr.202400088
   doi: https://doi.org/10.1002/anbr.202400088
 
-- title: Modeling membranes in situ
+- title: "Colors and Visualization Strategies in Structural and Cellular Biology"
+  path: https://shonan.nii.ac.jp/docs/e99700c7c681ca8538ef9cfa5d9ee7242cc2e793.pdf
+
+- title: "Surface-Tethered Curved Membrane Mimics for Characterizing Alpha Synuclein-Membrane Interactions by Surface Plasmon Resonance"
+  path: https://chemrxiv.org/doi/pdf/10.26434/chemrxiv-2025-lps7x
+  doi: https://doi.org/10.26434/chemrxiv-2025-lps7x
+  
+
+- title: "Modeling membranes in situ"
   image: https://ars.els-cdn.com/content/image/1-s2.0-S0959440X24000642-gr1.jpg
   path: https://www.sciencedirect.com/science/article/pii/S0959440X24000642?via%3Dihub
   doi: https://doi.org/10.1016/j.sbi.2024.102837
