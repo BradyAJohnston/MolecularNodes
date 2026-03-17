@@ -137,7 +137,6 @@ jobs:
       - name: Install Packages
         run: |
           uv sync --all-extras
-          uv run python -m biotite.setup_ccd
 
       - name: Pre-render Scripts
         timeout-minutes: 3
