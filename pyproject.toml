@@ -52,6 +52,7 @@ test = [
     ]
 docs = [
     "quartodoc>=0.11.1",
+    "griffe<2.0.0",
     "quarto-cli>=1.8.0",
     "tomlkit",
     "nodepad",
@@ -121,6 +122,12 @@ order-by-type = true
 [[tool.uv.index]]
 name="dailybpy"
 url = "https://bradyajohnston.github.io/dailybpy/"
+
+[dependency-groups]
+docs = [
+    "griffe<2.0",
+    "quartodoc>=0.11.1",
+]
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]

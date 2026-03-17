@@ -583,34 +583,14 @@ wheels = [
 
 [[package]]
 name = "griffe"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "griffecli" },
-    { name = "griffelib" },
-]
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8b/94/ee21d41e7eb4f823b94603b9d40f86d3c7fde80eacc2c3c71845476dddaa/griffe-2.0.0-py3-none-any.whl", hash = "sha256:5418081135a391c3e6e757a7f3f156f1a1a746cc7b4023868ff7d5e2f9a980aa", size = 5214, upload-time = "2026-02-09T19:09:44.105Z" },
-]
-
-[[package]]
-name = "griffecli"
-version = "2.0.0"
+version = "1.15.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama" },
-    { name = "griffelib" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/0d/0c/3a471b6e31951dce2360477420d0a8d1e00dea6cf33b70f3e8c3ab6e28e1/griffe-1.15.0.tar.gz", hash = "sha256:7726e3afd6f298fbc3696e67958803e7ac843c1cfe59734b6251a40cdbfb5eea", size = 424112, upload-time = "2025-11-10T15:03:15.52Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e6/ed/d93f7a447bbf7a935d8868e9617cbe1cadf9ee9ee6bd275d3040fbf93d60/griffecli-2.0.0-py3-none-any.whl", hash = "sha256:9f7cd9ee9b21d55e91689358978d2385ae65c22f307a63fb3269acf3f21e643d", size = 9345, upload-time = "2026-02-09T19:09:42.554Z" },
-]
-
-[[package]]
-name = "griffelib"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/51/c936033e16d12b627ea334aaaaf42229c37620d0f15593456ab69ab48161/griffelib-2.0.0-py3-none-any.whl", hash = "sha256:01284878c966508b6d6f1dbff9b6fa607bc062d8261c5c7253cb285b06422a7f", size = 142004, upload-time = "2026-02-09T19:09:40.561Z" },
+    { url = "https://files.pythonhosted.org/packages/9c/83/3b1d03d36f224edded98e9affd0467630fc09d766c0e56fb1498cbb04a9b/griffe-1.15.0-py3-none-any.whl", hash = "sha256:6f6762661949411031f5fcda9593f586e6ce8340f0ba88921a0f2ef7a81eb9a3", size = 150705, upload-time = "2025-11-10T15:03:13.549Z" },
 ]
 
 [[package]]
@@ -1348,7 +1328,6 @@ dependencies = [
     { name = "mrcfile" },
     { name = "pandas" },
     { name = "pyyaml" },
-    { name = "quartodoc" },
     { name = "starfile" },
 ]
 
@@ -1371,6 +1350,7 @@ dev = [
     { name = "syrupy" },
 ]
 docs = [
+    { name = "griffe" },
     { name = "ipython" },
     { name = "jupyter" },
     { name = "jupyter-cache" },
@@ -1399,12 +1379,19 @@ test = [
     { name = "syrupy" },
 ]
 
+[package.dev-dependencies]
+docs = [
+    { name = "griffe" },
+    { name = "quartodoc" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "biotite", specifier = ">=1.5" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=5.1.0" },
     { name = "databpy", specifier = ">=0.6.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
+    { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0.0" },
     { name = "imdclient", specifier = ">=0.2.3" },
     { name = "ipython", specifier = ">=9.7.0" },
     { name = "ipython", marker = "extra == 'dev'" },
@@ -1433,8 +1420,7 @@ requires-dist = [
     { name = "pytest-xdist", marker = "extra == 'test'" },
     { name = "pyyaml" },
     { name = "quarto-cli", marker = "extra == 'docs'", specifier = ">=1.8.0" },
-    { name = "quartodoc", specifier = ">=0.11.1" },
-    { name = "quartodoc", marker = "extra == 'docs'" },
+    { name = "quartodoc", marker = "extra == 'docs'", specifier = ">=0.11.1" },
     { name = "rdkit", marker = "extra == 'test'" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "scipy", marker = "extra == 'dev'" },
@@ -1446,6 +1432,12 @@ requires-dist = [
     { name = "tomlkit", marker = "extra == 'docs'" },
 ]
 provides-extras = ["bpy", "jupyter", "build", "dev", "test", "docs"]
+
+[package.metadata.requires-dev]
+docs = [
+    { name = "griffe", specifier = "<2.0" },
+    { name = "quartodoc", specifier = ">=0.11.1" },
+]
 
 [[package]]
 name = "mrcfile"
