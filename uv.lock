@@ -2,9 +2,6 @@ version = 1
 revision = 3
 requires-python = "==3.13.*"
 
-[options]
-prerelease-mode = "allow"
-
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
@@ -1351,6 +1348,7 @@ dependencies = [
     { name = "mrcfile" },
     { name = "pandas" },
     { name = "pyyaml" },
+    { name = "quartodoc" },
     { name = "starfile" },
 ]
 
@@ -1434,7 +1432,8 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'test'" },
     { name = "pytest-xdist", marker = "extra == 'test'" },
     { name = "pyyaml" },
-    { name = "quarto-cli", marker = "extra == 'docs'", specifier = "~=1.7.0" },
+    { name = "quarto-cli", marker = "extra == 'docs'", specifier = ">=1.8.0" },
+    { name = "quartodoc", specifier = ">=0.11.1" },
     { name = "quartodoc", marker = "extra == 'docs'" },
     { name = "rdkit", marker = "extra == 'test'" },
     { name = "ruff", marker = "extra == 'dev'" },
@@ -2103,14 +2102,14 @@ wheels = [
 
 [[package]]
 name = "quarto-cli"
-version = "1.7.34"
+version = "1.8.27"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jupyter" },
     { name = "nbclient" },
     { name = "wheel" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/24/3a/7c5570f29ac10731a1af53316e94e7a795b878cb6e20aeecb444d1d301ad/quarto_cli-1.7.34.tar.gz", hash = "sha256:a23eb0b817c0e224f49b6f639094c0b56731ff301b9f18b29a33de760bc95c71", size = 4616, upload-time = "2025-08-29T11:37:28.945Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/37/1c/91682258d62f14c7456fc5ee2a4ab70b6cdb924c0b5f6fd6a1558a1d1b44/quarto_cli-1.8.27.tar.gz", hash = "sha256:6373a0b378a97402bd856ed933d996b86d1eea3433beda5e443adb623e94a9a4", size = 4615, upload-time = "2026-01-16T09:23:04.515Z" }
 
 [[package]]
 name = "quartodoc"

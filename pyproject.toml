@@ -51,8 +51,8 @@ test = [
     "numpy<2.0"
     ]
 docs = [
-    "quartodoc",
-    "quarto-cli~=1.7.0",
+    "quartodoc>=0.11.1",
+    "quarto-cli>=1.8.0",
     "tomlkit",
     "nodepad",
     "jupyter",
