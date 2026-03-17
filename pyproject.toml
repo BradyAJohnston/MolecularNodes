@@ -1,6 +1,6 @@
 [project]
 name = "molecularnodes"
-version = "4.5.11"
+version = "4.5.12"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
@@ -15,7 +15,7 @@ dependencies = [
     "pandas<3.0.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
-requires-python = "~=3.11.0"
+requires-python = "~=3.13.0"
 
 [project.urls]
 Homepage = "https://bradyajohnston.github.io/MolecularNodes"
@@ -23,7 +23,7 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy = ["bpy>=4.5.2, <5.1.0"]
+bpy = ["bpy>=5.1.0"]
 jupyter = ["jupyter", "IPython"]
 build = ["tomlkit"]
 dev = [
@@ -38,7 +38,6 @@ dev = [
     "nodepad>=0.2.0"
 ]
 test = [
-    "bpy>=4.5.2, <5.1.0",
     "pytest",
     "pytest-cov",
     "syrupy",
@@ -116,6 +115,12 @@ order-by-type = true
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
 
+# [tool.uv.sources]
+# databpy = { workspace = true }
+
+[[tool.uv.index]]
+name="dailybpy"
+url = "https://bradyajohnston.github.io/dailybpy/"
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
