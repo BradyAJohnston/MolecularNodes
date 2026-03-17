@@ -156,7 +156,7 @@ jobs:
 
       - name: Quarto Render Docs
         run: |
-          uv run quarto render docs
+          uv run --group docs quarto render docs
 
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}

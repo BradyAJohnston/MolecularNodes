@@ -223,9 +223,9 @@ dependencies = [
     { name = "zstandard" },
 ]
 wheels = [
-    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-16/bpy-5.2.0a0-cp313-cp313-macosx_11_0_arm64.whl" },
-    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-16/bpy-5.2.0a0-cp313-cp313-manylinux_2_39_x86_64.whl" },
-    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-16/bpy-5.2.0a0-cp313-cp313-win_amd64.whl" },
+    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-17/bpy-5.2.0a0-cp313-cp313-macosx_11_0_arm64.whl" },
+    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-17/bpy-5.2.0a0-cp313-cp313-manylinux_2_39_x86_64.whl" },
+    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-17/bpy-5.2.0a0-cp313-cp313-win_amd64.whl" },
 ]
 
 [[package]]
@@ -1381,8 +1381,16 @@ test = [
 
 [package.dev-dependencies]
 docs = [
+    { name = "bpy" },
     { name = "griffe" },
+    { name = "ipython" },
+    { name = "jupyter" },
+    { name = "jupyter-cache" },
+    { name = "mdanalysisdata" },
+    { name = "mdanalysistests" },
     { name = "quartodoc" },
+    { name = "setuptools" },
+    { name = "tomlkit" },
 ]
 
 [package.metadata]
@@ -1435,8 +1443,16 @@ provides-extras = ["bpy", "jupyter", "build", "dev", "test", "docs"]
 
 [package.metadata.requires-dev]
 docs = [
+    { name = "bpy", specifier = ">=5.2.0a0" },
     { name = "griffe", specifier = "<2.0" },
+    { name = "ipython", specifier = ">=9.11.0" },
+    { name = "jupyter", specifier = ">=1.1.1" },
+    { name = "jupyter-cache", specifier = ">=1.0.1" },
+    { name = "mdanalysisdata", specifier = ">=0.9.0" },
+    { name = "mdanalysistests", specifier = ">=2.7.0" },
     { name = "quartodoc", specifier = ">=0.11.1" },
+    { name = "setuptools", specifier = "<81" },
+    { name = "tomlkit", specifier = ">=0.14.0" },
 ]
 
 [[package]]
@@ -2320,11 +2336,11 @@ wheels = [
 
 [[package]]
 name = "setuptools"
-version = "82.0.1"
+version = "80.10.2"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/4f/db/cfac1baf10650ab4d1c111714410d2fbb77ac5a616db26775db562c8fab2/setuptools-82.0.1.tar.gz", hash = "sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9", size = 1152316, upload-time = "2026-03-09T12:47:17.221Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/76/95/faf61eb8363f26aa7e1d762267a8d602a1b26d4f3a1e758e92cb3cb8b054/setuptools-80.10.2.tar.gz", hash = "sha256:8b0e9d10c784bf7d262c4e5ec5d4ec94127ce206e8738f29a437945fbc219b70", size = 1200343, upload-time = "2026-01-25T22:38:17.252Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9d/76/f789f7a86709c6b087c5a2f52f911838cad707cc613162401badc665acfe/setuptools-82.0.1-py3-none-any.whl", hash = "sha256:a59e362652f08dcd477c78bb6e7bd9d80a7995bc73ce773050228a348ce2e5bb", size = 1006223, upload-time = "2026-03-09T12:47:15.026Z" },
+    { url = "https://files.pythonhosted.org/packages/94/b8/f1f62a5e3c0ad2ff1d189590bfa4c46b4f3b6e49cef6f26c6ee4e575394d/setuptools-80.10.2-py3-none-any.whl", hash = "sha256:95b30ddfb717250edb492926c92b5221f7ef3fbcc2b07579bcd4a27da21d0173", size = 1064234, upload-time = "2026-01-25T22:38:15.216Z" },
 ]
 
 [[package]]
