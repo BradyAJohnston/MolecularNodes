@@ -60,7 +60,7 @@ jobs:
 
   test-bpy:
     name: Test with bpy
-    needs: [lint, build]
+    needs: [lint]
     runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 4
@@ -88,7 +88,7 @@ jobs:
 
   test-blender:
     name: Test in Blender
-    needs: [lint, build]
+    needs: [lint]
     runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 6
