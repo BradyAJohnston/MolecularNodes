@@ -30,7 +30,7 @@ def install_dependency_group(pyproject_path, group_name):
 
 # Configuration
 PYPROJECT_PATH = "pyproject.toml"  # Change this to your file path
-GROUP_NAME = "test"
+GROUP_NAME = "dev"
 
 if __name__ == "__main__":
     install_dependency_group(PYPROJECT_PATH, GROUP_NAME)
