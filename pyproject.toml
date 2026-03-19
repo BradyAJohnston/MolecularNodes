@@ -25,7 +25,6 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 bpy = ["bpy>=5.1.0"]
 jupyter = ["jupyter", "ipython>=9.7.0"]
 docs = [
-    "bpy>=5.1",
     "griffe<2.0",
     "ipython>=9.11.0",
     "jupyter>=1.1.1",
