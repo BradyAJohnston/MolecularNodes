@@ -104,12 +104,6 @@ jobs:
         with:
           version: ${{ matrix.version }}
 
-      - name: Download extension artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.ADDON_NAME }}-${{ github.sha }}
-          path: ./artifact
-
       - name: Install Dependencies
         shell: bash
         run: |
