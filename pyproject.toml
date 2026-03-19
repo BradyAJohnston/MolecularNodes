@@ -4,7 +4,7 @@ version = "4.5.12"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.6.0",
+    "databpy>=0.7.0",
     "mdanalysis>=2.10",
     "biotite>=1.5",
     "mrcfile",
@@ -30,15 +30,16 @@ docs = [
     "ipython>=9.11.0",
     "jupyter>=1.1.1",
     "jupyter-cache>=1.0.1",
+    "quartodoc>=0.11.1",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
-    "quartodoc>=0.11.1",
     "quarto-cli>=1.8.0",
     "setuptools<81",
     "tomlkit>=0.14.0",
 ]
 dev = [
-    "molecularnodes[docs]",
+    "mdanalysisdata>=0.9.0",
+    "mdanalysistests>=2.7.0",
     "fake-bpy-module",
     "nodepad>=0.2.0",
     "pooch>=1.8",
@@ -48,7 +49,6 @@ dev = [
     "pytest-xdist",
     "rdkit",
     "ruff",
-    "scipy",
     "syrupy",
 ]
 

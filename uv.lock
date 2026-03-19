@@ -1321,10 +1321,8 @@ version = "4.5.12"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
-    { name = "bpy" },
     { name = "databpy" },
     { name = "imdclient" },
-    { name = "ipython" },
     { name = "mdanalysis" },
     { name = "mrcfile" },
     { name = "pandas" },
@@ -1336,51 +1334,20 @@ dependencies = [
 bpy = [
     { name = "bpy" },
 ]
-build = [
-    { name = "tomlkit" },
-]
 dev = [
     { name = "fake-bpy-module" },
-    { name = "ipython" },
-    { name = "nodepad" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-    { name = "scipy" },
-    { name = "syrupy" },
-]
-docs = [
-    { name = "griffe" },
-    { name = "ipython" },
-    { name = "jupyter" },
-    { name = "jupyter-cache" },
     { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
     { name = "nodepad" },
-    { name = "quarto-cli" },
-    { name = "quartodoc" },
-    { name = "tomlkit" },
-]
-jupyter = [
-    { name = "ipython" },
-    { name = "jupyter" },
-]
-test = [
-    { name = "ipython" },
-    { name = "mdanalysisdata" },
-    { name = "mdanalysistests" },
-    { name = "numpy" },
     { name = "pooch" },
+    { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "pytest-xdist" },
     { name = "rdkit" },
-    { name = "scipy" },
+    { name = "ruff" },
     { name = "syrupy" },
 ]
-
-[package.dev-dependencies]
 docs = [
     { name = "bpy" },
     { name = "griffe" },
@@ -1389,73 +1356,54 @@ docs = [
     { name = "jupyter-cache" },
     { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
+    { name = "quarto-cli" },
     { name = "quartodoc" },
     { name = "setuptools" },
     { name = "tomlkit" },
+]
+jupyter = [
+    { name = "ipython" },
+    { name = "jupyter" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "biotite", specifier = ">=1.5" },
-    { name = "bpy", specifier = ">=5.1" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=5.1.0" },
-    { name = "databpy", specifier = ">=0.6.0" },
+    { name = "bpy", marker = "extra == 'docs'", specifier = ">=5.1" },
+    { name = "databpy", specifier = ">=0.7.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
-    { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0.0" },
+    { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0" },
     { name = "imdclient", specifier = ">=0.2.3" },
-    { name = "ipython", specifier = ">=9.7.0" },
-    { name = "ipython", marker = "extra == 'dev'" },
-    { name = "ipython", marker = "extra == 'docs'" },
-    { name = "ipython", marker = "extra == 'jupyter'" },
-    { name = "ipython", marker = "extra == 'test'" },
-    { name = "jupyter", marker = "extra == 'docs'" },
+    { name = "ipython", marker = "extra == 'docs'", specifier = ">=9.11.0" },
+    { name = "ipython", marker = "extra == 'jupyter'", specifier = ">=9.7.0" },
+    { name = "jupyter", marker = "extra == 'docs'", specifier = ">=1.1.1" },
     { name = "jupyter", marker = "extra == 'jupyter'" },
-    { name = "jupyter-cache", marker = "extra == 'docs'" },
+    { name = "jupyter-cache", marker = "extra == 'docs'", specifier = ">=1.0.1" },
     { name = "mdanalysis", specifier = ">=2.10" },
-    { name = "mdanalysisdata", marker = "extra == 'docs'" },
-    { name = "mdanalysisdata", marker = "extra == 'test'" },
+    { name = "mdanalysisdata", marker = "extra == 'dev'", specifier = ">=0.9.0" },
+    { name = "mdanalysisdata", marker = "extra == 'docs'", specifier = ">=0.9.0" },
+    { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
-    { name = "mdanalysistests", marker = "extra == 'test'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
     { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.2.0" },
-    { name = "nodepad", marker = "extra == 'docs'" },
-    { name = "numpy", marker = "extra == 'test'", specifier = "<2.0" },
     { name = "pandas", specifier = "<3.0.0" },
-    { name = "pooch", marker = "extra == 'test'", specifier = ">=1.8" },
+    { name = "pooch", marker = "extra == 'dev'", specifier = ">=1.8" },
     { name = "pre-commit", marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
-    { name = "pytest-cov", marker = "extra == 'test'" },
-    { name = "pytest-xdist", marker = "extra == 'test'" },
+    { name = "pytest-xdist", marker = "extra == 'dev'" },
     { name = "pyyaml" },
     { name = "quarto-cli", marker = "extra == 'docs'", specifier = ">=1.8.0" },
     { name = "quartodoc", marker = "extra == 'docs'", specifier = ">=0.11.1" },
-    { name = "rdkit", marker = "extra == 'test'" },
+    { name = "rdkit", marker = "extra == 'dev'" },
     { name = "ruff", marker = "extra == 'dev'" },
-    { name = "scipy", marker = "extra == 'dev'" },
-    { name = "scipy", marker = "extra == 'test'" },
+    { name = "setuptools", marker = "extra == 'docs'", specifier = "<81" },
     { name = "starfile" },
     { name = "syrupy", marker = "extra == 'dev'" },
-    { name = "syrupy", marker = "extra == 'test'" },
-    { name = "tomlkit", marker = "extra == 'build'" },
-    { name = "tomlkit", marker = "extra == 'docs'" },
+    { name = "tomlkit", marker = "extra == 'docs'", specifier = ">=0.14.0" },
 ]
-provides-extras = ["bpy", "jupyter", "build", "dev", "test", "docs"]
-
-[package.metadata.requires-dev]
-docs = [
-    { name = "bpy", specifier = ">=5.2.0a0" },
-    { name = "griffe", specifier = "<2.0" },
-    { name = "ipython", specifier = ">=9.11.0" },
-    { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "jupyter-cache", specifier = ">=1.0.1" },
-    { name = "mdanalysisdata", specifier = ">=0.9.0" },
-    { name = "mdanalysistests", specifier = ">=2.7.0" },
-    { name = "quartodoc", specifier = ">=0.11.1" },
-    { name = "setuptools", specifier = "<81" },
-    { name = "tomlkit", specifier = ">=0.14.0" },
-]
+provides-extras = ["bpy", "jupyter", "docs", "dev"]
 
 [[package]]
 name = "mrcfile"
