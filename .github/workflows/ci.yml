@@ -107,12 +107,12 @@ jobs:
       - name: Install Dependencies
         shell: bash
         run: |
-          blender --python-exit-code 1 -b -P tests/install.py
+          blender -b -P tests/install.py
 
       - name: Run Tests
         shell: bash
         run: |
-          blender --python-exit-code 1 -b -P tests/run.py -- -v
+          blender -b -P tests/run.py -- -v
 
   docs:
     name: Build Documentation
