@@ -11,7 +11,6 @@ dependencies = [
     "starfile",
     "PyYAML",
     "imdclient>=0.2.3",
-    "ipython>=9.7.0",
     "pandas<3.0.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
@@ -24,44 +23,7 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
 bpy = ["bpy>=5.1.0"]
-jupyter = ["jupyter", "IPython"]
-build = ["tomlkit"]
-dev = [
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "ruff",
-    "syrupy",
-    "scipy",
-    "fake-bpy-module",
-    "IPython",
-    "nodepad>=0.2.0"
-]
-test = [
-    "pytest",
-    "pytest-cov",
-    "syrupy",
-    "scipy",
-    "IPython",
-    "pytest-xdist",
-    "MDAnalysisTests>=2.7.0",
-    "MDAnalysisData",
-    "pooch>=1.8",
-    "rdkit",
-    "numpy<2.0"
-    ]
-docs = [
-    "quartodoc>=0.11.1",
-    "griffe<2.0.0",
-    "quarto-cli>=1.8.0",
-    "tomlkit",
-    "nodepad",
-    "jupyter",
-    "IPython",
-    "jupyter-cache",
-    "MDAnalysisTests>=2.7.0",
-    "MDAnalysisData",
-]
+jupyter = ["jupyter", "ipython>=9.7.0"]
 
 [build-system]
 build-backend = "setuptools.build_meta"
@@ -124,8 +86,29 @@ name="dailybpy"
 url = "https://bradyajohnston.github.io/dailybpy/"
 
 [dependency-groups]
+dev = [
+    "fake-bpy-module",
+    "griffe<2.0.0",
+    "jupyter",
+    "jupyter-cache",
+    "mdanalysisdata",
+    "mdanalysistests>=2.7.0",
+    "nodepad>=0.2.0",
+    "pooch>=1.8",
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "quartodoc>=0.11.1",
+    "quarto-cli>=1.8.0",
+    "rdkit",
+    "ruff",
+    "scipy",
+    "syrupy",
+    "tomlkit",
+]
 docs = [
-    "bpy>=5.2.0a0",
+    "bpy>=5.1",
     "griffe<2.0",
     "ipython>=9.11.0",
     "jupyter>=1.1.1",
