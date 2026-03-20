@@ -850,14 +850,19 @@ class MN_OT_Import_SMILES(bpy.types.Operator):
             self.report({"ERROR"}, "SMILES string is empty")
             return {"CANCELLED"}
 
-        universe = mda.Universe.from_smiles(smiles)
+        name = self.name.strip() or "SMILES"
+        try:
+            universe = mda.Universe.from_smiles(smiles)
+        except Exception as e:
+            self.report({"ERROR"}, f"Failed to parse SMILES: {e}")
+            return {"CANCELLED"}
         style = self.style if self.setup_nodes else None
-        traj = get_session().add_trajectory(universe, name=self.name, style=style)
+        traj = get_session().add_trajectory(universe, name=name, style=style)
 
         if hasattr(traj, "object") and traj.object is not None:
             context.view_layer.objects.active = traj.object
 
-        self.report({"INFO"}, f"Imported SMILES '{self.name}'")
+        self.report({"INFO"}, f"Imported SMILES '{name}'")
         return {"FINISHED"}
 
 
