@@ -41,7 +41,9 @@ def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None
         uframe = traj.uframe
 
         new_paths = [_make_path_relative(f) for f in traj_files]
-        traj.universe.load_new(new_paths)
+        traj.universe.load_new(
+        new_paths if len(new_paths) > 1 else new_paths[0]
+        )
 
         # restore frame
         traj.uframe = uframe
@@ -65,7 +67,9 @@ def _make_trajectory_paths_absolute(trajectories: Dict[str, Trajectory]) -> None
         uframe = traj.uframe
 
         new_paths = [_make_path_absolute(f) for f in traj_files]
-        traj.universe.load_new(new_paths)
+        traj.universe.load_new(
+        new_paths if len(new_paths) > 1 else new_paths[0]
+        )
 
         # restore frame
         traj.uframe = uframe
