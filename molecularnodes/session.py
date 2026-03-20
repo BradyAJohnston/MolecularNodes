@@ -26,26 +26,48 @@ def trim(dictionary: dict):
 
 def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
+        trajectory = traj.universe.trajectory
+
+        if hasattr(trajectory, "filenames"):
+            traj_files = list(trajectory.filenames)
+        else:
+            traj_files = [trajectory.filename]
+
         # skip streaming trajectories
-        if traj.universe.trajectory.filename.startswith("imd://"):
+        if any(f.startswith("imd://") for f in traj_files):
             continue
-        # save linked universe frame
+
+        # save frame
         uframe = traj.uframe
-        traj.universe.load_new(_make_path_relative(traj.universe.trajectory.filename))
-        # restore linked universe frame
+
+        new_paths = [_make_path_relative(f) for f in traj_files]
+        traj.universe.load_new(new_paths)
+
+        # restore frame
         traj.uframe = uframe
         traj._save_filepaths_on_object()
 
 
 def _make_trajectory_paths_absolute(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
+        trajectory = traj.universe.trajectory
+
+        if hasattr(trajectory, "filenames"):
+            traj_files = list(trajectory.filenames)
+        else:
+            traj_files = [trajectory.filename]
+
         # skip streaming trajectories
-        if traj.universe.trajectory.filename.startswith("imd://"):
+        if any(f.startswith("imd://") for f in traj_files):
             continue
-        # save linked universe frame
+
+        # save frame
         uframe = traj.uframe
-        traj.universe.load_new(_make_path_absolute(traj.universe.trajectory.filename))
-        # restore linked universe frame
+
+        new_paths = [_make_path_absolute(f) for f in traj_files]
+        traj.universe.load_new(new_paths)
+
+        # restore frame
         traj.uframe = uframe
         traj._save_filepaths_on_object()
 
