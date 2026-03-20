@@ -231,6 +231,27 @@ def panel_trajectory(layout, scene):
     col.enabled = scene.mn.import_node_setup
 
 
+def panel_smiles(layout, scene):
+    layout.label(text="Import SMILES", icon="IMPORT")
+    layout.separator()
+    row_import = layout.row()
+    row_import.prop(scene.mn, "import_smiles_name")
+    op = row_import.operator("mn.import_smiles", text="Import")
+    op.smiles = scene.mn.import_smiles
+    op.name = scene.mn.import_smiles_name
+    op.style = scene.mn.import_style
+    op.setup_nodes = scene.mn.import_node_setup
+    layout.prop(scene.mn, "import_smiles")
+
+    layout.separator()
+    layout.label(text="Options", icon="MODIFIER")
+    row = layout.row()
+    row.prop(scene.mn, "import_node_setup", text="")
+    col = row.column()
+    col.prop(scene.mn, "import_style")
+    col.enabled = scene.mn.import_node_setup
+
+
 def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
     """
     Create the panel layout for oxDNA import.
@@ -261,6 +282,7 @@ chosen_panel = {
     "alphafold": panel_alphafold,
     "star": panel_starfile,
     "md": panel_trajectory,
+    "smiles": panel_smiles,
     "density": panel_density,
     "cellpack": panel_cellpack,
     "dna": panel_oxdna,
