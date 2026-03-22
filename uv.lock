@@ -214,8 +214,8 @@ css = [
 
 [[package]]
 name = "bpy"
-version = "5.2.0a0"
-source = { registry = "https://bradyajohnston.github.io/dailybpy/" }
+version = "5.1.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cython" },
     { name = "numpy" },
@@ -223,9 +223,10 @@ dependencies = [
     { name = "zstandard" },
 ]
 wheels = [
-    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-17/bpy-5.2.0a0-cp313-cp313-macosx_11_0_arm64.whl" },
-    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-17/bpy-5.2.0a0-cp313-cp313-manylinux_2_39_x86_64.whl" },
-    { url = "https://github.com/BradyAJohnston/dailybpy/releases/download/daily-2026-03-17/bpy-5.2.0a0-cp313-cp313-win_amd64.whl" },
+    { url = "https://files.pythonhosted.org/packages/9e/58/e311ab21cd4347685035cb43def43e9aff32e870f65da791bb8ed666b8d7/bpy-5.1.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:79cb379d32432031b31aaa740b2af1cbd6fab14ba3aa25db1500b19ea332bf8a", size = 238523944, upload-time = "2026-03-17T14:44:24.527Z" },
+    { url = "https://files.pythonhosted.org/packages/a5/b9/bcd380708380baf759bd9c422f370294ab750535c869f809b447e7836917/bpy-5.1.0-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:5b557f65902e4c84caf8b413d9bc6aceb660a5ca934e65f6c16e4ee91dc4cd4f", size = 390716200, upload-time = "2026-03-17T14:45:55.547Z" },
+    { url = "https://files.pythonhosted.org/packages/f3/65/a75513cbdc117238bd2dcf1fe655e05fca379577087e03144cca6b6718a5/bpy-5.1.0-cp313-cp313-win_amd64.whl", hash = "sha256:6ee14d8b28989b911b2e921b4592d1801738d550fedbcc57f773dae589f41bb2", size = 350105048, upload-time = "2026-03-17T14:45:25.828Z" },
+    { url = "https://files.pythonhosted.org/packages/76/55/970c78b4046b3020bee271f17e1cd769f4edfcd9c29d8ab307e908eeddf3/bpy-5.1.0-cp313-cp313-win_arm64.whl", hash = "sha256:7dbd29e684dd6fa6acdc11c96bdbfb43ca95576a6b00ece413d3f80b8717fc08", size = 205493452, upload-time = "2026-03-17T14:44:51.573Z" },
 ]
 
 [[package]]
@@ -1323,7 +1324,6 @@ dependencies = [
     { name = "biotite" },
     { name = "databpy" },
     { name = "imdclient" },
-    { name = "ipython" },
     { name = "mdanalysis" },
     { name = "mrcfile" },
     { name = "pandas" },
@@ -1335,18 +1335,19 @@ dependencies = [
 bpy = [
     { name = "bpy" },
 ]
-build = [
-    { name = "tomlkit" },
-]
 dev = [
     { name = "fake-bpy-module" },
-    { name = "ipython" },
+    { name = "mdanalysisdata" },
+    { name = "mdanalysistests" },
     { name = "nodepad" },
+    { name = "numpy" },
+    { name = "pooch" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pytest-xdist" },
+    { name = "rdkit" },
     { name = "ruff" },
-    { name = "scipy" },
     { name = "syrupy" },
 ]
 docs = [
@@ -1356,104 +1357,54 @@ docs = [
     { name = "jupyter-cache" },
     { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
-    { name = "nodepad" },
     { name = "quarto-cli" },
     { name = "quartodoc" },
+    { name = "setuptools" },
     { name = "tomlkit" },
 ]
 jupyter = [
     { name = "ipython" },
     { name = "jupyter" },
 ]
-test = [
-    { name = "ipython" },
-    { name = "mdanalysisdata" },
-    { name = "mdanalysistests" },
-    { name = "numpy" },
-    { name = "pooch" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-xdist" },
-    { name = "rdkit" },
-    { name = "scipy" },
-    { name = "syrupy" },
-]
-
-[package.dev-dependencies]
-docs = [
-    { name = "bpy" },
-    { name = "griffe" },
-    { name = "ipython" },
-    { name = "jupyter" },
-    { name = "jupyter-cache" },
-    { name = "mdanalysisdata" },
-    { name = "mdanalysistests" },
-    { name = "quartodoc" },
-    { name = "setuptools" },
-    { name = "tomlkit" },
-]
 
 [package.metadata]
 requires-dist = [
     { name = "biotite", specifier = ">=1.5" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=5.1.0" },
-    { name = "databpy", specifier = ">=0.6.0" },
+    { name = "databpy", specifier = ">=0.7.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },
-    { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0.0" },
+    { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0" },
     { name = "imdclient", specifier = ">=0.2.3" },
-    { name = "ipython", specifier = ">=9.7.0" },
-    { name = "ipython", marker = "extra == 'dev'" },
-    { name = "ipython", marker = "extra == 'docs'" },
-    { name = "ipython", marker = "extra == 'jupyter'" },
-    { name = "ipython", marker = "extra == 'test'" },
-    { name = "jupyter", marker = "extra == 'docs'" },
+    { name = "ipython", marker = "extra == 'docs'", specifier = ">=9.11.0" },
+    { name = "ipython", marker = "extra == 'jupyter'", specifier = ">=9.7.0" },
+    { name = "jupyter", marker = "extra == 'docs'", specifier = ">=1.1.1" },
     { name = "jupyter", marker = "extra == 'jupyter'" },
-    { name = "jupyter-cache", marker = "extra == 'docs'" },
+    { name = "jupyter-cache", marker = "extra == 'docs'", specifier = ">=1.0.1" },
     { name = "mdanalysis", specifier = ">=2.10" },
-    { name = "mdanalysisdata", marker = "extra == 'docs'" },
-    { name = "mdanalysisdata", marker = "extra == 'test'" },
+    { name = "mdanalysisdata", marker = "extra == 'dev'", specifier = ">=0.9.0" },
+    { name = "mdanalysisdata", marker = "extra == 'docs'", specifier = ">=0.9.0" },
+    { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
-    { name = "mdanalysistests", marker = "extra == 'test'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.2.0" },
-    { name = "nodepad", marker = "extra == 'docs'" },
-    { name = "numpy", marker = "extra == 'test'", specifier = "<2.0" },
+    { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.3.0" },
+    { name = "numpy", marker = "extra == 'dev'", specifier = "<2.4" },
     { name = "pandas", specifier = "<3.0.0" },
-    { name = "pooch", marker = "extra == 'test'", specifier = ">=1.8" },
+    { name = "pooch", marker = "extra == 'dev'", specifier = ">=1.8" },
     { name = "pre-commit", marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'test'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
-    { name = "pytest-cov", marker = "extra == 'test'" },
-    { name = "pytest-xdist", marker = "extra == 'test'" },
+    { name = "pytest-xdist", marker = "extra == 'dev'" },
     { name = "pyyaml" },
     { name = "quarto-cli", marker = "extra == 'docs'", specifier = ">=1.8.0" },
     { name = "quartodoc", marker = "extra == 'docs'", specifier = ">=0.11.1" },
-    { name = "rdkit", marker = "extra == 'test'" },
+    { name = "rdkit", marker = "extra == 'dev'" },
     { name = "ruff", marker = "extra == 'dev'" },
-    { name = "scipy", marker = "extra == 'dev'" },
-    { name = "scipy", marker = "extra == 'test'" },
+    { name = "setuptools", marker = "extra == 'docs'", specifier = "<81" },
     { name = "starfile" },
     { name = "syrupy", marker = "extra == 'dev'" },
-    { name = "syrupy", marker = "extra == 'test'" },
-    { name = "tomlkit", marker = "extra == 'build'" },
-    { name = "tomlkit", marker = "extra == 'docs'" },
+    { name = "tomlkit", marker = "extra == 'docs'", specifier = ">=0.14.0" },
 ]
-provides-extras = ["bpy", "jupyter", "build", "dev", "test", "docs"]
-
-[package.metadata.requires-dev]
-docs = [
-    { name = "bpy", specifier = ">=5.2.0a0" },
-    { name = "griffe", specifier = "<2.0" },
-    { name = "ipython", specifier = ">=9.11.0" },
-    { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "jupyter-cache", specifier = ">=1.0.1" },
-    { name = "mdanalysisdata", specifier = ">=0.9.0" },
-    { name = "mdanalysistests", specifier = ">=2.7.0" },
-    { name = "quartodoc", specifier = ">=0.11.1" },
-    { name = "setuptools", specifier = "<81" },
-    { name = "tomlkit", specifier = ">=0.14.0" },
-]
+provides-extras = ["bpy", "jupyter", "docs", "dev"]
 
 [[package]]
 name = "mrcfile"
@@ -1577,15 +1528,15 @@ wheels = [
 
 [[package]]
 name = "nodepad"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/f1/8c85487d9a67654d53cce196ebd0c9889e7e95eea154546fad786c654eec/nodepad-0.2.0.tar.gz", hash = "sha256:784446f7d180a894b480c5f4d550d6cf6012f344e0dd2254a0bcafb387842da2", size = 36736, upload-time = "2025-09-02T10:35:22.527Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ce/41/9e47a3db9e5cd5fbd25d2b65634a72cfe1a59e031b2d09d7abeae0cb0c78/nodepad-0.3.0.tar.gz", hash = "sha256:cb3a248d5ea0903f29d3290252058ed3c99ea9606871a9d220237828a7a7d618", size = 36635, upload-time = "2026-03-22T21:13:27.766Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/be/171e6b1ae98e854e09708a6a0d9244a0229d5c1b12dbb51e4e71e418ecb9/nodepad-0.2.0-py3-none-any.whl", hash = "sha256:f5981d54d742388e229e2b10c07f56bbd41de8590d7808d98e44ea7c30a4f0dd", size = 29639, upload-time = "2025-09-02T10:35:21.438Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/63/c9545cd7e43643e5e813b42992c255a895b7c7a1003d0170cf4eace270c1/nodepad-0.3.0-py3-none-any.whl", hash = "sha256:82338657ea47b996acee5ad80514b235ba27994a40acf18cd497c9acfb715a5b", size = 29601, upload-time = "2026-03-22T21:13:26.349Z" },
 ]
 
 [[package]]
