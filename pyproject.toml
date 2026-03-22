@@ -4,14 +4,13 @@ version = "4.5.12"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.6.0",
+    "databpy>=0.7.0",
     "mdanalysis>=2.10",
     "biotite>=1.5",
     "mrcfile",
     "starfile",
     "PyYAML",
     "imdclient>=0.2.3",
-    "ipython>=9.7.0",
     "pandas<3.0.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
@@ -24,43 +23,33 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
 bpy = ["bpy>=5.1.0"]
-jupyter = ["jupyter", "IPython"]
-build = ["tomlkit"]
+jupyter = ["jupyter", "ipython>=9.7.0"]
+docs = [
+    "griffe<2.0",
+    "ipython>=9.11.0",
+    "jupyter>=1.1.1",
+    "jupyter-cache>=1.0.1",
+    "quartodoc>=0.11.1",
+    "mdanalysisdata>=0.9.0",
+    "mdanalysistests>=2.7.0",
+    "quarto-cli>=1.8.0",
+    "setuptools<81",
+    "tomlkit>=0.14.0",
+]
 dev = [
+    "numpy<2.4",
+    "mdanalysisdata>=0.9.0",
+    "mdanalysistests>=2.7.0",
+    "fake-bpy-module",
+    "nodepad>=0.3.0",
+    "pooch>=1.8",
     "pre-commit",
     "pytest",
     "pytest-cov",
+    "pytest-xdist",
+    "rdkit",
     "ruff",
     "syrupy",
-    "scipy",
-    "fake-bpy-module",
-    "IPython",
-    "nodepad>=0.2.0"
-]
-test = [
-    "pytest",
-    "pytest-cov",
-    "syrupy",
-    "scipy",
-    "IPython",
-    "pytest-xdist",
-    "MDAnalysisTests>=2.7.0",
-    "MDAnalysisData",
-    "pooch>=1.8",
-    "rdkit",
-    "numpy<2.0"
-    ]
-docs = [
-    "quartodoc>=0.11.1",
-    "griffe<2.0.0",
-    "quarto-cli>=1.8.0",
-    "tomlkit",
-    "nodepad",
-    "jupyter",
-    "IPython",
-    "jupyter-cache",
-    "MDAnalysisTests>=2.7.0",
-    "MDAnalysisData",
 ]
 
 [build-system]
@@ -111,31 +100,9 @@ no-lines-before = [
 ]
 order-by-type = true
 
-
 [tool.ruff.lint.per-file-ignores]
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
-
-# [tool.uv.sources]
-# databpy = { workspace = true }
-
-[[tool.uv.index]]
-name="dailybpy"
-url = "https://bradyajohnston.github.io/dailybpy/"
-
-[dependency-groups]
-docs = [
-    "bpy>=5.2.0a0",
-    "griffe<2.0",
-    "ipython>=9.11.0",
-    "jupyter>=1.1.1",
-    "jupyter-cache>=1.0.1",
-    "mdanalysisdata>=0.9.0",
-    "mdanalysistests>=2.7.0",
-    "quartodoc>=0.11.1",
-    "setuptools<81",
-    "tomlkit>=0.14.0",
-]
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
