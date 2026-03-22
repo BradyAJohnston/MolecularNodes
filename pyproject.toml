@@ -37,6 +37,7 @@ docs = [
     "tomlkit>=0.14.0",
 ]
 dev = [
+    "numpy<2.4",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
     "fake-bpy-module",
