@@ -2,9 +2,16 @@ import os
 import sys
 from os.path import dirname, join, realpath
 import bpy
+import numpy as np
 import pytest
 import molecularnodes as mn
 from .utils import NumpySnapshotExtension
+
+# Pin numpy print format so snapshots are consistent across numpy 1.x and 2.x
+# (numpy 2.2+ adds shape= to array_repr for truncated arrays)
+# TODO: Remove legacy="1.25" when bpy 5.1.1 is released
+if int(np.__version__.split(".")[0]) >= 2:
+    np.set_printoptions(legacy="2.1")
 
 mn.ui.addon._test_register()
 
