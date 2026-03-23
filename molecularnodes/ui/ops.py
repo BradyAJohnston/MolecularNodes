@@ -35,6 +35,10 @@ from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
 
+# Allow monkeypatching in tests.
+hasattr = hasattr
+
+
 def _add_node(node_name, context, show_options=False, material="default"):
     """
     Add a node group to the node tree and set the values.

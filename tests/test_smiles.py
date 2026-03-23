@@ -1,5 +1,6 @@
 import bpy
 import MDAnalysis as mda
+import pytest
 import molecularnodes.ui.ops as ops
 
 
@@ -51,9 +52,11 @@ def test_import_smiles_missing_support(monkeypatch):
         return False
 
     monkeypatch.setattr(ops, "hasattr", fake_hasattr)
-
-    result = bpy.ops.mn.import_smiles(smiles="C1CCCCC1", name="Cyclohexane")
-    assert result == {"CANCELLED"}
+    with pytest.raises(
+        RuntimeError,
+        match="MDAnalysis does not support SMILES in this version",
+    ):
+        bpy.ops.mn.import_smiles(smiles="C1CCCCC1", name="Cyclohexane")
 
 
 def test_import_smiles_empty_input(monkeypatch):
@@ -66,9 +69,8 @@ def test_import_smiles_empty_input(monkeypatch):
     monkeypatch.setattr(
         mda.Universe, "from_smiles", staticmethod(fake_from_smiles), raising=False
     )
-
-    result = bpy.ops.mn.import_smiles(smiles="   ", name="Empty")
-    assert result == {"CANCELLED"}
+    with pytest.raises(RuntimeError, match="SMILES string is empty"):
+        bpy.ops.mn.import_smiles(smiles="   ", name="Empty")
 
 
 def test_import_smiles_name_fallback(monkeypatch):
@@ -108,6 +110,5 @@ def test_import_smiles_parse_failure(monkeypatch):
         raise ValueError("invalid smiles")
 
     monkeypatch.setattr(mda.Universe, "from_smiles", mock_fail, raising=False)
-
-    result = bpy.ops.mn.import_smiles(smiles="bad", name="Broken")
-    assert result == {"CANCELLED"}
+    with pytest.raises(RuntimeError, match="Failed to parse SMILES: invalid smiles"):
+        bpy.ops.mn.import_smiles(smiles="bad", name="Broken")
