@@ -34,7 +34,6 @@ from . import node_info
 from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
-
 # Allow monkeypatching in tests.
 hasattr = hasattr
 
