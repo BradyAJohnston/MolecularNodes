@@ -501,6 +501,21 @@ class Trajectory(MolecularEntity):
             traj.add_style(style=style, selection=selection)
         return traj
 
+    @classmethod
+    def from_smiles(
+        cls,
+        smiles: str,
+        name: str = "NewTrajectory",
+        style: str | None = "spheres",
+        selection: str | None = None,
+        create_object: bool = True,
+    ) -> "Trajectory":
+        universe = mda.Universe.from_smiles(smiles)
+        traj = cls(universe, name=name, create_object=create_object)
+        if style:
+            traj.add_style(style=style, selection=selection)
+        return traj
+
     def _update_calculations(self) -> None:
         """Update all registered calculations for the current frame"""
         for name, func in self.calculations.items():

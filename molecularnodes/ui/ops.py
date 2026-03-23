@@ -34,9 +34,6 @@ from . import node_info
 from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
-# Allow monkeypatching in tests.
-hasattr = hasattr
-
 
 def _add_node(node_name, context, show_options=False, material="default"):
     """
@@ -840,32 +837,20 @@ class MN_OT_Import_SMILES(bpy.types.Operator):
     )
 
     def execute(self, context):
-        if not hasattr(mda.Universe, "from_smiles"):
-            self.report(
-                {"ERROR"},
-                "MDAnalysis does not support SMILES in this version "
-                "(missing Universe.from_smiles).",
-            )
-            return {"CANCELLED"}
-
         smiles = self.smiles.strip()
         if not smiles:
-            self.report({"ERROR"}, "SMILES string is empty")
-            return {"CANCELLED"}
+            raise RuntimeError("SMILES string is empty")
 
         name = self.name.strip() or "SMILES"
-        try:
-            universe = mda.Universe.from_smiles(smiles)
-        except Exception as e:
-            self.report({"ERROR"}, f"Failed to parse SMILES: {e}")
-            return {"CANCELLED"}
         style = self.style if self.setup_nodes else None
-        traj = get_session().add_trajectory(universe, name=name, style=style)
+        try:
+            traj = Trajectory.from_smiles(smiles, name=name, style=style)
+        except Exception as e:
+            raise RuntimeError(f"Failed to parse SMILES: {e}") from e
 
         if hasattr(traj, "object") and traj.object is not None:
             context.view_layer.objects.active = traj.object
 
-        self.report({"INFO"}, f"Imported SMILES '{name}'")
         return {"FINISHED"}
 
 
