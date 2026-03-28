@@ -117,7 +117,7 @@ jobs:
   docs:
     name: Build Documentation
     needs: [lint, build]
-    runs-on: self-hosted
+    runs-on: macos-latest
     permissions: write-all
     steps:
       - uses: actions/checkout@v5
