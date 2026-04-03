@@ -694,6 +694,8 @@ class Trajectory(MolecularEntity):
                 if trajectory_filename is not None:
                     state["_universe_trajectory"] = str(trajectory_filename)
 
+                state["_universe_frame"] = self.universe.trajectory.frame
+
             except AttributeError as e:
                 logger.warning(
                     f"Could not extract file paths from universe during serialization: {e}"
@@ -736,9 +738,12 @@ class Trajectory(MolecularEntity):
         if "_universe_topology" in state:
             topology = state.pop("_universe_topology")
             trajectory = state.pop("_universe_trajectory")
+            frame = state.pop("_universe_frame", None)
             if topology and trajectory:
                 try:
                     self.universe = mda.Universe(topology, trajectory)
+                    if frame is not None:
+                        self.universe.trajectory[frame]
                 except Exception as e:
                     raise RuntimeError(
                         f"Failed to restore Trajectory from saved session. "
