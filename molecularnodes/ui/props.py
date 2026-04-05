@@ -350,6 +350,18 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         default="NewTrajectory",
         maxlen=0,
     )
+    import_smiles: StringProperty(  # type: ignore
+        name="SMILES",
+        description="SMILES string to import",
+        default="",
+        maxlen=0,
+    )
+    import_smiles_name: StringProperty(  # type: ignore
+        name="Name",
+        description="Name of the molecule on import",
+        default="SMILES",
+        maxlen=0,
+    )
     import_density_invert: BoolProperty(  # type: ignore
         name="Invert Data",
         description="Invert the values in the map. Low becomes high, high becomes low.",
@@ -417,6 +429,7 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
             ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
             ("local", "Local", "Open a local file"),
             ("md", "MD", "Import a molecular dynamics trajectory"),
+            ("smiles", "SMILES", "Import a SMILES string"),
             ("density", "Density", "Import an EM Density Map"),
             ("star", "Starfile", "Import a .starfile mapback file"),
             ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),

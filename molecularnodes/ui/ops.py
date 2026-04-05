@@ -807,6 +807,53 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class MN_OT_Import_SMILES(bpy.types.Operator):
+    bl_idname = "mn.import_smiles"
+    bl_label = "Import SMILES"
+    bl_description = "Import a molecule from a SMILES string"
+    bl_options = {"REGISTER", "UNDO"}
+
+    smiles: StringProperty(  # type: ignore
+        name="SMILES",
+        description="SMILES string to import",
+        default="",
+    )
+    name: StringProperty(  # type: ignore
+        name="Name",
+        description="Name of the molecule on import",
+        default="SMILES",
+        maxlen=0,
+    )
+    style: EnumProperty(  # type: ignore
+        name="Style",
+        description="Default style for importing",
+        items=STYLE_ITEMS,
+        default="spheres",
+    )
+    setup_nodes: BoolProperty(  # type: ignore
+        name="Setup Nodes",
+        description="Add nodes to the scene to load the structure",
+        default=True,
+    )
+
+    def execute(self, context):
+        smiles = self.smiles.strip()
+        if not smiles:
+            raise RuntimeError("SMILES string is empty")
+
+        name = self.name.strip() or "SMILES"
+        style = self.style if self.setup_nodes else None
+        try:
+            traj = Trajectory.from_smiles(smiles, name=name, style=style)
+        except Exception as e:
+            raise RuntimeError(f"Failed to parse SMILES: {e}") from e
+
+        if hasattr(traj, "object") and traj.object is not None:
+            context.view_layer.objects.active = traj.object
+
+        return {"FINISHED"}
+
+
 class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
     """
     Blender operator for importing oxDNA trajectories.
@@ -1173,6 +1220,7 @@ CLASSES = [
     MN_OT_Import_Fetch,
     MN_OT_Import_OxDNA_Trajectory,
     MN_OT_Import_Trajectory,
+    MN_OT_Import_SMILES,
     MN_OT_Reload_Trajectory,
     MN_OT_Import_Map,
     MN_OT_Import_Star_File,
