@@ -128,6 +128,7 @@ def _compute_edge_type(
     bonds_array: np.ndarray,
     positions: np.ndarray,
     elastic_threshold: float = 2.5,
+    bond_types_itp: np.ndarray | None = None,
 ) -> np.ndarray:
     """Compute bond type integers as blender attribute
 
@@ -143,6 +144,9 @@ def _compute_edge_type(
     positions : np.ndarray
     elastic_threshold : float, default 2.5
         Bond length in Angstroms above which an edge is considered elastic.
+    bond_types_itp : np.ndarray or None
+        For an ITP parsed topology, bonds with funct = 6 is classified as elastic
+        and the length threshold is skipped.
 
     Returns
     -------
@@ -152,11 +156,13 @@ def _compute_edge_type(
     indices = bonds_array[:, :2]
     bond_types = bonds_array[:, 2].copy().astype(int)
 
-    pos_a = positions[indices[:, 0]]
-    pos_b = positions[indices[:, 1]]
-    lengths = np.linalg.norm(pos_b - pos_a, axis=1)
-
-    bond_types[lengths > elastic_threshold] = 8
+    if bond_types_itp is not None:
+        bond_types[bond_types_itp == 6] = 8
+    else:
+        pos_a = positions[indices[:, 0]]
+        pos_b = positions[indices[:, 1]]
+        bond_lengths = np.linalg.norm(pos_b - pos_a, axis=1)
+        bond_types[bond_lengths > elastic_threshold] = 8
 
     return bond_types
 
