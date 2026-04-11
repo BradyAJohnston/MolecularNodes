@@ -482,6 +482,8 @@ class TestTrajectory:
             "around 5.0 resid 1", name="around_sel", updating=True
         )
         traj.calculations["center_of_mass"] = dummy_calculation_for_pickle_test
+        # Change frame to check frame restore
+        traj.uframe = 1
 
         with tempfile.NamedTemporaryFile() as tmp_file:
             try:
@@ -502,6 +504,7 @@ class TestTrajectory:
                 # Verify universe restoration
                 assert hasattr(restored_traj.universe, "atoms")
                 assert restored_traj.universe.atoms.n_atoms == universe.atoms.n_atoms
+                assert restored_traj.universe.trajectory.frame == 1
 
                 # Verify circular references
                 assert restored_traj.frame_manager.trajectory is restored_traj

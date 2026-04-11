@@ -48,23 +48,22 @@ class Platform:
 # platforms = ["windows-x64", "macos-arm64", "linux-x64", "windows-arm64", "macos-x64"]
 
 
-windows_x64 = Platform(pypi_suffix="win_amd64", metadata="windows-x64")
-linux_x64 = Platform(pypi_suffix="manylinux2014_x86_64", metadata="linux-x64")
-macos_arm = Platform(pypi_suffix="macosx_12_0_arm64", metadata="macos-arm64")
-macos_intel = Platform(pypi_suffix="macosx_10_16_x86_64", metadata="macos-x64")
+build_platforms = [
+    Platform(pypi_suffix="win_amd64", metadata="windows-x64"),
+    Platform(pypi_suffix="manylinux2014_x86_64", metadata="linux-x64"),
+    Platform(pypi_suffix="macosx_12_0_arm64", metadata="macos-arm64"),
+    # unsure if these are the correct platform tags for windows_arm?
+    # a build for this currently only ends up at 56 mb so I am guessing there are
+    # some python packages that are not available for the plato
+    # Platform(pypi_suffix="win_arm64", metadata="windows-arm64")
+    # dropped intel mac support as of Blender 5.0
+    # macos_intel = Platform(pypi_suffix="macosx_10_16_x86_64", metadata="macos-x64")
+]
 
 
 with open(PYPROJ_PATH, "rb") as file:
     pyproj = tomllib.load(file)
     required_packages = pyproj["project"]["dependencies"]
-
-
-build_platforms = [
-    windows_x64,
-    linux_x64,
-    macos_arm,
-    macos_intel,
-]
 
 
 def remove_whls():

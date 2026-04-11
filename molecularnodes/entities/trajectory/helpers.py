@@ -221,7 +221,9 @@ class FrameManager:
         """
         if self.trajectory.correct_periodic and self.trajectory._is_orthorhombic:
             return correct_periodic_positions(
-                pos1, pos2, self.trajectory.universe.dimensions[:3]
+                pos1,
+                pos2,
+                self.trajectory.universe.dimensions[:3] * self.trajectory.world_scale,
             )
         else:
             return pos2
