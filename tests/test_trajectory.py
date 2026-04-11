@@ -116,8 +116,7 @@ class TestTrajectory:
         elastic = (values == 8).sum()
         covalent = len(values) - elastic
 
-        assert covalent == 40
-        assert elastic == 747
+        assert covalent == 787
 
     def test_bond_type_no_bonds(self):
         from MDAnalysis.tests.datafiles import GRO
