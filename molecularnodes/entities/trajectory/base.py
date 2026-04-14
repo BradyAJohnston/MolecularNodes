@@ -458,12 +458,12 @@ class Trajectory(MolecularEntity):
         )
 
         if hasattr(self.atoms, "bonds") and len(self.atoms.bonds) > 0:
-            bond_types_itp: np.ndarray | None = None
+            mda_bond_types: np.ndarray | None = None
             raw_bondtypes = self.atoms.bonds._bondtypes
             if len(raw_bondtypes) > 0 and isinstance(
                 raw_bondtypes[0], (int, np.integer)
             ):
-                bond_types_itp = raw_bondtypes.astype(int)
+                mda_bond_types = raw_bondtypes.astype(int)
 
             bond_types = _compute_edge_type(
                 bonds_array=np.column_stack(
@@ -473,7 +473,7 @@ class Trajectory(MolecularEntity):
                     ]
                 ),
                 positions=self.atoms.positions,
-                bond_types_itp=bond_types_itp,
+                bond_types_itp=mda_bond_types,
             )
             self.store_named_attribute(data=bond_types, name="bond_type", domain="EDGE")
 

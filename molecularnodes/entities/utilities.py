@@ -128,7 +128,7 @@ def _compute_edge_type(
     bonds_array: np.ndarray,
     positions: np.ndarray,
     elastic_threshold: float = 2.5,
-    bond_types_itp: np.ndarray | None = None,
+    mda_bond_types: np.ndarray | None = None,
 ) -> np.ndarray:
     """Compute bond type integers as blender attribute
 
@@ -136,7 +136,9 @@ def _compute_edge_type(
     ---------
     'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
     'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
-    'ELASTIC' = 8
+    'ELASTIC' = 10
+
+    Values >= 10 are used for bond classifications that come from topology files.
 
     Parameters
     ----------
@@ -144,9 +146,10 @@ def _compute_edge_type(
     positions : np.ndarray
     elastic_threshold : float, default 2.5
         Bond length in Angstroms above which an edge is considered elastic.
-    bond_types_itp : np.ndarray or None
-        For an ITP parsed topology, bonds with funct = 6 is classified as elastic
-        and the length threshold is skipped.
+    mda_bond_types : np.ndarray or None
+        Per-bond funct integers read from ``atoms.bonds._bondtypes`` on
+        a MDAnalysis Universe loaded from an ITP topology file
+        - ``funct = 6`` : an elastic network or rubber band bond.
 
     Returns
     -------
@@ -156,13 +159,14 @@ def _compute_edge_type(
     indices = bonds_array[:, :2]
     bond_types = bonds_array[:, 2].copy().astype(int)
 
-    if bond_types_itp is not None:
-        bond_types[bond_types_itp == 6] = 8
+    if mda_bond_types is not None:
+        # The value 6 in the ITP topology file represent elastic network or rubber band bond
+        bond_types[mda_bond_types == 6] = 10
     else:
         pos_a = positions[indices[:, 0]]
         pos_b = positions[indices[:, 1]]
         bond_lengths = np.linalg.norm(pos_b - pos_a, axis=1)
-        bond_types[bond_lengths > elastic_threshold] = 8
+        bond_types[bond_lengths > elastic_threshold] = 10
 
     return bond_types
 
@@ -217,7 +221,7 @@ def create_object(
     )
     # Add information about the bond types to the model on the edge domain
     # Bond types: 'ANY' = 0, 'SINGLE' = 1, 'DOUBLE' = 2, 'TRIPLE' = 3, 'QUADRUPLE' = 4
-    # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
+    # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7, 'ELASTIC' = 10
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
         bond_types = _compute_edge_type(
