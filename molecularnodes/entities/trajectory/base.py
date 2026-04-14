@@ -473,7 +473,7 @@ class Trajectory(MolecularEntity):
                     ]
                 ),
                 positions=self.atoms.positions,
-                bond_types_itp=mda_bond_types,
+                mda_bond_types=mda_bond_types,
             )
             self.store_named_attribute(data=bond_types, name="bond_type", domain="EDGE")
 
