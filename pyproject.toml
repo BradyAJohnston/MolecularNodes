@@ -1,6 +1,6 @@
 [project]
 name = "molecularnodes"
-version = "4.5.12"
+version = "5.2.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
@@ -12,6 +12,7 @@ dependencies = [
     "PyYAML",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
+    "nodebpy>=0.15.0"
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -22,7 +23,7 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy = ["bpy>=5.1.0"]
+bpy = ["bpy>=5.1.1"]
 jupyter = ["jupyter", "ipython>=9.7.0"]
 docs = [
     "griffe<2.0",
@@ -37,7 +38,7 @@ docs = [
     "tomlkit>=0.14.0",
 ]
 dev = [
-    "numpy<2.4",
+    "numpy>2.2",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
     "fake-bpy-module",
