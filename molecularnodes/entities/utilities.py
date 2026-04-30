@@ -128,7 +128,7 @@ def create_object(
     array: AtomArray | AtomArrayStack,
     name="NewObject",
     centre: str | None = None,
-    world_scale: float = 0.01,
+    world_scale: float = 0.1,
     collection: bpy.types.Collection | None = None,
 ) -> bpy.types.Object:
     """
@@ -193,7 +193,7 @@ def create_object(
 
 
 def atom_array_to_named_attributes(
-    array: AtomArray, obj: bpy.types.Object, world_scale: float = 0.01
+    array: AtomArray, obj: bpy.types.Object, world_scale: float = 0.1
 ) -> None:
     """
     Store all annotations from an AtomArray as named attributes on Blender vertex data.

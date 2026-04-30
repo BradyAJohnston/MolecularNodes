@@ -384,7 +384,7 @@ class OXDNA(Trajectory):
         self,
         universe: Universe,
         name: str = "NewOXDNAObject",
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         create_object: bool = True,
     ):
         super().__init__(

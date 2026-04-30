@@ -271,7 +271,7 @@ class StarFile(Ensemble):
         self,
         name: str = "StarFileObject",
         node_setup: bool = True,
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         fraction: float = 1.0,
         simplify: bool = True,
     ) -> bpy.types.Object:

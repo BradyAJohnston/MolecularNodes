@@ -52,7 +52,7 @@ def load(
     return trajectory
 
 
-def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
+def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.1):
     """
     Load an oxDNA trajectory.
 
