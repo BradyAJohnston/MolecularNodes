@@ -40,7 +40,7 @@ def create_data_object(
     array: np.ndarray,
     name: str = "DataObject",
     collection: str | bpy.types.Collection | None = None,
-    world_scale: float = 0.01,
+    world_scale: float = 0.1,
 ) -> bpy.types.Object:
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction

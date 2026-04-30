@@ -119,7 +119,7 @@ class Trajectory(MolecularEntity):
         self,
         universe: mda.Universe,
         name: str = "NewUniverseObject",
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         create_object: bool = True,
     ):
         """Initialize Trajectory from MDAnalysis Universe.
