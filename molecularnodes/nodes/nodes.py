@@ -703,17 +703,17 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode
     Add a join last node to the tree.
     """
     link = tree.links.new
-    node_join: bpy.types.GeometryNode = tree.nodes.new("GeometryNodeJoinGeometry")  # type: ignore
+    node_join: bpy.types.GeometryNode = tree.nodes.new("GeometryNodeJoinGeometry")
     node_output = get_output(tree)
     old_loc = node_output.location.copy()
     node_output.location += Vector([NODE_SPACING * 2, 0])
     node_join.location = old_loc + Vector([NODE_SPACING, 0])
     try:
         if len(node_output.inputs[0].links) > 0:
-            from_socket = node_output.inputs[0].links[0].from_socket  # type: ignore
+            from_socket = node_output.inputs[0].links[0].from_socket
             if from_socket.node != get_input(tree):
                 link(
-                    node_output.inputs[0].links[0].from_socket,  # type: ignore
+                    node_output.inputs[0].links[0].from_socket,
                     node_join.inputs[0],
                 )
     except IndexError:
@@ -726,7 +726,7 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode
 def last_node(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
     output = get_output(tree)
     try:
-        return output.inputs[0].links[0].from_socket.node  # type: ignore
+        return output.inputs[0].links[0].from_socket.node
     except IndexError:
         return output
 
