@@ -1,23 +1,18 @@
+from typing import cast
 import bpy
-from ..blender import IS_BLENDER_5
+from bpy.types import CompositorNodeTree
 from ..nodes.arrange import arrange_tree
-from ..nodes.compositor import default_5x_compositor_node_tree, mn_compositor_node_tree
+from ..nodes.compositor import compositor_node_tree
 
 annotations_image = "mn_annotations"
 mn_compositor_node_name = "MN Compositor"
 
 
 def setup_compositor(scene: bpy.types.Scene):
-    if IS_BLENDER_5:
-        node_tree = scene.compositing_node_group
-        use_nodes = True
-    else:
-        node_tree = scene.node_tree
-        use_nodes = scene.use_nodes
-    # lock interface when rendering
+    node_tree = cast(CompositorNodeTree, scene.compositing_node_group)
     scene.render.use_lock_interface = True
     # add a quick check to see if everything is setup correctly
-    if node_tree:
+    if node_tree is not None:
         if (
             use_nodes
             and mn_compositor_node_name in node_tree.nodes
@@ -28,15 +23,8 @@ def setup_compositor(scene: bpy.types.Scene):
             return
     else:
         # no node tree, create one
-        if IS_BLENDER_5:
-            # Staring 5.x compositor node trees can be re-used
-            # Technically we don't have to create a new one if we import from
-            # assets, but this is the safest when generating from code
-            scene.compositing_node_group = default_5x_compositor_node_tree()
-            node_tree = scene.compositing_node_group
-        else:
-            scene.use_nodes = True
-            node_tree = scene.node_tree
+        scene.use_nodes = True
+        node_tree = scene.node_tree
     # setup the compositor node tree
     nodes = node_tree.nodes
     links = node_tree.links
@@ -45,7 +33,7 @@ def setup_compositor(scene: bpy.types.Scene):
         bpy.data.images.new(annotations_image, 1, 1)
     # add MN Compositor node group to data block if not present
     if mn_compositor_node_name not in bpy.data.node_groups:
-        mn_compositor_node_tree()
+        compositor_node_tree()
     # add MN Compositor node to the node tree if not present
     if mn_compositor_node_name not in nodes:
         mn_compositor_node = nodes.new("CompositorNodeGroup")
@@ -54,14 +42,9 @@ def setup_compositor(scene: bpy.types.Scene):
     mn_compositor_node = nodes[mn_compositor_node_name]
     # insert MN Compositor right before the Composite node
     # add "Composite" node to node tree if not present
-    if IS_BLENDER_5:
-        if "Group Output" not in nodes:
-            nodes.new(type="NodeGroupOutput")
-        output_node = nodes["Group Output"]
-    else:
-        if "Composite" not in nodes:
-            nodes.new(type="CompositorNodeComposite")
-        output_node = nodes["Composite"]
+    if "Composite" not in nodes:
+        nodes.new(type="CompositorNodeComposite")
+    output_node = nodes["Composite"]
     # add "Render Layers" node to node tree if not present
     if "Render Layers" not in nodes:
         nodes.new(type="CompositorNodeRLayers")
