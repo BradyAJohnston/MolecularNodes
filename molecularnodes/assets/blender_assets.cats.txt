@@ -1,0 +1,26 @@
+# This is an Asset Catalog Definition file for Blender.
+#
+# Empty lines and lines starting with `#` will be ignored.
+# The first non-ignored line should be the version indicator.
+# Other lines are of the format "UUID:catalog/path/for/assets:simple catalog name"
+
+VERSION 1
+
+441e6ca5-e514-4e77-a3cd-25fc1a2e08ae:Compositor:Compositor
+fc8d3698-34f7-4b7e-8167-a2c0391b171b:Materials:Materials
+1f117b60-46a6-4a87-8589-2c96445ca7bd:Molecular Nodes:Molecular Nodes
+85730213-4c2e-469f-b333-52ac53adf274:Molecular Nodes/Animate:Molecular Nodes-Animate
+d3f975df-8408-4972-a669-8187a57e01d0:Molecular Nodes/Color:Molecular Nodes-Color
+9c167a5c-d0a6-457d-9e9c-90f3edd29e10:Molecular Nodes/Curves:Molecular Nodes-Curves
+0094c3e0-7885-427b-81b4-187a84dcff18:Molecular Nodes/DNA:Molecular Nodes-DNA
+a484cee9-1c7f-4bf8-a31c-6ffa99912ec0:Molecular Nodes/Ensemble:Molecular Nodes-Ensemble
+bd1f205b-fea5-4700-b2c2-754f3321e969:Molecular Nodes/Select:Molecular Nodes-Select
+c2c958af-5095-4fc2-884d-709bba965fc4:Molecular Nodes/Simulation:Molecular Nodes-Simulation
+541e6649-2ea6-4225-b1ee-5c0da6f5f1f6:Molecular Nodes/Style:Molecular Nodes-Style
+c5d9cc4a-2d12-48aa-838f-8114381e9e69:Molecular Nodes/Topology:Molecular Nodes-Topology
+b293127a-ef53-4981-b170-fce54963caa7:Molecular Nodes/Utilities:Molecular Nodes-Utilities
+dd5f0199-fa8b-4b01-a972-2dc586a3e60f:Molecular Nodes/Utilities/Attribute:Molecular Nodes-Utilities-Attribute
+0d42d20f-33f0-464a-b4c4-9fb278826421:Molecular Nodes/Utilities/Boolean:Molecular Nodes-Utilities-Boolean
+7ccb8802-a69f-483e-bf6e-4a47aaa9e940:Molecular Nodes/Utilities/Fields:Molecular Nodes-Utilities-Fields
+22e221d4-ff48-41f2-b105-83d7162a4372:Molecular Nodes/Utilities/Group:Molecular Nodes-Utilities-Group
+2177f62e-f8b5-4f3c-a457-1641bec1c82b:Molecular Nodes/Utilities/Visualize:Molecular Nodes-Utilities-Visualize
