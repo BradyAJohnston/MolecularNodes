@@ -1,4 +1,5 @@
 import bpy
+from bl_ui import node_add_menu
 from .node_info import menu_items
 
 
@@ -18,12 +19,14 @@ class MN_MT_Node_Bonds(bpy.types.Menu):
         menu_items.get_submenu("bonds").menu(self.layout, context)
 
 
-class MN_MT_Node_Style(bpy.types.Menu):
-    bl_idname = "MN_MT_NODE_STYLE"
-    bl_label = ""
+class NODE_MN_MT_Node_Style(node_add_menu.AddNodeMenu):
+    bl_idname = "NODE_MN_MT_NODE_STYLE"
+    bl_label = "Style"
+    menu_path = "-MolecularNodes/Style"
 
-    def draw(self, context):
-        menu_items.get_submenu("style").menu(self.layout, context)
+    def draw(self, _context):
+        layout = self.layout
+        self.draw_assets_for_catalog(layout, self.menu_path)
 
 
 class MN_MT_Node_Select(bpy.types.Menu):
@@ -124,7 +127,8 @@ class MN_MT_Node_Fields(bpy.types.Menu):
 
 def draw_node_menus(self, context):
     layout = self.layout
-    layout.menu("MN_MT_NODE_STYLE", text="Style", icon_value=77)
+    layout.menu("NODE_MN_MT_NODE_STYLE", text="Style", icon_value=77)
+
     layout.menu("MN_MT_NODE_SELECT", text="Select", icon="RESTRICT_SELECT_OFF")
     layout.menu("MN_MT_NODE_COLOR", text="Color", icon="COLORSET_07_VEC")
     layout.separator()
@@ -166,7 +170,7 @@ CLASSES = [
     MN_MT_Node_Color,
     MN_MT_Node_Density,
     MN_MT_Node_DNA,
-    MN_MT_Node_Style,
+    NODE_MN_MT_Node_Style,
     MN_MT_Node_Select,
     MN_MT_Node_Topology,
     MN_MT_Node_Attributes,
