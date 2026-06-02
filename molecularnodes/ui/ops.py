@@ -179,14 +179,22 @@ class MN_OT_iswitch_custom(Operator):
         node_name = " ".join([prefix, self.node_name, name])
 
         with databpy.nodes.DuplicatePrevention():
-            node_chains = nodes.custom_iswitch(
-                name=node_name,
-                dtype=self.dtype,
-                iter_list=prop,
-                start=self.starting_value,
-                field=self.field,
-                prefix=self.prefix,
-            )
+            if self.dtype == "BOOLEAN":
+                node_chains = nodes.custom_boolean_iswitch(
+                    name=node_name,
+                    items=prop,
+                    offset=self.starting_value,
+                    prefix=self.prefix,
+                )
+            else:
+                node_chains = nodes.custom_iswitch(
+                    name=node_name,
+                    dtype=self.dtype,
+                    iter_list=prop,
+                    start=self.starting_value,
+                    field=self.field,
+                    prefix=self.prefix,
+                )
 
         _add_node(node_chains.name, context)
 
