@@ -1,6 +1,6 @@
 import itertools
 import math
-from typing import List, Optional
+from typing import Iterable, List, Optional
 import bpy
 import databpy
 import numpy as np
@@ -13,6 +13,7 @@ from mathutils import Vector
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from ..blender import mesh
+from ..lib.nodebpy import geometry as g
 from .material import assign_material
 from .style_density_iso_surface import style_density_iso_surface_node_group
 
@@ -802,6 +803,55 @@ def insert_before(
     return node_new
 
 
+def custom_boolean_iswitch(
+    name: str,
+    items: Iterable[str],
+    attribute_name: str = "chain_id",
+    offset: int = 0,
+    prefix: str = "",
+) -> bpy.types.GeometryNodeTree:
+
+    with g.tree(name) as tree:
+        attr = g.NamedAttribute.integer(attribute_name)
+
+        switch = g.IndexSwitch.boolean(
+            index=attr if offset == 0 else attr + offset,
+            items=[tree.inputs.boolean(prefix + x) for x in items],
+        )
+
+        switch >> tree.outputs.boolean("Selection")
+        ~switch >> tree.outputs.boolean("Inverted")
+
+    tree.tree.color_tag = "INPUT"
+
+    return tree.tree
+
+
+def custom_color_iswitch(
+    name: str,
+    items: list[str] | dict[str, tuple[float, float, float, float]],
+    attribute_name: str = "chain_id",
+    offset: int = 0,
+) -> bpy.types.GeometryNodeTree:
+    with g.tree(name) as tree:
+        attr = g.NamedAttribute.integer(attribute_name)
+
+        if isinstance(items, list):
+            items: dict[str, tuple[float, ...]] = {
+                name: color.random_rgb() for name in items
+            }
+
+        switch = g.IndexSwitch.color(
+            index=attr if offset == 0 else attr + offset,
+            items=[tree.inputs.color(name, default) for name, default in items.items()],
+        )
+
+        switch >> tree.outputs.color()
+
+    tree.tree.color_tag = "INPUT"
+    return tree.tree
+
+
 def custom_iswitch(
     name: str,
     iter_list,
@@ -860,6 +910,7 @@ def custom_iswitch(
     NodeGroupCreationError
         If there was an error creating the node group.
     """
+
     iter_list = [str(i) for i in iter_list]
     tree = bpy.data.node_groups.get(name)
     if tree:
