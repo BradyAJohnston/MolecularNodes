@@ -10,10 +10,12 @@ VERSION 1
 fc8d3698-34f7-4b7e-8167-a2c0391b171b:Materials:Materials
 1f117b60-46a6-4a87-8589-2c96445ca7bd:Molecular Nodes:Molecular Nodes
 85730213-4c2e-469f-b333-52ac53adf274:Molecular Nodes/Animate:Molecular Nodes-Animate
+dfef0d3c-e718-420a-8b22-e7c3a3a9e333:Molecular Nodes/Attributes:Molecular Nodes-Attributes
 d3f975df-8408-4972-a669-8187a57e01d0:Molecular Nodes/Color:Molecular Nodes-Color
 9c167a5c-d0a6-457d-9e9c-90f3edd29e10:Molecular Nodes/Curves:Molecular Nodes-Curves
 0094c3e0-7885-427b-81b4-187a84dcff18:Molecular Nodes/DNA:Molecular Nodes-DNA
 a484cee9-1c7f-4bf8-a31c-6ffa99912ec0:Molecular Nodes/Ensemble:Molecular Nodes-Ensemble
+a1e4128a-131f-4e0e-b54e-81f863aba707:Molecular Nodes/Geometry:Molecular Nodes-Geometry
 bd1f205b-fea5-4700-b2c2-754f3321e969:Molecular Nodes/Select:Molecular Nodes-Select
 c2c958af-5095-4fc2-884d-709bba965fc4:Molecular Nodes/Simulation:Molecular Nodes-Simulation
 541e6649-2ea6-4225-b1ee-5c0da6f5f1f6:Molecular Nodes/Style:Molecular Nodes-Style
