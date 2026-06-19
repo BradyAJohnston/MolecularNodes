@@ -2,7 +2,7 @@ from pathlib import Path
 import bpy
 import databpy
 import MDAnalysis as mda
-from bpy.props import (  # type: ignore
+from bpy.props import (
     BoolProperty,
     CollectionProperty,
     EnumProperty,
@@ -10,7 +10,7 @@ from bpy.props import (  # type: ignore
     IntProperty,
     StringProperty,
 )
-from bpy.types import Context, Operator  # type: ignore
+from bpy.types import Context, Operator
 from .. import entities
 from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
@@ -23,11 +23,13 @@ from ..entities import (
     ensemble,
     trajectory,
 )
+from ..nodes import assets as a
 from ..nodes import nodes
 from ..nodes.geometry import (
     create_style_interface,
     get_final_style_nodes,
 )
+from ..nodes.material import add_all_materials
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from . import node_info
@@ -307,6 +309,16 @@ class MN_OT_Change_Color(Operator):
         return {"FINISHED"}
 
 
+_STYLE_NODE = {
+    "spheres": a.StyleSpheres,
+    "ribbon": a.StyleRibbon,
+    "cartoon": a.StyleCartoon,
+    "sticks": a.StyleSticks,
+    "ball_and_stick": a.StyleBallAndStick,
+    "surface": a.StyleSurface,
+}
+
+
 class Import_Molecule(bpy.types.Operator):
     style: EnumProperty(  # type: ignore
         name="Style",
@@ -356,6 +368,19 @@ class Import_Molecule(bpy.types.Operator):
         description="Build the biological assembly for the structure on import",
     )
 
+    @property
+    def style_node(
+        self,
+    ) -> (
+        a.StyleSurface
+        | a.StyleRibbon
+        | a.StyleBallAndStick
+        | a.StyleCartoon
+        | a.StyleSticks
+    ):
+        "Helper to get the selected node class for adding to the tree"
+        return _STYLE_NODE[self.style]
+
     def draw(self, context):
         layout = self.layout
         row = layout.row()
@@ -385,6 +410,7 @@ class MN_OT_Import_Molecule(Import_Molecule):
 
     def draw(self, context):
         layout = self.layout
+        assert layout
         layout.label(text=f"Importing {len(self.files)} molecules")
         layout = super().draw(context)
 
@@ -392,18 +418,20 @@ class MN_OT_Import_Molecule(Import_Molecule):
         if not self.directory:
             return {"CANCELLED"}
 
-        if not self.node_setup:
-            style = None
-        else:
-            style = self.style
-
         for file in self.files:
             try:
-                Molecule.load(
-                    Path(self.directory, file.name),
-                    name=file.name,
-                    remove_solvent=self.remove_solvent,
-                ).add_style(style, assembly=self.assembly)
+                mol = Molecule.load(
+                    file_path=Path(self.directory, file.name), name=file.name
+                )  # .add_style(style, assembly=self.assembly)
+
+                with mol.tree as tree:
+                    atoms, join = tree.reset()
+                    (
+                        atoms
+                        >> self.style_node()
+                        >> (a.EnsembleInstance() if self.assembly else None)
+                        >> join
+                    )
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
@@ -438,10 +466,10 @@ DOWNLOAD_FORMATS = (
 # operator that is called by the 'button' press which calls the fetch function
 
 
-class MN_OT_Import_Fetch(bpy.types.Operator):
+class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
     bl_idname = "mn.import_fetch"
     bl_label = "Fetch"
-    bl_description = "Download and open a structure from the PDB"
+    bl_description = "Download and open a structure a database"
     bl_options = {"REGISTER", "UNDO"}
 
     code: StringProperty(  # type: ignore
@@ -455,42 +483,17 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         default="bcif",
         items=DOWNLOAD_FORMATS,
     )
-    node_setup: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        default=True,
-        description="Create and set up a Geometry Nodes tree on import",
-    )
-    assembly: BoolProperty(  # type: ignore
-        name="Build Assembly",
-        description="Add a node to build the biological assembly on import",
-        default=False,
-    )
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        description="Default style for importing",
-        items=STYLE_ITEMS,
-        default="spheres",
-    )
+
     cache_dir: StringProperty(  # type: ignore
         name="Cache Directory",
         description="Where to store the structures downloaded from the Protein Data Bank",
         default=str(CACHE_DIR),
         subtype="DIR_PATH",
     )
-    remove_solvent: BoolProperty(  # type: ignore
-        name="Remove Solvent",
-        description="Delete the solvent from the structure on import",
-        default=True,
-    )
+
     del_hydrogen: BoolProperty(  # type: ignore
         name="Remove Hydrogens",
         description="Remove the hydrogens from a structure on import",
-        default=False,
-    )
-
-    centre: BoolProperty(  # type: ignore
-        name="Centre",
-        description="Centre the structure on the world origin",
         default=False,
     )
 
@@ -511,39 +514,25 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         ),
     )
 
-    centre_type: EnumProperty(  # type: ignore
-        name="Method",
-        default="mass",
-        items=(
-            (
-                "mass",
-                "Mass",
-                "Adjust the structure's centre of mass to be at the world origin",
-            ),
-            (
-                "centroid",
-                "Centroid",
-                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-            ),
-        ),
-    )
-
     def execute(self, context):
         try:
-            mol = (
-                entities.Molecule.fetch(
-                    code=self.code,
-                    cache=self.cache_dir,
-                    format=self.file_format,
-                    remove_solvent=self.remove_solvent,
-                    database=self.database,
-                )
-                .add_style(
-                    style=self.style if self.node_setup else None,  # type: ignore
-                    assembly=self.assembly,
-                )
-                .centre_molecule(self.centre_type if self.centre else None)
+            mol = entities.Molecule.fetch(
+                code=self.code,
+                cache=self.cache_dir,
+                format=self.file_format,
+                remove_solvent=self.remove_solvent,
+                database=self.database,
             )
+
+            with mol.tree as tree:
+                atoms, join = tree.reset()
+                (
+                    atoms
+                    >> a.SetColor(color=a.ColorElement())
+                    >> self.style_node(material=add_all_materials()["MN Default"])
+                    >> (a.EnsembleInstance() if self.assembly else None)
+                    >> join
+                )
 
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
@@ -558,7 +547,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
         try:
             bpy.context.view_layer.objects.active = mol.object  # type: ignore
         except RuntimeError:
-            message += " - MolecularNodes collection is disabled"
+            message += " - Molecular Nodes collection is disabled"
 
         self.report({"INFO"}, message=message)
 
@@ -578,17 +567,19 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     )
 
     def execute(self, context):
-        mol = (
-            Molecule.load(
-                file_path=path_resolve(self.filepath),
-                remove_solvent=self.remove_solvent,
-            )
-            .centre_molecule(self.centre_type if self.centre else None)
-            .add_style(
-                style=self.style if self.node_setup else None,  # type: ignore
-                assembly=self.assembly,
-            )
+        mol = Molecule.load(
+            file_path=path_resolve(self.filepath),
+            remove_solvent=self.remove_solvent,
         )
+
+        with mol.tree as tree:
+            atoms, join = tree.reset()
+            (
+                atoms
+                >> a.SetColor()
+                >> self.style_node(material=add_all_materials()["MN Default"])
+                >> join
+            )
 
         message = f"Imported '{self.filepath}' as {mol.name}"
         try:

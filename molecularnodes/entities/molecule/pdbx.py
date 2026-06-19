@@ -43,7 +43,7 @@ class PDBXReader(ReaderBase):
                 array, inter_residue=True
             )
 
-        return array  # type: ignore
+        return array
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()

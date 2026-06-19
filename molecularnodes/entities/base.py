@@ -2,16 +2,19 @@ from abc import ABCMeta
 from enum import Enum
 from typing import List
 import bpy
+from bpy.types import GeometryNodeTree
 from databpy import (
     BlenderObject,
 )
+from nodebpy import geometry as g
+from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
 from ..nodes import nodes
 from ..nodes.geometry import (
     GeometryNodeInterFace,
     style_interfaces_from_tree,
 )
-from .utilities import BoolObjectMNProperty, _get_gn_modifier
+from .utilities import BoolObjectMNProperty
 
 
 # create a EntityType enum
@@ -27,7 +30,23 @@ class EntityType(Enum):
     ENSEMBLE_CELLPACK = "ensemble-cellpack"
 
 
-bpy.types.NodesModifier
+class MolecularTree(TreeBuilder[GeometryNodeTree]):
+    def __init__(self, entitiy: "MolecularEntity", tree: TreeBuilder | str) -> None:
+        self._entity = entitiy
+        super().__init__(tree)
+
+    def reset(self) -> tuple[GeometrySocket, GeometrySocket]:
+        """Reset the tree to a default state. Returns the geometry input and the a JoinGeometry.i.geometry (input, join)"""
+        self.clear()
+        geo = self.inputs.geometry("Atoms")
+        join = g.JoinGeometry()
+        join >> self.outputs.geometry()
+        return geo, join.i.geometry
+
+    def clear(self) -> None:
+        self.tree.nodes.clear()
+        assert self.tree.interface
+        self.tree.interface.clear()
 
 
 class MolecularEntity(
@@ -35,22 +54,38 @@ class MolecularEntity(
     metaclass=ABCMeta,
 ):
     update_with_scene = BoolObjectMNProperty("update_with_scene")
-    _entity_type: EntityType = None  # Overridden by derived classes
+    _entity_type: EntityType | None = None
 
     def __init__(self) -> None:
         super().__init__(obj=None)
         self._register_with_session()
         self._world_scale = 0.01
+        self._tree = None
 
     @property
-    def node_group(self) -> bpy.types.GeometryNodeTree | None:
-        if "MolecularNodes" in self.object.modifiers:
-            return _get_gn_modifier(self.object, "MolecularNodes").node_group
-        return None
+    def node_group(self) -> bpy.types.GeometryNodeTree:
+        mod = self.modifier
+        mod.node_group = self.tree.tree
+        return mod.node_group
 
     @property
-    def tree(self) -> bpy.types.GeometryNodeTree:
-        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
+    def modifier(self) -> bpy.types.NodesModifier:
+        for mod in self.object.modifiers:
+            if mod.type == "NODES" and mod.name == "Molecular Nodes":
+                return mod
+
+        mod = self.object.modifiers.new("GeometryNodes", "NODES")
+        return mod
+
+    @property
+    def tree(self) -> MolecularTree:
+        if self._tree is None:
+            self._tree = MolecularTree(self, self.modifier_node_tree)
+        return self._tree
+
+    @property
+    def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:
+        mod: bpy.types.NodesModifier = self.object.modifiers["Molecular Nodes"]
         if mod is None:
             raise ValueError(
                 f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
@@ -62,7 +97,7 @@ class MolecularEntity(
         """
         Get the styles in the tree.
         """
-        return style_interfaces_from_tree(self.tree)
+        return style_interfaces_from_tree(self.modifier_node_tree)
 
     def _register_with_session(self) -> None:
         bpy.context.scene.MNSession.register_entity(self)  # type: ignore
@@ -87,12 +122,12 @@ class MolecularEntity(
         """
         Create the modifiers for the molecule.
         """
-        self.object.modifiers.new("MolecularNodes", "NODES")
+        self.object.modifiers.new("Molecular Nodes", "NODES")
         # fallback=False => new tree all the time
-        tree = nodes.new_tree(  # type: ignore
+        tree = nodes.new_tree(
             name=f"MN_{self.name}", input_name="Atoms", is_modifier=True, fallback=False
         )
-        self.object.modifiers[0].node_group = tree  # type: ignore
+        self.object.modifiers[0].node_group = tree
 
     def get_view(self) -> List[tuple]:
         """

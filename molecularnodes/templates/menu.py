@@ -35,8 +35,11 @@ def _draw_templates_menu(self, context):
 
 
 def register_templates_menu():
-    bpy.utils.register_class(MN_MT_templates)
-    bpy.types.TEXT_MT_templates.append(_draw_templates_menu)
+    try:
+        bpy.utils.register_class(MN_MT_templates)
+        bpy.types.TEXT_MT_templates.append(_draw_templates_menu)
+    except ValueError as e:
+        print(e)
 
 
 def unregister_templates_menu():

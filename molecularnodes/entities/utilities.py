@@ -231,7 +231,7 @@ def atom_array_to_named_attributes(
         if attr in annotations_to_skip:
             continue
 
-        data = array.get_annotation(attr)  # type: ignore
+        data = array.get_annotation(attr)
 
         if attr == "vdw_radii":
             data *= world_scale

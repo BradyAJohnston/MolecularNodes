@@ -227,7 +227,7 @@ class Trajectory(MolecularEntity):
                 x
                 if x in data.elements.keys()
                 else default_guesser.guess_atom_element(x)
-                for x in self.atoms.names  # type: ignore
+                for x in self.atoms.names
             ]
             return np.array(guessed_elements)
         except Exception as e:
@@ -349,7 +349,7 @@ class Trajectory(MolecularEntity):
     def _compute_atom_name_int(self) -> np.ndarray:
         if hasattr(self.atoms, "names"):
             return np.array(
-                [data.atom_names.get(x, -1) for x in self.atoms.names],  # type: ignore
+                [data.atom_names.get(x, -1) for x in self.atoms.names],
                 dtype=int,
             )
         else:
@@ -578,12 +578,12 @@ class Trajectory(MolecularEntity):
             return
         names = ["a", "b", "c", "alpha", "beta", "gamma"]
         nodes_to_update = ["Periodic Box", "Periodic Array"]
-        for node in self.tree.nodes:
+        for node in self.modifier_node_tree.nodes:
             if (
                 not isinstance(node, bpy.types.GeometryNodeGroup)
                 or node.node_tree is None
                 or node.node_tree.name not in nodes_to_update
-                or not node.inputs["Update"].default_value  # type: ignore
+                or not node.inputs["Update"].default_value
             ):
                 continue
 
@@ -664,7 +664,7 @@ class Trajectory(MolecularEntity):
             # Currently, styles are removed using GeometryNodeInterFace.remove(),
 
         node_style = add_style_branch(
-            tree=self.tree,
+            tree=self.modifier_node_tree,
             style=style,
             color=color,
             selection=attribute_name,
@@ -673,7 +673,9 @@ class Trajectory(MolecularEntity):
         )
 
         # set the active index for UI to the newly added style
-        self._mn_styles_active_index = self.tree.nodes.find(node_style.name)
+        self._mn_styles_active_index = self.modifier_node_tree.nodes.find(
+            node_style.name
+        )
 
         return self
 

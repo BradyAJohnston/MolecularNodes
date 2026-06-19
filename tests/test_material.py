@@ -68,7 +68,7 @@ def test_generic_material():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     s = mol.styles[0]
     s.material = bpy.data.materials["Material"]
-    assert s.material.material.name == "Material"  # type: ignore
+    assert s.material.material.name == "Material"
     with pytest.raises(KeyError):
         s.material = "Non-existent material"
     with pytest.raises(TypeError):

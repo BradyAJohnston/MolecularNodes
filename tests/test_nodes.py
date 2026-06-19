@@ -271,7 +271,7 @@ def test_node_topology(snapshot_custom: NumpySnapshotExtension, code, node_name)
 def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, name):
     mol = mn.Molecule.fetch(code, cache=data_dir)
     node_sp = mn.nodes.nodes.insert_before(
-        mol.tree.nodes["Group Output"], "GeometryNodeSetPosition"
+        mol.modifier_node_tree.nodes["Group Output"], "GeometryNodeSetPosition"
     )
     node = mn.nodes.nodes.insert_before(node_sp.inputs["Position"], name)
     for input in node.inputs:
@@ -312,7 +312,7 @@ def test_is_modifier():
         if hasattr(tree, "is_modifier"):
             assert not tree.is_modifier
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
-    assert mol.tree.is_modifier
+    assert mol.modifier_node_tree.is_modifier
 
 
 def test_node_setup():

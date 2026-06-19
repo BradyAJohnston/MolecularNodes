@@ -119,7 +119,7 @@ def get_selection(node: bpy.types.GeometryNode) -> bpy.types.GeometryNode | None
     if not sel_input:
         return None
     try:
-        return sel_input.links[0].from_socket.node  # type: ignore
+        return sel_input.links[0].from_socket.node
     except (KeyError, IndexError):
         return None
 
@@ -140,7 +140,7 @@ def get_input(group) -> bpy.types.GeometryNode:
     ]
 
 
-def get_mod(object, name="MolecularNodes"):
+def get_mod(object, name="Molecular Nodes"):
     node_mod = object.modifiers.get(name)
     if not node_mod:
         node_mod = object.modifiers.new(name, "NODES")
@@ -171,7 +171,7 @@ def style_node(group):
 
 def get_style_node(object):
     "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers["MolecularNodes"].node_group
+    group = object.modifiers["Molecular Nodes"].node_group
     return style_node(group)
 
 
@@ -186,13 +186,13 @@ def star_node(group):
 
 def get_star_node(object):
     "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers["MolecularNodes"].node_group
+    group = object.modifiers["Molecular Nodes"].node_group
     return star_node(group)
 
 
 def get_color_node(object):
     "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers["MolecularNodes"].node_group
+    group = object.modifiers["Molecular Nodes"].node_group
     for node in group.nodes:
         if node.name == "Color Attribute Random":
             return node
@@ -210,7 +210,7 @@ def insert_last_node(group, node, link_input=True):
 
 
 def realize_instances(obj):
-    group = obj.modifiers["MolecularNodes"].node_group
+    group = obj.modifiers["Molecular Nodes"].node_group
     realize = group.nodes.new("GeometryNodeRealizeInstances")
     insert_last_node(group, realize)
 
@@ -222,7 +222,7 @@ def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
         try:
             tree = bpy.data.node_groups[tree]
         except KeyError:
-            tree = append(tree)  # type: ignore
+            tree = append(tree)
 
     # only change the label if not customized
     if node.label == node.node_tree.name:
@@ -255,7 +255,7 @@ def new_tree(
     is_modifier: bool = False,
     fallback: bool = True,
 ) -> bpy.types.GeometryNodeTree:
-    tree = bpy.data.node_groups.get(name)  # type: ignore
+    tree = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
     if tree and fallback:
         if not isinstance(tree, bpy.types.GeometryNodeTree):
@@ -265,7 +265,7 @@ def new_tree(
     # create a new group for this particular name and do some initial setup
     tree: bpy.types.GeometryNodeTree = bpy.data.node_groups.new(
         name=name,
-        type="GeometryNodeTree",  # type: ignore
+        type="GeometryNodeTree",
     )  # type: ignore
     input_node = tree.nodes.new("NodeGroupInput")
     output_node = tree.nodes.new("NodeGroupOutput")
@@ -362,7 +362,7 @@ def create_starting_nodes_density(
 
     if style == "density_iso_surface":
         key = "ISO Value"
-        node_density = group.nodes.new("GeometryNodeGroup")  # type: ignore
+        node_density = group.nodes.new("GeometryNodeGroup")
         node_density.name = styles_mapping[style]
         node_density.location = [400, 0]
         tree = style_density_iso_surface_node_group()
@@ -752,10 +752,10 @@ def insert_before(
     else:
         node = item
         to_socket = node.inputs[0]
-        from_socket = to_socket.links[0].from_socket  # type: ignore
+        from_socket = to_socket.links[0].from_socket
         # for socket in node.inputs:
         #     if socket.is_linked:
-        #         from_socket = socket.links[0].from_socket  # type: ignore
+        #         from_socket = socket.links[0].from_socket
         #         to_socket = socket
         #         break
 

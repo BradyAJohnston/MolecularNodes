@@ -40,9 +40,9 @@ from nodebpy.types import (
 class AccumulateAxisRotation(AssetGeometryGroup):
     """Accumulate Axis Rotation"""
 
-    _name = 'Accumulate Axis Rotation'
-    _asset_name = 'Accumulate Axis Rotation'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Accumulate Axis Rotation"
+    _asset_name = "Accumulate Axis Rotation"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -65,6 +65,7 @@ class AccumulateAxisRotation(AssetGeometryGroup):
         """Trasnform"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -79,15 +80,24 @@ class AccumulateAxisRotation(AssetGeometryGroup):
         group_id: InputInteger = 0,
         transform_index: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_3": position, "Socket_5": selection, "Socket_6": pivot, "Socket_4": angle, "Socket_1": group_id, "Socket_8": transform_index})
+        super().__init__(
+            **{
+                "Socket_3": position,
+                "Socket_5": selection,
+                "Socket_6": pivot,
+                "Socket_4": angle,
+                "Socket_1": group_id,
+                "Socket_8": transform_index,
+            }
+        )
 
 
 class AngstromToWorld(AssetGeometryGroup):
     """Angstrom to World"""
 
-    _name = 'Angstrom to World'
-    _asset_name = 'Angstrom to World'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Angstrom to World"
+    _asset_name = "Angstrom to World"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         angstrom: FloatSocket
@@ -98,6 +108,7 @@ class AngstromToWorld(AssetGeometryGroup):
         """World"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -113,9 +124,9 @@ class AngstromToWorld(AssetGeometryGroup):
 class AnimateDihedrals(AssetGeometryGroup):
     """Animate Dihedrals"""
 
-    _name = 'Animate Dihedrals'
-    _asset_name = 'Animate Dihedrals'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Animate Dihedrals"
+    _asset_name = "Animate Dihedrals"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -134,6 +145,7 @@ class AnimateDihedrals(AssetGeometryGroup):
         """Atoms"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -147,15 +159,23 @@ class AnimateDihedrals(AssetGeometryGroup):
         interpolate: InputBoolean = True,
         frame: InputFloat = 0.0,
     ):
-        super().__init__(**{"Input_4": atoms, "Input_0": frames, "Input_7": smoother_step, "Input_8": interpolate, "Socket_0": frame})
+        super().__init__(
+            **{
+                "Input_4": atoms,
+                "Input_0": frames,
+                "Input_7": smoother_step,
+                "Input_8": interpolate,
+                "Socket_0": frame,
+            }
+        )
 
 
 class AtomID(AssetGeometryGroup):
     """Atom ID"""
 
-    _name = 'Atom ID'
-    _asset_name = 'Atom ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Atom ID"
+    _asset_name = "Atom ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -165,6 +185,7 @@ class AtomID(AssetGeometryGroup):
         atom_id: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -180,9 +201,9 @@ class AtomID(AssetGeometryGroup):
 class AtomName(AssetGeometryGroup):
     """Geometry Nodes doesn't currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page"""
 
-    _name = 'Atom Name'
-    _asset_name = 'Atom Name'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Atom Name"
+    _asset_name = "Atom Name"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -192,6 +213,7 @@ class AtomName(AssetGeometryGroup):
         atom_name: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -207,9 +229,9 @@ class AtomName(AssetGeometryGroup):
 class AtomicNumber(AssetGeometryGroup):
     """Atomic Number"""
 
-    _name = 'Atomic Number'
-    _asset_name = 'Atomic Number'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Atomic Number"
+    _asset_name = "Atomic Number"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -219,6 +241,7 @@ class AtomicNumber(AssetGeometryGroup):
         atomic_number: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -234,9 +257,9 @@ class AtomicNumber(AssetGeometryGroup):
 class AtomsToCACurves(AssetGeometryGroup):
     """Atoms to CA Curves"""
 
-    _name = 'Atoms to CA Curves'
-    _asset_name = 'Atoms to CA Curves'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Atoms to CA Curves"
+    _asset_name = "Atoms to CA Curves"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -253,6 +276,7 @@ class AtomsToCACurves(AssetGeometryGroup):
         """Curves"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -265,15 +289,22 @@ class AtomsToCACurves(AssetGeometryGroup):
         bs_smoothing: InputFloat = 1.0,
         threshold: InputFloat = 4.5,
     ):
-        super().__init__(**{"Input_0": atoms, "Input_1": selection, "Input_10": bs_smoothing, "Socket_9": threshold})
+        super().__init__(
+            **{
+                "Input_0": atoms,
+                "Input_1": selection,
+                "Input_10": bs_smoothing,
+                "Socket_9": threshold,
+            }
+        )
 
 
 class AtomsToCurves(AssetGeometryGroup):
     """Atoms to Curves"""
 
-    _name = 'Atoms to Curves'
-    _asset_name = 'Atoms to Curves'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Atoms to Curves"
+    _asset_name = "Atoms to Curves"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -290,6 +321,7 @@ class AtomsToCurves(AssetGeometryGroup):
         """Curves"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -302,15 +334,22 @@ class AtomsToCurves(AssetGeometryGroup):
         sort_points: InputBoolean = False,
         distance_cutoff_a: InputFloat = 6.0,
     ):
-        super().__init__(**{"Socket_0": atoms, "Socket_1": selection, "Socket_3": sort_points, "Socket_4": distance_cutoff_a})
+        super().__init__(
+            **{
+                "Socket_0": atoms,
+                "Socket_1": selection,
+                "Socket_3": sort_points,
+                "Socket_4": distance_cutoff_a,
+            }
+        )
 
 
 class BFactor(AssetGeometryGroup):
     """B Factor"""
 
-    _name = 'B Factor'
-    _asset_name = 'B Factor'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "B Factor"
+    _asset_name = "B Factor"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -320,6 +359,7 @@ class BFactor(AssetGeometryGroup):
         b_factor: FloatSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -335,9 +375,9 @@ class BFactor(AssetGeometryGroup):
 class BackboneC(AssetGeometryGroup):
     """Backbone C"""
 
-    _name = 'Backbone C'
-    _asset_name = 'Backbone C'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone C"
+    _asset_name = "Backbone C"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         method: MenuSocket
@@ -348,6 +388,7 @@ class BackboneC(AssetGeometryGroup):
         """C"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -355,7 +396,7 @@ class BackboneC(AssetGeometryGroup):
 
     def __init__(
         self,
-        method: InputMenu = 'Compute',
+        method: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_4": method})
 
@@ -363,9 +404,9 @@ class BackboneC(AssetGeometryGroup):
 class BackboneCA(AssetGeometryGroup):
     """Backbone CA"""
 
-    _name = 'Backbone CA'
-    _asset_name = 'Backbone CA'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone CA"
+    _asset_name = "Backbone CA"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         method: MenuSocket
@@ -376,6 +417,7 @@ class BackboneCA(AssetGeometryGroup):
         """CA"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -383,7 +425,7 @@ class BackboneCA(AssetGeometryGroup):
 
     def __init__(
         self,
-        method: InputMenu = 'Compute',
+        method: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_4": method})
 
@@ -391,9 +433,9 @@ class BackboneCA(AssetGeometryGroup):
 class BackboneN(AssetGeometryGroup):
     """Backbone N"""
 
-    _name = 'Backbone N'
-    _asset_name = 'Backbone N'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone N"
+    _asset_name = "Backbone N"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         method: MenuSocket
@@ -404,6 +446,7 @@ class BackboneN(AssetGeometryGroup):
         """N"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -411,7 +454,7 @@ class BackboneN(AssetGeometryGroup):
 
     def __init__(
         self,
-        method: InputMenu = 'Compute',
+        method: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_4": method})
 
@@ -419,9 +462,9 @@ class BackboneN(AssetGeometryGroup):
 class BackboneNH(AssetGeometryGroup):
     """Backbone NH"""
 
-    _name = 'Backbone NH'
-    _asset_name = 'Backbone NH'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone NH"
+    _asset_name = "Backbone NH"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         menu: MenuSocket
@@ -432,6 +475,7 @@ class BackboneNH(AssetGeometryGroup):
         """NH"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -439,7 +483,7 @@ class BackboneNH(AssetGeometryGroup):
 
     def __init__(
         self,
-        menu: InputMenu = 'Compute',
+        menu: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_4": menu})
 
@@ -447,9 +491,9 @@ class BackboneNH(AssetGeometryGroup):
 class BackboneO(AssetGeometryGroup):
     """Backbone O"""
 
-    _name = 'Backbone O'
-    _asset_name = 'Backbone O'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone O"
+    _asset_name = "Backbone O"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         method: MenuSocket
@@ -460,6 +504,7 @@ class BackboneO(AssetGeometryGroup):
         """O"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -467,7 +512,7 @@ class BackboneO(AssetGeometryGroup):
 
     def __init__(
         self,
-        method: InputMenu = 'Compute',
+        method: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_4": method})
 
@@ -475,9 +520,9 @@ class BackboneO(AssetGeometryGroup):
 class BackbonePositions(AssetGeometryGroup):
     """Backbone Positions"""
 
-    _name = 'Backbone Positions'
-    _asset_name = 'Backbone Positions'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone Positions"
+    _asset_name = "Backbone Positions"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         method: MenuSocket
@@ -496,6 +541,7 @@ class BackbonePositions(AssetGeometryGroup):
         """NH"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -503,7 +549,7 @@ class BackbonePositions(AssetGeometryGroup):
 
     def __init__(
         self,
-        method: InputMenu = 'Compute',
+        method: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_10": method})
 
@@ -511,9 +557,9 @@ class BackbonePositions(AssetGeometryGroup):
 class BackboneVectorList(AssetGeometryGroup):
     """Backbone Vector List"""
 
-    _name = 'Backbone Vector List'
-    _asset_name = 'Backbone Vector List'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone Vector List"
+    _asset_name = "Backbone Vector List"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         ca_atoms: GeometrySocket
@@ -528,6 +574,7 @@ class BackboneVectorList(AssetGeometryGroup):
         """CA Atoms"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -544,9 +591,9 @@ class BackboneVectorList(AssetGeometryGroup):
 class BackboneVectors(AssetGeometryGroup):
     """The `Vectors` that are useful for a curve when reading from a peptide backbone"""
 
-    _name = 'Backbone Vectors'
-    _asset_name = 'Backbone Vectors'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Backbone Vectors"
+    _asset_name = "Backbone Vectors"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         method: MenuSocket
@@ -561,6 +608,7 @@ class BackboneVectors(AssetGeometryGroup):
         """Bitangent"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -568,7 +616,7 @@ class BackboneVectors(AssetGeometryGroup):
 
     def __init__(
         self,
-        method: InputMenu = 'Compute',
+        method: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_4": method})
 
@@ -576,9 +624,9 @@ class BackboneVectors(AssetGeometryGroup):
 class BetweenFloat(AssetGeometryGroup):
     """Between Float"""
 
-    _name = 'Between Float'
-    _asset_name = 'Between Float'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Between Float"
+    _asset_name = "Between Float"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         value: FloatSocket
@@ -593,6 +641,7 @@ class BetweenFloat(AssetGeometryGroup):
         """Boolean"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -610,9 +659,9 @@ class BetweenFloat(AssetGeometryGroup):
 class BetweenInteger(AssetGeometryGroup):
     """Between Integer"""
 
-    _name = 'Between Integer'
-    _asset_name = 'Between Integer'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Between Integer"
+    _asset_name = "Between Integer"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         value: IntegerSocket
@@ -627,6 +676,7 @@ class BetweenInteger(AssetGeometryGroup):
         """Boolean"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -644,9 +694,9 @@ class BetweenInteger(AssetGeometryGroup):
 class BetweenVector(AssetGeometryGroup):
     """Between Vector"""
 
-    _name = 'Between Vector'
-    _asset_name = 'Between Vector'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Between Vector"
+    _asset_name = "Between Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         value: VectorSocket
@@ -661,6 +711,7 @@ class BetweenVector(AssetGeometryGroup):
         """Boolean"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -678,9 +729,9 @@ class BetweenVector(AssetGeometryGroup):
 class BondCount(AssetGeometryGroup):
     """Bond Count"""
 
-    _name = 'Bond Count'
-    _asset_name = 'Bond Count'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Bond Count"
+    _asset_name = "Bond Count"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -693,6 +744,7 @@ class BondCount(AssetGeometryGroup):
         """Bonds"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -708,9 +760,9 @@ class BondCount(AssetGeometryGroup):
 class BooleanAndOr(AssetGeometryGroup):
     """Boolean AndOr"""
 
-    _name = 'Boolean AndOr'
-    _asset_name = 'Boolean AndOr'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Boolean AndOr"
+    _asset_name = "Boolean AndOr"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -727,6 +779,7 @@ class BooleanAndOr(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -744,9 +797,9 @@ class BooleanAndOr(AssetGeometryGroup):
 class CentreOnSelection(AssetGeometryGroup):
     """Centre on Selection"""
 
-    _name = 'Centre on Selection'
-    _asset_name = 'Centre on Selection'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Centre on Selection"
+    _asset_name = "Centre on Selection"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -763,6 +816,7 @@ class CentreOnSelection(AssetGeometryGroup):
         """Offset"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -774,15 +828,17 @@ class CentreOnSelection(AssetGeometryGroup):
         selection: InputBoolean = True,
         group_id: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_1": atoms, "Socket_3": selection, "Socket_5": group_id})
+        super().__init__(
+            **{"Socket_1": atoms, "Socket_3": selection, "Socket_5": group_id}
+        )
 
 
 class Centroid(AssetGeometryGroup):
     """Centroid"""
 
-    _name = 'Centroid'
-    _asset_name = 'Centroid'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Centroid"
+    _asset_name = "Centroid"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -797,6 +853,7 @@ class Centroid(AssetGeometryGroup):
         """Centroid"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -808,15 +865,17 @@ class Centroid(AssetGeometryGroup):
         selection: InputBoolean = True,
         group_id: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_4": position, "Socket_1": selection, "Socket_3": group_id})
+        super().__init__(
+            **{"Socket_4": position, "Socket_1": selection, "Socket_3": group_id}
+        )
 
 
 class ChainID(AssetGeometryGroup):
     """Integer representation of the Chain IDs that were present in the structure"""
 
-    _name = 'Chain ID'
-    _asset_name = 'Chain ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Chain ID"
+    _asset_name = "Chain ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -826,6 +885,7 @@ class ChainID(AssetGeometryGroup):
         chain_id: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -841,9 +901,9 @@ class ChainID(AssetGeometryGroup):
 class ChainParameter(AssetGeometryGroup):
     """Information for each residue within the context of the chain"""
 
-    _name = 'Chain Parameter'
-    _asset_name = 'Chain Parameter'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Chain Parameter"
+    _asset_name = "Chain Parameter"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -865,6 +925,7 @@ class ChainParameter(AssetGeometryGroup):
         """Index of Last"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -877,9 +938,9 @@ class ChainParameter(AssetGeometryGroup):
 class CheckGeometry(AssetGeometryGroup):
     """Check Geometry"""
 
-    _name = 'Check Geometry'
-    _asset_name = 'Check Geometry'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Check Geometry"
+    _asset_name = "Check Geometry"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -892,6 +953,7 @@ class CheckGeometry(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -900,7 +962,7 @@ class CheckGeometry(AssetGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
-        message: InputString = 'Input contains no geometry, check your node connections.',
+        message: InputString = "Input contains no geometry, check your node connections.",
     ):
         super().__init__(**{"Socket_0": geometry, "Socket_3": message})
 
@@ -908,9 +970,9 @@ class CheckGeometry(AssetGeometryGroup):
 class Color(AssetGeometryGroup):
     """Color"""
 
-    _name = 'Color'
-    _asset_name = 'Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color"
+    _asset_name = "Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -921,6 +983,7 @@ class Color(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -936,9 +999,9 @@ class Color(AssetGeometryGroup):
 class ColorAtomicNumber(AssetGeometryGroup):
     """Color Atomic Number"""
 
-    _name = 'Color Atomic Number'
-    _asset_name = 'Color Atomic Number'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Atomic Number"
+    _asset_name = "Color Atomic Number"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atomic_number: IntegerSocket
@@ -950,6 +1013,7 @@ class ColorAtomicNumber(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -966,9 +1030,9 @@ class ColorAtomicNumber(AssetGeometryGroup):
 class ColorAttributeMap(AssetGeometryGroup):
     """Color Attribute Map"""
 
-    _name = 'Color Attribute Map'
-    _asset_name = 'Color Attribute Map'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Attribute Map"
+    _asset_name = "Color Attribute Map"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         color_space: MenuSocket
@@ -993,6 +1057,7 @@ class ColorAttributeMap(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1000,8 +1065,8 @@ class ColorAttributeMap(AssetGeometryGroup):
 
     def __init__(
         self,
-        color_space: InputMenu = 'Linear',
-        name: InputString = 'b_factor',
+        color_space: InputMenu = "Linear",
+        name: InputString = "b_factor",
         min: InputFloat = 0.0,
         max: InputFloat = 150.0,
         input_7: InputBoolean = True,
@@ -1009,15 +1074,26 @@ class ColorAttributeMap(AssetGeometryGroup):
         input_1: InputColor = None,
         b: InputColor = None,
     ):
-        super().__init__(**{"Socket_2": color_space, "Input_6": name, "Input_3": min, "Input_4": max, "Input_7": input_7, "Input_0": a, "Input_1": input_1, "Input_2": b})
+        super().__init__(
+            **{
+                "Socket_2": color_space,
+                "Input_6": name,
+                "Input_3": min,
+                "Input_4": max,
+                "Input_7": input_7,
+                "Input_0": a,
+                "Input_1": input_1,
+                "Input_2": b,
+            }
+        )
 
 
 class ColorAttributeRandom(AssetGeometryGroup):
     """Color Attribute Random"""
 
-    _name = 'Color Attribute Random'
-    _asset_name = 'Color Attribute Random'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Attribute Random"
+    _asset_name = "Color Attribute Random"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         name: StringSocket
@@ -1036,6 +1112,7 @@ class ColorAttributeRandom(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1043,21 +1120,29 @@ class ColorAttributeRandom(AssetGeometryGroup):
 
     def __init__(
         self,
-        name: InputString = 'chain_id',
-        colorspace: InputMenu = 'HSL',
+        name: InputString = "chain_id",
+        colorspace: InputMenu = "HSL",
         color_seed: InputInteger = 0,
         hsl_saturation: InputFloat = 0.6,
         hsl_lightness: InputFloat = 0.6,
     ):
-        super().__init__(**{"Input_0": name, "Socket_5": colorspace, "Input_4": color_seed, "Input_2": hsl_saturation, "Input_3": hsl_lightness})
+        super().__init__(
+            **{
+                "Input_0": name,
+                "Socket_5": colorspace,
+                "Input_4": color_seed,
+                "Input_2": hsl_saturation,
+                "Input_3": hsl_lightness,
+            }
+        )
 
 
 class ColorBackbone(AssetGeometryGroup):
     """Color Backbone"""
 
-    _name = 'Color Backbone'
-    _asset_name = 'Color Backbone'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Backbone"
+    _asset_name = "Color Backbone"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         backbone: ColorSocket
@@ -1070,6 +1155,7 @@ class ColorBackbone(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1086,9 +1172,9 @@ class ColorBackbone(AssetGeometryGroup):
 class ColorChain(AssetGeometryGroup):
     """Color Chain_"""
 
-    _name = 'Color Chain_'
-    _asset_name = 'Color Chain_'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Chain_"
+    _asset_name = "Color Chain_"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         chain_a: ColorSocket
@@ -1103,6 +1189,7 @@ class ColorChain(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1120,9 +1207,9 @@ class ColorChain(AssetGeometryGroup):
 class ColorCommon(AssetGeometryGroup):
     """Color Common"""
 
-    _name = 'Color Common'
-    _asset_name = 'Color Common'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Common"
+    _asset_name = "Color Common"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         hydrogen: ColorSocket
@@ -1143,6 +1230,7 @@ class ColorCommon(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1157,15 +1245,24 @@ class ColorCommon(AssetGeometryGroup):
         phosphorous: InputColor = None,
         sulfur: InputColor = None,
     ):
-        super().__init__(**{"Input_0": hydrogen, "Input_4": carbon, "Input_5": nitrogen, "Input_6": oxygen, "Input_7": phosphorous, "Input_8": sulfur})
+        super().__init__(
+            **{
+                "Input_0": hydrogen,
+                "Input_4": carbon,
+                "Input_5": nitrogen,
+                "Input_6": oxygen,
+                "Input_7": phosphorous,
+                "Input_8": sulfur,
+            }
+        )
 
 
 class ColorElement(AssetGeometryGroup):
     """Color Element"""
 
-    _name = 'Color Element'
-    _asset_name = 'Color Element'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Element"
+    _asset_name = "Color Element"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         h: ColorSocket
@@ -1334,6 +1431,7 @@ class ColorElement(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1422,15 +1520,98 @@ class ColorElement(AssetGeometryGroup):
         au: InputColor = None,
         hg: InputColor = None,
     ):
-        super().__init__(**{"Socket_0": h, "Socket_2": he, "Socket_3": li, "Socket_4": be, "Socket_5": b, "Socket_6": c, "Socket_7": n, "Socket_8": o, "Socket_9": f, "Socket_10": ne, "Socket_11": na, "Socket_12": mg, "Socket_13": al, "Socket_14": si, "Socket_15": p, "Socket_16": s, "Socket_17": cl, "Socket_18": ar, "Socket_19": k, "Socket_20": ca, "Socket_21": sc, "Socket_23": ti, "Socket_24": v, "Socket_25": cr, "Socket_26": mn, "Socket_27": fe, "Socket_28": co, "Socket_29": ni, "Socket_30": cu, "Socket_31": zn, "Socket_32": ga, "Socket_33": ge, "Socket_34": as_, "Socket_35": se, "Socket_36": br, "Socket_37": kr, "Socket_38": rb, "Socket_39": sr, "Socket_40": y, "Socket_41": zr, "Socket_42": nb, "Socket_44": mo, "Socket_45": tc, "Socket_46": ru, "Socket_47": rh, "Socket_48": pd, "Socket_49": ag, "Socket_50": cd, "Socket_51": in_, "Socket_52": sn, "Socket_53": sb, "Socket_54": te, "Socket_55": i, "Socket_56": xe, "Socket_57": cs, "Socket_58": ba, "Socket_59": la, "Socket_60": ce, "Socket_61": pr, "Socket_62": nd, "Socket_63": pm, "Socket_65": sm, "Socket_66": eu, "Socket_67": gd, "Socket_68": tb, "Socket_69": dy, "Socket_70": ho, "Socket_71": er, "Socket_72": tm, "Socket_73": yb, "Socket_74": lu, "Socket_75": hf, "Socket_76": ta, "Socket_77": w, "Socket_78": re, "Socket_79": os, "Socket_80": ir, "Socket_81": pt, "Socket_82": au, "Socket_83": hg})
+        super().__init__(
+            **{
+                "Socket_0": h,
+                "Socket_2": he,
+                "Socket_3": li,
+                "Socket_4": be,
+                "Socket_5": b,
+                "Socket_6": c,
+                "Socket_7": n,
+                "Socket_8": o,
+                "Socket_9": f,
+                "Socket_10": ne,
+                "Socket_11": na,
+                "Socket_12": mg,
+                "Socket_13": al,
+                "Socket_14": si,
+                "Socket_15": p,
+                "Socket_16": s,
+                "Socket_17": cl,
+                "Socket_18": ar,
+                "Socket_19": k,
+                "Socket_20": ca,
+                "Socket_21": sc,
+                "Socket_23": ti,
+                "Socket_24": v,
+                "Socket_25": cr,
+                "Socket_26": mn,
+                "Socket_27": fe,
+                "Socket_28": co,
+                "Socket_29": ni,
+                "Socket_30": cu,
+                "Socket_31": zn,
+                "Socket_32": ga,
+                "Socket_33": ge,
+                "Socket_34": as_,
+                "Socket_35": se,
+                "Socket_36": br,
+                "Socket_37": kr,
+                "Socket_38": rb,
+                "Socket_39": sr,
+                "Socket_40": y,
+                "Socket_41": zr,
+                "Socket_42": nb,
+                "Socket_44": mo,
+                "Socket_45": tc,
+                "Socket_46": ru,
+                "Socket_47": rh,
+                "Socket_48": pd,
+                "Socket_49": ag,
+                "Socket_50": cd,
+                "Socket_51": in_,
+                "Socket_52": sn,
+                "Socket_53": sb,
+                "Socket_54": te,
+                "Socket_55": i,
+                "Socket_56": xe,
+                "Socket_57": cs,
+                "Socket_58": ba,
+                "Socket_59": la,
+                "Socket_60": ce,
+                "Socket_61": pr,
+                "Socket_62": nd,
+                "Socket_63": pm,
+                "Socket_65": sm,
+                "Socket_66": eu,
+                "Socket_67": gd,
+                "Socket_68": tb,
+                "Socket_69": dy,
+                "Socket_70": ho,
+                "Socket_71": er,
+                "Socket_72": tm,
+                "Socket_73": yb,
+                "Socket_74": lu,
+                "Socket_75": hf,
+                "Socket_76": ta,
+                "Socket_77": w,
+                "Socket_78": re,
+                "Socket_79": os,
+                "Socket_80": ir,
+                "Socket_81": pt,
+                "Socket_82": au,
+                "Socket_83": hg,
+            }
+        )
 
 
 class ColorGoodsell(AssetGeometryGroup):
     """Color Goodsell"""
 
-    _name = 'Color Goodsell'
-    _asset_name = 'Color Goodsell'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Goodsell"
+    _asset_name = "Color Goodsell"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         color: ColorSocket
@@ -1445,6 +1626,7 @@ class ColorGoodsell(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1462,9 +1644,9 @@ class ColorGoodsell(AssetGeometryGroup):
 class ColorMixIntermediate(AssetGeometryGroup):
     """Color Mix Intermediate"""
 
-    _name = 'Color Mix Intermediate'
-    _asset_name = 'Color Mix Intermediate'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Mix Intermediate"
+    _asset_name = "Color Mix Intermediate"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         factor: FloatSocket
@@ -1483,6 +1665,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
         """Output"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1491,20 +1674,28 @@ class ColorMixIntermediate(AssetGeometryGroup):
     def __init__(
         self,
         factor: InputFloat = 0.5,
-        menu: InputMenu = 'Linear',
+        menu: InputMenu = "Linear",
         intermediate: InputBoolean = False,
         a: InputColor = None,
         b: InputColor = None,
     ):
-        super().__init__(**{"Socket_6": factor, "Socket_5": menu, "Socket_1": intermediate, "Socket_4": a, "Socket_3": b})
+        super().__init__(
+            **{
+                "Socket_6": factor,
+                "Socket_5": menu,
+                "Socket_1": intermediate,
+                "Socket_4": a,
+                "Socket_3": b,
+            }
+        )
 
 
 class ColorOKLabMix(AssetGeometryGroup):
     """Color OKLab Mix"""
 
-    _name = 'Color OKLab Mix'
-    _asset_name = 'Color OKLab Mix'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color OKLab Mix"
+    _asset_name = "Color OKLab Mix"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         factor: FloatSocket
@@ -1519,6 +1710,7 @@ class ColorOKLabMix(AssetGeometryGroup):
         """Result"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1536,9 +1728,9 @@ class ColorOKLabMix(AssetGeometryGroup):
 class ColorOKLabOffset(AssetGeometryGroup):
     """Color OKLab Offset"""
 
-    _name = 'Color OKLab Offset'
-    _asset_name = 'Color OKLab Offset'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color OKLab Offset"
+    _asset_name = "Color OKLab Offset"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         color: ColorSocket
@@ -1553,6 +1745,7 @@ class ColorOKLabOffset(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1570,9 +1763,9 @@ class ColorOKLabOffset(AssetGeometryGroup):
 class ColorPLDDT(AssetGeometryGroup):
     """Color pLDDT"""
 
-    _name = 'Color pLDDT'
-    _asset_name = 'Color pLDDT'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color pLDDT"
+    _asset_name = "Color pLDDT"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         _50: ColorSocket
@@ -1589,6 +1782,7 @@ class ColorPLDDT(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1601,15 +1795,22 @@ class ColorPLDDT(AssetGeometryGroup):
         socket_3: InputColor = None,
         socket_4: InputColor = None,
     ):
-        super().__init__(**{"Socket_1": _50, "Socket_2": _70, "Socket_3": socket_3, "Socket_4": socket_4})
+        super().__init__(
+            **{
+                "Socket_1": _50,
+                "Socket_2": _70,
+                "Socket_3": socket_3,
+                "Socket_4": socket_4,
+            }
+        )
 
 
 class ColorRainbow(AssetGeometryGroup):
     """Color Rainbow"""
 
-    _name = 'Color Rainbow'
-    _asset_name = 'Color Rainbow'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Rainbow"
+    _asset_name = "Color Rainbow"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         factor: MenuSocket
@@ -1628,6 +1829,7 @@ class ColorRainbow(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1635,21 +1837,29 @@ class ColorRainbow(AssetGeometryGroup):
 
     def __init__(
         self,
-        factor: InputMenu = 'Chain',
-        color_space: InputMenu = 'HSV',
+        factor: InputMenu = "Chain",
+        color_space: InputMenu = "HSV",
         offset: InputFloat = 0.0,
         hsl_saturation: InputFloat = 0.8,
         hsl_value: InputFloat = 0.8,
     ):
-        super().__init__(**{"Socket_14": factor, "Socket_15": color_space, "Socket_19": offset, "Socket_7": hsl_saturation, "Socket_8": hsl_value})
+        super().__init__(
+            **{
+                "Socket_14": factor,
+                "Socket_15": color_space,
+                "Socket_19": offset,
+                "Socket_7": hsl_saturation,
+                "Socket_8": hsl_value,
+            }
+        )
 
 
 class ColorResName(AssetGeometryGroup):
     """Color Res Name"""
 
-    _name = 'Color Res Name'
-    _asset_name = 'Color Res Name'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Res Name"
+    _asset_name = "Color Res Name"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         ala: ColorSocket
@@ -1714,6 +1924,7 @@ class ColorResName(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1750,15 +1961,46 @@ class ColorResName(AssetGeometryGroup):
         rg: InputColor = None,
         ru: InputColor = None,
     ):
-        super().__init__(**{"Socket_0": ala, "Socket_1": arg, "Socket_2": asn, "Socket_3": asp, "Socket_4": cys, "Socket_5": glu, "Socket_6": gln, "Socket_7": gly, "Socket_8": his, "Socket_9": ile, "Socket_10": leu, "Socket_11": lys, "Socket_12": met, "Socket_13": phe, "Socket_14": pro, "Socket_15": ser, "Socket_16": thr, "Socket_17": trp, "Socket_18": tyr, "Socket_19": val, "Socket_20": a, "Socket_21": c, "Socket_22": g, "Socket_23": t, "Socket_24": ra, "Socket_25": rc, "Socket_26": rg, "Socket_27": ru})
+        super().__init__(
+            **{
+                "Socket_0": ala,
+                "Socket_1": arg,
+                "Socket_2": asn,
+                "Socket_3": asp,
+                "Socket_4": cys,
+                "Socket_5": glu,
+                "Socket_6": gln,
+                "Socket_7": gly,
+                "Socket_8": his,
+                "Socket_9": ile,
+                "Socket_10": leu,
+                "Socket_11": lys,
+                "Socket_12": met,
+                "Socket_13": phe,
+                "Socket_14": pro,
+                "Socket_15": ser,
+                "Socket_16": thr,
+                "Socket_17": trp,
+                "Socket_18": tyr,
+                "Socket_19": val,
+                "Socket_20": a,
+                "Socket_21": c,
+                "Socket_22": g,
+                "Socket_23": t,
+                "Socket_24": ra,
+                "Socket_25": rc,
+                "Socket_26": rg,
+                "Socket_27": ru,
+            }
+        )
 
 
 class ColorResNameNucleic(AssetGeometryGroup):
     """Color Res Name Nucleic"""
 
-    _name = 'Color Res Name Nucleic'
-    _asset_name = 'Color Res Name Nucleic'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Res Name Nucleic"
+    _asset_name = "Color Res Name Nucleic"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: ColorSocket
@@ -1775,6 +2017,7 @@ class ColorResNameNucleic(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1793,9 +2036,9 @@ class ColorResNameNucleic(AssetGeometryGroup):
 class ColorSecStruct(AssetGeometryGroup):
     """Color Sec Struct"""
 
-    _name = 'Color Sec Struct'
-    _asset_name = 'Color Sec Struct'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Sec Struct"
+    _asset_name = "Color Sec Struct"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         alpha_helix: ColorSocket
@@ -1810,6 +2053,7 @@ class ColorSecStruct(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1821,15 +2065,17 @@ class ColorSecStruct(AssetGeometryGroup):
         beta_sheet: InputColor = None,
         loop: InputColor = None,
     ):
-        super().__init__(**{"Input_0": alpha_helix, "Input_2": beta_sheet, "Input_3": loop})
+        super().__init__(
+            **{"Input_0": alpha_helix, "Input_2": beta_sheet, "Input_3": loop}
+        )
 
 
 class ColorSegment(AssetGeometryGroup):
     """Color Segment_"""
 
-    _name = 'Color Segment_'
-    _asset_name = 'Color Segment_'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color Segment_"
+    _asset_name = "Color Segment_"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         segment_a: ColorSocket
@@ -1844,6 +2090,7 @@ class ColorSegment(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1861,9 +2108,9 @@ class ColorSegment(AssetGeometryGroup):
 class ColorToOKLab(AssetGeometryGroup):
     """Color to OKLab"""
 
-    _name = 'Color to OKLab'
-    _asset_name = 'Color to OKLab'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Color to OKLab"
+    _asset_name = "Color to OKLab"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         color: ColorSocket
@@ -1874,6 +2121,7 @@ class ColorToOKLab(AssetGeometryGroup):
         """OKLab"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1889,9 +2137,9 @@ class ColorToOKLab(AssetGeometryGroup):
 class ContainsGeometry(AssetGeometryGroup):
     """Contains Geometry"""
 
-    _name = 'Contains Geometry'
-    _asset_name = 'Contains Geometry'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Contains Geometry"
+    _asset_name = "Contains Geometry"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -1904,6 +2152,7 @@ class ContainsGeometry(AssetGeometryGroup):
         """Empty"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1919,9 +2168,9 @@ class ContainsGeometry(AssetGeometryGroup):
 class CurveOffsetDihedral(AssetGeometryGroup):
     """Offset from the current point a number of points, then use their `Position` and `Normal` to calculat a dihdral angle between them"""
 
-    _name = 'Curve Offset Dihedral'
-    _asset_name = 'Curve Offset Dihedral'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Curve Offset Dihedral"
+    _asset_name = "Curve Offset Dihedral"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -1938,6 +2187,7 @@ class CurveOffsetDihedral(AssetGeometryGroup):
         """Angle"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1950,15 +2200,22 @@ class CurveOffsetDihedral(AssetGeometryGroup):
         index: InputInteger = 0,
         offset: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_2": position, "Socket_3": normal, "Socket_1": index, "Socket_4": offset})
+        super().__init__(
+            **{
+                "Socket_2": position,
+                "Socket_3": normal,
+                "Socket_1": index,
+                "Socket_4": offset,
+            }
+        )
 
 
 class CurveVisualize(AssetGeometryGroup):
     """Curve Visualize"""
 
-    _name = 'Curve Visualize'
-    _asset_name = 'Curve Visualize'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Curve Visualize"
+    _asset_name = "Curve Visualize"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         curve: GeometrySocket
@@ -1979,6 +2236,7 @@ class CurveVisualize(AssetGeometryGroup):
         """Instances"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -1993,15 +2251,24 @@ class CurveVisualize(AssetGeometryGroup):
         handles: InputBoolean = False,
         arrow_size: InputFloat = 2.0,
     ):
-        super().__init__(**{"Socket_0": curve, "Socket_8": selection, "Socket_2": position, "Socket_7": normal, "Socket_4": handles, "Socket_6": arrow_size})
+        super().__init__(
+            **{
+                "Socket_0": curve,
+                "Socket_8": selection,
+                "Socket_2": position,
+                "Socket_7": normal,
+                "Socket_4": handles,
+                "Socket_6": arrow_size,
+            }
+        )
 
 
 class DihedralAngle(AssetGeometryGroup):
     """Dihedral Angle"""
 
-    _name = 'Dihedral Angle'
-    _asset_name = 'Dihedral Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Dihedral Angle"
+    _asset_name = "Dihedral Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
@@ -2024,6 +2291,7 @@ class DihedralAngle(AssetGeometryGroup):
         """BC"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2042,9 +2310,9 @@ class DihedralAngle(AssetGeometryGroup):
 class DihedralChiAngle(AssetGeometryGroup):
     """Dihedral Chi Angle"""
 
-    _name = 'Dihedral Chi Angle'
-    _asset_name = 'Dihedral Chi Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Dihedral Chi Angle"
+    _asset_name = "Dihedral Chi Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -2058,6 +2326,7 @@ class DihedralChiAngle(AssetGeometryGroup):
         """Axis"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2070,9 +2339,9 @@ class DihedralChiAngle(AssetGeometryGroup):
 class DihedralNucleicAngle(AssetGeometryGroup):
     """Dihedral Nucleic Angle"""
 
-    _name = 'Dihedral Nucleic Angle'
-    _asset_name = 'Dihedral Nucleic Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Dihedral Nucleic Angle"
+    _asset_name = "Dihedral Nucleic Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -2086,6 +2355,7 @@ class DihedralNucleicAngle(AssetGeometryGroup):
         """Axis"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2098,9 +2368,9 @@ class DihedralNucleicAngle(AssetGeometryGroup):
 class DihedralPhi(AssetGeometryGroup):
     """Dihedral Phi"""
 
-    _name = 'Dihedral Phi'
-    _asset_name = 'Dihedral Phi'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Dihedral Phi"
+    _asset_name = "Dihedral Phi"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         menu: MenuSocket
@@ -2115,6 +2385,7 @@ class DihedralPhi(AssetGeometryGroup):
         """Axis"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2122,7 +2393,7 @@ class DihedralPhi(AssetGeometryGroup):
 
     def __init__(
         self,
-        menu: InputMenu = 'Compute',
+        menu: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_16": menu})
 
@@ -2130,9 +2401,9 @@ class DihedralPhi(AssetGeometryGroup):
 class DihedralPsi(AssetGeometryGroup):
     """Dihedral Psi"""
 
-    _name = 'Dihedral Psi'
-    _asset_name = 'Dihedral Psi'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Dihedral Psi"
+    _asset_name = "Dihedral Psi"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         method: MenuSocket
@@ -2147,6 +2418,7 @@ class DihedralPsi(AssetGeometryGroup):
         """Axis"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2154,7 +2426,7 @@ class DihedralPsi(AssetGeometryGroup):
 
     def __init__(
         self,
-        method: InputMenu = 'Compute',
+        method: InputMenu = "Compute",
     ):
         super().__init__(**{"Socket_12": method})
 
@@ -2162,9 +2434,9 @@ class DihedralPsi(AssetGeometryGroup):
 class EdgeGroupID(AssetGeometryGroup):
     """Edge Group ID"""
 
-    _name = 'Edge Group ID'
-    _asset_name = 'Edge Group ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Edge Group ID"
+    _asset_name = "Edge Group ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         group_id: IntegerSocket
@@ -2177,6 +2449,7 @@ class EdgeGroupID(AssetGeometryGroup):
         """Is Equal"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2192,9 +2465,9 @@ class EdgeGroupID(AssetGeometryGroup):
 class EdgeInfo(AssetGeometryGroup):
     """Edge Info"""
 
-    _name = 'Edge Info'
-    _asset_name = 'Edge Info'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Edge Info"
+    _asset_name = "Edge Info"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         vertex_index: IntegerSocket
@@ -2217,6 +2490,7 @@ class EdgeInfo(AssetGeometryGroup):
         """Edge Length"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2233,9 +2507,9 @@ class EdgeInfo(AssetGeometryGroup):
 class EdgeLength(AssetGeometryGroup):
     """Edge Length"""
 
-    _name = 'Edge Length'
-    _asset_name = 'Edge Length'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Edge Length"
+    _asset_name = "Edge Length"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -2245,6 +2519,7 @@ class EdgeLength(AssetGeometryGroup):
         """Length"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2257,9 +2532,9 @@ class EdgeLength(AssetGeometryGroup):
 class EnsembleInstance(AssetGeometryGroup):
     """Ensemble Instance"""
 
-    _name = 'Ensemble Instance'
-    _asset_name = 'Ensemble Instance'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Ensemble Instance"
+    _asset_name = "Ensemble Instance"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         points: GeometrySocket
@@ -2284,6 +2559,7 @@ class EnsembleInstance(AssetGeometryGroup):
         """Instances"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2293,22 +2569,33 @@ class EnsembleInstance(AssetGeometryGroup):
         self,
         points: InputGeometry = None,
         selection: InputBoolean = True,
-        selection_type: InputMenu = 'Simple',
+        selection_type: InputMenu = "Simple",
         instances: InputCollection = None,
         fraction: InputFloat = 1.0,
         as_points: InputBoolean = True,
         point_radius: InputFloat = 0.1,
         point_material: InputMaterial = None,
     ):
-        super().__init__(**{"Input_0": points, "Input_1": selection, "Socket_8": selection_type, "Input_4": instances, "Input_2": fraction, "Input_5": as_points, "Input_6": point_radius, "Input_7": point_material})
+        super().__init__(
+            **{
+                "Input_0": points,
+                "Input_1": selection,
+                "Socket_8": selection_type,
+                "Input_4": instances,
+                "Input_2": fraction,
+                "Input_5": as_points,
+                "Input_6": point_radius,
+                "Input_7": point_material,
+            }
+        )
 
 
 class EntityID(AssetGeometryGroup):
     """The `entity_id` attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)"""
 
-    _name = 'Entity ID'
-    _asset_name = 'Entity ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Entity ID"
+    _asset_name = "Entity ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -2318,6 +2605,7 @@ class EntityID(AssetGeometryGroup):
         entity_id: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2333,9 +2621,9 @@ class EntityID(AssetGeometryGroup):
 class EvaluateOnAtoms(AssetGeometryGroup):
     """Evaluate on Atoms"""
 
-    _name = 'Evaluate on Atoms'
-    _asset_name = 'Evaluate on Atoms'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Evaluate on Atoms"
+    _asset_name = "Evaluate on Atoms"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -2352,6 +2640,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2362,17 +2651,24 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         geometry: InputGeometry = None,
         selection: InputBoolean = True,
         closure: InputClosure = None,
-        result: InputMenu = 'Geometry',
+        result: InputMenu = "Geometry",
     ):
-        super().__init__(**{"Socket_1": geometry, "Socket_10": selection, "Socket_0": closure, "Socket_9": result})
+        super().__init__(
+            **{
+                "Socket_1": geometry,
+                "Socket_10": selection,
+                "Socket_0": closure,
+                "Socket_9": result,
+            }
+        )
 
 
 class EvaluatePerGroup(AssetGeometryGroup):
     """Evaluate Per Group"""
 
-    _name = 'Evaluate Per Group'
-    _asset_name = 'Evaluate Per Group'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Evaluate Per Group"
+    _asset_name = "Evaluate Per Group"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -2387,6 +2683,7 @@ class EvaluatePerGroup(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2396,17 +2693,19 @@ class EvaluatePerGroup(AssetGeometryGroup):
         self,
         geometry: InputGeometry = None,
         closure: InputClosure = None,
-        group: InputMenu = 'chain_id',
+        group: InputMenu = "chain_id",
     ):
-        super().__init__(**{"Socket_0": geometry, "Socket_1": closure, "Socket_4": group})
+        super().__init__(
+            **{"Socket_0": geometry, "Socket_1": closure, "Socket_4": group}
+        )
 
 
 class ExpandBoolean(AssetGeometryGroup):
     """Expand Boolean"""
 
-    _name = 'Expand Boolean'
-    _asset_name = 'Expand Boolean'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Expand Boolean"
+    _asset_name = "Expand Boolean"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         boolean: BooleanSocket
@@ -2419,6 +2718,7 @@ class ExpandBoolean(AssetGeometryGroup):
         """Boolean"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2435,9 +2735,9 @@ class ExpandBoolean(AssetGeometryGroup):
 class FallbackColor(AssetGeometryGroup):
     """Fallback Color"""
 
-    _name = 'Fallback Color'
-    _asset_name = 'Fallback Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Fallback Color"
+    _asset_name = "Fallback Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         name: StringSocket
@@ -2450,6 +2750,7 @@ class FallbackColor(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2457,7 +2758,7 @@ class FallbackColor(AssetGeometryGroup):
 
     def __init__(
         self,
-        name: InputString = 'Color',
+        name: InputString = "Color",
         fallback: InputColor = None,
     ):
         super().__init__(**{"Socket_3": name, "Socket_2": fallback})
@@ -2466,9 +2767,9 @@ class FallbackColor(AssetGeometryGroup):
 class FallbackGeometry(AssetGeometryGroup):
     """Fallback Geometry"""
 
-    _name = 'Fallback Geometry'
-    _asset_name = 'Fallback Geometry'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Fallback Geometry"
+    _asset_name = "Fallback Geometry"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -2481,6 +2782,7 @@ class FallbackGeometry(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2497,9 +2799,9 @@ class FallbackGeometry(AssetGeometryGroup):
 class FieldRemap(AssetGeometryGroup):
     """Maps the range of values of the attribute on from the target atoms, to the range from min to max"""
 
-    _name = 'Field Remap'
-    _asset_name = 'Field Remap'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Field Remap"
+    _asset_name = "Field Remap"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         field: FloatSocket
@@ -2516,6 +2818,7 @@ class FieldRemap(AssetGeometryGroup):
         """Value"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2528,15 +2831,22 @@ class FieldRemap(AssetGeometryGroup):
         value_max: InputFloat = 1.0,
         group_id: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_5": field, "Socket_3": value_min, "Socket_4": value_max, "Socket_6": group_id})
+        super().__init__(
+            **{
+                "Socket_5": field,
+                "Socket_3": value_min,
+                "Socket_4": value_max,
+                "Socket_6": group_id,
+            }
+        )
 
 
 class FindBondedAtom(AssetGeometryGroup):
     """Find Bonded Atom"""
 
-    _name = 'Find Bonded Atom'
-    _asset_name = 'Find Bonded Atom'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Find Bonded Atom"
+    _asset_name = "Find Bonded Atom"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -2557,6 +2867,7 @@ class FindBondedAtom(AssetGeometryGroup):
         """Position"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2565,19 +2876,26 @@ class FindBondedAtom(AssetGeometryGroup):
     def __init__(
         self,
         index: InputInteger = 0,
-        method: InputMenu = 'Exact',
-        atom_name: InputMenu = 'N',
+        method: InputMenu = "Exact",
+        atom_name: InputMenu = "N",
         distance: InputInteger = 2,
     ):
-        super().__init__(**{"Socket_9": index, "Socket_6": method, "Socket_5": atom_name, "Socket_4": distance})
+        super().__init__(
+            **{
+                "Socket_9": index,
+                "Socket_6": method,
+                "Socket_5": atom_name,
+                "Socket_4": distance,
+            }
+        )
 
 
 class FractionateFloat(AssetGeometryGroup):
     """Fractionate Float"""
 
-    _name = 'Fractionate Float'
-    _asset_name = 'Fractionate Float'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Fractionate Float"
+    _asset_name = "Fractionate Float"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         menu: MenuSocket
@@ -2594,6 +2912,7 @@ class FractionateFloat(AssetGeometryGroup):
         """Ceiling"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2601,7 +2920,7 @@ class FractionateFloat(AssetGeometryGroup):
 
     def __init__(
         self,
-        menu: InputMenu = 'Linear',
+        menu: InputMenu = "Linear",
         value: InputFloat = 0.0,
     ):
         super().__init__(**{"Socket_4": menu, "Socket_3": value})
@@ -2610,9 +2929,9 @@ class FractionateFloat(AssetGeometryGroup):
 class GeometryFieldRemap(AssetGeometryGroup):
     """Maps the range of values of the attribute on from the target atoms, to the range from min to max"""
 
-    _name = 'Geometry Field Remap'
-    _asset_name = 'Geometry Field Remap'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Geometry Field Remap"
+    _asset_name = "Geometry Field Remap"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -2629,6 +2948,7 @@ class GeometryFieldRemap(AssetGeometryGroup):
         """Value"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2641,15 +2961,22 @@ class GeometryFieldRemap(AssetGeometryGroup):
         value_min: InputFloat = 0.0,
         value_max: InputFloat = 1.0,
     ):
-        super().__init__(**{"Socket_7": geometry, "Socket_5": field, "Socket_3": value_min, "Socket_4": value_max})
+        super().__init__(
+            **{
+                "Socket_7": geometry,
+                "Socket_5": field,
+                "Socket_3": value_min,
+                "Socket_4": value_max,
+            }
+        )
 
 
 class GetGeometryAtoms(AssetGeometryGroup):
     """Get Geometry Atoms"""
 
-    _name = 'Get Geometry Atoms'
-    _asset_name = 'Get Geometry Atoms'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Get Geometry Atoms"
+    _asset_name = "Get Geometry Atoms"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -2664,6 +2991,7 @@ class GetGeometryAtoms(AssetGeometryGroup):
         """Atoms"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2679,9 +3007,9 @@ class GetGeometryAtoms(AssetGeometryGroup):
 class IndexDistance(AssetGeometryGroup):
     """Index Distance"""
 
-    _name = 'Index Distance'
-    _asset_name = 'Index Distance'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Index Distance"
+    _asset_name = "Index Distance"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -2702,6 +3030,7 @@ class IndexDistance(AssetGeometryGroup):
         """Rotation"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2713,15 +3042,17 @@ class IndexDistance(AssetGeometryGroup):
         target_index: InputInteger = 100,
         position: InputVector = None,
     ):
-        super().__init__(**{"Socket_5": index, "Socket_0": target_index, "Socket_6": position})
+        super().__init__(
+            **{"Socket_5": index, "Socket_0": target_index, "Socket_6": position}
+        )
 
 
 class IndexMixColor(AssetGeometryGroup):
     """Index Mix Color"""
 
-    _name = 'Index Mix Color'
-    _asset_name = 'Index Mix Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Index Mix Color"
+    _asset_name = "Index Mix Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         color: ColorSocket
@@ -2738,6 +3069,7 @@ class IndexMixColor(AssetGeometryGroup):
         """To"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2754,9 +3086,9 @@ class IndexMixColor(AssetGeometryGroup):
 class IsAlphaCarbon(AssetGeometryGroup):
     """Is Alpha Carbon"""
 
-    _name = 'Is Alpha Carbon'
-    _asset_name = 'Is Alpha Carbon'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Alpha Carbon"
+    _asset_name = "Is Alpha Carbon"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -2771,6 +3103,7 @@ class IsAlphaCarbon(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2787,9 +3120,9 @@ class IsAlphaCarbon(AssetGeometryGroup):
 class IsBackbone(AssetGeometryGroup):
     """Is Backbone"""
 
-    _name = 'Is Backbone'
-    _asset_name = 'Is Backbone'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Backbone"
+    _asset_name = "Is Backbone"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -2804,6 +3137,7 @@ class IsBackbone(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2820,9 +3154,9 @@ class IsBackbone(AssetGeometryGroup):
 class IsBackboneEdge(AssetGeometryGroup):
     """Is Backbone Edge"""
 
-    _name = 'Is Backbone Edge'
-    _asset_name = 'Is Backbone Edge'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Backbone Edge"
+    _asset_name = "Is Backbone Edge"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -2832,6 +3166,7 @@ class IsBackboneEdge(AssetGeometryGroup):
         """Is Backbone Edge"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2844,9 +3179,9 @@ class IsBackboneEdge(AssetGeometryGroup):
 class IsBoundaryEdge(AssetGeometryGroup):
     """Is Boundary Edge"""
 
-    _name = 'Is Boundary Edge'
-    _asset_name = 'Is Boundary Edge'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Boundary Edge"
+    _asset_name = "Is Boundary Edge"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         mask: BooleanSocket
@@ -2857,6 +3192,7 @@ class IsBoundaryEdge(AssetGeometryGroup):
         """Selection"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2872,9 +3208,9 @@ class IsBoundaryEdge(AssetGeometryGroup):
 class IsHelix(AssetGeometryGroup):
     """Is Helix"""
 
-    _name = 'Is Helix'
-    _asset_name = 'Is Helix'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Helix"
+    _asset_name = "Is Helix"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -2889,6 +3225,7 @@ class IsHelix(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2905,9 +3242,9 @@ class IsHelix(AssetGeometryGroup):
 class IsHydrogen(AssetGeometryGroup):
     """Is Hydrogen"""
 
-    _name = 'Is Hydrogen'
-    _asset_name = 'Is Hydrogen'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Hydrogen"
+    _asset_name = "Is Hydrogen"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -2922,6 +3259,7 @@ class IsHydrogen(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2938,9 +3276,9 @@ class IsHydrogen(AssetGeometryGroup):
 class IsLipid(AssetGeometryGroup):
     """Is Lipid"""
 
-    _name = 'Is Lipid'
-    _asset_name = 'Is Lipid'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Lipid"
+    _asset_name = "Is Lipid"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -2955,6 +3293,7 @@ class IsLipid(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -2971,9 +3310,9 @@ class IsLipid(AssetGeometryGroup):
 class IsLoop(AssetGeometryGroup):
     """Is Loop"""
 
-    _name = 'Is Loop'
-    _asset_name = 'Is Loop'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Loop"
+    _asset_name = "Is Loop"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -2988,6 +3327,7 @@ class IsLoop(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3004,9 +3344,9 @@ class IsLoop(AssetGeometryGroup):
 class IsNucleic(AssetGeometryGroup):
     """Is Nucleic"""
 
-    _name = 'Is Nucleic'
-    _asset_name = 'Is Nucleic'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Nucleic"
+    _asset_name = "Is Nucleic"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -3021,6 +3361,7 @@ class IsNucleic(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3037,9 +3378,9 @@ class IsNucleic(AssetGeometryGroup):
 class IsPeptide(AssetGeometryGroup):
     """Is Peptide"""
 
-    _name = 'Is Peptide'
-    _asset_name = 'Is Peptide'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Peptide"
+    _asset_name = "Is Peptide"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -3054,6 +3395,7 @@ class IsPeptide(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3070,9 +3412,9 @@ class IsPeptide(AssetGeometryGroup):
 class IsSheet(AssetGeometryGroup):
     """Is Sheet"""
 
-    _name = 'Is Sheet'
-    _asset_name = 'Is Sheet'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Sheet"
+    _asset_name = "Is Sheet"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -3087,6 +3429,7 @@ class IsSheet(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3103,9 +3446,9 @@ class IsSheet(AssetGeometryGroup):
 class IsSideChain(AssetGeometryGroup):
     """Is Side Chain"""
 
-    _name = 'Is Side Chain'
-    _asset_name = 'Is Side Chain'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Side Chain"
+    _asset_name = "Is Side Chain"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -3122,6 +3465,7 @@ class IsSideChain(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3139,9 +3483,9 @@ class IsSideChain(AssetGeometryGroup):
 class IsSolvent(AssetGeometryGroup):
     """Is Solvent"""
 
-    _name = 'Is Solvent'
-    _asset_name = 'Is Solvent'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Is Solvent"
+    _asset_name = "Is Solvent"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -3156,6 +3500,7 @@ class IsSolvent(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3172,9 +3517,9 @@ class IsSolvent(AssetGeometryGroup):
 class LChToOKLab(AssetGeometryGroup):
     """LCh to OKLab"""
 
-    _name = 'LCh to OKLab'
-    _asset_name = 'LCh to OKLab'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "LCh to OKLab"
+    _asset_name = "LCh to OKLab"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         l: FloatSocket
@@ -3188,6 +3533,7 @@ class LChToOKLab(AssetGeometryGroup):
         """OKLab"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3205,9 +3551,9 @@ class LChToOKLab(AssetGeometryGroup):
 class LatticeGrid(AssetGeometryGroup):
     """Lattice Grid"""
 
-    _name = 'Lattice Grid'
-    _asset_name = 'Lattice Grid'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Lattice Grid"
+    _asset_name = "Lattice Grid"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
@@ -3228,6 +3574,7 @@ class LatticeGrid(AssetGeometryGroup):
         """Grid"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3242,15 +3589,24 @@ class LatticeGrid(AssetGeometryGroup):
         y: InputInteger = 3,
         z: InputInteger = 3,
     ):
-        super().__init__(**{"Socket_1": a, "Socket_2": b, "Socket_3": c, "Socket_4": x, "Socket_5": y, "Socket_6": z})
+        super().__init__(
+            **{
+                "Socket_1": a,
+                "Socket_2": b,
+                "Socket_3": c,
+                "Socket_4": x,
+                "Socket_5": y,
+                "Socket_6": z,
+            }
+        )
 
 
 class Mass(AssetGeometryGroup):
     """Mass"""
 
-    _name = 'Mass'
-    _asset_name = 'Mass'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Mass"
+    _asset_name = "Mass"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -3260,6 +3616,7 @@ class Mass(AssetGeometryGroup):
         mass: FloatSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3275,9 +3632,9 @@ class Mass(AssetGeometryGroup):
 class MenuAtomName(AssetGeometryGroup):
     """Menu Atom Name"""
 
-    _name = 'Menu Atom Name'
-    _asset_name = 'Menu Atom Name'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Menu Atom Name"
+    _asset_name = "Menu Atom Name"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atom_name: MenuSocket
@@ -3292,6 +3649,7 @@ class MenuAtomName(AssetGeometryGroup):
         """atom_name"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3299,7 +3657,7 @@ class MenuAtomName(AssetGeometryGroup):
 
     def __init__(
         self,
-        atom_name: InputMenu = 'N',
+        atom_name: InputMenu = "N",
     ):
         super().__init__(**{"Socket_0": atom_name})
 
@@ -3307,9 +3665,9 @@ class MenuAtomName(AssetGeometryGroup):
 class MenuResidueMask(AssetGeometryGroup):
     """Menu Residue Mask"""
 
-    _name = 'Menu Residue Mask'
-    _asset_name = 'Menu Residue Mask'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Menu Residue Mask"
+    _asset_name = "Menu Residue Mask"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atom_name: MenuSocket
@@ -3324,6 +3682,7 @@ class MenuResidueMask(AssetGeometryGroup):
         """Position"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3331,7 +3690,7 @@ class MenuResidueMask(AssetGeometryGroup):
 
     def __init__(
         self,
-        atom_name: InputMenu = 'N',
+        atom_name: InputMenu = "N",
     ):
         super().__init__(**{"Socket_7": atom_name})
 
@@ -3339,9 +3698,9 @@ class MenuResidueMask(AssetGeometryGroup):
 class MenuResidueName(AssetGeometryGroup):
     """Menu Residue Name"""
 
-    _name = 'Menu Residue Name'
-    _asset_name = 'Menu Residue Name'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Menu Residue Name"
+    _asset_name = "Menu Residue Name"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         residue_name: MenuSocket
@@ -3353,6 +3712,7 @@ class MenuResidueName(AssetGeometryGroup):
         """Selection"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3360,7 +3720,7 @@ class MenuResidueName(AssetGeometryGroup):
 
     def __init__(
         self,
-        residue_name: InputMenu = 'ALA',
+        residue_name: InputMenu = "ALA",
     ):
         super().__init__(**{"Socket_0": residue_name})
 
@@ -3368,9 +3728,9 @@ class MenuResidueName(AssetGeometryGroup):
 class NormalizeField(AssetGeometryGroup):
     """Normalize Field"""
 
-    _name = 'Normalize Field'
-    _asset_name = 'Normalize Field'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Normalize Field"
+    _asset_name = "Normalize Field"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         field: FloatSocket
@@ -3383,6 +3743,7 @@ class NormalizeField(AssetGeometryGroup):
         """Result"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3399,9 +3760,9 @@ class NormalizeField(AssetGeometryGroup):
 class NucleicChi(AssetGeometryGroup):
     """Nucleic Chi"""
 
-    _name = 'Nucleic Chi'
-    _asset_name = 'Nucleic Chi'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Nucleic Chi"
+    _asset_name = "Nucleic Chi"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -3416,6 +3777,7 @@ class NucleicChi(AssetGeometryGroup):
         """Position"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3427,15 +3789,17 @@ class NucleicChi(AssetGeometryGroup):
         selection: InputBoolean = True,
         x1: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_1": position, "Socket_3": selection, "Socket_2": x1})
+        super().__init__(
+            **{"Socket_1": position, "Socket_3": selection, "Socket_2": x1}
+        )
 
 
 class NucleicDihedral(AssetGeometryGroup):
     """Nucleic Dihedral"""
 
-    _name = 'Nucleic Dihedral'
-    _asset_name = 'Nucleic Dihedral'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Nucleic Dihedral"
+    _asset_name = "Nucleic Dihedral"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -3458,6 +3822,7 @@ class NucleicDihedral(AssetGeometryGroup):
         """Position"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3473,15 +3838,25 @@ class NucleicDihedral(AssetGeometryGroup):
         epsilon: InputFloat = 0.0,
         zeta: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_3": position, "Socket_2": selection, "Socket_5": alpha, "Socket_6": beta, "Socket_7": gamma, "Socket_8": epsilon, "Socket_1": zeta})
+        super().__init__(
+            **{
+                "Socket_3": position,
+                "Socket_2": selection,
+                "Socket_5": alpha,
+                "Socket_6": beta,
+                "Socket_7": gamma,
+                "Socket_8": epsilon,
+                "Socket_1": zeta,
+            }
+        )
 
 
 class OKLabOffsetLCh(AssetGeometryGroup):
     """OKLab Offset LCh"""
 
-    _name = 'OKLab Offset LCh'
-    _asset_name = 'OKLab Offset LCh'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "OKLab Offset LCh"
+    _asset_name = "OKLab Offset LCh"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         oklab: VectorSocket
@@ -3495,6 +3870,7 @@ class OKLabOffsetLCh(AssetGeometryGroup):
         """OKLab"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3512,9 +3888,9 @@ class OKLabOffsetLCh(AssetGeometryGroup):
 class OKLabToColor(AssetGeometryGroup):
     """OKLab to Color"""
 
-    _name = 'OKLab to Color'
-    _asset_name = 'OKLab to Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "OKLab to Color"
+    _asset_name = "OKLab to Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         oklab: VectorSocket
@@ -3525,6 +3901,7 @@ class OKLabToColor(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3540,9 +3917,9 @@ class OKLabToColor(AssetGeometryGroup):
 class OKLabToLCh(AssetGeometryGroup):
     """OKLab to LCh"""
 
-    _name = 'OKLab to LCh'
-    _asset_name = 'OKLab to LCh'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "OKLab to LCh"
+    _asset_name = "OKLab to LCh"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         oklab: VectorSocket
@@ -3556,6 +3933,7 @@ class OKLabToLCh(AssetGeometryGroup):
         h: FloatSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3571,9 +3949,9 @@ class OKLabToLCh(AssetGeometryGroup):
 class OffsetColor(AssetGeometryGroup):
     """Offset Color"""
 
-    _name = 'Offset Color'
-    _asset_name = 'Offset Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Offset Color"
+    _asset_name = "Offset Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -3588,6 +3966,7 @@ class OffsetColor(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3605,9 +3984,9 @@ class OffsetColor(AssetGeometryGroup):
 class OffsetColorAttribute(AssetGeometryGroup):
     """Offset Color Attribute"""
 
-    _name = 'Offset Color Attribute'
-    _asset_name = 'Offset Color Attribute'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Offset Color Attribute"
+    _asset_name = "Offset Color Attribute"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -3620,6 +3999,7 @@ class OffsetColorAttribute(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3636,9 +4016,9 @@ class OffsetColorAttribute(AssetGeometryGroup):
 class OffsetCurve(AssetGeometryGroup):
     """Offset Curve"""
 
-    _name = 'Offset Curve'
-    _asset_name = 'Offset Curve'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Offset Curve"
+    _asset_name = "Offset Curve"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         curve: GeometrySocket
@@ -3653,6 +4033,7 @@ class OffsetCurve(AssetGeometryGroup):
         """Factor"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3669,9 +4050,9 @@ class OffsetCurve(AssetGeometryGroup):
 class PeptideChi(AssetGeometryGroup):
     """Peptide Chi"""
 
-    _name = 'Peptide Chi'
-    _asset_name = 'Peptide Chi'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Peptide Chi"
+    _asset_name = "Peptide Chi"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -3694,6 +4075,7 @@ class PeptideChi(AssetGeometryGroup):
         """Position"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3709,15 +4091,25 @@ class PeptideChi(AssetGeometryGroup):
         x4: InputFloat = 0.0,
         x5: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_2": position, "Socket_8": selection, "Socket_3": x1, "Socket_4": x2, "Socket_5": x3, "Socket_6": x4, "Socket_7": x5})
+        super().__init__(
+            **{
+                "Socket_2": position,
+                "Socket_8": selection,
+                "Socket_3": x1,
+                "Socket_4": x2,
+                "Socket_5": x3,
+                "Socket_6": x4,
+                "Socket_7": x5,
+            }
+        )
 
 
 class PeptideDihedral(AssetGeometryGroup):
     """Peptide Dihedral"""
 
-    _name = 'Peptide Dihedral'
-    _asset_name = 'Peptide Dihedral'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Peptide Dihedral"
+    _asset_name = "Peptide Dihedral"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -3734,6 +4126,7 @@ class PeptideDihedral(AssetGeometryGroup):
         """Position"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3746,15 +4139,22 @@ class PeptideDihedral(AssetGeometryGroup):
         phi: InputFloat = 0.0,
         psi: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_1": position, "Socket_5": selection, "Socket_6": phi, "Socket_7": psi})
+        super().__init__(
+            **{
+                "Socket_1": position,
+                "Socket_5": selection,
+                "Socket_6": phi,
+                "Socket_7": psi,
+            }
+        )
 
 
 class PeriodicArray(AssetGeometryGroup):
     """Periodic Array"""
 
-    _name = 'Periodic Array'
-    _asset_name = 'Periodic Array'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Periodic Array"
+    _asset_name = "Periodic Array"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -3777,6 +4177,7 @@ class PeriodicArray(AssetGeometryGroup):
         """Instances"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3795,15 +4196,28 @@ class PeriodicArray(AssetGeometryGroup):
         y: InputInteger = 3,
         z: InputInteger = 3,
     ):
-        super().__init__(**{"Socket_9": geometry, "Socket_0": a, "Socket_1": b, "Socket_2": c, "Socket_3": alpha, "Socket_4": beta, "Socket_5": gamma, "Socket_6": x, "Socket_7": y, "Socket_8": z})
+        super().__init__(
+            **{
+                "Socket_9": geometry,
+                "Socket_0": a,
+                "Socket_1": b,
+                "Socket_2": c,
+                "Socket_3": alpha,
+                "Socket_4": beta,
+                "Socket_5": gamma,
+                "Socket_6": x,
+                "Socket_7": y,
+                "Socket_8": z,
+            }
+        )
 
 
 class PeriodicBox(AssetGeometryGroup):
     """Periodic Box"""
 
-    _name = 'Periodic Box'
-    _asset_name = 'Periodic Box'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Periodic Box"
+    _asset_name = "Periodic Box"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: FloatSocket
@@ -3822,6 +4236,7 @@ class PeriodicBox(AssetGeometryGroup):
         """C"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3836,15 +4251,24 @@ class PeriodicBox(AssetGeometryGroup):
         beta: InputFloat = 0.0,
         gamma: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_9": a, "Socket_10": b, "Socket_11": c, "Socket_14": alpha, "Socket_15": beta, "Socket_16": gamma})
+        super().__init__(
+            **{
+                "Socket_9": a,
+                "Socket_10": b,
+                "Socket_11": c,
+                "Socket_14": alpha,
+                "Socket_15": beta,
+                "Socket_16": gamma,
+            }
+        )
 
 
 class PeriodicImage(AssetGeometryGroup):
     """Periodic Image"""
 
-    _name = 'Periodic Image'
-    _asset_name = 'Periodic Image'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Periodic Image"
+    _asset_name = "Periodic Image"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
@@ -3865,6 +4289,7 @@ class PeriodicImage(AssetGeometryGroup):
         """Points"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3879,15 +4304,24 @@ class PeriodicImage(AssetGeometryGroup):
         image_b: InputInteger = 0,
         image_c: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_0": a, "Socket_1": b, "Socket_2": c, "Socket_4": image_a, "Socket_5": image_b, "Socket_6": image_c})
+        super().__init__(
+            **{
+                "Socket_0": a,
+                "Socket_1": b,
+                "Socket_2": c,
+                "Socket_4": image_a,
+                "Socket_5": image_b,
+                "Socket_6": image_c,
+            }
+        )
 
 
 class Plexus(AssetGeometryGroup):
     """Plexus"""
 
-    _name = 'Plexus'
-    _asset_name = 'Plexus'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Plexus"
+    _asset_name = "Plexus"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         points: GeometrySocket
@@ -3902,6 +4336,7 @@ class Plexus(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3919,9 +4354,9 @@ class Plexus(AssetGeometryGroup):
 class PointEdgeAngle(AssetGeometryGroup):
     """Point Edge Angle"""
 
-    _name = 'Point Edge Angle'
-    _asset_name = 'Point Edge Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Point Edge Angle"
+    _asset_name = "Point Edge Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         vertex_index: IntegerSocket
@@ -3946,6 +4381,7 @@ class PointEdgeAngle(AssetGeometryGroup):
         """Edge Vector B"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -3957,15 +4393,17 @@ class PointEdgeAngle(AssetGeometryGroup):
         edge_a: InputInteger = 0,
         edge_b: InputInteger = 1,
     ):
-        super().__init__(**{"Socket_8": vertex_index, "Socket_0": edge_a, "Socket_1": edge_b})
+        super().__init__(
+            **{"Socket_8": vertex_index, "Socket_0": edge_a, "Socket_1": edge_b}
+        )
 
 
 class PointsOfEdge(AssetGeometryGroup):
     """Points of Edge"""
 
-    _name = 'Points of Edge'
-    _asset_name = 'Points of Edge'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Points of Edge"
+    _asset_name = "Points of Edge"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         vertex_index: IntegerSocket
@@ -3986,6 +4424,7 @@ class PointsOfEdge(AssetGeometryGroup):
         """Total"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4002,9 +4441,9 @@ class PointsOfEdge(AssetGeometryGroup):
 class PrimitiveArrow(AssetGeometryGroup):
     """Primitive Arrow"""
 
-    _name = 'Primitive Arrow'
-    _asset_name = 'Primitive Arrow'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Primitive Arrow"
+    _asset_name = "Primitive Arrow"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         vertices: IntegerSocket
@@ -4023,6 +4462,7 @@ class PrimitiveArrow(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4036,15 +4476,23 @@ class PrimitiveArrow(AssetGeometryGroup):
         value: InputColor = None,
         material: InputMaterial = None,
     ):
-        super().__init__(**{"Socket_1": vertices, "Socket_4": height, "Socket_5": ratio, "Socket_3": value, "Socket_2": material})
+        super().__init__(
+            **{
+                "Socket_1": vertices,
+                "Socket_4": height,
+                "Socket_5": ratio,
+                "Socket_3": value,
+                "Socket_2": material,
+            }
+        )
 
 
 class PrimitiveGimbal(AssetGeometryGroup):
     """Primitive Gimbal"""
 
-    _name = 'Primitive Gimbal'
-    _asset_name = 'Primitive Gimbal'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Primitive Gimbal"
+    _asset_name = "Primitive Gimbal"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         vertices: IntegerSocket
@@ -4063,6 +4511,7 @@ class PrimitiveGimbal(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4076,15 +4525,23 @@ class PrimitiveGimbal(AssetGeometryGroup):
         z: InputColor = None,
         material: InputMaterial = None,
     ):
-        super().__init__(**{"Socket_1": vertices, "Socket_2": x, "Socket_3": y, "Socket_4": z, "Socket_5": material})
+        super().__init__(
+            **{
+                "Socket_1": vertices,
+                "Socket_2": x,
+                "Socket_3": y,
+                "Socket_4": z,
+                "Socket_5": material,
+            }
+        )
 
 
 class RandomColor(AssetGeometryGroup):
     """Random Color"""
 
-    _name = 'Random Color'
-    _asset_name = 'Random Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Random Color"
+    _asset_name = "Random Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         id: IntegerSocket
@@ -4103,6 +4560,7 @@ class RandomColor(AssetGeometryGroup):
         """Output"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4112,19 +4570,27 @@ class RandomColor(AssetGeometryGroup):
         self,
         id: InputInteger = 0,
         color_seed: InputInteger = 0,
-        colorspace: InputMenu = 'HSL',
+        colorspace: InputMenu = "HSL",
         hsl_saturation: InputFloat = 0.6,
         hsl_lightness: InputFloat = 0.6,
     ):
-        super().__init__(**{"Socket_8": id, "Socket_3": color_seed, "Socket_6": colorspace, "Socket_0": hsl_saturation, "Socket_1": hsl_lightness})
+        super().__init__(
+            **{
+                "Socket_8": id,
+                "Socket_3": color_seed,
+                "Socket_6": colorspace,
+                "Socket_0": hsl_saturation,
+                "Socket_1": hsl_lightness,
+            }
+        )
 
 
 class ResidueDihedralAngle(AssetGeometryGroup):
     """Residue Dihedral Angle"""
 
-    _name = 'Residue Dihedral Angle'
-    _asset_name = 'Residue Dihedral Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Residue Dihedral Angle"
+    _asset_name = "Residue Dihedral Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: IntegerSocket
@@ -4145,6 +4611,7 @@ class ResidueDihedralAngle(AssetGeometryGroup):
         """BC"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4162,9 +4629,9 @@ class ResidueDihedralAngle(AssetGeometryGroup):
 class ResidueID(AssetGeometryGroup):
     """Residue ID"""
 
-    _name = 'Residue ID'
-    _asset_name = 'Residue ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Residue ID"
+    _asset_name = "Residue ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -4174,6 +4641,7 @@ class ResidueID(AssetGeometryGroup):
         res_id: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4189,9 +4657,9 @@ class ResidueID(AssetGeometryGroup):
 class ResidueMask(AssetGeometryGroup):
     """Residue Mask"""
 
-    _name = 'Residue Mask'
-    _asset_name = 'Residue Mask'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Residue Mask"
+    _asset_name = "Residue Mask"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atom_name: IntegerSocket
@@ -4205,6 +4673,7 @@ class ResidueMask(AssetGeometryGroup):
         """Position"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4220,9 +4689,9 @@ class ResidueMask(AssetGeometryGroup):
 class ResidueName(AssetGeometryGroup):
     """Residue Name"""
 
-    _name = 'Residue Name'
-    _asset_name = 'Residue Name'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Residue Name"
+    _asset_name = "Residue Name"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -4232,6 +4701,7 @@ class ResidueName(AssetGeometryGroup):
         res_name: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4247,9 +4717,9 @@ class ResidueName(AssetGeometryGroup):
 class ResidueParameter(AssetGeometryGroup):
     """Residue Parameter"""
 
-    _name = 'Residue Parameter'
-    _asset_name = 'Residue Parameter'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Residue Parameter"
+    _asset_name = "Residue Parameter"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -4271,6 +4741,7 @@ class ResidueParameter(AssetGeometryGroup):
         """Index of Last"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4283,9 +4754,9 @@ class ResidueParameter(AssetGeometryGroup):
 class RotationFromZYZ(AssetGeometryGroup):
     """Combine a rotation defined as ZYZ common in electron tomography"""
 
-    _name = 'Rotation from ZYZ'
-    _asset_name = 'Rotation from ZYZ'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Rotation from ZYZ"
+    _asset_name = "Rotation from ZYZ"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         phi: FloatSocket
@@ -4300,6 +4771,7 @@ class RotationFromZYZ(AssetGeometryGroup):
         """Rotation"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4317,9 +4789,9 @@ class RotationFromZYZ(AssetGeometryGroup):
 class SampleMixedColor(AssetGeometryGroup):
     """Sample Mixed Color"""
 
-    _name = 'Sample Mixed Color'
-    _asset_name = 'Sample Mixed Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Sample Mixed Color"
+    _asset_name = "Sample Mixed Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -4334,6 +4806,7 @@ class SampleMixedColor(AssetGeometryGroup):
         """Color"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4351,9 +4824,9 @@ class SampleMixedColor(AssetGeometryGroup):
 class SampleNearestAtoms(AssetGeometryGroup):
     """Sample Nearest Atoms"""
 
-    _name = 'Sample Nearest Atoms'
-    _asset_name = 'Sample Nearest Atoms'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Sample Nearest Atoms"
+    _asset_name = "Sample Nearest Atoms"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -4369,6 +4842,7 @@ class SampleNearestAtoms(AssetGeometryGroup):
         res_name: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4384,9 +4858,9 @@ class SampleNearestAtoms(AssetGeometryGroup):
 class SecondaryStructure(AssetGeometryGroup):
     """Secondary Structure"""
 
-    _name = 'Secondary Structure'
-    _asset_name = 'Secondary Structure'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Secondary Structure"
+    _asset_name = "Secondary Structure"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -4396,6 +4870,7 @@ class SecondaryStructure(AssetGeometryGroup):
         sec_struct: IntegerSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4411,9 +4886,9 @@ class SecondaryStructure(AssetGeometryGroup):
 class SelectAtomicNumber(AssetGeometryGroup):
     """Select Atomic Number"""
 
-    _name = 'Select Atomic Number'
-    _asset_name = 'Select Atomic Number'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Atomic Number"
+    _asset_name = "Select Atomic Number"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -4429,6 +4904,7 @@ class SelectAtomicNumber(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4440,15 +4916,17 @@ class SelectAtomicNumber(AssetGeometryGroup):
         or_: InputBoolean = False,
         atomic_number: InputInteger = 6,
     ):
-        super().__init__(**{"Socket_0": and_, "Socket_1": or_, "Input_0": atomic_number})
+        super().__init__(
+            **{"Socket_0": and_, "Socket_1": or_, "Input_0": atomic_number}
+        )
 
 
 class SelectAttribute(AssetGeometryGroup):
     """Select Attribute"""
 
-    _name = 'Select Attribute'
-    _asset_name = 'Select Attribute'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Attribute"
+    _asset_name = "Select Attribute"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -4465,6 +4943,7 @@ class SelectAttribute(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4474,7 +4953,7 @@ class SelectAttribute(AssetGeometryGroup):
         self,
         and_: InputBoolean = True,
         or_: InputBoolean = False,
-        name: InputString = 'is_peptide',
+        name: InputString = "is_peptide",
     ):
         super().__init__(**{"Socket_1": and_, "Socket_4": or_, "Socket_3": name})
 
@@ -4482,9 +4961,9 @@ class SelectAttribute(AssetGeometryGroup):
 class SelectBonded(AssetGeometryGroup):
     """Select Bonded"""
 
-    _name = 'Select Bonded'
-    _asset_name = 'Select Bonded'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Bonded"
+    _asset_name = "Select Bonded"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         selection: BooleanSocket
@@ -4499,6 +4978,7 @@ class SelectBonded(AssetGeometryGroup):
         """Bonded"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4515,9 +4995,9 @@ class SelectBonded(AssetGeometryGroup):
 class SelectChain8H1B(AssetGeometryGroup):
     """Select Chain 8H1B"""
 
-    _name = 'Select Chain 8H1B'
-    _asset_name = 'Select Chain 8H1B'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Chain 8H1B"
+    _asset_name = "Select Chain 8H1B"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: BooleanSocket
@@ -4536,6 +5016,7 @@ class SelectChain8H1B(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4554,9 +5035,9 @@ class SelectChain8H1B(AssetGeometryGroup):
 class SelectCube(AssetGeometryGroup):
     """Select Cube"""
 
-    _name = 'Select Cube'
-    _asset_name = 'Select Cube'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Cube"
+    _asset_name = "Select Cube"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -4573,6 +5054,7 @@ class SelectCube(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4590,9 +5072,9 @@ class SelectCube(AssetGeometryGroup):
 class SelectElement(AssetGeometryGroup):
     """Select Element"""
 
-    _name = 'Select Element'
-    _asset_name = 'Select Element'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Element"
+    _asset_name = "Select Element"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -4767,6 +5249,7 @@ class SelectElement(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4857,15 +5340,100 @@ class SelectElement(AssetGeometryGroup):
         au: InputBoolean = False,
         hg: InputBoolean = False,
     ):
-        super().__init__(**{"Socket_86": and_, "Socket_87": or_, "Socket_0": h, "Socket_2": he, "Socket_3": li, "Socket_4": be, "Socket_5": b, "Socket_6": c, "Socket_7": n, "Socket_8": o, "Socket_9": f, "Socket_10": ne, "Socket_11": na, "Socket_12": mg, "Socket_13": al, "Socket_14": si, "Socket_15": p, "Socket_16": s, "Socket_17": cl, "Socket_18": ar, "Socket_19": k, "Socket_20": ca, "Socket_21": sc, "Socket_23": ti, "Socket_24": v, "Socket_25": cr, "Socket_26": mn, "Socket_27": fe, "Socket_28": co, "Socket_29": ni, "Socket_30": cu, "Socket_31": zn, "Socket_32": ga, "Socket_33": ge, "Socket_34": as_, "Socket_35": se, "Socket_36": br, "Socket_37": kr, "Socket_38": rb, "Socket_39": sr, "Socket_40": y, "Socket_41": zr, "Socket_42": nb, "Socket_44": mo, "Socket_45": tc, "Socket_46": ru, "Socket_47": rh, "Socket_48": pd, "Socket_49": ag, "Socket_50": cd, "Socket_51": in_, "Socket_52": sn, "Socket_53": sb, "Socket_54": te, "Socket_55": i, "Socket_56": xe, "Socket_57": cs, "Socket_58": ba, "Socket_59": la, "Socket_60": ce, "Socket_61": pr, "Socket_62": nd, "Socket_63": pm, "Socket_65": sm, "Socket_66": eu, "Socket_67": gd, "Socket_68": tb, "Socket_69": dy, "Socket_70": ho, "Socket_71": er, "Socket_72": tm, "Socket_73": yb, "Socket_74": lu, "Socket_75": hf, "Socket_76": ta, "Socket_77": w, "Socket_78": re, "Socket_79": os, "Socket_80": ir, "Socket_81": pt, "Socket_82": au, "Socket_83": hg})
+        super().__init__(
+            **{
+                "Socket_86": and_,
+                "Socket_87": or_,
+                "Socket_0": h,
+                "Socket_2": he,
+                "Socket_3": li,
+                "Socket_4": be,
+                "Socket_5": b,
+                "Socket_6": c,
+                "Socket_7": n,
+                "Socket_8": o,
+                "Socket_9": f,
+                "Socket_10": ne,
+                "Socket_11": na,
+                "Socket_12": mg,
+                "Socket_13": al,
+                "Socket_14": si,
+                "Socket_15": p,
+                "Socket_16": s,
+                "Socket_17": cl,
+                "Socket_18": ar,
+                "Socket_19": k,
+                "Socket_20": ca,
+                "Socket_21": sc,
+                "Socket_23": ti,
+                "Socket_24": v,
+                "Socket_25": cr,
+                "Socket_26": mn,
+                "Socket_27": fe,
+                "Socket_28": co,
+                "Socket_29": ni,
+                "Socket_30": cu,
+                "Socket_31": zn,
+                "Socket_32": ga,
+                "Socket_33": ge,
+                "Socket_34": as_,
+                "Socket_35": se,
+                "Socket_36": br,
+                "Socket_37": kr,
+                "Socket_38": rb,
+                "Socket_39": sr,
+                "Socket_40": y,
+                "Socket_41": zr,
+                "Socket_42": nb,
+                "Socket_44": mo,
+                "Socket_45": tc,
+                "Socket_46": ru,
+                "Socket_47": rh,
+                "Socket_48": pd,
+                "Socket_49": ag,
+                "Socket_50": cd,
+                "Socket_51": in_,
+                "Socket_52": sn,
+                "Socket_53": sb,
+                "Socket_54": te,
+                "Socket_55": i,
+                "Socket_56": xe,
+                "Socket_57": cs,
+                "Socket_58": ba,
+                "Socket_59": la,
+                "Socket_60": ce,
+                "Socket_61": pr,
+                "Socket_62": nd,
+                "Socket_63": pm,
+                "Socket_65": sm,
+                "Socket_66": eu,
+                "Socket_67": gd,
+                "Socket_68": tb,
+                "Socket_69": dy,
+                "Socket_70": ho,
+                "Socket_71": er,
+                "Socket_72": tm,
+                "Socket_73": yb,
+                "Socket_74": lu,
+                "Socket_75": hf,
+                "Socket_76": ta,
+                "Socket_77": w,
+                "Socket_78": re,
+                "Socket_79": os,
+                "Socket_80": ir,
+                "Socket_81": pt,
+                "Socket_82": au,
+                "Socket_83": hg,
+            }
+        )
 
 
 class SelectNucleicType(AssetGeometryGroup):
     """Select Nucleic Type"""
 
-    _name = 'Select Nucleic Type'
-    _asset_name = 'Select Nucleic Type'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Nucleic Type"
+    _asset_name = "Select Nucleic Type"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -4878,6 +5446,7 @@ class SelectNucleicType(AssetGeometryGroup):
         is_pyrimidine: BooleanSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4894,9 +5463,9 @@ class SelectNucleicType(AssetGeometryGroup):
 class SelectProximity(AssetGeometryGroup):
     """Select Proximity"""
 
-    _name = 'Select Proximity'
-    _asset_name = 'Select Proximity'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Proximity"
+    _asset_name = "Select Proximity"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         target_atoms: GeometrySocket
@@ -4915,6 +5484,7 @@ class SelectProximity(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4927,15 +5497,22 @@ class SelectProximity(AssetGeometryGroup):
         expand: InputBoolean = False,
         distance_a: InputFloat = 5.0,
     ):
-        super().__init__(**{"Input_0": target_atoms, "Input_5": subset, "Input_4": expand, "Input_1": distance_a})
+        super().__init__(
+            **{
+                "Input_0": target_atoms,
+                "Input_5": subset,
+                "Input_4": expand,
+                "Input_1": distance_a,
+            }
+        )
 
 
 class SelectResID(AssetGeometryGroup):
     """Select Res ID"""
 
-    _name = 'Select Res ID'
-    _asset_name = 'Select Res ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Res ID"
+    _asset_name = "Select Res ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -4952,6 +5529,7 @@ class SelectResID(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -4969,9 +5547,9 @@ class SelectResID(AssetGeometryGroup):
 class SelectResIDRange(AssetGeometryGroup):
     """Select Res ID Range"""
 
-    _name = 'Select Res ID Range'
-    _asset_name = 'Select Res ID Range'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Res ID Range"
+    _asset_name = "Select Res ID Range"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -4990,6 +5568,7 @@ class SelectResIDRange(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5002,15 +5581,17 @@ class SelectResIDRange(AssetGeometryGroup):
         min: InputInteger = 10,
         max: InputInteger = 100,
     ):
-        super().__init__(**{"Socket_1": and_, "Socket_2": or_, "Input_0": min, "Input_3": max})
+        super().__init__(
+            **{"Socket_1": and_, "Socket_2": or_, "Input_0": min, "Input_3": max}
+        )
 
 
 class SelectResIDString(AssetGeometryGroup):
     """Select Res ID String"""
 
-    _name = 'Select Res ID String'
-    _asset_name = 'Select Res ID String'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Res ID String"
+    _asset_name = "Select Res ID String"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         string: StringSocket
@@ -5021,6 +5602,7 @@ class SelectResIDString(AssetGeometryGroup):
         """Selection"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5028,7 +5610,7 @@ class SelectResIDString(AssetGeometryGroup):
 
     def __init__(
         self,
-        string: InputString = '',
+        string: InputString = "",
     ):
         super().__init__(**{"Socket_1": string})
 
@@ -5036,9 +5618,9 @@ class SelectResIDString(AssetGeometryGroup):
 class SelectResName(AssetGeometryGroup):
     """Select Res Name"""
 
-    _name = 'Select Res Name'
-    _asset_name = 'Select Res Name'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Res Name"
+    _asset_name = "Select Res Name"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -5109,6 +5691,7 @@ class SelectResName(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5147,15 +5730,48 @@ class SelectResName(AssetGeometryGroup):
         rg: InputBoolean = False,
         ru: InputBoolean = False,
     ):
-        super().__init__(**{"Socket_33": and_, "Socket_34": or_, "Socket_2": ala, "Socket_3": arg, "Socket_4": asn, "Socket_5": asp, "Socket_6": cys, "Socket_7": glu, "Socket_8": gln, "Socket_9": gly, "Socket_10": his, "Socket_11": ile, "Socket_12": leu, "Socket_13": lys, "Socket_14": met, "Socket_15": phe, "Socket_16": pro, "Socket_17": ser, "Socket_18": thr, "Socket_19": trp, "Socket_20": tyr, "Socket_21": val, "Socket_23": a, "Socket_24": c, "Socket_25": g, "Socket_26": t, "Socket_27": ra, "Socket_29": rc, "Socket_28": rg, "Socket_30": ru})
+        super().__init__(
+            **{
+                "Socket_33": and_,
+                "Socket_34": or_,
+                "Socket_2": ala,
+                "Socket_3": arg,
+                "Socket_4": asn,
+                "Socket_5": asp,
+                "Socket_6": cys,
+                "Socket_7": glu,
+                "Socket_8": gln,
+                "Socket_9": gly,
+                "Socket_10": his,
+                "Socket_11": ile,
+                "Socket_12": leu,
+                "Socket_13": lys,
+                "Socket_14": met,
+                "Socket_15": phe,
+                "Socket_16": pro,
+                "Socket_17": ser,
+                "Socket_18": thr,
+                "Socket_19": trp,
+                "Socket_20": tyr,
+                "Socket_21": val,
+                "Socket_23": a,
+                "Socket_24": c,
+                "Socket_25": g,
+                "Socket_26": t,
+                "Socket_27": ra,
+                "Socket_29": rc,
+                "Socket_28": rg,
+                "Socket_30": ru,
+            }
+        )
 
 
 class SelectResWhole(AssetGeometryGroup):
     """Select Res Whole"""
 
-    _name = 'Select Res Whole'
-    _asset_name = 'Select Res Whole'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Res Whole"
+    _asset_name = "Select Res Whole"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         selection: BooleanSocket
@@ -5168,6 +5784,7 @@ class SelectResWhole(AssetGeometryGroup):
         """Selection"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5184,9 +5801,9 @@ class SelectResWhole(AssetGeometryGroup):
 class SelectSphere(AssetGeometryGroup):
     """Select Sphere"""
 
-    _name = 'Select Sphere'
-    _asset_name = 'Select Sphere'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Select Sphere"
+    _asset_name = "Select Sphere"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
@@ -5203,6 +5820,7 @@ class SelectSphere(AssetGeometryGroup):
         """Inverted"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5220,9 +5838,9 @@ class SelectSphere(AssetGeometryGroup):
 class SelectedInstances(AssetGeometryGroup):
     """Selected Instances"""
 
-    _name = 'Selected Instances'
-    _asset_name = 'Selected Instances'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Selected Instances"
+    _asset_name = "Selected Instances"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         instances: GeometrySocket
@@ -5239,6 +5857,7 @@ class SelectedInstances(AssetGeometryGroup):
         """Not Selected"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5255,9 +5874,9 @@ class SelectedInstances(AssetGeometryGroup):
 class SeparateAtoms(AssetGeometryGroup):
     """Separate Atoms"""
 
-    _name = 'Separate Atoms'
-    _asset_name = 'Separate Atoms'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Separate Atoms"
+    _asset_name = "Separate Atoms"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5274,6 +5893,7 @@ class SeparateAtoms(AssetGeometryGroup):
         """Index"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5290,9 +5910,9 @@ class SeparateAtoms(AssetGeometryGroup):
 class SeparateFirstPoint(AssetGeometryGroup):
     """Separate the first point for each `Group ID` and return only those points. Optionally sort by the `Group ID` as well"""
 
-    _name = 'Separate First Point'
-    _asset_name = 'Separate First Point'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Separate First Point"
+    _asset_name = "Separate First Point"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -5307,6 +5927,7 @@ class SeparateFirstPoint(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5318,15 +5939,17 @@ class SeparateFirstPoint(AssetGeometryGroup):
         sort: InputBoolean = True,
         group_id: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_1": geometry, "Socket_3": sort, "Socket_2": group_id})
+        super().__init__(
+            **{"Socket_1": geometry, "Socket_3": sort, "Socket_2": group_id}
+        )
 
 
 class SeparatePolymers(AssetGeometryGroup):
     """Separate Polymers"""
 
-    _name = 'Separate Polymers'
-    _asset_name = 'Separate Polymers'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Separate Polymers"
+    _asset_name = "Separate Polymers"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5341,6 +5964,7 @@ class SeparatePolymers(AssetGeometryGroup):
         """Other"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5356,9 +5980,9 @@ class SeparatePolymers(AssetGeometryGroup):
 class SetChiAngle(AssetGeometryGroup):
     """Set Chi Angle"""
 
-    _name = 'Set Chi Angle'
-    _asset_name = 'Set Chi Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Set Chi Angle"
+    _asset_name = "Set Chi Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -5381,6 +6005,7 @@ class SetChiAngle(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5396,15 +6021,25 @@ class SetChiAngle(AssetGeometryGroup):
         x4: InputFloat = 0.0,
         x5: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_1": geometry, "Socket_6": selection, "Socket_2": x1, "Socket_3": x2, "Socket_4": x3, "Socket_5": x4, "Socket_8": x5})
+        super().__init__(
+            **{
+                "Socket_1": geometry,
+                "Socket_6": selection,
+                "Socket_2": x1,
+                "Socket_3": x2,
+                "Socket_4": x3,
+                "Socket_5": x4,
+                "Socket_8": x5,
+            }
+        )
 
 
 class SetColor(AssetGeometryGroup):
     """Set Color"""
 
-    _name = 'Set Color'
-    _asset_name = 'Set Color'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Set Color"
+    _asset_name = "Set Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5419,6 +6054,7 @@ class SetColor(AssetGeometryGroup):
         """Atoms"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5430,15 +6066,17 @@ class SetColor(AssetGeometryGroup):
         selection: InputBoolean = True,
         color: InputColor = None,
     ):
-        super().__init__(**{"Input_12": atoms, "Input_15": selection, "Input_16": color})
+        super().__init__(
+            **{"Input_12": atoms, "Input_15": selection, "Input_16": color}
+        )
 
 
 class SetNucleicDihedral(AssetGeometryGroup):
     """Set Nucleic Dihedral"""
 
-    _name = 'Set Nucleic Dihedral'
-    _asset_name = 'Set Nucleic Dihedral'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Set Nucleic Dihedral"
+    _asset_name = "Set Nucleic Dihedral"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -5461,6 +6099,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5476,15 +6115,25 @@ class SetNucleicDihedral(AssetGeometryGroup):
         epsilon: InputFloat = 0.0,
         zeta: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_1": geometry, "Socket_7": selection, "Socket_2": alpha, "Socket_3": beta, "Socket_4": gamma, "Socket_5": epsilon, "Socket_6": zeta})
+        super().__init__(
+            **{
+                "Socket_1": geometry,
+                "Socket_7": selection,
+                "Socket_2": alpha,
+                "Socket_3": beta,
+                "Socket_4": gamma,
+                "Socket_5": epsilon,
+                "Socket_6": zeta,
+            }
+        )
 
 
 class SetPhiPsiAngle(AssetGeometryGroup):
     """Set Phi Psi Angle"""
 
-    _name = 'Set Phi Psi Angle'
-    _asset_name = 'Set Phi Psi Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Set Phi Psi Angle"
+    _asset_name = "Set Phi Psi Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -5501,6 +6150,7 @@ class SetPhiPsiAngle(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5513,15 +6163,22 @@ class SetPhiPsiAngle(AssetGeometryGroup):
         phi: InputFloat = 0.0,
         psi: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_1": geometry, "Socket_4": selection, "Socket_2": phi, "Socket_3": psi})
+        super().__init__(
+            **{
+                "Socket_1": geometry,
+                "Socket_4": selection,
+                "Socket_2": phi,
+                "Socket_3": psi,
+            }
+        )
 
 
 class SetUResID(AssetGeometryGroup):
     """Set URes ID"""
 
-    _name = 'Set URes ID'
-    _asset_name = 'Set URes ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Set URes ID"
+    _asset_name = "Set URes ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -5532,6 +6189,7 @@ class SetUResID(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5547,9 +6205,9 @@ class SetUResID(AssetGeometryGroup):
 class SliceEdgeInstances(AssetGeometryGroup):
     """Slice Edge Instances"""
 
-    _name = 'Slice Edge Instances'
-    _asset_name = 'Slice Edge Instances'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Slice Edge Instances"
+    _asset_name = "Slice Edge Instances"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         instances: GeometrySocket
@@ -5564,6 +6222,7 @@ class SliceEdgeInstances(AssetGeometryGroup):
         """Realized Points"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5580,9 +6239,9 @@ class SliceEdgeInstances(AssetGeometryGroup):
 class SplitToCentredInstances(AssetGeometryGroup):
     """Split to Centred Instances"""
 
-    _name = 'Split to Centred Instances'
-    _asset_name = 'Split to Centred Instances'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Split to Centred Instances"
+    _asset_name = "Split to Centred Instances"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -5597,6 +6256,7 @@ class SplitToCentredInstances(AssetGeometryGroup):
         """Instances"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5608,15 +6268,17 @@ class SplitToCentredInstances(AssetGeometryGroup):
         selection: InputBoolean = True,
         group_id: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_0": geometry, "Socket_10": selection, "Socket_1": group_id})
+        super().__init__(
+            **{"Socket_0": geometry, "Socket_10": selection, "Socket_1": group_id}
+        )
 
 
 class StructureParameter(AssetGeometryGroup):
     """Structure Parameter"""
 
-    _name = 'Structure Parameter'
-    _asset_name = 'Structure Parameter'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Structure Parameter"
+    _asset_name = "Structure Parameter"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -5640,6 +6302,7 @@ class StructureParameter(AssetGeometryGroup):
         """Residue Count"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5652,9 +6315,9 @@ class StructureParameter(AssetGeometryGroup):
 class StyleBallAndStick(AssetGeometryGroup):
     """Style Ball and Stick"""
 
-    _name = 'Style Ball and Stick'
-    _asset_name = 'Style Ball and Stick'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Style Ball and Stick"
+    _asset_name = "Style Ball and Stick"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5685,6 +6348,7 @@ class StyleBallAndStick(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5695,24 +6359,38 @@ class StyleBallAndStick(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 2,
-        sphere_geometry: InputMenu = 'Instance',
+        sphere_geometry: InputMenu = "Instance",
         sphere_scale: InputFloat = 0.3,
-        bond_split: InputMenu = 'Double',
+        bond_split: InputMenu = "Double",
         bond_scale: InputFloat = 0.3,
         bond_find: InputBoolean = False,
         bond_find_scale: InputFloat = 1.0,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
-        super().__init__(**{"Input_0": atoms, "Input_1": selection, "Socket_5": quality, "Socket_8": sphere_geometry, "Input_3": sphere_scale, "Socket_22": bond_split, "Input_7": bond_scale, "Socket_3": bond_find, "Socket_16": bond_find_scale, "Input_4": shade_smooth, "Input_5": material})
+        super().__init__(
+            **{
+                "Input_0": atoms,
+                "Input_1": selection,
+                "Socket_5": quality,
+                "Socket_8": sphere_geometry,
+                "Input_3": sphere_scale,
+                "Socket_22": bond_split,
+                "Input_7": bond_scale,
+                "Socket_3": bond_find,
+                "Socket_16": bond_find_scale,
+                "Input_4": shade_smooth,
+                "Input_5": material,
+            }
+        )
 
 
 class StyleCartoon(AssetGeometryGroup):
     """Style Cartoon"""
 
-    _name = 'Style Cartoon'
-    _asset_name = 'Style Cartoon'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Style Cartoon"
+    _asset_name = "Style Cartoon"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5759,6 +6437,7 @@ class StyleCartoon(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5769,32 +6448,54 @@ class StyleCartoon(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 2,
-        peptide_shape: InputMenu = 'Sharp',
-        helix_shape: InputMenu = 'Spiral',
+        peptide_shape: InputMenu = "Sharp",
+        helix_shape: InputMenu = "Spiral",
         helix_thickness: InputFloat = 0.6,
         helix_width: InputFloat = 2.2,
-        sheet_arrows: InputMenu = 'Arrow',
+        sheet_arrows: InputMenu = "Arrow",
         sheet_thickness: InputFloat = 0.5,
         sheet_width: InputFloat = 2.5,
         sheet_smoothing: InputFloat = 0.5,
         loop_radius: InputFloat = 0.4,
-        backbone_shape: InputMenu = 'Cylinder',
+        backbone_shape: InputMenu = "Cylinder",
         nucleic_radius: InputFloat = 1.5,
-        base_shape: InputMenu = 'Rectangle',
+        base_shape: InputMenu = "Rectangle",
         base_scale_rectangle: InputVector = None,
         color_blur: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
-        super().__init__(**{"Input_0": atoms, "Input_1": selection, "Input_2": quality, "Input_11": peptide_shape, "Input_4": helix_shape, "Input_5": helix_thickness, "Input_6": helix_width, "Input_3": sheet_arrows, "Socket_61": sheet_thickness, "Socket_62": sheet_width, "Input_7": sheet_smoothing, "Input_12": loop_radius, "Socket_32": backbone_shape, "Socket_24": nucleic_radius, "Socket_22": base_shape, "Socket_64": base_scale_rectangle, "Socket_1": color_blur, "Input_8": shade_smooth, "Input_9": material})
+        super().__init__(
+            **{
+                "Input_0": atoms,
+                "Input_1": selection,
+                "Input_2": quality,
+                "Input_11": peptide_shape,
+                "Input_4": helix_shape,
+                "Input_5": helix_thickness,
+                "Input_6": helix_width,
+                "Input_3": sheet_arrows,
+                "Socket_61": sheet_thickness,
+                "Socket_62": sheet_width,
+                "Input_7": sheet_smoothing,
+                "Input_12": loop_radius,
+                "Socket_32": backbone_shape,
+                "Socket_24": nucleic_radius,
+                "Socket_22": base_shape,
+                "Socket_64": base_scale_rectangle,
+                "Socket_1": color_blur,
+                "Input_8": shade_smooth,
+                "Input_9": material,
+            }
+        )
 
 
 class StyleRibbon(AssetGeometryGroup):
     """Style Ribbon"""
 
-    _name = 'Style Ribbon'
-    _asset_name = 'Style Ribbon'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Style Ribbon"
+    _asset_name = "Style Ribbon"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5833,6 +6534,7 @@ class StyleRibbon(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5846,7 +6548,7 @@ class StyleRibbon(AssetGeometryGroup):
         backbone_smoothing: InputFloat = 0.5,
         backbone_threshold: InputFloat = 4.5,
         backbone_radius: InputFloat = 1.6,
-        nucleic_backbone_shape: InputMenu = 'Cylinder',
+        nucleic_backbone_shape: InputMenu = "Cylinder",
         nucleic_backbone_radius: InputFloat = 1.6,
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
@@ -5856,15 +6558,33 @@ class StyleRibbon(AssetGeometryGroup):
         material: InputMaterial = None,
         uv_map: InputBoolean = False,
     ):
-        super().__init__(**{"Socket_0": atoms, "Socket_2": selection, "Socket_3": quality, "Socket_7": backbone_smoothing, "Socket_40": backbone_threshold, "Socket_4": backbone_radius, "Socket_26": nucleic_backbone_shape, "Socket_51": nucleic_backbone_radius, "Socket_21": base_geometry, "Socket_22": base_scale, "Socket_18": base_resolution, "Socket_10": color_blur, "Socket_5": shade_smooth, "Socket_6": material, "Socket_29": uv_map})
+        super().__init__(
+            **{
+                "Socket_0": atoms,
+                "Socket_2": selection,
+                "Socket_3": quality,
+                "Socket_7": backbone_smoothing,
+                "Socket_40": backbone_threshold,
+                "Socket_4": backbone_radius,
+                "Socket_26": nucleic_backbone_shape,
+                "Socket_51": nucleic_backbone_radius,
+                "Socket_21": base_geometry,
+                "Socket_22": base_scale,
+                "Socket_18": base_resolution,
+                "Socket_10": color_blur,
+                "Socket_5": shade_smooth,
+                "Socket_6": material,
+                "Socket_29": uv_map,
+            }
+        )
 
 
 class StyleSpheres(AssetGeometryGroup):
     """Style Spheres"""
 
-    _name = 'Style Spheres'
-    _asset_name = 'Style Spheres'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Style Spheres"
+    _asset_name = "Style Spheres"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5883,6 +6603,7 @@ class StyleSpheres(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5892,19 +6613,27 @@ class StyleSpheres(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        geometry: InputMenu = 'Point',
+        geometry: InputMenu = "Point",
         scale: InputFloat = 0.8,
         material: InputMaterial = None,
     ):
-        super().__init__(**{"Input_0": atoms, "Input_1": selection, "Input_2": geometry, "Input_3": scale, "Input_6": material})
+        super().__init__(
+            **{
+                "Input_0": atoms,
+                "Input_1": selection,
+                "Input_2": geometry,
+                "Input_3": scale,
+                "Input_6": material,
+            }
+        )
 
 
 class StyleSticks(AssetGeometryGroup):
     """Style Sticks"""
 
-    _name = 'Style Sticks'
-    _asset_name = 'Style Sticks'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Style Sticks"
+    _asset_name = "Style Sticks"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5927,6 +6656,7 @@ class StyleSticks(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5936,21 +6666,31 @@ class StyleSticks(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        geometry: InputMenu = 'Instance',
+        geometry: InputMenu = "Instance",
         quality: InputInteger = 3,
         scale: InputFloat = 0.2,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
-        super().__init__(**{"Socket_0": atoms, "Socket_1": selection, "Socket_9": geometry, "Socket_4": quality, "Socket_3": scale, "Socket_5": shade_smooth, "Socket_6": material})
+        super().__init__(
+            **{
+                "Socket_0": atoms,
+                "Socket_1": selection,
+                "Socket_9": geometry,
+                "Socket_4": quality,
+                "Socket_3": scale,
+                "Socket_5": shade_smooth,
+                "Socket_6": material,
+            }
+        )
 
 
 class StyleSurface(AssetGeometryGroup):
     """Style Surface"""
 
-    _name = 'Style Surface'
-    _asset_name = 'Style Surface'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Style Surface"
+    _asset_name = "Style Surface"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -5977,6 +6717,7 @@ class StyleSurface(AssetGeometryGroup):
         """Geometry"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -5987,22 +6728,34 @@ class StyleSurface(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 3,
-        menu: InputMenu = 'Current',
+        menu: InputMenu = "Current",
         scale_radius: InputFloat = 1.5,
         probe_size: InputFloat = 1.0,
-        separate_by: InputMenu = 'chain_id',
+        separate_by: InputMenu = "chain_id",
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
-        super().__init__(**{"Socket_0": atoms, "Socket_3": selection, "Socket_4": quality, "Socket_25": menu, "Socket_5": scale_radius, "Socket_6": probe_size, "Socket_22": separate_by, "Socket_10": shade_smooth, "Socket_2": material})
+        super().__init__(
+            **{
+                "Socket_0": atoms,
+                "Socket_3": selection,
+                "Socket_4": quality,
+                "Socket_25": menu,
+                "Socket_5": scale_radius,
+                "Socket_6": probe_size,
+                "Socket_22": separate_by,
+                "Socket_10": shade_smooth,
+                "Socket_2": material,
+            }
+        )
 
 
 class SwitchResidueName(AssetGeometryGroup):
     """Switch Residue Name"""
 
-    _name = 'Switch Residue Name'
-    _asset_name = 'Switch Residue Name'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Switch Residue Name"
+    _asset_name = "Switch Residue Name"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         ala: IntegerSocket
@@ -6051,6 +6804,7 @@ class SwitchResidueName(AssetGeometryGroup):
         """Output"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6079,15 +6833,38 @@ class SwitchResidueName(AssetGeometryGroup):
         tyr: InputInteger = 6,
         val: InputInteger = 6,
     ):
-        super().__init__(**{"Socket_2": ala, "Socket_3": arg, "Socket_4": asn, "Socket_5": asp, "Socket_6": cys, "Socket_7": glu, "Socket_8": gln, "Socket_9": gly, "Socket_10": his, "Socket_11": ile, "Socket_12": leu, "Socket_13": lys, "Socket_14": met, "Socket_15": phe, "Socket_16": pro, "Socket_17": ser, "Socket_18": thr, "Socket_19": trp, "Socket_20": tyr, "Socket_21": val})
+        super().__init__(
+            **{
+                "Socket_2": ala,
+                "Socket_3": arg,
+                "Socket_4": asn,
+                "Socket_5": asp,
+                "Socket_6": cys,
+                "Socket_7": glu,
+                "Socket_8": gln,
+                "Socket_9": gly,
+                "Socket_10": his,
+                "Socket_11": ile,
+                "Socket_12": leu,
+                "Socket_13": lys,
+                "Socket_14": met,
+                "Socket_15": phe,
+                "Socket_16": pro,
+                "Socket_17": ser,
+                "Socket_18": thr,
+                "Socket_19": trp,
+                "Socket_20": tyr,
+                "Socket_21": val,
+            }
+        )
 
 
 class TopologyBreakBonds(AssetGeometryGroup):
     """Topology Break Bonds"""
 
-    _name = 'Topology Break Bonds'
-    _asset_name = 'Topology Break Bonds'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Topology Break Bonds"
+    _asset_name = "Topology Break Bonds"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -6102,6 +6879,7 @@ class TopologyBreakBonds(AssetGeometryGroup):
         """Atoms"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6119,9 +6897,9 @@ class TopologyBreakBonds(AssetGeometryGroup):
 class TopologyDSSP(AssetGeometryGroup):
     """Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm"""
 
-    _name = 'Topology DSSP'
-    _asset_name = 'Topology DSSP'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Topology DSSP"
+    _asset_name = "Topology DSSP"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -6132,6 +6910,7 @@ class TopologyDSSP(AssetGeometryGroup):
         """Atoms"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6147,9 +6926,9 @@ class TopologyDSSP(AssetGeometryGroup):
 class TopologyFindBonds(AssetGeometryGroup):
     """Topology Find Bonds"""
 
-    _name = 'Topology Find Bonds'
-    _asset_name = 'Topology Find Bonds'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Topology Find Bonds"
+    _asset_name = "Topology Find Bonds"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -6164,6 +6943,7 @@ class TopologyFindBonds(AssetGeometryGroup):
         """Atoms"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6181,9 +6961,9 @@ class TopologyFindBonds(AssetGeometryGroup):
 class TransformAccumulate(AssetGeometryGroup):
     """Transform Accumulate"""
 
-    _name = 'Transform Accumulate'
-    _asset_name = 'Transform Accumulate'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Transform Accumulate"
+    _asset_name = "Transform Accumulate"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         domain: MenuSocket
@@ -6200,6 +6980,7 @@ class TransformAccumulate(AssetGeometryGroup):
         """Transform"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6207,20 +6988,27 @@ class TransformAccumulate(AssetGeometryGroup):
 
     def __init__(
         self,
-        domain: InputMenu = 'Point',
+        domain: InputMenu = "Point",
         accumulate: InputBoolean = True,
         transform: InputMatrix = None,
         group_id: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_4": domain, "Socket_2": accumulate, "Socket_3": transform, "Socket_1": group_id})
+        super().__init__(
+            **{
+                "Socket_4": domain,
+                "Socket_2": accumulate,
+                "Socket_3": transform,
+                "Socket_1": group_id,
+            }
+        )
 
 
 class TransformAccumulatePoint(AssetGeometryGroup):
     """Accumulate transforms on the point domain"""
 
-    _name = 'Transform Accumulate Point'
-    _asset_name = 'Transform Accumulate Point'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Transform Accumulate Point"
+    _asset_name = "Transform Accumulate Point"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         domain: MenuSocket
@@ -6239,6 +7027,7 @@ class TransformAccumulatePoint(AssetGeometryGroup):
         """Vector"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6246,21 +7035,29 @@ class TransformAccumulatePoint(AssetGeometryGroup):
 
     def __init__(
         self,
-        domain: InputMenu = 'Point',
+        domain: InputMenu = "Point",
         accumulate: InputBoolean = True,
         position: InputVector = None,
         transform: InputMatrix = None,
         group_id: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_8": domain, "Socket_1": accumulate, "Socket_9": position, "Socket_2": transform, "Socket_4": group_id})
+        super().__init__(
+            **{
+                "Socket_8": domain,
+                "Socket_1": accumulate,
+                "Socket_9": position,
+                "Socket_2": transform,
+                "Socket_4": group_id,
+            }
+        )
 
 
 class TransformLocal(AssetGeometryGroup):
     """Apply the transform after first moving to world origin, then returning to original position"""
 
-    _name = 'Transform Local'
-    _asset_name = 'Transform Local'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Transform Local"
+    _asset_name = "Transform Local"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         origin: VectorSocket
@@ -6273,6 +7070,7 @@ class TransformLocal(AssetGeometryGroup):
         """Transform"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6289,9 +7087,9 @@ class TransformLocal(AssetGeometryGroup):
 class TransformLocalAxis(AssetGeometryGroup):
     """Create a transform around an axis in local space defined by the `Origin` point"""
 
-    _name = 'Transform Local Axis'
-    _asset_name = 'Transform Local Axis'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Transform Local Axis"
+    _asset_name = "Transform Local Axis"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         origin: VectorSocket
@@ -6306,6 +7104,7 @@ class TransformLocalAxis(AssetGeometryGroup):
         """Transform"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6323,9 +7122,9 @@ class TransformLocalAxis(AssetGeometryGroup):
 class TransformMix(AssetGeometryGroup):
     """Mix between two transformations"""
 
-    _name = 'Transform Mix'
-    _asset_name = 'Transform Mix'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Transform Mix"
+    _asset_name = "Transform Mix"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: MatrixSocket
@@ -6342,6 +7141,7 @@ class TransformMix(AssetGeometryGroup):
         """Transform"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6351,18 +7151,20 @@ class TransformMix(AssetGeometryGroup):
         self,
         a: InputMatrix = None,
         b: InputMatrix = None,
-        menu: InputMenu = 'Single',
+        menu: InputMenu = "Single",
         factor: InputFloat = 0.5,
     ):
-        super().__init__(**{"Socket_0": a, "Socket_5": b, "Socket_6": menu, "Socket_7": factor})
+        super().__init__(
+            **{"Socket_0": a, "Socket_5": b, "Socket_6": menu, "Socket_7": factor}
+        )
 
 
 class TransformRelative(AssetGeometryGroup):
     """Transform Relative"""
 
-    _name = 'Transform Relative'
-    _asset_name = 'Transform Relative'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Transform Relative"
+    _asset_name = "Transform Relative"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
@@ -6377,6 +7179,7 @@ class TransformRelative(AssetGeometryGroup):
         """Transform"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6394,9 +7197,9 @@ class TransformRelative(AssetGeometryGroup):
 class UResID(AssetGeometryGroup):
     """URes ID"""
 
-    _name = 'URes ID'
-    _asset_name = 'URes ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "URes ID"
+    _asset_name = "URes ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -6408,6 +7211,7 @@ class UResID(AssetGeometryGroup):
         """Size"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6423,9 +7227,9 @@ class UResID(AssetGeometryGroup):
 class UniqueChainID(AssetGeometryGroup):
     """Compute a unique Group ID based on the `chain_id` attribute, but also incrememnting if subsequent points are over a cutoff distance from each other"""
 
-    _name = 'Unique Chain ID'
-    _asset_name = 'Unique Chain ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Unique Chain ID"
+    _asset_name = "Unique Chain ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         threshold_a: FloatSocket
@@ -6436,6 +7240,7 @@ class UniqueChainID(AssetGeometryGroup):
         """Group ID"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6451,9 +7256,9 @@ class UniqueChainID(AssetGeometryGroup):
 class UniqueResidueID(AssetGeometryGroup):
     """Unique Residue ID"""
 
-    _name = 'Unique Residue ID'
-    _asset_name = 'Unique Residue ID'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Unique Residue ID"
+    _asset_name = "Unique Residue ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -6463,6 +7268,7 @@ class UniqueResidueID(AssetGeometryGroup):
         """Group ID"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6475,9 +7281,9 @@ class UniqueResidueID(AssetGeometryGroup):
 class VDWRadii(AssetGeometryGroup):
     """VDW Radii"""
 
-    _name = 'VDW Radii'
-    _asset_name = 'VDW Radii'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "VDW Radii"
+    _asset_name = "VDW Radii"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
@@ -6487,6 +7293,7 @@ class VDWRadii(AssetGeometryGroup):
         vdw_radii: FloatSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6502,9 +7309,9 @@ class VDWRadii(AssetGeometryGroup):
 class VectorAngle(AssetGeometryGroup):
     """The angle between two vectors, in radians"""
 
-    _name = 'Vector Angle'
-    _asset_name = 'Vector Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Vector Angle"
+    _asset_name = "Vector Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
@@ -6519,6 +7326,7 @@ class VectorAngle(AssetGeometryGroup):
         """A×B"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6535,9 +7343,9 @@ class VectorAngle(AssetGeometryGroup):
 class VectorDirection(AssetGeometryGroup):
     """Vector Direction"""
 
-    _name = 'Vector Direction'
-    _asset_name = 'Vector Direction'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Vector Direction"
+    _asset_name = "Vector Direction"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         normalize: BooleanSocket
@@ -6554,6 +7362,7 @@ class VectorDirection(AssetGeometryGroup):
         """Distance"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6571,9 +7380,9 @@ class VectorDirection(AssetGeometryGroup):
 class VectorFromPoint(AssetGeometryGroup):
     """Vector from Point"""
 
-    _name = 'Vector from Point'
-    _asset_name = 'Vector from Point'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Vector from Point"
+    _asset_name = "Vector from Point"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         target: VectorSocket
@@ -6592,6 +7401,7 @@ class VectorFromPoint(AssetGeometryGroup):
         """Rotation"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6608,9 +7418,9 @@ class VectorFromPoint(AssetGeometryGroup):
 class Velocity(AssetGeometryGroup):
     """Velocity"""
 
-    _name = 'Velocity'
-    _asset_name = 'Velocity'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Velocity"
+    _asset_name = "Velocity"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         pass
@@ -6619,6 +7429,7 @@ class Velocity(AssetGeometryGroup):
         velocity: VectorSocket
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6631,9 +7442,9 @@ class Velocity(AssetGeometryGroup):
 class VisualizeAngle(AssetGeometryGroup):
     """Visualize Angle"""
 
-    _name = 'Visualize Angle'
-    _asset_name = 'Visualize Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Visualize Angle"
+    _asset_name = "Visualize Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         points: GeometrySocket
@@ -6660,6 +7471,7 @@ class VisualizeAngle(AssetGeometryGroup):
         """Curve"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6676,15 +7488,26 @@ class VisualizeAngle(AssetGeometryGroup):
         axis: InputVector = None,
         radius: InputFloat = 0.2,
     ):
-        super().__init__(**{"Socket_1": points, "Socket_2": selection, "Socket_7": position, "Socket_3": angle, "Socket_4": length, "Socket_6": up, "Socket_5": axis, "Socket_8": radius})
+        super().__init__(
+            **{
+                "Socket_1": points,
+                "Socket_2": selection,
+                "Socket_7": position,
+                "Socket_3": angle,
+                "Socket_4": length,
+                "Socket_6": up,
+                "Socket_5": axis,
+                "Socket_8": radius,
+            }
+        )
 
 
 class VisualizeChiAngle(AssetGeometryGroup):
     """Visualize Chi Angle"""
 
-    _name = 'Visualize Chi Angle'
-    _asset_name = 'Visualize Chi Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Visualize Chi Angle"
+    _asset_name = "Visualize Chi Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
@@ -6705,6 +7528,7 @@ class VisualizeChiAngle(AssetGeometryGroup):
         """Curve"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6718,15 +7542,23 @@ class VisualizeChiAngle(AssetGeometryGroup):
         value: InputFloat = 0.61,
         radius: InputFloat = 0.2,
     ):
-        super().__init__(**{"Socket_1": geometry, "Socket_2": selection, "Socket_3": factor, "Socket_4": value, "Socket_5": radius})
+        super().__init__(
+            **{
+                "Socket_1": geometry,
+                "Socket_2": selection,
+                "Socket_3": factor,
+                "Socket_4": value,
+                "Socket_5": radius,
+            }
+        )
 
 
 class VisualizePoints(AssetGeometryGroup):
     """Visualize Points"""
 
-    _name = 'Visualize Points'
-    _asset_name = 'Visualize Points'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Visualize Points"
+    _asset_name = "Visualize Points"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         points: GeometrySocket
@@ -6743,6 +7575,7 @@ class VisualizePoints(AssetGeometryGroup):
         """Instances"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6755,15 +7588,22 @@ class VisualizePoints(AssetGeometryGroup):
         target: InputVector = None,
         position: InputVector = None,
     ):
-        super().__init__(**{"Socket_0": points, "Socket_3": selection, "Socket_1": target, "Socket_2": position})
+        super().__init__(
+            **{
+                "Socket_0": points,
+                "Socket_3": selection,
+                "Socket_1": target,
+                "Socket_2": position,
+            }
+        )
 
 
 class VisualizeRelativeAtoms(AssetGeometryGroup):
     """Visualize Relative Atoms"""
 
-    _name = 'Visualize Relative Atoms'
-    _asset_name = 'Visualize Relative Atoms'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "Visualize Relative Atoms"
+    _asset_name = "Visualize Relative Atoms"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
@@ -6784,6 +7624,7 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
         """Instances"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6798,15 +7639,24 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
         target_index: InputInteger = 100,
         target_position: InputVector = None,
     ):
-        super().__init__(**{"Socket_1": atoms, "Socket_2": selection, "Socket_6": scale, "Socket_4": position, "Socket_3": target_index, "Socket_5": target_position})
+        super().__init__(
+            **{
+                "Socket_1": atoms,
+                "Socket_2": selection,
+                "Socket_6": scale,
+                "Socket_4": position,
+                "Socket_3": target_index,
+                "Socket_5": target_position,
+            }
+        )
 
 
 class WorldToAngstrom(AssetGeometryGroup):
     """World to Angstrom"""
 
-    _name = 'World to Angstrom'
-    _asset_name = 'World to Angstrom'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "World to Angstrom"
+    _asset_name = "World to Angstrom"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         world: FloatSocket
@@ -6817,6 +7667,7 @@ class WorldToAngstrom(AssetGeometryGroup):
         """Angstrom"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6832,9 +7683,9 @@ class WorldToAngstrom(AssetGeometryGroup):
 class _2IndexAngle(AssetGeometryGroup):
     """2 Index Angle"""
 
-    _name = '2 Index Angle'
-    _asset_name = '2 Index Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "2 Index Angle"
+    _asset_name = "2 Index Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
@@ -6851,6 +7702,7 @@ class _2IndexAngle(AssetGeometryGroup):
         """Angle"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6863,15 +7715,22 @@ class _2IndexAngle(AssetGeometryGroup):
         index_b: InputInteger = 0,
         index_c: InputInteger = 2,
     ):
-        super().__init__(**{"Socket_4": position, "Socket_0": index_a, "Socket_5": index_b, "Socket_2": index_c})
+        super().__init__(
+            **{
+                "Socket_4": position,
+                "Socket_0": index_a,
+                "Socket_5": index_b,
+                "Socket_2": index_c,
+            }
+        )
 
 
 class _3IndexAngle(AssetGeometryGroup):
     """3 Index Angle"""
 
-    _name = '3 Index Angle'
-    _asset_name = '3 Index Angle'
-    _library = PackageLibrary(__file__, '../assets/node_data_file.blend')
+    _name = "3 Index Angle"
+    _asset_name = "3 Index Angle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
         index_a: IntegerSocket
@@ -6886,6 +7745,7 @@ class _3IndexAngle(AssetGeometryGroup):
         """Angle"""
 
     if TYPE_CHECKING:
+
         @property
         def i(self) -> _Inputs: ...
         @property
@@ -6897,7 +7757,9 @@ class _3IndexAngle(AssetGeometryGroup):
         index_b: InputInteger = 1,
         index_c: InputInteger = 2,
     ):
-        super().__init__(**{"Socket_0": index_a, "Socket_1": index_b, "Socket_2": index_c})
+        super().__init__(
+            **{"Socket_0": index_a, "Socket_1": index_b, "Socket_2": index_c}
+        )
 
 
 __all__ = (

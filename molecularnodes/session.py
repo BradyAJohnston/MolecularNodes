@@ -4,9 +4,9 @@ from contextlib import chdir
 from typing import Dict, Union
 import bpy
 import MDAnalysis as mda
-from bpy.app.handlers import persistent  # type: ignore
-from bpy.props import StringProperty  # type: ignore
-from bpy.types import Context  # type: ignore
+from bpy.app.handlers import persistent
+from bpy.props import StringProperty
+from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
 from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule

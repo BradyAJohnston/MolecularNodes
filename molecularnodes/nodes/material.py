@@ -19,10 +19,9 @@ def append_material(name: str) -> bpy.types.Material:
     return append_from_blend(name, str(MN_DATA_FILE))
 
 
-def add_all_materials() -> None:
+def add_all_materials() -> dict[str, bpy.types.Material]:
     "Append all pre-defined materials from the MN_DATA_FILE."
-    for name in MATERIAL_NAMES:
-        append_material(name)
+    return {name: append_material(name) for name in MATERIAL_NAMES}
 
 
 # class to interact with a bpy.types.Material node tree and change some of the default

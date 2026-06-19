@@ -6,14 +6,14 @@ readme = "README.md"
 dependencies = [
     "databpy>=0.7.0",
     "mdanalysis>=2.10",
-    "biotite>=1.5",
+    "biotite>=1.7",
     "mrcfile",
     "starfile",
     "PyYAML",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy==520.3.*",
+    "nodebpy==520.5.*",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"

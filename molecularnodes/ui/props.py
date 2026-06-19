@@ -1,5 +1,5 @@
 import bpy
-from bpy.props import (  # type: ignore
+from bpy.props import (
     BoolProperty,
     CollectionProperty,
     EnumProperty,
@@ -15,7 +15,7 @@ from ..handlers import _update_entities
 from ..session import get_entity
 from .style import STYLE_ITEMS
 
-uuid_property = StringProperty(  # type: ignore
+uuid_property = StringProperty(
     name="UUID",
     description="Unique ID for referencing the required objects in the MNSession",
     default="",
