@@ -182,12 +182,12 @@ class AssemblyInstance(AssetGeometryGroup):
         """Geometry"""
         selection: BooleanSocket
         """Selection"""
-        realize_all: BooleanSocket
-        """Realize All"""
-        assembly_id: IntegerSocket
-        """Assembly ID"""
         data_object: ObjectSocket
         """Data Object"""
+        assembly_id: IntegerSocket
+        """Assembly ID"""
+        realize_all: BooleanSocket
+        """Realize All"""
         rotation: FloatSocket
         """Rotation"""
         position: FloatSocket
@@ -209,9 +209,9 @@ class AssemblyInstance(AssetGeometryGroup):
         self,
         geometry: InputGeometry = None,
         selection: InputBoolean = True,
-        realize_all: InputBoolean = False,
-        assembly_id: InputInteger = 1,
         data_object: InputObject = None,
+        assembly_id: InputInteger = 1,
+        realize_all: InputBoolean = False,
         rotation: InputFloat = 1.0,
         position: InputFloat = 1.0,
     ):
@@ -219,9 +219,9 @@ class AssemblyInstance(AssetGeometryGroup):
             **{
                 "Socket_1": geometry,
                 "Socket_3": selection,
-                "Socket_10": realize_all,
-                "Socket_8": assembly_id,
                 "Socket_2": data_object,
+                "Socket_8": assembly_id,
+                "Socket_10": realize_all,
                 "Socket_4": rotation,
                 "Socket_5": position,
             }
@@ -6331,6 +6331,55 @@ class SplitToCentredInstances(AssetGeometryGroup):
         )
 
 
+class StarfileInstances(AssetGeometryGroup):
+    """Starfile Instances"""
+
+    _name = "Starfile Instances"
+    _asset_name = "Starfile Instances"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        points: GeometrySocket
+        """Points"""
+        image: IntegerSocket
+        """Image"""
+        menu: MenuSocket
+        """Menu"""
+        instance: ObjectSocket
+        """Instance"""
+        material: MaterialSocket
+        """Material"""
+
+    class _Outputs(SocketAccessor):
+        instances: GeometrySocket
+        """Instances"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        points: InputGeometry = None,
+        image: InputInteger = 1,
+        menu: InputMenu = "Instance",
+        instance: InputObject = None,
+        material: InputMaterial = None,
+    ):
+        super().__init__(
+            **{
+                "Socket_0": points,
+                "Socket_3": image,
+                "Socket_14": menu,
+                "Socket_2": instance,
+                "Socket_13": material,
+            }
+        )
+
+
 class StructureParameter(AssetGeometryGroup):
     """Structure Parameter"""
 
@@ -7966,6 +8015,7 @@ __all__ = (
     "SetUResID",
     "SliceEdgeInstances",
     "SplitToCentredInstances",
+    "StarfileInstances",
     "StructureParameter",
     "StyleBallAndStick",
     "StyleCartoon",
