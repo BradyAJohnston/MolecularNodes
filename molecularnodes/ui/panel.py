@@ -276,28 +276,6 @@ def is_style_node(context):
     return node.name.startswith("Style")
 
 
-def change_style_node_menu(self, context):
-    layout = self.layout
-    node = context.active_node
-
-    # return early if not a node group
-    if not hasattr(node, "node_tree"):
-        return None
-
-    # return early if the node group isn't one of the ones we want to swap easily
-    prefix = node.node_tree.name.split(" ")[0].lower()
-    if prefix not in ["color", "select", "is", "style", "topology", "animate"]:
-        return None
-
-    layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
-
-    row = layout.row()
-    op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
-    op.node_description = "The topology nodes"
-
-    layout.separator()
-
-
 def panel_import(layout, context):
     scene = context.scene
     selection = scene.mn.panel_import_type

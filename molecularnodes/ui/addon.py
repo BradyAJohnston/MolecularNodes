@@ -28,7 +28,6 @@ from . import ops, panel, pref, props
 
 all_classes = (
     panel.CLASSES + ops.CLASSES + props.CLASSES + pref.CLASSES + session.CLASSES
-    # + node_menu.CLASSES
 )
 
 _is_registered = False
@@ -65,9 +64,7 @@ def register():
         except Exception as e:
             print(e)
             pass
-    # bpy.types.NODE_MT_add.append(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
-    bpy.types.NODE_MT_context_menu.prepend(panel.change_style_node_menu)
 
     save_post.append(session._pickle)
     load_post.append(session._load)
@@ -113,9 +110,7 @@ def unregister():
             print(e)
             pass
 
-    # bpy.types.NODE_MT_add.remove(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(panel.pt_object_context)
-    bpy.types.NODE_MT_context_menu.remove(panel.change_style_node_menu)
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)

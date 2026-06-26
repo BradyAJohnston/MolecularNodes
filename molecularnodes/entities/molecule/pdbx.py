@@ -39,9 +39,7 @@ class PDBXReader(ReaderBase):
             array = pdbx.get_component(self.file)
 
         if include_bonds and not array.bonds:
-            array.bonds = struc.bonds.connect_via_residue_names(
-                array, inter_residue=True
-            )
+            array.bonds = struc.connect_via_residue_names(array, inter_residue=True)
 
         return array
 

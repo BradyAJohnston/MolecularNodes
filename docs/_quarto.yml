@@ -4,10 +4,10 @@ project:
 
 # lightbox: true
 filters:
-  - interlinks
-  - filters.lua
-  - quarto
-  - quarto-pdb
+- interlinks
+- filters.lua
+- quarto
+- quarto-pdb
 
 website:
   title: "Molecular Nodes"
@@ -16,46 +16,46 @@ website:
 
   navbar:
     left:
-      - href: tutorials/index.qmd
-        text: Documentation
-      - text: API
-        href: api/
-      - href: examples/
-        text: Examples
-      - href: citations/
-        text: Citations
+    - href: tutorials/index.qmd
+      text: Documentation
+    - text: API
+      href: api/
+    - href: examples/
+      text: Examples
+    - href: citations/
+      text: Citations
     tools:
-      - icon: github
-        href: https://github.com/BradyAJohnston/MolecularNodes
-      - icon: twitter
-        href: https://twitter.com/bradyajohnston
-      - icon: youtube
-        href: https://youtube.com/c/bradyjohnston
+    - icon: github
+      href: https://github.com/BradyAJohnston/MolecularNodes
+    - icon: twitter
+      href: https://twitter.com/bradyajohnston
+    - icon: youtube
+      href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-    # - id: nodes
-    #   title: Nodes
-    #   contents: nodes/*
+  # - id: nodes
+  #   title: Nodes
+  #   contents: nodes/*
 
-    - id: attributes
+  - id: attributes
+    contents:
+    - section: "Tutorials"
       contents:
-        - section: "Tutorials"
-          contents:
-            - tutorials/index.qmd
-            - tutorials/installation.qmd
-            - tutorials/interface.qmd
-            - tutorials/importing.qmd
-            - tutorials/selections.qmd
-            - tutorials/trajectories.qmd
-            - tutorials/streaming-trajectories.qmd
-            - tutorials/cryoem.qmd
-            - tutorials/simulation.qmd
-        - section: "Reference"
-          contents:
-            - attributes.qmd
-            - data_table.qmd
-        - section: "Nodes"
-          contents: nodes/*
+      - tutorials/index.qmd
+      - tutorials/installation.qmd
+      - tutorials/interface.qmd
+      - tutorials/importing.qmd
+      - tutorials/selections.qmd
+      - tutorials/trajectories.qmd
+      - tutorials/streaming-trajectories.qmd
+      - tutorials/cryoem.qmd
+      - tutorials/simulation.qmd
+    - section: "Reference"
+      contents:
+      - attributes.qmd
+      - data_table.qmd
+    - section: "Nodes"
+      contents: nodes/*
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -65,8 +65,8 @@ format:
   html:
     # page-layout: full
     theme:
-      - darkly
-      - style.scss
+    - darkly
+    - style.scss
 
     toc: true
     toc-depth: 3
@@ -75,7 +75,7 @@ format:
       text: true
 
 metadata-files:
-  - api/_sidebar.yml
+- api/_sidebar.yml
 
 interlinks:
   aliases:
@@ -104,79 +104,78 @@ quartodoc:
     search: true
     collapse-level: 4
     contents:
-      - text: Introduction
-        href: api/index.qmd
-      - api/styles.qmd
-      - api/materials.qmd
-      - api/density.qmd
-      - api/annotations.qmd
-      - api/canvas.qmd
-      - api/blender.qmd
-      - section: "Trajectory"
-        contents: api/trajectory/*
-      - text: "---"
-      - section: "Reference"
-        contents:
-          - "{{ contents }}"
+    - text: Introduction
+      href: api/index.qmd
+    - api/styles.qmd
+    - api/materials.qmd
+    - api/density.qmd
+    - api/annotations.qmd
+    - api/canvas.qmd
+    - api/blender.qmd
+    - section: "Trajectory"
+      contents: api/trajectory/*
+    - text: "---"
+    - section: "Reference"
+      contents:
+      - "{{ contents }}"
   # css: api/_styles-quartodoc.css
 
   options:
     include_inherited: true
 
   sections:
-    - title: Entity
-      desc: Importing and manipulating different molecular entities
-      contents:
-        - Molecule
-        - MoleculeSelector
-        - Trajectory
-        - entities.Ensemble
-        - entities.OXDNA
+  - title: Entity
+    desc: Importing and manipulating different molecular entities
+    contents:
+    - Molecule
+    - Trajectory
+    - entities.Ensemble
+    - entities.OXDNA
 
-    - title: Trajectory
-      desc: Working with molecular dynamics trajectories
-      contents:
-        - Trajectory
-        - entities.trajectory.SelectionManager
-        - entities.trajectory.DSSPManager
-        - entities.StreamingTrajectory
+  - title: Trajectory
+    desc: Working with molecular dynamics trajectories
+    contents:
+    - Trajectory
+    - entities.trajectory.SelectionManager
+    - entities.trajectory.DSSPManager
+    - entities.StreamingTrajectory
 
-    - title: Styles
-      desc: Setting and controlling the different styles
-      contents:
-        - StyleSpheres
-        - StyleRibbon
-        - StyleCartoon
-        - StyleSurface
-        - StyleSticks
-        - StyleBallAndStick
+  - title: Styles
+    desc: Setting and controlling the different styles
+    contents:
+    - StyleSpheres
+    - StyleRibbon
+    - StyleCartoon
+    - StyleSurface
+    - StyleSticks
+    - StyleBallAndStick
 
-    - title: Materials
-      desc: Setting and controlling the different materials
-      contents:
-        - material.AmbientOcclusion
-        - material.Default
-        - material.Squishy
-        - material.FlatOutline
-        - material.TransparentOutline
+  - title: Materials
+    desc: Setting and controlling the different materials
+    contents:
+    - material.AmbientOcclusion
+    - material.Default
+    - material.Squishy
+    - material.FlatOutline
+    - material.TransparentOutline
 
-    - title: Session
-      desc: Session object to control molecular entities
-      contents:
-        - session.MNSession
+  - title: Session
+    desc: Session object to control molecular entities
+    contents:
+    - session.MNSession
 
-    - title: Annotations
-      desc: Annotations for molecular entitites
-      contents:
-        - annotations.base
-        - annotations.interface
-        - annotations.manager
-        - entities.trajectory.annotations
-        - entities.molecule.annotations
-        - entities.density.annotations
+  - title: Annotations
+    desc: Annotations for molecular entitites
+    contents:
+    - annotations.base
+    - annotations.interface
+    - annotations.manager
+    - entities.trajectory.annotations
+    - entities.molecule.annotations
+    - entities.density.annotations
 
-    - title: Scene
-      desc: Control settings for the Blender scene through the `Canvas` object.
-      contents:
-        - Canvas
-        - scene.camera
+  - title: Scene
+    desc: Control settings for the Blender scene through the `Canvas` object.
+    contents:
+    - Canvas
+    - scene.camera

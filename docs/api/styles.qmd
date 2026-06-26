@@ -39,18 +39,13 @@ mol = (
     .add_style("cartoon", material = mn.material.AmbientOcclusion())
     .add_style(
         style="surface",
-        selection=mn.MoleculeSelector().is_peptide(),
+        # selection=mn.MoleculeSelector().is_peptide(),
         color=(0.6, 0.6, 0.8, 1.0),
         material=mn.material.TransparentOutline()
         )
 )
 cv.frame_object(mol)
 cv.snapshot()
-```
-
-```{python}
-with mol.styles as input, output:
-    input >> g.SetColor(color=n.RandomColor()) >> n.StyleRibbon(selection=n.IsHydgrogen().o.inverted, width=0.3, material=mn.material.AmbientOcclusion()) >> n.StyleSurface(selection=n.SelectResID("10, 200:300"))
 ```
 
 ```{python}

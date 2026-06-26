@@ -170,6 +170,64 @@ class AnimateDihedrals(AssetGeometryGroup):
         )
 
 
+class AssemblyInstance(AssetGeometryGroup):
+    """Assembly Instance"""
+
+    _name = "Assembly Instance"
+    _asset_name = "Assembly Instance"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        selection: BooleanSocket
+        """Selection"""
+        realize_all: BooleanSocket
+        """Realize All"""
+        assembly_id: IntegerSocket
+        """Assembly ID"""
+        data_object: ObjectSocket
+        """Data Object"""
+        rotation: FloatSocket
+        """Rotation"""
+        position: FloatSocket
+        """Position"""
+
+    class _Outputs(SocketAccessor):
+        instances: GeometrySocket
+        """Instances"""
+        chain_id: IntegerSocket
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        selection: InputBoolean = True,
+        realize_all: InputBoolean = False,
+        assembly_id: InputInteger = 1,
+        data_object: InputObject = None,
+        rotation: InputFloat = 1.0,
+        position: InputFloat = 1.0,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": geometry,
+                "Socket_3": selection,
+                "Socket_10": realize_all,
+                "Socket_8": assembly_id,
+                "Socket_2": data_object,
+                "Socket_4": rotation,
+                "Socket_5": position,
+            }
+        )
+
+
 class AtomID(AssetGeometryGroup):
     """Atom ID"""
 
@@ -7766,6 +7824,7 @@ __all__ = (
     "AccumulateAxisRotation",
     "AngstromToWorld",
     "AnimateDihedrals",
+    "AssemblyInstance",
     "AtomID",
     "AtomName",
     "AtomicNumber",
