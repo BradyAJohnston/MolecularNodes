@@ -7,13 +7,12 @@ import numpy as np
 from databpy.nodes import (
     NodeGroupCreationError,
     append_from_blend,
-    swap_tree,
 )
 from mathutils import Vector
 from nodebpy import geometry as g
 from .. import color, utils
 from ..assets import MN_DATA_FILE
-from ..blender import coll, mesh
+from ..blender import mesh
 from . import assets as a
 from .material import assign_material
 from .style_density_iso_surface import style_density_iso_surface_node_group
@@ -215,21 +214,6 @@ def realize_instances(obj):
     insert_last_node(group, realize)
 
 
-def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
-    "Swap out the node's node_tree, while maintaining the possible old connections"
-
-    if isinstance(tree, str):
-        try:
-            tree = bpy.data.node_groups[tree]
-        except KeyError:
-            tree = append(tree)
-
-    # only change the label if not customized
-    if node.label == node.node_tree.name:
-        node.label = tree.name
-    swap_tree(node=node, tree=tree)
-
-
 def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
     "Append a GN node from the MN data file"
     GN_TREES_PATH = MN_DATA_FILE / "NodeTree"
@@ -309,30 +293,6 @@ def add_custom(
 
     return node
 
-
-def change_style_node(obj: bpy.types.Object, style: str):
-    swap(get_style_node(obj), append(styles_mapping[style]))
-
-
-def create_starting_nodes_starfile(object):
-    # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    node_mod = get_mod(object)
-
-    node_name = f"MN_starfile_{object.name}"
-
-    # create a new GN node group, specific to this particular molecule
-    group = new_tree(node_name)
-    node_mod.node_group = group
-    link = group.links.new
-
-    # move the input and output nodes for the group
-    node_input = get_input(group)
-    node_output = get_output(group)
-    node_input.location = [0, 0]
-    node_output.location = [700, 0]
-    node_star_instances = add_custom(group, "Starfile Instances", [450, 0])
-    link(node_star_instances.outputs[0], node_output.inputs[0])
-    link(node_input.outputs[0], node_star_instances.inputs[0])
 
 
 def create_starting_nodes_density(

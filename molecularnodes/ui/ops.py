@@ -59,8 +59,6 @@ def _add_node(node_name, context, show_options=False, material="default"):
     nodes.assign_material(node, new_material=material)
 
 
-
-
 _STYLE_NODE = {
     "spheres": a.StyleSpheres,
     "ribbon": a.StyleRibbon,

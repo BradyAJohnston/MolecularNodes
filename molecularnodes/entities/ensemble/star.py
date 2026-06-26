@@ -10,7 +10,7 @@ from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
-from ...nodes import nodes
+from ...nodes import assets, nodes
 from .base import Ensemble, EntityType
 
 
@@ -287,7 +287,9 @@ class StarFile(Ensemble):
         self.data_frame.store_data_on_object(self.object)
 
         if node_setup:
-            nodes.create_starting_nodes_starfile(self.object)
+            with self.tree as tree:
+                input, join = tree.reset()
+                input >> assets.EnsembleInstance() >> join
 
         self.object["starfile_path"] = str(self.file_path)
         return self.object
