@@ -102,4 +102,3 @@ wheels = [
 [permissions]
 network = "Downloading structural data from the PDB and AFPDB"
 files = "Importing data files from disk and caching downloads"
-

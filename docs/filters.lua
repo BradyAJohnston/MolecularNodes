@@ -10,7 +10,7 @@ for _, v in ipairs(attributes) do
 end
 
 local special_mappings = {
-  ["True"] = "True::Bool", 
+  ["True"] = "True::Bool",
   ["False"] = "False::Bool",
   ["None"] = "None::Object",
 }
@@ -21,7 +21,7 @@ function Code(el)
   end
   if el.text:match("^'.*'$") then
     el.text = el.text ..  "::String"
-  end  
+  end
   for _, keyword in ipairs(keywords) do
     local pattern = "(.+)::" .. keyword
     local name = el.text:match(pattern)

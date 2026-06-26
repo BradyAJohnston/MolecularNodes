@@ -10,7 +10,7 @@ For the purposes of this document, _content_ is defined as any contribution to t
 - Documentation of any kind
 - Communication content (e.g. issues, discussions, pull request descriptions, and reviews)
 
-We recognize that the use of AI in open source software raises many difficult questions and acknowledge that views, approaches, and technical capabilities are rapidly changing. 
+We recognize that the use of AI in open source software raises many difficult questions and acknowledge that views, approaches, and technical capabilities are rapidly changing.
 We invite comments and further discussion (via our [discussion](https://github.com/BradyAJohnston/MolecularNodes/discussions)) and expect to periodically review this policy.
 
 ## Policy overview

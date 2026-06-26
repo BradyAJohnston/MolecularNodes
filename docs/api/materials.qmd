@@ -94,4 +94,3 @@ for mat, eng in itertools.product(materials, engines):
     traj.styles[0].material = mat
     cv.snapshot()
 ```
-

@@ -10,7 +10,7 @@ toc-depth: 3
 
 Inside of Geometry Nodes, we can run simulations using the **Simulation Zone**.
 In the most simple form, a simulation is just doing something with data from a previous iteration of the data.
-The easiest example of this is moving the positions of some points, building on top of the previous positions of the point from earlier time points. 
+The easiest example of this is moving the positions of some points, building on top of the previous positions of the point from earlier time points.
 
 ### What is a simulation?
 
@@ -36,7 +36,7 @@ Changing the `Alpha Carbon::Float` value for the **Build Elastic Network** node 
 
 #### All-atom Simulation
 
-We can create an elastic network that includes all atoms by selecting the `All Atom::Menu` enum for the **Build Elastic Network** node. The `Alpha Carbon::Float` input will still be used for building a network between the alpha carbons for overall structure stability, but the `All Atom::Float` input will be used for building a shorter-range network between all atoms. 
+We can create an elastic network that includes all atoms by selecting the `All Atom::Menu` enum for the **Build Elastic Network** node. The `Alpha Carbon::Float` input will still be used for building a network between the alpha carbons for overall structure stability, but the `All Atom::Float` input will be used for building a shorter-range network between all atoms.
 
 We can't just use the **Style Ball and Stick** node because the edges are now between all of the atoms. Instead, we can sample the positions from the resulting simulation using the **Sample Position** node update the positions of our starting atoms using the **Set Position** node. Then we can style accordingly.
 

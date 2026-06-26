@@ -33,7 +33,7 @@ If applicable, add screenshots to help explain your problem.
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows / MacOS / Linux]
  - Hardware: [e.g. Intel Mac, M1 Mac, x86 PC]
- - Blender Version: 
+ - Blender Version:
 - MolecularNodes Version:
 
 **Additional context**

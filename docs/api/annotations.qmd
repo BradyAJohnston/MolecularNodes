@@ -29,7 +29,7 @@ t = mn.Trajectory(u).add_style("cartoon")
 
 ## Adding Annotations
 
-Annotations can be added using the `add_<annotation_type>` method of the annotations manager of an entity. Each entity can have different annotation types supported. 
+Annotations can be added using the `add_<annotation_type>` method of the annotations manager of an entity. Each entity can have different annotation types supported.
 
 The bundled annotation types for Trajectories are:
 
@@ -57,7 +57,7 @@ Available annotation types can be seen as follows:
 [a for a in t.annotations.__dir__() if a.startswith("add_")]
 ```
 
-Each annotation type can have different input parameters. A common parameter `name` can be passed to name the annotation for easier name based lookups later. All the parameters to the `add_<annotation_type>` method have to be keyword params. 
+Each annotation type can have different input parameters. A common parameter `name` can be passed to name the annotation for easier name based lookups later. All the parameters to the `add_<annotation_type>` method have to be keyword params.
 
 Annotations can be added using the `add_<annotation_type>` method, which returns an instance that can be used to further customize the annotation. Annotation specific inputs as well as common annotation parameters can be customized.
 
@@ -578,4 +578,3 @@ The following utility methods are currently available:
 - [](`~molecularnodes.annotations.base.BaseAnnotation.pil_image_to_bpy_image`) - Convert PIL image to Blender image
 
 These methods can be used within the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) method of a custom annotation. Please see the API reference for [](`mn.annotations.base`) for details about these methods.
-

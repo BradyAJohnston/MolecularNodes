@@ -261,7 +261,7 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         name="PDB",
         description="The PDB code to download and import",
         options={"TEXTEDIT_UPDATE"},
-        maxlen=4,
+        maxlen=12,
     )
 
     is_updating: BoolProperty(  # type: ignore
@@ -476,7 +476,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     code: StringProperty(  # type: ignore
         name="PDB",
         description="PDB code used to download this structure",
-        maxlen=4,
+        maxlen=12,
         options={"HIDDEN"},
     )
     trajectory_selection_index: IntProperty(  # type: ignore

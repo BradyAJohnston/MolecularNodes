@@ -39,7 +39,7 @@ Connecting to streaming trajectories in MN should still be considered experiment
 
 Once we have a simulation that is up and running, we can import it to Molecular Nodes like we would a normal trajecotry. For the coordinates, instead of a filepath we give the IMD streaming server. By default on your own machine it will be `imd://localhost:8889`.
 
-After we load the trajectory, every time the frame changes inside of Blender it will fetch the latest frame from the simulation and the 3D model will be updated. 
+After we load the trajectory, every time the frame changes inside of Blender it will fetch the latest frame from the simulation and the 3D model will be updated.
 
 ![](images/trajectory/streaming-example.mp4)
 
