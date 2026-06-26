@@ -294,7 +294,6 @@ def add_custom(
     return node
 
 
-
 def create_starting_nodes_density(
     object: bpy.types.Object,
     threshold: float = 0.8,

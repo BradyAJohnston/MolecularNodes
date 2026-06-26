@@ -289,7 +289,7 @@ class StarFile(Ensemble):
         if node_setup:
             with self.tree as tree:
                 input, join = tree.reset()
-                input >> assets.EnsembleInstance() >> join
+                input >> assets.StarfileInstances() >> join
 
         self.object["starfile_path"] = str(self.file_path)
         return self.object
