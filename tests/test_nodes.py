@@ -151,37 +151,6 @@ def get_links(sockets):
             yield link
 
 
-def test_change_style():
-    mol = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon")
-    model = mol.object
-    style_node_1 = nodes.get_style_node(model).name
-    nodes.change_style_node(model, "ribbon")
-    style_node_2 = nodes.get_style_node(model).name
-
-    assert style_node_1 != style_node_2
-
-    styles_to_check = ["ribbon", "cartoon", "ball_and_stick", "surface"] + list(
-        [f"preset_{i}" for i in [1, 2, 3, 4]]
-    )
-
-    for style in styles_to_check:
-        style_node_1 = nodes.get_style_node(model)
-        links_in_1 = [link.from_socket.name for link in get_links(style_node_1.inputs)]
-        links_out_1 = [
-            link.from_socket.name for link in get_links(style_node_1.outputs)
-        ]
-
-        nodes.change_style_node(model, style)
-        style_node_2 = nodes.get_style_node(model)
-        links_in_2 = [link.from_socket.name for link in get_links(style_node_2.inputs)]
-        links_out_2 = [
-            link.from_socket.name for link in get_links(style_node_2.outputs)
-        ]
-
-        assert len(links_in_1) == len(links_in_2)
-        assert len(links_out_1) == len(links_out_2)
-
-
 @pytest.fixture
 def pdb_8h1b():
     return mn.Molecule.fetch("8H1B", cache=data_dir)

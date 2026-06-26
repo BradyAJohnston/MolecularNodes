@@ -21,7 +21,7 @@ from ...nodes.styles import (
 )
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
-from . import pdb, pdbx, sdf, selections
+from . import pdb, pdbx, sdf
 from .annotations import MoleculeAnnotationManager
 from .reader import ReaderBase
 
