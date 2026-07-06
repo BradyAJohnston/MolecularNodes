@@ -32,6 +32,7 @@ from nodebpy.types import (
     InputMatrix,
     InputMenu,
     InputObject,
+    InputRotation,
     InputString,
     InputVector,
 )
@@ -166,6 +167,296 @@ class AnimateDihedrals(AssetGeometryGroup):
                 "Input_7": smoother_step,
                 "Input_8": interpolate,
                 "Socket_0": frame,
+            }
+        )
+
+
+class AnimateFrames(AssetGeometryGroup):
+    """Animate Frames"""
+
+    _name = "Animate Frames"
+    _asset_name = "Animate Frames"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+        selection: BooleanSocket
+        """Selection"""
+        frames: CollectionSocket
+        """Frames"""
+        smoother_step: BooleanSocket
+        """Smoother Step"""
+        interpolate: BooleanSocket
+        """Interpolate"""
+        frame: FloatSocket
+        """Frame"""
+
+    class _Outputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+        all_frames: GeometrySocket
+        """All Frames"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        atoms: InputGeometry = None,
+        selection: InputBoolean = True,
+        frames: InputCollection = None,
+        smoother_step: InputBoolean = False,
+        interpolate: InputBoolean = True,
+        frame: InputFloat = 0.0,
+    ):
+        super().__init__(
+            **{
+                "Input_4": atoms,
+                "Input_16": selection,
+                "Input_0": frames,
+                "Input_7": smoother_step,
+                "Input_8": interpolate,
+                "Socket_0": frame,
+            }
+        )
+
+
+class AnimatePeptideToCurve(AssetGeometryGroup):
+    """Animate Peptide to Curve"""
+
+    _name = "Animate Peptide to Curve"
+    _asset_name = "Animate Peptide to Curve"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+        curve: GeometrySocket
+        """Curve"""
+        offset: FloatSocket
+        """Offset"""
+        start: FloatSocket
+        """Start"""
+        end: FloatSocket
+        """End"""
+        rotate: FloatSocket
+        """Rotate"""
+        twist: FloatSocket
+        """Twist"""
+
+    class _Outputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        atoms: InputGeometry = None,
+        curve: InputGeometry = None,
+        offset: InputFloat = 0.0,
+        start: InputFloat = 0.0,
+        end: InputFloat = 1.0,
+        rotate: InputFloat = 0.5,
+        twist: InputFloat = 1.0,
+    ):
+        super().__init__(
+            **{
+                "Input_0": atoms,
+                "Input_2": curve,
+                "Input_7": offset,
+                "Input_8": start,
+                "Input_9": end,
+                "Input_10": rotate,
+                "Input_11": twist,
+            }
+        )
+
+
+class AnimateTrails(AssetGeometryGroup):
+    """Animate Trails"""
+
+    _name = "Animate Trails"
+    _asset_name = "Animate Trails"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+        selection: BooleanSocket
+        """Selection"""
+        trail_threshold: MenuSocket
+        """Trail Threshold"""
+        trail_curve_type: MenuSocket
+        """Trail Curve Type"""
+        trail_frames: IntegerSocket
+        """Trail Frames"""
+        trail_radius: FloatSocket
+        """Trail Radius"""
+        trail_resolution: IntegerSocket
+        """Trail Resolution"""
+        shade_smooth: BooleanSocket
+        """Shade Smooth"""
+        material: MaterialSocket
+        """Material"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        atoms: InputGeometry = None,
+        selection: InputBoolean = True,
+        trail_threshold: InputMenu = "Unlimited",
+        trail_curve_type: InputMenu = "Poly",
+        trail_frames: InputInteger = 5,
+        trail_radius: InputFloat = 1.0,
+        trail_resolution: InputInteger = 6,
+        shade_smooth: InputBoolean = True,
+        material: InputMaterial = None,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": atoms,
+                "Socket_4": selection,
+                "Socket_24": trail_threshold,
+                "Socket_23": trail_curve_type,
+                "Socket_2": trail_frames,
+                "Socket_11": trail_radius,
+                "Socket_10": trail_resolution,
+                "Socket_7": shade_smooth,
+                "Socket_3": material,
+            }
+        )
+
+
+class AnimateValue(AssetGeometryGroup):
+    """Animate Value"""
+
+    _name = "Animate Value"
+    _asset_name = "Animate Value"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        smoother_step: BooleanSocket
+        """Smoother Step"""
+        clamped: BooleanSocket
+        """Clamped"""
+        frame_start: IntegerSocket
+        """Frame Start"""
+        frame_end: IntegerSocket
+        """Frame End"""
+        value_min: FloatSocket
+        """Value Min"""
+        value_max: FloatSocket
+        """Value Max"""
+
+    class _Outputs(SocketAccessor):
+        value: FloatSocket
+        """Value"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        smoother_step: InputBoolean = False,
+        clamped: InputBoolean = False,
+        frame_start: InputInteger = 1,
+        frame_end: InputInteger = 250,
+        value_min: InputFloat = 0.0,
+        value_max: InputFloat = 1.0,
+    ):
+        super().__init__(
+            **{
+                "Input_3": smoother_step,
+                "Input_6": clamped,
+                "Input_0": frame_start,
+                "Input_1": frame_end,
+                "Input_4": value_min,
+                "Input_5": value_max,
+            }
+        )
+
+
+class AnimateWiggle(AssetGeometryGroup):
+    """Animate Wiggle"""
+
+    _name = "Animate Wiggle"
+    _asset_name = "Animate Wiggle"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+        selection: BooleanSocket
+        """Selection"""
+        b_factor: FloatSocket
+        amplitude: FloatSocket
+        """Amplitude"""
+        amp_axis: FloatSocket
+        """Amp. Axis"""
+        amp_euler: FloatSocket
+        """Amp. Euler"""
+        speed: FloatSocket
+        """Speed"""
+        animate: FloatSocket
+        """Animate"""
+
+    class _Outputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        atoms: InputGeometry = None,
+        selection: InputBoolean = True,
+        b_factor: InputFloat = 1.0,
+        amplitude: InputFloat = 1.0,
+        amp_axis: InputFloat = 1.0,
+        amp_euler: InputFloat = 0.4,
+        speed: InputFloat = 3.0,
+        animate: InputFloat = 0.0,
+    ):
+        super().__init__(
+            **{
+                "Input_1": atoms,
+                "Input_2": selection,
+                "Input_7": b_factor,
+                "Input_4": amplitude,
+                "Input_8": amp_axis,
+                "Input_9": amp_euler,
+                "Input_6": speed,
+                "Input_3": animate,
             }
         )
 
@@ -400,6 +691,40 @@ class AtomsToCurves(AssetGeometryGroup):
                 "Socket_4": distance_cutoff_a,
             }
         )
+
+
+class AttributeRun(AssetGeometryGroup):
+    """Group mask increments whenever the attribute or the Group ID changes"""
+
+    _name = "Attribute Run"
+    _asset_name = "Attribute Run"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        name: StringSocket
+        """Name"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        is_different: BooleanSocket
+        """Is Different"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        name: InputString = "",
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_4": name, "Socket_3": group_id})
 
 
 class BFactor(AssetGeometryGroup):
@@ -852,6 +1177,210 @@ class BooleanAndOr(AssetGeometryGroup):
         super().__init__(**{"Socket_2": and_, "Socket_4": or_, "Socket_3": boolean})
 
 
+class BooleanAny(AssetGeometryGroup):
+    """Boolean Any"""
+
+    _name = "Boolean Any"
+    _asset_name = "Boolean Any"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        boolean: InputBoolean = False,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": boolean, "Socket_2": group_id})
+
+
+class BooleanFirst(AssetGeometryGroup):
+    """Only the first `True` in each `Group ID` remains `True`, all others become `False`"""
+
+    _name = "Boolean First"
+    _asset_name = "Boolean First"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        is_first: BooleanSocket
+        """Is First"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        boolean: InputBoolean = False,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": boolean, "Socket_2": group_id})
+
+
+class BooleanLast(AssetGeometryGroup):
+    """Index of last time the `Boolean` is true for each `Group ID` (not including the current point)."""
+
+    _name = "Boolean Last"
+    _asset_name = "Boolean Last"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+
+    class _Outputs(SocketAccessor):
+        index_of_last: IntegerSocket
+        """Index of Last"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        boolean: InputBoolean = True,
+    ):
+        super().__init__(**{"Socket_3": boolean})
+
+
+class BooleanRunFill(AssetGeometryGroup):
+    """Moving down the points, fill in `False` values that are equal to or less than the `Fill Size`"""
+
+    _name = "Boolean Run Fill"
+    _asset_name = "Boolean Run Fill"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+        fill_size: IntegerSocket
+        """Fill Size"""
+
+    class _Outputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        boolean: InputBoolean = True,
+        fill_size: InputInteger = 3,
+    ):
+        super().__init__(**{"Socket_0": boolean, "Socket_2": fill_size})
+
+
+class BooleanRunTrim(AssetGeometryGroup):
+    """Boolean Run Trim"""
+
+    _name = "Boolean Run Trim"
+    _asset_name = "Boolean Run Trim"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+        start: IntegerSocket
+        """Start"""
+        end: IntegerSocket
+        """End"""
+        size: IntegerSocket
+        """Size"""
+
+    class _Outputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        boolean: InputBoolean = True,
+        start: InputInteger = 0,
+        end: InputInteger = 0,
+        size: InputInteger = 10,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": boolean,
+                "Socket_2": start,
+                "Socket_6": end,
+                "Socket_3": size,
+            }
+        )
+
+
+class BreakCurves(AssetGeometryGroup):
+    """Break Curves"""
+
+    _name = "Break Curves"
+    _asset_name = "Break Curves"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        curves: GeometrySocket
+        """Curves"""
+        threshold: FloatSocket
+        """Threshold"""
+
+    class _Outputs(SocketAccessor):
+        curves: GeometrySocket
+        """Curves"""
+        original_index: IntegerSocket
+        """Original Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        curves: InputGeometry = None,
+        threshold: InputFloat = 0.5,
+    ):
+        super().__init__(**{"Socket_0": curves, "Socket_3": threshold})
+
+
 class CentreOnSelection(AssetGeometryGroup):
     """Centre on Selection"""
 
@@ -1023,6 +1552,43 @@ class CheckGeometry(AssetGeometryGroup):
         message: InputString = "Input contains no geometry, check your node connections.",
     ):
         super().__init__(**{"Socket_0": geometry, "Socket_3": message})
+
+
+class ClearInstanceTransforms(AssetGeometryGroup):
+    """Clear Instance Transforms"""
+
+    _name = "Clear Instance Transforms"
+    _asset_name = "Clear Instance Transforms"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        selection: BooleanSocket
+        """Selection"""
+        realize_all: BooleanSocket
+        """Realize All"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        selection: InputBoolean = True,
+        realize_all: InputBoolean = False,
+    ):
+        super().__init__(
+            **{"Socket_1": geometry, "Socket_2": selection, "Socket_3": realize_all}
+        )
 
 
 class Color(AssetGeometryGroup):
@@ -2223,6 +2789,153 @@ class ContainsGeometry(AssetGeometryGroup):
         super().__init__(**{"Socket_2": geometry})
 
 
+class CumulativeLength(AssetGeometryGroup):
+    """Cumulative Length"""
+
+    _name = "Cumulative Length"
+    _asset_name = "Cumulative Length"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pass
+
+    class _Outputs(SocketAccessor):
+        length: FloatSocket
+        """Length"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(self):
+        super().__init__(**{})
+
+
+class CurveCustomProfile(AssetGeometryGroup):
+    """Curve Custom Profile"""
+
+    _name = "Curve Custom Profile"
+    _asset_name = "Curve Custom Profile"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        curve: GeometrySocket
+        """Curve"""
+        subdivisions: IntegerSocket
+        """Subdivisions"""
+        profile_type: MenuSocket
+        """Profile Type"""
+        uv_map: BooleanSocket
+        """UV Map"""
+        socket_6: RotationSocket
+        """Profile Rotation"""
+        profile_scale: VectorSocket
+        """Profile Scale"""
+        profile_curve: GeometrySocket
+        """Profile Curve"""
+        profile_resolution: IntegerSocket
+        """Profile Resolution"""
+        profile_radius: FloatSocket
+        """Profile Radius"""
+        input_14: FloatSocket
+        """Profile Rotation"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        curve: InputGeometry = None,
+        subdivisions: InputInteger = 6,
+        profile_type: InputMenu = "Custom Profile",
+        uv_map: InputBoolean = False,
+        socket_6: InputRotation = None,
+        profile_scale: InputVector = None,
+        profile_curve: InputGeometry = None,
+        profile_resolution: InputInteger = 4,
+        profile_radius: InputFloat = 1.0,
+        input_14: InputFloat = 0.785398,
+    ):
+        super().__init__(
+            **{
+                "Input_6": curve,
+                "Input_15": subdivisions,
+                "Socket_8": profile_type,
+                "Socket_9": uv_map,
+                "Socket_6": socket_6,
+                "Input_2": profile_scale,
+                "Input_0": profile_curve,
+                "Input_12": profile_resolution,
+                "Input_13": profile_radius,
+                "Input_14": input_14,
+            }
+        )
+
+
+class CurveEndpointValues(AssetGeometryGroup):
+    """Output a different integer value for the endpoints of a curve and the middle of a curve"""
+
+    _name = "Curve Endpoint Values"
+    _asset_name = "Curve Endpoint Values"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        start_size: IntegerSocket
+        """Start Size"""
+        start_value: IntegerSocket
+        """Start Value"""
+        other_value: IntegerSocket
+        """Other Value"""
+        end_size: IntegerSocket
+        """End Size"""
+        end_value: IntegerSocket
+        """End Value"""
+
+    class _Outputs(SocketAccessor):
+        value: IntegerSocket
+        """Value"""
+        start_selection: BooleanSocket
+        """Start Selection"""
+        end_selection: BooleanSocket
+        """End Selection"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        start_size: InputInteger = 1,
+        start_value: InputInteger = 1,
+        other_value: InputInteger = 0,
+        end_size: InputInteger = 1,
+        end_value: InputInteger = -1,
+    ):
+        super().__init__(
+            **{
+                "Socket_5": start_size,
+                "Socket_1": start_value,
+                "Socket_2": other_value,
+                "Socket_6": end_size,
+                "Socket_3": end_value,
+            }
+        )
+
+
 class CurveOffsetDihedral(AssetGeometryGroup):
     """Offset from the current point a number of points, then use their `Position` and `Normal` to calculat a dihdral angle between them"""
 
@@ -2268,6 +2981,146 @@ class CurveOffsetDihedral(AssetGeometryGroup):
         )
 
 
+class CurveOffsetDot(AssetGeometryGroup):
+    """Curve Offset Dot"""
+
+    _name = "Curve Offset Dot"
+    _asset_name = "Curve Offset Dot"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        normal: VectorSocket
+        """Normal"""
+        offset: IntegerSocket
+        """Offset"""
+        threshold_direction: MenuSocket
+        """Threshold Direction"""
+        threshold_cutoff: FloatSocket
+        """Threshold Cutoff"""
+        rotation_axis: VectorSocket
+        """Rotation Axis"""
+        rotation_amount: FloatSocket
+        """Rotation Amount"""
+
+    class _Outputs(SocketAccessor):
+        thresholded: BooleanSocket
+        """Thresholded"""
+        leading: IntegerSocket
+        """Leading"""
+        rotation: RotationSocket
+        """Rotation"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        normal: InputVector = None,
+        offset: InputInteger = -1,
+        threshold_direction: InputMenu = "Less Than",
+        threshold_cutoff: InputFloat = -0.9,
+        rotation_axis: InputVector = None,
+        rotation_amount: InputFloat = 3.141593,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": normal,
+                "Socket_6": offset,
+                "Socket_4": threshold_direction,
+                "Socket_3": threshold_cutoff,
+                "Socket_8": rotation_axis,
+                "Socket_7": rotation_amount,
+            }
+        )
+
+
+class CurveRotation(AssetGeometryGroup):
+    """Computes the rotation of the point on the curve, by default using the `Normal` attribute and the `Tangent` axis"""
+
+    _name = "Curve Rotation"
+    _asset_name = "Curve Rotation"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        normal: VectorSocket
+        """Normal"""
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        normal: InputVector = None,
+    ):
+        super().__init__(**{"Socket_1": normal})
+
+
+class CurveTransform(AssetGeometryGroup):
+    """Calculates the transformation matrix for the point on the curve. Position is taken from the `Position`, `Rotation` is calculated from the `Normal` and `Tangent` values, and the `Radius` drives the scale"""
+
+    _name = "Curve Transform"
+    _asset_name = "Curve Transform"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pass
+
+    class _Outputs(SocketAccessor):
+        transform: MatrixSocket
+        """Transform"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(self):
+        super().__init__(**{})
+
+
+class CurveVectors(AssetGeometryGroup):
+    """Curve Vectors"""
+
+    _name = "Curve Vectors"
+    _asset_name = "Curve Vectors"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pass
+
+    class _Outputs(SocketAccessor):
+        normal: VectorSocket
+        """Normal"""
+        tangent: VectorSocket
+        """Tangent"""
+        bitangent: VectorSocket
+        """Bitangent"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(self):
+        super().__init__(**{})
+
+
 class CurveVisualize(AssetGeometryGroup):
     """Curve Visualize"""
 
@@ -2282,8 +3135,6 @@ class CurveVisualize(AssetGeometryGroup):
         """Selection"""
         position: VectorSocket
         """Position"""
-        normal: VectorSocket
-        """Normal"""
         handles: BooleanSocket
         """Handles"""
         arrow_size: FloatSocket
@@ -2305,7 +3156,6 @@ class CurveVisualize(AssetGeometryGroup):
         curve: InputGeometry = None,
         selection: InputBoolean = True,
         position: InputVector = None,
-        normal: InputVector = None,
         handles: InputBoolean = False,
         arrow_size: InputFloat = 2.0,
     ):
@@ -2314,9 +3164,53 @@ class CurveVisualize(AssetGeometryGroup):
                 "Socket_0": curve,
                 "Socket_8": selection,
                 "Socket_2": position,
-                "Socket_7": normal,
                 "Socket_4": handles,
                 "Socket_6": arrow_size,
+            }
+        )
+
+
+class DNAFromCurve(AssetGeometryGroup):
+    """DNA From Curve"""
+
+    _name = "DNA From Curve"
+    _asset_name = "DNA From Curve"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        curves: GeometrySocket
+        """Curves"""
+        base_resolution: IntegerSocket
+        """Base Resolution"""
+        menu: MenuSocket
+        """Menu"""
+        wind: FloatSocket
+        """Wind"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        curves: InputGeometry = None,
+        base_resolution: InputInteger = 0,
+        menu: InputMenu = "Static",
+        wind: InputFloat = 1.0,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": curves,
+                "Socket_2": base_resolution,
+                "Socket_3": menu,
+                "Socket_4": wind,
             }
         )
 
@@ -2721,6 +3615,38 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         )
 
 
+class EvaluateOnInstances(AssetGeometryGroup):
+    """Evaluate on Instances"""
+
+    _name = "Evaluate on Instances"
+    _asset_name = "Evaluate on Instances"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        closure: ClosureSocket
+        """Closure"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        closure: InputClosure = None,
+    ):
+        super().__init__(**{"Socket_0": geometry, "Socket_2": closure})
+
+
 class EvaluatePerGroup(AssetGeometryGroup):
     """Evaluate Per Group"""
 
@@ -2739,6 +3665,8 @@ class EvaluatePerGroup(AssetGeometryGroup):
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
         """Geometry"""
+        instances: GeometrySocket
+        """Instances"""
 
     if TYPE_CHECKING:
 
@@ -3062,6 +3990,219 @@ class GetGeometryAtoms(AssetGeometryGroup):
         super().__init__(**{"Socket_1": geometry})
 
 
+class GroupInfo(AssetGeometryGroup):
+    """Group Info"""
+
+    _name = "Group Info"
+    _asset_name = "Group Info"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        size: IntegerSocket
+        """Size"""
+        index_in_group: IntegerSocket
+        """Index in Group"""
+        index_of_first: IntegerSocket
+        """Index of First"""
+        index_of_last: IntegerSocket
+        """Index of Last"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_4": group_id})
+
+
+class GroupParameter(AssetGeometryGroup):
+    """Group Parameter"""
+
+    _name = "Group Parameter"
+    _asset_name = "Group Parameter"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        is_first: BooleanSocket
+        """Is First"""
+        is_last: BooleanSocket
+        """Is Last"""
+        group_size: IntegerSocket
+        """Group Size"""
+        relative_index: IntegerSocket
+        """Relative Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_6": group_id})
+
+
+class GroupPick(AssetGeometryGroup):
+    """Get the item of the `True` in each `Group ID`, but only if there is a single `True` in each group"""
+
+    _name = "Group Pick"
+    _asset_name = "Group Pick"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pick: BooleanSocket
+        """Pick"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        is_valid: BooleanSocket
+        """Is Valid"""
+        index: IntegerSocket
+        """Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        pick: InputBoolean = False,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_3": pick, "Socket_2": group_id})
+
+
+class GroupPickFirst(AssetGeometryGroup):
+    """Get the `Index` of the first `True` item for each `Group ID`"""
+
+    _name = "Group Pick First"
+    _asset_name = "Group Pick First"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pick: BooleanSocket
+        """Pick"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        is_valid: BooleanSocket
+        """Is Valid"""
+        index: IntegerSocket
+        """Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        pick: InputBoolean = False,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_3": pick, "Socket_2": group_id})
+
+
+class GroupPickIndex(AssetGeometryGroup):
+    """Group Pick Index"""
+
+    _name = "Group Pick Index"
+    _asset_name = "Group Pick Index"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        relative_index: IntegerSocket
+        """Relative Index"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        is_valid: BooleanSocket
+        """Is Valid"""
+        index: IntegerSocket
+        """Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        relative_index: InputInteger = 0,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_0": relative_index, "Socket_1": group_id})
+
+
+class GroupPickVector(AssetGeometryGroup):
+    """Group Pick Vector"""
+
+    _name = "Group Pick Vector"
+    _asset_name = "Group Pick Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pick: BooleanSocket
+        """Pick"""
+        group_id: IntegerSocket
+        """Group ID"""
+        position: VectorSocket
+        """Position"""
+
+    class _Outputs(SocketAccessor):
+        is_valid: BooleanSocket
+        """Is Valid"""
+        index: IntegerSocket
+        """Index"""
+        vector: VectorSocket
+        """Vector"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        pick: InputBoolean = False,
+        group_id: InputInteger = 0,
+        position: InputVector = None,
+    ):
+        super().__init__(
+            **{"Socket_4": pick, "Socket_3": group_id, "Socket_5": position}
+        )
+
+
 class IndexDistance(AssetGeometryGroup):
     """Index Distance"""
 
@@ -3139,6 +4280,77 @@ class IndexMixColor(AssetGeometryGroup):
         index: InputFloat = 0.0,
     ):
         super().__init__(**{"Socket_2": color, "Socket_3": index})
+
+
+class IntegerDistance(AssetGeometryGroup):
+    """Integer Distance"""
+
+    _name = "Integer Distance"
+    _asset_name = "Integer Distance"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        a: IntegerSocket
+        """A"""
+        b: IntegerSocket
+        """B"""
+        distance: IntegerSocket
+        """Distance"""
+
+    class _Outputs(SocketAccessor):
+        cutoff: BooleanSocket
+        """Cutoff"""
+        distance: IntegerSocket
+        """Distance"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        a: InputInteger = 0,
+        b: InputInteger = 0,
+        distance: InputInteger = 2,
+    ):
+        super().__init__(**{"Socket_0": a, "Socket_1": b, "Socket_2": distance})
+
+
+class IntegerRun(AssetGeometryGroup):
+    """A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes"""
+
+    _name = "Integer Run"
+    _asset_name = "Integer Run"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        value: IntegerSocket
+        """Value"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        is_different: BooleanSocket
+        """Is Different"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        value: InputInteger = 0,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_0": value, "Socket_2": group_id})
 
 
 class IsAlphaCarbon(AssetGeometryGroup):
@@ -3261,6 +4473,37 @@ class IsBoundaryEdge(AssetGeometryGroup):
         mask: InputBoolean = True,
     ):
         super().__init__(**{"Socket_0": mask})
+
+
+class IsEven(AssetGeometryGroup):
+    """Is Even"""
+
+    _name = "Is Even"
+    _asset_name = "Is Even"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        value: IntegerSocket
+        """Value"""
+
+    class _Outputs(SocketAccessor):
+        odd: BooleanSocket
+        """Odd"""
+        even: BooleanSocket
+        """Even"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        value: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_0": value})
 
 
 class IsHelix(AssetGeometryGroup):
@@ -3606,6 +4849,55 @@ class LChToOKLab(AssetGeometryGroup):
         super().__init__(**{"Socket_2": l, "Socket_3": c, "Socket_4": h})
 
 
+class LagGeometry(AssetGeometryGroup):
+    """Lag Geometry"""
+
+    _name = "Lag Geometry"
+    _asset_name = "Lag Geometry"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        input: GeometrySocket
+        """Input"""
+        selection: BooleanSocket
+        """Selection"""
+        count: IntegerSocket
+        """Count"""
+        realize_all: BooleanSocket
+        """Realize All"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        lag_index: IntegerSocket
+        """Lag Index"""
+        index: IntegerSocket
+        """Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        input: InputGeometry = None,
+        selection: InputBoolean = True,
+        count: InputInteger = 5,
+        realize_all: InputBoolean = True,
+    ):
+        super().__init__(
+            **{
+                "Socket_0": input,
+                "Socket_9": selection,
+                "Socket_4": count,
+                "Socket_3": realize_all,
+            }
+        )
+
+
 class LatticeGrid(AssetGeometryGroup):
     """Lattice Grid"""
 
@@ -3655,6 +4947,50 @@ class LatticeGrid(AssetGeometryGroup):
                 "Socket_4": x,
                 "Socket_5": y,
                 "Socket_6": z,
+            }
+        )
+
+
+class MNTypedBundles(AssetGeometryGroup):
+    """MN Typed Bundles"""
+
+    _name = "MN Typed Bundles"
+    _asset_name = "MN Typed Bundles"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        type: MenuSocket
+        """Type"""
+        closure: ClosureSocket
+        """Closure"""
+        step: IntegerSocket
+        path: StringSocket
+        """Path"""
+
+    class _Outputs(SocketAccessor):
+        bundle: BundleSocket
+        """Bundle"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        type: InputMenu = "MN.MeshProcess",
+        closure: InputClosure = None,
+        step: InputInteger = 1,
+        path: InputString = "",
+    ):
+        super().__init__(
+            **{
+                "Socket_5": type,
+                "Socket_0": closure,
+                "Socket_2": step,
+                "Socket_3": path,
             }
         )
 
@@ -4004,6 +5340,41 @@ class OKLabToLCh(AssetGeometryGroup):
         super().__init__(**{"Socket_0": oklab})
 
 
+class OffsetBoolean(AssetGeometryGroup):
+    """Offset Boolean"""
+
+    _name = "Offset Boolean"
+    _asset_name = "Offset Boolean"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+        index: IntegerSocket
+        """Index"""
+        offset: IntegerSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        boolean: InputBoolean = False,
+        index: InputInteger = 0,
+        offset: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_2": boolean, "Socket_1": index, "Socket_3": offset})
+
+
 class OffsetColor(AssetGeometryGroup):
     """Offset Color"""
 
@@ -4012,10 +5383,10 @@ class OffsetColor(AssetGeometryGroup):
     _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
-        index: IntegerSocket
-        """Index"""
         color: ColorSocket
         """Color"""
+        index: IntegerSocket
+        """Index"""
         offset: IntegerSocket
         """Offset"""
 
@@ -4032,11 +5403,11 @@ class OffsetColor(AssetGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
         color: InputColor = None,
+        index: InputInteger = 0,
         offset: InputInteger = 0,
     ):
-        super().__init__(**{"Socket_0": index, "Socket_1": color, "Input_0": offset})
+        super().__init__(**{"Socket_1": color, "Socket_0": index, "Input_0": offset})
 
 
 class OffsetColorAttribute(AssetGeometryGroup):
@@ -4081,8 +5452,8 @@ class OffsetCurve(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         curve: GeometrySocket
         """Curve"""
-        offset: FloatSocket
-        """Offset"""
+        points: FloatSocket
+        """Points"""
 
     class _Outputs(SocketAccessor):
         curve: GeometrySocket
@@ -4100,9 +5471,258 @@ class OffsetCurve(AssetGeometryGroup):
     def __init__(
         self,
         curve: InputGeometry = None,
+        points: InputFloat = 0.0,
+    ):
+        super().__init__(**{"Socket_1": curve, "Socket_2": points})
+
+
+class OffsetFloat(AssetGeometryGroup):
+    """Offset Float"""
+
+    _name = "Offset Float"
+    _asset_name = "Offset Float"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        value: FloatSocket
+        """Value"""
+        index: IntegerSocket
+        """Index"""
+        offset: IntegerSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        value: FloatSocket
+        """Value"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        value: InputFloat = 0.0,
+        index: InputInteger = 0,
+        offset: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_2": value, "Socket_1": index, "Socket_3": offset})
+
+
+class OffsetIndex(AssetGeometryGroup):
+    """Offset Index"""
+
+    _name = "Offset Index"
+    _asset_name = "Offset Index"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+        offset: IntegerSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+        offset: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": index, "Socket_2": offset})
+
+
+class OffsetInteger(AssetGeometryGroup):
+    """Offset Integer"""
+
+    _name = "Offset Integer"
+    _asset_name = "Offset Integer"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        integer: IntegerSocket
+        """Integer"""
+        index: IntegerSocket
+        """Index"""
+        offset: IntegerSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        integer: IntegerSocket
+        """Integer"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        integer: InputInteger = 0,
+        index: InputInteger = 0,
+        offset: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_3": integer, "Socket_1": index, "Socket_2": offset})
+
+
+class OffsetMatrix(AssetGeometryGroup):
+    """Offset Matrix"""
+
+    _name = "Offset Matrix"
+    _asset_name = "Offset Matrix"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        matrix: MatrixSocket
+        """Matrix"""
+        index: IntegerSocket
+        """Index"""
+        offset: IntegerSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        matrix: MatrixSocket
+        """Matrix"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        matrix: InputMatrix = None,
+        index: InputInteger = 0,
+        offset: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_3": matrix, "Socket_1": index, "Socket_2": offset})
+
+
+class OffsetPointAlongCurve(AssetGeometryGroup):
+    """Offset along the current point's curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between `Point Index` + 1 and `Point Index` + 2, returning the `Length` and the `Factor` for this point on the curve"""
+
+    _name = "Offset Point Along Curve"
+    _asset_name = "Offset Point Along Curve"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        point_index: IntegerSocket
+        """Point Index"""
+        offset: FloatSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        is_off_spline: BooleanSocket
+        """Is Off Spline"""
+        factor: FloatSocket
+        """Factor"""
+        length: FloatSocket
+        """Length"""
+        index_a: IntegerSocket
+        """Index A"""
+        index_b: IntegerSocket
+        """Index B"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        point_index: InputInteger = 0,
         offset: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_1": curve, "Socket_2": offset})
+        super().__init__(**{"Socket_6": point_index, "Socket_1": offset})
+
+
+class OffsetRotation(AssetGeometryGroup):
+    """Offset Rotation"""
+
+    _name = "Offset Rotation"
+    _asset_name = "Offset Rotation"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+        index: IntegerSocket
+        """Index"""
+        offset: IntegerSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        rotation: InputRotation = None,
+        index: InputInteger = 0,
+        offset: InputInteger = 0,
+    ):
+        super().__init__(
+            **{"Socket_3": rotation, "Socket_1": index, "Socket_2": offset}
+        )
+
+
+class OffsetVector(AssetGeometryGroup):
+    """Offset Vector"""
+
+    _name = "Offset Vector"
+    _asset_name = "Offset Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        vector: VectorSocket
+        """Vector"""
+        index: IntegerSocket
+        """Index"""
+        offset: IntegerSocket
+        """Offset"""
+
+    class _Outputs(SocketAccessor):
+        value: VectorSocket
+        """Value"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        vector: InputVector = None,
+        index: InputInteger = 0,
+        offset: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_0": vector, "Socket_2": index, "Socket_3": offset})
 
 
 class PeptideChi(AssetGeometryGroup):
@@ -4641,6 +6261,41 @@ class RandomColor(AssetGeometryGroup):
                 "Socket_1": hsl_lightness,
             }
         )
+
+
+class RelativeIndex(AssetGeometryGroup):
+    """Get information about the points in a `Group ID` such as size and the start and end Indices"""
+
+    _name = "Relative Index"
+    _asset_name = "Relative Index"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        group_size: IntegerSocket
+        """Group Size"""
+        relative_index: IntegerSocket
+        """Relative Index"""
+        first_index: IntegerSocket
+        """First Index"""
+        last_index: IntegerSocket
+        """Last Index"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_0": group_id})
 
 
 class ResidueDihedralAngle(AssetGeometryGroup):
@@ -6806,14 +8461,24 @@ class StyleSurface(AssetGeometryGroup):
         """Selection"""
         quality: IntegerSocket
         """Quality"""
-        menu: MenuSocket
-        """Menu"""
-        scale_radius: FloatSocket
-        """Scale Radius"""
-        probe_size: FloatSocket
-        """Probe Size"""
+        surface_scale: FloatSocket
+        """Surface Scale"""
+        surface_relax: IntegerSocket
+        """Surface Relax"""
+        offset: FloatSocket
+        """Offset"""
+        fillet: IntegerSocket
+        """Fillet"""
+        mean_width: IntegerSocket
+        """Mean Width"""
+        mean_iterations: IntegerSocket
+        """Mean Iterations"""
         separate_by: MenuSocket
         """Separate By"""
+        color_source: MenuSocket
+        """Color Source"""
+        color_blur: IntegerSocket
+        """Color Blur"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -6835,10 +8500,15 @@ class StyleSurface(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 3,
-        menu: InputMenu = "Current",
-        scale_radius: InputFloat = 1.5,
-        probe_size: InputFloat = 1.0,
+        surface_scale: InputFloat = 1.25,
+        surface_relax: InputInteger = 5,
+        offset: InputFloat = 0.15,
+        fillet: InputInteger = 0,
+        mean_width: InputInteger = 1,
+        mean_iterations: InputInteger = 1,
         separate_by: InputMenu = "chain_id",
+        color_source: InputMenu = "Alpha Carbon",
+        color_blur: InputInteger = 2,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -6847,14 +8517,63 @@ class StyleSurface(AssetGeometryGroup):
                 "Socket_0": atoms,
                 "Socket_3": selection,
                 "Socket_4": quality,
-                "Socket_25": menu,
-                "Socket_5": scale_radius,
-                "Socket_6": probe_size,
+                "Socket_5": surface_scale,
+                "Socket_39": surface_relax,
+                "Socket_33": offset,
+                "Socket_34": fillet,
+                "Socket_35": mean_width,
+                "Socket_36": mean_iterations,
                 "Socket_22": separate_by,
+                "Socket_19": color_source,
+                "Socket_9": color_blur,
                 "Socket_10": shade_smooth,
                 "Socket_2": material,
             }
         )
+
+
+class SubGroupInfo(AssetGeometryGroup):
+    """Sub Group Info"""
+
+    _name = "Sub Group Info"
+    _asset_name = "Sub Group Info"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        sub_group_id: IntegerSocket
+        """Sub Group ID"""
+        group_id: IntegerSocket
+        """Group ID"""
+
+    class _Outputs(SocketAccessor):
+        size: IntegerSocket
+        """Size"""
+        group_id: IntegerSocket
+        """Group ID"""
+        index_of_first: IntegerSocket
+        """Index of First"""
+        index_of_last: IntegerSocket
+        """Index of Last"""
+        index_in_group_id: IntegerSocket
+        """Index in Group ID"""
+        sub_group_id: IntegerSocket
+        """Sub Group ID"""
+        sub_group_total: IntegerSocket
+        """Sub Group Total"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        sub_group_id: InputInteger = 0,
+        group_id: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": sub_group_id, "Socket_2": group_id})
 
 
 class SwitchResidueName(AssetGeometryGroup):
@@ -7873,12 +9592,18 @@ __all__ = (
     "AccumulateAxisRotation",
     "AngstromToWorld",
     "AnimateDihedrals",
+    "AnimateFrames",
+    "AnimatePeptideToCurve",
+    "AnimateTrails",
+    "AnimateValue",
+    "AnimateWiggle",
     "AssemblyInstance",
     "AtomID",
     "AtomName",
     "AtomicNumber",
     "AtomsToCACurves",
     "AtomsToCurves",
+    "AttributeRun",
     "BFactor",
     "BackboneC",
     "BackboneCA",
@@ -7893,11 +9618,18 @@ __all__ = (
     "BetweenVector",
     "BondCount",
     "BooleanAndOr",
+    "BooleanAny",
+    "BooleanFirst",
+    "BooleanLast",
+    "BooleanRunFill",
+    "BooleanRunTrim",
+    "BreakCurves",
     "CentreOnSelection",
     "Centroid",
     "ChainID",
     "ChainParameter",
     "CheckGeometry",
+    "ClearInstanceTransforms",
     "Color",
     "ColorAtomicNumber",
     "ColorAttributeMap",
@@ -7918,8 +9650,16 @@ __all__ = (
     "ColorSegment",
     "ColorToOKLab",
     "ContainsGeometry",
+    "CumulativeLength",
+    "CurveCustomProfile",
+    "CurveEndpointValues",
     "CurveOffsetDihedral",
+    "CurveOffsetDot",
+    "CurveRotation",
+    "CurveTransform",
+    "CurveVectors",
     "CurveVisualize",
+    "DNAFromCurve",
     "DihedralAngle",
     "DihedralChiAngle",
     "DihedralNucleicAngle",
@@ -7931,6 +9671,7 @@ __all__ = (
     "EnsembleInstance",
     "EntityID",
     "EvaluateOnAtoms",
+    "EvaluateOnInstances",
     "EvaluatePerGroup",
     "ExpandBoolean",
     "FallbackColor",
@@ -7940,12 +9681,21 @@ __all__ = (
     "FractionateFloat",
     "GeometryFieldRemap",
     "GetGeometryAtoms",
+    "GroupInfo",
+    "GroupParameter",
+    "GroupPick",
+    "GroupPickFirst",
+    "GroupPickIndex",
+    "GroupPickVector",
     "IndexDistance",
     "IndexMixColor",
+    "IntegerDistance",
+    "IntegerRun",
     "IsAlphaCarbon",
     "IsBackbone",
     "IsBackboneEdge",
     "IsBoundaryEdge",
+    "IsEven",
     "IsHelix",
     "IsHydrogen",
     "IsLipid",
@@ -7956,7 +9706,9 @@ __all__ = (
     "IsSideChain",
     "IsSolvent",
     "LChToOKLab",
+    "LagGeometry",
     "LatticeGrid",
+    "MNTypedBundles",
     "Mass",
     "MenuAtomName",
     "MenuResidueMask",
@@ -7967,9 +9719,17 @@ __all__ = (
     "OKLabOffsetLCh",
     "OKLabToColor",
     "OKLabToLCh",
+    "OffsetBoolean",
     "OffsetColor",
     "OffsetColorAttribute",
     "OffsetCurve",
+    "OffsetFloat",
+    "OffsetIndex",
+    "OffsetInteger",
+    "OffsetMatrix",
+    "OffsetPointAlongCurve",
+    "OffsetRotation",
+    "OffsetVector",
     "PeptideChi",
     "PeptideDihedral",
     "PeriodicArray",
@@ -7981,6 +9741,7 @@ __all__ = (
     "PrimitiveArrow",
     "PrimitiveGimbal",
     "RandomColor",
+    "RelativeIndex",
     "ResidueDihedralAngle",
     "ResidueID",
     "ResidueMask",
@@ -8023,6 +9784,7 @@ __all__ = (
     "StyleSpheres",
     "StyleSticks",
     "StyleSurface",
+    "SubGroupInfo",
     "SwitchResidueName",
     "TopologyBreakBonds",
     "TopologyDSSP",
