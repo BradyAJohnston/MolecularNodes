@@ -110,9 +110,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         return data_obj
 
     @classmethod
-    def load(
-        cls, file_path: str | Path, name: str | None = None, remove_solvent: bool = True
-    ) -> "Molecule":
+    def load(cls, file_path: str | Path, name: str | None = None) -> "Molecule":
         """
         Load a molecule from a file.
 
@@ -122,8 +120,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             The path to the file containing molecular data
         name : str or None, optional
             The name to give the molecule object. If None, uses the filename stem
-        remove_solvent : bool, optional
-            Whether to remove solvent molecules from the structure, default True
 
         Returns
         -------
@@ -138,12 +134,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         if not name:
             name = Path(file_path).stem
         mol = cls(reader.array, reader=reader)
-
-        if remove_solvent:
-            if isinstance(mol.array, AtomArrayStack):
-                mol.array = mol.array[:, ~struc.filter_solvent(mol.array)]
-            else:
-                mol.array = mol.array[~struc.filter_solvent(mol.array)]
 
         mol.create_object(name=name)
         mol._reader = reader
@@ -165,8 +155,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     @staticmethod
     def _read(
         file_path: str | Path | io.BytesIO,
-        # remove_solvent: bool = False,
-        # del_hydrogen: bool = False,
     ) -> ReaderBase:
         """
         Initially open the file, ready to extract the required data.
@@ -204,7 +192,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         code: str,
         format=".bcif",
         centre: str | None = None,
-        remove_solvent: bool = True,
         cache: Path | str | None = download.CACHE_DIR,
         database: str = "rcsb",
     ) -> "Molecule":
@@ -222,8 +209,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             or "mass" (center of mass). If None, no centering is performed. Default is None.
         cache : str, optional
             Path to cache directory. If None, no caching is performed.
-        remove_solvent : bool, optional
-            Whether to remove solvent from the molecule. Default is True.
         database : str, optional
             The database to fetch from. Default is "rcsb".
 
@@ -235,23 +220,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         file_path = download.StructureDownloader(cache=cache).download(
             code=code, format=format, database=database
         )
-        mol = cls.load(file_path, name=code, remove_solvent=remove_solvent)
+        mol = cls.load(file_path, name=code)
         mol._code = code
 
         return mol
-
-    def centre_molecule(self, method: str | None = "centroid"):
-        """
-        Offset positions to centre the atoms and vertices over either the geometric centroid
-        or the centre of mass.
-        """
-        if method is None or method == "":
-            return self
-
-        adjustment = self.centroid(weight=method)
-        self.position -= adjustment
-        self.array.coord -= adjustment
-        return self
 
     def centroid(self, weight: str | np.ndarray | None = None) -> np.ndarray:
         if weight == "centroid" or weight == "":

@@ -16,8 +16,6 @@ STYLES_TO_TEST = [
     "ball_and_stick",
 ]
 
-CENTRE_METHODS_TO_TEST = ["", "centroid", "mass"]
-
 
 @pytest.mark.parametrize(
     "assembly, code, style", itertools.product([False], codes, STYLES_TO_TEST)
@@ -56,47 +54,6 @@ def test_download_format(code, format):
 def test_style_positions(snapshot_custom: NumpySnapshotExtension, code):
     mol = mn.Molecule.fetch(code, cache=data_dir)
     assert snapshot_custom == mol.position
-
-
-@pytest.mark.parametrize(
-    "code, centre_method", itertools.product(codes, CENTRE_METHODS_TO_TEST)
-)
-def test_centring(snapshot_custom: NumpySnapshotExtension, code, centre_method):
-    """fetch a pdb structure using code and translate the model using the
-    centre_method. Check the CoG and CoM values against the snapshot file.
-    """
-    mol = mn.Molecule.fetch(code, cache=data_dir).centre_molecule(centre_method)
-    CoG = mol.centroid()
-    CoM = mol.centroid(weight="mass")
-
-    if centre_method == "centroid":
-        assert np.linalg.norm(CoG) < 1e-06
-    elif centre_method == "mass":
-        assert np.linalg.norm(CoM) < 1e-06
-
-    CoG = np.array_str(CoG, precision=4, suppress_small=True)
-    CoM = np.array_str(CoM, precision=4, suppress_small=True)
-    assert snapshot_custom == [CoG, CoM]
-
-
-@pytest.mark.parametrize("code", codes)
-def test_centring_different(code):
-    """fetch multiple instances of the same pdb structure and translate
-    each by a different centring method. Check that their centroids and
-    positions are in fact different.
-    """
-    mols = [
-        mn.Molecule.fetch(code, cache=data_dir).centre_molecule(method)
-        for method in CENTRE_METHODS_TO_TEST
-    ]
-    for mol1, mol2 in itertools.combinations(mols, 2):
-        assert not np.allclose(mol1.centroid(), mol2.centroid())
-        assert not np.allclose(
-            mol1.centroid(weight="mass"), mol2.centroid(weight="mass")
-        )
-        assert not np.allclose(
-            mol1.named_attribute("position"), mol2.named_attribute("position")
-        )
 
 
 def test_local_pdb(snapshot_custom):

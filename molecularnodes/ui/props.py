@@ -105,7 +105,7 @@ class EntityProperties(bpy.types.PropertyGroup):
     # type value is one of EntityType enum
     __slots__ = []
     type: StringProperty(name="Entity Type", default="")  # type: ignore
-    visible: BoolProperty(
+    visible: BoolProperty(  # type: ignore
         name="visible",
         description="Visibility of the entity",
         default=True,
@@ -173,7 +173,7 @@ class DSSPProperties(bpy.types.PropertyGroup):
         default="per-frame",
         update=_update_dssp_display_option,
     )
-    window_size: IntProperty(
+    window_size: IntProperty(  # type: ignore
         name="Window Size",
         description="Number of frames in the sliding window",
         min=1,
@@ -181,13 +181,13 @@ class DSSPProperties(bpy.types.PropertyGroup):
         default=5,
         update=_update_dssp_display_option,
     )  # type: ignore
-    apply_sw_threshold: BoolProperty(
+    apply_sw_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
     )  # type: ignore
-    sw_threshold: FloatProperty(
+    sw_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for sliding window average",
         subtype="FACTOR",
@@ -196,13 +196,13 @@ class DSSPProperties(bpy.types.PropertyGroup):
         default=0.5,
         update=_update_dssp_display_option,
     )  # type: ignore
-    apply_ta_threshold: BoolProperty(
+    apply_ta_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
     )  # type: ignore
-    ta_threshold: FloatProperty(
+    ta_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for trajectory average",
         subtype="FACTOR",
@@ -210,28 +210,49 @@ class DSSPProperties(bpy.types.PropertyGroup):
         max=1.0,
         default=0.5,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    applied: BoolProperty(
+    )
+    applied: BoolProperty(  # type: ignore
         default=True,
         update=_update_dssp_applied,
-    )  # type: ignore
+    )
     cancelling: BoolProperty(default=False)  # type: ignore
+
+
+class MolecularNodesFetchProperties(bpy.types.PropertyGroup):
+    code: StringProperty(  # type: ignore
+        name="Code",
+        description="Code to fetch from the database",
+        default="",
+    )
+    format: EnumProperty(  # type: ignore
+        name="Format",
+        description="Format to download as from the PDB",
+        items=(
+            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
+            ("cif", ".cif", "The new standard of .cif / .mmcif"),
+            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
+        ),
+    )
+    database: EnumProperty(  # type: ignore
+        name="Database",
+        description="Database to fetch from",
+        items=(
+            ("wwpdb", "wwPDB", "Worldwide Protein Data Bank"),
+            ("alphafold", "AlphaFold", "AlphaFold Protein Structure Database"),
+        ),
+        default="wwpdb",
+    )
 
 
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
     entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
-    entities_active_index: IntProperty(
+    fetch: PointerProperty(type=MolecularNodesFetchProperties)  # type: ignore
+    entities_active_index: IntProperty(  # type: ignore
         name="Active entity index",
         default=-1,
         update=_entities_active_index_callback,
     )  # type: ignore
-
-    import_del_hydrogen: BoolProperty(  # type: ignore
-        name="Remove Hydrogens",
-        description="Remove the hydrogens from a structure on import",
-        default=False,
-    )
 
     import_local_path: StringProperty(  # type: ignore
         name="File",
@@ -247,52 +268,10 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         options={"TEXTEDIT_UPDATE"},
     )
 
-    import_format_fetch: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        items=(
-            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
-            ("cif", ".cif", "The new standard of .cif / .mmcif"),
-            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
-        ),
-    )
-
-    import_code_pdb: StringProperty(  # type: ignore
-        name="PDB",
-        description="The PDB code to download and import",
-        options={"TEXTEDIT_UPDATE"},
-        maxlen=4,
-    )
-
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
         default=False,
-    )
-
-    import_centre: BoolProperty(  # type: ignore
-        name="Centre Structure",
-        description="Move the imported Molecule on the World Origin",
-        default=False,
-    )
-
-    import_centre_type: EnumProperty(  # type: ignore
-        name="Method",
-        default="mass",
-        items=(
-            (
-                "mass",
-                "Mass",
-                "Adjust the structure's centre of mass to be at the world origin",
-                1,
-            ),
-            (
-                "centroid",
-                "Centroid",
-                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-                2,
-            ),
-        ),
     )
 
     import_node_setup: BoolProperty(  # type: ignore
@@ -305,12 +284,6 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         name="Build Assembly",
         description="Add a node to build the biological assembly on import",
         default=False,
-    )
-
-    import_remove_solvent: BoolProperty(  # type: ignore
-        name="Remove Solvent",
-        description="Delete the solvent from the structure on import",
-        default=True,
     )
 
     import_oxdna_topology: StringProperty(  # type: ignore
@@ -413,8 +386,7 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     panel_import_type: bpy.props.EnumProperty(  # type: ignore
         name="Method",
         items=(
-            ("pdb", "PDB", "Download from the PDB"),
-            ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
+            ("pdb", "Fetch", "Fetch structures from the wwPDB or AlphaFold databases"),
             ("local", "Local", "Open a local file"),
             ("md", "MD", "Import a molecular dynamics trajectory"),
             ("density", "Density", "Import an EM Density Map"),
@@ -681,6 +653,7 @@ CLASSES = [
     EntityProperties,
     DSSPProperties,
     MolecularNodesObjectProperties,
+    MolecularNodesFetchProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly
     MN_UL_TrajectorySelectionListUI,
