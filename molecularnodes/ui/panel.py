@@ -40,7 +40,9 @@ class MN_MT_Add(bpy.types.Menu):
         op.ensemble_type = "cellpack"
 
         layout.separator()
-        op = layout.operator("mn.import_trajectory", text="MD Trajectory", icon="IMPORT")
+        op = layout.operator(
+            "mn.import_trajectory", text="MD Trajectory", icon="IMPORT"
+        )
         op.format = "md"
         op = layout.operator("mn.import_trajectory", text="oxDNA", icon="IMPORT")
         op.format = "oxdna"
