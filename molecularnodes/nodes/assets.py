@@ -2396,6 +2396,8 @@ class ColorOKLabOffset(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         color: ColorSocket
         """Color"""
+        colorspace: MenuSocket
+        """Colorspace"""
         luminance: FloatSocket
         """Luminance"""
         hue: FloatSocket
@@ -2415,10 +2417,18 @@ class ColorOKLabOffset(AssetGeometryGroup):
     def __init__(
         self,
         color: InputColor = None,
+        colorspace: InputMenu = "OKLab",
         luminance: InputFloat = 0.0,
         hue: InputFloat = 0.0,
     ):
-        super().__init__(**{"Socket_1": color, "Socket_3": luminance, "Socket_2": hue})
+        super().__init__(
+            **{
+                "Socket_1": color,
+                "Socket_6": colorspace,
+                "Socket_3": luminance,
+                "Socket_2": hue,
+            }
+        )
 
 
 class ColorPLDDT(AssetGeometryGroup):
@@ -2726,6 +2736,38 @@ class ColorSegment(AssetGeometryGroup):
         _: InputColor = None,
     ):
         super().__init__(**{"Input_0": segment_a, "Input_2": segment_b, "Input_3": _})
+
+
+class ColorToLCh(AssetGeometryGroup):
+    """Color to LCh"""
+
+    _name = "Color to LCh"
+    _asset_name = "Color to LCh"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        color: ColorSocket
+        """Color"""
+
+    class _Outputs(SocketAccessor):
+        l: FloatSocket
+        """L"""
+        c: FloatSocket
+        """C"""
+        h: FloatSocket
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        color: InputColor = None,
+    ):
+        super().__init__(**{"Socket_0": color})
 
 
 class ColorToOKLab(AssetGeometryGroup):
@@ -5212,6 +5254,40 @@ class IsSolvent(AssetGeometryGroup):
         or_: InputBoolean = False,
     ):
         super().__init__(**{"Socket_1": and_, "Socket_3": or_})
+
+
+class LChToColor(AssetGeometryGroup):
+    """LCh to Color"""
+
+    _name = "LCh to Color"
+    _asset_name = "LCh to Color"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        l: FloatSocket
+        """L"""
+        c: FloatSocket
+        """C"""
+        h: FloatSocket
+
+    class _Outputs(SocketAccessor):
+        color: ColorSocket
+        """Color"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        l: InputFloat = 0.0,
+        c: InputFloat = 0.0,
+        h: InputFloat = 0.0,
+    ):
+        super().__init__(**{"Socket_0": l, "Socket_1": c, "Socket_2": h})
 
 
 class LChToOKLab(AssetGeometryGroup):
@@ -10374,6 +10450,7 @@ __all__ = (
     "ColorResName",
     "ColorSecStruct",
     "ColorSegment",
+    "ColorToLCh",
     "ColorToOKLab",
     "ContainsGeometry",
     "CumulativeLength",
@@ -10443,6 +10520,7 @@ __all__ = (
     "IsSheet",
     "IsSideChain",
     "IsSolvent",
+    "LChToColor",
     "LChToOKLab",
     "LagGeometry",
     "LatticeGrid",
