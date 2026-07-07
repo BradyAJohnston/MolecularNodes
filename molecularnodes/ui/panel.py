@@ -18,16 +18,35 @@ class MN_MT_Add(bpy.types.Menu):
     def draw(self, context: bpy.types.Context) -> None:
         layout = self.layout
         assert layout
-        layout = check_online_access_for_ui(layout)
         # the Add menu defaults to EXEC_REGION_WIN, which would run the operator
-        # directly; force INVOKE so the operator's popup dialog is shown instead
+        # directly; force INVOKE so the operators' popup dialogs are shown instead
         layout.operator_context = "INVOKE_DEFAULT"
-        op = layout.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
+
+        op = layout.operator("mn.import_fetch", text="Import Local File", icon="IMPORT")
+        op.database = "local"
+        # fetching requires online access, so gate only those entries
+        online = check_online_access_for_ui(layout.column())
+        op = online.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
         op.database = "wwpdb"
-        op = layout.operator(
+        op = online.operator(
             "mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT"
         )
         op.database = "alphafold"
+
+        layout.separator()
+        op = layout.operator("mn.import_ensemble", text="Starfile", icon="IMPORT")
+        op.ensemble_type = "starfile"
+        op = layout.operator("mn.import_ensemble", text="CellPack", icon="IMPORT")
+        op.ensemble_type = "cellpack"
+
+        layout.separator()
+        op = layout.operator("mn.import_trajectory", text="MD Trajectory", icon="IMPORT")
+        op.format = "md"
+        op = layout.operator("mn.import_trajectory", text="oxDNA", icon="IMPORT")
+        op.format = "oxdna"
+
+        layout.separator()
+        layout.operator("mn.import_density", text="Density Map", icon="IMPORT")
 
 
 def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
@@ -36,150 +55,12 @@ def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
     layout.menu("MN_MT_Add")
 
 
-def panel_fetch(layout, scene):
-    layout.separator()
-    layout = check_online_access_for_ui(layout)
-    layout.operator("mn.import_fetch", text="Fetch Structure", icon="IMPORT")
-
-
-def panel_local(layout, scene):
-    layout.label(text="Load a Local File", icon="FILE_TICK")
-    layout.separator()
-
-    row = layout.row()
-    row.prop(scene.mn, "import_local_path")
-    op = row.operator("mn.import_local")
-    op.filepath = scene.mn.import_local_path
-    op.node_setup = scene.mn.import_node_setup
-    op.assembly = scene.mn.import_build_assembly
-    op.style = scene.mn.import_style
-    layout.separator()
-
-    layout.label(text="Options", icon="MODIFIER")
-    options = layout.column(align=True)
-
-    row = options.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-    options.separator()
-
-    grid = options.grid_flow()
-    grid.prop(scene.mn, "import_build_assembly")
-
-
-def panel_starfile(layout, scene):
-    layout.label(text="Load Star File", icon="FILE_TICK")
-    layout.separator()
-    row_import = layout.row()
-    row_import.prop(scene.mn, "import_star_file_path")
-    op = row_import.operator("mn.import_star_file")
-    op.filepath = scene.mn.import_star_file_path
-    op.node_setup = scene.mn.import_node_setup
-
-
-def panel_cellpack(layout, scene):
-    layout.label(text="Load CellPack Model", icon="FILE_TICK")
-    layout.separator()
-    row = layout.row()
-    row.prop(scene.mn, "import_cell_pack_path")
-    op = row.operator("mn.import_cell_pack")
-    op.filepath = scene.mn.import_cell_pack_path
-    op.node_setup = scene.mn.import_node_setup
-
-
-def panel_density(layout, scene):
-    layout.label(text="Load Density Grids", icon="FILE_TICK")
-    layout.separator()
-
-    row = layout.row()
-    row.prop(scene.mn, "import_density")
-    row.operator("mn.import_density")
-
-    layout.separator()
-    col = layout.column()
-    col.alignment = "LEFT"
-    col.scale_y = 0.5
-    label = f"\
-    An intermediate file will be created: {scene.mn.import_density}.vdb\
-    Please do not delete this file or the volume will not render.\
-    Move the original .map file to change this location.\
-    "
-    for line in label.strip().split("    "):
-        col.label(text=line)
-
-    layout.separator()
-    layout.label(text="Options", icon="MODIFIER")
-
-    layout.prop(scene.mn, "import_density_invert")
-    layout.prop(scene.mn, "import_density_center")
-    layout.prop(scene.mn, "import_density_overwrite")
-    row = layout.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_density_style")
-    col.enabled = scene.mn.import_node_setup
-
-
-def panel_trajectory(layout, scene):
-    layout.label(text="Load MD Trajectories", icon="FILE_TICK")
-    layout.separator()
+def panel_import(layout, context):
     col = layout.column(align=True)
-    row_import = col.row()
-    row_import.prop(scene.mn, "import_md_name")
-    op = row_import.operator("mn.import_trajectory", text="Load")
-    op.topology = scene.mn.import_md_topology
-    op.trajectory = scene.mn.import_md_trajectory
-    op.name = scene.mn.import_md_name
-    op.style = scene.mn.import_style
-    op.setup_nodes = scene.mn.import_node_setup
-    col.separator()
-    col.prop(scene.mn, "import_md_topology")
-    col.prop(scene.mn, "import_md_trajectory")
-
-    layout.separator()
-    layout.label(text="Options", icon="MODIFIER")
-    row = layout.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-
-
-def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
-    """
-    Create the panel layout for oxDNA import.
-
-    Parameters
-    ----------
-    layout : bpy.types.UILayout
-        Layout to add elements to
-    scene : bpy.types.Scene
-        Current scene
-    """
-    layout.label(text="Load oxDNA File", icon="FILE_TICK")
-    layout.separator()
-    row = layout.row()
-    row.prop(scene.mn, "import_oxdna_name")
-    op = row.operator("mn.import_oxdna")
-    op.name = scene.mn.import_oxdna_name
-    op.topology = scene.mn.import_oxdna_topology
-    op.trajectory = scene.mn.import_oxdna_trajectory
-    col = layout.column(align=True)
-    col.prop(scene.mn, "import_oxdna_topology")
-    col.prop(scene.mn, "import_oxdna_trajectory")
-
-
-chosen_panel = {
-    "pdb": panel_fetch,
-    "local": panel_local,
-    "star": panel_starfile,
-    "md": panel_trajectory,
-    "density": panel_density,
-    "cellpack": panel_cellpack,
-    "dna": panel_oxdna,
-}
+    col.operator("mn.import_fetch", text="Import Molecule", icon="IMPORT")
+    col.operator("mn.import_ensemble", text="Import Ensemble", icon="IMPORT")
+    col.operator("mn.import_trajectory", text="Import Trajectory", icon="IMPORT")
+    col.operator("mn.import_density", text="Import Density", icon="IMPORT")
 
 
 def pt_object_context(self, context):
@@ -189,15 +70,6 @@ def pt_object_context(self, context):
 def is_style_node(context):
     node = context.space_data.edit_tree.nodes.active
     return node.name.startswith("Style")
-
-
-def panel_import(layout, context):
-    scene = context.scene
-    selection = scene.mn.panel_import_type
-    layout.prop(scene.mn, "panel_import_type")
-
-    col = layout.column()
-    chosen_panel[selection](col, scene)
 
 
 def ui_from_node(
