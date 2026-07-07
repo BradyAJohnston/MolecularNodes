@@ -22,6 +22,7 @@ from nodebpy.builder import (
 )
 from nodebpy.types import (
     InputBoolean,
+    InputBundle,
     InputClosure,
     InputCollection,
     InputColor,
@@ -120,6 +121,42 @@ class AngstromToWorld(AssetGeometryGroup):
         angstrom: InputFloat = 3.0,
     ):
         super().__init__(**{"Socket_2": angstrom})
+
+
+class AnimateAction(AssetGeometryGroup):
+    """Animate Action"""
+
+    _name = "Animate Action"
+    _asset_name = "Animate Action"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        start: IntegerSocket
+        """Start"""
+        length: IntegerSocket
+        """Length"""
+
+    class _Outputs(SocketAccessor):
+        factor: FloatSocket
+        """Factor"""
+        active: BooleanSocket
+        """Active"""
+        stop: IntegerSocket
+        """Stop"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        start: InputInteger = 1,
+        length: InputInteger = 100,
+    ):
+        super().__init__(**{"Socket_0": start, "Socket_1": length})
 
 
 class AnimateDihedrals(AssetGeometryGroup):
@@ -2619,44 +2656,6 @@ class ColorResName(AssetGeometryGroup):
         )
 
 
-class ColorResNameNucleic(AssetGeometryGroup):
-    """Color Res Name Nucleic"""
-
-    _name = "Color Res Name Nucleic"
-    _asset_name = "Color Res Name Nucleic"
-    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
-
-    class _Inputs(SocketAccessor):
-        a: ColorSocket
-        """A"""
-        c: ColorSocket
-        """C"""
-        g: ColorSocket
-        """G"""
-        t_u: ColorSocket
-        """T / U"""
-
-    class _Outputs(SocketAccessor):
-        color: ColorSocket
-        """Color"""
-
-    if TYPE_CHECKING:
-
-        @property
-        def i(self) -> _Inputs: ...
-        @property
-        def o(self) -> _Outputs: ...
-
-    def __init__(
-        self,
-        a: InputColor = None,
-        c: InputColor = None,
-        g: InputColor = None,
-        t_u: InputColor = None,
-    ):
-        super().__init__(**{"Input_0": a, "Input_2": c, "Input_3": g, "Input_4": t_u})
-
-
 class ColorSecStruct(AssetGeometryGroup):
     """Color Sec Struct"""
 
@@ -3647,6 +3646,43 @@ class EvaluateOnInstances(AssetGeometryGroup):
         super().__init__(**{"Socket_0": geometry, "Socket_2": closure})
 
 
+class EvaluateOrderedBundles(AssetGeometryGroup):
+    """Evaluate Ordered Bundles"""
+
+    _name = "Evaluate Ordered Bundles"
+    _asset_name = "Evaluate Ordered Bundles"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        bundles: BundleSocket
+        """Bundles"""
+        prefix: StringSocket
+        """Prefix"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        bundles: InputBundle = None,
+        prefix: InputString = "MN*",
+    ):
+        super().__init__(
+            **{"Socket_2": geometry, "Socket_1": bundles, "Socket_3": prefix}
+        )
+
+
 class EvaluatePerGroup(AssetGeometryGroup):
     """Evaluate Per Group"""
 
@@ -3686,6 +3722,38 @@ class EvaluatePerGroup(AssetGeometryGroup):
         )
 
 
+class EvluateWhilePlanar(AssetGeometryGroup):
+    """Evluate While Planar"""
+
+    _name = "Evluate While Planar"
+    _asset_name = "Evluate While Planar"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        closure: ClosureSocket
+        """Closure"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        closure: InputClosure = None,
+    ):
+        super().__init__(**{"Socket_1": geometry, "Socket_0": closure})
+
+
 class ExpandBoolean(AssetGeometryGroup):
     """Expand Boolean"""
 
@@ -3716,6 +3784,38 @@ class ExpandBoolean(AssetGeometryGroup):
         expand: InputInteger = 0,
     ):
         super().__init__(**{"Socket_1": boolean, "Socket_2": expand})
+
+
+class FallbackBoolean(AssetGeometryGroup):
+    """Computes the boolean field if the given attribute doesn't exist. If it doesn't exist it just uses the attribute instead"""
+
+    _name = "Fallback Boolean"
+    _asset_name = "Fallback Boolean"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        name: StringSocket
+        """Name"""
+        fallback: BooleanSocket
+        """Fallback"""
+
+    class _Outputs(SocketAccessor):
+        boolean: BooleanSocket
+        """Boolean"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        name: InputString = "",
+        fallback: InputBoolean = False,
+    ):
+        super().__init__(**{"Socket_2": name, "Socket_0": fallback})
 
 
 class FallbackColor(AssetGeometryGroup):
@@ -3750,6 +3850,38 @@ class FallbackColor(AssetGeometryGroup):
         super().__init__(**{"Socket_3": name, "Socket_2": fallback})
 
 
+class FallbackFloat(AssetGeometryGroup):
+    """Fallback Float"""
+
+    _name = "Fallback Float"
+    _asset_name = "Fallback Float"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        name: StringSocket
+        """Name"""
+        fallback: FloatSocket
+        """Fallback"""
+
+    class _Outputs(SocketAccessor):
+        value: FloatSocket
+        """Value"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        name: InputString = "",
+        fallback: InputFloat = 0.0,
+    ):
+        super().__init__(**{"Socket_0": name, "Socket_1": fallback})
+
+
 class FallbackGeometry(AssetGeometryGroup):
     """Fallback Geometry"""
 
@@ -3780,6 +3912,134 @@ class FallbackGeometry(AssetGeometryGroup):
         fallback: InputGeometry = None,
     ):
         super().__init__(**{"Socket_2": geometry, "Socket_1": fallback})
+
+
+class FallbackInteger(AssetGeometryGroup):
+    """Fallback Integer"""
+
+    _name = "Fallback Integer"
+    _asset_name = "Fallback Integer"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        name: StringSocket
+        """Name"""
+        fallback: IntegerSocket
+        """Fallback"""
+
+    class _Outputs(SocketAccessor):
+        integer: IntegerSocket
+        """Integer"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        name: InputString = "",
+        fallback: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_3": name, "Socket_2": fallback})
+
+
+class FallbackMatrix(AssetGeometryGroup):
+    """Fallback Matrix"""
+
+    _name = "Fallback Matrix"
+    _asset_name = "Fallback Matrix"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        name: StringSocket
+        """Name"""
+        fallback: MatrixSocket
+        """Fallback"""
+
+    class _Outputs(SocketAccessor):
+        matrix: MatrixSocket
+        """Matrix"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        name: InputString = "",
+        fallback: InputMatrix = None,
+    ):
+        super().__init__(**{"Socket_2": name, "Socket_1": fallback})
+
+
+class FallbackRotation(AssetGeometryGroup):
+    """Fallback Rotation"""
+
+    _name = "Fallback Rotation"
+    _asset_name = "Fallback Rotation"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        name: StringSocket
+        """Name"""
+        fallback: RotationSocket
+        """Fallback"""
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        name: InputString = "",
+        fallback: InputRotation = None,
+    ):
+        super().__init__(**{"Socket_2": name, "Socket_1": fallback})
+
+
+class FallbackVector(AssetGeometryGroup):
+    """Fallback Vector"""
+
+    _name = "Fallback Vector"
+    _asset_name = "Fallback Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        name: StringSocket
+        """Name"""
+        fallback: VectorSocket
+        """Fallback"""
+
+    class _Outputs(SocketAccessor):
+        output: VectorSocket
+        """Output"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        name: InputString = "",
+        fallback: InputVector = None,
+    ):
+        super().__init__(**{"Socket_2": name, "Socket_1": fallback})
 
 
 class FieldRemap(AssetGeometryGroup):
@@ -3910,6 +4170,37 @@ class FractionateFloat(AssetGeometryGroup):
         value: InputFloat = 0.0,
     ):
         super().__init__(**{"Socket_4": menu, "Socket_3": value})
+
+
+class GeoemtryToPlanar(AssetGeometryGroup):
+    """Geoemtry to Planar"""
+
+    _name = "Geoemtry to Planar"
+    _asset_name = "Geoemtry to Planar"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        transform: MatrixSocket
+        """Transform"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+    ):
+        super().__init__(**{"Socket_0": geometry})
 
 
 class GeometryFieldRemap(AssetGeometryGroup):
@@ -4282,6 +4573,114 @@ class IndexMixColor(AssetGeometryGroup):
         super().__init__(**{"Socket_2": color, "Socket_3": index})
 
 
+class IndexMixFloat(AssetGeometryGroup):
+    """Index Mix Float"""
+
+    _name = "Index Mix Float"
+    _asset_name = "Index Mix Float"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        value: FloatSocket
+        """Value"""
+        index: FloatSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        value: FloatSocket
+        """Value"""
+        from_: IntegerSocket
+        """From"""
+        to: IntegerSocket
+        """To"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        value: InputFloat = 0.0,
+        index: InputFloat = 0.0,
+    ):
+        super().__init__(**{"Socket_2": value, "Socket_3": index})
+
+
+class IndexMixRotation(AssetGeometryGroup):
+    """Index Mix Rotation"""
+
+    _name = "Index Mix Rotation"
+    _asset_name = "Index Mix Rotation"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+        index: FloatSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+        from_: IntegerSocket
+        """From"""
+        to: IntegerSocket
+        """To"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        rotation: InputRotation = None,
+        index: InputFloat = 0.0,
+    ):
+        super().__init__(**{"Socket_2": rotation, "Socket_3": index})
+
+
+class IndexMixVector(AssetGeometryGroup):
+    """Index Mix Vector"""
+
+    _name = "Index Mix Vector"
+    _asset_name = "Index Mix Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        value: VectorSocket
+        """Value"""
+        index: FloatSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        value: VectorSocket
+        """Value"""
+        from_: IntegerSocket
+        """From"""
+        to: IntegerSocket
+        """To"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        value: InputVector = None,
+        index: InputFloat = 0.0,
+    ):
+        super().__init__(**{"Socket_2": value, "Socket_3": index})
+
+
 class IntegerDistance(AssetGeometryGroup):
     """Integer Distance"""
 
@@ -4487,10 +4886,10 @@ class IsEven(AssetGeometryGroup):
         """Value"""
 
     class _Outputs(SocketAccessor):
-        odd: BooleanSocket
-        """Odd"""
         even: BooleanSocket
         """Even"""
+        odd: BooleanSocket
+        """Odd"""
 
     if TYPE_CHECKING:
 
@@ -5725,6 +6124,120 @@ class OffsetVector(AssetGeometryGroup):
         super().__init__(**{"Socket_0": vector, "Socket_2": index, "Socket_3": offset})
 
 
+class OxDNANormal(AssetGeometryGroup):
+    """oxDNA Normal"""
+
+    _name = "oxDNA Normal"
+    _asset_name = "oxDNA Normal"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        base_normal: VectorSocket
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": index})
+
+
+class OxDNAOffset(AssetGeometryGroup):
+    """oxDNA Offset"""
+
+    _name = "oxDNA Offset"
+    _asset_name = "oxDNA Offset"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        offset: VectorSocket
+        """Offset"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": index})
+
+
+class OxDNARotation(AssetGeometryGroup):
+    """oxDNA Rotation"""
+
+    _name = "oxDNA Rotation"
+    _asset_name = "oxDNA Rotation"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": index})
+
+
+class OxDNAVector(AssetGeometryGroup):
+    """oxDNA Vector"""
+
+    _name = "oxDNA Vector"
+    _asset_name = "oxDNA Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        base_vector: VectorSocket
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_1": index})
+
+
 class PeptideChi(AssetGeometryGroup):
     """Peptide Chi"""
 
@@ -6183,6 +6696,8 @@ class PrimitiveGimbal(AssetGeometryGroup):
         """Z"""
         material: MaterialSocket
         """Material"""
+        height: FloatSocket
+        """Height"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -6202,6 +6717,7 @@ class PrimitiveGimbal(AssetGeometryGroup):
         y: InputColor = None,
         z: InputColor = None,
         material: InputMaterial = None,
+        height: InputFloat = 1.0,
     ):
         super().__init__(
             **{
@@ -6210,6 +6726,7 @@ class PrimitiveGimbal(AssetGeometryGroup):
                 "Socket_3": y,
                 "Socket_4": z,
                 "Socket_5": material,
+                "Socket_6": height,
             }
         )
 
@@ -6499,6 +7016,104 @@ class RotationFromZYZ(AssetGeometryGroup):
         super().__init__(**{"Socket_1": phi, "Socket_2": theta, "Socket_3": psi})
 
 
+class SampleMixFloat(AssetGeometryGroup):
+    """Sample a float value from two different geometries and mix from A to B"""
+
+    _name = "Sample Mix Float"
+    _asset_name = "Sample Mix Float"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        a: GeometrySocket
+        """A"""
+        b: GeometrySocket
+        """B"""
+        value: FloatSocket
+        """Value"""
+        factor: FloatSocket
+        """Factor"""
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        value: FloatSocket
+        """Value"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        a: InputGeometry = None,
+        b: InputGeometry = None,
+        value: InputFloat = 0.0,
+        factor: InputFloat = 0.5,
+        index: InputInteger = 0,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": a,
+                "Socket_4": b,
+                "Socket_6": value,
+                "Socket_5": factor,
+                "Socket_9": index,
+            }
+        )
+
+
+class SampleMixVector(AssetGeometryGroup):
+    """Sample Mix Vector"""
+
+    _name = "Sample Mix Vector"
+    _asset_name = "Sample Mix Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        a: GeometrySocket
+        """A"""
+        b: GeometrySocket
+        """B"""
+        position: VectorSocket
+        """Position"""
+        factor: FloatSocket
+        """Factor"""
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        vector: VectorSocket
+        """Vector"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        a: InputGeometry = None,
+        b: InputGeometry = None,
+        position: InputVector = None,
+        factor: InputFloat = 0.5,
+        index: InputInteger = 0,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": a,
+                "Socket_4": b,
+                "Socket_6": position,
+                "Socket_5": factor,
+                "Socket_9": index,
+            }
+        )
+
+
 class SampleMixedColor(AssetGeometryGroup):
     """Sample Mixed Color"""
 
@@ -6534,6 +7149,80 @@ class SampleMixedColor(AssetGeometryGroup):
         super().__init__(**{"Socket_1": geometry, "Socket_2": color, "Socket_3": index})
 
 
+class SampleMixedRotation(AssetGeometryGroup):
+    """Sample Mixed Rotation"""
+
+    _name = "Sample Mixed Rotation"
+    _asset_name = "Sample Mixed Rotation"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        rotation: RotationSocket
+        """Rotation"""
+        index: FloatSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        rotation: InputRotation = None,
+        index: InputFloat = 0.0,
+    ):
+        super().__init__(
+            **{"Socket_1": geometry, "Socket_2": rotation, "Socket_3": index}
+        )
+
+
+class SampleMixedVector(AssetGeometryGroup):
+    """Sample Mixed Vector"""
+
+    _name = "Sample Mixed Vector"
+    _asset_name = "Sample Mixed Vector"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        vector: VectorSocket
+        """Vector"""
+        index: FloatSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        vector: VectorSocket
+        """Vector"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        vector: InputVector = None,
+        index: InputFloat = 0.0,
+    ):
+        super().__init__(
+            **{"Socket_1": geometry, "Socket_2": vector, "Socket_3": index}
+        )
+
+
 class SampleNearestAtoms(AssetGeometryGroup):
     """Sample Nearest Atoms"""
 
@@ -6566,6 +7255,43 @@ class SampleNearestAtoms(AssetGeometryGroup):
         atoms: InputGeometry = None,
     ):
         super().__init__(**{"Input_2": atoms})
+
+
+class SamplePosition(AssetGeometryGroup):
+    """A convenience wrapper around the `Sample Index` and `Position` nodes"""
+
+    _name = "Sample Position"
+    _asset_name = "Sample Position"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        position: VectorSocket
+        """Position"""
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        position: VectorSocket
+        """Position"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        position: InputVector = None,
+        index: InputInteger = 0,
+    ):
+        super().__init__(
+            **{"Socket_1": geometry, "Socket_4": position, "Socket_3": index}
+        )
 
 
 class SecondaryStructure(AssetGeometryGroup):
@@ -9591,6 +10317,7 @@ class _3IndexAngle(AssetGeometryGroup):
 __all__ = (
     "AccumulateAxisRotation",
     "AngstromToWorld",
+    "AnimateAction",
     "AnimateDihedrals",
     "AnimateFrames",
     "AnimatePeptideToCurve",
@@ -9645,7 +10372,6 @@ __all__ = (
     "ColorPLDDT",
     "ColorRainbow",
     "ColorResName",
-    "ColorResNameNucleic",
     "ColorSecStruct",
     "ColorSegment",
     "ColorToOKLab",
@@ -9672,13 +10398,22 @@ __all__ = (
     "EntityID",
     "EvaluateOnAtoms",
     "EvaluateOnInstances",
+    "EvaluateOrderedBundles",
     "EvaluatePerGroup",
+    "EvluateWhilePlanar",
     "ExpandBoolean",
+    "FallbackBoolean",
     "FallbackColor",
+    "FallbackFloat",
     "FallbackGeometry",
+    "FallbackInteger",
+    "FallbackMatrix",
+    "FallbackRotation",
+    "FallbackVector",
     "FieldRemap",
     "FindBondedAtom",
     "FractionateFloat",
+    "GeoemtryToPlanar",
     "GeometryFieldRemap",
     "GetGeometryAtoms",
     "GroupInfo",
@@ -9689,6 +10424,9 @@ __all__ = (
     "GroupPickVector",
     "IndexDistance",
     "IndexMixColor",
+    "IndexMixFloat",
+    "IndexMixRotation",
+    "IndexMixVector",
     "IntegerDistance",
     "IntegerRun",
     "IsAlphaCarbon",
@@ -9730,6 +10468,10 @@ __all__ = (
     "OffsetPointAlongCurve",
     "OffsetRotation",
     "OffsetVector",
+    "OxDNANormal",
+    "OxDNAOffset",
+    "OxDNARotation",
+    "OxDNAVector",
     "PeptideChi",
     "PeptideDihedral",
     "PeriodicArray",
@@ -9748,8 +10490,13 @@ __all__ = (
     "ResidueName",
     "ResidueParameter",
     "RotationFromZYZ",
+    "SampleMixFloat",
+    "SampleMixVector",
     "SampleMixedColor",
+    "SampleMixedRotation",
+    "SampleMixedVector",
     "SampleNearestAtoms",
+    "SamplePosition",
     "SecondaryStructure",
     "SelectAtomicNumber",
     "SelectAttribute",
