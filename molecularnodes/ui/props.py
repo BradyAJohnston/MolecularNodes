@@ -218,36 +218,9 @@ class DSSPProperties(bpy.types.PropertyGroup):
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
-class MolecularNodesFetchProperties(bpy.types.PropertyGroup):
-    code: StringProperty(  # type: ignore
-        name="Code",
-        description="Code to fetch from the database",
-        default="",
-    )
-    format: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        items=(
-            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
-            ("cif", ".cif", "The new standard of .cif / .mmcif"),
-            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
-        ),
-    )
-    database: EnumProperty(  # type: ignore
-        name="Database",
-        description="Database to fetch from",
-        items=(
-            ("wwpdb", "wwPDB", "Worldwide Protein Data Bank"),
-            ("alphafold", "AlphaFold", "AlphaFold Protein Structure Database"),
-        ),
-        default="wwpdb",
-    )
-
-
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
     entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
-    fetch: PointerProperty(type=MolecularNodesFetchProperties)  # type: ignore
     entities_active_index: IntProperty(  # type: ignore
         name="Active entity index",
         default=-1,
@@ -260,12 +233,6 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         options={"TEXTEDIT_UPDATE"},
         subtype="FILE_PATH",
         maxlen=0,
-    )
-
-    import_code_alphafold: StringProperty(  # type: ignore
-        name="UniProt ID",
-        description="The UniProt ID to use for downloading from the AlphaFold databse",
-        options={"TEXTEDIT_UPDATE"},
     )
 
     is_updating: BoolProperty(  # type: ignore
@@ -653,7 +620,6 @@ CLASSES = [
     EntityProperties,
     DSSPProperties,
     MolecularNodesObjectProperties,
-    MolecularNodesFetchProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly
     MN_UL_TrajectorySelectionListUI,
