@@ -31,6 +31,7 @@ from ..nodes.geometry import (
 from ..nodes.material import add_all_materials
 from ..scene.compositor import setup_compositor
 from ..session import get_session
+from .pref import addon_preferences
 from .style import STYLE_ITEMS
 
 
@@ -111,7 +112,6 @@ class Import_Molecule(bpy.types.Operator):
         col.prop(self, "style")
         col.enabled = self.node_setup
         # row = layout.row()
-        layout.prop(self, "centre")
         layout.prop(self, "assembly")
 
         return layout
@@ -232,6 +232,27 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
             ),
         ),
     )
+
+    def draw(self, context):
+        layout = self.layout
+        assert layout
+        layout.prop_tabs_enum(self, "database")
+        row = layout.row().split(factor=0.7)
+        row.prop(self, "code")
+        # file format only applies to wwPDB downloads; other databases pick their own
+        if self.database == "wwpdb":
+            row.prop(self, "file_format", text="")
+        row = layout.row()
+        row.prop(self, "node_setup", text="")
+        col = row.column()
+        col.prop(self, "style")
+        col.enabled = self.node_setup
+        layout.prop(self, "assembly")
+
+    def invoke(self, context, event):
+        prefs = addon_preferences()
+        self.cache_dir = str(prefs.cache_dir) if prefs is not None else bpy.app.tempdir
+        return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
         try:

@@ -7,51 +7,39 @@ from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.geometry import get_final_style_nodes
 from ..session import get_session
-from .pref import addon_preferences
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
 
 
-def panel_wwpdb(layout, scene):
-    layout.label(text="Download from PDB", icon="IMPORT")
-    layout.separator()
+class MN_MT_Add(bpy.types.Menu):
+    bl_idname = "MN_MT_Add"
+    bl_label = "Molecular Nodes"
 
+    def draw(self, context: bpy.types.Context) -> None:
+        layout = self.layout
+        assert layout
+        layout = check_online_access_for_ui(layout)
+        # the Add menu defaults to EXEC_REGION_WIN, which would run the operator
+        # directly; force INVOKE so the operator's popup dialog is shown instead
+        layout.operator_context = "INVOKE_DEFAULT"
+        op = layout.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
+        op.database = "wwpdb"
+        op = layout.operator(
+            "mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT"
+        )
+        op.database = "alphafold"
+
+
+def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
+    layout = self.layout
+    assert layout
+    layout.menu("MN_MT_Add")
+
+
+def panel_fetch(layout, scene):
+    layout.separator()
     layout = check_online_access_for_ui(layout)
-    row = layout.row()
-    row.prop_tabs_enum(scene.mn.fetch, "database")
-    row_import = layout.row().split(factor=0.5)
-    row_import.prop(scene.mn.fetch, "code")
-    row = row_import.split(factor=0.3)
-    row.prop(scene.mn.fetch, "format", text="")
-    op = row.operator("mn.import_fetch")
-
-    op.code = scene.mn.fetch.code
-    op.database = "wwpdb"
-    op.file_format = scene.mn.fetch.format
-    op.assembly = scene.mn.import_build_assembly
-    op.style = scene.mn.import_style
-    prefs = addon_preferences()
-    if prefs is not None:
-        op.cache_dir = str(prefs.cache_dir)  # type: ignore
-    else:
-        op.cache_dir = str(bpy.app.tempdir)
-    layout.separator(factor=0.4)
-
-    layout.separator()
-
-    layout.label(text="Options", icon="MODIFIER")
-    options = layout.column(align=True)
-
-    row = options.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-
-    options.separator()
-
-    grid = options.grid_flow()
-    grid.prop(scene.mn, "import_build_assembly")
+    layout.operator("mn.import_fetch", text="Fetch Structure", icon="IMPORT")
 
 
 def panel_local(layout, scene):
@@ -184,7 +172,7 @@ def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
 
 
 chosen_panel = {
-    "pdb": panel_wwpdb,
+    "pdb": panel_fetch,
     "local": panel_local,
     "star": panel_starfile,
     "md": panel_trajectory,
@@ -1169,6 +1157,7 @@ class MN_PT_Compositor(bpy.types.Panel):
 
 
 CLASSES = [
+    MN_MT_Add,
     MN_PT_Scene,
     MN_UL_EntitiesList,
     MN_PT_Entities,

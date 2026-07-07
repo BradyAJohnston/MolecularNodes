@@ -65,7 +65,7 @@ def register():
             print(e)
             pass
     bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
-    bpy.types.VIEW3D_MT_add.prepend(panel.panel_wwpdb)
+    bpy.types.VIEW3D_MT_add.prepend(panel.add_menu_options)
 
     save_post.append(session._pickle)
     load_post.append(session._load)
@@ -112,6 +112,7 @@ def unregister():
             pass
 
     bpy.types.VIEW3D_MT_object_context_menu.remove(panel.pt_object_context)
+    bpy.types.VIEW3D_MT_add.remove(panel.add_menu_options)
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
