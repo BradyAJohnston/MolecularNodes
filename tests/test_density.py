@@ -76,8 +76,7 @@ def test_density_multiple_load():
 
 
 def test_density_naming_op(density_file):
-    bpy.context.scene.mn.import_density = str(density_file)
-    bpy.ops.mn.import_density()
+    bpy.ops.mn.import_density(filepath=str(density_file))
     _object = bpy.data.objects[density_file.name]
 
 
@@ -88,12 +87,13 @@ def test_density_operator(
     snapshot_custom: NumpySnapshotExtension, density_file, invert, node_setup, center
 ):
     scene = bpy.context.scene
-    scene.mn.import_density = str(density_file)
-    scene.mn.import_density_invert = invert
-    scene.mn.import_node_setup = node_setup
-    scene.mn.import_density_center = center
     with ObjectTracker() as o:
-        bpy.ops.mn.import_density()
+        bpy.ops.mn.import_density(
+            filepath=str(density_file),
+            invert=invert,
+            setup_nodes=node_setup,
+            center=center,
+        )
         density: mn.entities.Density = scene.MNSession.match(o.latest())
 
     obj = mn.blender.mesh.evaluate_using_mesh(density.object)

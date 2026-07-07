@@ -13,7 +13,6 @@ from ..blender.utils import set_object_visibility
 from ..entities.base import EntityType
 from ..handlers import _update_entities
 from ..session import get_entity
-from .style import STYLE_ITEMS
 
 uuid_property = StringProperty(
     name="UUID",
@@ -227,113 +226,10 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         update=_entities_active_index_callback,
     )  # type: ignore
 
-    import_local_path: StringProperty(  # type: ignore
-        name="File",
-        description="File path of the structure to open",
-        options={"TEXTEDIT_UPDATE"},
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
         default=False,
-    )
-
-    import_node_setup: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        default=True,
-        description="Create and set up a Geometry Nodes tree on import",
-    )
-
-    import_build_assembly: BoolProperty(  # type: ignore
-        name="Build Assembly",
-        description="Add a node to build the biological assembly on import",
-        default=False,
-    )
-
-    import_oxdna_topology: StringProperty(  # type: ignore
-        name="Toplogy",
-        description="File path for the topology to import (.top)",
-        subtype="FILE_PATH",
-    )
-    import_oxdna_trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory to import (.oxdna / .dat)",
-        subtype="FILE_PATH",
-    )
-    import_oxdna_name: StringProperty(  # type: ignore
-        name="Name", description="Name of the created object.", default="NewOrigami"
-    )
-    import_style: EnumProperty(  # type: ignore
-        name="Style",
-        description="Default style for importing",
-        items=STYLE_ITEMS,
-        default="spheres",
-    )
-    import_md_topology: StringProperty(  # type: ignore
-        name="Topology",
-        description="File path for the toplogy file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_md_trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_md_name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name of the molecule on import",
-        default="NewTrajectory",
-        maxlen=0,
-    )
-    import_density_invert: BoolProperty(  # type: ignore
-        name="Invert Data",
-        description="Invert the values in the map. Low becomes high, high becomes low.",
-        default=False,
-    )
-    import_density_center: BoolProperty(  # type: ignore
-        name="Center Density",
-        description="Translate the density so that the center of the box is at the origin.",
-        default=False,
-    )
-    import_density_overwrite: BoolProperty(  # type: ignore
-        name="Overwrite Intermediate File",
-        description="Overwrite generated intermediate .vdb file.",
-        default=False,
-    )
-    import_density: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the map file.",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-
-    import_density_style: EnumProperty(  # type: ignore
-        name="Style",
-        items=(
-            (
-                "density_surface",
-                "Surface",
-                "A mesh surface based on the specified threshold",
-                0,
-            ),
-            (
-                "density_iso_surface",
-                "ISO Surface",
-                "A mesh surface based on the specified iso value",
-                1,
-            ),
-            (
-                "density_wire",
-                "Wire",
-                "A wire mesh surface based on the specified threshold",
-                2,
-            ),
-        ),
     )
 
     panel_selection: bpy.props.EnumProperty(  # type: ignore
@@ -350,30 +246,6 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         ),
     )
 
-    panel_import_type: bpy.props.EnumProperty(  # type: ignore
-        name="Method",
-        items=(
-            ("pdb", "Fetch", "Fetch structures from the wwPDB or AlphaFold databases"),
-            ("local", "Local", "Open a local file"),
-            ("md", "MD", "Import a molecular dynamics trajectory"),
-            ("density", "Density", "Import an EM Density Map"),
-            ("star", "Starfile", "Import a .starfile mapback file"),
-            ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
-            ("dna", "oxDNA", "Import an oxDNA file"),
-        ),
-    )
-    import_star_file_path: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the `.star` file to import.",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_cell_pack_path: bpy.props.StringProperty(  # type: ignore
-        name="File",
-        description="File to import (.cif, .bcif)",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
 
 
 def _update_annotations_visibility(self, context):
