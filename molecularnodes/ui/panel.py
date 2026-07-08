@@ -57,12 +57,20 @@ def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
     layout.menu("MN_MT_Add")
 
 
-def panel_import(layout, context):
-    col = layout.column(align=True)
-    col.operator("mn.import_fetch", text="Import Molecule", icon="IMPORT")
-    col.operator("mn.import_ensemble", text="Import Ensemble", icon="IMPORT")
-    col.operator("mn.import_trajectory", text="Import Trajectory", icon="IMPORT")
-    col.operator("mn.import_density", text="Import Density", icon="IMPORT")
+class MN_MT_Import(bpy.types.Menu):
+    bl_idname = "MN_MT_Import"
+    bl_label = "Import"
+
+    def draw(self, context: bpy.types.Context) -> None:
+        layout = self.layout
+        assert layout
+        # force INVOKE so the operators' popup dialogs are shown instead of
+        # being executed directly
+        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator("mn.import_fetch", text="Molecule", icon="IMPORT")
+        layout.operator("mn.import_ensemble", text="Ensemble", icon="IMPORT")
+        layout.operator("mn.import_trajectory", text="Trajectory", icon="IMPORT")
+        layout.operator("mn.import_density", text="Density", icon="IMPORT")
 
 
 def pt_object_context(self, context):
@@ -244,43 +252,6 @@ def panel_object(layout, context):
         return None
 
 
-def item_ui(layout, item):
-    row = layout.row()
-    row.label(text=item.name)
-    col = row.column()
-    op = col.operator("mn.session_create_object")
-    op.uuid = item.uuid
-    col.enabled = item.object is None
-
-    op = row.operator("mn.session_remove_item", text="", icon="CANCEL")
-    op.uuid = item.uuid
-
-    if item.object is not None:
-        row = layout.row()
-        row.label(text=f"Object: {item.object.name}", icon="OUTLINER_OB_MESH")
-
-
-def panel_session(layout, context):
-    session = get_session(context)
-    row = layout.row()
-    row.label(text="Loaded items in the session")
-
-    layout.label(text="Molecules")
-    box = layout.box()
-    for mol in session.molecules.values():
-        item_ui(box, mol)
-
-    layout.label(text="Universes")
-    box = layout.box()
-    for uni in session.trajectories.values():
-        item_ui(box, uni)
-
-    layout.label(text="Ensembles")
-    box = layout.box()
-    for ens in session.ensembles.values():
-        item_ui(box, ens)
-
-
 def panel_scene(layout, context):
     scene = context.scene
 
@@ -333,22 +304,27 @@ class MN_PT_Scene(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
-        row = layout.row()
 
-        row = layout.row(align=True)
+        # import operators live in a single drop-down menu at the top
+        layout.menu("MN_MT_Import", text="Import", icon="IMPORT")
 
-        for p in ["import", "object", "session"]:
-            row.prop_enum(scene.mn, "panel_selection", p)
+        # display the information for the selected object
+        panel_object(layout, context)
 
-        # the possible panel functions to choose between
-        which_panel = {
-            "import": panel_import,
-            "object": panel_object,
-            "session": panel_session,
-        }
-        # call the required panel function with the layout and context
-        which_panel[scene.mn.panel_selection](layout, context)
+
+class MN_PT_Object(bpy.types.Panel):
+    bl_label = "Molecular Nodes"
+    bl_idname = "MN_PT_object"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "object"
+    bl_order = 0
+    bl_options = {"HEADER_LAYOUT_EXPAND"}
+    bl_ui_units_x = 0
+
+    def draw(self, context):
+        # display the information for the selected object
+        panel_object(self.layout, context)
 
 
 class MN_UL_EntitiesList(bpy.types.UIList):
@@ -1032,7 +1008,9 @@ class MN_PT_Compositor(bpy.types.Panel):
 
 CLASSES = [
     MN_MT_Add,
+    MN_MT_Import,
     MN_PT_Scene,
+    MN_PT_Object,
     MN_UL_EntitiesList,
     MN_PT_Entities,
     MN_PT_trajectory,
