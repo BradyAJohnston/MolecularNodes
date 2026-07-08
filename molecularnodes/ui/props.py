@@ -232,20 +232,6 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         default=False,
     )
 
-    panel_selection: bpy.props.EnumProperty(  # type: ignore
-        name="Panel Selection",
-        items=(
-            ("import", "Import", "Import macromolecules", 0),
-            ("object", "Object", "Adjust settings affecting the selected object", 1),
-            (
-                "session",
-                "Session",
-                "Interacting with the Molecular Nodes session tracking all of the objects",
-                2,
-            ),
-        ),
-    )
-
 
 def _update_annotations_visibility(self, context):
     entity = context.scene.MNSession.get(self.id_data.uuid)
