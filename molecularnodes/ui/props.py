@@ -421,6 +421,7 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
             ("star", "Starfile", "Import a .starfile mapback file"),
             ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
             ("dna", "oxDNA", "Import an oxDNA file"),
+            ("cas", "CAS", "Import from the NIH CAS Database"),
         ),
     )
     import_star_file_path: StringProperty(  # type: ignore

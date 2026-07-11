@@ -255,6 +255,10 @@ def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
     col.prop(scene.mn, "import_oxdna_trajectory")
 
 
+def panel_cas(layout, scene):
+    pass
+
+
 chosen_panel = {
     "pdb": panel_wwpdb,
     "local": panel_local,
@@ -264,6 +268,7 @@ chosen_panel = {
     "density": panel_density,
     "cellpack": panel_cellpack,
     "dna": panel_oxdna,
+    "cas": panel_cas,
 }
 
 
