@@ -823,6 +823,101 @@ class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
         return {"FINISHED"}
 
 
+class MN_OT_Import_CAS(bpy.types.Operator):
+    """
+    Operator for importing simple molecules from a CAS code database.
+    """
+
+    bl_idname = "mn.import_cas"
+    bl_label = "Import CAS"
+    bl_description = "Import simple molecule from CAS code database"
+    bl_options = {"REGISTER", "UNDO"}
+
+    code: StringProperty(  # type: ignore
+        name="CAS",
+        description="The max 12-character CAS code to download",
+        options={"TEXTEDIT_UPDATE"},
+    )
+
+    node_setup: BoolProperty(  # type: ignore
+        name="Setup Nodes",
+        default=True,
+        description="Create and set up a Geometry Nodes tree on import",
+    )
+
+    style: EnumProperty(  # type: ignore
+        name="Style",
+        description="Default style for importing",
+        items=STYLE_ITEMS,
+        default="spheres",
+    )
+
+    cache_dir: StringProperty(  # type: ignore
+        name="Cache Directory",
+        description="Where to store the structures downloaded from the Protein Data Bank",
+        default=str(CACHE_DIR),
+        subtype="DIR_PATH",
+    )
+
+    del_hydrogen: BoolProperty(  # type: ignore
+        name="Remove Hydrogens",
+        description="Remove the hydrogens from a structure on import",
+        default=False,
+    )
+
+    centre: BoolProperty(  # type: ignore
+        name="Centre",
+        description="Centre the structure on the world origin",
+        default=False,
+    )
+
+    database: StringProperty(  # type: ignore
+        name="CAS Database",
+        description="The NCI NIH CAS database",
+        default="NIH",
+    )
+
+    centre_type: EnumProperty(  # type: ignore
+        name="Method",
+        default="mass",
+        items=(
+            (
+                "mass",
+                "Mass",
+                "Adjust the structure's centre of mass to be at the world origin",
+            ),
+            (
+                "centroid",
+                "Centroid",
+                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
+            ),
+        ),
+    )
+
+    def execute(self, context):
+        mol = (
+            entities.Molecule.cas_fetch(
+                code=self.code,
+                cache=self.cache_dir,
+                database=self.database,
+            )
+            .add_style(
+                style=self.style if self.node_setup else None,  # type: ignore
+            )
+            .centre_molecule(self.centre_type if self.centre else None)
+        )
+
+        message = f"Downloaded {self.code} as {mol.name}"
+        try:
+            bpy.context.view_layer.objects.active = mol.object  # type: ignore
+        except RuntimeError:
+            message += " - MolecularNodes collection is disabled"
+
+        self.report({"INFO"}, message=message)
+
+        return {"FINISHED"}
+
+
 class MN_OT_Add_Style(Operator):
     """
     Operator to add a new style to an entity
@@ -1171,6 +1266,7 @@ CLASSES = [
     MN_OT_Node_Swap,
     MN_OT_Node_Swap_Style_Menu,
     MN_OT_Import_Fetch,
+    MN_OT_Import_CAS,
     MN_OT_Import_OxDNA_Trajectory,
     MN_OT_Import_Trajectory,
     MN_OT_Reload_Trajectory,

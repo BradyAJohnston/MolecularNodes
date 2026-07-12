@@ -113,6 +113,17 @@ class StructureDownloader:
                     f"Error downloading from AlphaFold database: {str(e)}"
                 )
 
+        """
+        TODO:
+        Somewhere in here we need to add a CAS checker
+
+        Trying to reuse what we have. Download function already does what we need it to do...I think...
+        it just needs to perform the correct actions for the CAS specific pipeline.
+
+        The preceeding FETCH call that leads to download, probably has to be adjusted or cloned
+        to specifically handle CAS codes.
+        """
+
         _is_binary = format in ["bcif"]
         filename = f"{code}.{format}"
 

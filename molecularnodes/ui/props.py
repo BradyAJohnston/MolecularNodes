@@ -264,6 +264,13 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         maxlen=4,
     )
 
+    import_code_cas: StringProperty(  # type: ignore
+        name="CAS",
+        description="The CAS code to download and import",
+        options={"TEXTEDIT_UPDATE"},
+        maxlen=12,
+    )
+
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
