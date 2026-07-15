@@ -1,11 +1,9 @@
-import itertools
 import math
-from typing import Iterable, List, Optional
+from typing import Iterable
 import bpy
 import databpy
 import numpy as np
 from databpy.nodes import (
-    NodeGroupCreationError,
     append_from_blend,
 )
 from mathutils import Vector

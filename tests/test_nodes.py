@@ -7,7 +7,6 @@ from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from molecularnodes.nodes.assets import (
-    PeriodicArray,
     TopologyBreakBonds,
     TopologyFindBonds,
 )
