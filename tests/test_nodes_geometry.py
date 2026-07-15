@@ -1,7 +1,6 @@
 import numpy as np
 from nodebpy.nodes.geometry import CurveToMesh, SetHandleType, SetSplineType
 import molecularnodes as mn
-from molecularnodes.nodes import nodes
 from molecularnodes.nodes.assets import AtomsToCACurves
 
 

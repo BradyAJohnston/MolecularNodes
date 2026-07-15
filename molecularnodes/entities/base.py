@@ -2,7 +2,7 @@ from abc import ABCMeta
 from enum import Enum
 from typing import List, cast
 import bpy
-from bpy.types import GeometryNodeTree, NodesModifier
+from bpy.types import GeometryNodeTree
 from databpy import (
     BlenderObject,
 )
