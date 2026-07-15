@@ -3223,10 +3223,12 @@ class DNAFromCurve(AssetGeometryGroup):
         """Curves"""
         base_resolution: IntegerSocket
         """Base Resolution"""
-        menu: MenuSocket
+        socket_3: MenuSocket
         """Menu"""
         wind: FloatSocket
         """Wind"""
+        socket_5: MenuSocket
+        """Menu"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -3243,15 +3245,17 @@ class DNAFromCurve(AssetGeometryGroup):
         self,
         curves: InputGeometry = None,
         base_resolution: InputInteger = 0,
-        menu: InputMenu = "Static",
+        socket_3: InputMenu = "Static",
         wind: InputFloat = 1.0,
+        socket_5: InputMenu = "Instance",
     ):
         super().__init__(
             **{
                 "Socket_1": curves,
                 "Socket_2": base_resolution,
-                "Socket_3": menu,
+                "Socket_3": socket_3,
                 "Socket_4": wind,
+                "Socket_5": socket_5,
             }
         )
 
@@ -3774,6 +3778,8 @@ class EvluateWhilePlanar(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
         """Geometry"""
+        selection: BooleanSocket
+        """Selection"""
         closure: ClosureSocket
         """Closure"""
 
@@ -3791,9 +3797,12 @@ class EvluateWhilePlanar(AssetGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
+        selection: InputBoolean = True,
         closure: InputClosure = None,
     ):
-        super().__init__(**{"Socket_1": geometry, "Socket_0": closure})
+        super().__init__(
+            **{"Socket_1": geometry, "Socket_4": selection, "Socket_0": closure}
+        )
 
 
 class ExpandBoolean(AssetGeometryGroup):
@@ -4224,6 +4233,8 @@ class GeoemtryToPlanar(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
         """Geometry"""
+        selection: BooleanSocket
+        """Selection"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -4241,8 +4252,9 @@ class GeoemtryToPlanar(AssetGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
+        selection: InputBoolean = True,
     ):
-        super().__init__(**{"Socket_0": geometry})
+        super().__init__(**{"Socket_0": geometry, "Socket_5": selection})
 
 
 class GeometryFieldRemap(AssetGeometryGroup):
