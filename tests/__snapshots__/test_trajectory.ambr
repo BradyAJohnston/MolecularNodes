@@ -1,12 +1,12 @@
 # serializer version: 1
 # name: TestTrajectory.test_correct_periodic
-  [[1.5 1.1 1.0]
-   [1.4 1.1 1.0]
-   [1.4 1.1 1.0]
+  [[14.6 10.9  9.8]
+   [14.4 10.8  9.6]
+   [14.5 11.0  9.7]
    ...
-   [1.3 1.4 0.6]
-   [1.0 0.9 1.2]
-   [2.6 2.3 0.4]]
+   [13.2 14.4  5.8]
+   [ 9.9  9.4 12.1]
+   [25.6 22.7  3.5]]
 # ---
 # name: TestTrajectory.test_dssp
   AttributeArray(name='sec_struct', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(10273,), dtype=int32)
@@ -21,33 +21,33 @@
   array([3, 3, 3, ..., 0, 0, 0], dtype=int32)
 # ---
 # name: TestTrajectory.test_save_persistance
-  [[0.4 0.3 0.5]
-   [0.4 0.3 0.5]
-   [0.4 0.3 0.5]
+  [[ 3.9  2.8  4.9]
+   [ 3.8  2.7  4.9]
+   [ 3.8  2.8  4.9]
    ...
-   [1.3 0.3 0.6]
-   [1.3 0.4 0.6]
-   [1.3 0.4 0.6]]
+   [13.0  3.3  5.7]
+   [13.0  3.6  5.8]
+   [13.0  3.5  5.8]]
 # ---
 # name: TestTrajectory.test_trajectory_update
   AttributeArray(name='position', object='TestTrajectoryUpdate', mesh='TestTrajectoryUpdate', domain=POINT, type=FLOAT_VECTOR, shape=(10273, 3), dtype=float32)
-  array([[0.3918    , 0.28980002, 0.4846    ],
-         [0.3928    , 0.28290004, 0.49179998],
-         [0.38480002, 0.28730002, 0.4778    ],
+  array([[ 3.918    ,  2.8980005,  4.846    ],
+         [ 3.9280002,  2.8290002,  4.918    ],
+         [ 3.8480003,  2.8730001,  4.7780004],
          ...,
-         [1.3074    , 0.3377    , 0.5838    ],
-         [1.3069    , 0.36280003, 0.58320004],
-         [1.3123001 , 0.36460003, 0.5755    ]], dtype=float32)
+         [13.074    ,  3.377    ,  5.838001 ],
+         [13.069    ,  3.6280003,  5.8320003],
+         [13.123001 ,  3.6460004,  5.7550006]], dtype=float32)
 # ---
 # name: TestTrajectory.test_trajectory_update.1
   AttributeArray(name='position', object='TestTrajectoryUpdate', mesh='TestTrajectoryUpdate', domain=POINT, type=FLOAT_VECTOR, shape=(10273, 3), dtype=float32)
-  array([[0.3873    , 0.27580002, 0.49330002],
-         [0.3821    , 0.27069998, 0.4864    ],
-         [0.38300002, 0.2848    , 0.49490005],
+  array([[ 3.8730004,  2.7580001,  4.933    ],
+         [ 3.8209999,  2.707    ,  4.8640003],
+         [ 3.8300004,  2.848    ,  4.949001 ],
          ...,
-         [1.2967001 , 0.3315    , 0.56920004],
-         [1.299     , 0.3594    , 0.5756    ],
-         [1.3039    , 0.35300002, 0.5809    ]], dtype=float32)
+         [12.967002 ,  3.3150003,  5.692001 ],
+         [12.990001 ,  3.5940003,  5.756    ],
+         [13.0390005,  3.5300004,  5.8090005]], dtype=float32)
 # ---
 # name: test_martini[pent/TOPOL2.pdb]
   AttributeArray(name='.select_vert', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=BOOLEAN, shape=(11350,), dtype=bool)
@@ -83,13 +83,13 @@
 # ---
 # name: test_martini[pent/TOPOL2.pdb].16
   AttributeArray(name='position', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT_VECTOR, shape=(11350, 3), dtype=float32)
-  array([[1.6561999 , 1.3041    , 0.9823001 ],
-         [1.6645999 , 1.3149999 , 1.0121001 ],
-         [1.6619002 , 1.2694    , 0.9965    ],
+  array([[16.562    , 13.041    ,  9.823001 ],
+         [16.646    , 13.150001 , 10.121001 ],
+         [16.619001 , 12.694    ,  9.965    ],
          ...,
-         [2.0666    , 0.45930004, 1.8026    ],
-         [0.0522    , 0.10690001, 1.1598    ],
-         [1.3804001 , 1.7211999 , 1.2453    ]], dtype=float32)
+         [20.666    ,  4.5930004, 18.026001 ],
+         [ 0.522    ,  1.0690001, 11.598001 ],
+         [13.804001 , 17.212    , 12.453002 ]], dtype=float32)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].17
   AttributeArray(name='res_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
@@ -117,7 +117,7 @@
 # ---
 # name: test_martini[pent/TOPOL2.pdb].22
   AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
-  array([0.0192, 0.018 , 0.0192, ..., 0.0155, 0.0155, 0.0155], dtype=float32)
+  array([0.192, 0.18 , 0.192, ..., 0.155, 0.155, 0.155], dtype=float32)
 # ---
 # name: test_martini[pent/TOPOL2.pdb].3
   AttributeArray(name='atom_types', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
@@ -195,13 +195,13 @@
 # ---
 # name: test_martini[pent/prot_ion.tpr].18
   AttributeArray(name='position', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT_VECTOR, shape=(11350, 3), dtype=float32)
-  array([[1.6561999 , 1.3041    , 0.9823001 ],
-         [1.6645999 , 1.3149999 , 1.0121001 ],
-         [1.6619002 , 1.2694    , 0.9965    ],
+  array([[16.562    , 13.041    ,  9.823001 ],
+         [16.646    , 13.150001 , 10.121001 ],
+         [16.619001 , 12.694    ,  9.965    ],
          ...,
-         [2.0666    , 0.45930004, 1.8026    ],
-         [0.0522    , 0.10690001, 1.1598    ],
-         [1.3804001 , 1.7211999 , 1.2453    ]], dtype=float32)
+         [20.666    ,  4.5930004, 18.026001 ],
+         [ 0.522    ,  1.0690001, 11.598001 ],
+         [13.804001 , 17.212    , 12.453002 ]], dtype=float32)
 # ---
 # name: test_martini[pent/prot_ion.tpr].19
   AttributeArray(name='res_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
@@ -229,7 +229,7 @@
 # ---
 # name: test_martini[pent/prot_ion.tpr].24
   AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
-  array([0.0192, 0.018 , 0.0192, ..., 0.01  , 0.01  , 0.01  ], dtype=float32)
+  array([0.192, 0.18 , 0.192, ..., 0.1  , 0.1  , 0.1  ], dtype=float32)
 # ---
 # name: test_martini[pent/prot_ion.tpr].3
   AttributeArray(name='atom_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)

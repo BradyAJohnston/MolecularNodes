@@ -56,13 +56,13 @@
   )
 # ---
 # name: test_load_cellpack[bcif].11
-  array([[ 4.85001   ,  5.22001   ,  0.33998   ],
-         [ 4.9088597 ,  5.1272    ,  0.12058   ],
-         [ 4.90488   ,  5.12826   ,  0.13482   ],
+  array([[ 48.5001    ,  52.2001    ,   3.3998    ],
+         [ 49.0886    ,  51.272     ,   1.2057999 ],
+         [ 49.0488    ,  51.2826    ,   1.3482001 ],
          ...,
-         [11.73818   , -9.592943  ,  0.07578434],
-         [11.753367  , -9.576974  ,  0.07908607],
-         [11.715687  , -9.584151  ,  0.08706783]], dtype=float32)
+         [117.3818    , -95.92943   ,   0.75784343],
+         [117.533676  , -95.76974   ,   0.79086065],
+         [117.15686   , -95.84151   ,   0.8706783 ]], dtype=float32)
 # ---
 # name: test_load_cellpack[bcif].2
   AttributeArray(name='.select_vert', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=BOOLEAN, shape=(29808,), dtype=bool)
@@ -82,13 +82,13 @@
 # ---
 # name: test_load_cellpack[bcif].6
   AttributeArray(name='position', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=FLOAT_VECTOR, shape=(29808, 3), dtype=float32)
-  array([[ 10.2       ,  10.2       ,   0.        ],
-         [ 10.2       ,  10.2       ,   0.        ],
-         [ 10.2       ,  10.2       ,   0.        ],
+  array([[ 102.       ,  102.       ,    0.       ],
+         [ 102.       ,  102.       ,    0.       ],
+         [ 102.       ,  102.       ,    0.       ],
          ...,
-         [ 11.4733    , -10.0471    ,   0.3316    ],
-         [ 10.7361    ,  -9.3912    ,   0.33990002],
-         [ 10.448101  ,  -9.1335    ,   0.3397    ]], dtype=float32)
+         [ 114.732994 , -100.471    ,    3.316    ],
+         [ 107.361    ,  -93.912    ,    3.3990002],
+         [ 104.481    ,  -91.335    ,    3.397    ]], dtype=float32)
 # ---
 # name: test_load_cellpack[bcif].7
   AttributeArray(name='rotation', object='square1.bcif', mesh='square1.bcif', domain=POINT, type=QUATERNION, shape=(29808, 4), dtype=float32)
@@ -166,13 +166,13 @@
   )
 # ---
 # name: test_load_cellpack[cif].11
-  array([[ 4.85001   ,  5.22001   ,  0.33998   ],
-         [ 4.9088597 ,  5.1272    ,  0.12058   ],
-         [ 4.90488   ,  5.12826   ,  0.13482   ],
+  array([[ 48.5001    ,  52.2001    ,   3.3998    ],
+         [ 49.0886    ,  51.272     ,   1.2057999 ],
+         [ 49.0488    ,  51.2826    ,   1.3482001 ],
          ...,
-         [11.73818   , -9.592943  ,  0.07578434],
-         [11.753367  , -9.576974  ,  0.07908607],
-         [11.715687  , -9.584151  ,  0.08706783]], dtype=float32)
+         [117.3818    , -95.92943   ,   0.75784343],
+         [117.533676  , -95.76974   ,   0.79086065],
+         [117.15686   , -95.84151   ,   0.8706783 ]], dtype=float32)
 # ---
 # name: test_load_cellpack[cif].2
   AttributeArray(name='.select_vert', object='square1.cif', mesh='square1.cif', domain=POINT, type=BOOLEAN, shape=(29808,), dtype=bool)
@@ -192,13 +192,13 @@
 # ---
 # name: test_load_cellpack[cif].6
   AttributeArray(name='position', object='square1.cif', mesh='square1.cif', domain=POINT, type=FLOAT_VECTOR, shape=(29808, 3), dtype=float32)
-  array([[ 10.2       ,  10.2       ,   0.        ],
-         [ 10.2       ,  10.2       ,   0.        ],
-         [ 10.2       ,  10.2       ,   0.        ],
+  array([[ 102.       ,  102.       ,    0.       ],
+         [ 102.       ,  102.       ,    0.       ],
+         [ 102.       ,  102.       ,    0.       ],
          ...,
-         [ 11.4733    , -10.0471    ,   0.3316    ],
-         [ 10.7361    ,  -9.3912    ,   0.33990002],
-         [ 10.448101  ,  -9.1335    ,   0.3397    ]], dtype=float32)
+         [ 114.732994 , -100.471    ,    3.316    ],
+         [ 107.361    ,  -93.912    ,    3.3990002],
+         [ 104.481    ,  -91.335    ,    3.397    ]], dtype=float32)
 # ---
 # name: test_load_cellpack[cif].7
   AttributeArray(name='rotation', object='square1.cif', mesh='square1.cif', domain=POINT, type=QUATERNION, shape=(29808, 4), dtype=float32)
