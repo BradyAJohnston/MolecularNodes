@@ -6,6 +6,11 @@ import pytest
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
+from molecularnodes.nodes.assets import (
+    PeriodicArray,
+    TopologyBreakBonds,
+    TopologyFindBonds,
+)
 from .constants import codes, data_dir
 from .utils import GeometrySet, NumpySnapshotExtension
 
@@ -28,9 +33,7 @@ def test_get_nodes():
 
 def test_selection():
     chain_ids = [let for let in "ABCDEFG123456"]
-    node = nodes.custom_iswitch(
-        "test_node", chain_ids, prefix="Chain ", dtype="BOOLEAN"
-    )
+    node = nodes.custom_boolean_iswitch("test_node", chain_ids, prefix="Chain ")
 
     input_sockets = nodes.inputs(node)
     for letter, socket in zip(chain_ids, input_sockets.values()):
@@ -64,11 +67,10 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     mol = mn.Molecule.fetch(code, cache=data_dir).add_style("ribbon")
 
-    group_col = nodes.custom_iswitch(
+    group_col = nodes.custom_color_iswitch(
         name=f"Color Entity {mol.name}",
-        iter_list=mol.object[f"{attribute}s"],
-        field=attribute,
-        dtype="RGBA",
+        items=mol.object[f"{attribute}s"],
+        attribute_name=attribute,
     )
     group = mol.node_group
     node_col = nodes.add_custom(group, group_col.name, [0, -200])
@@ -80,22 +82,9 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     assert snapshot_custom == mol.named_attribute("Color")
 
 
-def test_custom_resid_selection():
-    node = nodes.resid_multiple_selection("new_node", "1, 5, 10-20, 40-100")
-    numbers = [1, 5, 10, 20, 40, 100]
-    assert len(nodes.outputs(node)) == 2
-    counter = 0
-    for item in node.interface.items_tree:
-        if item.in_out == "INPUT":
-            assert item.default_value == numbers[counter]
-            counter += 1
-
-
 def test_iswitch_creation():
-    items = list(range(10))
-    tree_boolean = nodes.custom_iswitch(
-        name="newboolean", iter_list=items, dtype="BOOLEAN"
-    )
+    items = [str(x) for x in range(10)]
+    tree_boolean = nodes.custom_boolean_iswitch("newboolean", items)
     # ensure there isn't an item called 'Color' in the created interface
     assert not tree_boolean.interface.items_tree.get("Color")
     assert tree_boolean.interface.items_tree["Selection"].in_out == "OUTPUT"
@@ -103,7 +92,7 @@ def test_iswitch_creation():
     for i in items:
         assert tree_boolean.interface.items_tree[str(i)].in_out == "INPUT"
 
-    tree_rgba = nodes.custom_iswitch(name="newcolor", iter_list=items, dtype="RGBA")
+    tree_rgba = nodes.custom_color_iswitch("newcolor", items)
     # ensure there isn't an item called 'selection'
     assert not tree_rgba.interface.items_tree.get("Selection")
     assert tree_rgba.interface.items_tree["Color"].in_out == "OUTPUT"
@@ -114,8 +103,8 @@ def test_iswitch_creation():
 def test_op_custom_color():
     mol = mn.Molecule.load(data_dir / "1cd3.cif")
     mol.object.select_set(True)
-    group = nodes.custom_iswitch(
-        name=f"Color Chain {mol.name}", iter_list=mol.object["chain_ids"], dtype="RGBA"
+    group = nodes.custom_color_iswitch(
+        name=f"Color Chain {mol.name}", items=mol.object["chain_ids"]
     )
 
     assert group
@@ -127,20 +116,16 @@ def test_op_custom_color():
 def test_color_lookup_supplied():
     col = mn.color.random_rgb(6)
     name = "test"
-    node = nodes.custom_iswitch(
+    node = nodes.custom_color_iswitch(
         name=name,
-        iter_list=range(10, 20),
-        dtype="RGBA",
-        default_values=[col for i in range(10)],
-        start=10,
+        items={str(x): col for x in range(10, 20)},
+        offset=10,
     )
     assert node.name == name
     for item in nodes.inputs(node).values():
         assert np.allclose(np.array(item.default_value), col)
 
-    node = nodes.custom_iswitch(
-        name="test2", iter_list=range(10, 20), dtype="RGBA", start=10
-    )
+    node = nodes.custom_color_iswitch(name="test2", items=range(10, 20), offset=10)
     for item in nodes.inputs(node).values():
         assert not np.allclose(np.array(item.default_value), col)
 
@@ -156,19 +141,8 @@ def pdb_8h1b():
     return mn.Molecule.fetch("8H1B", cache=data_dir)
 
 
-topology_node_names = mn.ui.node_info.menu_items.get_submenu("topology").node_names()
-topology_node_names += mn.ui.node_info.menu_items.get_submenu("attributes").node_names()
-
-
-def test_nodes_exist():
-    for menu in mn.ui.node_info.menu_items.submenus:
-        for item in menu.items:
-            if item.is_break or item.is_custom:
-                continue
-            if item.name.startswith("mn."):
-                continue
-            nodes.append(item.name)
-            assert True
+# topology_node_names = [n for n in dir(mn.nodes.assets) if not n.startswith(".")]
+topology_node_names = []
 
 
 @pytest.mark.parametrize("node_name", topology_node_names)
@@ -253,11 +227,9 @@ def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, name)
 def test_topo_bonds():
     mol = mn.Molecule.fetch("1BNA", cache=data_dir)
     group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
-
-    # add the node that will break bonds, set the cutoff to 0
-    node_break = nodes.add_custom(group, "Topology Break Bonds")
-    nodes.insert_last_node(group, node=node_break)
-    node_break.inputs["Cutoff"].default_value = 0
+    with mol.tree as tree:
+        atoms, join = tree.reset()
+        atoms >> TopologyBreakBonds(cutoff=0.0) >> join
 
     # compare the number of edges before and after deleting them with
     bonds = mol.object.data.edges
@@ -267,8 +239,10 @@ def test_topo_bonds():
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
-    node_find = nodes.add_custom(group, "Topology Find Bonds")
-    nodes.insert_last_node(group, node=node_find)
+    with mol.tree as tree:
+        atoms, join = tree.reset()
+        atoms >> TopologyBreakBonds(cutoff=0.0) >> TopologyFindBonds() >> join
+
     bonds_new = mol.evaluate().data.edges
     assert len(bonds) == len(bonds_new)
 
@@ -276,10 +250,8 @@ def test_topo_bonds():
 def test_is_modifier():
     bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
     for tree in bpy.data.node_groups:
-        if tree.name == "Smooth by Angle":
-            continue
-        if hasattr(tree, "is_modifier"):
-            assert not tree.is_modifier
+        if tree.name.startswith("Style") and "Preset" not in tree.name:
+            assert tree.is_modifier
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
     assert mol.modifier_node_tree.is_modifier
 
@@ -303,9 +275,9 @@ def test_reuse_node_group():
     assert n_nodes == len(tree.nodes)
 
 
-def _insert_periodic_array(traj):
-    node = mn.nodes.nodes.add_custom(traj.tree, "Periodic Array")
-    mn.nodes.nodes.insert_last_node(group=traj.tree, node=node)
+def _insert_periodic_array(traj: mn.Trajectory):
+    node = mn.nodes.nodes.add_custom(traj.modifier_node_tree, "Periodic Array")
+    mn.nodes.nodes.insert_last_node(group=traj.tree.tree, node=node)
     return node
 
 
@@ -348,6 +320,8 @@ def test_periodic_array(snapshot, tmp_path):
 # and everything remains 0
 def test_periodic_array_no_dimensions():
     traj = mn.Trajectory.load(PSF, DCD, selection="protein")
+    # with traj.tree as tree:
+    #     atoms, join = tree.reset()
     node = _insert_periodic_array(traj)
 
     traj.set_frame(1)

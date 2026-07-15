@@ -1,8 +1,8 @@
 from abc import ABCMeta
 from enum import Enum
-from typing import List
+from typing import List, cast
 import bpy
-from bpy.types import GeometryNodeTree
+from bpy.types import GeometryNodeTree, NodesModifier
 from databpy import (
     BlenderObject,
 )
@@ -86,14 +86,15 @@ class MolecularEntity(
     @property
     def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:
         mod: bpy.types.NodesModifier = self.object.modifiers.get("Molecular Nodes")
+
         if mod is None:
             mod = self.object.modifiers.new("Molecular Nodes", "NODES")
+
         if mod.node_group is None:
             mod.node_group = g.tree().tree
-            # raise ValueError(
-            #     f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
-            # )
-        return mod.node_group  # type: ignore
+
+        mod.node_group.is_modifier = True
+        return cast(GeometryNodeTree, mod.node_group)
 
     @property
     def styles(self) -> List[GeometryNodeInterFace]:
