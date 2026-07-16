@@ -574,7 +574,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             return
         # object visibility
         object = self._entity.object
-        if object.hide_get():
+        if not object.visible_get():
             return
         # check if object is in current scene
         if self._scene is None:
