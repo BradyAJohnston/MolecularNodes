@@ -614,7 +614,7 @@ class MN_UL_EntitiesList(bpy.types.UIList):
             col.prop(entity.object, "name", text="", emboss=False)
             # use the object viewport visibility to determine the icon
             # we do not have direct callbacks for raw object visibility changes
-            hide_icon = "HIDE_OFF" if not entity.object.hide_get() else "HIDE_ON"
+            hide_icon = "HIDE_OFF" if entity.object.visible_get() else "HIDE_ON"
             row.prop(
                 item,
                 "visible",
