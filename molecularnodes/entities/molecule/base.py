@@ -279,6 +279,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         style: STYLE_LITERALS = "spheres",
         selection: "str | None" = None,
         material: bpy.types.Material | None = None,
+        **kwargs,
     ) -> "Molecule":
         """
         Add a visual style to the molecule.
@@ -299,6 +300,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         material : bpy.types.Material | None, optional
             The material to apply to the styled atoms. Can be a Blender Material object,
             a string with a material name, or None to use default materials. Default is None.
+
+        **kwargs : optional
+            Additional keyword arguments to pass to the added style node.
 
         Returns
         -------
@@ -337,6 +341,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 >> STYLE_NODE_MAPPING[style](
                     selection=NamedAttribute(selection) if selection else None,
                     material=material,
+                    **kwargs,
                 )
                 >> tree.join
             )

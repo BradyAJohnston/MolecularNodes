@@ -11,10 +11,8 @@ from .utils import NumpySnapshotExtension
 
 
 @pytest.fixture
-def density_file():
-    file = data_dir / "emd_24805.map.gz"
-    vdb_file = data_dir / "emd_24805.vdb"
-    vdb_file.unlink(missing_ok=True)
+def density_file(isolated_density_file):
+    file = isolated_density_file(data_dir / "emd_24805.map.gz")
     # Make all densities are removed
     for o in bpy.data.objects:
         if o.mn.entity_type == "density":
@@ -65,8 +63,8 @@ def test_density_invert(density_file):
     assert pos[:, 2].max() > 2.0
 
 
-def test_density_multiple_load():
-    file = data_dir / "emd_24805.map.gz"
+def test_density_multiple_load(isolated_density_file):
+    file = isolated_density_file(data_dir / "emd_24805.map.gz")
     density1 = mn.entities.density.load(file)
     density2 = mn.entities.density.load(file)
 
@@ -101,10 +99,8 @@ def test_density_operator(
 
 
 @pytest.fixture
-def density_file_dx():
-    file = data_dir / "water.dx.gz"
-    vdb_file = data_dir / "water.vdb"
-    vdb_file.unlink(missing_ok=True)
+def density_file_dx(isolated_density_file):
+    file = isolated_density_file(data_dir / "water.dx.gz")
     # Make sure all densities are removed
     for o in bpy.data.objects:
         if o.mn.entity_type == "density":
@@ -120,17 +116,21 @@ def test_density_load_dx(density_file_dx):
 
 
 # this test fails without the fallback using mrcfile
-def test_fallback_reading():
-    mn.entities.density.load(data_dir / "62270-small_sg0.mrc")
+def test_fallback_reading(isolated_density_file):
+    mn.entities.density.load(isolated_density_file(data_dir / "62270-small_sg0.mrc"))
 
 
-def test_fallback_transforms():
+def test_fallback_transforms(isolated_density_file):
     def evaluated_obj(file):
         density = mn.entities.density.load(file, overwrite=True)
         return mn.blender.mesh.evaluate_using_mesh(density.object)
 
-    space_group_one = evaluated_obj(data_dir / "62270-small_sg1.mrc")
-    space_group_zero = evaluated_obj(data_dir / "62270-small_sg0.mrc")
+    space_group_one = evaluated_obj(
+        isolated_density_file(data_dir / "62270-small_sg1.mrc")
+    )
+    space_group_zero = evaluated_obj(
+        isolated_density_file(data_dir / "62270-small_sg0.mrc")
+    )
 
     pos_default = databpy.AttributeArray(space_group_one, "position")
     pos_chimerax = databpy.AttributeArray(space_group_zero, "position")

@@ -586,6 +586,7 @@ class Trajectory(MolecularEntity):
         style: STYLE_LITERALS = "spheres",
         selection: str | AtomGroup | None = None,
         material: bpy.types.Material | None = None,
+        **kwargs,
     ) -> "Trajectory":
         """
         Add a visual style to the trajectory.
@@ -610,6 +611,8 @@ class Trajectory(MolecularEntity):
             The material to apply to the styled atoms. Can be a Blender Material object,
             a string with a material name, or None to use default materials. Default is None.
 
+        **kwargs : optional
+            Additional keyword arguments to pass to the added style node.
 
         Returns
         -------
@@ -648,6 +651,7 @@ class Trajectory(MolecularEntity):
                     if attribute_name
                     else None,
                     material=material,
+                    **kwargs,
                 )
                 >> tree.join
             )
