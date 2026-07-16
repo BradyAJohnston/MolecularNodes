@@ -2,7 +2,7 @@ import itertools
 import numpy as np
 import pytest
 import molecularnodes as mn
-from molecularnodes.nodes.assets import StyleRibbon, StyleSpheres
+from molecularnodes.nodes.geometry import StyleRibbon, StyleSpheres
 from .constants import attributes, codes, data_dir
 
 formats = ["pdb", "cif", "bcif"]
@@ -30,18 +30,16 @@ def test_store_named_attribute(snapshot_custom):
 
 def test_uv_map(snapshot_custom):
     mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif")
-    with mol.tree as tree:
-        atoms, join = tree.reset()
-        atoms >> StyleRibbon(uv_map=True, quality=1) >> join
+    with mol.tree.reset() as tree:
+        tree.atoms >> StyleRibbon(uv_map=True, quality=1) >> tree.join
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[:1000]
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]
 
 
 def test_bond_attributes(snapshot_custom):
     mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
-    with mol.tree as tree:
-        atoms, join = tree.reset()
-        atoms >> StyleSpheres(geometry="Mesh") >> join
+    with mol.tree.reset() as tree:
+        tree.atoms >> StyleSpheres(geometry="Mesh") >> tree.join
 
     for attr in mol.list_attributes(evaluate=True, drop_hidden=True):
         assert snapshot_custom == mol.named_attribute(attr, evaluate=True)

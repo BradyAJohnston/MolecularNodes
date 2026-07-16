@@ -5,7 +5,7 @@ from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, Trajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
-from ..nodes.geometry import get_final_style_nodes
+from ..nodes.node_management import get_final_style_nodes
 from ..session import get_session
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui

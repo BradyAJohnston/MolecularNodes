@@ -1,7 +1,7 @@
 import numpy as np
 from nodebpy.nodes.geometry import CurveToMesh, SetHandleType, SetSplineType
 import molecularnodes as mn
-from molecularnodes.nodes.assets import AtomsToCACurves
+from molecularnodes.nodes.geometry import AtomsToCACurves
 
 
 def test_atoms_to_ca_splines():
@@ -10,16 +10,15 @@ def test_atoms_to_ca_splines():
     separate by a larger distance
     """
     mol = mn.Molecule.fetch("1HQM")
-    with mol.tree as tree:
-        atoms, join = tree.reset()
+    with mol.tree.reset() as tree:
         atca = AtomsToCACurves()
         (
-            atoms
+            tree.atoms
             >> atca
             >> SetSplineType(spline_type="BEZIER")
             >> SetHandleType.free()
             >> CurveToMesh()
-            >> join
+            >> tree.join
         )
 
     pos_pre = mol.named_attribute("position", evaluate=True)

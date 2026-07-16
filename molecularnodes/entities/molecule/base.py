@@ -12,7 +12,7 @@ from biotite.structure import AtomArray, AtomArrayStack
 from ... import blender as bl
 from ... import download, utils
 from ...nodes import nodes
-from ...nodes.geometry import (
+from ...nodes.node_management import (
     add_style_branch,
 )
 from ...nodes.nodes import styles_mapping

@@ -22,13 +22,13 @@ from ..entities import (
     ensemble,
     trajectory,
 )
-from ..nodes import assets as a
+from ..nodes import geometry as g
 from ..nodes import nodes
-from ..nodes.geometry import (
+from ..nodes.material import add_all_materials
+from ..nodes.node_management import (
     get_final_style_nodes,
     remove_style_node,
 )
-from ..nodes.material import add_all_materials
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from .pref import addon_preferences
@@ -61,12 +61,12 @@ def _add_node(node_name, context, show_options=False, material="default"):
 
 
 _STYLE_NODE = {
-    "spheres": a.StyleSpheres,
-    "ribbon": a.StyleRibbon,
-    "cartoon": a.StyleCartoon,
-    "sticks": a.StyleSticks,
-    "ball_and_stick": a.StyleBallAndStick,
-    "surface": a.StyleSurface,
+    "spheres": g.StyleSpheres,
+    "ribbon": g.StyleRibbon,
+    "cartoon": g.StyleCartoon,
+    "sticks": g.StyleSticks,
+    "ball_and_stick": g.StyleBallAndStick,
+    "surface": g.StyleSurface,
 }
 
 
@@ -93,12 +93,12 @@ class Import_Molecule(bpy.types.Operator):
     def style_node(
         self,
     ) -> type[
-        a.StyleSpheres
-        | a.StyleSurface
-        | a.StyleRibbon
-        | a.StyleSticks
-        | a.StyleBallAndStick
-        | a.StyleCartoon
+        g.StyleSpheres
+        | g.StyleSurface
+        | g.StyleRibbon
+        | g.StyleSticks
+        | g.StyleBallAndStick
+        | g.StyleCartoon
     ]:
         "Helper to get the selected node class for adding to the tree"
         return _STYLE_NODE[self.style]
@@ -145,13 +145,12 @@ class MN_OT_Import_Molecule(Import_Molecule):
                     file_path=Path(self.directory, file.name), name=file.name
                 )
 
-                with mol.tree as tree:
-                    atoms, join = tree.reset()
+                with mol.tree.reset() as (atoms, join):
                     (
                         atoms
                         >> self.style_node(material=add_all_materials()["MN Default"])
                         >> (
-                            a.AssemblyInstance(data_object=mol.create_data_object())
+                            g.AssemblyInstance(data_object=mol.create_data_object())
                             if self.assembly
                             else None
                         )
@@ -291,14 +290,13 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
         if self.assembly:
             nodes.assembly_data_object_from_obj(mol.object)
 
-        with mol.tree as tree:
-            atoms, join = tree.reset()
+        with mol.tree.reset() as (atoms, join):
             (
                 atoms
-                >> a.SetColor(color=a.ColorElement(c=a.RandomColor(a.ChainID(), 3)))
+                >> g.SetColor(color=g.ColorElement(c=g.RandomColor(g.ChainID(), 3)))
                 >> self.style_node(material=add_all_materials()["MN Default"])
                 >> (
-                    a.AssemblyInstance(data_object=mol.create_data_object())
+                    g.AssemblyInstance(data_object=mol.create_data_object())
                     if self.assembly
                     else None
                 )

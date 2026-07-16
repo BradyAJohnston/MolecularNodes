@@ -16,7 +16,7 @@ from MDAnalysis.core.groups import AtomGroup
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
-from ...nodes.geometry import (
+from ...nodes.node_management import (
     add_style_branch,
 )
 from ...nodes.nodes import styles_mapping

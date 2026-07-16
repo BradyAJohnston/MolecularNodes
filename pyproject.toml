@@ -13,7 +13,7 @@ dependencies = [
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.6",
+    "nodebpy>=520.7",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -105,7 +105,9 @@ order-by-type = true
 [tool.ruff.lint.per-file-ignores]
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
-"molecularnodes/nodes/assets.py" = ["E741"]
+"molecularnodes/nodes/geometry.py" = ["E741"]
+# "molecularnodes/nodes/shader.py" = ["E741"]
+# "molecularnodes/nodes/compositor.py" = ["E741"]
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]

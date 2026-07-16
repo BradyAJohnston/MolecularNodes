@@ -6,7 +6,7 @@ import pytest
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
-from molecularnodes.nodes.assets import (
+from molecularnodes.nodes.geometry import (
     TopologyBreakBonds,
     TopologyFindBonds,
 )
@@ -140,7 +140,7 @@ def pdb_8h1b():
     return mn.Molecule.fetch("8H1B", cache=data_dir)
 
 
-# topology_node_names = [n for n in dir(mn.nodes.assets) if not n.startswith(".")]
+# topology_node_names = [n for n in dir(mn.nodes.geometry) if not n.startswith(".")]
 topology_node_names = []
 
 
@@ -226,9 +226,8 @@ def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, name)
 def test_topo_bonds():
     mol = mn.Molecule.fetch("1BNA", cache=data_dir)
     nodes.get_mod(mol.object).node_group = nodes.new_tree()
-    with mol.tree as tree:
-        atoms, join = tree.reset()
-        atoms >> TopologyBreakBonds(cutoff=0.0) >> join
+    with mol.tree.reset() as tree:
+        tree.atoms >> TopologyBreakBonds(cutoff=0.0) >> tree.join
 
     # compare the number of edges before and after deleting them with
     bonds = mol.object.data.edges
@@ -238,9 +237,8 @@ def test_topo_bonds():
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
-    with mol.tree as tree:
-        atoms, join = tree.reset()
-        atoms >> TopologyBreakBonds(cutoff=0.0) >> TopologyFindBonds() >> join
+    with mol.tree.reset() as tree:
+        tree.atoms >> TopologyBreakBonds(cutoff=0.0) >> TopologyFindBonds() >> tree.join
 
     bonds_new = mol.evaluate().data.edges
     assert len(bonds) == len(bonds_new)

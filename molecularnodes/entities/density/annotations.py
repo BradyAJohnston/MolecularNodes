@@ -2,7 +2,7 @@ import os
 import numpy as np
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
-from ...nodes.geometry import get_final_style_nodes
+from ...nodes.node_management import get_final_style_nodes
 from ..annotations import Label2D, Label3D
 from ..base import EntityType
 
