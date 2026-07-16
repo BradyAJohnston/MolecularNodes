@@ -26,7 +26,6 @@ from ..nodes import geometry as g
 from ..nodes import nodes
 from ..nodes.material import add_all_materials
 from ..nodes.node_management import (
-    get_final_style_nodes,
     remove_style_node,
 )
 from ..scene.compositor import setup_compositor
@@ -448,8 +447,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
         density.load(
             file_path=path_resolve(self.filepath),
             invert=self.invert,
-            setup_nodes=self.setup_nodes,
-            style=self.style,
+            style=self.style if self.setup_nodes else None,
             center=self.center,
             overwrite=self.overwrite,
         )
@@ -708,11 +706,7 @@ class MN_OT_Remove_Style(Operator):
         style_node = node_group.nodes[self.style_node_index]
         remove_style_node(style_node)
         # set the active index in UI to the last style
-        style_nodes = get_final_style_nodes(node_group)
-        if len(style_nodes) > 0:
-            entity.object.mn.styles_active_index = node_group.nodes.find(
-                style_nodes[-1].name
-            )
+
         return {"FINISHED"}
 
     def invoke(self, context, event):

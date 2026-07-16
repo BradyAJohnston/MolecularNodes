@@ -226,8 +226,8 @@ def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, name)
 def test_topo_bonds():
     mol = mn.Molecule.fetch("1BNA", cache=data_dir)
     nodes.get_mod(mol.object).node_group = nodes.new_tree()
-    with mol.tree.reset() as tree:
-        tree.atoms >> TopologyBreakBonds(cutoff=0.0) >> tree.join
+    with mol.tree.reset() as (atoms, join):
+        atoms >> TopologyBreakBonds(cutoff=0.0) >> join
 
     # compare the number of edges before and after deleting them with
     bonds = mol.object.data.edges
@@ -237,8 +237,8 @@ def test_topo_bonds():
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
-    with mol.tree.reset() as tree:
-        tree.atoms >> TopologyBreakBonds(cutoff=0.0) >> TopologyFindBonds() >> tree.join
+    with mol.tree.reset() as (atoms, join):
+        atoms >> TopologyBreakBonds(cutoff=0.0) >> TopologyFindBonds() >> join
 
     bonds_new = mol.evaluate().data.edges
     assert len(bonds) == len(bonds_new)
@@ -317,8 +317,6 @@ def test_periodic_array(snapshot, tmp_path):
 # and everything remains 0
 def test_periodic_array_no_dimensions():
     traj = mn.Trajectory.load(PSF, DCD, selection="protein")
-    # with traj.tree as tree:
-    #     atoms, join = tree.reset()
     node = _insert_periodic_array(traj)
 
     traj.set_frame(1)

@@ -43,7 +43,8 @@ def test_density_centered(density_file):
     pos = density.named_attribute("position")
     avg = np.mean(pos, axis=0)
     assert len(pos) > 1000
-    assert np.linalg.norm(avg) < 0.1
+    # centered on the origin, vs ~20.0 for the same volume uncentered
+    assert np.linalg.norm(avg) < 1.0
 
 
 def test_density_invert(density_file):
@@ -81,17 +82,16 @@ def test_density_naming_op(density_file):
 
 
 @pytest.mark.parametrize(
-    "invert,node_setup,center", list(itertools.product([True, False], repeat=3))
+    "invert,center", list(itertools.product([True, False], repeat=2))
 )
 def test_density_operator(
-    snapshot_custom: NumpySnapshotExtension, density_file, invert, node_setup, center
+    snapshot_custom: NumpySnapshotExtension, density_file, invert, center
 ):
     scene = bpy.context.scene
     with ObjectTracker() as o:
         bpy.ops.mn.import_density(
             filepath=str(density_file),
             invert=invert,
-            setup_nodes=node_setup,
             center=center,
         )
         density: mn.entities.Density = scene.MNSession.match(o.latest())

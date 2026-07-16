@@ -40,7 +40,9 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         super().__init__(tree)
 
     @contextmanager
-    def reset(self, input: str = "Atoms", output: str = "Geometry") -> Iterator[ResetSockets]:
+    def reset(
+        self, input: str = "Atoms", output: str = "Geometry"
+    ) -> Iterator[ResetSockets]:
         """
         Clear the tree back to a default state and build within it.
 

@@ -10,15 +10,15 @@ def test_atoms_to_ca_splines():
     separate by a larger distance
     """
     mol = mn.Molecule.fetch("1HQM")
-    with mol.tree.reset() as tree:
+    with mol.tree.reset() as (atoms, join):
         atca = AtomsToCACurves()
         (
-            tree.atoms
+            atoms
             >> atca
             >> SetSplineType(spline_type="BEZIER")
             >> SetHandleType.free()
             >> CurveToMesh()
-            >> tree.join
+            >> join
         )
 
     pos_pre = mol.named_attribute("position", evaluate=True)
