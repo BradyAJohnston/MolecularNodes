@@ -1,6 +1,4 @@
 import bl_ext.blender_org.molecularnodes as mn  # type: ignore
 
 mol = mn.Molecule.fetch("4ozs")
-mol.add_style(
-    mn.StyleCartoon(peptide_loop_radius=0.4), material=mn.material.AmbientOcclusion()
-)
+mol.add_style("cartoon", material="MN Ambient Occlusion")

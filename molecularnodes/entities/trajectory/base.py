@@ -658,7 +658,7 @@ class Trajectory(MolecularEntity):
                 sel = self.selections.from_atomgroup(selection)
             attribute_name = sel.name
             # TODO: Delete these named attributes when style is deleted
-            # Currently, styles are removed using GeometryNodeInterFace.remove(),
+            # Currently, styles are removed using remove_style_node()
 
         node_style = add_style_branch(
             tree=self.modifier_node_tree,
@@ -678,7 +678,7 @@ class Trajectory(MolecularEntity):
 
     def __getstate__(self):
         """Custom serialization to handle MDAnalysis Universe objects."""
-        state = self.__dict__.copy()
+        state = super().__getstate__()
 
         # Store universe file paths for restoration
         if hasattr(self, "universe") and self.universe is not None:

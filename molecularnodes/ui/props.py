@@ -110,7 +110,7 @@ class EntityProperties(bpy.types.PropertyGroup):
         default=True,
         get=_get_entity_visibility,
         set=_set_entity_visibility,
-    )  # type: ignore
+    )
 
 
 def _update_dssp_display_option(self, context):
@@ -179,13 +179,13 @@ class DSSPProperties(bpy.types.PropertyGroup):
         soft_max=10,
         default=5,
         update=_update_dssp_display_option,
-    )  # type: ignore
+    )
     apply_sw_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
-    )  # type: ignore
+    )
     sw_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for sliding window average",
@@ -194,13 +194,13 @@ class DSSPProperties(bpy.types.PropertyGroup):
         max=1.0,
         default=0.5,
         update=_update_dssp_display_option,
-    )  # type: ignore
+    )
     apply_ta_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
-    )  # type: ignore
+    )
     ta_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for trajectory average",
@@ -224,7 +224,7 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         name="Active entity index",
         default=-1,
         update=_entities_active_index_callback,
-    )  # type: ignore
+    )
 
     is_updating: BoolProperty(  # type: ignore
         name="Updating",

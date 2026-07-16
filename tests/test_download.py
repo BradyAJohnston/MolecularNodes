@@ -97,19 +97,20 @@ def test_fetch_new_code(tmpdir, code, format, database):
         with pytest.raises(ValueError):
             downloader.download(code, format, database=database)
         return
-    if format == "bcif":
-        with pytest.raises(FileDownloadPDBError):
-            downloader.download(code, format, database=database)
-        return
     file = downloader.download(code, format, database=database)
 
     assert isinstance(file, Path)
     assert os.path.isfile(file)
     assert file.name == f"{code}.{format}"
 
-    with open(file, "r") as f:
-        content = f.read()
-    assert content.startswith(_filestart(format))
+    if format == "bcif":
+        with open(file, "rb") as f:
+            content = f.read()
+        assert content.startswith(b"\x83\xa7")
+    else:
+        with open(file, "r") as f:
+            content = f.read()
+        assert content.startswith(_filestart(format))
     time.sleep(SLEEP_TIME)
 
 
