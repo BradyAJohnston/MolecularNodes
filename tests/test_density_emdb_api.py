@@ -5,13 +5,9 @@ from .emdb_pooch import fetch_emdb_map
 
 
 @pytest.fixture
-def emdb_density_map():
-    file = fetch_emdb_map("EMD-48397")
-    # we don't just use Path().stem because usually is .map.gz
-    base = file.name.split(".")[0]
-    vdb_path = file.parent / f"{base}.vdb"
-    vdb_path.unlink(missing_ok=True)
-    return file
+def emdb_density_map(isolated_density_file):
+    # copy out of the pooch cache so the generated .vdb is written to a temp dir
+    return isolated_density_file(fetch_emdb_map("EMD-48397"))
 
 
 def test_emdb_api_density_load(emdb_density_map):

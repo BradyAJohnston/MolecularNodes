@@ -1,6 +1,8 @@
 import os
+import shutil
 import sys
 from os.path import dirname, join, realpath
+from pathlib import Path
 import bpy
 import numpy as np
 import pytest
@@ -57,3 +59,22 @@ def pytest_sessionstart(session):
 @pytest.fixture
 def snapshot_custom(snapshot):
     return snapshot.use_extension(NumpySnapshotExtension)
+
+
+@pytest.fixture
+def isolated_density_file(tmp_path):
+    """
+    Copy a density file into a per-test temporary directory.
+
+    The generated `.vdb` is written next to the file it was created from, so tests
+    sharing a file in `tests/data` overwrite and delete each other's `.vdb` when run
+    in parallel. Copying gives each test its own directory to write into.
+    """
+
+    def _copy(file: str | Path) -> Path:
+        file = Path(file)
+        destination = tmp_path / file.name
+        shutil.copy(file, destination)
+        return destination
+
+    return _copy
