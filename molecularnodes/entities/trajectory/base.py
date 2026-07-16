@@ -20,9 +20,6 @@ from ...nodes.geometry import (
     add_style_branch,
 )
 from ...nodes.nodes import styles_mapping
-from ...nodes.styles import (
-    StyleBase,
-)
 from ...utils import (
     count_value_changes,
     temp_override_property,
@@ -595,7 +592,7 @@ class Trajectory(MolecularEntity):
 
     def add_style(
         self,
-        style: StyleBase | str = "spheres",
+        style: str = "spheres",
         color: str | None = "common",
         selection: str | AtomGroup | None = None,
         material: bpy.types.Material | str | None = None,

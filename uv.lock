@@ -1399,7 +1399,7 @@ jupyter = [
 
 [package.metadata]
 requires-dist = [
-    { name = "biotite", specifier = ">=1.7" },
+    { name = "biotite", specifier = ">=1.7.1" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = "==5.2.*" },
     { name = "databpy", specifier = ">=0.7.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },

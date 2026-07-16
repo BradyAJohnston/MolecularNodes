@@ -6,7 +6,7 @@ readme = "README.md"
 dependencies = [
     "databpy>=0.7.0",
     "mdanalysis>=2.10",
-    "biotite>=1.7",
+    "biotite>=1.7.1",
     "mrcfile",
     "starfile",
     "PyYAML",
@@ -105,6 +105,7 @@ order-by-type = true
 [tool.ruff.lint.per-file-ignores]
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
+"molecularnodes/nodes/assets.py" = ["E741"]
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]

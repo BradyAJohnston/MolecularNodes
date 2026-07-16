@@ -52,9 +52,9 @@ styles_mapping = {
     "ball_and_stick": "Style Ball and Stick",
     "ball+stick": "Style Ball and Stick",
     "oxdna": "MN_oxdna_style_ribbon",
-    "density_surface": "Style Density Surface",
-    "density_iso_surface": "Style Density ISO Surface",
-    "density_wire": "Style Density Wire",
+    "density_surface": "Density Style Surface",
+    "density_iso_surface": "Density Style ISO Surface",
+    "density_wire": "Density Style Wire",
 }
 
 

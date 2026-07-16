@@ -627,13 +627,13 @@ class MN_OT_Add_Style(Operator):
         items=STYLE_ITEMS,
     )
 
-    use_uniform_color: BoolProperty(
+    use_uniform_color: BoolProperty(  # type: ignore
         name="Use uniform color",
         description="Use uniform color for style",
         default=False,
-    )  # type: ignore
+    )
 
-    uniform_color: bpy.props.FloatVectorProperty(
+    uniform_color: bpy.props.FloatVectorProperty(  # type: ignore
         name="Uniform color",
         description="Uniform color for style",
         subtype="COLOR",
@@ -641,25 +641,25 @@ class MN_OT_Add_Style(Operator):
         default=(0.162, 0.624, 0.196, 1),
         min=0.0,
         max=1.0,
-    )  # type: ignore
+    )
 
-    color_scheme: StringProperty(
+    color_scheme: StringProperty(  # type: ignore
         name="Coloring scheme",
         description="Coloring scheme for style",
         default="common",
-    )  # type: ignore
+    )
 
-    selection: StringProperty(
+    selection: StringProperty(  # type: ignore
         name="Selection",
         description="Selection for which the style applies",
         default="all",
-    )  # type: ignore
+    )
 
-    name: StringProperty(
+    name: StringProperty(  # type: ignore
         name="Name",
         description="Label for the style",
         default="",
-    )  # type: ignore
+    )
 
     def draw(self, context):
         layout = self.layout
