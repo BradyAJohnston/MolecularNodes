@@ -426,6 +426,7 @@ class OXDNA(Trajectory):
             Name of the new object, by default "NewUniverseObject"
         """
         super()._create_object(name=name)
+        self.set_frame(0)
         nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
 
     def set_frame(self, frame: int) -> None:
