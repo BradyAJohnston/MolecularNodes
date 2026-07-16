@@ -3272,8 +3272,8 @@ class DensityStyleISOSurface(AssetGeometryGroup):
         """Volume"""
         visible: BooleanSocket
         """Visible"""
-        iso_value: FloatSocket
-        """ISO Value"""
+        threshold: FloatSocket
+        """Threshold"""
         show_contours: BooleanSocket
         """Show Contours"""
         only_contours: BooleanSocket
@@ -3310,7 +3310,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
         self,
         volume: InputGeometry = None,
         visible: InputBoolean = True,
-        iso_value: InputFloat = 0.009593,
+        threshold: InputFloat = 0.009593,
         show_contours: InputBoolean = False,
         only_contours: InputBoolean = False,
         contour_thickness: InputFloat = 0.1,
@@ -3326,7 +3326,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
             **{
                 "Socket_1": volume,
                 "Socket_2": visible,
-                "Socket_4": iso_value,
+                "Socket_4": threshold,
                 "Socket_9": show_contours,
                 "Socket_10": only_contours,
                 "Socket_11": contour_thickness,

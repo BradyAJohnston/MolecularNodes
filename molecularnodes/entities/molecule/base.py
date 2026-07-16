@@ -352,11 +352,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             name=name,
         )
 
-        # set the active index for UI to the newly added style
-        self.object.mn.styles_active_index = self.modifier_node_tree.nodes.find(
-            node_style.name
-        )
-
         if assembly:
             nodes.assembly_initialise(self.object)
             nodes.assembly_insert(self.object)

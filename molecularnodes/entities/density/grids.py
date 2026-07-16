@@ -4,9 +4,12 @@ import bpy
 import databpy
 import numpy as np
 from gridData import Grid
-from nodebpy.nodes.geometry import JoinGeometry
-from molecularnodes.nodes.geometry import DensityStyleISOSurface, DensityStyleSurface
 from ...blender import coll
+from ...nodes.geometry import (
+    DensityStyleISOSurface,
+    DensityStyleSurface,
+    DensityStyleWire,
+)
 from .base import Density
 
 
@@ -104,7 +107,7 @@ class Grids(Density):
             )
 
     def create_object(
-        self, name="NewDensity", style="density_surface", setup_nodes=True
+        self, name="NewDensity", style="density_surface"
     ) -> bpy.types.Object:
         """
         Loads a grid into Blender as a volumetric object.
@@ -115,8 +118,6 @@ class Grids(Density):
             If not empty, renames the object with the new name. Default is "NewDensity".
         style : str, optional
             The style of the density object. Default is "density_surface".
-        setup_nodes : bool, optional
-            Whether to create starting node tree. Default is True.
 
         Returns
         -------
@@ -129,27 +130,22 @@ class Grids(Density):
         self.object.location = (0, 0, 0)
         self.object.mn.entity_type = self._entity_type.value
 
+        threshold = float(np.quantile(self.grid.grid, 0.995))
+
         if name and name != "":
             self.name = name
 
-        if setup_nodes:
-            with self.tree as tree:
-                tree.reset()
-                volume = tree.inputs.geometry("Volume")
+        if style is not None:
+            with self.tree.reset(input="Volume") as (volume, join):
                 (
                     volume
                     >> {
-                        "iso": DensityStyleISOSurface(),
-                        "density_surface": DensityStyleSurface(),
-                    }[style]
-                    >> JoinGeometry()
-                    >> tree.outputs.geometry()
+                        "density_iso_surface": DensityStyleISOSurface,
+                        "density_surface": DensityStyleSurface,
+                        "density_wire": DensityStyleWire,
+                    }[style](threshold=threshold)
+                    >> join
                 )
-
-        # set the active index for UI to the added style
-        self.object.mn.styles_active_index = self.modifier_node_tree.nodes.find(
-            node_density.name
-        )
 
         return self.object
 
@@ -157,7 +153,7 @@ class Grids(Density):
         self,
         file: str,
         invert: bool = False,
-        world_scale=0.01,
+        world_scale=0.1,
         center: bool = False,
         overwrite=False,
     ) -> str:

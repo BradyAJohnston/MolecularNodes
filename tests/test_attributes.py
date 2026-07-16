@@ -30,16 +30,16 @@ def test_store_named_attribute(snapshot_custom):
 
 def test_uv_map(snapshot_custom):
     mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif")
-    with mol.tree.reset() as tree:
-        tree.atoms >> StyleRibbon(uv_map=True, quality=1) >> tree.join
+    with mol.tree.reset() as (atoms, join):
+        atoms >> StyleRibbon(uv_map=True, quality=1) >> join
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[:1000]
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]
 
 
 def test_bond_attributes(snapshot_custom):
     mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
-    with mol.tree.reset() as tree:
-        tree.atoms >> StyleSpheres(geometry="Mesh") >> tree.join
+    with mol.tree.reset() as (atoms, join):
+        atoms >> StyleSpheres(geometry="Mesh") >> join
 
     for attr in mol.list_attributes(evaluate=True, drop_hidden=True):
         assert snapshot_custom == mol.named_attribute(attr, evaluate=True)

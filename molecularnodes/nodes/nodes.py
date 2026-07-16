@@ -155,12 +155,22 @@ def previous_node(node):
     return prev
 
 
+def node_group_name(node) -> str:
+    """
+    The name of the node group a node instances, or "" if it doesn't instance one.
+
+    The node's own name is not a reliable identifier: swapping the node group of an
+    existing node leaves the old name behind, and nodes created via the node API are
+    named generically ("Group"). The node group name always tracks what is being used.
+    """
+    tree = getattr(node, "node_tree", None)
+    return tree.name if tree is not None else ""
+
+
 def style_node(group):
     prev = previous_node(get_output(group))
-    is_style_node = "Style" in prev.name
-    while not is_style_node:
+    while "Style" not in node_group_name(prev):
         prev = previous_node(prev)
-        is_style_node = "Style" in prev.name
     return prev
 
 
@@ -170,15 +180,9 @@ def get_style_node(object):
     return style_node(group)
 
 
-def _is_star_node(node) -> bool:
-    # the node itself is generically named, so match on the group it instances
-    tree = getattr(node, "node_tree", None)
-    return tree is not None and "Starfile Instances" in tree.name
-
-
 def star_node(group):
     prev = previous_node(get_output(group))
-    while not _is_star_node(prev):
+    while "Starfile Instances" not in node_group_name(prev):
         prev = previous_node(prev)
     return prev
 

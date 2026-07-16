@@ -103,9 +103,6 @@ class Trajectory(MolecularEntity):
     interpolate = BoolObjectMNProperty("interpolate")
 
     _mn_frame = BoolObjectMNProperty("frame_hidden")
-    _mn_styles_active_index = IntObjectMNProperty(
-        "styles_active_index", _validate_non_negative
-    )
     _mn_entity_type = StringObjectMNProperty("entity_type")
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
@@ -667,11 +664,6 @@ class Trajectory(MolecularEntity):
             selection=attribute_name,
             material=material,
             name=name,
-        )
-
-        # set the active index for UI to the newly added style
-        self._mn_styles_active_index = self.modifier_node_tree.nodes.find(
-            node_style.name
         )
 
         return self

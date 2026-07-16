@@ -688,9 +688,6 @@ class MN_PT_Styles(bpy.types.Panel):
         styles_active_index: int = entity.object.mn.styles_active_index  # type: ignore
         valid_selection = False
         style_nodes = get_final_style_nodes(node_group)
-        if 0 <= styles_active_index < len(node_group.nodes):
-            if node_group.nodes[styles_active_index] in style_nodes:
-                valid_selection = True
 
         row = layout.row()
         MN_UL_StylesList.style_nodes = style_nodes
