@@ -138,6 +138,28 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         return mol
 
+    # @classmethod
+    # def cas_load(
+    #     cls,
+    #     smiles_string: str,
+    #     name: str,
+    #     remove_solvent: bool = True,
+    # ) -> "Molecule":
+    #     """
+    #     Load a molecules using the SMILES string given.
+
+    #     Parameters
+    #     ----------
+    #     smiles_string : str
+    #         The SMILES string of the molecule to load.
+    #     name : str
+    #         The name to give the molecule object.
+    #     remove_solvent : bool, optional
+    #         Whether to remove solvent from the molecule, by default True.
+    #     """
+    #     u = mda.Universe.from_smiles(smiles_string)
+    #     return Trajectory(u).create_object
+
     @property
     def code(self) -> str | None:
         """
@@ -227,11 +249,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
     def cas_fetch(
         cls,
         code: str,
-        format=".bcif",
         centre: str | None = None,
         remove_solvent: bool = True,
         cache: Path | str | None = download.CACHE_DIR,
-        database: str = "rcsb",
     ) -> "Molecule":
         """
         Fetch a molecule from the RCSB database.
@@ -240,8 +260,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         ----------
         code : str
             The PDB ID code of the molecule to fetch.
-        format : str, optional
-            The file format to download. Default is ".bcif".
         centre : str | None, optional
             Method to use for centering the molecule. Options are "centroid" (geometric center)
             or "mass" (center of mass). If None, no centering is performed. Default is None.
@@ -257,6 +275,12 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         Molecule
             A new Molecule instance created from the downloaded data.
         """
+
+        cas_SDF_path = download.StructureDownloader(cache=cache).cas_download(code=code)
+        mol = cls.load(cas_SDF_path, name=code, remove_solvent=remove_solvent)
+        mol._code = code
+
+        return mol
 
     def centre_molecule(self, method: str | None = "centroid"):
         """

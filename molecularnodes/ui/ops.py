@@ -34,6 +34,8 @@ from . import node_info
 from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
+""" from posix import remove"""
+
 
 def _add_node(node_name, context, show_options=False, material="default"):
     """
@@ -899,7 +901,6 @@ class MN_OT_Import_CAS(bpy.types.Operator):
             entities.Molecule.cas_fetch(
                 code=self.code,
                 cache=self.cache_dir,
-                database=self.database,
             )
             .add_style(
                 style=self.style if self.node_setup else None,  # type: ignore

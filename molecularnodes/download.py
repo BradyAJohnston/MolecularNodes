@@ -86,6 +86,7 @@ class StructureDownloader:
         >>> path = downloader.download("1abc", format="cif")
         >>> path = downloader.download("pdb_00009bdt", format="bcif")
         """
+
         code = code.strip()
         format = format.strip(".")
         supported_formats = ["cif", "pdb", "bcif"]
@@ -113,17 +114,6 @@ class StructureDownloader:
                     f"Error downloading from AlphaFold database: {str(e)}"
                 )
 
-        """
-        TODO:
-        Somewhere in here we need to add a CAS checker
-
-        Trying to reuse what we have. Download function already does what we need it to do...I think...
-        it just needs to perform the correct actions for the CAS specific pipeline.
-
-        The preceeding FETCH call that leads to download, probably has to be adjusted or cloned
-        to specifically handle CAS codes.
-        """
-
         _is_binary = format in ["bcif"]
         filename = f"{code}.{format}"
 
@@ -136,6 +126,75 @@ class StructureDownloader:
 
         try:
             r = requests.get(self._url(code, format, database))
+            r.raise_for_status()
+        except requests.HTTPError as e:
+            raise FileDownloadPDBError(str(e))
+
+        if _is_binary:
+            content = r.content
+            # Check if the content is gzipped
+            if content[:2] == b"\x1f\x8b":  # gzip magic number
+                content = gzip.decompress(content)
+        else:
+            content = r.text
+
+        if file:
+            mode = "wb+" if _is_binary else "w+"
+            with open(file, mode) as f:
+                f.write(content)
+            return Path(file)
+        else:
+            if _is_binary:
+                if not isinstance(content, bytes):
+                    raise ValueError(
+                        "Binary content is not bytes, please check your format."
+                    )
+                file = io.BytesIO(content)
+            else:
+                if not isinstance(content, str):
+                    raise ValueError(
+                        "Text content is not str, please check your format."
+                    )
+                file = io.StringIO(content)
+
+        return file
+
+    def cas_download(
+        self,
+        code: str,
+    ) -> Path | io.BytesIO | io.StringIO:
+        """Download structure as SDF (Easily fits into existing pipelines).
+
+        Parameters
+        ----------
+        code : str
+            The CAS code of the structure to download.
+
+        Returns
+        -------
+        Path or io.BytesIO or io.StringIO
+        """
+
+        BASE_API = "https://cactus.nci.nih.gov/chemical/structure"
+        # cas_url = f"{BASE_API}/{code}/smiles"
+        cas_url = f"{BASE_API}/{code}/file?format=sdf"
+        # https://cactus.nci.nih.gov/chemical/structure/aspirin/file?format=sdf
+        # r = requests.get(cas_url)
+        # r.raise_for_status()
+        # return r.text
+
+        _is_binary = format in ["bcif"]
+        filename = f"{code}.sdf"
+
+        if self.cache:
+            file = self.cache / filename
+            if file.exists():
+                return file
+        else:
+            file = None
+
+        try:
+            r = requests.get(cas_url)
             r.raise_for_status()
         except requests.HTTPError as e:
             raise FileDownloadPDBError(str(e))
