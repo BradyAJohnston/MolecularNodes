@@ -1,5 +1,5 @@
 import math
-from typing import Iterable
+from typing import Iterable, Literal
 import bpy
 import databpy
 import numpy as np
@@ -11,6 +11,7 @@ from nodebpy import geometry as g
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from ..blender import mesh
+from . import geometry as mng
 from .material import assign_material
 
 NODE_WIDTH = 180
@@ -32,6 +33,17 @@ socket_types = {
     "RGBA": "NodeSocketColor",
     "IMAGE": "NodeSocketImage",
 }
+
+
+STYLE_NODE_MAPPING = {
+    "spheres": mng.StyleSpheres,
+    "cartoon": mng.StyleCartoon,
+    "ribbon": mng.StyleRibbon,
+    "surface": mng.StyleSurface,
+    "ball_and_stick": mng.StyleBallAndStick,
+}
+
+STYLE_LITERALS = Literal["spheres", "cartoon", "ribbon", "surface", "ball_and_stick"]
 
 # current implemented representations
 styles_mapping = {

@@ -13,13 +13,11 @@ import databpy as db
 import MDAnalysis as mda
 import numpy as np
 from MDAnalysis.core.groups import AtomGroup
+from nodebpy.nodes.geometry import NamedAttribute
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
-from ...nodes.node_management import (
-    add_style_branch,
-)
-from ...nodes.nodes import styles_mapping
+from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING, styles_mapping
 from ...utils import (
     count_value_changes,
     temp_override_property,
@@ -485,14 +483,10 @@ class Trajectory(MolecularEntity):
         topology: Path | str,
         coordinates: Path | str,
         name: str = "NewTrajectory",
-        style: str | None = "spheres",
-        selection: str | None = None,
         create_object: bool = True,
     ) -> "Trajectory":
         u = mda.Universe(topology, coordinates)
         traj = cls(u, name=name, create_object=create_object)
-        if style:
-            traj.add_style(style=style, selection=selection)
         return traj
 
     def _update_calculations(self) -> None:
@@ -589,14 +583,15 @@ class Trajectory(MolecularEntity):
 
     def add_style(
         self,
-        style: str = "spheres",
-        color: str | None = "common",
+        style: STYLE_LITERALS = "spheres",
         selection: str | AtomGroup | None = None,
-        material: bpy.types.Material | str | None = None,
-        name: str | None = None,
+        material: bpy.types.Material | None = None,
     ) -> "Trajectory":
         """
         Add a visual style to the trajectory.
+
+        Provides a simple interface for adding visual styles to the molecule. For more complex
+        styling, use the manual node tree creation via the `with mol.tree:` context manager.
 
         Parameters
         ----------
@@ -604,11 +599,6 @@ class Trajectory(MolecularEntity):
             The style to apply to the trajectory. Can be a GeometryNodeTree or a string
             identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
             Default is "spheres".
-
-        color : str | None, optional
-            The coloring scheme to apply. Can be "common" (element-based coloring),
-            "chain", "residue", or other supported schemes. If None, no coloring
-            is applied. Default is "common".
 
         selection : str | AtomGroup | None, optional
             Apply the style only to atoms matching this selection. Can be:
@@ -620,8 +610,6 @@ class Trajectory(MolecularEntity):
             The material to apply to the styled atoms. Can be a Blender Material object,
             a string with a material name, or None to use default materials. Default is None.
 
-        name: str, optional
-            The label for this style
 
         Returns
         -------
@@ -638,9 +626,6 @@ class Trajectory(MolecularEntity):
         If a selection is provided, it will be evaluated and stored as a new
         named attribute on the trajectory with an automatically generated name (sel_N).
         """
-        if style is None:
-            return self
-
         if isinstance(style, str) and style not in styles_mapping:
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
@@ -654,17 +639,18 @@ class Trajectory(MolecularEntity):
             elif isinstance(selection, AtomGroup):
                 sel = self.selections.from_atomgroup(selection)
             attribute_name = sel.name
-            # TODO: Delete these named attributes when style is deleted
-            # Currently, styles are removed using remove_style_node()
 
-        node_style = add_style_branch(
-            tree=self.modifier_node_tree,
-            style=style,
-            color=color,
-            selection=attribute_name,
-            material=material,
-            name=name,
-        )
+        with self.tree as tree:
+            (
+                tree.atoms
+                >> STYLE_NODE_MAPPING[style](
+                    selection=NamedAttribute(attribute_name)
+                    if attribute_name
+                    else None,
+                    material=material,
+                )
+                >> tree.join
+            )
 
         return self
 

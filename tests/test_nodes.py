@@ -292,7 +292,7 @@ def _get_node_defaults(node) -> list[Any]:
 
 
 def test_periodic_array(snapshot, tmp_path):
-    traj = mn.Trajectory.load(GRO, XTC, selection="protein")
+    traj = mn.Trajectory.load(GRO, XTC)
     node = _insert_periodic_array(traj)
 
     traj.set_frame(1)
@@ -316,7 +316,7 @@ def test_periodic_array(snapshot, tmp_path):
 # update the positions and _attempt_ to update the periodic box but fail not do so quietly
 # and everything remains 0
 def test_periodic_array_no_dimensions():
-    traj = mn.Trajectory.load(PSF, DCD, selection="protein")
+    traj = mn.Trajectory.load(PSF, DCD)
     node = _insert_periodic_array(traj)
 
     traj.set_frame(1)
