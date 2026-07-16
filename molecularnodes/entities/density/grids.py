@@ -4,8 +4,9 @@ import bpy
 import databpy
 import numpy as np
 from gridData import Grid
+from nodebpy.nodes.geometry import JoinGeometry
+from molecularnodes.nodes.geometry import DensityStyleISOSurface, DensityStyleSurface
 from ...blender import coll
-from ...nodes import nodes
 from .base import Density
 
 
@@ -131,58 +132,26 @@ class Grids(Density):
         if name and name != "":
             self.name = name
 
-        # TODO: setup_nodes is unused. Using it causes pytest failures
-        node_density = self.create_starting_node_tree(style=style)
+        if setup_nodes:
+            with self.tree as tree:
+                tree.reset()
+                volume = tree.inputs.geometry("Volume")
+                (
+                    volume
+                    >> {
+                        "iso": DensityStyleISOSurface(),
+                        "density_surface": DensityStyleSurface(),
+                    }[style]
+                    >> JoinGeometry()
+                    >> tree.outputs.geometry()
+                )
+
         # set the active index for UI to the added style
         self.object.mn.styles_active_index = self.modifier_node_tree.nodes.find(
             node_density.name
         )
 
         return self.object
-
-    def create_starting_node_tree(self, style="density_surface"):
-        """
-        Creates a starting node tree for the density object.
-
-        Parameters
-        ----------
-        style : str, optional
-            The style of the density object, defaulting to 'density_surface'.
-        """
-
-        gobj = self.grid
-        grid = gobj.grid
-        threshold = np.quantile(grid, 0.995)
-        threshold_range = (np.min(grid), np.max(grid))
-        threshold_type = None
-        if np.issubdtype(grid.dtype, np.floating):
-            threshold_type = "NodeSocketFloat"
-        elif np.issubdtype(grid.dtype, np.floating):
-            threshold_type = "NodeSocketInt"
-
-        x_range = y_range = z_range = None
-        if gobj.origin.size == 3:
-            origin = gobj.origin.copy()
-            if gobj.metadata["center"]:
-                origin = -np.array(grid.shape) * 0.5 * gobj.delta
-            origin *= self._world_scale
-            # adjust offset because Blender uses cell-centered values
-            origin -= 0.5 * gobj.delta * self._world_scale
-            length = grid.shape * gobj.delta * self._world_scale
-            x_range = (origin[0], origin[0] + length[0])
-            y_range = (origin[1], origin[1] + length[1])
-            z_range = (origin[2], origin[2] + length[2])
-
-        return nodes.create_starting_nodes_density(
-            object=self.object,
-            style=style,
-            threshold=threshold,
-            threshold_range=threshold_range,
-            threshold_type=threshold_type,
-            x_range=x_range,
-            y_range=y_range,
-            z_range=z_range,
-        )
 
     def grid_to_vdb(
         self,

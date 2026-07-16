@@ -11,9 +11,7 @@ from nodebpy import geometry as g
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from ..blender import mesh
-from . import assets as a
 from .material import assign_material
-from .style_density_iso_surface import style_density_iso_surface_node_group
 
 NODE_WIDTH = 180
 
@@ -296,81 +294,6 @@ def add_custom(
     return node
 
 
-def create_starting_nodes_density(
-    object: bpy.types.Object,
-    threshold: float = 0.8,
-    style: str = "density_surface",
-    threshold_range: tuple | None = None,
-    threshold_type: str | None = None,
-    x_range: tuple | None = None,
-    y_range: tuple | None = None,
-    z_range: tuple | None = None,
-) -> bpy.types.GeometryNodeGroup:
-    # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    mod = get_mod(object)
-    node_name = f"MN_density_{object.name}"
-
-    # create a new GN node group, specific to this particular molecule
-    group = new_tree(node_name, fallback=False)
-    link = group.links.new
-    mod.node_group = group
-
-    # move the input and output nodes for the group
-    node_input = get_input(group)
-    node_input.location = [0, 0]
-    node_output = get_output(group)
-    node_output.location = [800, 0]
-
-    if style == "density_iso_surface":
-        key = "ISO Value"
-        node_density = group.nodes.new("GeometryNodeGroup")
-        node_density.name = styles_mapping[style]
-        node_density.location = [400, 0]
-        tree = style_density_iso_surface_node_group()
-        tree.name = f"{styles_mapping[style]}.{object.name}"
-        node_density.node_tree = tree
-        assign_material(node_density)
-        if x_range is not None:
-            tree.nodes["X Min"].outputs["Value"].default_value = x_range[0]
-            tree.nodes["X Max"].outputs["Value"].default_value = x_range[1]
-        if y_range is not None:
-            tree.nodes["Y Min"].outputs["Value"].default_value = y_range[0]
-            tree.nodes["Y Max"].outputs["Value"].default_value = y_range[1]
-        if z_range is not None:
-            tree.nodes["Z Min"].outputs["Value"].default_value = z_range[0]
-            tree.nodes["Z Max"].outputs["Value"].default_value = z_range[1]
-    else:
-        key = "Threshold"
-        node_density = add_custom(group, styles_mapping[style], [400, 0])
-        # make the node tree of this node independent (single user)
-        # to allow separate configuration of min, max and default threshold values
-        node_tree_copy = node_density.node_tree.copy()
-        node_tree_copy.name = f"{styles_mapping[style]}.{object.name}"
-        node_density.node_tree = node_tree_copy
-
-    items_tree = node_density.node_tree.interface.items_tree
-    # set the socket type if specified - NodeSocketInt or NodeSocketFloat
-    if threshold_type is not None:
-        items_tree[key].socket_type = threshold_type
-    # set the default threshold - both interface and socket
-    items_tree[key].default_value = threshold
-    node_density.inputs[key].default_value = threshold
-    # set the min, max threshold values if specified
-    if threshold_range is not None:
-        items_tree[key].min_value = threshold_range[0]
-        items_tree[key].max_value = threshold_range[1]
-
-    # add the join geometry node to keep this consistent with style interface
-    node_join = group.nodes.new("GeometryNodeJoinGeometry")
-    node_join.location = [620, 0]
-
-    link(node_input.outputs[0], node_density.inputs[0])
-    link(node_density.outputs[0], node_join.inputs[0])
-    link(node_join.outputs[0], node_output.inputs[0])
-
-    return node_density
-
-
 def create_starting_node_tree(
     object: bpy.types.Object,
     coll_frames: bpy.types.Collection | None = None,
@@ -414,21 +337,21 @@ def create_starting_node_tree(
 
         match color.lower():
             case "pldtt":
-                color = a.ColorPLDDT()
+                color = g.ColorPLDDT()
             case _:
-                color = a.ColorElement(c=a.RandomColor(a.ChainID()))
+                color = g.ColorElement(c=g.RandomColor(g.ChainID()))
 
         if coll_frames:
-            atoms = atoms >> a.AnimateFrames(
-                collection=coll_frames, factor=a.AnimateValue()
+            atoms = atoms >> g.AnimateFrames(
+                collection=coll_frames, factor=g.AnimateValue()
             )
 
         style_node = {
-            "ribbon": a.StyleRibbon,
-            "cartoon": a.StyleCartoon,
-            "surface": a.StyleSurface,
-            "ball_and_stick": a.StyleBallAndStick,
-            "sticks": a.StyleSticks,
+            "ribbon": g.StyleRibbon,
+            "cartoon": g.StyleCartoon,
+            "surface": g.StyleSurface,
+            "ball_and_stick": g.StyleBallAndStick,
+            "sticks": g.StyleSticks,
         }[style]
 
         if isinstance(material, str):
@@ -436,7 +359,7 @@ def create_starting_node_tree(
 
         assign_material(style_node.node, material)
 
-        atoms >> a.SetColor(color=color) >> style_node >> join
+        atoms >> g.SetColor(color=color) >> style_node >> join
 
     mod.node_group = tree.tree
 

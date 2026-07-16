@@ -20,7 +20,7 @@ pytestmark = [
 
 
 def style_nodes(entity):
-    return mn.nodes.geometry.get_final_style_nodes(entity.modifier_node_tree)
+    return mn.nodes.node_management.get_final_style_nodes(entity.modifier_node_tree)
 
 
 def dummy_calculation_for_pickle_test(universe):
@@ -382,9 +382,9 @@ class TestTrajectory:
         t1.add_style(style="cartoon")
         assert len(style_nodes(t1)) == 2
         # test remove style
-        mn.nodes.geometry.remove_style_node(style_nodes(t1)[0])
+        mn.nodes.node_management.remove_style_node(style_nodes(t1)[0])
         assert len(style_nodes(t1)) == 1
-        mn.nodes.geometry.remove_style_node(style_nodes(t1)[0])
+        mn.nodes.node_management.remove_style_node(style_nodes(t1)[0])
         assert len(style_nodes(t1)) == 0
         session.remove_trajectory(t1)
         # test remove style from UI

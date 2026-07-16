@@ -1,7 +1,7 @@
 import pytest
 import molecularnodes as mn
-from molecularnodes.nodes import geometry
-from molecularnodes.nodes.geometry import add_style_branch
+from molecularnodes.nodes import node_management
+from molecularnodes.nodes.node_management import add_style_branch
 
 
 def test_style_interface():
@@ -9,7 +9,7 @@ def test_style_interface():
     assert len(mol.modifier_node_tree.nodes) == 7
     add_style_branch(mol.modifier_node_tree, "cartoon")
     assert len(mol.modifier_node_tree.nodes) == 8
-    geometry.input_named_attribute(
+    node_management.input_named_attribute(
         mol.modifier_node_tree.nodes["Style Cartoon"].inputs["Selection"],
         "is_backbone",
         "BOOLEAN",
@@ -32,8 +32,8 @@ def test_style_interface():
     assert len(mol.modifier_node_tree.nodes) == 12
     mol.add_style("cartoon", color="is_peptide")
     assert len(mol.modifier_node_tree.nodes) == 15
-    geometry.remove_style_node(
-        geometry.get_final_style_nodes(mol.modifier_node_tree)[-1]
+    node_management.remove_style_node(
+        node_management.get_final_style_nodes(mol.modifier_node_tree)[-1]
     )
     assert len(mol.modifier_node_tree.nodes) == 12
 
@@ -74,7 +74,7 @@ def test_add_style_with_selection():
 def test_change_style_values():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     pre = mol.named_attribute("position", evaluate=True)
-    style_node = geometry.get_final_style_nodes(mol.modifier_node_tree)[0]
+    style_node = node_management.get_final_style_nodes(mol.modifier_node_tree)[0]
     style_node.inputs["Quality"].default_value = 5
     post = mol.named_attribute("position", evaluate=True)
 

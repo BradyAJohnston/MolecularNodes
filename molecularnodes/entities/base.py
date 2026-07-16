@@ -1,6 +1,7 @@
 from abc import ABCMeta
+from contextlib import contextmanager
 from enum import Enum
-from typing import List, cast
+from typing import Iterator, List, NamedTuple, cast
 import bpy
 from bpy.types import GeometryNodeTree
 from databpy import (
@@ -26,18 +27,34 @@ class EntityType(Enum):
     ENSEMBLE_CELLPACK = "ensemble-cellpack"
 
 
+class ResetSockets(NamedTuple):
+    """The sockets to build between, as returned by `MolecularTree.reset()`."""
+
+    atoms: GeometrySocket
+    join: GeometrySocket
+
+
 class MolecularTree(TreeBuilder[GeometryNodeTree]):
-    def __init__(self, entitiy: "MolecularEntity", tree: TreeBuilder | str) -> None:
-        self._entity = entitiy
+    def __init__(self, entity: "MolecularEntity", tree: TreeBuilder | str) -> None:
+        self._entity = entity
         super().__init__(tree)
 
-    def reset(self) -> tuple[GeometrySocket, GeometrySocket]:
-        """Reset the tree to a default state. Returns the geometry input and the a JoinGeometry.i.geometry (input, join)"""
-        self.clear()
-        geo = self.inputs.geometry("Atoms")
-        join = g.JoinGeometry()
-        join >> self.outputs.geometry()
-        return geo, join.i.geometry
+    @contextmanager
+    def reset(self, input: str = "Atoms", output: str = "Geometry") -> Iterator[ResetSockets]:
+        """
+        Clear the tree back to a default state and build within it.
+
+        Discards the existing tree, so use `with entity.tree` instead to add to it.
+
+        >>> with mol.tree.reset() as (atoms, join):
+        ...     atoms >> StyleCartoon() >> join
+        """
+        with self:
+            self.clear()
+            atoms = self.inputs.geometry(input)
+            join = g.JoinGeometry()
+            join >> self.outputs.geometry(output)
+            yield ResetSockets(atoms, join.i.geometry)
 
     def clear(self) -> None:
         self.tree.nodes.clear()
