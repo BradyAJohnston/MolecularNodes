@@ -78,7 +78,7 @@ There are a number of different object types that can be added. The most common 
 
 To render an image, you can click <kbd>F12</kbd> or use the `Render -> Render Image` menu. Blender will not render what you are immediately seeing. Instead, it will render whatever the **Camera**** is seeing. This can be frustrating at first, but it makes sense when you can have multiple cameras in a single scene.
 
-To see what the camera sees, you can click the Camera widget in the top right, or click backtick (<kbd>`</kbd>) + <kbd>1</kbd>. 
+To see what the camera sees, you can click the Camera widget in the top right, or click backtick (<kbd>`</kbd>) + <kbd>1</kbd>.
 
 > The backtick is directly under the <kdb>Esc</kbd> key on most American / Enlgish keyboards. It can vary in other language layouts.
 
@@ -127,4 +127,3 @@ With a mesh object selected, you can change in to edit mode. While in edit mode,
 You now know the _very basics_ of adding new objects, changing the materials, adding some lights and rendering an image. The same principles apply to everything that you you do in Blender, and often all of the different workspaces will contain similar keyboard shortcuts and ways of working. Try playing around some more inside of the 3D scene, rendering some different 3D images, before moving on to the section which includes actual proteins.
 
 Most things are best learnt by doing, so load some proteins in and try to follow along with the other tutorials.
-

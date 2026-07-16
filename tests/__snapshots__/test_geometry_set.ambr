@@ -2,7 +2,7 @@
 # name: test_get_set
   Mesh: 1BNA
     Geometry: 1608 verts, 3192 edges, 1588 polys
-  
+
     Attributes:
     Color: shape=(1588, 4), atype=FLOAT_COLOR, unique=2, values=['0.202', '1']
     atom_id: shape=(1608,), atype=INT, unique=134, range=[3, 470]
@@ -31,7 +31,7 @@
     sharp_edge: shape=(3192,), atype=BOOLEAN, unique=2, values=['False', 'True']
     ures_id: shape=(1608,), atype=INT, unique=24, range=[0, 23]
     vdw_radii: shape=(1608,), atype=FLOAT, constant=0.017
-  
+
   Instances: 24 points
     Transforms: shape=(24, 4, 4), dtype=float32
       Transform[0]:
@@ -156,7 +156,7 @@
         [  0.182,   0.185,   0.288,   1.000]
     Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
     Instance references: [<GeometrySet: 8 verts, 12 edges, 6 faces, 24 corners>]
-  
+
     Attributes:
     Color: shape=(24, 4), atype=FLOAT_COLOR, unique=2, values=['0.202', '1']
     atom_id: shape=(24,), atype=INT, unique=24, range=[3, 470]
@@ -187,12 +187,12 @@
 # name: test_spheres_style
   Mesh: 1BNA
     Geometry: 0 verts, 0 edges, 0 polys
-  
+
     Attributes:
     position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
-  
+
   Pointcloud: 486 points
-  
+
     Attributes:
     Color: shape=(486, 4), atype=FLOAT_COLOR, unique=9, range=[0.16, 1]
     atom_id: shape=(486,), atype=INT, unique=486, range=[1, 486]

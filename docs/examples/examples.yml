@@ -3,7 +3,7 @@
   path: https://www.evolutionaryscale.ai/
   image: https://imgur.com/2zXf8ng.png
 
-- title:  Your Operating System ｜Eukaryotic Transcription 
+- title:  Your Operating System ｜Eukaryotic Transcription
   author: Clockwork
   description: 🧬How does your DNA actually become who you are? Let's go on the incredible journey it takes to transcribe your DNA into mRNA.
   path: https://www.youtube.com/watch?v=HZAmbbTcQ3M
@@ -14,7 +14,7 @@
   image: https://img.youtube.com/vi/P_fHJIYENdI/0.jpg
   description: A veritasium video about using AI for protein folding, highlighting the work of AlphaFold and RFDiffusion.
   author: Veritasium
-  
+
 - title: Introducing RFpeptides
   path: https://www.ipd.uw.edu/2024/11/introducing-rfpeptides-ai-for-cyclic-peptide-design/
   image: https://www.ipd.uw.edu/wp-content/uploads/2024/11/RFpeptides-macrocycle-diffusion-web-banner-1.jpg
@@ -65,7 +65,7 @@
   description: A popular YouTube science channel, discussing DNA topoisomerases.
   path: https://www.youtube.com/watch?v=8DBhTXM_Br4
   image: https://img.youtube.com/vi/8DBhTXM_Br4/0.jpg
-  
+
 - title: Microtubules
   author: Zhaowen Luo, St Jude Children's Hospital
   description: An animation from St Jude Children's Hospital, created by Zhaowen Luo. It was shown at the Association of Medical Illustrators annual conference in 2023, and won the category for Individual Professional Motion and Interactive Media.
@@ -76,4 +76,3 @@
   description: Nano rooms is a YouTube channel explaining the beautilful mathematical underpinnings of biology, and many of their animations of protein structures are using Molecular Nodes and Blender.
   path: https://www.youtube.com/watch?v=elRbbdJUiTU
   image: https://img.youtube.com/vi/elRbbdJUiTU/0.jpg
-

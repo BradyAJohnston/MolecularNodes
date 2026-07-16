@@ -128,4 +128,3 @@ Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnsto
 | O2 | `75::Int` |
 | O4 | `76::Int` |
 | C7 | `77::Int` |
-

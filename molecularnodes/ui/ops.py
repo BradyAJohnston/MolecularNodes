@@ -438,7 +438,7 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
 
     code: StringProperty(  # type: ignore
         name="PDB",
-        description="The 4-character PDB code to download",
+        description="The PDB code to download (4-character e.g. '1abc' or 12-character e.g. 'pdb_00001abc')",
         options={"TEXTEDIT_UPDATE"},
     )
     file_format: EnumProperty(  # type: ignore

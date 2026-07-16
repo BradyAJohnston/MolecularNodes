@@ -1,6 +1,6 @@
 ---
 title: Examples
-listing: 
+listing:
     id: listing-examples
     contents: examples.yml
     type: grid
@@ -9,7 +9,7 @@ listing:
     grid-columns: 2
     filter-ui: true
     # template: template.ejs
-    
+
 # css: styles.css
 
 

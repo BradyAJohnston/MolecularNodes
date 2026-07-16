@@ -30491,10 +30491,10 @@
 # name: test_periodic_array
   Mesh: NewTrajectory
     Geometry: 0 verts, 0 edges, 0 polys
-  
+
     Attributes:
     position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
-  
+
   Instances: 27 points
     Transforms: shape=(27, 4, 4), dtype=float32
       Transform[0]:
@@ -30634,7 +30634,7 @@
         [  2.403,   2.403,   1.133,   1.000]
     Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
     Instance references: [<GeometrySet: 3341 points>]
-  
+
     Attributes:
     instance_transform: shape=(27, 4, 4), atype=FLOAT4X4, unique=20, range=[-7e-08, 2.4]
 # ---

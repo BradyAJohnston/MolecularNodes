@@ -1,6 +1,6 @@
 ---
 title: Citing Molecular Nodes
-listing: 
+listing:
     id: listing-citations
     contents: citations.yml
     type: grid

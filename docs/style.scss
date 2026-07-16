@@ -45,7 +45,7 @@
   $node-type-color-attribute:      #1D2546 !default;
   $node-type-color-simulation:     #664162 !default;
   $node-type-color-repeat:         #76512F !default;
-  
+
   $node-socket-color-text:         #ffffff !default;
   $node-socket-color-geometry:     #05D19F !default;
   $code-socket-color-int:          #027a2a !default;
@@ -60,7 +60,7 @@
   $node-socket-color-collection:   #f4f4f4 !default;
   $node-socket-color-string:       #70B2FF !default;
   $node-socket-color-object:       #ED9E5C !default;
-  
+
   $h2-font-size:          1.6rem !default;
   $headings-font-weight:  500 !default;
   $color: #e1e1e1 !default;
@@ -140,19 +140,19 @@ table {
   border-collapse: collapse;
   vertical-align: middle;
   overflow: hidden; // Add this to ensure rounded corners are visible
-  
+
   th {
     text-align: center;
   }
 
   th, td {
     border: 1px solid rgb(21, 21, 21);
-    
+
     padding: 10%;
     background-color: $global-highlight;
     color: $node-socket-color-geometry;
   }
-  
+
   tr {
     background-color: $global-foreground;
     color: darken($node-editor-text, 10%);

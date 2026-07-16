@@ -889,7 +889,7 @@ ensemble:
       Replicate the trajectory across periodic boundaries.
   - name: Periodic Box
     description: >-
-      Get the box vectors for a trajectory's periodic simulation box. These vectors can be used to create periodic 
+      Get the box vectors for a trajectory's periodic simulation box. These vectors can be used to create periodic
       images of the trajectory
   - name: Periodic Image
     description: >-
