@@ -39,6 +39,69 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         self._entity = entity
         super().__init__(tree)
 
+    def _wrap(self, socket: bpy.types.NodeSocket) -> GeometrySocket:
+        """Wrap an existing Blender socket as a socket bound to this tree."""
+        wrapped = GeometrySocket(socket)
+        wrapped._tree = self
+        return wrapped
+
+    def _interface_geometry(
+        self, in_out: str
+    ) -> bpy.types.NodeTreeInterfaceSocket | None:
+        """The tree's first geometry interface socket in the given direction, if any."""
+        for item in self.tree.interface.items_tree:
+            if (
+                item.item_type == "SOCKET"
+                and item.in_out == in_out
+                and item.socket_type == "NodeSocketGeometry"
+            ):
+                return item
+        return None
+
+    @property
+    def atoms(self) -> GeometrySocket:
+        """
+        The geometry input to build branches from, adding the input if it is missing.
+
+        >>> with mol.tree as tree:
+        ...     tree.atoms >> StyleCartoon() >> tree.join
+        """
+        item = self._interface_geometry("INPUT")
+        if item is None:
+            return self.inputs.geometry("Atoms")
+        return self._wrap(self._input_node().outputs[item.identifier])
+
+    @property
+    def geometry(self) -> GeometrySocket:
+        """The geometry output of the tree, adding the output if it is missing."""
+        item = self._interface_geometry("OUTPUT")
+        if item is None:
+            return self.outputs.geometry("Geometry")
+        return self._wrap(self._output_node().inputs[item.identifier])
+
+    @property
+    def join(self) -> GeometrySocket:
+        """
+        The join that feeds the tree output, which every branch ends in.
+
+        Adds the join if it is missing, keeping whatever already fed the output.
+        """
+        output = self.geometry
+        links = output.socket.links
+        if links:
+            node = links[0].from_socket.node
+            if node.bl_idname == "GeometryNodeJoinGeometry":
+                return self._wrap(node.inputs[0])
+
+        join = g.JoinGeometry()
+        if links and links[0].from_socket.node.bl_idname != "NodeGroupInput":
+            # real work already feeds the output, so join it rather than orphan it.
+            # a bare input -> output passthrough is just the tree's default state and
+            # is dropped, otherwise unstyled geometry is rendered alongside every branch
+            self._wrap(links[0].from_socket) >> join
+        join >> output
+        return join.i.geometry
+
     @contextmanager
     def reset(
         self, input: str = "Atoms", output: str = "Geometry"
@@ -53,10 +116,9 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         """
         with self:
             self.clear()
-            atoms = self.inputs.geometry(input)
-            join = g.JoinGeometry()
-            join >> self.outputs.geometry(output)
-            yield ResetSockets(atoms, join.i.geometry)
+            self.inputs.geometry(input)
+            self.outputs.geometry(output)
+            yield ResetSockets(self.atoms, self.join)
 
     def clear(self) -> None:
         self.tree.nodes.clear()

@@ -9,13 +9,11 @@ import databpy
 import numpy as np
 from biotite import InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack
+from nodebpy.nodes.geometry import NamedAttribute
 from ... import blender as bl
 from ... import download, utils
-from ...nodes import nodes
-from ...nodes.node_management import (
-    add_style_branch,
-)
-from ...nodes.nodes import styles_mapping
+from ...nodes import geometry as g
+from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING, styles_mapping
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf
@@ -278,43 +276,29 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: str = "spheres",
-        color: str | None = "common",
+        style: STYLE_LITERALS = "spheres",
         selection: "str | None" = None,
-        assembly: bool = False,
-        material: bpy.types.Material | str | None = None,
-        name: str | None = None,
+        material: bpy.types.Material | None = None,
     ) -> "Molecule":
         """
         Add a visual style to the molecule.
 
+        Provides a simple interface for adding visual styles to the molecule. For more complex
+        styling, use the manual node tree creation via the `with mol.tree:` context manager.
+
         Parameters
         ----------
-        style : bpy.types.GeometryNodeTree | str, optional
-            The style to apply to the molecule. Can be a GeometryNodeTree or a string
-            identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
-            Default is "spheres".
-
-        color : str | None, optional
-            The coloring scheme to apply. Can be "common" (element-based coloring),
-            "chain", "residue", or other supported schemes. If None, no coloring
-            is applied. Default is "common".
+        style : str
+            The style to apply to the molecule. Can be a string identifying a predefined
+            style (e.g., "spheres", "sticks", "ball_stick"). Default is "spheres".
 
         selection : str | None, optional
-            Apply the style only to atoms matching this selection. Can be:
-            - A string referring to an existing boolean attribute on the molecule
-            - None to apply to all atoms (default)
+            The selection to apply the style to. Can be the name of a boolean attribute
+            on the molecule, or None to apply to all atoms.
 
-        assembly : bool, optional
-            If True, set up the style to work with biological assemblies.
-            Default is False.
-
-        material : bpy.types.Material | str | None, optional
+        material : bpy.types.Material | None, optional
             The material to apply to the styled atoms. Can be a Blender Material object,
             a string with a material name, or None to use default materials. Default is None.
-
-        name: str, optional
-            The label for this style
 
         Returns
         -------
@@ -326,9 +310,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         ValueError
             If an unsupported style string is passed
         """
-        if style is None:
-            return self
-
         if isinstance(style, str) and style not in styles_mapping:
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
@@ -342,19 +323,23 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                 category=UserWarning,
             )
 
-        node_style = add_style_branch(
-            tree=self.modifier_node_tree,
-            style=style,
-            color=color,
-            selection=selection,
-            material=material,
-            frames=self.frames,
-            name=name,
-        )
-
-        if assembly:
-            nodes.assembly_initialise(self.object)
-            nodes.assembly_insert(self.object)
+        with self.tree as tree:
+            (
+                tree.atoms
+                >> (
+                    g.AnimateFrames(
+                        frames=self.frames,
+                        frame=g.AnimateValue(value_min=0, value_max=self.n_models),
+                    )
+                    if self.n_models > 1
+                    else None
+                )
+                >> STYLE_NODE_MAPPING[style](
+                    selection=NamedAttribute(selection) if selection else None,
+                    material=material,
+                )
+                >> tree.join
+            )
 
         return self
 
