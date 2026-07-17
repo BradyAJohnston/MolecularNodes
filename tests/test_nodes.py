@@ -4,9 +4,12 @@ import bpy
 import numpy as np
 import pytest
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
+from nodebpy.nodes.geometry import Group
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from molecularnodes.nodes.geometry import (
+    SetColor,
+    StyleCartoon,
     TopologyBreakBonds,
     TopologyFindBonds,
 )
@@ -23,11 +26,12 @@ def test_get_nodes():
     nodes.realize_instances(mol.object)
     assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Realize Instances"
     assert nodes.get_style_node(mol.object).name == "Style Spheres"
+    assert nodes.get_style_node(mol.object).node_tree.name == "Style Spheres"
 
-    mol2 = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon", assembly=True)
+    mol2 = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon")
 
-    assert nodes.get_nodes_last_output(mol2.node_group)[0].name == "Assembly 1cd3"
-    assert nodes.get_style_node(mol2.object).name == "Style Cartoon"
+    assert nodes.get_nodes_last_output(mol2.node_group)[0].name == "Join Geometry"
+    assert nodes.get_style_node(mol2.object).node_tree.name == "Style Cartoon"
 
 
 def test_selection():
@@ -64,18 +68,21 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
-    mol = mn.Molecule.fetch(code, cache=data_dir).add_style("ribbon")
+    mol = mn.Molecule.fetch(code, cache=data_dir)
 
     group_col = nodes.custom_color_iswitch(
         name=f"Color Entity {mol.name}",
         items=mol.object[f"{attribute}s"],
         attribute_name=attribute,
     )
-    group = mol.node_group
-    node_col = nodes.add_custom(group, group_col.name, [0, -200])
-    group.links.new(node_col.outputs[0], group.nodes["Set Color"].inputs["Color"])
+    with mol.tree.reset() as (atoms, join):
+        n_color = Group()
+        n_color.node.node_tree = group_col
 
-    for i, input in enumerate(node_col.inputs):
+        atoms >> SetColor(color=n_color) >> StyleCartoon() >> join
+
+
+    for i, input in enumerate(n_color.i):
         setattr(input, "default_value", mn.color.random_rgb(i))
 
     assert snapshot_custom == mol.named_attribute("Color")

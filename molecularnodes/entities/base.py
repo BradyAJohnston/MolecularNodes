@@ -136,7 +136,7 @@ class MolecularEntity(
     def __init__(self) -> None:
         super().__init__(obj=None)
         self._register_with_session()
-        self._world_scale = 0.01
+        self._world_scale = 0.1
         self._tree = None
 
     def __getstate__(self):

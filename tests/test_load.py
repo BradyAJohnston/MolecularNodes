@@ -3,12 +3,14 @@ import bpy
 import databpy as db
 import numpy as np
 import pytest
+from nodebpy.nodes.geometry import RealizeInstances
 import molecularnodes as mn
+from molecularnodes.nodes.geometry import AnimateFrames, AnimateValue, StyleCartoon
+from molecularnodes.nodes.nodes import STYLE_NODE_MAPPING
 from .constants import attributes, codes, data_dir
 from .utils import NumpySnapshotExtension
 
 STYLES_TO_TEST = [
-    "preset_1",
     "cartoon",
     "ribbon",
     "spheres",
@@ -18,17 +20,29 @@ STYLES_TO_TEST = [
 
 
 @pytest.mark.parametrize(
-    "assembly, code, style", itertools.product([False], codes, STYLES_TO_TEST)
+    "code, assembly, style", itertools.product(codes, [True, False], STYLES_TO_TEST)
 )
-def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style):
-    mol = mn.Molecule.fetch(code, cache=data_dir).add_style(
-        style=style, assembly=assembly
-    )
-    if style == "spheres":
-        style_node = mn.nodes.node_management.get_final_style_nodes(
-            mol.modifier_node_tree
-        )[0]
-        style_node.inputs["Geometry"].default_value = "Mesh"
+def test_style_1(snapshot_custom: NumpySnapshotExtension, code, assembly, style):
+    mol = mn.Molecule.fetch(code, cache=data_dir)
+    kwargs = {}
+    match style:
+        case "ball_and_stick":
+            kwargs["sphere_geometry"] = "Mesh"
+        case "spheres":
+            kwargs["geometry"] = "Mesh"
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> STYLE_NODE_MAPPING[style](**kwargs)
+            >> (
+                mn.nodes.geometry.AssemblyInstance(
+                    data_object=mol.create_data_object(), realize_all=True
+                )
+                if assembly
+                else None
+            )
+            >> join
+        )
 
     for att in attributes:
         try:
@@ -74,9 +88,17 @@ def test_pdb_no_bonds(snapshot):
 
 
 def test_rcsb_nmr(snapshot_custom):
-    mol = mn.Molecule.fetch("2M6Q", cache=data_dir).add_style(style="cartoon")
-    assert len(mol.frames.objects) == 10
-    assert mol.node_group.nodes["Animate Value"].inputs["Value Max"].default_value == 9
+    mol = mn.Molecule.fetch("2M6Q", cache=data_dir)
+
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> AnimateFrames(
+                frames=mol.frames, frame=AnimateValue(value_max=9)
+            )
+            >> StyleCartoon()
+            >> join
+        )
     assert snapshot_custom == mol.named_attribute("position")
 
     bpy.context.scene.frame_set(1)
