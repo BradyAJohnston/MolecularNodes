@@ -828,6 +828,14 @@ class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
 class MN_OT_Import_CAS(bpy.types.Operator):
     """
     Operator for importing simple molecules from a CAS code database.
+
+    Original implementation idea was to use CAS codes, but the fact is, the NCI NIH
+    API we are calling, will automatically understand CAS codes, common names, SMILES strings,
+    and even other options to give a result.
+
+    Example:
+    --------
+    The common name "aspirin" or the CAS code 50-78-2 can be given and the same result will be obtained.
     """
 
     bl_idname = "mn.import_cas"
