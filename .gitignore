@@ -4,6 +4,7 @@
 
 
 *.blend1
+tests/blend_files/*.blend
 __pycache__/*
 .vscode/*
 molecularnodes*.zip
