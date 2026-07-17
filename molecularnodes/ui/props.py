@@ -339,6 +339,12 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         items=STYLE_ITEMS,
         default="spheres",
     )
+    import_style_cas: EnumProperty(  # type: ignore
+        name="Style",
+        description="Default style for importing",
+        items=STYLE_ITEMS,
+        default="ball_and_stick",
+    )
     import_md_topology: StringProperty(  # type: ignore
         name="Topology",
         description="File path for the toplogy file for the trajectory",

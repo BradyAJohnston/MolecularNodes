@@ -170,20 +170,25 @@ class StructureDownloader:
         code : str
             The CAS code of the structure to download.
 
+        Example of the API call structure:
+        https://cactus.nci.nih.gov/chemical/structure/aspirin/file?format=sdf
+        Base API: https://cactus.nci.nih.gov/chemical/structure/{code}/{representation}
+
+        Code can be CAS number, name, SMILES string, amongst other possibilities.
+        - The API will handle the code given on its own, we aren't doing anything to on our end.
+        - We are simply providing to the API a "code".
+
+        Representation can be SMILES, SDF, CIF, amongst MANY other options (see API docs)
+        - The current implementation is getting the SDF representation and turning it into a file to be loaded into MolecularNodes.
+
         Returns
         -------
         Path or io.BytesIO or io.StringIO
         """
 
         BASE_API = "https://cactus.nci.nih.gov/chemical/structure"
-        # cas_url = f"{BASE_API}/{code}/smiles"
         cas_url = f"{BASE_API}/{code}/file?format=sdf"
-        # https://cactus.nci.nih.gov/chemical/structure/aspirin/file?format=sdf
-        # r = requests.get(cas_url)
-        # r.raise_for_status()
-        # return r.text
 
-        _is_binary = format in ["bcif"]
         filename = f"{code}.sdf"
 
         if self.cache:
@@ -199,32 +204,17 @@ class StructureDownloader:
         except requests.HTTPError as e:
             raise FileDownloadPDBError(str(e))
 
-        if _is_binary:
-            content = r.content
-            # Check if the content is gzipped
-            if content[:2] == b"\x1f\x8b":  # gzip magic number
-                content = gzip.decompress(content)
-        else:
-            content = r.text
+        content = r.text
 
         if file:
-            mode = "wb+" if _is_binary else "w+"
+            mode = "w+"
             with open(file, mode) as f:
                 f.write(content)
             return Path(file)
         else:
-            if _is_binary:
-                if not isinstance(content, bytes):
-                    raise ValueError(
-                        "Binary content is not bytes, please check your format."
-                    )
-                file = io.BytesIO(content)
-            else:
-                if not isinstance(content, str):
-                    raise ValueError(
-                        "Text content is not str, please check your format."
-                    )
-                file = io.StringIO(content)
+            if not isinstance(content, str):
+                raise ValueError("Text content is not str, please check your format.")
+            file = io.StringIO(content)
 
         return file
 

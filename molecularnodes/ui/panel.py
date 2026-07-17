@@ -267,7 +267,7 @@ def panel_cas(layout, scene):
     op.code = scene.mn.import_code_cas  # type: ignore
     op.database = "NIH"  # type: ignore
     op.node_setup = scene.mn.import_node_setup  # type: ignore
-    op.style = scene.mn.import_style  # type: ignore
+    op.style = scene.mn.import_style_cas  # type: ignore
     op.centre = scene.mn.import_centre  # type: ignore
     op.centre_type = scene.mn.import_centre_type  # type: ignore
 
@@ -286,7 +286,7 @@ def panel_cas(layout, scene):
     row = options.row()
     row.prop(scene.mn, "import_node_setup", text="")
     col = row.column()
-    col.prop(scene.mn, "import_style")
+    col.prop(scene.mn, "import_style_cas")
     col.enabled = scene.mn.import_node_setup
 
     row_centre = options.row()
@@ -295,9 +295,6 @@ def panel_cas(layout, scene):
     col_centre.prop(scene.mn, "import_centre_type", text="")
     col_centre.enabled = scene.mn.import_centre
     options.separator()
-
-    grid = options.grid_flow()
-    grid.prop(scene.mn, "import_del_hydrogen")
 
 
 chosen_panel = {

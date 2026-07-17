@@ -851,7 +851,7 @@ class MN_OT_Import_CAS(bpy.types.Operator):
         name="Style",
         description="Default style for importing",
         items=STYLE_ITEMS,
-        default="spheres",
+        default="ball_and_stick",
     )
 
     cache_dir: StringProperty(  # type: ignore
@@ -859,12 +859,6 @@ class MN_OT_Import_CAS(bpy.types.Operator):
         description="Where to store the structures downloaded from the Protein Data Bank",
         default=str(CACHE_DIR),
         subtype="DIR_PATH",
-    )
-
-    del_hydrogen: BoolProperty(  # type: ignore
-        name="Remove Hydrogens",
-        description="Remove the hydrogens from a structure on import",
-        default=False,
     )
 
     centre: BoolProperty(  # type: ignore

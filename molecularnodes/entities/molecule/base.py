@@ -138,28 +138,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         return mol
 
-    # @classmethod
-    # def cas_load(
-    #     cls,
-    #     smiles_string: str,
-    #     name: str,
-    #     remove_solvent: bool = True,
-    # ) -> "Molecule":
-    #     """
-    #     Load a molecules using the SMILES string given.
-
-    #     Parameters
-    #     ----------
-    #     smiles_string : str
-    #         The SMILES string of the molecule to load.
-    #     name : str
-    #         The name to give the molecule object.
-    #     remove_solvent : bool, optional
-    #         Whether to remove solvent from the molecule, by default True.
-    #     """
-    #     u = mda.Universe.from_smiles(smiles_string)
-    #     return Trajectory(u).create_object
-
     @property
     def code(self) -> str | None:
         """
@@ -250,7 +228,6 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         cls,
         code: str,
         centre: str | None = None,
-        remove_solvent: bool = True,
         cache: Path | str | None = download.CACHE_DIR,
     ) -> "Molecule":
         """
@@ -277,7 +254,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
 
         cas_SDF_path = download.StructureDownloader(cache=cache).cas_download(code=code)
-        mol = cls.load(cas_SDF_path, name=code, remove_solvent=remove_solvent)
+        mol = cls.load(cas_SDF_path, name=code)
         mol._code = code
 
         return mol
