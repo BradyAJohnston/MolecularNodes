@@ -11,9 +11,9 @@ def test_add_style_with_selection():
 
     node_style = [
         node
-        for node in mol.modifier_node_tree
+        for node in mol.modifier_node_tree.nodes
         if (
-            isinstance(node, bpy.types.NodeGroup)
+            isinstance(node, bpy.types.GeometryNodeGroup)
             and node.node_tree.name == "Style Ball and Stick"
         )
     ][0]
