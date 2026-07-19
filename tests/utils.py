@@ -32,7 +32,7 @@ class GeometrySet:
     def __init__(self, obj: Object, context: None | Context = None):
         self.obj = obj
         self.context = context if isinstance(context, Context) else bpy.context
-        depsgraph: Depsgraph = self.context.view_layer.depsgraph
+        depsgraph: Depsgraph = self.context.evaluated_depsgraph_get()
         if depsgraph is None:
             raise ValueError
 

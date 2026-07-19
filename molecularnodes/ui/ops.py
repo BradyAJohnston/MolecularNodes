@@ -579,9 +579,9 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 topology=topology,
                 coordinates=coordinates,
                 name=self.name,
-                style=self.style if self.setup_nodes else None,
-                selection="all",
             )
+            if self.setup_nodes:
+                traj.add_style(style=self.style)
 
         context.view_layer.objects.active = traj.object
         context.scene.frame_start = 0
