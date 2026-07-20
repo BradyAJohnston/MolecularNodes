@@ -1,8 +1,8 @@
 from typing import List, Sequence
 import bpy
-from bpy.types import Node  # type: ignore
+from bpy.types import Node
 from databpy.nodes import get_output
-from mathutils import Vector  # type: ignore
+from mathutils import Vector
 from . import nodes
 from .arrange import arrange_tree
 from .interface import (
@@ -46,7 +46,7 @@ def insert_set_color(
         else:
             input_named_attribute(node_sc.inputs["Color"], color, "FLOAT_COLOR")
     else:
-        node_sc.inputs["Color"].default_value = color  # type: ignore
+        node_sc.inputs["Color"].default_value = color
     return node_sc
 
 
@@ -60,9 +60,9 @@ def insert_animate_frames(
     tree = node.id_data
     node_af: bpy.types.GeometryNodeGroup = insert_before(node, "Animate Frames")  # type: ignore
     if isinstance(frames, bpy.types.Collection):
-        node_af.inputs["Frames"].default_value = frames  # type: ignore
+        node_af.inputs["Frames"].default_value = frames
     elif isinstance(frames, str):
-        node_af.inputs["Frames"].default_value = bpy.data.collections[frames]  # type: ignore
+        node_af.inputs["Frames"].default_value = bpy.data.collections[frames]
     else:
         raise ValueError(
             f"Frames must be a string or a Collection, not {type(frames)=}"
@@ -130,8 +130,8 @@ def add_style_branch(
         node_join.inputs[0],
     )
 
-    for nodelink in node_join.inputs[0].links:  # type: ignore
-        if nodelink.from_socket.node == nodes.get_input(tree):  # type: ignore
+    for nodelink in node_join.inputs[0].links:
+        if nodelink.from_socket.node == nodes.get_input(tree):
             tree.links.remove(nodelink)
 
     # Apply style modifications
@@ -162,14 +162,14 @@ def get_final_style_nodes(
     Get the final style nodes in the tree.
     """
     try:
-        links: bpy.types.NodeLinks = final_join(tree).inputs[0].links  # type: ignore
+        links: bpy.types.NodeLinks = final_join(tree).inputs[0].links
     except AttributeError:
         links = get_output(tree).inputs[0].links
 
     return [
-        link.from_socket.node  # type: ignore
+        link.from_socket.node
         for link in reversed(links)
-        if link.from_socket.node.name.startswith("Style")  # type: ignore
+        if link.from_socket.node.name.startswith("Style")
     ]
 
 
@@ -239,7 +239,7 @@ def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInter
     # Pre-expose options for linked nodes
     for input in node.inputs:
         if input.is_linked:
-            linked_node = input.links[0].from_socket.node  # type: ignore
+            linked_node = input.links[0].from_socket.node
             interface._expose_options(linked_node)
 
     return interface

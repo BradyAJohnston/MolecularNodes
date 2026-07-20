@@ -50,7 +50,7 @@ class MolecularEntity(
 
     @property
     def tree(self) -> bpy.types.GeometryNodeTree:
-        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]  # type: ignore
+        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]
         if mod is None:
             raise ValueError(
                 f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
@@ -89,10 +89,10 @@ class MolecularEntity(
         """
         self.object.modifiers.new("MolecularNodes", "NODES")
         # fallback=False => new tree all the time
-        tree = nodes.new_tree(  # type: ignore
+        tree = nodes.new_tree(
             name=f"MN_{self.name}", input_name="Atoms", is_modifier=True, fallback=False
         )
-        self.object.modifiers[0].node_group = tree  # type: ignore
+        self.object.modifiers[0].node_group = tree
 
     def get_view(self) -> List[tuple]:
         """

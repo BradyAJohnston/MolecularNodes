@@ -99,7 +99,7 @@ class ReaderBase(metaclass=ABCMeta):
                 except IndexError:
                     array.set_annotation(
                         name,
-                        func(array, file)[array.atom_id - 1],  # type: ignore
+                        func(array, file)[array.atom_id - 1],
                     )
             except KeyError:
                 pass

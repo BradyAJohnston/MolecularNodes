@@ -138,7 +138,7 @@ wheels = [
 
 [[package]]
 name = "biotite"
-version = "1.6.0"
+version = "1.7.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "biotraj" },
@@ -148,13 +148,12 @@ dependencies = [
     { name = "packaging" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/59/7b/99153f7bceef01034b5f19a6b123219533132d446ffcf141dfef3e386d33/biotite-1.6.0.tar.gz", hash = "sha256:4c172f6e57521220fa0fc4899142211f6f21ba83d8f6f135d4edc68981f70e7e", size = 38514388, upload-time = "2026-01-23T12:47:38.331Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/93/ed0751d0f16d54ec82735605c776b37c77af7949a3dd230a1226f2b3b4df/biotite-1.7.1.tar.gz", hash = "sha256:2ae4a5d2c2d5ba08ca5d89a647984c99f45994eb908b614e896ce9e4db3ca800", size = 39858536, upload-time = "2026-06-22T12:42:34.507Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/c0/2f911876c91468e9794003724cc641f0bfe7563229f537ee6a2040b6bc6f/biotite-1.6.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:69d16be1721bb65769e1daa9316580e8e7c832d487cb9e5f1ce1f3100492f966", size = 41648417, upload-time = "2026-01-23T12:47:07.791Z" },
-    { url = "https://files.pythonhosted.org/packages/d2/5b/ca8476009f5dab4efbd5e889e60b14eac4650384bf39bada08e551d97da9/biotite-1.6.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:8cbac31dfc484a953a0b50ad692ab558e5537a39894b126791506da2ba8e759f", size = 41531163, upload-time = "2026-01-23T12:47:11.175Z" },
-    { url = "https://files.pythonhosted.org/packages/db/c6/b72f7ce4438401d9d7c6b2c46ef26e7cf1187f0ff9faf15b8444cacdc0da/biotite-1.6.0-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:4026e034e90696780598f46fccd9e020a562983620f77c4e6f51b0805f929f38", size = 56584437, upload-time = "2026-01-23T12:47:14.53Z" },
-    { url = "https://files.pythonhosted.org/packages/25/44/c8cfb570d8a131e136e3f06b9c47d4dea0b6f1ce0b34d1ce1092331e7505/biotite-1.6.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:5087a40853a451abf4aedae1293bb413ef1aa4dd8287fc2b363b4a5c70c3ae55", size = 57184611, upload-time = "2026-01-23T12:47:17.642Z" },
-    { url = "https://files.pythonhosted.org/packages/1c/5a/4594df3af07446506305806f253f1432374f9f318d0225725631dacfde83/biotite-1.6.0-cp313-cp313-win_amd64.whl", hash = "sha256:fe64a929d7ddede42c4c757a81ef505d5f389e788bc8b9c61c8fe605899a20a4", size = 41201315, upload-time = "2026-01-23T12:47:20.481Z" },
+    { url = "https://files.pythonhosted.org/packages/b1/b1/b01e44a3d0ceefce400ee857a8baada1a0a5661a8c1222d1b2ec46d606a7/biotite-1.7.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:5212116934b9c22515f86a1c23046cf3ecf7c9706464b14f16d72cd993866095", size = 45605899, upload-time = "2026-06-22T12:42:08.553Z" },
+    { url = "https://files.pythonhosted.org/packages/85/16/66398b9eced43ca1f421dd46f013d1c9a3b8e159e2de62ec0e11604a29c9/biotite-1.7.1-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:4f99104e7ebc1b2ab8ff7910736321e1205c85dba532826877ff263c65bd85ff", size = 57339294, upload-time = "2026-06-22T12:42:11.558Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/34/51e095d4d4475bc64b793efd362b33d8c88658ac7b8a0b41c632d598b6d8/biotite-1.7.1-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:085976013c62977eb29c5180cdffbc4b49633f35172b64c99e56eb7007d9f516", size = 57888297, upload-time = "2026-06-22T12:42:14.947Z" },
+    { url = "https://files.pythonhosted.org/packages/44/c7/93a55ec59b8677e89c54f103a1b5017c75cec322b36bf738f27381513273/biotite-1.7.1-cp313-cp313-win_amd64.whl", hash = "sha256:965824257f716a77de3df35616cdaf302483a9ab8df98dc1dd0096c987342c49", size = 45272222, upload-time = "2026-06-22T12:42:18.114Z" },
 ]
 
 [[package]]
@@ -1318,7 +1317,7 @@ wheels = [
 
 [[package]]
 name = "molecularnodes"
-version = "4.5.12"
+version = "4.5.13"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
@@ -1369,7 +1368,7 @@ jupyter = [
 
 [package.metadata]
 requires-dist = [
-    { name = "biotite", specifier = ">=1.5" },
+    { name = "biotite", specifier = ">=1.7.1" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = ">=5.1.0" },
     { name = "databpy", specifier = ">=0.7.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'" },

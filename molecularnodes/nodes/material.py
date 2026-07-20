@@ -442,7 +442,7 @@ def create_material(
     if tree is None:
         raise RuntimeError("Material does not have a node tree")
     try:
-        bsdf = mat.node_tree.nodes["Principled BSDF"]  # type: ignore
+        bsdf = mat.node_tree.nodes["Principled BSDF"]
     except KeyError:
         output = tree.nodes.new("ShaderNodeOutputMaterial")
         bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")

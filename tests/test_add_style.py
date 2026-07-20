@@ -25,7 +25,7 @@ def test_style_interface():
         .inputs["Selection"]
         .links[0]
         .from_node.inputs["Name"]
-        .default_value  # type: ignore
+        .default_value
         == "is_backbone"
     )
     add_style_branch(mol.tree, "spheres")
@@ -58,7 +58,7 @@ def test_add_color_node():
     # node, checking that the name is the one that we set
     add_style_branch(mol.tree, "cartoon", color="is_peptide")
     assert len(mol.tree.nodes) == 11
-    node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node  # type: ignore
+    node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node
     assert node_sc.inputs["Color"].is_linked
     node_na = node_sc.inputs["Color"].links[0].from_socket.node
     assert node_na.inputs["Name"].default_value == "is_peptide"

@@ -23,20 +23,20 @@ def panel_wwpdb(layout, scene):
     row = row_import.split(factor=0.3)
     row.prop(scene.mn, "import_format_fetch", text="")
     op = row.operator("mn.import_fetch")
-    op.code = scene.mn.import_code_pdb  # type: ignore
-    op.database = "wwpdb"  # type: ignore
-    op.file_format = scene.mn.import_format_fetch  # type: ignore
-    op.node_setup = scene.mn.import_node_setup  # type: ignore
-    op.remove_solvent = scene.mn.import_remove_solvent  # type: ignore
-    op.assembly = scene.mn.import_build_assembly  # type: ignore
-    op.style = scene.mn.import_style  # type: ignore
-    op.centre = scene.mn.import_centre  # type: ignore
-    op.centre_type = scene.mn.import_centre_type  # type: ignore
+    op.code = scene.mn.import_code_pdb
+    op.database = "wwpdb"
+    op.file_format = scene.mn.import_format_fetch
+    op.node_setup = scene.mn.import_node_setup
+    op.remove_solvent = scene.mn.import_remove_solvent
+    op.assembly = scene.mn.import_build_assembly
+    op.style = scene.mn.import_style
+    op.centre = scene.mn.import_centre
+    op.centre_type = scene.mn.import_centre_type
     prefs = addon_preferences()
     if prefs is not None:
         op.cache_dir = str(prefs.cache_dir)  # type: ignore
     else:
-        op.cache_dir = str(bpy.app.tempdir)  # type: ignore
+        op.cache_dir = str(bpy.app.tempdir)
     layout.separator(factor=0.4)
 
     layout.separator()
@@ -74,19 +74,19 @@ def panel_alphafold(layout, scene):
     download = row_import.split(factor=0.3)
     download.prop(scene.mn, "import_format_fetch", text="")
     op = download.operator("mn.import_fetch")
-    op.code = scene.mn.import_code_alphafold  # type: ignore
-    op.database = "alphafold"  # type: ignore
-    op.file_format = scene.mn.import_format_fetch  # type: ignore
-    op.node_setup = scene.mn.import_node_setup  # type: ignore
-    op.assembly = scene.mn.import_build_assembly  # type: ignore
-    op.style = scene.mn.import_style  # type: ignore
-    op.centre = scene.mn.import_centre  # type: ignore
-    op.centre_type = scene.mn.import_centre_type  # type: ignore
+    op.code = scene.mn.import_code_alphafold
+    op.database = "alphafold"
+    op.file_format = scene.mn.import_format_fetch
+    op.node_setup = scene.mn.import_node_setup
+    op.assembly = scene.mn.import_build_assembly
+    op.style = scene.mn.import_style
+    op.centre = scene.mn.import_centre
+    op.centre_type = scene.mn.import_centre_type
     prefs = addon_preferences()
     if prefs is not None:
         op.cache_dir = str(prefs.cache_dir)  # type: ignore
     else:
-        op.cache_dir = str(bpy.app.tempdir)  # type: ignore
+        op.cache_dir = str(bpy.app.tempdir)
 
     layout.separator(factor=0.4)
 
