@@ -225,7 +225,7 @@ def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, name)
 
 def test_topo_bonds():
     mol = mn.Molecule.fetch("1BNA", cache=data_dir)
-    group = nodes.get_mod(mol.object).node_group = nodes.new_tree()
+    nodes.get_mod(mol.object).node_group = nodes.new_tree()
     with mol.tree as tree:
         atoms, join = tree.reset()
         atoms >> TopologyBreakBonds(cutoff=0.0) >> join

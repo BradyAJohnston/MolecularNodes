@@ -1,7 +1,9 @@
 import itertools
 import numpy as np
 import pytest
+from scipy.stats import geom
 import molecularnodes as mn
+from molecularnodes.nodes.assets import StyleSpheres
 from .constants import attributes, codes, data_dir
 
 formats = ["pdb", "cif", "bcif"]
@@ -36,9 +38,10 @@ def test_uv_map(snapshot_custom):
 
 
 def test_bond_attributes(snapshot_custom):
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif").add_style(
-        mn.StyleBallAndStick(sphere_geometry="Mesh"),
-    )
+    mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
+    with mol.tree as tree:
+        atoms, join = tree.reset()
+        atoms >> StyleSpheres(geometry="Mesh") >> join
 
     for attr in mol.list_attributes(evaluate=True, drop_hidden=True):
         assert snapshot_custom == mol.named_attribute(attr, evaluate=True)

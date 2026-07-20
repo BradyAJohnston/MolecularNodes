@@ -105,6 +105,7 @@ order-by-type = true
 [tool.ruff.lint.per-file-ignores]
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
+"molecularnodes/nodes/assets.py" = ["E741"]
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]

@@ -40,7 +40,7 @@ SURFACE_STYLE_ITEMS = (
     (
         "density_surface",
         "Surface",
-        "Style Density Surface",
+        "Density Style Surface",
     ),
     # (
     #     "density_iso_surface",

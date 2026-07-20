@@ -16,9 +16,6 @@ from ...nodes.geometry import (
     add_style_branch,
 )
 from ...nodes.nodes import styles_mapping
-from ...nodes.styles import (
-    StyleBase,
-)
 from ..base import EntityType, MolecularEntity
 from ..utilities import create_object
 from . import pdb, pdbx, sdf
@@ -281,7 +278,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def add_style(
         self,
-        style: StyleBase | str = "spheres",
+        style: str = "spheres",
         color: str | None = "common",
         selection: "str | None" = None,
         assembly: bool = False,
