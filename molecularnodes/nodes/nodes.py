@@ -13,7 +13,7 @@ from mathutils import Vector
 from nodebpy import geometry as g
 from .. import color, utils
 from ..assets import MN_DATA_FILE
-from ..blender import mesh
+from ..blender import coll, mesh
 from . import assets as a
 from .material import assign_material
 from .style_density_iso_surface import style_density_iso_surface_node_group
@@ -528,20 +528,22 @@ def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chai
     return group
 
 
+def assembly_data_object_from_obj(obj: bpy.types.Object) -> bpy.types.Object:
+    data_obj_name = f".data_{obj.name}_assemblies"
+    data_obj = bpy.data.objects.get(data_obj_name)
+    if not data_obj:
+        transforms = utils.array_quaternions_from_dict(obj.mn.biological_assemblies)
+        data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
+
+    return data_obj
+
+
 def assembly_initialise(obj: bpy.types.Object):
     """
     Setup the required data object and nodes for building an assembly.
     """
-
-    data_obj_name = f".data_assembly_{obj.name}"
-
-    # check if a data object exists and create a new one if not
-    data_object = bpy.data.objects.get(data_obj_name)
-    if not data_object:
-        transforms = utils.array_quaternions_from_dict(obj.mn.biological_assemblies)
-        data_object = mesh.create_data_object(array=transforms, name=data_obj_name)
-
-    tree_assembly = create_assembly_node_tree(name=obj.name, data_object=data_object)
+    data_obj = assembly_data_object_from_obj(obj)
+    tree_assembly = create_assembly_node_tree(name=obj.name, data_object=data_obj)
     return tree_assembly
 
 
