@@ -1,9 +1,8 @@
 import itertools
 import numpy as np
 import pytest
-from scipy.stats import geom
 import molecularnodes as mn
-from molecularnodes.nodes.assets import StyleSpheres
+from molecularnodes.nodes.assets import StyleRibbon, StyleSpheres
 from .constants import attributes, codes, data_dir
 
 formats = ["pdb", "cif", "bcif"]
@@ -30,9 +29,10 @@ def test_store_named_attribute(snapshot_custom):
 
 
 def test_uv_map(snapshot_custom):
-    mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif").add_style("ribbon")
-    mol.styles[0].uv_map = True
-    mol.styles[0].quality = 1
+    mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif")
+    with mol.tree as tree:
+        atoms, join = tree.reset()
+        atoms >> StyleRibbon(uv_map=True, quality=1) >> join
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[:1000]
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]
 

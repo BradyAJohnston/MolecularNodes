@@ -25,8 +25,8 @@ from ..entities import (
 from ..nodes import assets as a
 from ..nodes import nodes
 from ..nodes.geometry import (
-    create_style_interface,
     get_final_style_nodes,
+    remove_style_node,
 )
 from ..nodes.material import add_all_materials
 from ..scene.compositor import setup_compositor
@@ -708,7 +708,7 @@ class MN_OT_Remove_Style(Operator):
         entity = get_session().get(self.uuid)
         node_group = entity.node_group
         style_node = node_group.nodes[self.style_node_index]
-        create_style_interface(style_node).remove()
+        remove_style_node(style_node)
         # set the active index in UI to the last style
         style_nodes = get_final_style_nodes(node_group)
         if len(style_nodes) > 0:

@@ -10,10 +10,6 @@ from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
 from ..nodes import nodes
-from ..nodes.geometry import (
-    GeometryNodeInterFace,
-    style_interfaces_from_tree,
-)
 from .utilities import BoolObjectMNProperty
 
 
@@ -62,6 +58,14 @@ class MolecularEntity(
         self._world_scale = 0.01
         self._tree = None
 
+    def __getstate__(self):
+        """Custom serialization."""
+        state = self.__dict__.copy()
+        # the cached tree wraps live Blender data which can't be pickled, and is
+        # rebuilt on the next access of the `tree` property
+        state["_tree"] = None
+        return state
+
     @property
     def node_group(self) -> bpy.types.GeometryNodeTree:
         mod = self.modifier
@@ -95,13 +99,6 @@ class MolecularEntity(
 
         mod.node_group.is_modifier = True
         return cast(GeometryNodeTree, mod.node_group)
-
-    @property
-    def styles(self) -> List[GeometryNodeInterFace]:
-        """
-        Get the styles in the tree.
-        """
-        return style_interfaces_from_tree(self.modifier_node_tree)
 
     def _register_with_session(self) -> None:
         bpy.context.scene.MNSession.register_entity(self)  # type: ignore

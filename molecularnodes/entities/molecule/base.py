@@ -419,7 +419,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
     def __getstate__(self):
         """Custom serialization."""
-        state = self.__dict__.copy()
+        state = super().__getstate__()
         # Remove objects with circular references or PyCapsules
         if "annotations" in state:
             del state["annotations"]

@@ -3255,14 +3255,18 @@ SACCHARIDE_REPRESENTATION = {
 # partially taken from here: https://computecanada.github.io/molmodsim-md-theory-lesson-novice/09-water_models/index.html
 # and here: https://github.com/BradyAJohnston/MolecularNodes/issues/1051
 RESNAMES_SOLVENT: tuple = (
+    "DOD",
+    "H2O",
+    "HOH",
     "OPC",
     "OPC3",
     "PW",
-    "SOL"
+    "SOL",
     "SPC",
     "SPE",
     "TIP3",
     "TIP4",
+    "TIP5",
     "W",
     "WAT",
     )

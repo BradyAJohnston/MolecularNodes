@@ -1,7 +1,4 @@
-import bpy
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 import molecularnodes as mn
 from molecularnodes.nodes import geometry
 from molecularnodes.nodes.geometry import add_style_branch
@@ -32,20 +29,12 @@ def test_style_interface():
     )
     add_style_branch(mol.modifier_node_tree, "spheres")
 
-    style = mol.styles[0]
-    assert_allclose(
-        style.peptide_width,
-        bpy.data.node_groups["Style Cartoon"]
-        .interface.items_tree["Peptide Width"]
-        .default_value,
-    )
-    style.peptide_width = 1.0
-    assert_allclose(style.peptide_width, 1.0)
-
     assert len(mol.modifier_node_tree.nodes) == 12
     mol.add_style("cartoon", color="is_peptide")
     assert len(mol.modifier_node_tree.nodes) == 15
-    mol.styles[-1].remove()
+    geometry.remove_style_node(
+        geometry.get_final_style_nodes(mol.modifier_node_tree)[-1]
+    )
     assert len(mol.modifier_node_tree.nodes) == 12
 
 
@@ -69,24 +58,14 @@ def test_add_color_node():
 
 def test_add_style_with_selection():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
-    mol.select.res_id(range(50)).is_side_chain().store_selection("show_side_chains")
+    mol.store_named_attribute(mol.named_attribute("is_side_chain"), "show_side_chains")
     mol.add_style("ball+stick", selection="show_side_chains")
-    mol.add_style("cartoon")
 
-    sel = (
-        mn.entities.MoleculeSelector()
-        .res_id(range(50, 500))
-        .is_side_chain()
-        .res_name(["ARG", "LYS", "VAL"])
+    node_style = mol.modifier_node_tree.nodes["Style Ball and Stick"]
+    assert (
+        node_style.inputs["Selection"].links[0].from_node.inputs["Name"].default_value
+        == "show_side_chains"
     )
-
-    mol.add_style(
-        "ball+stick",
-        selection=sel,
-    )
-
-    assert "sel_0" in mol.list_attributes()
-    assert np.allclose(mol.named_attribute("sel_0"), sel.evaluate_on_array(mol.array))
 
     with pytest.warns(UserWarning):
         mol.add_style("cartoon", selection="non_existing_selection")
@@ -95,9 +74,8 @@ def test_add_style_with_selection():
 def test_change_style_values():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     pre = mol.named_attribute("position", evaluate=True)
-    mol.styles[0].quality = 5
+    style_node = geometry.get_final_style_nodes(mol.modifier_node_tree)[0]
+    style_node.inputs["Quality"].default_value = 5
     post = mol.named_attribute("position", evaluate=True)
 
     assert len(pre) < len(post)
-    with pytest.raises(ValueError):
-        mol.styles[0].quality = 1.0

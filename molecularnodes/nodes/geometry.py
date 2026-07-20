@@ -6,13 +6,10 @@ from mathutils import Vector
 from . import nodes
 from .arrange import arrange_tree
 from .interface import (
-    TreeInterface,
     input_named_attribute,
-    socket,
 )
 from .material import (
     assign_material,
-    getset_material,
 )
 from .nodes import (
     NODE_SPACING,
@@ -166,87 +163,14 @@ def get_final_style_nodes(
     ]
 
 
-class GeometryNodeInterFace(TreeInterface):
+def remove_style_node(node: Node) -> None:
     """
-    Interface for the geometry nodes in the tree.
+    Remove a style node from its tree, along with the nodes linked into its inputs.
     """
-
-    def __init__(self, node: bpy.types.Node) -> None:
-        super().__init__()
-        self.tree: bpy.types.NodeTree = node.id_data
-        self._nodes = []
-
-    def remove(self) -> None:
-        """
-        Cleanup when this instance is explicitly deleted.
-        """
-        for node in self._nodes:
-            self.tree.nodes.remove(node)
-        arrange_tree(self.tree)
-
-    def _expose_options(self, node: bpy.types.Node) -> None:
-        self._nodes.append(node)
-        for input in node.inputs:
-            if not hasattr(input, "default_value"):
-                continue
-
-            # Create property name from node and input names
-            prop_name = (
-                "_".join([node.name.split(".")[0], input.name])
-                .lower()
-                .replace(" ", "_")
-                .removeprefix("style_")
-                .removeprefix("ribbon_")
-                .removeprefix("surface_")
-                .removeprefix("ball_and_stick_")
-                .removeprefix("cartoon_")
-                .removeprefix("spheres_")
-                .removeprefix("density_surface_")
-                .removeprefix("density_iso_surface_")
-                .removeprefix("density_wire_")
-            )
-            if isinstance(input, bpy.types.NodeSocketMaterial):
-                prop = getset_material(input)
-            else:
-                prop = socket(input)
-            self._register_property(prop_name)
-            setattr(self.__class__, prop_name, prop)
-
-
-def create_style_interface(node: Node, linked: bool = True) -> GeometryNodeInterFace:
-    """
-    Dynamically create a StyleInterface class with exposed options.
-    """
-    class_name = f"DynamicStyleInterface_{node.name.replace('Style ', '')}"
-
-    # Create the dynamic class with a unique name
-    DynamicInterface = type(class_name, (GeometryNodeInterFace,), {})
-
-    # Pre-expose the options for the main node
-    interface = DynamicInterface(node)
-    interface._expose_options(node)
-
-    if not linked:
-        return interface
-
-    # Pre-expose options for linked nodes
-    for input in node.inputs:
-        if input.is_linked:
-            linked_node = input.links[0].from_socket.node
-            interface._expose_options(linked_node)
-
-    return interface
-
-
-class StyleManager(List):
-    def clear(self) -> None:
-        while len(self) > 0:
-            self.pop().remove()
-
-
-def style_interfaces_from_tree(
-    tree: bpy.types.GeometryNodeTree,
-) -> StyleManager[GeometryNodeInterFace]:
-    return StyleManager(
-        create_style_interface(node) for node in get_final_style_nodes(tree)
-    )
+    tree: bpy.types.NodeTree = node.id_data
+    to_remove = [node] + [
+        input.links[0].from_socket.node for input in node.inputs if input.is_linked
+    ]
+    for node_to_remove in to_remove:
+        tree.nodes.remove(node_to_remove)
+    arrange_tree(tree)

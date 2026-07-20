@@ -172,12 +172,16 @@ def get_style_node(object):
     return style_node(group)
 
 
+def _is_star_node(node) -> bool:
+    # the node itself is generically named, so match on the group it instances
+    tree = getattr(node, "node_tree", None)
+    return tree is not None and "Starfile Instances" in tree.name
+
+
 def star_node(group):
     prev = previous_node(get_output(group))
-    is_star_node = "Starfile Instances" in prev.name
-    while not is_star_node:
+    while not _is_star_node(prev):
         prev = previous_node(prev)
-        is_star_node = "Starfile Instances" in prev.name
     return prev
 
 
