@@ -65,6 +65,7 @@ def register():
             print(e)
             pass
     bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
+    bpy.types.VIEW3D_MT_add.prepend(panel.panel_wwpdb)
 
     save_post.append(session._pickle)
     load_post.append(session._load)

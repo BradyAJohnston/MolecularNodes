@@ -66,7 +66,7 @@ def test_op_local(snapshot_custom, code, file_format):
         assert mol.object.mn.entity_type == mol._entity_type.value
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=str(path), centre=True, centre_type="centroid")
+        bpy.ops.mn.import_local(filepath=str(path))
         mol_cent = session.match(o.latest())
 
     assert snapshot_custom == mol.position

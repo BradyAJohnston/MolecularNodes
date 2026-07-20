@@ -82,36 +82,6 @@ class Import_Molecule(bpy.types.Operator):
         default=True,
         description="Whether to setup the starting default node tree on import",
     )
-
-    centre: BoolProperty(  # type: ignore
-        name="Centre",
-        description="Whether to centre the structure on import",
-        default=False,
-    )
-    centre_type: EnumProperty(  # type: ignore
-        name="Centre",
-        description="Centre the structure at the world origin using the given method",
-        default="mass",
-        items=(
-            (
-                "mass",
-                "Mass",
-                "Adjust the structure's centre of mass to be at the world origin",
-                2,
-            ),
-            (
-                "centroid",
-                "Centroid",
-                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-                3,
-            ),
-        ),
-    )
-    remove_solvent: BoolProperty(  # type: ignore
-        default=True,
-        name="Remove Solvent",
-        description="Remove solvent atoms from the structure on import",
-    )
     assembly: BoolProperty(  # type: ignore
         default=False,
         name="Build Biological Assembly",
@@ -142,7 +112,6 @@ class Import_Molecule(bpy.types.Operator):
         col.enabled = self.node_setup
         # row = layout.row()
         layout.prop(self, "centre")
-        layout.prop(self, "remove_solvent")
         layout.prop(self, "assembly")
 
         return layout
@@ -247,12 +216,6 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
         subtype="DIR_PATH",
     )
 
-    del_hydrogen: BoolProperty(  # type: ignore
-        name="Remove Hydrogens",
-        description="Remove the hydrogens from a structure on import",
-        default=False,
-    )
-
     database: EnumProperty(  # type: ignore
         name="Method",
         default="wwpdb",
@@ -276,7 +239,6 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
                 code=self.code,
                 cache=self.cache_dir,
                 format=self.file_format,
-                remove_solvent=self.remove_solvent,
                 database=self.database,
             )
             if self.assembly:
@@ -331,7 +293,11 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     def execute(self, context):
         mol = Molecule.load(
             file_path=path_resolve(self.filepath),
+<<<<<<< HEAD
             remove_solvent=self.remove_solvent,
+=======
+        )
+>>>>>>> 07031022 (cleanup a bunch of operator properties; oxdna changes)
 
         with mol.tree as tree:
             atoms, join = tree.reset()

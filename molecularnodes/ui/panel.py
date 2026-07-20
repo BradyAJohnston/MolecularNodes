@@ -17,21 +17,19 @@ def panel_wwpdb(layout, scene):
     layout.separator()
 
     layout = check_online_access_for_ui(layout)
-
+    row = layout.row()
+    row.prop_tabs_enum(scene.mn.fetch, "database")
     row_import = layout.row().split(factor=0.5)
-    row_import.prop(scene.mn, "import_code_pdb")
+    row_import.prop(scene.mn.fetch, "code")
     row = row_import.split(factor=0.3)
-    row.prop(scene.mn, "import_format_fetch", text="")
+    row.prop(scene.mn.fetch, "format", text="")
     op = row.operator("mn.import_fetch")
-    op.code = scene.mn.import_code_pdb
+
+    op.code = scene.mn.fetch.code
     op.database = "wwpdb"
-    op.file_format = scene.mn.import_format_fetch
-    op.node_setup = scene.mn.import_node_setup
-    op.remove_solvent = scene.mn.import_remove_solvent
+    op.file_format = scene.mn.fetch.format
     op.assembly = scene.mn.import_build_assembly
     op.style = scene.mn.import_style
-    op.centre = scene.mn.import_centre
-    op.centre_type = scene.mn.import_centre_type
     prefs = addon_preferences()
     if prefs is not None:
         op.cache_dir = str(prefs.cache_dir)  # type: ignore
@@ -50,67 +48,10 @@ def panel_wwpdb(layout, scene):
     col.prop(scene.mn, "import_style")
     col.enabled = scene.mn.import_node_setup
 
-    row_centre = options.row()
-    row_centre.prop(scene.mn, "import_centre", icon_value=0)
-    col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "import_centre_type", text="")
-    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()
     grid.prop(scene.mn, "import_build_assembly")
-    grid.prop(scene.mn, "import_remove_solvent")
-    grid.prop(scene.mn, "import_del_hydrogen")
-
-
-def panel_alphafold(layout, scene):
-    layout.label(text="Download from the AlphaFold DataBase", icon="IMPORT")
-    layout.separator()
-
-    layout = check_online_access_for_ui(layout)
-
-    row_import = layout.row().split(factor=0.5)
-    row_import.prop(scene.mn, "import_code_alphafold")
-    download = row_import.split(factor=0.3)
-    download.prop(scene.mn, "import_format_fetch", text="")
-    op = download.operator("mn.import_fetch")
-    op.code = scene.mn.import_code_alphafold
-    op.database = "alphafold"
-    op.file_format = scene.mn.import_format_fetch
-    op.node_setup = scene.mn.import_node_setup
-    op.assembly = scene.mn.import_build_assembly
-    op.style = scene.mn.import_style
-    op.centre = scene.mn.import_centre
-    op.centre_type = scene.mn.import_centre_type
-    prefs = addon_preferences()
-    if prefs is not None:
-        op.cache_dir = str(prefs.cache_dir)  # type: ignore
-    else:
-        op.cache_dir = str(bpy.app.tempdir)
-
-    layout.separator(factor=0.4)
-
-    row = layout.row().split(factor=0.3)
-    layout.separator()
-
-    layout.label(text="Options", icon="MODIFIER")
-    options = layout.column(align=True)
-
-    row = options.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-
-    row_centre = options.row()
-    row_centre.prop(scene.mn, "import_centre", icon_value=0)
-    col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "import_centre_type", text="")
-    col_centre.enabled = scene.mn.import_centre
-    options.separator()
-
-
-# operator that calls the function to import the structure from a local file
 
 
 def panel_local(layout, scene):
@@ -124,9 +65,6 @@ def panel_local(layout, scene):
     op.node_setup = scene.mn.import_node_setup
     op.assembly = scene.mn.import_build_assembly
     op.style = scene.mn.import_style
-    op.centre = scene.mn.import_centre
-    op.remove_solvent = scene.mn.import_remove_solvent
-    op.centre_type = scene.mn.import_centre_type
     layout.separator()
 
     layout.label(text="Options", icon="MODIFIER")
@@ -137,20 +75,10 @@ def panel_local(layout, scene):
     col = row.column()
     col.prop(scene.mn, "import_style")
     col.enabled = scene.mn.import_node_setup
-
-    row_centre = options.row()
-
-    row_centre.prop(scene.mn, "import_centre", icon_value=0)
-    # row_centre.prop()
-    col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "import_centre_type", text="")
-    col_centre.enabled = scene.mn.import_centre
     options.separator()
 
     grid = options.grid_flow()
     grid.prop(scene.mn, "import_build_assembly")
-    grid.prop(scene.mn, "import_remove_solvent", icon_value=0)
-    grid.prop(scene.mn, "import_del_hydrogen", icon_value=0)
 
 
 def panel_starfile(layout, scene):
@@ -258,7 +186,6 @@ def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
 chosen_panel = {
     "pdb": panel_wwpdb,
     "local": panel_local,
-    "alphafold": panel_alphafold,
     "star": panel_starfile,
     "md": panel_trajectory,
     "density": panel_density,
