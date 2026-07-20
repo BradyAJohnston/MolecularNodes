@@ -81,7 +81,6 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
 
         atoms >> SetColor(color=n_color) >> StyleCartoon() >> join
 
-
     for i, input in enumerate(n_color.i):
         setattr(input, "default_value", mn.color.random_rgb(i))
 

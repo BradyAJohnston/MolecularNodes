@@ -1,7 +1,6 @@
 import bpy
 import pytest
 import molecularnodes as mn
-from molecularnodes.nodes import node_management
 
 
 def test_add_style_with_selection():

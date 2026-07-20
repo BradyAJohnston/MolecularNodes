@@ -3,7 +3,6 @@ import bpy
 import databpy as db
 import numpy as np
 import pytest
-from nodebpy.nodes.geometry import RealizeInstances
 import molecularnodes as mn
 from molecularnodes.nodes.geometry import AnimateFrames, AnimateValue, StyleCartoon
 from molecularnodes.nodes.nodes import STYLE_NODE_MAPPING
@@ -93,9 +92,7 @@ def test_rcsb_nmr(snapshot_custom):
     with mol.tree.reset() as (atoms, join):
         (
             atoms
-            >> AnimateFrames(
-                frames=mol.frames, frame=AnimateValue(value_max=9)
-            )
+            >> AnimateFrames(frames=mol.frames, frame=AnimateValue(value_max=9))
             >> StyleCartoon()
             >> join
         )
