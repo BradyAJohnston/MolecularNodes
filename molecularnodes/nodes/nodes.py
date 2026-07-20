@@ -140,7 +140,7 @@ def get_input(group) -> bpy.types.GeometryNode:
     ]
 
 
-def get_mod(object, name="MolecularNodes"):
+def get_mod(object, name="Molecular Nodes"):
     node_mod = object.modifiers.get(name)
     if not node_mod:
         node_mod = object.modifiers.new(name, "NODES")
@@ -171,7 +171,7 @@ def style_node(group):
 
 def get_style_node(object):
     "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers["MolecularNodes"].node_group
+    group = object.modifiers["Molecular Nodes"].node_group
     return style_node(group)
 
 
@@ -186,13 +186,13 @@ def star_node(group):
 
 def get_star_node(object):
     "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers["MolecularNodes"].node_group
+    group = object.modifiers["Molecular Nodes"].node_group
     return star_node(group)
 
 
 def get_color_node(object):
     "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers["MolecularNodes"].node_group
+    group = object.modifiers["Molecular Nodes"].node_group
     for node in group.nodes:
         if node.name == "Color Attribute Random":
             return node
@@ -210,7 +210,7 @@ def insert_last_node(group, node, link_input=True):
 
 
 def realize_instances(obj):
-    group = obj.modifiers["MolecularNodes"].node_group
+    group = obj.modifiers["Molecular Nodes"].node_group
     realize = group.nodes.new("GeometryNodeRealizeInstances")
     insert_last_node(group, realize)
 

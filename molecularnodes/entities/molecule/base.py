@@ -379,7 +379,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             selection = attribute_name
 
         node_style = add_style_branch(
-            tree=self.tree,
+            tree=self.modifier_node_tree,
             style=style,
             color=color,
             selection=selection,
@@ -389,7 +389,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         )
 
         # set the active index for UI to the newly added style
-        self.object.mn.styles_active_index = self.tree.nodes.find(node_style.name)
+        self.object.mn.styles_active_index = self.modifier_node_tree.nodes.find(
+            node_style.name
+        )
 
         if assembly:
             nodes.assembly_initialise(self.object)

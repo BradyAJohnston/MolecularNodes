@@ -134,7 +134,9 @@ class Grids(Density):
         # TODO: setup_nodes is unused. Using it causes pytest failures
         node_density = self.create_starting_node_tree(style=style)
         # set the active index for UI to the added style
-        self.object.mn.styles_active_index = self.tree.nodes.find(node_density.name)
+        self.object.mn.styles_active_index = self.modifier_node_tree.nodes.find(
+            node_density.name
+        )
 
         return self.object
 

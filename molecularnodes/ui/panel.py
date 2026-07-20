@@ -317,7 +317,7 @@ def ui_from_node(
     for user control in a panel, rather than through the node editor.
     """
     col = layout.column(align=True)
-    ntree = context.active_object.modifiers["MolecularNodes"].node_group
+    ntree = context.active_object.modifiers["Molecular Nodes"].node_group
 
     tree = node.node_tree.interface.items_tree
 
@@ -939,7 +939,7 @@ class MN_PT_Styles(bpy.types.Panel):
         entity = get_session().get(uuid)
         if entity is None:
             return
-        node_group = entity.node_group
+        node_group = entity.modifier_node_tree
         if node_group is None:
             return
         styles_active_index: int = entity.object.mn.styles_active_index  # type: ignore

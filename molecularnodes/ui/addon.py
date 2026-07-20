@@ -21,18 +21,14 @@ from bpy.app.handlers import (
     save_post,
 )
 from bpy.props import CollectionProperty, PointerProperty
-from .. import session
+from .. import assets, session
 from ..handlers import render_pre_handler, update_entities
 from ..templates import register_templates_menu, unregister_templates_menu
-from . import node_menu, ops, panel, pref, props
+from . import ops, panel, pref, props
 
 all_classes = (
-    panel.CLASSES
-    + ops.CLASSES
-    + props.CLASSES
-    + pref.CLASSES
-    + session.CLASSES
-    + node_menu.CLASSES
+    panel.CLASSES + ops.CLASSES + props.CLASSES + pref.CLASSES + session.CLASSES
+    # + node_menu.CLASSES
 )
 
 _is_registered = False
@@ -69,7 +65,7 @@ def register():
         except Exception as e:
             print(e)
             pass
-    bpy.types.NODE_MT_add.append(node_menu.add_node_menu)
+    # bpy.types.NODE_MT_add.append(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
     bpy.types.NODE_MT_context_menu.prepend(panel.change_style_node_menu)
 
@@ -97,6 +93,7 @@ def register():
         # loaded, reuse the saved value
         bpy.types.Object.mn_annotations = _mn_annotations
     register_templates_menu()
+    assets._add_mn_asset_library()
     if _mn_session is not None:
         # register a run once timer to restore draw handlers
         bpy.app.timers.register(_session_restore_draw_handlers, first_interval=0.01)
@@ -116,7 +113,7 @@ def unregister():
             print(e)
             pass
 
-    bpy.types.NODE_MT_add.remove(node_menu.add_node_menu)
+    # bpy.types.NODE_MT_add.remove(node_menu.add_node_menu)
     bpy.types.VIEW3D_MT_object_context_menu.remove(panel.pt_object_context)
     bpy.types.NODE_MT_context_menu.remove(panel.change_style_node_menu)
 
@@ -136,5 +133,6 @@ def unregister():
     _mn_annotations = bpy.types.Object.mn_annotations
     del bpy.types.Object.mn_annotations  # type: ignore
     unregister_templates_menu()
+    assets._remove_mn_asset_library()
 
     _is_registered = False

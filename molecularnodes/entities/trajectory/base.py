@@ -578,7 +578,7 @@ class Trajectory(MolecularEntity):
             return
         names = ["a", "b", "c", "alpha", "beta", "gamma"]
         nodes_to_update = ["Periodic Box", "Periodic Array"]
-        for node in self.tree.nodes:
+        for node in self.modifier_node_tree.nodes:
             if (
                 not isinstance(node, bpy.types.GeometryNodeGroup)
                 or node.node_tree is None
@@ -664,7 +664,7 @@ class Trajectory(MolecularEntity):
             # Currently, styles are removed using GeometryNodeInterFace.remove(),
 
         node_style = add_style_branch(
-            tree=self.tree,
+            tree=self.modifier_node_tree,
             style=style,
             color=color,
             selection=attribute_name,
@@ -673,7 +673,9 @@ class Trajectory(MolecularEntity):
         )
 
         # set the active index for UI to the newly added style
-        self._mn_styles_active_index = self.tree.nodes.find(node_style.name)
+        self._mn_styles_active_index = self.modifier_node_tree.nodes.find(
+            node_style.name
+        )
 
         return self
 

@@ -332,24 +332,24 @@ class TestTrajectory:
         session = mn.session.get_session()
         # test defaults
         t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.modifier_node_tree.nodes) == 7
         session.remove_trajectory(t1)
         # test add_trajectory with non-default style
         t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.modifier_node_tree.nodes) == 7
         session.remove_trajectory(t1)
         # test add_trajectory with no style
         t1 = mn.Trajectory(universe)
-        assert len(t1.tree.nodes) == 2
+        assert len(t1.modifier_node_tree.nodes) == 2
         # test adding empty style
         t1.add_style(style=None)
-        assert len(t1.tree.nodes) == 2
+        assert len(t1.modifier_node_tree.nodes) == 2
         # test adding invalid style
         with pytest.raises(ValueError):
             t1.add_style(style="invalid")
         # test adding new style
         t1.add_style(style="cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.modifier_node_tree.nodes) == 7
         # test add_style with selection string
         selection = "resid 1:10"
         t1.add_style(style="ribbon", selection=selection)
@@ -372,7 +372,7 @@ class TestTrajectory:
     ):
         session = mn.session.get_session()
         t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
+        assert len(t1.modifier_node_tree.nodes) == 7
         assert len(t1.styles) == 1
         # add new style
         t1.add_style(style="cartoon")
@@ -386,8 +386,8 @@ class TestTrajectory:
         # test remove style from UI
         t1 = mn.Trajectory(universe).add_style("cartoon")
         assert len(t1.styles) == 1
-        style_node = mn.nodes.geometry.get_final_style_nodes(t1.tree)[0]
-        style_node_index = t1.tree.nodes.find(style_node.name)
+        style_node = mn.nodes.geometry.get_final_style_nodes(t1.modifier_node_tree)[0]
+        style_node_index = t1.modifier_node_tree.nodes.find(style_node.name)
         bpy.ops.mn.remove_style(
             "EXEC_DEFAULT", uuid=t1.uuid, style_node_index=style_node_index
         )

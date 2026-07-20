@@ -28,7 +28,7 @@ class ReaderBase(metaclass=ABCMeta):
 
     @property
     def n_models(self) -> int:
-        return self.array.stack_depth()  # type: ignore
+        return self.array.stack_depth()
 
     def read(self, file_path: str | Path | BytesIO) -> File:
         raise NotImplementedError("Subclasses must implement this method.")
