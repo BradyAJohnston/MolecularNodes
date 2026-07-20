@@ -293,11 +293,7 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
     def execute(self, context):
         mol = Molecule.load(
             file_path=path_resolve(self.filepath),
-<<<<<<< HEAD
-            remove_solvent=self.remove_solvent,
-=======
         )
->>>>>>> 07031022 (cleanup a bunch of operator properties; oxdna changes)
 
         with mol.tree as tree:
             atoms, join = tree.reset()

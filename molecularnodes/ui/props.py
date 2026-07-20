@@ -268,26 +268,6 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         options={"TEXTEDIT_UPDATE"},
     )
 
-<<<<<<< HEAD
-    import_format_fetch: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        items=(
-            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
-            ("cif", ".cif", "The new standard of .cif / .mmcif"),
-            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
-        ),
-    )
-
-    import_code_pdb: StringProperty(  # type: ignore
-        name="PDB",
-        description="The PDB code to download and import",
-        options={"TEXTEDIT_UPDATE"},
-        maxlen=12,
-    )
-
-=======
->>>>>>> 07031022 (cleanup a bunch of operator properties; oxdna changes)
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
