@@ -266,7 +266,7 @@ def new_tree(
     tree: bpy.types.GeometryNodeTree = bpy.data.node_groups.new(
         name=name,
         type="GeometryNodeTree",
-    )
+)  # type: ignore
     input_node = tree.nodes.new("NodeGroupInput")
     output_node = tree.nodes.new("NodeGroupOutput")
     input_node.location.x = -200 - input_node.width
