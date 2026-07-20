@@ -13,6 +13,7 @@ dependencies = [
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
+    "nodebpy==520.3.*",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -23,7 +24,7 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy = ["bpy>=5.2.0"]
+bpy = ["bpy==5.2.*"]
 jupyter = ["jupyter", "ipython>=9.7.0"]
 docs = [
     "griffe<2.0",

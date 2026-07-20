@@ -1,5 +1,5 @@
 import bpy
-from ..lib.nodebpy import compositor as c
+from nodebpy import compositor as c
 
 
 def default_5x_compositor_node_tree() -> bpy.types.CompositorNodeTree:

@@ -10,10 +10,11 @@ from databpy.nodes import (
     swap_tree,
 )
 from mathutils import Vector
+from nodebpy import geometry as g
 from .. import color, utils
 from ..assets import MN_DATA_FILE
 from ..blender import mesh
-from ..lib.nodebpy import geometry as g
+from . import assets as a
 from .material import assign_material
 from .style_density_iso_surface import style_density_iso_surface_node_group
 
@@ -438,77 +439,45 @@ def create_starting_node_tree(
         None doesn't add ay set_color nodes, 'common' adds the color by common elements
         and 'plddt' adds color by pLDDT score.
     """
+
     # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    mod = get_mod(object)
+    mod: bpy.types.NodesModifier = get_mod(object)
 
     if not name:
         name = f"MN_{object.name}"
 
-    # check if the node tree already exists and use that instead
-    # try:
-    #     tree = bpy.data.node_groups[name]
-    #     mod.node_group = tree
-    #     return
-    # except KeyError:
-    #     pass
+    with g.tree(name) as tree:
+        atoms = tree.inputs.geometry("Atoms")
+        join = g.JoinGeometry()
+        join >> tree.outputs.geometry("Geometry")
 
-    tree = new_tree(name, input_name="Atoms")
-    tree.is_modifier = is_modifier
-    link = tree.links.new
-    mod.node_group = tree
+        match color.lower():
+            case "pldtt":
+                color = a.ColorPLDDT()
+            case _:
+                color = a.ColorElement(c=a.RandomColor(a.ChainID()))
 
-    # move the input and output nodes for the group
-    node_input = get_input(tree)
-    node_output = get_output(tree)
-    node_input.location = [0, 0]
-    node_output.location = [700, 0]
+        if coll_frames:
+            atoms = atoms >> a.AnimateFrames(
+                collection=coll_frames, factor=a.AnimateValue()
+            )
 
-    if style is None:
-        link(node_input.outputs[0], node_output.inputs[0])
-        return tree
+        style_node = {
+            "ribbon": a.StyleRibbon,
+            "cartoon": a.StyleCartoon,
+            "surface": a.StyleSurface,
+            "ball_and_stick": a.StyleBallAndStick,
+            "sticks": a.StyleSticks,
+        }[style]
 
-    node_style = add_custom(tree, styles_mapping[style], [450, 0], material=material)
-    link(node_style.outputs[0], node_output.inputs[0])
-    link(node_input.outputs[0], node_style.inputs[0])
+        if isinstance(material, str):
+            material = bpy.data.materials()
 
-    # if requested, setup the nodes for generating colors in the node tree
-    if color is not None:
-        if color == "common":
-            node_color_set = add_custom(tree, "Set Color", [200, 0])
-            node_color_common = add_custom(tree, "Color Common", [-50, -150])
-            node_random_color = add_custom(tree, "Color Attribute Random", [-300, -150])
+        assign_material(style_node.node, material)
 
-            link(node_input.outputs[0], node_color_set.inputs[0])
-            link(node_random_color.outputs["Color"], node_color_common.inputs["Carbon"])
-            link(node_color_common.outputs[0], node_color_set.inputs["Color"])
-            link(node_color_set.outputs[0], node_style.inputs[0])
-            to_animate = node_color_set
-        elif color.lower() == "plddt":
-            node_color_set = add_custom(tree, "Set Color", [200, 0])
-            node_color_plddt = add_custom(tree, "Color pLDDT", [-50, -150])
+        atoms >> a.SetColor(color=color) >> style_node >> join
 
-            link(node_input.outputs[0], node_color_set.inputs["Atoms"])
-            link(node_color_plddt.outputs[0], node_color_set.inputs["Color"])
-            link(node_color_set.outputs["Atoms"], node_style.inputs["Atoms"])
-        else:
-            to_animate = node_input
-    else:
-        to_animate = node_input
-
-    # if multiple frames, set up the required nodes for an animation
-    if coll_frames:
-        node_output.location = [1100, 0]
-        node_style.location = [800, 0]
-
-        node_animate_frames = add_custom(tree, "Animate Frames", [500, 0])
-        node_animate = add_custom(tree, "Animate Value", [500, -300])
-
-        node_animate_frames.inputs["Frames"].default_value = coll_frames
-        node_animate.inputs["Value Max"].default_value = len(coll_frames.objects) - 1
-
-        link(to_animate.outputs[0], node_animate_frames.inputs[0])
-        link(node_animate_frames.outputs[0], node_style.inputs[0])
-        link(node_animate.outputs[0], node_animate_frames.inputs["Frame"])
+    mod.node_group = tree.tree
 
 
 def combine_join_geometry(group, node_list, output="Geometry", join_offset=300):
