@@ -135,7 +135,7 @@ class GeometrySet:
             return []
 
         lines = [
-            f"Mesh: {self.obj.name}",
+            f"Mesh: {mesh.name}",
             f"  Geometry: {len(mesh.vertices)} verts, {len(mesh.edges)} edges, {len(mesh.polygons)} polys",
         ]
         lines.extend(self._summarize_attributes(mesh.attributes, "  Attributes"))
