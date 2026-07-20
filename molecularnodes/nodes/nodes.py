@@ -104,8 +104,8 @@ def add_selection(group, sel_name, input_list, field="chain_id"):
     style = style_node(group)
     sel_node = add_custom(
         group,
-        custom_iswitch(
-            name="selection", iter_list=input_list, field=field, dtype="BOOLEAN"
+        custom_boolean_iswitch(
+            name="selection", items=input_list, attribute_name=field
         ).name,
     )
 
@@ -759,321 +759,24 @@ def custom_boolean_iswitch(
 
 def custom_color_iswitch(
     name: str,
-    items: list[str] | dict[str, tuple[float, float, float, float]],
+    items: dict[str, tuple[float, float, float, float]] | Iterable[int | float],
     attribute_name: str = "chain_id",
     offset: int = 0,
 ) -> bpy.types.GeometryNodeTree:
     with g.tree(name) as tree:
         attr = g.NamedAttribute.integer(attribute_name)
 
-        if isinstance(items, list):
+        if not isinstance(items, dict):
             items: dict[str, tuple[float, ...]] = {
-                name: color.random_rgb() for name in items
+                str(key): color.random_rgb() for key in items
             }
 
         switch = g.IndexSwitch.color(
             index=attr if offset == 0 else attr + offset,
-            items=[tree.inputs.color(name, default) for name, default in items.items()],
+            items=[tree.inputs.color(key, value) for key, value in items.items()],
         )
 
         switch >> tree.outputs.color()
 
     tree.tree.color_tag = "INPUT"
     return tree.tree
-
-
-def custom_iswitch(
-    name: str,
-    iter_list,
-    field: str = "chain_id",
-    dtype: str = "BOOLEAN",
-    default_values=None,
-    prefix: str = "",
-    start: int = 0,
-    offset: int = 0,
-    panels: Optional[List[str]] = None,
-    panels_open: int = 1,
-) -> bpy.types.GeometryNodeTree:
-    """
-    Creates a named `Index Switch` node.
-
-    Wraps an index switch node, giving the group names or each name in the `iter_list`. The
-    inputs can also be placed in subpanels and given specific default values. Uses the
-    given field for the attribute name to use in the index switch, and optionally adds an
-    offset value if the start value is non zero.
-
-    If a list of default items is given, then it is recycled to fill the defaults for
-    each created socket in for the node.
-
-    Parameters
-    ----------
-    name : str
-        The name of the node group.
-    iter_list : list
-        The list of items to iterate over.
-    field : str, optional
-        The name of the attribute field. Defaults to 'chain_id'.
-    default_values : list, optional
-        The list of default values to assign to each item. Defaults to None.
-    panels : list, str
-        List of panel names for the sockets to be assigned to. If None, then socket will
-        not be assigned to the panel. The will appear in the panel in the order in which
-        they are given.
-    panels_open: int
-        Number of panels to default to open. If `0` then all panels will be closed. Useful
-        for larger panel node groups, to keep them closed and help with organisation. A
-        list of panel names can also be given to optionally categorise the sockets into
-        panels in the final group node. The length of the panels list must match the length
-        of the iter_list. `None` values mean the socket is not placed in a panel.
-    prefix : str, optional
-        The prefix to add to the node names. Defaults to an empty string.
-    start : int, optional
-        The starting index for the node names. Defaults to 0.
-
-    Returns
-    -------
-    group : bpy.types.GeometryNodeTree
-        The created node group.
-
-    Raises
-    ------
-    NodeGroupCreationError
-        If there was an error creating the node group.
-    """
-
-    iter_list = [str(i) for i in iter_list]
-    tree = bpy.data.node_groups.get(name)
-    if tree:
-        return tree
-
-    socket_type = socket_types[dtype]
-    tree = new_tree(name, geometry=False, fallback=False)
-
-    # try creating the node group, otherwise on fail cleanup the created group and
-    # report the error
-    try:
-        link = tree.links.new
-        node_input = get_input(tree)
-        node_output = get_output(tree)
-        node_attr = tree.nodes.new("GeometryNodeInputNamedAttribute")
-        node_attr.data_type = "INT"
-        node_attr.location = [0, 150]
-        node_attr.inputs["Name"].default_value = str(field)
-
-        node_iswitch: bpy.types.GeometryNodeIndexSwitch = tree.nodes.new(
-            "GeometryNodeIndexSwitch"
-        )
-        node_iswitch.data_type = dtype
-
-        link(node_attr.outputs["Attribute"], node_iswitch.inputs["Index"])
-
-        # if there is as offset to the lookup values (say we want to start looking up
-        # from 100 or 1000 etc) then we add a math node with that offset value
-        if start != 0:
-            node_math = tree.nodes.new("ShaderNodeMath")
-            node_math.operation = "ADD"
-            node_math.location = [0, 150]
-            node_attr.location = [0, 300]
-
-            node_math.inputs[1].default_value = start
-            link(node_attr.outputs["Attribute"], node_math.inputs[0])
-            link(node_math.outputs["Value"], node_iswitch.inputs["Index"])
-
-        # if there are custom values provided, create a dictionary lookup for those values
-        # to assign to the sockets upon creation. If no default was given and the dtype
-        # is colors, then generate a random pastel color for each value
-        default_lookup = None
-        if default_values is not None:
-            default_lookup = dict(zip(iter_list, itertools.cycle(default_values)))
-        elif dtype == "RGBA":
-            default_lookup = dict(
-                zip(iter_list, [color.random_rgb() for i in iter_list])
-            )
-
-        # for each item in the iter_list, we create a new socket on the interface for this
-        # node group, and link it to the interface on the index switch. The index switch
-        # currently starts with two items already, so once i > 1 we start to add
-        # new items for the index switch as well
-        panel_item_counter = 0
-        panel_counter = 0
-        for j in range(offset):
-            node_iswitch.index_switch_items.new()
-        for i, item in enumerate(iter_list):
-            if i > 1:
-                node_iswitch.index_switch_items.new()
-
-            # The offset creates but skips itmes on the index switch node.
-            # if we offset by 1 then we can index from 1 essentially, for attributes like
-            # the atomic_number
-
-            socket = tree.interface.new_socket(
-                name=f"{prefix}{item}", in_out="INPUT", socket_type=socket_type
-            )
-            #  if a set of default values was given, then use it for setting
-            # the defaults on the created sockets of the node group
-            if default_lookup:
-                socket.default_value = default_lookup[item]
-            link(
-                node_input.outputs[socket.identifier],
-                node_iswitch.inputs[str(i + offset)],
-            )
-
-            # if a list of panel names has been passed in, then we use it to
-            # assign all of the interface sockets to the panels
-            if panels:
-                pname = panels[i]
-                if pname is not None:
-                    # try and get an existing panel, if None is returned we have to create
-                    # a panel with the given name
-                    panel: bpy.types.NodeTreeInterfacePanel = (
-                        tree.interface.items_tree.get(pname)
-                    )
-                    if not panel:
-                        panel_item_counter = 0
-                        panel = tree.interface.new_panel(name=pname)
-                        panel_counter += 1
-                        # we can set a certain number of panels to be open when created.
-                        # a value of 0 means all created panels will be closed on creation.
-                        # larger cutoffs will mean that n number of panels will be open by
-                        # default
-                        if panel_counter >= panels_open:
-                            panel.default_closed = True
-
-                    tree.interface.move_to_parent(
-                        socket, panel, to_position=panel_item_counter + 1
-                    )
-                    panel_item_counter += 1
-
-        if dtype == "BOOLEAN":
-            tree.color_tag = "INPUT"
-            boolean_link_output(tree, node_iswitch)
-        elif dtype == "RGBA":
-            tree.color_tag = "COLOR"
-            socket_out = tree.interface.new_socket(
-                name="Color", in_out="OUTPUT", socket_type=socket_type
-            )
-            link(
-                node_iswitch.outputs["Output"],
-                node_output.inputs[socket_out.identifier],
-            )
-        else:
-            raise ValueError(f"Unsupported value typee for custom iswitch: {dtype}")
-
-        return tree
-
-    # if something broke when creating the node group, delete whatever was created
-    except Exception as e:
-        node_name = tree.name
-        bpy.data.node_groups.remove(tree)
-        raise NodeGroupCreationError(
-            f"Unable to make node group: {node_name}.\nError: {e}"
-        )
-
-
-def resid_multiple_selection(node_name, input_resid_string):
-    """
-    Returns a node group that takes an integer input and creates a boolean
-    tick box for each item in the input list. Outputs are the selected
-    residues and the inverse selection. Used for constructing chain
-    selections in specific proteins.
-    """
-
-    # do a cleanning of input string to allow fuzzy input from users
-    for c in ";/+ .":
-        if c in input_resid_string:
-            input_resid_string = input_resid_string.replace(c, ",")
-
-    for c in "_=:":
-        if c in input_resid_string:
-            input_resid_string = input_resid_string.replace(c, "-")
-
-    # parse input_resid_string into sub selecting string list
-    sub_list = [item for item in input_resid_string.split(",") if item]
-
-    # distance vertical to space all of the created nodes
-    node_sep_dis = -100
-
-    # get the active object, might need to change to taking an object as an input
-    # and making it active isntead, to be more readily applied to multiple objects
-
-    # create the custom node group data block, where everything will go
-    # also create the required group node input and position it
-    residue_id_group = bpy.data.node_groups.new(node_name, "GeometryNodeTree")
-    node_input = residue_id_group.nodes.new("NodeGroupInput")
-    node_input.location = [0, node_sep_dis * len(sub_list) / 2]
-
-    group_link = residue_id_group.links.new
-    new_node = residue_id_group.nodes.new
-
-    prev = None
-    for residue_id_index, residue_id in enumerate(sub_list):
-        # add an new node of Select Res ID or MN_sek_res_id_range
-        current_node = new_node("GeometryNodeGroup")
-
-        # add an bool_math block
-        bool_math = new_node("FunctionNodeBooleanMath")
-        bool_math.location = [400, (residue_id_index + 1) * node_sep_dis]
-        bool_math.operation = "OR"
-
-        if "-" in residue_id:
-            # selecting a range of residues by using the Res ID Range node and connecting
-            # to the min and max of those nodes
-            current_node.node_tree = append("Select Res ID Range")
-            [resid_start, resid_end] = residue_id.split("-")[:2]
-            socket_1 = residue_id_group.interface.new_socket(
-                "res_id: Min", in_out="INPUT", socket_type="NodeSocketInt"
-            )
-            socket_1.default_value = int(resid_start)
-            socket_2 = residue_id_group.interface.new_socket(
-                "res_id: Max", in_out="INPUT", socket_type="NodeSocketInt"
-            )
-            socket_2.default_value = int(resid_end)
-
-            # a residue range
-            group_link(
-                node_input.outputs[socket_1.identifier], current_node.inputs["Min"]
-            )
-            group_link(
-                node_input.outputs[socket_2.identifier], current_node.inputs["Max"]
-            )
-        else:
-            # Selecting singular res ID numbers by creating the socket and adding a node
-            # ensuring that we are connecting to the right node
-            current_node.node_tree = append("Select Res ID")
-            socket = residue_id_group.interface.new_socket(
-                "res_id", in_out="INPUT", socket_type="NodeSocketInt"
-            )
-            socket.default_value = int(residue_id)
-            group_link(
-                node_input.outputs[socket.identifier], current_node.inputs["Res ID"]
-            )
-
-        # set the coordinates
-        current_node.location = [200, (residue_id_index + 1) * node_sep_dis]
-        if not prev:
-            # link the first residue selection to the first input of its OR block
-            group_link(current_node.outputs["Selection"], bool_math.inputs[0])
-        else:
-            # if it is not the first residue selection, link the output to the previous or block
-            group_link(current_node.outputs["Selection"], prev.inputs[1])
-
-            # link the ouput of previous OR block to the current OR block
-            group_link(prev.outputs[0], bool_math.inputs[0])
-        prev = bool_math
-
-    # add a output block
-    residue_id_group_out = new_node("NodeGroupOutput")
-    residue_id_group_out.location = [800, (residue_id_index + 1) / 2 * node_sep_dis]
-    residue_id_group.interface.new_socket(
-        "Selection", in_out="OUTPUT", socket_type="NodeSocketBool"
-    )
-    residue_id_group.interface.new_socket(
-        "Inverted", in_out="OUTPUT", socket_type="NodeSocketBool"
-    )
-    group_link(prev.outputs[0], residue_id_group_out.inputs["Selection"])
-    invert_bool_math = new_node("FunctionNodeBooleanMath")
-    invert_bool_math.location = [600, (residue_id_index + 1) / 3 * 2 * node_sep_dis]
-    invert_bool_math.operation = "NOT"
-    group_link(prev.outputs[0], invert_bool_math.inputs[0])
-    group_link(invert_bool_math.outputs[0], residue_id_group_out.inputs["Inverted"])
-    return residue_id_group

@@ -14,6 +14,7 @@ dfef0d3c-e718-420a-8b22-e7c3a3a9e333:Molecular Nodes/Attributes:Molecular Nodes-
 d3f975df-8408-4972-a669-8187a57e01d0:Molecular Nodes/Color:Molecular Nodes-Color
 9c167a5c-d0a6-457d-9e9c-90f3edd29e10:Molecular Nodes/Curves:Molecular Nodes-Curves
 0094c3e0-7885-427b-81b4-187a84dcff18:Molecular Nodes/DNA:Molecular Nodes-DNA
+35b7cc56-45fd-4113-8e88-3c7387edb2d8:Molecular Nodes/Density:Molecular Nodes-Density
 a484cee9-1c7f-4bf8-a31c-6ffa99912ec0:Molecular Nodes/Ensemble:Molecular Nodes-Ensemble
 a1e4128a-131f-4e0e-b54e-81f863aba707:Molecular Nodes/Geometry:Molecular Nodes-Geometry
 bd1f205b-fea5-4700-b2c2-754f3321e969:Molecular Nodes/Select:Molecular Nodes-Select
