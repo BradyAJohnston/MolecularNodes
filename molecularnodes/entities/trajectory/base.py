@@ -227,7 +227,7 @@ class Trajectory(MolecularEntity):
                 x
                 if x in data.elements.keys()
                 else default_guesser.guess_atom_element(x)
-                for x in self.atoms.names  # type: ignore
+                for x in self.atoms.names
             ]
             return np.array(guessed_elements)
         except Exception as e:
@@ -349,7 +349,7 @@ class Trajectory(MolecularEntity):
     def _compute_atom_name_int(self) -> np.ndarray:
         if hasattr(self.atoms, "names"):
             return np.array(
-                [data.atom_names.get(x, -1) for x in self.atoms.names],  # type: ignore
+                [data.atom_names.get(x, -1) for x in self.atoms.names],
                 dtype=int,
             )
         else:
@@ -583,7 +583,7 @@ class Trajectory(MolecularEntity):
                 not isinstance(node, bpy.types.GeometryNodeGroup)
                 or node.node_tree is None
                 or node.node_tree.name not in nodes_to_update
-                or not node.inputs["Update"].default_value  # type: ignore
+                or not node.inputs["Update"].default_value
             ):
                 continue
 

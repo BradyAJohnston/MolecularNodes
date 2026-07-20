@@ -301,7 +301,7 @@ class SelectionManager:
         ag_to_attribute : Called to immediately store the selection as an attribute.
         """
         with FrozenUpdates(self):
-            item: TrajectorySelectionItem = self.ui_items.add()  # type: ignore
+            item: TrajectorySelectionItem = self.ui_items.add()
             item.name = name if name else self._unique_selection_name()
             self.atomgroups[item.name] = atomgroup
             item.from_atomgroup = True
@@ -380,7 +380,7 @@ class SelectionManager:
             selection_has_changed = False
             ag = self.atomgroups[key]
 
-            item: TrajectorySelectionItem = self.ui_items.get(key)  # type: ignore
+            item: TrajectorySelectionItem = self.ui_items.get(key)
             if item is None:
                 del self.atomgroups[key]
                 continue
@@ -458,7 +458,7 @@ class SelectionManager:
             del self.atomgroups[item.name]
         except KeyError:
             pass
-        self.ui_items.remove(idx)  # type: ignore
+        self.ui_items.remove(idx)
 
     def get(self, name: str) -> TrajectorySelectionItem | None:
         """Try and get a selection UI Item by name.

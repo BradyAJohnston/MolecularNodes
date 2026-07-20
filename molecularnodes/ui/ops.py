@@ -2,7 +2,7 @@ from pathlib import Path
 import bpy
 import databpy
 import MDAnalysis as mda
-from bpy.props import (  # type: ignore
+from bpy.props import (
     BoolProperty,
     CollectionProperty,
     EnumProperty,
@@ -10,7 +10,7 @@ from bpy.props import (  # type: ignore
     IntProperty,
     StringProperty,
 )
-from bpy.types import Context, Operator  # type: ignore
+from bpy.types import Context, Operator
 from .. import entities
 from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
@@ -577,7 +577,7 @@ class MN_OT_Import_Protein_Local(Import_Molecule):
             )
             .centre_molecule(self.centre_type if self.centre else None)
             .add_style(
-                style=self.style if self.node_setup else None,  # type: ignore
+                style=self.style if self.node_setup else None,
                 assembly=self.assembly,
             )
         )

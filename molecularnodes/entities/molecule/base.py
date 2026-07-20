@@ -402,7 +402,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
             self.frames = bl.coll.frames(self.name)
             for i, array in enumerate(self.array):
                 databpy.create_object(
-                    vertices=array.coord * self._world_scale,  # type: ignore
+                    vertices=array.coord * self._world_scale,
                     name="{}_frame_{}".format(self.name, str(i)),
                     collection=self.frames,
                 )
@@ -572,7 +572,7 @@ class MoleculeSelector:
         evaluated and combined with a logical AND, using the AtomArray as input.
         """
         if isinstance(array, AtomArrayStack):
-            array = array[0]  # type: ignore
+            array = array[0]
 
         self.mask = np.ones(array.array_length(), dtype=bool)
         if not self.pending_selections:
@@ -580,7 +580,7 @@ class MoleculeSelector:
 
         for operation in self.pending_selections:
             self.mask &= operation(array)
-        return self.mask  # type: ignore
+        return self.mask
 
     def atom_name(self, atom_name: str | list[str] | tuple[str, ...] | np.ndarray):
         """Select atoms by their name.

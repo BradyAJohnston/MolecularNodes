@@ -117,7 +117,7 @@ def get_selection(node: bpy.types.GeometryNode) -> bpy.types.GeometryNode | None
     if not sel_input:
         return None
     try:
-        return sel_input.links[0].from_socket.node  # type: ignore
+        return sel_input.links[0].from_socket.node
     except (KeyError, IndexError):
         return None
 
@@ -220,7 +220,7 @@ def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
         try:
             tree = bpy.data.node_groups[tree]
         except KeyError:
-            tree = append(tree)  # type: ignore
+            tree = append(tree)
 
     # only change the label if not customized
     if node.label == node.node_tree.name:
@@ -253,7 +253,7 @@ def new_tree(
     is_modifier: bool = False,
     fallback: bool = True,
 ) -> bpy.types.GeometryNodeTree:
-    tree = bpy.data.node_groups.get(name)  # type: ignore
+    tree = bpy.data.node_groups.get(name)
     # if the group already exists, return it and don't create a new one
     if tree and fallback:
         if not isinstance(tree, bpy.types.GeometryNodeTree):
@@ -263,8 +263,8 @@ def new_tree(
     # create a new group for this particular name and do some initial setup
     tree: bpy.types.GeometryNodeTree = bpy.data.node_groups.new(
         name=name,
-        type="GeometryNodeTree",  # type: ignore
-    )  # type: ignore
+        type="GeometryNodeTree",
+    )
     input_node = tree.nodes.new("NodeGroupInput")
     output_node = tree.nodes.new("NodeGroupOutput")
     input_node.location.x = -200 - input_node.width
@@ -290,7 +290,7 @@ def add_custom(
     show_options: bool = False,
     link: bool = False,
 ) -> bpy.types.GeometryNodeGroup:
-    node: bpy.types.GeometryNodeGroup = group.nodes.new("GeometryNodeGroup")  # type: ignore
+    node: bpy.types.GeometryNodeGroup = group.nodes.new("GeometryNodeGroup")
     node.node_tree = append(name, link=link)
     # set the label to the node tree name by default
     node.label = node.node_tree.name
@@ -360,7 +360,7 @@ def create_starting_nodes_density(
 
     if style == "density_iso_surface":
         key = "ISO Value"
-        node_density = group.nodes.new("GeometryNodeGroup")  # type: ignore
+        node_density = group.nodes.new("GeometryNodeGroup")
         node_density.name = styles_mapping[style]
         node_density.location = [400, 0]
         tree = style_density_iso_surface_node_group()
@@ -601,7 +601,7 @@ def create_assembly_node_tree(
 
     node_att: bpy.types.GeometryNodeInputNamedAttribute = tree.nodes.new(
         "GeometryNodeInputNamedAttribute"
-    )  # type: ignore
+    )
     node_att.data_type = "INT"
     node_att.inputs[0].default_value = "chain_id"
     node_att.location = [-150, -200]
@@ -690,7 +690,7 @@ def boolean_link_output(tree: bpy.types.NodeTree, node: bpy.types.Node) -> None:
     link(final_output, node_output.inputs["Selection"])
     node_invert: bpy.types.FunctionNodeBooleanMath = tree.nodes.new(
         "FunctionNodeBooleanMath"
-    )  # type: ignore
+    )
 
     node_invert.operation = "NOT"
     node_invert.location = (np.array(node_output.location) - [0, 200]).tolist()
@@ -703,17 +703,17 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode
     Add a join last node to the tree.
     """
     link = tree.links.new
-    node_join: bpy.types.GeometryNode = tree.nodes.new("GeometryNodeJoinGeometry")  # type: ignore
+    node_join: bpy.types.GeometryNode = tree.nodes.new("GeometryNodeJoinGeometry")
     node_output = get_output(tree)
     old_loc = node_output.location.copy()
     node_output.location += Vector([NODE_SPACING * 2, 0])
     node_join.location = old_loc + Vector([NODE_SPACING, 0])
     try:
         if len(node_output.inputs[0].links) > 0:
-            from_socket = node_output.inputs[0].links[0].from_socket  # type: ignore
+            from_socket = node_output.inputs[0].links[0].from_socket
             if from_socket.node != get_input(tree):
                 link(
-                    node_output.inputs[0].links[0].from_socket,  # type: ignore
+                    node_output.inputs[0].links[0].from_socket,
                     node_join.inputs[0],
                 )
     except IndexError:
@@ -726,7 +726,7 @@ def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode
 def last_node(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
     output = get_output(tree)
     try:
-        return output.inputs[0].links[0].from_socket.node  # type: ignore
+        return output.inputs[0].links[0].from_socket.node
     except IndexError:
         return output
 
@@ -782,10 +782,10 @@ def insert_before(
     else:
         node = item
         to_socket = node.inputs[0]
-        from_socket = to_socket.links[0].from_socket  # type: ignore
+        from_socket = to_socket.links[0].from_socket
         # for socket in node.inputs:
         #     if socket.is_linked:
-        #         from_socket = socket.links[0].from_socket  # type: ignore
+        #         from_socket = socket.links[0].from_socket
         #         to_socket = socket
         #         break
 
@@ -879,7 +879,7 @@ def custom_iswitch(
         node_attr.location = [0, 150]
         node_attr.inputs["Name"].default_value = str(field)
 
-        node_iswitch: bpy.types.GeometryNodeIndexSwitch = tree.nodes.new(  # type: ignore
+        node_iswitch: bpy.types.GeometryNodeIndexSwitch = tree.nodes.new(
             "GeometryNodeIndexSwitch"
         )
         node_iswitch.data_type = dtype

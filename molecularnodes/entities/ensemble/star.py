@@ -221,11 +221,11 @@ class StarFile(Ensemble):
 
         if self._is_relion():
             micrograph_path = self.object["rlnMicrographName_categories"][
-                self.star_node.inputs["Image"].default_value - 1  # type: ignore
+                self.star_node.inputs["Image"].default_value - 1
             ]
         elif self._is_cistem():
             micrograph_path = self.object["cisTEMOriginalImageFilename_categories"][
-                self.star_node.inputs["Image"].default_value - 1  # type: ignore
+                self.star_node.inputs["Image"].default_value - 1
             ].strip("'")
         else:
             raise ValueError("File is not a valid RELION>=3.1 or cisTEM STAR file")

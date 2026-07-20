@@ -54,7 +54,7 @@ class Grids(Density):
 
         # Fallback: try using mrcfile for MRC/CCP4/MAP formats
         try:
-            import mrcfile  # type: ignore
+            import mrcfile
 
             with mrcfile.open(file, permissive=True) as mrc:
                 # Determine voxel size (delta)

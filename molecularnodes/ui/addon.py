@@ -87,7 +87,7 @@ def register():
     bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)  # type: ignore
     bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)  # type: ignore
     bpy.types.Object.mn_trajectory_selections = CollectionProperty(  # type: ignore
-        type=props.TrajectorySelectionItem  # type: ignore
+        type=props.TrajectorySelectionItem
     )
     # bpy.types.Object.mn_annotations is dynamically created and updated based
     # on different annotation types. It has to be a top level property to avoid
