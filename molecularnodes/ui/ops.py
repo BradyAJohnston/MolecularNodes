@@ -843,7 +843,7 @@ class MN_OT_Import_CAS(bpy.types.Operator):
 
     code: StringProperty(  # type: ignore
         name="CAS",
-        description="The max 12-character CAS code to download",
+        description="The CAS code to download",
         options={"TEXTEDIT_UPDATE"},
     )
 
