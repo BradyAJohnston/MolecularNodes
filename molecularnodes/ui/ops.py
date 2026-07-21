@@ -34,8 +34,6 @@ from . import node_info
 from .props import SURFACE_STYLE_ITEMS
 from .style import STYLE_ITEMS
 
-""" from posix import remove"""
-
 
 def _add_node(node_name, context, show_options=False, material="default"):
     """

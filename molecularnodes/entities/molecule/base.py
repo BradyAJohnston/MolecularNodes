@@ -231,21 +231,17 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         cache: Path | str | None = download.CACHE_DIR,
     ) -> "Molecule":
         """
-        Fetch a molecule from the RCSB database.
+        Fetch a molecule from the NCI NIH database.
 
         Parameters
         ----------
         code : str
-            The PDB ID code of the molecule to fetch.
+            The CAS ID code of the molecule to fetch.
         centre : str | None, optional
             Method to use for centering the molecule. Options are "centroid" (geometric center)
             or "mass" (center of mass). If None, no centering is performed. Default is None.
         cache : str, optional
             Path to cache directory. If None, no caching is performed.
-        remove_solvent : bool, optional
-            Whether to remove solvent from the molecule. Default is True.
-        database : str, optional
-            The database to fetch from. Default is "rcsb".
 
         Returns
         -------
