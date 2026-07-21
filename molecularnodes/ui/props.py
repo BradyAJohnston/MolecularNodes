@@ -268,7 +268,6 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         name="CAS",
         description="The CAS code to download and import",
         options={"TEXTEDIT_UPDATE"},
-        maxlen=12,
     )
 
     is_updating: BoolProperty(  # type: ignore
