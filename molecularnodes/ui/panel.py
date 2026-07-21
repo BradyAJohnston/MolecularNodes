@@ -255,6 +255,48 @@ def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
     col.prop(scene.mn, "import_oxdna_trajectory")
 
 
+def panel_cas(layout, scene):
+    layout.label(text="Download from NIH CAS Database", icon="IMPORT")
+    layout.separator()
+
+    layout = check_online_access_for_ui(layout)
+
+    row_import = layout.row().split(factor=0.5)
+    row_import.prop(scene.mn, "import_code_cas")
+    op = row_import.operator("mn.import_cas")
+    op.code = scene.mn.import_code_cas  # type: ignore
+    op.database = "NIH"  # type: ignore
+    op.node_setup = scene.mn.import_node_setup  # type: ignore
+    op.style = scene.mn.import_style_cas  # type: ignore
+    op.centre = scene.mn.import_centre  # type: ignore
+    op.centre_type = scene.mn.import_centre_type  # type: ignore
+
+    prefs = addon_preferences()
+    if prefs is not None:
+        op.cache_dir = str(prefs.cache_dir)  # type: ignore
+    else:
+        op.cache_dir = str(bpy.app.tempdir)  # type: ignore
+    layout.separator(factor=0.4)
+
+    layout.separator()
+
+    layout.label(text="Options", icon="MODIFIER")
+    options = layout.column(align=True)
+
+    row = options.row()
+    row.prop(scene.mn, "import_node_setup", text="")
+    col = row.column()
+    col.prop(scene.mn, "import_style_cas")
+    col.enabled = scene.mn.import_node_setup
+
+    row_centre = options.row()
+    row_centre.prop(scene.mn, "import_centre", icon_value=0)
+    col_centre = row_centre.column()
+    col_centre.prop(scene.mn, "import_centre_type", text="")
+    col_centre.enabled = scene.mn.import_centre
+    options.separator()
+
+
 chosen_panel = {
     "pdb": panel_wwpdb,
     "local": panel_local,
@@ -264,6 +306,7 @@ chosen_panel = {
     "density": panel_density,
     "cellpack": panel_cellpack,
     "dna": panel_oxdna,
+    "cas": panel_cas,
 }
 
 

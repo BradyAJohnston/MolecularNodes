@@ -264,6 +264,13 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         maxlen=4,
     )
 
+    import_code_cas: StringProperty(  # type: ignore
+        name="CAS",
+        description="The CAS code to download and import",
+        options={"TEXTEDIT_UPDATE"},
+        maxlen=12,
+    )
+
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
@@ -331,6 +338,12 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         description="Default style for importing",
         items=STYLE_ITEMS,
         default="spheres",
+    )
+    import_style_cas: EnumProperty(  # type: ignore
+        name="Style",
+        description="Default style for importing",
+        items=STYLE_ITEMS,
+        default="ball_and_stick",
     )
     import_md_topology: StringProperty(  # type: ignore
         name="Topology",
@@ -421,6 +434,7 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
             ("star", "Starfile", "Import a .starfile mapback file"),
             ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
             ("dna", "oxDNA", "Import an oxDNA file"),
+            ("cas", "CAS", "Import from the NIH CAS Database"),
         ),
     )
     import_star_file_path: StringProperty(  # type: ignore

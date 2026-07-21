@@ -223,6 +223,42 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         return mol
 
+    @classmethod
+    def cas_fetch(
+        cls,
+        code: str,
+        centre: str | None = None,
+        cache: Path | str | None = download.CACHE_DIR,
+    ) -> "Molecule":
+        """
+        Fetch a molecule from the RCSB database.
+
+        Parameters
+        ----------
+        code : str
+            The PDB ID code of the molecule to fetch.
+        centre : str | None, optional
+            Method to use for centering the molecule. Options are "centroid" (geometric center)
+            or "mass" (center of mass). If None, no centering is performed. Default is None.
+        cache : str, optional
+            Path to cache directory. If None, no caching is performed.
+        remove_solvent : bool, optional
+            Whether to remove solvent from the molecule. Default is True.
+        database : str, optional
+            The database to fetch from. Default is "rcsb".
+
+        Returns
+        -------
+        Molecule
+            A new Molecule instance created from the downloaded data.
+        """
+
+        cas_SDF_path = download.StructureDownloader(cache=cache).cas_download(code=code)
+        mol = cls.load(cas_SDF_path, name=code)
+        mol._code = code
+
+        return mol
+
     def centre_molecule(self, method: str | None = "centroid"):
         """
         Offset positions to centre the atoms and vertices over either the geometric centroid

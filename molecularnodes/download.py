@@ -86,6 +86,7 @@ class StructureDownloader:
         >>> path = downloader.download("1abc", format="cif")
         >>> path = downloader.download("pdb_00009bdt", format="bcif")
         """
+
         code = code.strip()
         format = format.strip(".")
         supported_formats = ["cif", "pdb", "bcif"]
@@ -155,6 +156,65 @@ class StructureDownloader:
                         "Text content is not str, please check your format."
                     )
                 file = io.StringIO(content)
+
+        return file
+
+    def cas_download(
+        self,
+        code: str,
+    ) -> Path | io.BytesIO | io.StringIO:
+        """Download structure as SDF (Easily fits into existing pipelines).
+
+        Parameters
+        ----------
+        code : str
+            The CAS code of the structure to download.
+
+        Example of the API call structure:
+        https://cactus.nci.nih.gov/chemical/structure/aspirin/file?format=sdf
+        Base API: https://cactus.nci.nih.gov/chemical/structure/{code}/{representation}
+
+        Code can be CAS number, name, SMILES string, amongst other possibilities.
+        - The API will handle the code given on its own, we aren't doing anything to on our end.
+        - We are simply providing to the API a "code".
+
+        Representation can be SMILES, SDF, CIF, amongst MANY other options (see API docs)
+        - The current implementation is getting the SDF representation and turning it into a file to be loaded into MolecularNodes.
+
+        Returns
+        -------
+        Path or io.BytesIO or io.StringIO
+        """
+
+        BASE_API = "https://cactus.nci.nih.gov/chemical/structure"
+        cas_url = f"{BASE_API}/{code}/file?format=sdf"
+
+        filename = f"{code}.sdf"
+
+        if self.cache:
+            file = self.cache / filename
+            if file.exists():
+                return file
+        else:
+            file = None
+
+        try:
+            r = requests.get(cas_url)
+            r.raise_for_status()
+        except requests.HTTPError as e:
+            raise FileDownloadPDBError(str(e))
+
+        content = r.text
+
+        if file:
+            mode = "w+"
+            with open(file, mode) as f:
+                f.write(content)
+            return Path(file)
+        else:
+            if not isinstance(content, str):
+                raise ValueError("Text content is not str, please check your format.")
+            file = io.StringIO(content)
 
         return file
 
