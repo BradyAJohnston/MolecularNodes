@@ -253,4 +253,5 @@ def atom_array_to_named_attributes(
             obj=obj,
             data=data,
             name=attr.replace("_int", ""),
+            atype=db.AttributeTypes.FLOAT_COLOR if attr == "Color" else None,
         )

@@ -1,6 +1,6 @@
 # serializer version: 1
 # name: test_get_set
-  Mesh: Mesh
+  Mesh: 1BNA
     Geometry: 1608 verts, 3192 edges, 1588 polys
   
     Attributes:

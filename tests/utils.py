@@ -1,7 +1,5 @@
-import bpy
 import databpy as db
 import numpy as np
-from bpy.types import Context, Depsgraph, Object
 from syrupy.extensions.amber import AmberSnapshotExtension
 
 
@@ -25,23 +23,8 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
         return super().serialize(data, **kwargs)
 
 
-# https://docs.blender.org/api/4.5/bpy.types.GeometrySet.html
-
-
-class GeometrySet:
-    def __init__(self, obj: Object, context: None | Context = None):
-        self.obj = obj
-        self.context = context if isinstance(context, Context) else bpy.context
-        depsgraph: Depsgraph = self.context.evaluated_depsgraph_get()
-        if depsgraph is None:
-            raise ValueError
-
-        self.eval_obj = depsgraph.id_eval_get(self.obj)
-        self.geom = self.eval_obj.evaluated_geometry()
-
-    @property
-    def instances(self):
-        return self.geom.instances_pointcloud()
+class GeometrySet(db.GeometrySet):
+    """`databpy.GeometrySet`, extended with richer attribute summaries for snapshot testing."""
 
     def _get_point_count(self, attributes) -> int:
         if "position" in attributes:
@@ -130,19 +113,22 @@ class GeometrySet:
         return lines
 
     def _summarize_mesh(self) -> list[str]:
-        mesh = self.geom.mesh
+        mesh = self.mesh
         if not mesh:
             return []
 
         lines = [
-            f"Mesh: {mesh.name}",
+            # `mesh.name` is the evaluated depsgraph mesh's data-block name, which
+            # Blender does not guarantee to be stable (it can be a generic "Mesh"
+            # depending on version/build) - use the object's own name instead.
+            f"Mesh: {self.object.name}",
             f"  Geometry: {len(mesh.vertices)} verts, {len(mesh.edges)} edges, {len(mesh.polygons)} polys",
         ]
         lines.extend(self._summarize_attributes(mesh.attributes, "  Attributes"))
         return lines
 
     def _summarize_pointcloud(self) -> list[str]:
-        pointcloud = self.geom.pointcloud
+        pointcloud = self.pointcloud
         if not pointcloud:
             return []
 
@@ -172,7 +158,7 @@ class GeometrySet:
             ref_arr = ref_attr.as_array()
             n_unique = len(np.unique(ref_arr))
             lines.append(f"  Unique instances: {n_unique}; {ref_arr}")
-            lines.append(f"  Instance references: {self.geom.instance_references()}")
+            lines.append(f"  Instance references: {self.instance_references}")
 
         filtered_attrs = {
             k: v for k, v in instances.attributes.items() if k != "position"
@@ -181,21 +167,21 @@ class GeometrySet:
         return lines
 
     def _summarize_curves(self) -> list[str]:
-        if self.geom.curves:
+        if self.curves:
             return ["\nCurves: present"]
         return []
 
     def _summarize_volume(self) -> list[str]:
-        if self.geom.volume:
+        if self.volume:
             return ["\nVolume: present"]
         return []
 
     def _summarize_grease_pencil(self) -> list[str]:
-        if self.geom.grease_pencil:
+        if self.grease_pencil:
             return ["\nGrease Pencil: present"]
         return []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         lines = []
         lines.extend(self._summarize_mesh())
         lines.extend(self._summarize_pointcloud())
