@@ -231,23 +231,21 @@ def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, name)
 
 def test_topo_bonds():
     mol = mn.Molecule.fetch("1BNA", cache=data_dir)
-    nodes.get_mod(mol.object).node_group = nodes.new_tree()
     with mol.tree.reset() as (atoms, join):
         atoms >> BreakBonds(cutoff=0.0) >> join
 
     # compare the number of edges before and after deleting them with
-    bonds = mol.object.data.edges
-    no_bonds = mol.evaluate().data.edges
-    assert len(bonds) > len(no_bonds)
-    assert len(no_bonds) == 0
+    gs = GeometrySet(mol.object)
+    assert gs.mesh
+    assert len(gs.mesh.edges) == 0
 
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
     with mol.tree.reset() as (atoms, join):
         atoms >> BreakBonds(cutoff=0.0) >> FindBonds() >> join
 
-    bonds_new = mol.evaluate().data.edges
-    assert len(bonds) == len(bonds_new)
+    gs_new = GeometrySet(mol.object)
+    assert len(mol.object.data.edges) == len(gs_new.mesh.edges)
 
 
 def test_is_modifier():
