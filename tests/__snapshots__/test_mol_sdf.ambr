@@ -1,179 +1,215 @@
 # serializer version: 1
 # name: test_load[ball_and_stick-mol]
-  Mesh: caffeine
-    Geometry: 2052 verts, 4620 edges, 2616 polys
-  
-    Attributes:
-    Color: shape=(8544, 4), atype=FLOAT_COLOR, range=[0.051, 1]
-    atom_id: shape=(8544,), atype=INT, constant=0
-    atom_name: shape=(8544,), atype=INT, constant=-1
-    atomic_number: shape=(8544,), atype=INT, unique=4, values=['1', '6', '7', '8']
-    b_factor: shape=(8544,), atype=FLOAT, constant=0
-    bond_type: shape=(2052,), atype=INT, unique=2, values=['1', '2']
-    chain_id: shape=(8544,), atype=INT, constant=0
-    charge: shape=(2052,), atype=FLOAT, constant=0
-    entity_id: shape=(8544,), atype=INT, constant=0
-    is_alpha_carbon: shape=(8544,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(8544,), atype=BOOLEAN, constant=False
-    is_carb: shape=(2052,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(2052,), atype=BOOLEAN, constant=False
-    is_instanced: shape=(2052,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(8544,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(8544,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(8544,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(8544,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(2052,), atype=FLOAT, constant=0
-    mass: shape=(8544,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    material_index: shape=(2616,), atype=INT, constant=0
-    position: shape=(2052, 3), atype=FLOAT_VECTOR, range=[-0.356, 0.454]
-    res_id: shape=(8544,), atype=INT, constant=0
-    res_name: shape=(8544,), atype=INT, constant=-1
-    sec_struct: shape=(8544,), atype=INT, constant=0
-    ures_id: shape=(8544,), atype=INT, constant=0
-    vdw_radii: shape=(8544,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']
+  dict({
+    'mesh': dict({
+      'attributes': dict({
+        'Color': 'shape=(~8540, 4), atype=FLOAT_COLOR, range=[0.051, 1]',
+        'atom_id': 'shape=(~8540,), atype=INT, constant=0',
+        'atom_name': 'shape=(~8540,), atype=INT, constant=-1',
+        'atomic_number': "shape=(~8540,), atype=INT, unique=4, values=['1', '6', '7', '8']",
+        'b_factor': 'shape=(~8540,), atype=FLOAT, constant=0',
+        'bond_type': "shape=(~2050,), atype=INT, unique=2, values=['1', '2']",
+        'chain_id': 'shape=(~8540,), atype=INT, constant=0',
+        'charge': 'shape=(~2050,), atype=FLOAT, constant=0',
+        'entity_id': 'shape=(~8540,), atype=INT, constant=0',
+        'is_alpha_carbon': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_backbone': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_carb': 'shape=(~2050,), atype=BOOLEAN, constant=False',
+        'is_hetero': 'shape=(~2050,), atype=BOOLEAN, constant=False',
+        'is_instanced': "shape=(~2050,), atype=BOOLEAN, unique=2, values=['False', 'True']",
+        'is_nucleic': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_peptide': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_side_chain': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_solvent': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'lipophobicity': 'shape=(~2050,), atype=FLOAT, constant=0',
+        'mass': "shape=(~8540,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']",
+        'material_index': 'shape=(~2620,), atype=INT, constant=0',
+        'position': 'shape=(~2050, 3), atype=FLOAT_VECTOR, range=[-0.356, 0.454]',
+        'res_id': 'shape=(~8540,), atype=INT, constant=0',
+        'res_name': 'shape=(~8540,), atype=INT, constant=-1',
+        'sec_struct': 'shape=(~8540,), atype=INT, constant=0',
+        'ures_id': 'shape=(~8540,), atype=INT, constant=0',
+        'vdw_radii': "shape=(~8540,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']",
+      }),
+      'edges': '~4620',
+      'name': 'caffeine',
+      'polys': '~2620',
+      'verts': '~2050',
+    }),
+  })
 # ---
 # name: test_load[ball_and_stick-sdf]
-  Mesh: caffeine
-    Geometry: 2052 verts, 4620 edges, 2616 polys
-  
-    Attributes:
-    Color: shape=(8544, 4), atype=FLOAT_COLOR, range=[0.051, 1]
-    atom_id: shape=(8544,), atype=INT, constant=0
-    atom_name: shape=(8544,), atype=INT, constant=-1
-    atomic_number: shape=(8544,), atype=INT, unique=4, values=['1', '6', '7', '8']
-    b_factor: shape=(8544,), atype=FLOAT, constant=0
-    bond_type: shape=(2052,), atype=INT, unique=2, values=['1', '2']
-    chain_id: shape=(8544,), atype=INT, constant=0
-    charge: shape=(2052,), atype=FLOAT, constant=0
-    entity_id: shape=(8544,), atype=INT, constant=0
-    is_alpha_carbon: shape=(8544,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(8544,), atype=BOOLEAN, constant=False
-    is_carb: shape=(2052,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(2052,), atype=BOOLEAN, constant=False
-    is_instanced: shape=(2052,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(8544,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(8544,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(8544,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(8544,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(2052,), atype=FLOAT, constant=0
-    mass: shape=(8544,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    material_index: shape=(2616,), atype=INT, constant=0
-    position: shape=(2052, 3), atype=FLOAT_VECTOR, range=[-0.331, 0.488]
-    res_id: shape=(8544,), atype=INT, constant=0
-    res_name: shape=(8544,), atype=INT, constant=-1
-    sec_struct: shape=(8544,), atype=INT, constant=0
-    ures_id: shape=(8544,), atype=INT, constant=0
-    vdw_radii: shape=(8544,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']
+  dict({
+    'mesh': dict({
+      'attributes': dict({
+        'Color': 'shape=(~8540, 4), atype=FLOAT_COLOR, range=[0.051, 1]',
+        'atom_id': 'shape=(~8540,), atype=INT, constant=0',
+        'atom_name': 'shape=(~8540,), atype=INT, constant=-1',
+        'atomic_number': "shape=(~8540,), atype=INT, unique=4, values=['1', '6', '7', '8']",
+        'b_factor': 'shape=(~8540,), atype=FLOAT, constant=0',
+        'bond_type': "shape=(~2050,), atype=INT, unique=2, values=['1', '2']",
+        'chain_id': 'shape=(~8540,), atype=INT, constant=0',
+        'charge': 'shape=(~2050,), atype=FLOAT, constant=0',
+        'entity_id': 'shape=(~8540,), atype=INT, constant=0',
+        'is_alpha_carbon': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_backbone': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_carb': 'shape=(~2050,), atype=BOOLEAN, constant=False',
+        'is_hetero': 'shape=(~2050,), atype=BOOLEAN, constant=False',
+        'is_instanced': "shape=(~2050,), atype=BOOLEAN, unique=2, values=['False', 'True']",
+        'is_nucleic': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_peptide': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_side_chain': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'is_solvent': 'shape=(~8540,), atype=BOOLEAN, constant=False',
+        'lipophobicity': 'shape=(~2050,), atype=FLOAT, constant=0',
+        'mass': "shape=(~8540,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']",
+        'material_index': 'shape=(~2620,), atype=INT, constant=0',
+        'position': 'shape=(~2050, 3), atype=FLOAT_VECTOR, range=[-0.331, 0.488]',
+        'res_id': 'shape=(~8540,), atype=INT, constant=0',
+        'res_name': 'shape=(~8540,), atype=INT, constant=-1',
+        'sec_struct': 'shape=(~8540,), atype=INT, constant=0',
+        'ures_id': 'shape=(~8540,), atype=INT, constant=0',
+        'vdw_radii': "shape=(~8540,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']",
+      }),
+      'edges': '~4620',
+      'name': 'caffeine',
+      'polys': '~2620',
+      'verts': '~2050',
+    }),
+  })
 # ---
 # name: test_load[spheres-mol]
-  Mesh: caffeine
-    Geometry: 1008 verts, 2880 edges, 1920 polys
-  
-    Attributes:
-    Color: shape=(1008, 4), atype=FLOAT_COLOR, range=[0.051, 1]
-    atom_name: shape=(1008,), atype=INT, constant=-1
-    atomic_number: shape=(1008,), atype=INT, unique=4, values=['1', '6', '7', '8']
-    bond_type: shape=(1008,), atype=INT, unique=2, values=['1', '2']
-    chain_id: shape=(1008,), atype=INT, constant=0
-    charge: shape=(1008,), atype=FLOAT, constant=0
-    is_alpha_carbon: shape=(1008,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(1008,), atype=BOOLEAN, constant=False
-    is_carb: shape=(1008,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(1008,), atype=BOOLEAN, constant=False
-    is_instanced: shape=(1008,), atype=BOOLEAN, constant=True
-    is_nucleic: shape=(1008,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(1008,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(1008,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(1008,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(1008,), atype=FLOAT, constant=0
-    mass: shape=(1008,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    position: shape=(1008, 3), atype=FLOAT_VECTOR, range=[-0.428, 0.511]
-    res_id: shape=(1008,), atype=INT, constant=0
-    res_name: shape=(1008,), atype=INT, constant=-1
-    ures_id: shape=(1008,), atype=INT, constant=0
-    vdw_radii: shape=(1008,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']
+  dict({
+    'mesh': dict({
+      'attributes': dict({
+        'Color': 'shape=(~1010, 4), atype=FLOAT_COLOR, range=[0.051, 1]',
+        'atom_name': 'shape=(~1010,), atype=INT, constant=-1',
+        'atomic_number': "shape=(~1010,), atype=INT, unique=4, values=['1', '6', '7', '8']",
+        'bond_type': "shape=(~1010,), atype=INT, unique=2, values=['1', '2']",
+        'chain_id': 'shape=(~1010,), atype=INT, constant=0',
+        'charge': 'shape=(~1010,), atype=FLOAT, constant=0',
+        'is_alpha_carbon': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_backbone': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_carb': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_hetero': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_instanced': 'shape=(~1010,), atype=BOOLEAN, constant=True',
+        'is_nucleic': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_peptide': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_side_chain': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_solvent': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'lipophobicity': 'shape=(~1010,), atype=FLOAT, constant=0',
+        'mass': "shape=(~1010,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']",
+        'position': 'shape=(~1010, 3), atype=FLOAT_VECTOR, range=[-0.428, 0.511]',
+        'res_id': 'shape=(~1010,), atype=INT, constant=0',
+        'res_name': 'shape=(~1010,), atype=INT, constant=-1',
+        'ures_id': 'shape=(~1010,), atype=INT, constant=0',
+        'vdw_radii': "shape=(~1010,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']",
+      }),
+      'edges': '~2880',
+      'name': 'caffeine',
+      'polys': '~1920',
+      'verts': '~1010',
+    }),
+  })
 # ---
 # name: test_load[spheres-sdf]
-  Mesh: caffeine
-    Geometry: 1008 verts, 2880 edges, 1920 polys
-  
-    Attributes:
-    Color: shape=(1008, 4), atype=FLOAT_COLOR, range=[0.051, 1]
-    atom_name: shape=(1008,), atype=INT, constant=-1
-    atomic_number: shape=(1008,), atype=INT, unique=4, values=['1', '6', '7', '8']
-    bond_type: shape=(1008,), atype=INT, unique=2, values=['1', '2']
-    chain_id: shape=(1008,), atype=INT, constant=0
-    charge: shape=(1008,), atype=FLOAT, constant=0
-    is_alpha_carbon: shape=(1008,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(1008,), atype=BOOLEAN, constant=False
-    is_carb: shape=(1008,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(1008,), atype=BOOLEAN, constant=False
-    is_instanced: shape=(1008,), atype=BOOLEAN, constant=True
-    is_nucleic: shape=(1008,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(1008,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(1008,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(1008,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(1008,), atype=FLOAT, constant=0
-    mass: shape=(1008,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    position: shape=(1008, 3), atype=FLOAT_VECTOR, range=[-0.388, 0.548]
-    res_id: shape=(1008,), atype=INT, constant=0
-    res_name: shape=(1008,), atype=INT, constant=-1
-    ures_id: shape=(1008,), atype=INT, constant=0
-    vdw_radii: shape=(1008,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']
+  dict({
+    'mesh': dict({
+      'attributes': dict({
+        'Color': 'shape=(~1010, 4), atype=FLOAT_COLOR, range=[0.051, 1]',
+        'atom_name': 'shape=(~1010,), atype=INT, constant=-1',
+        'atomic_number': "shape=(~1010,), atype=INT, unique=4, values=['1', '6', '7', '8']",
+        'bond_type': "shape=(~1010,), atype=INT, unique=2, values=['1', '2']",
+        'chain_id': 'shape=(~1010,), atype=INT, constant=0',
+        'charge': 'shape=(~1010,), atype=FLOAT, constant=0',
+        'is_alpha_carbon': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_backbone': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_carb': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_hetero': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_instanced': 'shape=(~1010,), atype=BOOLEAN, constant=True',
+        'is_nucleic': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_peptide': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_side_chain': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'is_solvent': 'shape=(~1010,), atype=BOOLEAN, constant=False',
+        'lipophobicity': 'shape=(~1010,), atype=FLOAT, constant=0',
+        'mass': "shape=(~1010,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']",
+        'position': 'shape=(~1010, 3), atype=FLOAT_VECTOR, range=[-0.388, 0.548]',
+        'res_id': 'shape=(~1010,), atype=INT, constant=0',
+        'res_name': 'shape=(~1010,), atype=INT, constant=-1',
+        'ures_id': 'shape=(~1010,), atype=INT, constant=0',
+        'vdw_radii': "shape=(~1010,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']",
+      }),
+      'edges': '~2880',
+      'name': 'caffeine',
+      'polys': '~1920',
+      'verts': '~1010',
+    }),
+  })
 # ---
 # name: test_load[surface-mol]
-  Mesh: caffeine
-    Geometry: 826 verts, 1648 edges, 824 polys
-  
-    Attributes:
-    Color: shape=(826, 4), atype=FLOAT_COLOR, range=[0.051, 1]
-    atom_name: shape=(826,), atype=INT, constant=-1
-    atomic_number: shape=(826,), atype=INT, unique=4, values=['1', '6', '7', '8']
-    chain_id: shape=(826,), atype=INT, constant=0
-    charge: shape=(826,), atype=FLOAT, constant=0
-    group_id: shape=(826,), atype=INT, constant=0
-    is_alpha_carbon: shape=(826,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(826,), atype=BOOLEAN, constant=False
-    is_carb: shape=(826,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(826,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(826,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(826,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(826,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(826,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(826,), atype=FLOAT, constant=0
-    mass: shape=(826,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    material_index: shape=(824,), atype=INT, constant=0
-    position: shape=(826, 3), atype=FLOAT_VECTOR, range=[-0.493, 0.565]
-    res_id: shape=(826,), atype=INT, constant=0
-    res_name: shape=(826,), atype=INT, constant=-1
-    ures_id: shape=(826,), atype=INT, constant=0
-    vdw_radii: shape=(826,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']
+  dict({
+    'mesh': dict({
+      'attributes': dict({
+        'Color': 'shape=(826, 4), atype=FLOAT_COLOR, range=[0.051, 1]',
+        'atom_name': 'shape=(826,), atype=INT, constant=-1',
+        'atomic_number': "shape=(826,), atype=INT, unique=4, values=['1', '6', '7', '8']",
+        'chain_id': 'shape=(826,), atype=INT, constant=0',
+        'charge': 'shape=(826,), atype=FLOAT, constant=0',
+        'group_id': 'shape=(826,), atype=INT, constant=0',
+        'is_alpha_carbon': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'is_backbone': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'is_carb': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'is_hetero': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'is_nucleic': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'is_peptide': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'is_side_chain': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'is_solvent': 'shape=(826,), atype=BOOLEAN, constant=False',
+        'lipophobicity': 'shape=(826,), atype=FLOAT, constant=0',
+        'mass': "shape=(826,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']",
+        'material_index': 'shape=(824,), atype=INT, constant=0',
+        'position': 'shape=(826, 3), atype=FLOAT_VECTOR, range=[-0.493, 0.565]',
+        'res_id': 'shape=(826,), atype=INT, constant=0',
+        'res_name': 'shape=(826,), atype=INT, constant=-1',
+        'ures_id': 'shape=(826,), atype=INT, constant=0',
+        'vdw_radii': "shape=(826,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']",
+      }),
+      'edges': '~1650',
+      'name': 'caffeine',
+      'polys': '824',
+      'verts': '826',
+    }),
+  })
 # ---
 # name: test_load[surface-sdf]
-  Mesh: caffeine
-    Geometry: 816 verts, 1628 edges, 814 polys
-  
-    Attributes:
-    Color: shape=(816, 4), atype=FLOAT_COLOR, range=[0.051, 1]
-    atom_name: shape=(816,), atype=INT, constant=-1
-    atomic_number: shape=(816,), atype=INT, unique=4, values=['1', '6', '7', '8']
-    chain_id: shape=(816,), atype=INT, constant=0
-    charge: shape=(816,), atype=FLOAT, constant=0
-    group_id: shape=(816,), atype=INT, constant=0
-    is_alpha_carbon: shape=(816,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(816,), atype=BOOLEAN, constant=False
-    is_carb: shape=(816,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(816,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(816,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(816,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(816,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(816,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(816,), atype=FLOAT, constant=0
-    mass: shape=(816,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    material_index: shape=(814,), atype=INT, constant=0
-    position: shape=(816, 3), atype=FLOAT_VECTOR, range=[-0.44, 0.593]
-    res_id: shape=(816,), atype=INT, constant=0
-    res_name: shape=(816,), atype=INT, constant=-1
-    ures_id: shape=(816,), atype=INT, constant=0
-    vdw_radii: shape=(816,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']
+  dict({
+    'mesh': dict({
+      'attributes': dict({
+        'Color': 'shape=(816, 4), atype=FLOAT_COLOR, range=[0.051, 1]',
+        'atom_name': 'shape=(816,), atype=INT, constant=-1',
+        'atomic_number': "shape=(816,), atype=INT, unique=4, values=['1', '6', '7', '8']",
+        'chain_id': 'shape=(816,), atype=INT, constant=0',
+        'charge': 'shape=(816,), atype=FLOAT, constant=0',
+        'group_id': 'shape=(816,), atype=INT, constant=0',
+        'is_alpha_carbon': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'is_backbone': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'is_carb': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'is_hetero': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'is_nucleic': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'is_peptide': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'is_side_chain': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'is_solvent': 'shape=(816,), atype=BOOLEAN, constant=False',
+        'lipophobicity': 'shape=(816,), atype=FLOAT, constant=0',
+        'mass': "shape=(816,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']",
+        'material_index': 'shape=(814,), atype=INT, constant=0',
+        'position': 'shape=(816, 3), atype=FLOAT_VECTOR, range=[-0.44, 0.593]',
+        'res_id': 'shape=(816,), atype=INT, constant=0',
+        'res_name': 'shape=(816,), atype=INT, constant=-1',
+        'ures_id': 'shape=(816,), atype=INT, constant=0',
+        'vdw_radii': "shape=(816,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']",
+      }),
+      'edges': '~1630',
+      'name': 'caffeine',
+      'polys': '814',
+      'verts': '816',
+    }),
+  })
 # ---

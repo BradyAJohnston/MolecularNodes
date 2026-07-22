@@ -34,4 +34,4 @@ def test_load(snapshot, format, style):
             >> tree.join
         )
 
-    assert snapshot == GeometrySet(mol.object)
+    assert snapshot == GeometrySet(mol.object).summary()

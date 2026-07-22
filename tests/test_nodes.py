@@ -313,7 +313,7 @@ def test_periodic_array(snapshot, tmp_path):
     # for some reason we need to trigger a proper re-evaluation of the GN node tree
     # by saving to a temp file #TODO: look into and try to fix this
     bpy.ops.wm.save_as_mainfile(filepath=str(tmp_path / "example.blend"))
-    assert snapshot == GeometrySet(traj.object)
+    assert snapshot == GeometrySet(traj.object).summary()
 
 
 # this topology doesn't have any dimension information so it should just

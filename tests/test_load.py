@@ -24,10 +24,18 @@ STYLES_TO_TEST = [
     "ball_and_stick",
 ]
 
+# `surface` builds its mesh through a volume, and the marching cubes step lands on a
+# slightly different vertex count on each platform's Blender build. It is also by far
+# the slowest style, so it is only exercised on the smallest structure.
+SURFACE_CODE = "1BNA"
+STYLE_PARAMS = [
+    (code, assembly, style)
+    for code, assembly, style in itertools.product(codes, [True, False], STYLES_TO_TEST)
+    if style != "surface" or code == SURFACE_CODE
+]
 
-@pytest.mark.parametrize(
-    "code, assembly, style", itertools.product(codes, [True, False], STYLES_TO_TEST)
-)
+
+@pytest.mark.parametrize("code, assembly, style", STYLE_PARAMS)
 def test_style_1(snapshot, code, assembly, style):
     mol = mn.Molecule.fetch(code, cache=data_dir)
     with mol.tree.reset() as (atoms, join):
@@ -50,11 +58,11 @@ def test_style_1(snapshot, code, assembly, style):
         )
         (atoms >> style_node >> assembly >> join)
 
-    assert snapshot == GeometrySet(mol.object)
+    assert snapshot == GeometrySet(mol.object).summary()
 
 
 @pytest.mark.parametrize(
-    "code, format", itertools.product(codes, ["bcif", "cif", "pdb"])
+    "code, format", list(itertools.product(codes, ["bcif", "cif", "pdb"]))
 )
 def test_download_format(code, format):
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
@@ -111,4 +119,4 @@ def test_load_small_mol(snapshot):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
     assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
     assert mol.object.mn.entity_type == mol._entity_type.value
-    assert snapshot == GeometrySet(mol.object)
+    assert snapshot == GeometrySet(mol.object, strict=True).summary()

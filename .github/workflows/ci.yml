@@ -64,6 +64,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 6
+      # without this the first OS to fail cancels the others, hiding whether a failure
+      # is platform-specific
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
@@ -82,6 +85,8 @@ jobs:
     name: Test in Blender
     needs: [lint]
     runs-on: ${{ matrix.os }}
+    # the daily build is a moving target - report its failures without failing the run
+    continue-on-error: ${{ matrix.version == 'daily' }}
     strategy:
       max-parallel: 6
       fail-fast: false

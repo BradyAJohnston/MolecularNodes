@@ -8,14 +8,14 @@ def test_get_set(snapshot):
     code = "1BNA"
     mol = mn.Molecule.fetch(code).add_style("ribbon")
     geom = GeometrySet(mol.object)
-    assert snapshot == geom
+    assert snapshot == geom.summary()
 
 
 def test_spheres_style(snapshot):
     code = "1BNA"
     mol = mn.Molecule.fetch(code).add_style("spheres")
     geom = GeometrySet(mol.object)
-    assert snapshot == geom
+    assert snapshot == geom.summary()
 
 
 def test_specific_attribute():

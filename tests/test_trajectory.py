@@ -180,7 +180,7 @@ class TestTrajectory:
 
     @pytest.mark.parametrize(
         "correct,subframes,interpolate",
-        itertools.product([True, False], [0, 1, 2, 3], [True, False]),
+        list(itertools.product([True, False], [0, 1, 2, 3], [True, False])),
     )
     def test_mean_position(
         self, snapshot, subframes: int, correct: bool, interpolate: bool, universe

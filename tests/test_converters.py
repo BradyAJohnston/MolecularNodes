@@ -7,7 +7,7 @@ from .constants import codes, data_dir
 
 
 @pytest.mark.parametrize(
-    "code, format", itertools.product(codes, ["bcif", "cif", "pdb"])
+    "code, format", list(itertools.product(codes, ["bcif", "cif", "pdb"]))
 )
 def test_biotite_converter(code, format):
     # fetch and load molecule through biotite

@@ -9,10 +9,11 @@ from .utils import GeometrySet
 formats = ["pdb", "cif", "bcif"]
 
 
-@pytest.mark.parametrize("code, format", itertools.product(codes, formats))
+@pytest.mark.parametrize("code, format", list(itertools.product(codes, formats)))
 def test_attribute(snapshot, code, format):
     mol = mn.Molecule.fetch(code, cache=data_dir, format=format)
-    assert snapshot == GeometrySet(mol.object)
+    # no style applied, so the geometry is the parsed file and is exact on all platforms
+    assert snapshot == GeometrySet(mol.object, strict=True).summary()
 
 
 def test_store_named_attribute(snapshot_custom):
@@ -37,4 +38,4 @@ def test_bond_attributes(snapshot):
     with mol.tree.reset() as (atoms, join):
         atoms >> StyleSpheres(geometry="Mesh") >> join
 
-    assert snapshot == GeometrySet(mol.object)
+    assert snapshot == GeometrySet(mol.object).summary()
