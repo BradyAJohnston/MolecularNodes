@@ -7340,6 +7340,33 @@ class ResidueParameter(AssetGeometryGroup):
         super().__init__(**{})
 
 
+class RotationCisTEM(AssetGeometryGroup):
+    """Rotation cisTEM"""
+
+    _name = "Rotation cisTEM"
+    _asset_name = "Rotation cisTEM"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pass
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+        is_valid: BooleanSocket
+        """Is Valid"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(self):
+        super().__init__(**{})
+
+
 class RotationFromZYZ(AssetGeometryGroup):
     """Combine a rotation defined as ZYZ common in electron tomography"""
 
@@ -7373,6 +7400,33 @@ class RotationFromZYZ(AssetGeometryGroup):
         psi: InputFloat = 0.0,
     ):
         super().__init__(**{"Socket_1": phi, "Socket_2": theta, "Socket_3": psi})
+
+
+class RotationRELION(AssetGeometryGroup):
+    """Rotation RELION"""
+
+    _name = "Rotation RELION"
+    _asset_name = "Rotation RELION"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        pass
+
+    class _Outputs(SocketAccessor):
+        rotation: RotationSocket
+        """Rotation"""
+        is_valid: BooleanSocket
+        """Is Valid"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(self):
+        super().__init__(**{})
 
 
 class SampleMixFloat(AssetGeometryGroup):
@@ -9081,7 +9135,9 @@ class StarfileInstances(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         points: GeometrySocket
         """Points"""
-        image: IntegerSocket
+        socket_17: MenuSocket
+        """Image"""
+        socket_3: IntegerSocket
         """Image"""
         menu: MenuSocket
         """Menu"""
@@ -9104,7 +9160,8 @@ class StarfileInstances(AssetGeometryGroup):
     def __init__(
         self,
         points: InputGeometry = None,
-        image: InputInteger = 1,
+        socket_17: InputMenu = "Image",
+        socket_3: InputInteger = 0,
         menu: InputMenu = "Instance",
         instance: InputObject = None,
         material: InputMaterial = None,
@@ -9112,7 +9169,8 @@ class StarfileInstances(AssetGeometryGroup):
         super().__init__(
             **{
                 "Socket_0": points,
-                "Socket_3": image,
+                "Socket_17": socket_17,
+                "Socket_3": socket_3,
                 "Socket_14": menu,
                 "Socket_2": instance,
                 "Socket_13": material,
@@ -10773,7 +10831,9 @@ __all__ = (
     "ResidueMask",
     "ResidueName",
     "ResidueParameter",
+    "RotationCisTEM",
     "RotationFromZYZ",
+    "RotationRELION",
     "SampleMixFloat",
     "SampleMixVector",
     "SampleMixedColor",

@@ -50,12 +50,7 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, code, assembly, style)
             if assembly
             else None
         )
-        (
-            atoms
-            >> style_node
-            >> assembly
-            >> join
-        )
+        (atoms >> style_node >> assembly >> join)
 
     for att in attributes:
         try:
