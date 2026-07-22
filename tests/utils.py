@@ -62,7 +62,7 @@ class GeometrySet(db.GeometrySet):
             formatted_values = [self._format_value(v, dtype_kind) for v in unique]
             parts.append(f"unique={n_unique}, values={formatted_values}")
         else:
-            parts.append(f"unique={n_unique}")
+            # parts.append(f"unique={n_unique}")
             if dtype_kind in ["i", "f"]:
                 min_val = self._format_value(arr.min(), dtype_kind)
                 max_val = self._format_value(arr.max(), dtype_kind)

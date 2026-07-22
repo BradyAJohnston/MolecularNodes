@@ -4,7 +4,7 @@
     Geometry: 2052 verts, 4620 edges, 2616 polys
   
     Attributes:
-    Color: shape=(8544, 4), atype=FLOAT_COLOR, unique=7, range=[0.051, 1]
+    Color: shape=(8544, 4), atype=FLOAT_COLOR, range=[0.051, 1]
     atom_id: shape=(8544,), atype=INT, constant=0
     atom_name: shape=(8544,), atype=INT, constant=-1
     atomic_number: shape=(8544,), atype=INT, unique=4, values=['1', '6', '7', '8']
@@ -25,7 +25,7 @@
     lipophobicity: shape=(2052,), atype=FLOAT, constant=0
     mass: shape=(8544,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
     material_index: shape=(2616,), atype=INT, constant=0
-    position: shape=(2052, 3), atype=FLOAT_VECTOR, unique=4306, range=[-0.356, 0.454]
+    position: shape=(2052, 3), atype=FLOAT_VECTOR, range=[-0.356, 0.454]
     res_id: shape=(8544,), atype=INT, constant=0
     res_name: shape=(8544,), atype=INT, constant=-1
     sec_struct: shape=(8544,), atype=INT, constant=0
@@ -37,7 +37,7 @@
     Geometry: 2052 verts, 4620 edges, 2616 polys
   
     Attributes:
-    Color: shape=(8544, 4), atype=FLOAT_COLOR, unique=7, range=[0.051, 1]
+    Color: shape=(8544, 4), atype=FLOAT_COLOR, range=[0.051, 1]
     atom_id: shape=(8544,), atype=INT, constant=0
     atom_name: shape=(8544,), atype=INT, constant=-1
     atomic_number: shape=(8544,), atype=INT, unique=4, values=['1', '6', '7', '8']
@@ -58,7 +58,7 @@
     lipophobicity: shape=(2052,), atype=FLOAT, constant=0
     mass: shape=(8544,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
     material_index: shape=(2616,), atype=INT, constant=0
-    position: shape=(2052, 3), atype=FLOAT_VECTOR, unique=4458, range=[-0.331, 0.488]
+    position: shape=(2052, 3), atype=FLOAT_VECTOR, range=[-0.331, 0.488]
     res_id: shape=(8544,), atype=INT, constant=0
     res_name: shape=(8544,), atype=INT, constant=-1
     sec_struct: shape=(8544,), atype=INT, constant=0
@@ -70,7 +70,7 @@
     Geometry: 1008 verts, 2880 edges, 1920 polys
   
     Attributes:
-    Color: shape=(1008, 4), atype=FLOAT_COLOR, unique=7, range=[0.051, 1]
+    Color: shape=(1008, 4), atype=FLOAT_COLOR, range=[0.051, 1]
     atom_name: shape=(1008,), atype=INT, constant=-1
     atomic_number: shape=(1008,), atype=INT, unique=4, values=['1', '6', '7', '8']
     bond_type: shape=(1008,), atype=INT, unique=2, values=['1', '2']
@@ -87,7 +87,7 @@
     is_solvent: shape=(1008,), atype=BOOLEAN, constant=False
     lipophobicity: shape=(1008,), atype=FLOAT, constant=0
     mass: shape=(1008,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    position: shape=(1008, 3), atype=FLOAT_VECTOR, unique=1466, range=[-0.428, 0.511]
+    position: shape=(1008, 3), atype=FLOAT_VECTOR, range=[-0.428, 0.511]
     res_id: shape=(1008,), atype=INT, constant=0
     res_name: shape=(1008,), atype=INT, constant=-1
     ures_id: shape=(1008,), atype=INT, constant=0
@@ -98,7 +98,7 @@
     Geometry: 1008 verts, 2880 edges, 1920 polys
   
     Attributes:
-    Color: shape=(1008, 4), atype=FLOAT_COLOR, unique=7, range=[0.051, 1]
+    Color: shape=(1008, 4), atype=FLOAT_COLOR, range=[0.051, 1]
     atom_name: shape=(1008,), atype=INT, constant=-1
     atomic_number: shape=(1008,), atype=INT, unique=4, values=['1', '6', '7', '8']
     bond_type: shape=(1008,), atype=INT, unique=2, values=['1', '2']
@@ -115,7 +115,7 @@
     is_solvent: shape=(1008,), atype=BOOLEAN, constant=False
     lipophobicity: shape=(1008,), atype=FLOAT, constant=0
     mass: shape=(1008,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
-    position: shape=(1008, 3), atype=FLOAT_VECTOR, unique=1491, range=[-0.388, 0.548]
+    position: shape=(1008, 3), atype=FLOAT_VECTOR, range=[-0.388, 0.548]
     res_id: shape=(1008,), atype=INT, constant=0
     res_name: shape=(1008,), atype=INT, constant=-1
     ures_id: shape=(1008,), atype=INT, constant=0
@@ -126,7 +126,7 @@
     Geometry: 826 verts, 1648 edges, 824 polys
   
     Attributes:
-    Color: shape=(826, 4), atype=FLOAT_COLOR, unique=353, range=[0.051, 1]
+    Color: shape=(826, 4), atype=FLOAT_COLOR, range=[0.051, 1]
     atom_name: shape=(826,), atype=INT, constant=-1
     atomic_number: shape=(826,), atype=INT, unique=4, values=['1', '6', '7', '8']
     chain_id: shape=(826,), atype=INT, constant=0
@@ -143,7 +143,7 @@
     lipophobicity: shape=(826,), atype=FLOAT, constant=0
     mass: shape=(826,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
     material_index: shape=(824,), atype=INT, constant=0
-    position: shape=(826, 3), atype=FLOAT_VECTOR, unique=2478, range=[-0.493, 0.565]
+    position: shape=(826, 3), atype=FLOAT_VECTOR, range=[-0.493, 0.565]
     res_id: shape=(826,), atype=INT, constant=0
     res_name: shape=(826,), atype=INT, constant=-1
     ures_id: shape=(826,), atype=INT, constant=0
@@ -154,7 +154,7 @@
     Geometry: 816 verts, 1628 edges, 814 polys
   
     Attributes:
-    Color: shape=(816, 4), atype=FLOAT_COLOR, unique=524, range=[0.051, 1]
+    Color: shape=(816, 4), atype=FLOAT_COLOR, range=[0.051, 1]
     atom_name: shape=(816,), atype=INT, constant=-1
     atomic_number: shape=(816,), atype=INT, unique=4, values=['1', '6', '7', '8']
     chain_id: shape=(816,), atype=INT, constant=0
@@ -171,7 +171,7 @@
     lipophobicity: shape=(816,), atype=FLOAT, constant=0
     mass: shape=(816,), atype=FLOAT, unique=4, values=['1.01', '12', '14', '16']
     material_index: shape=(814,), atype=INT, constant=0
-    position: shape=(816, 3), atype=FLOAT_VECTOR, unique=2448, range=[-0.44, 0.593]
+    position: shape=(816, 3), atype=FLOAT_VECTOR, range=[-0.44, 0.593]
     res_id: shape=(816,), atype=INT, constant=0
     res_name: shape=(816,), atype=INT, constant=-1
     ures_id: shape=(816,), atype=INT, constant=0

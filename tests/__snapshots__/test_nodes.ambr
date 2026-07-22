@@ -29678,7 +29678,7 @@
     Instance references: [<GeometrySet: 47681 verts, 0 edges, 0 faces, 0 corners>]
   
     Attributes:
-    instance_transform: shape=(27, 4, 4), atype=FLOAT4X4, unique=20, range=[-7e-07, 24]
+    instance_transform: shape=(27, 4, 4), atype=FLOAT4X4, range=[-7e-07, 24]
 # ---
 # name: test_selection_working[chain_id-1BNA]
   tuple(
