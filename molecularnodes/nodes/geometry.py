@@ -9135,9 +9135,9 @@ class StarfileInstances(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         points: GeometrySocket
         """Points"""
-        socket_17: MenuSocket
-        """Image"""
-        socket_3: IntegerSocket
+        point_selection: MenuSocket
+        """Point Selection"""
+        image: IntegerSocket
         """Image"""
         menu: MenuSocket
         """Menu"""
@@ -9160,8 +9160,8 @@ class StarfileInstances(AssetGeometryGroup):
     def __init__(
         self,
         points: InputGeometry = None,
-        socket_17: InputMenu = "Image",
-        socket_3: InputInteger = 0,
+        point_selection: InputMenu = "Image",
+        image: InputInteger = 0,
         menu: InputMenu = "Instance",
         instance: InputObject = None,
         material: InputMaterial = None,
@@ -9169,8 +9169,8 @@ class StarfileInstances(AssetGeometryGroup):
         super().__init__(
             **{
                 "Socket_0": points,
-                "Socket_17": socket_17,
-                "Socket_3": socket_3,
+                "Socket_17": point_selection,
+                "Socket_3": image,
                 "Socket_14": menu,
                 "Socket_2": instance,
                 "Socket_13": material,
