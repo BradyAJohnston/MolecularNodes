@@ -3,20 +3,16 @@ import numpy as np
 import pytest
 import molecularnodes as mn
 from molecularnodes.nodes.geometry import StyleRibbon, StyleSpheres
-from .constants import attributes, codes, data_dir
+from .constants import codes, data_dir
+from .utils import GeometrySet
 
 formats = ["pdb", "cif", "bcif"]
 
 
 @pytest.mark.parametrize("code, format", itertools.product(codes, formats))
-def test_attribute(snapshot_custom, code, format):
+def test_attribute(snapshot, code, format):
     mol = mn.Molecule.fetch(code, cache=data_dir, format=format)
-    for attribute in attributes:
-        try:
-            print(f"{attribute=}")
-            assert snapshot_custom == mol.named_attribute(attribute)
-        except AttributeError as e:
-            assert snapshot_custom == e
+    assert snapshot == GeometrySet(mol.object)
 
 
 def test_store_named_attribute(snapshot_custom):
@@ -36,10 +32,9 @@ def test_uv_map(snapshot_custom):
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]
 
 
-def test_bond_attributes(snapshot_custom):
+def test_bond_attributes(snapshot):
     mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
     with mol.tree.reset() as (atoms, join):
         atoms >> StyleSpheres(geometry="Mesh") >> join
 
-    for attr in mol.list_attributes(evaluate=True, drop_hidden=True):
-        assert snapshot_custom == mol.named_attribute(attr, evaluate=True)
+    assert snapshot == GeometrySet(mol.object)

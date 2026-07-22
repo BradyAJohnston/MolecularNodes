@@ -2,8 +2,8 @@ import pytest
 import molecularnodes as mn
 from molecularnodes.nodes import nodes as nodes
 from molecularnodes.nodes.geometry import StyleBallAndStick, StyleSpheres, StyleSurface
-from .constants import attributes, data_dir
-from .utils import NumpySnapshotExtension
+from .constants import data_dir
+from .utils import GeometrySet
 
 formats = ["mol", "sdf"]
 
@@ -20,7 +20,7 @@ def test_open(format):
     "style",
     ["ball_and_stick", "spheres", "surface"],
 )
-def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
+def test_load(snapshot, format, style):
     mol = mn.Molecule.load(data_dir / f"caffeine.{format}")
     assert mol.object
     with mol.tree.reset() as tree:
@@ -34,9 +34,4 @@ def test_load(snapshot_custom: NumpySnapshotExtension, format, style):
             >> tree.join
         )
 
-    for attribute in attributes:
-        try:
-            print(f"{attribute=}")
-            assert snapshot_custom == mol.named_attribute(attribute, evaluate=True)
-        except AttributeError as e:
-            assert e
+    assert snapshot == GeometrySet(mol.object)

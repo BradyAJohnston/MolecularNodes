@@ -13,8 +13,8 @@ from molecularnodes.nodes.geometry import (
     StyleSpheres,
     StyleSurface,
 )
-from .constants import attributes, codes, data_dir
-from .utils import NumpySnapshotExtension
+from .constants import codes, data_dir
+from .utils import GeometrySet, NumpySnapshotExtension
 
 STYLES_TO_TEST = [
     "cartoon",
@@ -28,7 +28,7 @@ STYLES_TO_TEST = [
 @pytest.mark.parametrize(
     "code, assembly, style", itertools.product(codes, [True, False], STYLES_TO_TEST)
 )
-def test_style_1(snapshot_custom: NumpySnapshotExtension, code, assembly, style):
+def test_style_1(snapshot, code, assembly, style):
     mol = mn.Molecule.fetch(code, cache=data_dir)
     with mol.tree.reset() as (atoms, join):
         match style:
@@ -52,13 +52,7 @@ def test_style_1(snapshot_custom: NumpySnapshotExtension, code, assembly, style)
         )
         (atoms >> style_node >> assembly >> join)
 
-    for att in attributes:
-        try:
-            assert snapshot_custom == mol.named_attribute(
-                att, evaluate=style == "cartoon" and code == "1BNA"
-            )
-        except AttributeError as e:
-            assert snapshot_custom == e
+    assert snapshot == GeometrySet(mol.object)
 
 
 @pytest.mark.parametrize(
@@ -115,9 +109,8 @@ def test_rcsb_nmr(snapshot_custom):
     assert not np.allclose(pos_1, pos_2)
 
 
-def test_load_small_mol(snapshot_custom):
+def test_load_small_mol(snapshot):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
     assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
     assert mol.object.mn.entity_type == mol._entity_type.value
-    for att in ["position", "bond_type"]:
-        assert snapshot_custom == mol.named_attribute(att).tolist()
+    assert snapshot == GeometrySet(mol.object)
