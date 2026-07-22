@@ -4,8 +4,15 @@ import databpy as db
 import numpy as np
 import pytest
 import molecularnodes as mn
-from molecularnodes.nodes.geometry import AnimateFrames, AnimateValue, StyleCartoon
-from molecularnodes.nodes.nodes import STYLE_NODE_MAPPING
+from molecularnodes.nodes.geometry import (
+    AnimateFrames,
+    AnimateValue,
+    StyleBallAndStick,
+    StyleCartoon,
+    StyleRibbon,
+    StyleSpheres,
+    StyleSurface,
+)
 from .constants import attributes, codes, data_dir
 from .utils import NumpySnapshotExtension
 
@@ -23,23 +30,30 @@ STYLES_TO_TEST = [
 )
 def test_style_1(snapshot_custom: NumpySnapshotExtension, code, assembly, style):
     mol = mn.Molecule.fetch(code, cache=data_dir)
-    kwargs = {}
-    match style:
-        case "ball_and_stick":
-            kwargs["sphere_geometry"] = "Mesh"
-        case "spheres":
-            kwargs["geometry"] = "Mesh"
     with mol.tree.reset() as (atoms, join):
+        match style:
+            case "ball_and_stick":
+                style_node = StyleBallAndStick(sphere_geometry="Mesh")
+            case "spheres":
+                style_node = StyleSpheres(geometry="Mesh")
+            case "cartoon":
+                style_node = StyleCartoon()
+            case "ribbon":
+                style_node = StyleRibbon()
+            case "surface":
+                style_node = StyleSurface()
+
+        assembly = (
+            mn.nodes.geometry.AssemblyInstance(
+                data_object=mol.create_data_object(), realize_all=True
+            )
+            if assembly
+            else None
+        )
         (
             atoms
-            >> STYLE_NODE_MAPPING[style](**kwargs)
-            >> (
-                mn.nodes.geometry.AssemblyInstance(
-                    data_object=mol.create_data_object(), realize_all=True
-                )
-                if assembly
-                else None
-            )
+            >> style_node
+            >> assembly
             >> join
         )
 

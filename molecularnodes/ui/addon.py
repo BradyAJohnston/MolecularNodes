@@ -91,7 +91,7 @@ def register():
         # loaded, reuse the saved value
         bpy.types.Object.mn_annotations = _mn_annotations
     register_templates_menu()
-    assets._add_mn_asset_library()
+    assets._ensure_mn_asset_library()
     if _mn_session is not None:
         # register a run once timer to restore draw handlers
         bpy.app.timers.register(_session_restore_draw_handlers, first_interval=0.01)
