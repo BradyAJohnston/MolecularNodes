@@ -10,8 +10,8 @@ from molecularnodes.nodes import nodes
 from molecularnodes.nodes.geometry import (
     SetColor,
     StyleCartoon,
-    TopologyBreakBonds,
-    TopologyFindBonds,
+    BreakBonds,
+    FindBonds,
 )
 from .constants import codes, data_dir
 from .utils import GeometrySet, NumpySnapshotExtension
@@ -233,7 +233,7 @@ def test_topo_bonds():
     mol = mn.Molecule.fetch("1BNA", cache=data_dir)
     nodes.get_mod(mol.object).node_group = nodes.new_tree()
     with mol.tree.reset() as (atoms, join):
-        atoms >> TopologyBreakBonds(cutoff=0.0) >> join
+        atoms >> BreakBonds(cutoff=0.0) >> join
 
     # compare the number of edges before and after deleting them with
     bonds = mol.object.data.edges
@@ -244,7 +244,7 @@ def test_topo_bonds():
     # add the node to find the bonds, and ensure the number of bonds pre and post the nodes
     # are the same (other attributes will be different, but for now this is good)
     with mol.tree.reset() as (atoms, join):
-        atoms >> TopologyBreakBonds(cutoff=0.0) >> TopologyFindBonds() >> join
+        atoms >> BreakBonds(cutoff=0.0) >> FindBonds() >> join
 
     bonds_new = mol.evaluate().data.edges
     assert len(bonds) == len(bonds_new)
