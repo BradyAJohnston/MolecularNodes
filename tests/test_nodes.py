@@ -8,10 +8,10 @@ from nodebpy.nodes.geometry import Group
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from molecularnodes.nodes.geometry import (
-    SetColor,
-    StyleCartoon,
     BreakBonds,
     FindBonds,
+    SetColor,
+    StyleCartoon,
 )
 from .constants import codes, data_dir
 from .utils import GeometrySet, NumpySnapshotExtension
