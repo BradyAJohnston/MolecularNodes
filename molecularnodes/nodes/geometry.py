@@ -1384,6 +1384,41 @@ class BooleanRunTrim(AssetGeometryGroup):
         )
 
 
+class BreakBonds(AssetGeometryGroup):
+    """Break Bonds"""
+
+    _name = "Break Bonds"
+    _asset_name = "Break Bonds"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+        selection: BooleanSocket
+        """Selection"""
+        cutoff: FloatSocket
+        """Cutoff"""
+
+    class _Outputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        atoms: InputGeometry = None,
+        selection: InputBoolean = False,
+        cutoff: InputFloat = 2.5,
+    ):
+        super().__init__(**{"Input_0": atoms, "Input_3": selection, "Input_2": cutoff})
+
+
 class BreakCurves(AssetGeometryGroup):
     """Break Curves"""
 
@@ -4378,6 +4413,41 @@ class FindBondedAtom(AssetGeometryGroup):
         )
 
 
+class FindBonds(AssetGeometryGroup):
+    """Find Bonds"""
+
+    _name = "Find Bonds"
+    _asset_name = "Find Bonds"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+        selection: BooleanSocket
+        """Selection"""
+        scale: FloatSocket
+        """Scale"""
+
+    class _Outputs(SocketAccessor):
+        atoms: GeometrySocket
+        """Atoms"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        atoms: InputGeometry = None,
+        selection: InputBoolean = True,
+        scale: InputFloat = 1.0,
+    ):
+        super().__init__(**{"Input_1": atoms, "Input_35": selection, "Input_2": scale})
+
+
 class FractionateFloat(AssetGeometryGroup):
     """Fractionate Float"""
 
@@ -6800,6 +6870,8 @@ class Plexus(AssetGeometryGroup):
         """Sort"""
         distance: FloatSocket
         """Distance"""
+        radius: FloatSocket
+        """Radius"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -6817,8 +6889,16 @@ class Plexus(AssetGeometryGroup):
         points: InputGeometry = None,
         sort: InputBoolean = True,
         distance: InputFloat = 0.5,
+        radius: InputFloat = 1.0,
     ):
-        super().__init__(**{"Socket_2": points, "Socket_3": sort, "Socket_1": distance})
+        super().__init__(
+            **{
+                "Socket_2": points,
+                "Socket_3": sort,
+                "Socket_1": distance,
+                "Socket_4": radius,
+            }
+        )
 
 
 class PointEdgeAngle(AssetGeometryGroup):
@@ -9103,8 +9183,6 @@ class StyleBallAndStick(AssetGeometryGroup):
         """Bond Scale"""
         bond_find: BooleanSocket
         """Bond Find"""
-        bond_find_scale: FloatSocket
-        """Bond Find Scale"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -9131,7 +9209,6 @@ class StyleBallAndStick(AssetGeometryGroup):
         bond_split: InputMenu = "Double",
         bond_scale: InputFloat = 0.3,
         bond_find: InputBoolean = False,
-        bond_find_scale: InputFloat = 1.0,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -9145,7 +9222,6 @@ class StyleBallAndStick(AssetGeometryGroup):
                 "Socket_22": bond_split,
                 "Input_7": bond_scale,
                 "Socket_3": bond_find,
-                "Socket_16": bond_find_scale,
                 "Input_4": shade_smooth,
                 "Input_5": material,
             }
@@ -9192,8 +9268,6 @@ class StyleCartoon(AssetGeometryGroup):
         """Base Shape"""
         base_scale_rectangle: VectorSocket
         """Base Scale Rectangle"""
-        color_blur: BooleanSocket
-        """Color Blur"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -9228,7 +9302,6 @@ class StyleCartoon(AssetGeometryGroup):
         nucleic_radius: InputFloat = 1.5,
         base_shape: InputMenu = "Rectangle",
         base_scale_rectangle: InputVector = None,
-        color_blur: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -9250,7 +9323,6 @@ class StyleCartoon(AssetGeometryGroup):
                 "Socket_24": nucleic_radius,
                 "Socket_22": base_shape,
                 "Socket_64": base_scale_rectangle,
-                "Socket_1": color_blur,
                 "Input_8": shade_smooth,
                 "Input_9": material,
             }
@@ -9271,12 +9343,14 @@ class StyleRibbon(AssetGeometryGroup):
         """Selection"""
         quality: IntegerSocket
         """Quality"""
+        peptide_radius: FloatSocket
+        """Peptide Radius"""
         backbone_smoothing: FloatSocket
         """Backbone Smoothing"""
         backbone_threshold: FloatSocket
         """Backbone Threshold"""
-        backbone_radius: FloatSocket
-        """Backbone Radius"""
+        uv_map: BooleanSocket
+        """UV Map"""
         nucleic_backbone_shape: MenuSocket
         """Nucleic Backbone Shape"""
         nucleic_backbone_radius: FloatSocket
@@ -9287,14 +9361,10 @@ class StyleRibbon(AssetGeometryGroup):
         """Base Scale"""
         base_resolution: IntegerSocket
         """Base Resolution"""
-        color_blur: BooleanSocket
-        """Color Blur"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
         """Material"""
-        uv_map: BooleanSocket
-        """UV Map"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -9312,36 +9382,34 @@ class StyleRibbon(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 3,
+        peptide_radius: InputFloat = 1.6,
         backbone_smoothing: InputFloat = 0.5,
         backbone_threshold: InputFloat = 4.5,
-        backbone_radius: InputFloat = 1.6,
-        nucleic_backbone_shape: InputMenu = "Cylinder",
-        nucleic_backbone_radius: InputFloat = 1.6,
+        uv_map: InputBoolean = False,
+        nucleic_backbone_shape: InputMenu = "Cicular",
+        nucleic_backbone_radius: InputFloat = 2.0,
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
         base_resolution: InputInteger = 4,
-        color_blur: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
-        uv_map: InputBoolean = False,
     ):
         super().__init__(
             **{
                 "Socket_0": atoms,
                 "Socket_2": selection,
                 "Socket_3": quality,
+                "Socket_4": peptide_radius,
                 "Socket_7": backbone_smoothing,
                 "Socket_40": backbone_threshold,
-                "Socket_4": backbone_radius,
+                "Socket_29": uv_map,
                 "Socket_26": nucleic_backbone_shape,
                 "Socket_51": nucleic_backbone_radius,
                 "Socket_21": base_geometry,
                 "Socket_22": base_scale,
                 "Socket_18": base_resolution,
-                "Socket_10": color_blur,
                 "Socket_5": shade_smooth,
                 "Socket_6": material,
-                "Socket_29": uv_map,
             }
         )
 
@@ -9690,41 +9758,6 @@ class SwitchResidueName(AssetGeometryGroup):
         )
 
 
-class TopologyBreakBonds(AssetGeometryGroup):
-    """Topology Break Bonds"""
-
-    _name = "Topology Break Bonds"
-    _asset_name = "Topology Break Bonds"
-    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
-
-    class _Inputs(SocketAccessor):
-        atoms: GeometrySocket
-        """Atoms"""
-        selection: BooleanSocket
-        """Selection"""
-        cutoff: FloatSocket
-        """Cutoff"""
-
-    class _Outputs(SocketAccessor):
-        atoms: GeometrySocket
-        """Atoms"""
-
-    if TYPE_CHECKING:
-
-        @property
-        def i(self) -> _Inputs: ...
-        @property
-        def o(self) -> _Outputs: ...
-
-    def __init__(
-        self,
-        atoms: InputGeometry = None,
-        selection: InputBoolean = False,
-        cutoff: InputFloat = 2.5,
-    ):
-        super().__init__(**{"Input_0": atoms, "Input_3": selection, "Input_2": cutoff})
-
-
 class TopologyDSSP(AssetGeometryGroup):
     """Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm"""
 
@@ -9752,41 +9785,6 @@ class TopologyDSSP(AssetGeometryGroup):
         atoms: InputGeometry = None,
     ):
         super().__init__(**{"Socket_1": atoms})
-
-
-class TopologyFindBonds(AssetGeometryGroup):
-    """Topology Find Bonds"""
-
-    _name = "Topology Find Bonds"
-    _asset_name = "Topology Find Bonds"
-    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
-
-    class _Inputs(SocketAccessor):
-        atoms: GeometrySocket
-        """Atoms"""
-        selection: BooleanSocket
-        """Selection"""
-        scale: FloatSocket
-        """Scale"""
-
-    class _Outputs(SocketAccessor):
-        atoms: GeometrySocket
-        """Atoms"""
-
-    if TYPE_CHECKING:
-
-        @property
-        def i(self) -> _Inputs: ...
-        @property
-        def o(self) -> _Outputs: ...
-
-    def __init__(
-        self,
-        atoms: InputGeometry = None,
-        selection: InputBoolean = True,
-        scale: InputFloat = 1.0,
-    ):
-        super().__init__(**{"Input_1": atoms, "Input_35": selection, "Input_2": scale})
 
 
 class TransformAccumulate(AssetGeometryGroup):
@@ -10629,6 +10627,7 @@ __all__ = (
     "BooleanLast",
     "BooleanRunFill",
     "BooleanRunTrim",
+    "BreakBonds",
     "BreakCurves",
     "CentreOnSelection",
     "Centroid",
@@ -10695,6 +10694,7 @@ __all__ = (
     "FallbackVector",
     "FieldRemap",
     "FindBondedAtom",
+    "FindBonds",
     "FractionateFloat",
     "GeoemtryToPlanar",
     "GeometryFieldRemap",
@@ -10817,9 +10817,7 @@ __all__ = (
     "StyleSurface",
     "SubGroupInfo",
     "SwitchResidueName",
-    "TopologyBreakBonds",
     "TopologyDSSP",
-    "TopologyFindBonds",
     "TransformAccumulate",
     "TransformAccumulatePoint",
     "TransformLocal",
