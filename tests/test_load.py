@@ -44,9 +44,7 @@ def test_style_1(snapshot, code, assembly, style):
                 style_node = StyleSurface()
 
         assembly = (
-            mn.nodes.geometry.AssemblyInstance(
-                data_object=mol.create_data_object(), realize_all=True
-            )
+            mn.nodes.geometry.AssemblyInstance(data_object=mol.create_data_object())
             if assembly
             else None
         )

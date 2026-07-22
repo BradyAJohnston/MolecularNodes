@@ -551,181 +551,203 @@
 # ---
 # name: test_style_1[1BNA-True-ball_and_stick]
   Mesh: 1BNA
-    Geometry: 94344 verts, 213840 edges, 121760 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(396480, 4), atype=FLOAT_COLOR, unique=9, range=[0, 1]
-    assembly_id: shape=(94344,), atype=INT, constant=1
-    atom_id: shape=(396480,), atype=INT, unique=566, range=[1, 566]
-    atom_name: shape=(396480,), atype=INT, unique=28, range=[4, 77]
-    atomic_number: shape=(396480,), atype=INT, unique=4, values=['6', '7', '8', '15']
-    b_factor: shape=(396480,), atype=FLOAT, unique=542, range=[8.73, 79]
-    bond_type: shape=(94344,), atype=INT, unique=6, range=[0, 6]
-    chain_id: shape=(94344,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    charge: shape=(94344,), atype=FLOAT, unique=112, range=[-0.977, 1.17]
-    entity_id: shape=(396480,), atype=INT, unique=2, values=['0', '1']
-    is_alpha_carbon: shape=(396480,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(396480,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(94344,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(94344,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(94344,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(396480,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_peptide: shape=(396480,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(396480,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(396480,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(94344,), atype=FLOAT, unique=44, range=[-1.66, 0.45]
-    mass: shape=(396480,), atype=FLOAT, unique=4, values=['12', '14', '16', '31']
-    occupancy: shape=(94344,), atype=FLOAT, constant=1
-    pdb_model_num: shape=(94344,), atype=INT, constant=0
-    position: shape=(94344, 3), atype=FLOAT_VECTOR, unique=90623, range=[-1.19, 3.47]
-    res_id: shape=(396480,), atype=INT, unique=104, range=[1, 104]
-    res_name: shape=(396480,), atype=INT, unique=5, values=['-1', '30', '31', '32', '33']
-    rotation: shape=(94344, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(396480,), atype=INT, constant=0
-    transform_id: shape=(94344,), atype=INT, constant=0
-    ures_id: shape=(396480,), atype=INT, unique=104, range=[0, 103]
-    vdw_radii: shape=(396480,), atype=FLOAT, unique=4, values=['0.152', '0.155', '0.17', '0.18']
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 4 points
+    Transforms: shape=(4, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.506,   2.154,   0.892,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.434,   2.044,   0.873,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.506,   2.154,   0.892,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.434,   2.044,   0.873,   1.000]
+    Unique instances: 2; [0 1 0 1]
+    Instance references: [<GeometrySet: 23460 verts, 53100 edges, 30200 faces, 98400 corners>, <GeometrySet: 23712 verts, 53820 edges, 30680 faces, 99840 corners>]
+  
+    Attributes:
+    assembly_id: shape=(4,), atype=INT, constant=1
+    chain_id: shape=(4,), atype=INT, unique=4, values=['0', '1', '2', '3']
+    instance_transform: shape=(4, 4, 4), atype=FLOAT4X4, unique=8, range=[0, 2.15]
+    pdb_model_num: shape=(4,), atype=INT, constant=0
+    rotation: shape=(4, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(4,), atype=INT, constant=0
 # ---
 # name: test_style_1[1BNA-True-cartoon]
   Mesh: 1BNA
-    Geometry: 1440 verts, 2848 edges, 1416 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(1440, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(1440,), atype=INT, constant=1
-    atom_id: shape=(1440,), atype=INT, unique=90, range=[3, 470]
-    atom_name: shape=(1440,), atype=INT, constant=55
-    atomic_number: shape=(1440,), atype=INT, constant=6
-    b_factor: shape=(1440,), atype=FLOAT, unique=90, range=[25, 72.5]
-    chain_id: shape=(1440,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    charge: shape=(1440,), atype=FLOAT, constant=0.163
-    entity_id: shape=(1440,), atype=INT, constant=0
-    is_alpha_carbon: shape=(1440,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(1440,), atype=BOOLEAN, constant=True
-    is_carb: shape=(1440,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(1440,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(1440,), atype=BOOLEAN, constant=True
-    is_peptide: shape=(1440,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(1440,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(1440,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(1440,), atype=FLOAT, constant=0.02
-    mass: shape=(1440,), atype=FLOAT, constant=12
-    occupancy: shape=(1440,), atype=FLOAT, constant=1
-    pdb_model_num: shape=(1440,), atype=INT, constant=0
-    position: shape=(1440, 3), atype=FLOAT_VECTOR, unique=2160, range=[-1.3, 3.49]
-    res_id: shape=(1440,), atype=INT, unique=24, range=[1, 24]
-    res_name: shape=(1440,), atype=INT, unique=4, values=['30', '31', '32', '33']
-    rotation: shape=(1440, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sharp_edge: shape=(2848,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(1440,), atype=INT, constant=0
-    ures_id: shape=(1440,), atype=INT, unique=24, range=[0, 23]
-    vdw_radii: shape=(1440,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 4 points
+    Transforms: shape=(4, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.523,   2.161,   0.866,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.433,   2.029,   0.917,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.523,   2.161,   0.866,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.433,   2.029,   0.917,   1.000]
+    Unique instances: 2; [0 1 0 1]
+    Instance references: [<GeometrySet: 360 verts, 712 edges, 354 faces, 1424 corners>, <GeometrySet: 360 verts, 712 edges, 354 faces, 1424 corners>]
+  
+    Attributes:
+    assembly_id: shape=(4,), atype=INT, constant=1
+    chain_id: shape=(4,), atype=INT, unique=4, values=['0', '1', '2', '3']
+    instance_transform: shape=(4, 4, 4), atype=FLOAT4X4, unique=8, range=[0, 2.16]
+    pdb_model_num: shape=(4,), atype=INT, constant=0
+    rotation: shape=(4, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(4,), atype=INT, constant=0
 # ---
 # name: test_style_1[1BNA-True-ribbon]
   Mesh: 1BNA
-    Geometry: 3216 verts, 6384 edges, 3176 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(3216, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(3216,), atype=INT, constant=1
-    atom_id: shape=(3216,), atype=INT, unique=134, range=[3, 470]
-    atom_name: shape=(3216,), atype=INT, constant=55
-    atomic_number: shape=(3216,), atype=INT, constant=6
-    b_factor: shape=(3216,), atype=FLOAT, unique=134, range=[25, 72.5]
-    chain_id: shape=(3216,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    charge: shape=(3216,), atype=FLOAT, constant=0.163
-    entity_id: shape=(3216,), atype=INT, constant=0
-    is_alpha_carbon: shape=(3216,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(3216,), atype=BOOLEAN, constant=True
-    is_carb: shape=(3216,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(3216,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(3216,), atype=BOOLEAN, constant=True
-    is_peptide: shape=(3216,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(3216,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(3216,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(3216,), atype=FLOAT, constant=0.02
-    mass: shape=(3216,), atype=FLOAT, unique=2, values=['12', '12']
-    occupancy: shape=(3216,), atype=FLOAT, constant=1
-    pdb_model_num: shape=(3216,), atype=INT, constant=0
-    position: shape=(3216, 3), atype=FLOAT_VECTOR, unique=4824, range=[-1.35, 3.52]
-    res_id: shape=(3216,), atype=INT, unique=24, range=[1, 24]
-    res_name: shape=(3216,), atype=INT, unique=4, values=['30', '31', '32', '33']
-    rotation: shape=(3216, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sharp_edge: shape=(6384,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(3216,), atype=INT, constant=0
-    ures_id: shape=(3216,), atype=INT, unique=24, range=[0, 23]
-    vdw_radii: shape=(3216,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 4 points
+    Transforms: shape=(4, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.520,   2.156,   0.868,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.434,   2.033,   0.915,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.520,   2.156,   0.868,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.434,   2.033,   0.915,   1.000]
+    Unique instances: 2; [0 1 0 1]
+    Instance references: [<GeometrySet: 804 verts, 1596 edges, 794 faces, 3192 corners>, <GeometrySet: 804 verts, 1596 edges, 794 faces, 3192 corners>]
+  
+    Attributes:
+    assembly_id: shape=(4,), atype=INT, constant=1
+    chain_id: shape=(4,), atype=INT, unique=4, values=['0', '1', '2', '3']
+    instance_transform: shape=(4, 4, 4), atype=FLOAT4X4, unique=8, range=[0, 2.16]
+    pdb_model_num: shape=(4,), atype=INT, constant=0
+    rotation: shape=(4, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(4,), atype=INT, constant=0
 # ---
 # name: test_style_1[1BNA-True-spheres]
   Mesh: 1BNA
-    Geometry: 47544 verts, 135840 edges, 90560 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(47544, 4), atype=FLOAT_COLOR, unique=9, range=[0, 1]
-    assembly_id: shape=(47544,), atype=INT, constant=1
-    atom_id: shape=(47544,), atype=INT, unique=566, range=[1, 566]
-    atom_name: shape=(47544,), atype=INT, unique=28, range=[4, 77]
-    atomic_number: shape=(47544,), atype=INT, unique=4, values=['6', '7', '8', '15']
-    b_factor: shape=(47544,), atype=FLOAT, unique=542, range=[8.73, 79]
-    bond_type: shape=(47544,), atype=INT, unique=6, range=[0, 6]
-    chain_id: shape=(47544,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    charge: shape=(47544,), atype=FLOAT, unique=51, range=[-0.977, 1.17]
-    entity_id: shape=(47544,), atype=INT, unique=2, values=['0', '1']
-    is_alpha_carbon: shape=(47544,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(47544,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(47544,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(47544,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(47544,), atype=BOOLEAN, constant=True
-    is_nucleic: shape=(47544,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_peptide: shape=(47544,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(47544,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(47544,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(47544,), atype=FLOAT, unique=19, range=[-1.66, 0.45]
-    mass: shape=(47544,), atype=FLOAT, unique=4, values=['12', '14', '16', '31']
-    occupancy: shape=(47544,), atype=FLOAT, constant=1
-    pdb_model_num: shape=(47544,), atype=INT, constant=0
-    position: shape=(47544, 3), atype=FLOAT_VECTOR, unique=33161, range=[-1.27, 3.54]
-    res_id: shape=(47544,), atype=INT, unique=104, range=[1, 104]
-    res_name: shape=(47544,), atype=INT, unique=5, values=['-1', '30', '31', '32', '33']
-    rotation: shape=(47544, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    transform_id: shape=(47544,), atype=INT, constant=0
-    ures_id: shape=(47544,), atype=INT, unique=104, range=[0, 103]
-    vdw_radii: shape=(47544,), atype=FLOAT, unique=4, values=['0.152', '0.155', '0.17', '0.18']
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 4 points
+    Transforms: shape=(4, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.506,   2.157,   0.902,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.432,   2.045,   0.865,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.506,   2.157,   0.902,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.432,   2.045,   0.865,   1.000]
+    Unique instances: 2; [0 1 0 1]
+    Instance references: [<GeometrySet: 11760 verts, 33600 edges, 22400 faces, 67200 corners>, <GeometrySet: 12012 verts, 34320 edges, 22880 faces, 68640 corners>]
+  
+    Attributes:
+    assembly_id: shape=(4,), atype=INT, constant=1
+    chain_id: shape=(4,), atype=INT, unique=4, values=['0', '1', '2', '3']
+    instance_transform: shape=(4, 4, 4), atype=FLOAT4X4, unique=8, range=[0, 2.16]
+    pdb_model_num: shape=(4,), atype=INT, constant=0
+    rotation: shape=(4, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(4,), atype=INT, constant=0
 # ---
 # name: test_style_1[1BNA-True-surface]
   Mesh: 1BNA
-    Geometry: 41568 verts, 83120 edges, 41560 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(41568, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(41568,), atype=INT, constant=1
-    atom_id: shape=(41568,), atype=INT, unique=24, range=[2, 469]
-    atom_name: shape=(41568,), atype=INT, constant=54
-    atomic_number: shape=(41568,), atype=INT, constant=6
-    b_factor: shape=(41568,), atype=FLOAT, unique=24, range=[28.8, 73.4]
-    chain_id: shape=(41568,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    charge: shape=(41568,), atype=FLOAT, constant=-0.0069
-    entity_id: shape=(41568,), atype=INT, constant=0
-    group_id: shape=(41568,), atype=INT, unique=2, values=['0', '1']
-    is_alpha_carbon: shape=(41568,), atype=BOOLEAN, constant=False
-    is_backbone: shape=(41568,), atype=BOOLEAN, constant=True
-    is_carb: shape=(41568,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(41568,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(41568,), atype=BOOLEAN, constant=True
-    is_peptide: shape=(41568,), atype=BOOLEAN, constant=False
-    is_side_chain: shape=(41568,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(41568,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(41568,), atype=FLOAT, constant=0.45
-    mass: shape=(41568,), atype=FLOAT, constant=12
-    occupancy: shape=(41568,), atype=FLOAT, constant=1
-    pdb_model_num: shape=(41568,), atype=INT, constant=0
-    position: shape=(41568, 3), atype=FLOAT_VECTOR, unique=62249, range=[-1.34, 3.6]
-    res_id: shape=(41568,), atype=INT, unique=24, range=[1, 24]
-    res_name: shape=(41568,), atype=INT, unique=4, values=['30', '31', '32', '33']
-    rotation: shape=(41568, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    transform_id: shape=(41568,), atype=INT, constant=0
-    ures_id: shape=(41568,), atype=INT, unique=24, range=[0, 23]
-    vdw_radii: shape=(41568,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 4 points
+    Transforms: shape=(4, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.529,   2.204,   0.924,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.438,   2.001,   0.844,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.529,   2.204,   0.924,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  1.438,   2.001,   0.844,   1.000]
+    Unique instances: 2; [0 1 0 1]
+    Instance references: [<GeometrySet: 10202 verts, 20400 edges, 10200 faces, 40800 corners>, <GeometrySet: 10582 verts, 21160 edges, 10580 faces, 42320 corners>]
+  
+    Attributes:
+    assembly_id: shape=(4,), atype=INT, constant=1
+    chain_id: shape=(4,), atype=INT, unique=4, values=['0', '1', '2', '3']
+    instance_transform: shape=(4, 4, 4), atype=FLOAT4X4, unique=8, range=[0, 2.2]
+    pdb_model_num: shape=(4,), atype=INT, constant=0
+    rotation: shape=(4, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(4,), atype=INT, constant=0
 # ---
 # name: test_style_1[4ozs-False-ball_and_stick]
   Mesh: 4ozs
@@ -897,187 +919,253 @@
 # ---
 # name: test_style_1[4ozs-True-ball_and_stick]
   Mesh: 4ozs
-    Geometry: 708264 verts, 1603440 edges, 912096 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(2971584, 4), atype=FLOAT_COLOR, unique=7, range=[0.051, 1]
-    assembly_id: shape=(708264,), atype=INT, constant=1
-    atom_id: shape=(2971584,), atype=INT, unique=1410, range=[1, 1416]
-    atom_name: shape=(2971584,), atype=INT, unique=28, range=[1, 37]
-    atomic_number: shape=(2971584,), atype=INT, unique=4, values=['6', '7', '8', '16']
-    b_factor: shape=(2971584,), atype=FLOAT, unique=1216, range=[28.4, 113]
-    bond_type: shape=(708264,), atype=INT, unique=6, range=[0, 6]
-    chain_id: shape=(708264,), atype=INT, unique=6, range=[0, 5]
-    charge: shape=(708264,), atype=FLOAT, unique=192, range=[-0.941, 0.808]
-    entity_id: shape=(2971584,), atype=INT, unique=2, values=['0', '1']
-    is_alpha_carbon: shape=(2971584,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(2971584,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(708264,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(708264,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(708264,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(2971584,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(2971584,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(2971584,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(2971584,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(708264,), atype=FLOAT, unique=48, range=[-1.07, 0.63]
-    mass: shape=(2971584,), atype=FLOAT, unique=4, values=['12', '14', '16', '32.1']
-    occupancy: shape=(708264,), atype=FLOAT, unique=3, values=['0.5', '0.75', '1']
-    pdb_model_num: shape=(708264,), atype=INT, constant=0
-    position: shape=(708264, 3), atype=FLOAT_VECTOR, unique=499245, range=[-6.21, 8.21]
-    res_id: shape=(2971584,), atype=INT, unique=220, range=[1, 245]
-    res_name: shape=(2971584,), atype=INT, unique=17, range=[-1, 19]
-    rotation: shape=(708264, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(2971584,), atype=INT, unique=3, values=['0', '1', '3']
-    transform_id: shape=(708264,), atype=INT, unique=3, values=['0', '1', '2']
-    ures_id: shape=(2971584,), atype=INT, unique=220, range=[0, 219]
-    vdw_radii: shape=(2971584,), atype=FLOAT, unique=4, values=['0.152', '0.155', '0.17', '0.18']
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 6 points
+    Transforms: shape=(6, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.170,   0.499,   0.988,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.170,   0.499,   0.988,   1.000]
+      Transform[2]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.934,  -0.499,   5.243,   1.000]
+      Transform[3]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.934,  -0.499,   5.243,   1.000]
+      Transform[4]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.934,  -0.499,  -3.268,   1.000]
+      Transform[5]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.934,  -0.499,  -3.268,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 118044 verts, 267240 edges, 152016 faces, 495264 corners>]
+  
+    Attributes:
+    assembly_id: shape=(6,), atype=INT, constant=1
+    chain_id: shape=(6,), atype=INT, unique=2, values=['0', '1']
+    instance_transform: shape=(6, 4, 4), atype=FLOAT4X4, unique=12, range=[-3.27, 5.24]
+    pdb_model_num: shape=(6,), atype=INT, constant=0
+    rotation: shape=(6, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(6,), atype=INT, unique=3, values=['0', '1', '2']
 # ---
 # name: test_style_1[4ozs-True-cartoon]
   Mesh: 4ozs
-    Geometry: 40080 verts, 79320 edges, 39480 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(40080, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(40080,), atype=INT, constant=1
-    atom_id: shape=(40080,), atype=INT, unique=1019, range=[2, 1366]
-    atom_name: shape=(40080,), atype=INT, constant=2
-    atomic_number: shape=(40080,), atype=INT, constant=6
-    b_factor: shape=(40080,), atype=FLOAT, unique=1131, range=[31.9, 91.7]
-    bond_type: shape=(40080,), atype=INT, constant=1
-    chain_id: shape=(40080,), atype=INT, unique=6, range=[0, 5]
-    charge: shape=(40080,), atype=FLOAT, unique=200, range=[-0.264, 0.0397]
-    entity_id: shape=(40080,), atype=INT, constant=0
-    is_alpha_carbon: shape=(40080,), atype=BOOLEAN, constant=True
-    is_backbone: shape=(40080,), atype=BOOLEAN, constant=True
-    is_carb: shape=(40080,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(40080,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(40080,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(40080,), atype=BOOLEAN, constant=True
-    is_side_chain: shape=(40080,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(40080,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(40080,), atype=FLOAT, unique=22, range=[0.02, 0.45]
-    mass: shape=(40080,), atype=FLOAT, unique=2, values=['12', '12']
-    occupancy: shape=(40080,), atype=FLOAT, unique=9, range=[0.5, 1]
-    pdb_model_num: shape=(40080,), atype=INT, constant=0
-    position: shape=(40080, 3), atype=FLOAT_VECTOR, unique=46731, range=[-6.09, 8.1]
-    res_id: shape=(40080,), atype=INT, unique=175, range=[1, 175]
-    res_name: shape=(40080,), atype=INT, unique=20, range=[0, 19]
-    rotation: shape=(40080, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(40080,), atype=INT, unique=2, values=['1', '3']
-    sharp_edge: shape=(79320,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(40080,), atype=INT, unique=3, values=['0', '1', '2']
-    ures_id: shape=(40080,), atype=INT, unique=175, range=[0, 174]
-    vdw_radii: shape=(40080,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 6 points
+    Transforms: shape=(6, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.174,   0.481,   0.985,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.174,   0.481,   0.985,   1.000]
+      Transform[2]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.481,   5.241,   1.000]
+      Transform[3]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.481,   5.241,   1.000]
+      Transform[4]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.481,  -3.271,   1.000]
+      Transform[5]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.481,  -3.271,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 6680 verts, 13220 edges, 6580 faces, 26440 corners>]
+  
+    Attributes:
+    assembly_id: shape=(6,), atype=INT, constant=1
+    chain_id: shape=(6,), atype=INT, unique=2, values=['0', '1']
+    instance_transform: shape=(6, 4, 4), atype=FLOAT4X4, unique=12, range=[-3.27, 5.24]
+    pdb_model_num: shape=(6,), atype=INT, constant=0
+    rotation: shape=(6, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(6,), atype=INT, unique=3, values=['0', '1', '2']
 # ---
 # name: test_style_1[4ozs-True-ribbon]
   Mesh: 4ozs
-    Geometry: 56430 verts, 112806 edges, 56388 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(56430, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(56430,), atype=INT, constant=1
-    atom_id: shape=(56430,), atype=INT, unique=1000, range=[2, 1366]
-    atom_name: shape=(56430,), atype=INT, constant=2
-    atomic_number: shape=(56430,), atype=INT, constant=6
-    b_factor: shape=(56430,), atype=FLOAT, unique=1018, range=[31.9, 91.7]
-    bond_type: shape=(56430,), atype=INT, constant=1
-    chain_id: shape=(56430,), atype=INT, unique=6, range=[0, 5]
-    charge: shape=(56430,), atype=FLOAT, unique=176, range=[-0.264, 0.0397]
-    entity_id: shape=(56430,), atype=INT, constant=0
-    is_alpha_carbon: shape=(56430,), atype=BOOLEAN, constant=True
-    is_backbone: shape=(56430,), atype=BOOLEAN, constant=True
-    is_carb: shape=(56430,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(56430,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(56430,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(56430,), atype=BOOLEAN, constant=True
-    is_side_chain: shape=(56430,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(56430,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(56430,), atype=FLOAT, unique=11, range=[0.02, 0.45]
-    mass: shape=(56430,), atype=FLOAT, unique=2, values=['12', '12']
-    occupancy: shape=(56430,), atype=FLOAT, unique=9, range=[0.5, 1]
-    pdb_model_num: shape=(56430,), atype=INT, constant=0
-    position: shape=(56430, 3), atype=FLOAT_VECTOR, unique=65793, range=[-6.05, 8.22]
-    res_id: shape=(56430,), atype=INT, unique=175, range=[1, 175]
-    res_name: shape=(56430,), atype=INT, unique=20, range=[0, 19]
-    rotation: shape=(56430, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(56430,), atype=INT, unique=3, values=['1', '2', '3']
-    sharp_edge: shape=(112806,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(56430,), atype=INT, unique=3, values=['0', '1', '2']
-    ures_id: shape=(56430,), atype=INT, unique=175, range=[0, 174]
-    vdw_radii: shape=(56430,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 6 points
+    Transforms: shape=(6, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.195,   0.493,   1.000,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.195,   0.493,   1.000,   1.000]
+      Transform[2]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.909,  -0.493,   5.256,   1.000]
+      Transform[3]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.909,  -0.493,   5.256,   1.000]
+      Transform[4]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.909,  -0.493,  -3.256,   1.000]
+      Transform[5]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.909,  -0.493,  -3.256,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 9405 verts, 18801 edges, 9398 faces, 37602 corners>]
+  
+    Attributes:
+    assembly_id: shape=(6,), atype=INT, constant=1
+    chain_id: shape=(6,), atype=INT, unique=2, values=['0', '1']
+    instance_transform: shape=(6, 4, 4), atype=FLOAT4X4, unique=12, range=[-3.26, 5.26]
+    pdb_model_num: shape=(6,), atype=INT, constant=0
+    rotation: shape=(6, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(6,), atype=INT, unique=3, values=['0', '1', '2']
 # ---
 # name: test_style_1[4ozs-True-spheres]
   Mesh: 4ozs
-    Geometry: 355320 verts, 1015200 edges, 676800 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(355320, 4), atype=FLOAT_COLOR, unique=7, range=[0.051, 1]
-    assembly_id: shape=(355320,), atype=INT, constant=1
-    atom_id: shape=(355320,), atype=INT, unique=1410, range=[1, 1416]
-    atom_name: shape=(355320,), atype=INT, unique=28, range=[1, 37]
-    atomic_number: shape=(355320,), atype=INT, unique=4, values=['6', '7', '8', '16']
-    b_factor: shape=(355320,), atype=FLOAT, unique=1216, range=[28.4, 113]
-    bond_type: shape=(355320,), atype=INT, unique=5, values=['0', '1', '2', '4', '6']
-    chain_id: shape=(355320,), atype=INT, unique=6, range=[0, 5]
-    charge: shape=(355320,), atype=FLOAT, unique=87, range=[-0.941, 0.808]
-    entity_id: shape=(355320,), atype=INT, unique=2, values=['0', '1']
-    is_alpha_carbon: shape=(355320,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(355320,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(355320,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(355320,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(355320,), atype=BOOLEAN, constant=True
-    is_nucleic: shape=(355320,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(355320,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(355320,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(355320,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(355320,), atype=FLOAT, unique=20, range=[-1.07, 0.63]
-    mass: shape=(355320,), atype=FLOAT, unique=4, values=['12', '14', '16', '32.1']
-    occupancy: shape=(355320,), atype=FLOAT, unique=2, values=['0.5', '1']
-    pdb_model_num: shape=(355320,), atype=INT, constant=0
-    position: shape=(355320, 3), atype=FLOAT_VECTOR, unique=183228, range=[-6.29, 8.29]
-    res_id: shape=(355320,), atype=INT, unique=220, range=[1, 245]
-    res_name: shape=(355320,), atype=INT, unique=17, range=[-1, 19]
-    rotation: shape=(355320, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(355320,), atype=INT, unique=3, values=['0', '1', '3']
-    transform_id: shape=(355320,), atype=INT, unique=3, values=['0', '1', '2']
-    ures_id: shape=(355320,), atype=INT, unique=220, range=[0, 219]
-    vdw_radii: shape=(355320,), atype=FLOAT, unique=4, values=['0.152', '0.155', '0.17', '0.18']
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 6 points
+    Transforms: shape=(6, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.174,   0.504,   0.992,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.174,   0.504,   0.992,   1.000]
+      Transform[2]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.504,   5.248,   1.000]
+      Transform[3]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.504,   5.248,   1.000]
+      Transform[4]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.504,  -3.264,   1.000]
+      Transform[5]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.930,  -0.504,  -3.264,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 59220 verts, 169200 edges, 112800 faces, 338400 corners>]
+  
+    Attributes:
+    assembly_id: shape=(6,), atype=INT, constant=1
+    chain_id: shape=(6,), atype=INT, unique=2, values=['0', '1']
+    instance_transform: shape=(6, 4, 4), atype=FLOAT4X4, unique=12, range=[-3.26, 5.25]
+    pdb_model_num: shape=(6,), atype=INT, constant=0
+    rotation: shape=(6, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(6,), atype=INT, unique=3, values=['0', '1', '2']
 # ---
 # name: test_style_1[4ozs-True-surface]
   Mesh: 4ozs
-    Geometry: 172152 verts, 344280 edges, 172140 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(172152, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(172152,), atype=INT, constant=1
-    atom_id: shape=(172152,), atype=INT, unique=152, range=[2, 1366]
-    atom_name: shape=(172152,), atype=INT, constant=2
-    atomic_number: shape=(172152,), atype=INT, constant=6
-    b_factor: shape=(172152,), atype=FLOAT, unique=147, range=[31.9, 91.7]
-    chain_id: shape=(172152,), atype=INT, unique=6, range=[0, 5]
-    charge: shape=(172152,), atype=FLOAT, unique=16, range=[-0.264, 0.0397]
-    entity_id: shape=(172152,), atype=INT, constant=0
-    group_id: shape=(172152,), atype=INT, constant=0
-    is_alpha_carbon: shape=(172152,), atype=BOOLEAN, constant=True
-    is_backbone: shape=(172152,), atype=BOOLEAN, constant=True
-    is_carb: shape=(172152,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(172152,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(172152,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(172152,), atype=BOOLEAN, constant=True
-    is_side_chain: shape=(172152,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(172152,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(172152,), atype=FLOAT, unique=2, values=['0.02', '0.45']
-    mass: shape=(172152,), atype=FLOAT, constant=12
-    occupancy: shape=(172152,), atype=FLOAT, unique=2, values=['0.5', '1']
-    pdb_model_num: shape=(172152,), atype=INT, constant=0
-    position: shape=(172152, 3), atype=FLOAT_VECTOR, unique=200318, range=[-6.35, 8.36]
-    res_id: shape=(172152,), atype=INT, unique=152, range=[1, 175]
-    res_name: shape=(172152,), atype=INT, unique=16, range=[0, 19]
-    rotation: shape=(172152, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(172152,), atype=INT, unique=2, values=['1', '3']
-    transform_id: shape=(172152,), atype=INT, unique=3, values=['0', '1', '2']
-    ures_id: shape=(172152,), atype=INT, unique=152, range=[0, 174]
-    vdw_radii: shape=(172152,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 6 points
+    Transforms: shape=(6, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.210,   0.461,   0.995,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  3.210,   0.461,   0.995,   1.000]
+      Transform[2]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.894,  -0.461,   5.251,   1.000]
+      Transform[3]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.894,  -0.461,   5.251,   1.000]
+      Transform[4]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.894,  -0.461,  -3.261,   1.000]
+      Transform[5]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  4.894,  -0.461,  -3.261,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 28692 verts, 57380 edges, 28690 faces, 114760 corners>]
+  
+    Attributes:
+    assembly_id: shape=(6,), atype=INT, constant=1
+    chain_id: shape=(6,), atype=INT, unique=2, values=['0', '1']
+    instance_transform: shape=(6, 4, 4), atype=FLOAT4X4, unique=12, range=[-3.26, 5.25]
+    pdb_model_num: shape=(6,), atype=INT, constant=0
+    rotation: shape=(6, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(6,), atype=INT, unique=3, values=['0', '1', '2']
 # ---
 # name: test_style_1[8H1B-False-ball_and_stick]
   Mesh: 8H1B
@@ -1654,187 +1742,378 @@
 # ---
 # name: test_style_1[8H1B-True-ball_and_stick]
   Mesh: 8H1B
-    Geometry: 1007352 verts, 2292420 edges, 1309608 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(4256832, 4), atype=FLOAT_COLOR, unique=14, range=[0, 1]
-    assembly_id: shape=(1007352,), atype=INT, constant=1
-    atom_id: shape=(4256832,), atype=INT, unique=4214, range=[1, 4367]
-    atom_name: shape=(4256832,), atype=INT, unique=60, range=[-1, 76]
-    atomic_number: shape=(4256832,), atype=INT, unique=6, range=[6, 16]
-    b_factor: shape=(4256832,), atype=FLOAT, unique=2499, range=[12.9, 84.1]
-    bond_type: shape=(1007352,), atype=INT, unique=6, range=[0, 6]
-    chain_id: shape=(1007352,), atype=INT, unique=11, range=[0, 10]
-    charge: shape=(1007352,), atype=FLOAT, unique=214, range=[-0.941, 0.808]
-    entity_id: shape=(4256832,), atype=INT, unique=5, values=['0', '1', '2', '3', '4']
-    is_alpha_carbon: shape=(4256832,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(4256832,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(1007352,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(1007352,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(1007352,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(4256832,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_peptide: shape=(4256832,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(4256832,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(4256832,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(1007352,), atype=FLOAT, unique=85, range=[-1.66, 0.63]
-    mass: shape=(4256832,), atype=FLOAT, unique=6, range=[12, 32.1]
-    occupancy: shape=(1007352,), atype=FLOAT, unique=27, range=[0.39, 1]
-    pdb_model_num: shape=(1007352,), atype=INT, constant=0
-    position: shape=(1007352, 3), atype=FLOAT_VECTOR, unique=654541, range=[-3.17, 6.56]
-    res_id: shape=(4256832,), atype=INT, unique=438, range=[1, 502]
-    res_name: shape=(4256832,), atype=INT, unique=24, range=[-1, 43]
-    rotation: shape=(1007352, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(4256832,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    transform_id: shape=(1007352,), atype=INT, constant=0
-    ures_id: shape=(4256832,), atype=INT, unique=840, range=[0, 839]
-    vdw_radii: shape=(4256832,), atype=FLOAT, unique=5, values=['0.152', '0.155', '0.17', '0.18', '0.227']
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 11 points
+    Transforms: shape=(11, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.561,   1.361,   2.802,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.896,  -1.265,   1.295,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.655,   0.155,   4.788,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.260,  -0.820,  -0.159,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.561,   1.361,   2.802,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.896,  -1.265,   1.295,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.655,   0.155,   4.788,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.260,  -0.820,  -0.159,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.561,   1.361,   2.802,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.896,  -1.265,   1.295,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.655,   0.155,   4.788,   1.000]
+    Unique instances: 4; [0 1 2 3 0 1 2 3 0 1 2]
+    Instance references: [<GeometrySet: 139290 verts, 318300 edges, 182456 faces, 591984 corners>, <GeometrySet: 141180 verts, 321300 edges, 183560 faces, 596640 corners>, <GeometrySet: 33642 verts, 76020 edges, 43176 faces, 140784 corners>, <GeometrySet: 32508 verts, 72780 edges, 41016 faces, 134304 corners>]
+  
+    Attributes:
+    assembly_id: shape=(11,), atype=INT, constant=1
+    chain_id: shape=(11,), atype=INT, unique=11, range=[0, 10]
+    instance_transform: shape=(11, 4, 4), atype=FLOAT4X4, unique=14, range=[-1.27, 4.79]
+    pdb_model_num: shape=(11,), atype=INT, constant=0
+    rotation: shape=(11, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(11,), atype=INT, constant=0
 # ---
 # name: test_style_1[8H1B-True-cartoon]
   Mesh: 8H1B
-    Geometry: 53720 verts, 106164 edges, 52802 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(53720, 4), atype=FLOAT_COLOR, unique=5, values=['0.357', '0.549', '0.741', '0.839', '1']
-    assembly_id: shape=(53720,), atype=INT, constant=1
-    atom_id: shape=(53720,), atype=INT, unique=2404, range=[2, 3877]
-    atom_name: shape=(53720,), atype=INT, unique=2, values=['2', '55']
-    atomic_number: shape=(53720,), atype=INT, constant=6
-    b_factor: shape=(53720,), atype=FLOAT, unique=2340, range=[13.6, 77.9]
-    bond_type: shape=(53720,), atype=INT, unique=2, values=['0', '1']
-    chain_id: shape=(53720,), atype=INT, unique=11, range=[0, 10]
-    charge: shape=(53720,), atype=FLOAT, unique=696, range=[-0.264, 0.0397]
-    entity_id: shape=(53720,), atype=INT, unique=2, values=['0', '1']
-    is_alpha_carbon: shape=(53720,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(53720,), atype=BOOLEAN, constant=True
-    is_carb: shape=(53720,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(53720,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(53720,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_peptide: shape=(53720,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(53720,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(53720,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(53720,), atype=FLOAT, unique=22, range=[0.02, 0.45]
-    mass: shape=(53720,), atype=FLOAT, unique=2, values=['12', '12']
-    occupancy: shape=(53720,), atype=FLOAT, unique=130, range=[0.39, 1]
-    pdb_model_num: shape=(53720,), atype=INT, constant=0
-    position: shape=(53720, 3), atype=FLOAT_VECTOR, unique=54127, range=[-2.73, 6.58]
-    res_id: shape=(53720,), atype=INT, unique=193, range=[1, 193]
-    res_name: shape=(53720,), atype=INT, unique=24, range=[0, 43]
-    rotation: shape=(53720, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(53720,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    sharp_edge: shape=(106164,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(53720,), atype=INT, constant=0
-    ures_id: shape=(53720,), atype=INT, unique=416, range=[0, 415]
-    vdw_radii: shape=(53720,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 11 points
+    Transforms: shape=(11, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.542,   1.404,   2.809,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.938,  -1.270,   1.270,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.623,   0.163,   4.806,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.262,  -0.855,  -0.168,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.542,   1.404,   2.809,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.938,  -1.270,   1.270,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.623,   0.163,   4.806,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.262,  -0.855,  -0.168,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.542,   1.404,   2.809,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.938,  -1.270,   1.270,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.623,   0.163,   4.806,   1.000]
+    Unique instances: 4; [0 1 2 3 0 1 2 3 0 1 2]
+    Instance references: [<GeometrySet: 8418 verts, 16630 edges, 8270 faces, 33260 corners>, <GeometrySet: 8622 verts, 17038 edges, 8474 faces, 34076 corners>, <GeometrySet: 520 verts, 1032 edges, 514 faces, 2064 corners>, <GeometrySet: 520 verts, 1032 edges, 514 faces, 2064 corners>]
+  
+    Attributes:
+    assembly_id: shape=(11,), atype=INT, constant=1
+    chain_id: shape=(11,), atype=INT, unique=11, range=[0, 10]
+    instance_transform: shape=(11, 4, 4), atype=FLOAT4X4, unique=14, range=[-1.27, 4.81]
+    pdb_model_num: shape=(11,), atype=INT, constant=0
+    rotation: shape=(11, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(11,), atype=INT, constant=0
 # ---
 # name: test_style_1[8H1B-True-ribbon]
   Mesh: 8H1B
-    Geometry: 67434 verts, 134754 edges, 67342 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(67434, 4), atype=FLOAT_COLOR, unique=5, values=['0.357', '0.549', '0.741', '0.839', '1']
-    assembly_id: shape=(67434,), atype=INT, constant=1
-    atom_id: shape=(67434,), atype=INT, unique=2408, range=[2, 3877]
-    atom_name: shape=(67434,), atype=INT, unique=2, values=['2', '55']
-    atomic_number: shape=(67434,), atype=INT, constant=6
-    b_factor: shape=(67434,), atype=FLOAT, unique=2244, range=[13.6, 77.9]
-    bond_type: shape=(67434,), atype=INT, unique=2, values=['0', '1']
-    chain_id: shape=(67434,), atype=INT, unique=11, range=[0, 10]
-    charge: shape=(67434,), atype=FLOAT, unique=601, range=[-0.264, 0.0397]
-    entity_id: shape=(67434,), atype=INT, unique=2, values=['0', '1']
-    is_alpha_carbon: shape=(67434,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(67434,), atype=BOOLEAN, constant=True
-    is_carb: shape=(67434,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(67434,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(67434,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_peptide: shape=(67434,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(67434,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(67434,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(67434,), atype=FLOAT, unique=11, range=[0.02, 0.45]
-    mass: shape=(67434,), atype=FLOAT, unique=2, values=['12', '12']
-    occupancy: shape=(67434,), atype=FLOAT, unique=104, range=[0.39, 1]
-    pdb_model_num: shape=(67434,), atype=INT, constant=0
-    position: shape=(67434, 3), atype=FLOAT_VECTOR, unique=68553, range=[-2.75, 6.62]
-    res_id: shape=(67434,), atype=INT, unique=193, range=[1, 193]
-    res_name: shape=(67434,), atype=INT, unique=24, range=[0, 43]
-    rotation: shape=(67434, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(67434,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    sharp_edge: shape=(134754,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(67434,), atype=INT, constant=0
-    ures_id: shape=(67434,), atype=INT, unique=416, range=[0, 415]
-    vdw_radii: shape=(67434,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 11 points
+    Transforms: shape=(11, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.574,   1.382,   2.779,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.927,  -1.273,   1.302,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.622,   0.168,   4.801,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.255,  -0.855,  -0.166,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.574,   1.382,   2.779,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.927,  -1.273,   1.302,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.622,   0.168,   4.801,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.255,  -0.855,  -0.166,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.574,   1.382,   2.779,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.927,  -1.273,   1.302,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.622,   0.168,   4.801,   1.000]
+    Unique instances: 4; [0 1 2 3 0 1 2 3 0 1 2]
+    Instance references: [<GeometrySet: 10161 verts, 20313 edges, 10154 faces, 40626 corners>, <GeometrySet: 10377 verts, 20745 edges, 10370 faces, 41490 corners>, <GeometrySet: 1164 verts, 2316 edges, 1154 faces, 4632 corners>, <GeometrySet: 1164 verts, 2316 edges, 1154 faces, 4632 corners>]
+  
+    Attributes:
+    assembly_id: shape=(11,), atype=INT, constant=1
+    chain_id: shape=(11,), atype=INT, unique=11, range=[0, 10]
+    instance_transform: shape=(11, 4, 4), atype=FLOAT4X4, unique=14, range=[-1.27, 4.8]
+    pdb_model_num: shape=(11,), atype=INT, constant=0
+    rotation: shape=(11, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(11,), atype=INT, constant=0
 # ---
 # name: test_style_1[8H1B-True-spheres]
   Mesh: 8H1B
-    Geometry: 515340 verts, 1472400 edges, 981600 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(515340, 4), atype=FLOAT_COLOR, unique=14, range=[0, 1]
-    assembly_id: shape=(515340,), atype=INT, constant=1
-    atom_id: shape=(515340,), atype=INT, unique=4214, range=[1, 4367]
-    atom_name: shape=(515340,), atype=INT, unique=60, range=[-1, 76]
-    atomic_number: shape=(515340,), atype=INT, unique=6, range=[6, 16]
-    b_factor: shape=(515340,), atype=FLOAT, unique=2499, range=[12.9, 84.1]
-    bond_type: shape=(515340,), atype=INT, unique=6, range=[0, 6]
-    chain_id: shape=(515340,), atype=INT, unique=11, range=[0, 10]
-    charge: shape=(515340,), atype=FLOAT, unique=93, range=[-0.941, 0.808]
-    entity_id: shape=(515340,), atype=INT, unique=5, values=['0', '1', '2', '3', '4']
-    is_alpha_carbon: shape=(515340,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(515340,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(515340,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(515340,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(515340,), atype=BOOLEAN, constant=True
-    is_nucleic: shape=(515340,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_peptide: shape=(515340,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(515340,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(515340,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(515340,), atype=FLOAT, unique=34, range=[-1.66, 0.63]
-    mass: shape=(515340,), atype=FLOAT, unique=6, range=[12, 32.1]
-    occupancy: shape=(515340,), atype=FLOAT, unique=14, range=[0.39, 1]
-    pdb_model_num: shape=(515340,), atype=INT, constant=0
-    position: shape=(515340, 3), atype=FLOAT_VECTOR, unique=238749, range=[-3.24, 6.63]
-    res_id: shape=(515340,), atype=INT, unique=438, range=[1, 502]
-    res_name: shape=(515340,), atype=INT, unique=24, range=[-1, 43]
-    rotation: shape=(515340, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(515340,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    transform_id: shape=(515340,), atype=INT, constant=0
-    ures_id: shape=(515340,), atype=INT, unique=840, range=[0, 839]
-    vdw_radii: shape=(515340,), atype=FLOAT, unique=5, values=['0.152', '0.155', '0.17', '0.18', '0.227']
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 11 points
+    Transforms: shape=(11, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.561,   1.365,   2.807,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.881,  -1.259,   1.290,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.658,   0.161,   4.776,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.250,  -0.819,  -0.152,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.561,   1.365,   2.807,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.881,  -1.259,   1.290,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.658,   0.161,   4.776,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.250,  -0.819,  -0.152,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.561,   1.365,   2.807,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.881,  -1.259,   1.290,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.658,   0.161,   4.776,   1.000]
+    Unique instances: 4; [0 1 2 3 0 1 2 3 0 1 2]
+    Instance references: [<GeometrySet: 72366 verts, 206760 edges, 137840 faces, 413520 corners>, <GeometrySet: 72240 verts, 206400 edges, 137600 faces, 412800 corners>, <GeometrySet: 16758 verts, 47880 edges, 31920 faces, 95760 corners>, <GeometrySet: 15624 verts, 44640 edges, 29760 faces, 89280 corners>]
+  
+    Attributes:
+    assembly_id: shape=(11,), atype=INT, constant=1
+    chain_id: shape=(11,), atype=INT, unique=11, range=[0, 10]
+    instance_transform: shape=(11, 4, 4), atype=FLOAT4X4, unique=14, range=[-1.26, 4.78]
+    pdb_model_num: shape=(11,), atype=INT, constant=0
+    rotation: shape=(11, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(11,), atype=INT, constant=0
 # ---
 # name: test_style_1[8H1B-True-surface]
   Mesh: 8H1B
-    Geometry: 231680 verts, 463144 edges, 231572 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(231680, 4), atype=FLOAT_COLOR, unique=6, range=[0.357, 1]
-    assembly_id: shape=(231680,), atype=INT, constant=1
-    atom_id: shape=(231680,), atype=INT, unique=345, range=[2, 3928]
-    atom_name: shape=(231680,), atype=INT, unique=2, values=['2', '54']
-    atomic_number: shape=(231680,), atype=INT, constant=6
-    b_factor: shape=(231680,), atype=FLOAT, unique=319, range=[14.3, 79.3]
-    chain_id: shape=(231680,), atype=INT, unique=11, range=[0, 10]
-    charge: shape=(231680,), atype=FLOAT, unique=19, range=[-0.264, 0.0397]
-    entity_id: shape=(231680,), atype=INT, unique=3, values=['0', '1', '4']
-    group_id: shape=(231680,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    is_alpha_carbon: shape=(231680,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(231680,), atype=BOOLEAN, constant=True
-    is_carb: shape=(231680,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(231680,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(231680,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_peptide: shape=(231680,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(231680,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(231680,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(231680,), atype=FLOAT, unique=3, values=['0', '0.02', '0.45']
-    mass: shape=(231680,), atype=FLOAT, constant=12
-    occupancy: shape=(231680,), atype=FLOAT, unique=14, range=[0.39, 1]
-    pdb_model_num: shape=(231680,), atype=INT, constant=0
-    position: shape=(231680, 3), atype=FLOAT_VECTOR, unique=241450, range=[-3.3, 6.69]
-    res_id: shape=(231680,), atype=INT, unique=168, range=[1, 201]
-    res_name: shape=(231680,), atype=INT, unique=24, range=[-1, 43]
-    rotation: shape=(231680, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(231680,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    transform_id: shape=(231680,), atype=INT, constant=0
-    ures_id: shape=(231680,), atype=INT, unique=343, range=[0, 417]
-    vdw_radii: shape=(231680,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 11 points
+    Transforms: shape=(11, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.497,   1.247,   2.814,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.844,  -1.146,   1.345,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.615,   0.188,   4.740,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.197,  -0.817,  -0.117,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.497,   1.247,   2.814,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.844,  -1.146,   1.345,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.615,   0.188,   4.740,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -1.197,  -0.817,  -0.117,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -0.497,   1.247,   2.814,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.844,  -1.146,   1.345,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [  0.615,   0.188,   4.740,   1.000]
+    Unique instances: 4; [0 1 2 3 0 1 2 3 0 1 2]
+    Instance references: [<GeometrySet: 29020 verts, 58004 edges, 29002 faces, 116008 corners>, <GeometrySet: 30324 verts, 60616 edges, 30308 faces, 121232 corners>, <GeometrySet: 10932 verts, 21860 edges, 10930 faces, 43720 corners>, <GeometrySet: 10426 verts, 20852 edges, 10426 faces, 41704 corners>]
+  
+    Attributes:
+    assembly_id: shape=(11,), atype=INT, constant=1
+    chain_id: shape=(11,), atype=INT, unique=11, range=[0, 10]
+    instance_transform: shape=(11, 4, 4), atype=FLOAT4X4, unique=14, range=[-1.2, 4.74]
+    pdb_model_num: shape=(11,), atype=INT, constant=0
+    rotation: shape=(11, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(11,), atype=INT, constant=0
 # ---
 # name: test_style_1[8U8W-False-ball_and_stick]
   Mesh: 8U8W
@@ -2006,187 +2285,1308 @@
 # ---
 # name: test_style_1[8U8W-True-ball_and_stick]
   Mesh: 8U8W
-    Geometry: 10090944 verts, 23048640 edges, 13206912 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(42859008, 4), atype=FLOAT_COLOR, unique=14, range=[0, 1]
-    assembly_id: shape=(10090944,), atype=INT, constant=1
-    atom_id: shape=(42859008,), atype=INT, unique=2596, range=[1, 2669]
-    atom_name: shape=(42859008,), atype=INT, unique=40, range=[-1, 75]
-    atomic_number: shape=(42859008,), atype=INT, unique=7, range=[6, 53]
-    b_factor: shape=(42859008,), atype=FLOAT, unique=1626, range=[26.1, 102]
-    bond_type: shape=(10090944,), atype=INT, unique=6, range=[0, 6]
-    chain_id: shape=(10090944,), atype=INT, unique=48, range=[0, 47]
-    charge: shape=(10090944,), atype=FLOAT, unique=238, range=[-0.941, 0.808]
-    entity_id: shape=(42859008,), atype=INT, unique=7, range=[0, 6]
-    is_alpha_carbon: shape=(42859008,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(42859008,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(10090944,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(10090944,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(10090944,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(42859008,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(42859008,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(42859008,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(42859008,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(10090944,), atype=FLOAT, unique=60, range=[-1.14, 0.63]
-    mass: shape=(42859008,), atype=FLOAT, unique=7, range=[12, 127]
-    occupancy: shape=(10090944,), atype=FLOAT, unique=13, range=[0.2, 1]
-    pdb_model_num: shape=(10090944,), atype=INT, constant=0
-    position: shape=(10090944, 3), atype=FLOAT_VECTOR, unique=1012647, range=[-9.03, 4.27]
-    res_id: shape=(42859008,), atype=INT, unique=582, range=[0, 675]
-    res_name: shape=(42859008,), atype=INT, unique=21, range=[-1, 19]
-    rotation: shape=(10090944, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(42859008,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    transform_id: shape=(10090944,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    ures_id: shape=(42859008,), atype=INT, unique=582, range=[0, 581]
-    vdw_radii: shape=(42859008,), atype=FLOAT, unique=7, range=[0.152, 0.227]
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 48 points
+    Transforms: shape=(48, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[11]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.159,  -0.144,   1.867,   1.000]
+      Transform[12]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[13]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[14]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[15]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[16]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[17]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[18]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[19]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[20]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[21]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[22]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[23]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.582,   0.144,   1.867,   1.000]
+      Transform[24]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[25]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[26]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[27]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[28]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[29]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[30]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[31]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[32]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[33]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[34]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[35]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.159,   0.144,  -1.867,   1.000]
+      Transform[36]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[37]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[38]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[39]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[40]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[41]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[42]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[43]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[44]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[45]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[46]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+      Transform[47]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.582,  -0.144,  -1.867,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 210228 verts, 480180 edges, 275144 faces, 892896 corners>]
+  
+    Attributes:
+    assembly_id: shape=(48,), atype=INT, constant=1
+    chain_id: shape=(48,), atype=INT, unique=12, range=[0, 11]
+    instance_transform: shape=(48, 4, 4), atype=FLOAT4X4, unique=13, range=[-6.58, 1.87]
+    pdb_model_num: shape=(48,), atype=INT, constant=0
+    rotation: shape=(48, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(48,), atype=INT, unique=4, values=['0', '1', '2', '3']
 # ---
 # name: test_style_1[8U8W-True-cartoon]
   Mesh: 8U8W
-    Geometry: 586848 verts, 1160928 edges, 577728 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(586848, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(586848,), atype=INT, constant=1
-    atom_id: shape=(586848,), atype=INT, unique=1740, range=[2, 2351]
-    atom_name: shape=(586848,), atype=INT, constant=2
-    atomic_number: shape=(586848,), atype=INT, constant=6
-    b_factor: shape=(586848,), atype=FLOAT, unique=1759, range=[26.1, 94.3]
-    bond_type: shape=(586848,), atype=INT, constant=1
-    chain_id: shape=(586848,), atype=INT, unique=48, range=[0, 47]
-    charge: shape=(586848,), atype=FLOAT, unique=903, range=[-0.264, 0.0397]
-    entity_id: shape=(586848,), atype=INT, constant=0
-    is_alpha_carbon: shape=(586848,), atype=BOOLEAN, constant=True
-    is_backbone: shape=(586848,), atype=BOOLEAN, constant=True
-    is_carb: shape=(586848,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(586848,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(586848,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(586848,), atype=BOOLEAN, constant=True
-    is_side_chain: shape=(586848,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(586848,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(586848,), atype=FLOAT, unique=22, range=[0.02, 0.45]
-    mass: shape=(586848,), atype=FLOAT, unique=2, values=['12', '12']
-    occupancy: shape=(586848,), atype=FLOAT, unique=40, range=[0.42, 1]
-    pdb_model_num: shape=(586848,), atype=INT, constant=0
-    position: shape=(586848, 3), atype=FLOAT_VECTOR, unique=96275, range=[-8.95, 3.82]
-    res_id: shape=(586848,), atype=INT, unique=297, range=[0, 296]
-    res_name: shape=(586848,), atype=INT, unique=20, range=[0, 19]
-    rotation: shape=(586848, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(586848,), atype=INT, unique=3, values=['1', '2', '3']
-    sharp_edge: shape=(1160928,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(586848,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    ures_id: shape=(586848,), atype=INT, unique=297, range=[0, 296]
-    vdw_radii: shape=(586848,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 48 points
+    Transforms: shape=(48, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[11]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.198,  -0.030,   1.927,   1.000]
+      Transform[12]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[13]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[14]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[15]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[16]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[17]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[18]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[19]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[20]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[21]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[22]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[23]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.544,   0.030,   1.927,   1.000]
+      Transform[24]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[25]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[26]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[27]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[28]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[29]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[30]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[31]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[32]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[33]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[34]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[35]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.198,   0.030,  -1.927,   1.000]
+      Transform[36]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[37]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[38]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[39]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[40]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[41]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[42]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[43]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[44]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[45]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[46]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+      Transform[47]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.544,  -0.030,  -1.927,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 12226 verts, 24186 edges, 12036 faces, 48372 corners>]
+  
+    Attributes:
+    assembly_id: shape=(48,), atype=INT, constant=1
+    chain_id: shape=(48,), atype=INT, unique=12, range=[0, 11]
+    instance_transform: shape=(48, 4, 4), atype=FLOAT4X4, unique=13, range=[-6.54, 1.93]
+    pdb_model_num: shape=(48,), atype=INT, constant=0
+    rotation: shape=(48, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(48,), atype=INT, unique=4, values=['0', '1', '2', '3']
 # ---
 # name: test_style_1[8U8W-True-ribbon]
   Mesh: 8U8W
-    Geometry: 767664 verts, 1534896 edges, 767328 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(767664, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(767664,), atype=INT, constant=1
-    atom_id: shape=(767664,), atype=INT, unique=1697, range=[2, 2351]
-    atom_name: shape=(767664,), atype=INT, constant=2
-    atomic_number: shape=(767664,), atype=INT, constant=6
-    b_factor: shape=(767664,), atype=FLOAT, unique=1636, range=[26.1, 94.3]
-    bond_type: shape=(767664,), atype=INT, constant=1
-    chain_id: shape=(767664,), atype=INT, unique=48, range=[0, 47]
-    charge: shape=(767664,), atype=FLOAT, unique=781, range=[-0.264, 0.0397]
-    entity_id: shape=(767664,), atype=INT, constant=0
-    is_alpha_carbon: shape=(767664,), atype=BOOLEAN, constant=True
-    is_backbone: shape=(767664,), atype=BOOLEAN, constant=True
-    is_carb: shape=(767664,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(767664,), atype=BOOLEAN, constant=False
-    is_nucleic: shape=(767664,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(767664,), atype=BOOLEAN, constant=True
-    is_side_chain: shape=(767664,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(767664,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(767664,), atype=FLOAT, unique=11, range=[0.02, 0.45]
-    mass: shape=(767664,), atype=FLOAT, unique=2, values=['12', '12']
-    occupancy: shape=(767664,), atype=FLOAT, unique=40, range=[0.42, 1]
-    pdb_model_num: shape=(767664,), atype=INT, constant=0
-    position: shape=(767664, 3), atype=FLOAT_VECTOR, unique=126161, range=[-9, 3.89]
-    res_id: shape=(767664,), atype=INT, unique=297, range=[0, 296]
-    res_name: shape=(767664,), atype=INT, unique=20, range=[0, 19]
-    rotation: shape=(767664, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(767664,), atype=INT, unique=3, values=['1', '2', '3']
-    sharp_edge: shape=(1534896,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    transform_id: shape=(767664,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    ures_id: shape=(767664,), atype=INT, unique=297, range=[0, 296]
-    vdw_radii: shape=(767664,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 48 points
+    Transforms: shape=(48, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[11]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.111,  -0.109,   1.876,   1.000]
+      Transform[12]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[13]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[14]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[15]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[16]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[17]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[18]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[19]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[20]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[21]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[22]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[23]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.630,   0.109,   1.876,   1.000]
+      Transform[24]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[25]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[26]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[27]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[28]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[29]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[30]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[31]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[32]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[33]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[34]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[35]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.111,   0.109,  -1.876,   1.000]
+      Transform[36]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[37]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[38]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[39]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[40]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[41]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[42]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[43]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[44]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[45]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[46]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+      Transform[47]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.630,  -0.109,  -1.876,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 15993 verts, 31977 edges, 15986 faces, 63954 corners>]
+  
+    Attributes:
+    assembly_id: shape=(48,), atype=INT, constant=1
+    chain_id: shape=(48,), atype=INT, unique=12, range=[0, 11]
+    instance_transform: shape=(48, 4, 4), atype=FLOAT4X4, unique=13, range=[-6.63, 1.88]
+    pdb_model_num: shape=(48,), atype=INT, constant=0
+    rotation: shape=(48, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(48,), atype=INT, unique=4, values=['0', '1', '2', '3']
 # ---
 # name: test_style_1[8U8W-True-spheres]
   Mesh: 8U8W
-    Geometry: 5233536 verts, 14952960 edges, 9968640 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(5233536, 4), atype=FLOAT_COLOR, unique=14, range=[0, 1]
-    assembly_id: shape=(5233536,), atype=INT, constant=1
-    atom_id: shape=(5233536,), atype=INT, unique=2596, range=[1, 2669]
-    atom_name: shape=(5233536,), atype=INT, unique=40, range=[-1, 75]
-    atomic_number: shape=(5233536,), atype=INT, unique=7, range=[6, 53]
-    b_factor: shape=(5233536,), atype=FLOAT, unique=1626, range=[26.1, 102]
-    bond_type: shape=(5233536,), atype=INT, unique=6, range=[0, 6]
-    chain_id: shape=(5233536,), atype=INT, unique=48, range=[0, 47]
-    charge: shape=(5233536,), atype=FLOAT, unique=104, range=[-0.941, 0.808]
-    entity_id: shape=(5233536,), atype=INT, unique=7, range=[0, 6]
-    is_alpha_carbon: shape=(5233536,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_backbone: shape=(5233536,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_carb: shape=(5233536,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(5233536,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_instanced: shape=(5233536,), atype=BOOLEAN, constant=True
-    is_nucleic: shape=(5233536,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(5233536,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(5233536,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_solvent: shape=(5233536,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    lipophobicity: shape=(5233536,), atype=FLOAT, unique=25, range=[-1.14, 0.63]
-    mass: shape=(5233536,), atype=FLOAT, unique=7, range=[12, 127]
-    occupancy: shape=(5233536,), atype=FLOAT, unique=8, range=[0.2, 1]
-    pdb_model_num: shape=(5233536,), atype=INT, constant=0
-    position: shape=(5233536, 3), atype=FLOAT_VECTOR, unique=393393, range=[-9.1, 4.35]
-    res_id: shape=(5233536,), atype=INT, unique=582, range=[0, 675]
-    res_name: shape=(5233536,), atype=INT, unique=21, range=[-1, 19]
-    rotation: shape=(5233536, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(5233536,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    transform_id: shape=(5233536,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    ures_id: shape=(5233536,), atype=INT, unique=582, range=[0, 581]
-    vdw_radii: shape=(5233536,), atype=FLOAT, unique=7, range=[0.152, 0.227]
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 48 points
+    Transforms: shape=(48, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[11]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.170,  -0.157,   1.868,   1.000]
+      Transform[12]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[13]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[14]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[15]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[16]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[17]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[18]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[19]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[20]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[21]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[22]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[23]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.571,   0.157,   1.868,   1.000]
+      Transform[24]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[25]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[26]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[27]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[28]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[29]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[30]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[31]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[32]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[33]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[34]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[35]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.170,   0.157,  -1.868,   1.000]
+      Transform[36]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[37]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[38]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[39]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[40]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[41]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[42]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[43]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[44]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[45]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[46]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+      Transform[47]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.571,  -0.157,  -1.868,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 109032 verts, 311520 edges, 207680 faces, 623040 corners>]
+  
+    Attributes:
+    assembly_id: shape=(48,), atype=INT, constant=1
+    chain_id: shape=(48,), atype=INT, unique=12, range=[0, 11]
+    instance_transform: shape=(48, 4, 4), atype=FLOAT4X4, unique=13, range=[-6.57, 1.87]
+    pdb_model_num: shape=(48,), atype=INT, constant=0
+    rotation: shape=(48, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(48,), atype=INT, unique=4, values=['0', '1', '2', '3']
 # ---
 # name: test_style_1[8U8W-True-surface]
   Mesh: 8U8W
-    Geometry: 1804032 verts, 3605568 edges, 1802784 polys
+    Geometry: 0 verts, 0 edges, 0 polys
   
     Attributes:
-    Color: shape=(1804032, 4), atype=FLOAT_COLOR, unique=3, values=['0.357', '0.839', '1']
-    assembly_id: shape=(1804032,), atype=INT, constant=1
-    atom_id: shape=(1804032,), atype=INT, unique=216, range=[2, 2369]
-    atom_name: shape=(1804032,), atype=INT, constant=2
-    atomic_number: shape=(1804032,), atype=INT, constant=6
-    b_factor: shape=(1804032,), atype=FLOAT, unique=211, range=[27.1, 94.3]
-    chain_id: shape=(1804032,), atype=INT, unique=48, range=[0, 47]
-    charge: shape=(1804032,), atype=FLOAT, unique=20, range=[-0.264, 0.0397]
-    entity_id: shape=(1804032,), atype=INT, unique=2, values=['0', '6']
-    group_id: shape=(1804032,), atype=INT, constant=0
-    is_alpha_carbon: shape=(1804032,), atype=BOOLEAN, constant=True
-    is_backbone: shape=(1804032,), atype=BOOLEAN, constant=True
-    is_carb: shape=(1804032,), atype=BOOLEAN, constant=False
-    is_hetero: shape=(1804032,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_nucleic: shape=(1804032,), atype=BOOLEAN, constant=False
-    is_peptide: shape=(1804032,), atype=BOOLEAN, unique=2, values=['False', 'True']
-    is_side_chain: shape=(1804032,), atype=BOOLEAN, constant=False
-    is_solvent: shape=(1804032,), atype=BOOLEAN, constant=False
-    lipophobicity: shape=(1804032,), atype=FLOAT, unique=3, values=['0', '0.02', '0.45']
-    mass: shape=(1804032,), atype=FLOAT, constant=12
-    occupancy: shape=(1804032,), atype=FLOAT, unique=6, range=[0.42, 1]
-    pdb_model_num: shape=(1804032,), atype=INT, constant=0
-    position: shape=(1804032, 3), atype=FLOAT_VECTOR, unique=292242, range=[-9.16, 4.41]
-    res_id: shape=(1804032,), atype=INT, unique=216, range=[0, 306]
-    res_name: shape=(1804032,), atype=INT, unique=21, range=[-1, 19]
-    rotation: shape=(1804032, 4), atype=QUATERNION, unique=2, values=['0', '1']
-    sec_struct: shape=(1804032,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    transform_id: shape=(1804032,), atype=INT, unique=4, values=['0', '1', '2', '3']
-    ures_id: shape=(1804032,), atype=INT, unique=216, range=[0, 302]
-    vdw_radii: shape=(1804032,), atype=FLOAT, constant=0.17
+    position: shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]
+  
+  Instances: 48 points
+    Transforms: shape=(48, 4, 4), dtype=float32
+      Transform[0]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[1]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[2]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[3]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[4]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[5]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[6]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[7]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[8]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[9]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[10]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[11]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -3.211,  -0.185,   1.742,   1.000]
+      Transform[12]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[13]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[14]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[15]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[16]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[17]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[18]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[19]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[20]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[21]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[22]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[23]:
+        [ -1.000,  -0.000,   0.000,   0.000]
+        [  0.000,  -1.000,   0.000,   0.000]
+        [  0.000,   0.000,   1.000,   0.000]
+        [ -6.530,   0.185,   1.742,   1.000]
+      Transform[24]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[25]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[26]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[27]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[28]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[29]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[30]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[31]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[32]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[33]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[34]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[35]:
+        [  1.000,   0.000,   0.000,   0.000]
+        [  0.000,  -1.000,  -0.000,   0.000]
+        [  0.000,   0.000,  -1.000,   0.000]
+        [ -3.211,   0.185,  -1.742,   1.000]
+      Transform[36]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[37]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[38]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[39]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[40]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[41]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[42]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[43]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[44]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[45]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[46]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+      Transform[47]:
+        [ -1.000,   0.000,   0.000,   0.000]
+        [  0.000,   1.000,   0.000,   0.000]
+        [ -0.000,   0.000,  -1.000,   0.000]
+        [ -6.530,  -0.185,  -1.742,   1.000]
+    Unique instances: 1; [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+   0 0 0 0 0 0 0 0 0 0 0]
+    Instance references: [<GeometrySet: 37584 verts, 75116 edges, 37558 faces, 150232 corners>]
+  
+    Attributes:
+    assembly_id: shape=(48,), atype=INT, constant=1
+    chain_id: shape=(48,), atype=INT, unique=12, range=[0, 11]
+    instance_transform: shape=(48, 4, 4), atype=FLOAT4X4, unique=13, range=[-6.53, 1.74]
+    pdb_model_num: shape=(48,), atype=INT, constant=0
+    rotation: shape=(48, 4), atype=QUATERNION, unique=2, values=['0', '1']
+    transform_id: shape=(48,), atype=INT, unique=4, values=['0', '1', '2', '3']
 # ---
 # name: test_style_positions[1BNA]
   [[ 1.9e+00  3.4e+00  2.6e+00]
