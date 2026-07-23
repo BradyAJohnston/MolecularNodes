@@ -31,10 +31,6 @@ def test_load(snapshot, format, style):
                 node = StyleSpheres(geometry="Mesh")
             case "surface":
                 node = StyleSurface()
-        (
-            tree.atoms
-            >> node
-            >> tree.join
-        )
+        (tree.atoms >> node >> tree.join)
 
     assert snapshot == GeometrySet(mol.object).summary()
