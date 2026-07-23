@@ -24,13 +24,16 @@ def test_load(snapshot, format, style):
     mol = mn.Molecule.load(data_dir / f"caffeine.{format}")
     assert mol.object
     with mol.tree.reset() as tree:
+        match style:
+            case "ball_and_stick":
+                node = StyleBallAndStick(sphere_geometry="Mesh")
+            case "spheres":
+                node = StyleSpheres(geometry="Mesh")
+            case "surface":
+                node = StyleSurface()
         (
             tree.atoms
-            >> {
-                "ball_and_stick": StyleBallAndStick(sphere_geometry="Mesh"),
-                "spheres": StyleSpheres(geometry="Mesh"),
-                "surface": StyleSurface(),
-            }[style]
+            >> node
             >> tree.join
         )
 
