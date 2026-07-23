@@ -5,266 +5,72 @@ from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, Trajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
-from ..nodes.geometry import get_final_style_nodes
+from ..nodes.node_management import get_final_style_nodes
 from ..session import get_session
-from .pref import addon_preferences
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
 
 
-def panel_wwpdb(layout, scene):
-    layout.label(text="Download from PDB", icon="IMPORT")
-    layout.separator()
+class MN_MT_Add(bpy.types.Menu):
+    bl_idname = "MN_MT_Add"
+    bl_label = "Molecular Nodes"
 
-    layout = check_online_access_for_ui(layout)
+    def draw(self, context: bpy.types.Context) -> None:
+        layout = self.layout
+        assert layout
+        # the Add menu defaults to EXEC_REGION_WIN, which would run the operator
+        # directly; force INVOKE so the operators' popup dialogs are shown instead
+        layout.operator_context = "INVOKE_DEFAULT"
 
-    row_import = layout.row().split(factor=0.5)
-    row_import.prop(scene.mn, "import_code_pdb")
-    row = row_import.split(factor=0.3)
-    row.prop(scene.mn, "import_format_fetch", text="")
-    op = row.operator("mn.import_fetch")
-    op.code = scene.mn.import_code_pdb
-    op.database = "wwpdb"
-    op.file_format = scene.mn.import_format_fetch
-    op.node_setup = scene.mn.import_node_setup
-    op.remove_solvent = scene.mn.import_remove_solvent
-    op.assembly = scene.mn.import_build_assembly
-    op.style = scene.mn.import_style
-    op.centre = scene.mn.import_centre
-    op.centre_type = scene.mn.import_centre_type
-    prefs = addon_preferences()
-    if prefs is not None:
-        op.cache_dir = str(prefs.cache_dir)  # type: ignore
-    else:
-        op.cache_dir = str(bpy.app.tempdir)
-    layout.separator(factor=0.4)
+        op = layout.operator("mn.import_fetch", text="Import Local File", icon="IMPORT")
+        op.database = "local"
+        # fetching requires online access, so gate only those entries
+        online = check_online_access_for_ui(layout.column())
+        op = online.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
+        op.database = "wwpdb"
+        op = online.operator(
+            "mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT"
+        )
+        op.database = "alphafold"
 
-    layout.separator()
+        layout.separator()
+        op = layout.operator("mn.import_ensemble", text="Starfile", icon="IMPORT")
+        op.ensemble_type = "starfile"
+        op = layout.operator("mn.import_ensemble", text="CellPack", icon="IMPORT")
+        op.ensemble_type = "cellpack"
 
-    layout.label(text="Options", icon="MODIFIER")
-    options = layout.column(align=True)
+        layout.separator()
+        op = layout.operator(
+            "mn.import_trajectory", text="MD Trajectory", icon="IMPORT"
+        )
+        op.format = "md"
+        op = layout.operator("mn.import_trajectory", text="oxDNA", icon="IMPORT")
+        op.format = "oxdna"
 
-    row = options.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-
-    row_centre = options.row()
-    row_centre.prop(scene.mn, "import_centre", icon_value=0)
-    col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "import_centre_type", text="")
-    col_centre.enabled = scene.mn.import_centre
-    options.separator()
-
-    grid = options.grid_flow()
-    grid.prop(scene.mn, "import_build_assembly")
-    grid.prop(scene.mn, "import_remove_solvent")
-    grid.prop(scene.mn, "import_del_hydrogen")
+        layout.separator()
+        layout.operator("mn.import_density", text="Density Map", icon="IMPORT")
 
 
-def panel_alphafold(layout, scene):
-    layout.label(text="Download from the AlphaFold DataBase", icon="IMPORT")
-    layout.separator()
-
-    layout = check_online_access_for_ui(layout)
-
-    row_import = layout.row().split(factor=0.5)
-    row_import.prop(scene.mn, "import_code_alphafold")
-    download = row_import.split(factor=0.3)
-    download.prop(scene.mn, "import_format_fetch", text="")
-    op = download.operator("mn.import_fetch")
-    op.code = scene.mn.import_code_alphafold
-    op.database = "alphafold"
-    op.file_format = scene.mn.import_format_fetch
-    op.node_setup = scene.mn.import_node_setup
-    op.assembly = scene.mn.import_build_assembly
-    op.style = scene.mn.import_style
-    op.centre = scene.mn.import_centre
-    op.centre_type = scene.mn.import_centre_type
-    prefs = addon_preferences()
-    if prefs is not None:
-        op.cache_dir = str(prefs.cache_dir)  # type: ignore
-    else:
-        op.cache_dir = str(bpy.app.tempdir)
-
-    layout.separator(factor=0.4)
-
-    row = layout.row().split(factor=0.3)
-    layout.separator()
-
-    layout.label(text="Options", icon="MODIFIER")
-    options = layout.column(align=True)
-
-    row = options.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-
-    row_centre = options.row()
-    row_centre.prop(scene.mn, "import_centre", icon_value=0)
-    col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "import_centre_type", text="")
-    col_centre.enabled = scene.mn.import_centre
-    options.separator()
+def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
+    layout = self.layout
+    assert layout
+    layout.menu("MN_MT_Add")
 
 
-# operator that calls the function to import the structure from a local file
+class MN_MT_Import(bpy.types.Menu):
+    bl_idname = "MN_MT_Import"
+    bl_label = "Import"
 
-
-def panel_local(layout, scene):
-    layout.label(text="Load a Local File", icon="FILE_TICK")
-    layout.separator()
-
-    row = layout.row()
-    row.prop(scene.mn, "import_local_path")
-    op = row.operator("mn.import_local")
-    op.filepath = scene.mn.import_local_path
-    op.node_setup = scene.mn.import_node_setup
-    op.assembly = scene.mn.import_build_assembly
-    op.style = scene.mn.import_style
-    op.centre = scene.mn.import_centre
-    op.remove_solvent = scene.mn.import_remove_solvent
-    op.centre_type = scene.mn.import_centre_type
-    layout.separator()
-
-    layout.label(text="Options", icon="MODIFIER")
-    options = layout.column(align=True)
-
-    row = options.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-
-    row_centre = options.row()
-
-    row_centre.prop(scene.mn, "import_centre", icon_value=0)
-    # row_centre.prop()
-    col_centre = row_centre.column()
-    col_centre.prop(scene.mn, "import_centre_type", text="")
-    col_centre.enabled = scene.mn.import_centre
-    options.separator()
-
-    grid = options.grid_flow()
-    grid.prop(scene.mn, "import_build_assembly")
-    grid.prop(scene.mn, "import_remove_solvent", icon_value=0)
-    grid.prop(scene.mn, "import_del_hydrogen", icon_value=0)
-
-
-def panel_starfile(layout, scene):
-    layout.label(text="Load Star File", icon="FILE_TICK")
-    layout.separator()
-    row_import = layout.row()
-    row_import.prop(scene.mn, "import_star_file_path")
-    op = row_import.operator("mn.import_star_file")
-    op.filepath = scene.mn.import_star_file_path
-    op.node_setup = scene.mn.import_node_setup
-
-
-def panel_cellpack(layout, scene):
-    layout.label(text="Load CellPack Model", icon="FILE_TICK")
-    layout.separator()
-    row = layout.row()
-    row.prop(scene.mn, "import_cell_pack_path")
-    op = row.operator("mn.import_cell_pack")
-    op.filepath = scene.mn.import_cell_pack_path
-    op.node_setup = scene.mn.import_node_setup
-
-
-def panel_density(layout, scene):
-    layout.label(text="Load Density Grids", icon="FILE_TICK")
-    layout.separator()
-
-    row = layout.row()
-    row.prop(scene.mn, "import_density")
-    row.operator("mn.import_density")
-
-    layout.separator()
-    col = layout.column()
-    col.alignment = "LEFT"
-    col.scale_y = 0.5
-    label = f"\
-    An intermediate file will be created: {scene.mn.import_density}.vdb\
-    Please do not delete this file or the volume will not render.\
-    Move the original .map file to change this location.\
-    "
-    for line in label.strip().split("    "):
-        col.label(text=line)
-
-    layout.separator()
-    layout.label(text="Options", icon="MODIFIER")
-
-    layout.prop(scene.mn, "import_density_invert")
-    layout.prop(scene.mn, "import_density_center")
-    layout.prop(scene.mn, "import_density_overwrite")
-    row = layout.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_density_style")
-    col.enabled = scene.mn.import_node_setup
-
-
-def panel_trajectory(layout, scene):
-    layout.label(text="Load MD Trajectories", icon="FILE_TICK")
-    layout.separator()
-    col = layout.column(align=True)
-    row_import = col.row()
-    row_import.prop(scene.mn, "import_md_name")
-    op = row_import.operator("mn.import_trajectory", text="Load")
-    op.topology = scene.mn.import_md_topology
-    op.trajectory = scene.mn.import_md_trajectory
-    op.name = scene.mn.import_md_name
-    op.style = scene.mn.import_style
-    op.setup_nodes = scene.mn.import_node_setup
-    col.separator()
-    col.prop(scene.mn, "import_md_topology")
-    col.prop(scene.mn, "import_md_trajectory")
-
-    layout.separator()
-    layout.label(text="Options", icon="MODIFIER")
-    row = layout.row()
-    row.prop(scene.mn, "import_node_setup", text="")
-    col = row.column()
-    col.prop(scene.mn, "import_style")
-    col.enabled = scene.mn.import_node_setup
-
-
-def panel_oxdna(layout: bpy.types.UILayout, scene: bpy.types.Scene) -> None:
-    """
-    Create the panel layout for oxDNA import.
-
-    Parameters
-    ----------
-    layout : bpy.types.UILayout
-        Layout to add elements to
-    scene : bpy.types.Scene
-        Current scene
-    """
-    layout.label(text="Load oxDNA File", icon="FILE_TICK")
-    layout.separator()
-    row = layout.row()
-    row.prop(scene.mn, "import_oxdna_name")
-    op = row.operator("mn.import_oxdna")
-    op.name = scene.mn.import_oxdna_name
-    op.topology = scene.mn.import_oxdna_topology
-    op.trajectory = scene.mn.import_oxdna_trajectory
-    col = layout.column(align=True)
-    col.prop(scene.mn, "import_oxdna_topology")
-    col.prop(scene.mn, "import_oxdna_trajectory")
-
-
-chosen_panel = {
-    "pdb": panel_wwpdb,
-    "local": panel_local,
-    "alphafold": panel_alphafold,
-    "star": panel_starfile,
-    "md": panel_trajectory,
-    "density": panel_density,
-    "cellpack": panel_cellpack,
-    "dna": panel_oxdna,
-}
+    def draw(self, context: bpy.types.Context) -> None:
+        layout = self.layout
+        assert layout
+        # force INVOKE so the operators' popup dialogs are shown instead of
+        # being executed directly
+        layout.operator_context = "INVOKE_DEFAULT"
+        layout.operator("mn.import_fetch", text="Molecule", icon="IMPORT")
+        layout.operator("mn.import_ensemble", text="Ensemble", icon="IMPORT")
+        layout.operator("mn.import_trajectory", text="Trajectory", icon="IMPORT")
+        layout.operator("mn.import_density", text="Density", icon="IMPORT")
 
 
 def pt_object_context(self, context):
@@ -274,37 +80,6 @@ def pt_object_context(self, context):
 def is_style_node(context):
     node = context.space_data.edit_tree.nodes.active
     return node.name.startswith("Style")
-
-
-def change_style_node_menu(self, context):
-    layout = self.layout
-    node = context.active_node
-
-    # return early if not a node group
-    if not hasattr(node, "node_tree"):
-        return None
-
-    # return early if the node group isn't one of the ones we want to swap easily
-    prefix = node.node_tree.name.split(" ")[0].lower()
-    if prefix not in ["color", "select", "is", "style", "topology", "animate"]:
-        return None
-
-    layout.label(text="Molecular Nodes", icon="MOD_PARTICLES")
-
-    row = layout.row()
-    op = row.operator_menu_enum("mn.node_swap", "node_items", text="Change Node")
-    op.node_description = "The topology nodes"
-
-    layout.separator()
-
-
-def panel_import(layout, context):
-    scene = context.scene
-    selection = scene.mn.panel_import_type
-    layout.prop(scene.mn, "panel_import_type")
-
-    col = layout.column()
-    chosen_panel[selection](col, scene)
 
 
 def ui_from_node(
@@ -317,7 +92,7 @@ def ui_from_node(
     for user control in a panel, rather than through the node editor.
     """
     col = layout.column(align=True)
-    ntree = context.active_object.modifiers["MolecularNodes"].node_group
+    ntree = context.active_object.modifiers["Molecular Nodes"].node_group
 
     tree = node.node_tree.interface.items_tree
 
@@ -477,43 +252,6 @@ def panel_object(layout, context):
         return None
 
 
-def item_ui(layout, item):
-    row = layout.row()
-    row.label(text=item.name)
-    col = row.column()
-    op = col.operator("mn.session_create_object")
-    op.uuid = item.uuid
-    col.enabled = item.object is None
-
-    op = row.operator("mn.session_remove_item", text="", icon="CANCEL")
-    op.uuid = item.uuid
-
-    if item.object is not None:
-        row = layout.row()
-        row.label(text=f"Object: {item.object.name}", icon="OUTLINER_OB_MESH")
-
-
-def panel_session(layout, context):
-    session = get_session(context)
-    row = layout.row()
-    row.label(text="Loaded items in the session")
-
-    layout.label(text="Molecules")
-    box = layout.box()
-    for mol in session.molecules.values():
-        item_ui(box, mol)
-
-    layout.label(text="Universes")
-    box = layout.box()
-    for uni in session.trajectories.values():
-        item_ui(box, uni)
-
-    layout.label(text="Ensembles")
-    box = layout.box()
-    for ens in session.ensembles.values():
-        item_ui(box, ens)
-
-
 def panel_scene(layout, context):
     scene = context.scene
 
@@ -566,22 +304,27 @@ class MN_PT_Scene(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
-        row = layout.row()
 
-        row = layout.row(align=True)
+        # import operators live in a single drop-down menu at the top
+        layout.menu("MN_MT_Import", text="Import", icon="IMPORT")
 
-        for p in ["import", "object", "session"]:
-            row.prop_enum(scene.mn, "panel_selection", p)
+        # display the information for the selected object
+        panel_object(layout, context)
 
-        # the possible panel functions to choose between
-        which_panel = {
-            "import": panel_import,
-            "object": panel_object,
-            "session": panel_session,
-        }
-        # call the required panel function with the layout and context
-        which_panel[scene.mn.panel_selection](layout, context)
+
+class MN_PT_Object(bpy.types.Panel):
+    bl_label = "Molecular Nodes"
+    bl_idname = "MN_PT_object"
+    bl_space_type = "PROPERTIES"
+    bl_region_type = "WINDOW"
+    bl_context = "object"
+    bl_order = 0
+    bl_options = {"HEADER_LAYOUT_EXPAND"}
+    bl_ui_units_x = 0
+
+    def draw(self, context):
+        # display the information for the selected object
+        panel_object(self.layout, context)
 
 
 class MN_UL_EntitiesList(bpy.types.UIList):
@@ -939,15 +682,12 @@ class MN_PT_Styles(bpy.types.Panel):
         entity = get_session().get(uuid)
         if entity is None:
             return
-        node_group = entity.node_group
+        node_group = entity.modifier_node_tree
         if node_group is None:
             return
         styles_active_index: int = entity.object.mn.styles_active_index  # type: ignore
         valid_selection = False
         style_nodes = get_final_style_nodes(node_group)
-        if 0 <= styles_active_index < len(node_group.nodes):
-            if node_group.nodes[styles_active_index] in style_nodes:
-                valid_selection = True
 
         row = layout.row()
         MN_UL_StylesList.style_nodes = style_nodes
@@ -1264,7 +1004,10 @@ class MN_PT_Compositor(bpy.types.Panel):
 
 
 CLASSES = [
+    MN_MT_Add,
+    MN_MT_Import,
     MN_PT_Scene,
+    MN_PT_Object,
     MN_UL_EntitiesList,
     MN_PT_Entities,
     MN_PT_trajectory,

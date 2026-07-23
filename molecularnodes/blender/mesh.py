@@ -39,18 +39,18 @@ def evaluate_using_mesh(obj: bpy.types.Object) -> bpy.types.Object:
 def create_data_object(
     array: np.ndarray,
     name: str = "DataObject",
-    collection: str | bpy.types.Collection | None = None,
-    world_scale: float = 0.01,
+    collection: bpy.types.Collection | None = None,
+    world_scale: float = 0.1,
 ) -> bpy.types.Object:
     # still requires a unique call TODO: figure out why
     # I think this has to do with the bcif instancing extraction
     # array = np.unique(array)
     locations = array["translation"] * world_scale
-
-    if not collection:
-        collection = coll.data()
-
-    bob = create_bob(locations, collection=collection, name=name)
+    bob = create_bob(
+        locations,
+        collection=collection if collection is not None else coll.data(),
+        name=name,
+    )
 
     attributes = [
         ("rotation", AttributeTypes.QUATERNION),

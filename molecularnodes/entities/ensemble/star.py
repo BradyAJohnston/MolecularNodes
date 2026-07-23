@@ -10,7 +10,7 @@ from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
-from ...nodes import nodes
+from ...nodes import geometry, nodes
 from .base import Ensemble, EntityType
 
 
@@ -76,11 +76,6 @@ class EnsembleDataFrame:
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
-        bob.store_named_attribute(
-            self.rotation_as_quaternion(),
-            name="rotation",
-            atype=AttributeTypes.QUATERNION,
-        )
 
         bob.store_named_attribute(
             self.image_id_values(),
@@ -271,7 +266,7 @@ class StarFile(Ensemble):
         self,
         name: str = "StarFileObject",
         node_setup: bool = True,
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         fraction: float = 1.0,
         simplify: bool = True,
     ) -> bpy.types.Object:
@@ -287,7 +282,8 @@ class StarFile(Ensemble):
         self.data_frame.store_data_on_object(self.object)
 
         if node_setup:
-            nodes.create_starting_nodes_starfile(self.object)
+            with self.tree.reset() as (input, join):
+                input >> geometry.StarfileInstances() >> join
 
         self.object["starfile_path"] = str(self.file_path)
         return self.object

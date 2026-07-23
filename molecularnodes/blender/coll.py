@@ -5,7 +5,7 @@ from databpy.collection import create_collection
 
 def mn() -> Collection:
     "Return the 'MolecularNodes' collection, creating it first if required"
-    return create_collection("MolecularNodes")
+    return create_collection("Molecular Nodes")
 
 
 def data() -> Collection:
@@ -17,7 +17,7 @@ def data() -> Collection:
     except KeyError:
         collection = create_collection(name=name, parent=mn())
 
-        bpy.context.view_layer.layer_collection.children["MolecularNodes"].children[
+        bpy.context.view_layer.layer_collection.children["Molecular Nodes"].children[
             collection.name
         ].exclude = True
         return collection

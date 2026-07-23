@@ -1,6 +1,5 @@
 from pathlib import Path
 import bpy
-import databpy
 import MDAnalysis as mda
 from bpy.props import (
     BoolProperty,
@@ -23,15 +22,15 @@ from ..entities import (
     ensemble,
     trajectory,
 )
+from ..nodes import geometry as g
 from ..nodes import nodes
-from ..nodes.geometry import (
-    create_style_interface,
-    get_final_style_nodes,
+from ..nodes.material import add_all_materials
+from ..nodes.node_management import (
+    remove_style_node,
 )
 from ..scene.compositor import setup_compositor
 from ..session import get_session
-from . import node_info
-from .props import SURFACE_STYLE_ITEMS
+from .pref import addon_preferences
 from .style import STYLE_ITEMS
 
 
@@ -60,243 +59,14 @@ def _add_node(node_name, context, show_options=False, material="default"):
     nodes.assign_material(node, new_material=material)
 
 
-class MN_OT_Add_Custom_Node_Group(Operator):
-    bl_idname = "mn.add_custom_node_group"
-    bl_label = "Add Custom Node Group"
-    # bl_description = "Add Molecular Nodes custom node group."
-    bl_options = {"REGISTER", "UNDO"}
-    node_name: StringProperty(  # type: ignore
-        name="node_name", description="", default="", subtype="NONE", maxlen=0
-    )
-    node_label: StringProperty(name="node_label", default="")  # type: ignore
-    node_description: StringProperty(  # type: ignore
-        name="node_description",
-        description="",
-        default="Add MolecularNodes custom node group.",
-        subtype="NONE",
-    )
-    node_link: BoolProperty(name="node_link", default=True)  # type: ignore
-
-    @classmethod
-    def description(cls, context, properties):
-        return properties.node_description
-
-    def execute(self, context):
-        try:
-            nodes.append(self.node_name, link=self.node_link)
-            _add_node(self.node_name, context)  # , label=self.node_label)
-        except RuntimeError:
-            self.report(
-                {"ERROR"},
-                message="Failed to add node. Ensure you are not in edit mode.",
-            )
-            return {"CANCELLED"}
-        return {"FINISHED"}
-
-
-class MN_OT_Assembly_Bio(Operator):
-    bl_idname = "mn.assembly_bio"
-    bl_label = "Build Biological Assembly"
-    bl_description = "Adds node to build biological assembly based on symmetry operations that are extraced from the structure file"
-    bl_options = {"REGISTER", "UNDO"}
-
-    inset_node: BoolProperty(default=False)  # type: ignore
-
-    @classmethod
-    def poll(cls, context):
-        # this just checks to see that there is some biological assembly information that
-        # is associated with the object / molecule. If there isn't then the assembly
-        # operator will be greyed out and unable to be executed
-        obj = context.active_object
-        if obj is None:
-            return False
-        return obj.mn.biological_assemblies != ""
-
-    def execute(self, context):
-        obj = context.active_object
-        if not isinstance(obj, bpy.types.Object):
-            self.report({"ERROR"}, "No active object")
-            return {"CANCELLED"}
-
-        with databpy.nodes.DuplicatePrevention():
-            try:
-                if self.inset_node:
-                    nodes.assembly_insert(obj)
-                else:
-                    tree_assembly = nodes.assembly_initialise(obj)
-                    _add_node(tree_assembly.name, context)
-            except (KeyError, ValueError) as e:
-                self.report({"ERROR"}, "Unable to build biological assembly node.")
-                self.report({"ERROR"}, str(e))
-                return {"CANCELLED"}
-
-        return {"FINISHED"}
-
-
-class MN_OT_iswitch_custom(Operator):
-    bl_idname = "mn.iswitch_custom"
-    # bl_idname = "mn.selection_custom"
-    bl_label = "Custom ISwitch Node"
-    bl_options = {"REGISTER", "UNDO"}
-
-    description: StringProperty(name="Description")  # type: ignore
-    dtype: EnumProperty(  # type: ignore
-        name="Data type",
-        items=(
-            ("RGBA", "RGBA", "Color iswitch."),
-            ("BOOLEAN", "BOOLEAN", "Boolean iswitch"),
-        ),
-    )
-    field: StringProperty(name="field", default="chain_id")  # type: ignore
-    prefix: StringProperty(name="prefix", default="Chain ")  # type: ignore
-    node_property: StringProperty(name="node_property", default="chain_ids")  # type: ignore
-    node_name: StringProperty(name="node_name", default="chain")  # type: ignore
-    starting_value: IntProperty(name="starting_value", default=0)  # type: ignore
-
-    @classmethod
-    def poll(cls, context: Context) -> bool:
-        obj = context.active_object
-        if obj is None:
-            return False
-        return True
-
-    @classmethod
-    def description(cls, context, properties):
-        return properties.description
-
-    def execute(self, context):
-        object = context.view_layer.objects.active
-        prop = object[self.node_property]
-        name = object.name
-        if not prop:
-            self.report(
-                {"WARNING"},
-                message=f"{self.node_property} not available for {object.name}.",
-            )
-            return {"CANCELLED"}
-
-        prefix = {"BOOLEAN": "Select", "RGBA": "Color"}[self.dtype]
-        node_name = " ".join([prefix, self.node_name, name])
-
-        with databpy.nodes.DuplicatePrevention():
-            node_chains = nodes.custom_iswitch(
-                name=node_name,
-                dtype=self.dtype,
-                iter_list=prop,
-                start=self.starting_value,
-                field=self.field,
-                prefix=self.prefix,
-            )
-
-        _add_node(node_chains.name, context)
-
-        return {"FINISHED"}
-
-
-class MN_OT_Residues_Selection_Custom(Operator):
-    bl_idname = "mn.residues_selection_custom"
-    bl_label = "Res ID Custom"
-    bl_description = "Create a selection based on the provided residue strings.\nThis \
-        node is built on a per-molecule basis, taking into account the residues that \
-        were input."
-    bl_options = {"REGISTER", "UNDO"}
-
-    input_resid_string: StringProperty(  # type: ignore
-        name="Select residue IDs: ",
-        description="Enter a string value.",
-        default="19,94,1-16",
-    )
-
-    def execute(self, context):
-        with databpy.nodes.DuplicatePrevention():
-            node_residues = nodes.resid_multiple_selection(
-                node_name="MN_select_res_id_custom",
-                input_resid_string=self.input_resid_string,
-            )
-
-        _add_node(node_residues.name, context)
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_props_dialog(self)
-
-
-def get_swap_items(self, context):
-    node = context.active_node
-    prefix = node.node_tree.name.split(" ")[0].lower()
-    if prefix == "is":
-        prefix = "select"
-
-    items = [
-        (item.name, item.label, item.description)
-        for item in node_info.menu_items.get_submenu(prefix).items
-        if (not item.is_break and not item.is_custom and item.name != "Set Color")
-    ]
-    return items
-
-
-class MN_OT_Node_Swap(Operator):
-    bl_idname = "mn.node_swap"
-    bl_label = "Swap Node"
-    bl_description = "Swap this node for another."
-
-    node_description: StringProperty(default="Swap selected node for another")  # type: ignore
-    node_items: EnumProperty(items=get_swap_items)  # type: ignore
-
-    @classmethod
-    def description(cls, context, properties):
-        return properties.node_description
-
-    def execute(self, context: Context):
-        node = context.active_node
-        nodes.swap(node, self.node_items)
-        return {"FINISHED"}
-
-
-def _lookup_swap_style_items(self, context: Context | None = None):
-    scene = context.scene
-    entities_active_index: int = scene.mn.entities_active_index
-    uuid: str = scene.mn.entities[entities_active_index].name
-    entity = get_session().get(uuid)
-    print(f"{self}")
-    print(f"{self.name_node=}")
-    return (
-        SURFACE_STYLE_ITEMS if entity._entity_type.value == "density" else STYLE_ITEMS
-    )
-
-
-class MN_OT_Node_Swap_Style_Menu(Operator):
-    bl_idname = "mn.node_swap_style_menu"
-    bl_label = "Swap Style"
-    bl_description = "Swap the style node currently used"
-
-    name_tree: StringProperty()  # type: ignore
-    name_node: StringProperty()  # type: ignore
-    node_items: EnumProperty(items=_lookup_swap_style_items)  # type: ignore
-
-    def execute(self, context: Context):
-        node = bpy.data.node_groups[self.name_tree].nodes[self.name_node]
-        nodes.swap(node, tree=nodes.styles_mapping[self.node_items])
-        return {"FINISHED"}
-
-
-class MN_OT_Change_Color(Operator):
-    bl_idname = "mn.change_color"
-    bl_label = "Color"
-
-    color: EnumProperty(  # type: ignore
-        items=(
-            (item.name, item.label, item.description)
-            for item in node_info.menu_items.get_submenu("color").items
-            if (not item.is_break and not item.is_custom and item.name != "Set Color")
-        )
-    )
-
-    def execute(self, context: Context):
-        node = context.active_node
-        nodes.swap(node, self.color)
-        self.report({"INFO"}, f"Selected {self.color}")
-        return {"FINISHED"}
+_STYLE_NODE = {
+    "spheres": g.StyleSpheres,
+    "ribbon": g.StyleRibbon,
+    "cartoon": g.StyleCartoon,
+    "sticks": g.StyleSticks,
+    "ball_and_stick": g.StyleBallAndStick,
+    "surface": g.StyleSurface,
+}
 
 
 class Import_Molecule(bpy.types.Operator):
@@ -312,52 +82,35 @@ class Import_Molecule(bpy.types.Operator):
         default=True,
         description="Whether to setup the starting default node tree on import",
     )
-
-    centre: BoolProperty(  # type: ignore
-        name="Centre",
-        description="Whether to centre the structure on import",
-        default=False,
-    )
-    centre_type: EnumProperty(  # type: ignore
-        name="Centre",
-        description="Centre the structure at the world origin using the given method",
-        default="mass",
-        items=(
-            (
-                "mass",
-                "Mass",
-                "Adjust the structure's centre of mass to be at the world origin",
-                2,
-            ),
-            (
-                "centroid",
-                "Centroid",
-                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-                3,
-            ),
-        ),
-    )
-    remove_solvent: BoolProperty(  # type: ignore
-        default=True,
-        name="Remove Solvent",
-        description="Remove solvent atoms from the structure on import",
-    )
     assembly: BoolProperty(  # type: ignore
         default=False,
         name="Build Biological Assembly",
         description="Build the biological assembly for the structure on import",
     )
 
+    @property
+    def style_node(
+        self,
+    ) -> type[
+        g.StyleSpheres
+        | g.StyleSurface
+        | g.StyleRibbon
+        | g.StyleSticks
+        | g.StyleBallAndStick
+        | g.StyleCartoon
+    ]:
+        "Helper to get the selected node class for adding to the tree"
+        return _STYLE_NODE[self.style]
+
     def draw(self, context):
         layout = self.layout
+        assert layout
         row = layout.row()
         row.prop(self, "node_setup", text="")
         col = row.column()
         col.prop(self, "style")
         col.enabled = self.node_setup
         # row = layout.row()
-        layout.prop(self, "centre")
-        layout.prop(self, "remove_solvent")
         layout.prop(self, "assembly")
 
         return layout
@@ -377,6 +130,7 @@ class MN_OT_Import_Molecule(Import_Molecule):
 
     def draw(self, context):
         layout = self.layout
+        assert layout
         layout.label(text=f"Importing {len(self.files)} molecules")
         layout = super().draw(context)
 
@@ -384,18 +138,23 @@ class MN_OT_Import_Molecule(Import_Molecule):
         if not self.directory:
             return {"CANCELLED"}
 
-        if not self.node_setup:
-            style = None
-        else:
-            style = self.style
-
         for file in self.files:
             try:
-                Molecule.load(
-                    Path(self.directory, file.name),
-                    name=file.name,
-                    remove_solvent=self.remove_solvent,
-                ).add_style(style, assembly=self.assembly)
+                mol = Molecule.load(
+                    file_path=Path(self.directory, file.name), name=file.name
+                )
+
+                with mol.tree.reset() as (atoms, join):
+                    (
+                        atoms
+                        >> self.style_node(material=add_all_materials()["MN Default"])
+                        >> (
+                            g.AssemblyInstance(data_object=mol.create_data_object())
+                            if self.assembly
+                            else None
+                        )
+                        >> join
+                    )
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
@@ -430,66 +189,21 @@ DOWNLOAD_FORMATS = (
 # operator that is called by the 'button' press which calls the fetch function
 
 
-class MN_OT_Import_Fetch(bpy.types.Operator):
+class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
     bl_idname = "mn.import_fetch"
-    bl_label = "Fetch"
-    bl_description = "Download and open a structure from the PDB"
+    bl_label = "Import Molecule"
+    bl_description = "Open a local structure file or download one from a database"
     bl_options = {"REGISTER", "UNDO"}
 
-    code: StringProperty(  # type: ignore
-        name="PDB",
-        description="The PDB code to download (4-character e.g. '1abc' or 12-character e.g. 'pdb_00001abc')",
-        options={"TEXTEDIT_UPDATE"},
-    )
-    file_format: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        default="bcif",
-        items=DOWNLOAD_FORMATS,
-    )
-    node_setup: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        default=True,
-        description="Create and set up a Geometry Nodes tree on import",
-    )
-    assembly: BoolProperty(  # type: ignore
-        name="Build Assembly",
-        description="Add a node to build the biological assembly on import",
-        default=False,
-    )
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        description="Default style for importing",
-        items=STYLE_ITEMS,
-        default="spheres",
-    )
-    cache_dir: StringProperty(  # type: ignore
-        name="Cache Directory",
-        description="Where to store the structures downloaded from the Protein Data Bank",
-        default=str(CACHE_DIR),
-        subtype="DIR_PATH",
-    )
-    remove_solvent: BoolProperty(  # type: ignore
-        name="Remove Solvent",
-        description="Delete the solvent from the structure on import",
-        default=True,
-    )
-    del_hydrogen: BoolProperty(  # type: ignore
-        name="Remove Hydrogens",
-        description="Remove the hydrogens from a structure on import",
-        default=False,
-    )
-
-    centre: BoolProperty(  # type: ignore
-        name="Centre",
-        description="Centre the structure on the world origin",
-        default=False,
-    )
-
     database: EnumProperty(  # type: ignore
-        name="Method",
+        name="Database",
         default="wwpdb",
         items=(
+            (
+                "local",
+                "Local File",
+                "Open a structure file already on disk",
+            ),
             (
                 "wwpdb",
                 "wwPDB",
@@ -502,41 +216,67 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
             ),
         ),
     )
-
-    centre_type: EnumProperty(  # type: ignore
-        name="Method",
-        default="mass",
-        items=(
-            (
-                "mass",
-                "Mass",
-                "Adjust the structure's centre of mass to be at the world origin",
-            ),
-            (
-                "centroid",
-                "Centroid",
-                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-            ),
-        ),
+    code: StringProperty(  # type: ignore
+        name="PDB",
+        description="The PDB code to download (4-character e.g. '1abc' or 12-character e.g. 'pdb_00001abc')",
+        options={"TEXTEDIT_UPDATE"},
     )
+    filepath: StringProperty(  # type: ignore
+        name="File",
+        description="Path of the local structure file to open",
+        subtype="FILE_PATH",
+    )
+    file_format: EnumProperty(  # type: ignore
+        name="Format",
+        description="Format to download as from the PDB",
+        default="bcif",
+        items=DOWNLOAD_FORMATS,
+    )
+
+    cache_dir: StringProperty(  # type: ignore
+        name="Cache Directory",
+        description="Where to store the structures downloaded from the Protein Data Bank",
+        default=str(CACHE_DIR),
+        subtype="DIR_PATH",
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        assert layout
+        layout.prop_tabs_enum(self, "database")
+        if self.database == "local":
+            layout.prop(self, "filepath")
+        else:
+            row = layout.row().split(factor=0.7)
+            row.prop(self, "code")
+            # file format only applies to wwPDB downloads; others pick their own
+            if self.database == "wwpdb":
+                row.prop(self, "file_format", text="")
+        row = layout.row()
+        row.prop(self, "node_setup", text="")
+        col = row.column()
+        col.prop(self, "style")
+        col.enabled = self.node_setup
+        layout.prop(self, "assembly")
+
+    def invoke(self, context, event):
+        prefs = addon_preferences()
+        self.cache_dir = str(prefs.cache_dir) if prefs is not None else bpy.app.tempdir
+        return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
         try:
-            mol = (
-                entities.Molecule.fetch(
+            if self.database == "local":
+                mol = Molecule.load(file_path=path_resolve(self.filepath))
+                message = f"Imported '{self.filepath}' as {mol.name}"
+            else:
+                mol = entities.Molecule.fetch(
                     code=self.code,
                     cache=self.cache_dir,
                     format=self.file_format,
-                    remove_solvent=self.remove_solvent,
                     database=self.database,
                 )
-                .add_style(
-                    style=self.style if self.node_setup else None,  # type: ignore
-                    assembly=self.assembly,
-                )
-                .centre_molecule(self.centre_type if self.centre else None)
-            )
-
+                message = f"Downloaded {self.code} as {mol.name}"
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
             if self.file_format == "pdb":
@@ -546,56 +286,53 @@ class MN_OT_Import_Fetch(bpy.types.Operator):
                 )
             return {"CANCELLED"}
 
-        message = f"Downloaded {self.code} as {mol.name}"
+        if self.assembly:
+            nodes.assembly_data_object_from_obj(mol.object)
+
+        with mol.tree.reset() as (atoms, join):
+            (
+                atoms
+                >> g.SetColor(color=g.ColorElement(c=g.RandomColor(g.ChainID(), 3)))
+                >> self.style_node(material=add_all_materials()["MN Default"])
+                >> (
+                    g.AssemblyInstance(data_object=mol.create_data_object())
+                    if self.assembly
+                    else None
+                )
+                >> join
+            )
+
         try:
             bpy.context.view_layer.objects.active = mol.object  # type: ignore
         except RuntimeError:
-            message += " - MolecularNodes collection is disabled"
+            message += " - Molecular Nodes collection is disabled"
 
         self.report({"INFO"}, message=message)
 
         return {"FINISHED"}
 
 
-class MN_OT_Import_Protein_Local(Import_Molecule):
-    bl_idname = "mn.import_local"
-    bl_label = "Local"
-    bl_description = "Open a local structure file"
+ENSEMBLE_TYPES = (
+    ("starfile", "Starfile", "Import a .star mapback file"),
+    ("cellpack", "CellPack", "Import a CellPack .cif / .bcif model"),
+)
+
+
+class MN_OT_Import_Ensemble(bpy.types.Operator):
+    bl_idname = "mn.import_ensemble"
+    bl_label = "Import Ensemble"
+    bl_description = "Import an ensemble as a Starfile or CellPack model"
     bl_options = {"REGISTER", "UNDO"}
 
-    filepath: StringProperty(  # type: ignore
-        name="File",
-        description="File to import",
-        subtype="FILE_PATH",
+    ensemble_type: EnumProperty(  # type: ignore
+        name="Type",
+        description="The kind of ensemble to import",
+        default="starfile",
+        items=ENSEMBLE_TYPES,
     )
-
-    def execute(self, context):
-        mol = (
-            Molecule.load(
-                file_path=path_resolve(self.filepath),
-                remove_solvent=self.remove_solvent,
-            )
-            .centre_molecule(self.centre_type if self.centre else None)
-            .add_style(
-                style=self.style if self.node_setup else None,
-                assembly=self.assembly,
-            )
-        )
-
-        message = f"Imported '{self.filepath}' as {mol.name}"
-        try:
-            bpy.context.view_layer.objects.active = mol.object  # type: ignore
-        except RuntimeError:
-            message += " - MolecularNodes collection is disabled"
-
-        self.report({"INFO"}, message=message)
-        return {"FINISHED"}
-
-
-class ImportEnsemble(bpy.types.Operator):
     filepath: StringProperty(  # type: ignore
         name="File",
-        description="File path for the `.star` file to import.",
+        description="File path for the ensemble to import",
         subtype="FILE_PATH",
         maxlen=0,
     )
@@ -605,90 +342,116 @@ class ImportEnsemble(bpy.types.Operator):
         description="Create and set up a Geometry Nodes tree on import",
     )
 
+    def draw(self, context):
+        layout = self.layout
+        assert layout
+        layout.prop_tabs_enum(self, "ensemble_type")
+        layout.prop(self, "filepath")
+        layout.prop(self, "node_setup")
 
-class MN_OT_Import_Star_File(ImportEnsemble):
-    bl_idname = "mn.import_star_file"
-    bl_label = "Load"
-    bl_description = (
-        "Will import the given file, setting up the points to instance an object."
-    )
-    bl_options = {"REGISTER"}
-
-    @classmethod
-    def poll(cls, context):
-        return True
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        ensemble.load_starfile(
-            file_path=path_resolve(self.filepath),
-            node_setup=self.node_setup,
-        )
+        file_path = path_resolve(self.filepath)
+        if self.ensemble_type == "cellpack":
+            ensemble.load_cellpack(
+                file_path=file_path,
+                name=Path(self.filepath).name,
+                node_setup=self.node_setup,
+            )
+        else:
+            ensemble.load_starfile(
+                file_path=file_path,
+                node_setup=self.node_setup,
+            )
         return {"FINISHED"}
 
 
-class MN_OT_Import_Cell_Pack(ImportEnsemble):
-    bl_idname = "mn.import_cell_pack"
-    bl_label = "Load"
-    bl_description = "Load a CellPack ensemble from a .cif or .bcif file"
-    bl_options = {"REGISTER"}
-
-    def execute(self, context):
-        ensemble.load_cellpack(
-            file_path=path_resolve(self.filepath),
-            name=Path(self.filepath).name,
-            node_setup=self.node_setup,
-        )
-        return {"FINISHED"}
+DENSITY_STYLE_ITEMS = (
+    (
+        "density_surface",
+        "Surface",
+        "A mesh surface based on the specified threshold",
+        0,
+    ),
+    (
+        "density_iso_surface",
+        "ISO Surface",
+        "A mesh surface based on the specified iso value",
+        1,
+    ),
+    (
+        "density_wire",
+        "Wire",
+        "A wire mesh surface based on the specified threshold",
+        2,
+    ),
+)
 
 
 class MN_OT_Import_Map(bpy.types.Operator):
     bl_idname = "mn.import_density"
-    bl_label = "Load"
-    bl_description = "Import a EM density map into Blender"
-    bl_options = {"REGISTER"}
+    bl_label = "Import Density"
+    bl_description = "Import an EM density map into Blender"
+    bl_options = {"REGISTER", "UNDO"}
 
-    def execute(self, context):
-        scene = context.scene
-        density.load(
-            file_path=path_resolve(scene.mn.import_density),
-            invert=scene.mn.import_density_invert,
-            setup_nodes=scene.mn.import_node_setup,
-            style=scene.mn.import_density_style,
-            center=scene.mn.import_density_center,
-            overwrite=scene.mn.import_density_overwrite,
-        )
-        return {"FINISHED"}
-
-
-class TrajectoryImportOperator(bpy.types.Operator):
-    bl_label = "Import"
-    bl_description = "Will import the given file and toplogy."
-    bl_options = {"REGISTER"}
-
-    topology: StringProperty(  # type: ignore
-        name="Toplogy",
-        description="File path for the topology file",
+    filepath: StringProperty(  # type: ignore
+        name="File",
+        description="File path for the map file.",
         subtype="FILE_PATH",
         maxlen=0,
     )
-    trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory file",
-        subtype="FILE_PATH",
-        maxlen=0,
+    invert: BoolProperty(  # type: ignore
+        name="Invert Data",
+        description="Invert the values in the map. Low becomes high, high becomes low.",
+        default=False,
     )
-    name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name for the object that will be created and linked to the trajectory",
-        default="NewOrigami",
-        maxlen=0,
+    center: BoolProperty(  # type: ignore
+        name="Center Density",
+        description="Translate the density so that the center of the box is at the origin.",
+        default=False,
+    )
+    overwrite: BoolProperty(  # type: ignore
+        name="Overwrite Intermediate File",
+        description="Overwrite generated intermediate .vdb file.",
+        default=False,
+    )
+    setup_nodes: BoolProperty(  # type: ignore
+        name="Setup Nodes",
+        default=True,
+        description="Create and set up a Geometry Nodes tree on import",
     )
     style: EnumProperty(  # type: ignore
         name="Style",
-        description="Starting style on import",
-        default="spheres",
-        items=STYLE_ITEMS,
+        items=DENSITY_STYLE_ITEMS,
     )
+
+    def draw(self, context):
+        layout = self.layout
+        assert layout
+        layout.prop(self, "filepath")
+        layout.prop(self, "invert")
+        layout.prop(self, "center")
+        layout.prop(self, "overwrite")
+        row = layout.row()
+        row.prop(self, "setup_nodes", text="")
+        col = row.column()
+        col.prop(self, "style")
+        col.enabled = self.setup_nodes
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        density.load(
+            file_path=path_resolve(self.filepath),
+            invert=self.invert,
+            style=self.style if self.setup_nodes else None,
+            center=self.center,
+            overwrite=self.overwrite,
+        )
+        return {"FINISHED"}
 
 
 class MN_OT_Reload_Trajectory(bpy.types.Operator):
@@ -721,9 +484,7 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
         elif "streaming" in obj.mn.entity_type:
             traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
         else:
-            traj = Trajectory.load(
-                path_topo, path_traj, style=None, create_object=False
-            )
+            traj = Trajectory.load(path_topo, path_traj, create_object=False)
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
@@ -732,10 +493,19 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
 class MN_OT_Import_Trajectory(bpy.types.Operator):
     bl_idname = "mn.import_trajectory"
-    bl_label = "Import Protein MD"
-    bl_description = "Load molecular dynamics trajectory"
+    bl_label = "Import Trajectory"
+    bl_description = "Load a molecular dynamics or oxDNA trajectory"
     bl_options = {"REGISTER", "UNDO"}
 
+    format: EnumProperty(  # type: ignore
+        name="Format",
+        description="The kind of trajectory to import",
+        default="md",
+        items=(
+            ("md", "MD", "A molecular dynamics trajectory (via MDAnalysis)"),
+            ("oxdna", "oxDNA", "An oxDNA trajectory"),
+        ),
+    )
     topology: StringProperty(  # type: ignore
         name="Topology",
         description="File path for the toplogy file for the trajectory",
@@ -766,7 +536,33 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         default=True,
     )
 
+    def draw(self, context):
+        layout = self.layout
+        assert layout
+        layout.prop_tabs_enum(self, "format")
+        layout.prop(self, "name")
+        layout.prop(self, "topology")
+        layout.prop(self, "trajectory")
+        # oxDNA imports don't set up a style/node tree in the same way
+        if self.format == "md":
+            row = layout.row()
+            row.prop(self, "setup_nodes", text="")
+            col = row.column()
+            col.prop(self, "style")
+            col.enabled = self.setup_nodes
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
     def execute(self, context):
+        if self.format == "oxdna":
+            trajectory.load_oxdna(
+                top=path_resolve(self.topology),
+                traj=path_resolve(self.trajectory),
+                name=self.name,
+            )
+            return {"FINISHED"}
+
         topology = path_resolve(self.topology)
         coordinates = path_resolve(self.trajectory)
 
@@ -783,9 +579,9 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 topology=topology,
                 coordinates=coordinates,
                 name=self.name,
-                style=self.style if self.setup_nodes else None,
-                selection="all",
             )
+            if self.setup_nodes:
+                traj.add_style(style=self.style)
 
         context.view_layer.objects.active = traj.object
         context.scene.frame_start = 0
@@ -807,22 +603,6 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Import_OxDNA_Trajectory(TrajectoryImportOperator):
-    """
-    Blender operator for importing oxDNA trajectories.
-    """
-
-    bl_idname = "mn.import_oxdna"
-
-    def execute(self, context):
-        trajectory.load_oxdna(
-            top=path_resolve(self.topology),
-            traj=path_resolve(self.trajectory),
-            name=self.name,
-        )
-        return {"FINISHED"}
-
-
 class MN_OT_Add_Style(Operator):
     """
     Operator to add a new style to an entity
@@ -841,13 +621,13 @@ class MN_OT_Add_Style(Operator):
         items=STYLE_ITEMS,
     )
 
-    use_uniform_color: BoolProperty(
+    use_uniform_color: BoolProperty(  # type: ignore
         name="Use uniform color",
         description="Use uniform color for style",
         default=False,
-    )  # type: ignore
+    )
 
-    uniform_color: bpy.props.FloatVectorProperty(
+    uniform_color: bpy.props.FloatVectorProperty(  # type: ignore
         name="Uniform color",
         description="Uniform color for style",
         subtype="COLOR",
@@ -855,28 +635,29 @@ class MN_OT_Add_Style(Operator):
         default=(0.162, 0.624, 0.196, 1),
         min=0.0,
         max=1.0,
-    )  # type: ignore
+    )
 
-    color_scheme: StringProperty(
+    color_scheme: StringProperty(  # type: ignore
         name="Coloring scheme",
         description="Coloring scheme for style",
         default="common",
-    )  # type: ignore
+    )
 
-    selection: StringProperty(
+    selection: StringProperty(  # type: ignore
         name="Selection",
         description="Selection for which the style applies",
         default="all",
-    )  # type: ignore
+    )
 
-    name: StringProperty(
+    name: StringProperty(  # type: ignore
         name="Name",
         description="Label for the style",
         default="",
-    )  # type: ignore
+    )
 
     def draw(self, context):
         layout = self.layout
+        assert layout
         layout.prop(self, "style")
         layout.prop(self, "use_uniform_color")
         if self.use_uniform_color:
@@ -921,13 +702,9 @@ class MN_OT_Remove_Style(Operator):
         entity = get_session().get(self.uuid)
         node_group = entity.node_group
         style_node = node_group.nodes[self.style_node_index]
-        create_style_interface(style_node).remove()
+        remove_style_node(style_node)
         # set the active index in UI to the last style
-        style_nodes = get_final_style_nodes(node_group)
-        if len(style_nodes) > 0:
-            entity.object.mn.styles_active_index = node_group.nodes.find(
-                style_nodes[-1].name
-            )
+
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -1030,6 +807,7 @@ class MN_OT_Add_Annotation(Operator):
 
     def draw(self, context):
         layout = self.layout
+        assert layout
         layout.prop(self, "type")
 
     def execute(self, context: Context):
@@ -1163,21 +941,11 @@ class MN_OT_DSSP_cancel(Operator):
 
 
 CLASSES = [
-    MN_OT_Add_Custom_Node_Group,
-    MN_OT_Residues_Selection_Custom,
-    MN_OT_Assembly_Bio,
-    MN_OT_iswitch_custom,
-    MN_OT_Change_Color,
-    MN_OT_Node_Swap,
-    MN_OT_Node_Swap_Style_Menu,
     MN_OT_Import_Fetch,
-    MN_OT_Import_OxDNA_Trajectory,
     MN_OT_Import_Trajectory,
     MN_OT_Reload_Trajectory,
     MN_OT_Import_Map,
-    MN_OT_Import_Star_File,
-    MN_OT_Import_Cell_Pack,
-    MN_OT_Import_Protein_Local,
+    MN_OT_Import_Ensemble,
     MN_OT_Import_Molecule,
     MN_FH_Import_Molecule,
     MN_OT_Add_Style,

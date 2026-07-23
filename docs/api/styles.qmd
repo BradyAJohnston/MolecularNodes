@@ -39,7 +39,7 @@ mol = (
     .add_style("cartoon", material = mn.material.AmbientOcclusion())
     .add_style(
         style="surface",
-        selection=mn.MoleculeSelector().is_peptide(),
+        # selection=mn.MoleculeSelector().is_peptide(),
         color=(0.6, 0.6, 0.8, 1.0),
         material=mn.material.TransparentOutline()
         )
@@ -47,8 +47,6 @@ mol = (
 cv.frame_object(mol)
 cv.snapshot()
 ```
-
-
 
 ```{python}
 mol.styles[0].remove()

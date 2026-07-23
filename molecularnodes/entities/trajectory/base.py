@@ -13,16 +13,11 @@ import databpy as db
 import MDAnalysis as mda
 import numpy as np
 from MDAnalysis.core.groups import AtomGroup
+from nodebpy.nodes.geometry import NamedAttribute
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
-from ...nodes.geometry import (
-    add_style_branch,
-)
-from ...nodes.nodes import styles_mapping
-from ...nodes.styles import (
-    StyleBase,
-)
+from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING, styles_mapping
 from ...utils import (
     count_value_changes,
     temp_override_property,
@@ -106,9 +101,6 @@ class Trajectory(MolecularEntity):
     interpolate = BoolObjectMNProperty("interpolate")
 
     _mn_frame = BoolObjectMNProperty("frame_hidden")
-    _mn_styles_active_index = IntObjectMNProperty(
-        "styles_active_index", _validate_non_negative
-    )
     _mn_entity_type = StringObjectMNProperty("entity_type")
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
@@ -119,7 +111,7 @@ class Trajectory(MolecularEntity):
         self,
         universe: mda.Universe,
         name: str = "NewUniverseObject",
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         create_object: bool = True,
     ):
         """Initialize Trajectory from MDAnalysis Universe.
@@ -491,14 +483,10 @@ class Trajectory(MolecularEntity):
         topology: Path | str,
         coordinates: Path | str,
         name: str = "NewTrajectory",
-        style: str | None = "spheres",
-        selection: str | None = None,
         create_object: bool = True,
     ) -> "Trajectory":
         u = mda.Universe(topology, coordinates)
         traj = cls(u, name=name, create_object=create_object)
-        if style:
-            traj.add_style(style=style, selection=selection)
         return traj
 
     def _update_calculations(self) -> None:
@@ -578,7 +566,7 @@ class Trajectory(MolecularEntity):
             return
         names = ["a", "b", "c", "alpha", "beta", "gamma"]
         nodes_to_update = ["Periodic Box", "Periodic Array"]
-        for node in self.tree.nodes:
+        for node in self.modifier_node_tree.nodes:
             if (
                 not isinstance(node, bpy.types.GeometryNodeGroup)
                 or node.node_tree is None
@@ -595,14 +583,16 @@ class Trajectory(MolecularEntity):
 
     def add_style(
         self,
-        style: StyleBase | str = "spheres",
-        color: str | None = "common",
+        style: STYLE_LITERALS = "spheres",
         selection: str | AtomGroup | None = None,
-        material: bpy.types.Material | str | None = None,
-        name: str | None = None,
+        material: bpy.types.Material | None = None,
+        **kwargs,
     ) -> "Trajectory":
         """
         Add a visual style to the trajectory.
+
+        Provides a simple interface for adding visual styles to the molecule. For more complex
+        styling, use the manual node tree creation via the `with mol.tree:` context manager.
 
         Parameters
         ----------
@@ -610,11 +600,6 @@ class Trajectory(MolecularEntity):
             The style to apply to the trajectory. Can be a GeometryNodeTree or a string
             identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
             Default is "spheres".
-
-        color : str | None, optional
-            The coloring scheme to apply. Can be "common" (element-based coloring),
-            "chain", "residue", or other supported schemes. If None, no coloring
-            is applied. Default is "common".
 
         selection : str | AtomGroup | None, optional
             Apply the style only to atoms matching this selection. Can be:
@@ -626,8 +611,8 @@ class Trajectory(MolecularEntity):
             The material to apply to the styled atoms. Can be a Blender Material object,
             a string with a material name, or None to use default materials. Default is None.
 
-        name: str, optional
-            The label for this style
+        **kwargs : optional
+            Additional keyword arguments to pass to the added style node.
 
         Returns
         -------
@@ -644,8 +629,9 @@ class Trajectory(MolecularEntity):
         If a selection is provided, it will be evaluated and stored as a new
         named attribute on the trajectory with an automatically generated name (sel_N).
         """
-        if style is None:
-            return self
+
+        from ...nodes.geometry import OxDNAStyleRibbon
+        from . import OXDNA
 
         if isinstance(style, str) and style not in styles_mapping:
             raise ValueError(
@@ -660,26 +646,28 @@ class Trajectory(MolecularEntity):
             elif isinstance(selection, AtomGroup):
                 sel = self.selections.from_atomgroup(selection)
             attribute_name = sel.name
-            # TODO: Delete these named attributes when style is deleted
-            # Currently, styles are removed using GeometryNodeInterFace.remove(),
 
-        node_style = add_style_branch(
-            tree=self.tree,
-            style=style,
-            color=color,
-            selection=attribute_name,
-            material=material,
-            name=name,
-        )
+        if isinstance(self, OXDNA):
+            STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
 
-        # set the active index for UI to the newly added style
-        self._mn_styles_active_index = self.tree.nodes.find(node_style.name)
+        with self.tree as tree:
+            (
+                tree.atoms
+                >> STYLE_NODE_MAPPING[style](
+                    selection=NamedAttribute(attribute_name)
+                    if attribute_name
+                    else None,
+                    material=material,
+                    **kwargs,
+                )
+                >> tree.join
+            )
 
         return self
 
     def __getstate__(self):
         """Custom serialization to handle MDAnalysis Universe objects."""
-        state = self.__dict__.copy()
+        state = super().__getstate__()
 
         # Store universe file paths for restoration
         if hasattr(self, "universe") and self.universe is not None:

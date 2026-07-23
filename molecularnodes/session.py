@@ -237,7 +237,7 @@ class MNSession:
     def add_trajectory(
         self,
         universe: mda.Universe | AtomGroup,
-        style: str | None = "vdw",
+        style: str | None = "spheres",
         name: str = "NewUniverseObject",
     ) -> Trajectory:
         """

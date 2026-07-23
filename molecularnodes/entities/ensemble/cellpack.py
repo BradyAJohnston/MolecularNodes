@@ -7,6 +7,7 @@ from databpy import AttributeTypes, BlenderObject, store_named_attribute
 from ... import blender as bl
 from ... import color
 from ...nodes import nodes
+from ...nodes.geometry import EnsembleInstance
 from ..utilities import create_object
 from .base import Ensemble, EntityType
 from .reader import CellPackReader
@@ -24,9 +25,14 @@ class CellPack(Ensemble):
         self._color_palette_path = Path(file_path).parent / "color_palette.json"
         self.object = self._create_data_object(name=f"{Path(file_path).name}")
         self.object.mn.entity_type = self._entity_type.value
-        self._create_object_instances(name=self.object.name, node_setup=False)
-        self._setup_node_tree(fraction=0.1)
-        # self._setup_colors()
+        self._create_object_instances(name=self.object.name, node_setup=True)
+
+        with self.tree.reset() as (atoms, join):
+            (
+                atoms
+                >> EnsembleInstance(instances=self.data_collection, fraction=0.1)
+                >> join
+            )
 
     def _setup_colors(self):
         if self._color_palette_path.exists():
@@ -113,18 +119,3 @@ class CellPack(Ensemble):
             bob.store_named_attribute(bob.named_attribute("pdb_model_num"), "chain_id")
 
         return bob.object
-
-    def _setup_node_tree(self, name="CellPack", fraction=1.0, as_points=False):
-        mod = nodes.get_mod(self.object)
-
-        group = nodes.new_tree(name=f"MN_ensemble_{name}", fallback=False)
-        mod.node_group = group
-
-        node_pack = nodes.add_custom(group, "Ensemble Instance", location=[-100, 0])
-        node_pack.inputs["Instances"].default_value = self.data_collection
-        node_pack.inputs["Fraction"].default_value = fraction
-        node_pack.inputs["As Points"].default_value = as_points
-
-        link = group.links.new
-        link(nodes.get_input(group).outputs[0], node_pack.inputs[0])
-        link(node_pack.outputs[0], nodes.get_output(group).inputs[0])

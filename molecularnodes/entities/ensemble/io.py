@@ -3,7 +3,7 @@ from .cellpack import CellPack
 from .star import StarFile
 
 
-def load_starfile(file_path, node_setup=True, world_scale=0.01):
+def load_starfile(file_path, node_setup=True, world_scale=0.1) -> StarFile:
     ensemble = StarFile.from_starfile(file_path)
     ensemble.create_object(
         name=Path(file_path).name, node_setup=node_setup, world_scale=world_scale
@@ -18,7 +18,7 @@ def load_cellpack(
     node_setup=True,
     world_scale=0.01,
     fraction: float = 1,
-):
+) -> CellPack:
     ensemble = CellPack(file_path)
     ensemble.create_object(
         name=name, node_setup=node_setup, world_scale=world_scale, fraction=fraction

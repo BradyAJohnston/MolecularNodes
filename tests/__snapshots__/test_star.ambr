@@ -1,0 +1,26 @@
+# serializer version: 1
+# name: test_categorical_attributes
+  GeometrySet of 'cistem.star'
+    INSTANCES: 2037 points
+      attributes: cisTEMAmplitudeContrast, cisTEMAnglePhi, cisTEMAnglePsi, cisTEMAngleTheta, cisTEMBeamTiltX, cisTEMBeamTiltY, cisTEMDefocus1, cisTEMDefocus2, cisTEMDefocusAngle, cisTEMImageShiftX, cisTEMImageShiftY, cisTEMMicroscopeCsMM, cisTEMMicroscopeVoltagekV, cisTEMOriginalImageFilename, cisTEMOriginalXPosition, cisTEMOriginalYPosition, cisTEMPixelSize, cisTEMScore, cisTEMScoreChange, cisTEMZFromDefocus, image_id, instance_transform, position
+# ---
+# name: test_load_starfiles
+  GeometrySet of 'clathrin.star'
+    INSTANCES: 63 points
+      attributes: image_id, instance_transform, position, rlnAnglePsi, rlnAngleRot, rlnAngleTilt, rlnCoordinateX, rlnCoordinateY, rlnCoordinateZ, rlnParticleName, rlnTomoMdocName, rlnTomoName
+# ---
+# name: test_micrograph_conversion
+  GeometrySet of 'cistem.star'
+    INSTANCES: 2037 points
+      attributes: cisTEMAmplitudeContrast, cisTEMAnglePhi, cisTEMAnglePsi, cisTEMAngleTheta, cisTEMBeamTiltX, cisTEMBeamTiltY, cisTEMDefocus1, cisTEMDefocus2, cisTEMDefocusAngle, cisTEMImageShiftX, cisTEMImageShiftY, cisTEMMicroscopeCsMM, cisTEMMicroscopeVoltagekV, cisTEMOriginalImageFilename, cisTEMOriginalXPosition, cisTEMOriginalYPosition, cisTEMPixelSize, cisTEMScore, cisTEMScoreChange, cisTEMZFromDefocus, image_id, instance_transform, position
+# ---
+# name: test_starfile_attributes[cistem]
+  GeometrySet of 'cistem.star'
+    MESH: 2037 verts, 0 edges, 0 faces
+      attributes: cisTEMAmplitudeContrast, cisTEMAnglePhi, cisTEMAnglePsi, cisTEMAngleTheta, cisTEMBeamTiltX, cisTEMBeamTiltY, cisTEMDefocus1, cisTEMDefocus2, cisTEMDefocusAngle, cisTEMImageShiftX, cisTEMImageShiftY, cisTEMMicroscopeCsMM, cisTEMMicroscopeVoltagekV, cisTEMOriginalImageFilename, cisTEMOriginalXPosition, cisTEMOriginalYPosition, cisTEMPixelSize, cisTEMScore, cisTEMScoreChange, cisTEMZFromDefocus, image_id, position, rotation, sharp_face
+# ---
+# name: test_starfile_attributes[relion]
+  GeometrySet of 'relion.star'
+    MESH: 400 verts, 0 edges, 0 faces
+      attributes: faVectorX, faVectorY, faVectorZ, image_id, position, rlnAnglePsi, rlnAngleRot, rlnAngleTilt, rlnCoordinateX, rlnCoordinateY, rlnCoordinateZ, rlnImagePixelSize, rlnMicrographName, rlnOpticsGroup, rlnOriginXAngst, rlnOriginYAngst, rlnOriginZAngst, rotation, sharp_face
+# ---

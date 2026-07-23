@@ -8,14 +8,14 @@ def test_get_set(snapshot):
     code = "1BNA"
     mol = mn.Molecule.fetch(code).add_style("ribbon")
     geom = GeometrySet(mol.object)
-    assert snapshot == geom
+    assert snapshot == geom.summary()
 
 
 def test_spheres_style(snapshot):
     code = "1BNA"
     mol = mn.Molecule.fetch(code).add_style("spheres")
     geom = GeometrySet(mol.object)
-    assert snapshot == geom
+    assert snapshot == geom.summary()
 
 
 def test_specific_attribute():
@@ -23,7 +23,7 @@ def test_specific_attribute():
     mol = mn.Molecule.fetch(code).add_style("ribbon")
     geom = GeometrySet(mol.object)
 
-    mesh = geom.geom.mesh
+    mesh = geom.mesh
     b_factor_attr = db.Attribute(mesh.attributes["b_factor"])
     b_factor = b_factor_attr.as_array()
 
@@ -49,7 +49,7 @@ def test_attribute_comparison():
     mol_spheres = mn.Molecule.fetch(code).add_style("spheres")
     geom_spheres = GeometrySet(mol_spheres.object)
 
-    pc = geom_spheres.geom.pointcloud
+    pc = geom_spheres.pointcloud
     pc_count = len(db.Attribute(pc.attributes["position"]))
 
     instances = geom_ribbon.instances

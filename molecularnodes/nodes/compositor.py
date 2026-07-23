@@ -1,90 +1,20 @@
 import bpy
-from ..blender import IS_BLENDER_5
+from nodebpy import compositor as c
 
 
-# Default 5.x compositor node tree
-def default_5x_compositor_node_tree():
-    node_tree = bpy.data.node_groups.new(
-        type="CompositorNodeTree", name="Compositor Nodes"
-    )
-    render_layers = node_tree.nodes.new("CompositorNodeRLayers")
-    group_output = node_tree.nodes.new("NodeGroupOutput")
-    _ = node_tree.interface.new_socket(
-        name="Image", in_out="OUTPUT", socket_type="NodeSocketColor"
-    )
-    render_layers.location = (100.0, 250.0)
-    group_output.location = (600.0, 250.0)
-    node_tree.links.new(render_layers.outputs["Image"], group_output.inputs["Image"])
-    return node_tree
+def default_5x_compositor_node_tree() -> bpy.types.CompositorNodeTree:
+    with c.tree("Compositor Nodes") as tree:
+        c.RenderLayers().o.image >> tree.outputs.color("Image")
+
+    return tree.tree
 
 
-# MN Compositor node tree
-def mn_compositor_node_tree():
-    mn_compositor = bpy.data.node_groups.new(
-        type="CompositorNodeTree", name="MN Compositor"
-    )
+def mn_compositor_node_tree() -> bpy.types.CompositorNodeTree:
+    with c.tree("MN Compositor") as tree:
+        input = tree.inputs.color("Image")
+        output = tree.outputs.color("Image")
 
-    # mn_compositor interface
-    # Socket Image Output
-    mn_compositor.interface.new_socket(
-        name="Image", in_out="OUTPUT", socket_type="NodeSocketColor"
-    )
-    # Socket Image Input
-    mn_compositor.interface.new_socket(
-        name="Image", in_out="INPUT", socket_type="NodeSocketColor"
-    )
+        image = c.Image(image=bpy.data.images.get("mn_annotations", None))
+        c.AlphaOver(input, image, 1.0) >> output
 
-    # initialize mn_compositor nodes
-    # node Group Output
-    group_output = mn_compositor.nodes.new("NodeGroupOutput")
-    group_output.name = "Group Output"
-
-    # node Group Input
-    group_input = mn_compositor.nodes.new("NodeGroupInput")
-    group_input.name = "Group Input"
-
-    # node Image
-    image = mn_compositor.nodes.new("CompositorNodeImage")
-    image.name = "Image"
-    if "mn_annotations" in bpy.data.images:
-        image.image = bpy.data.images["mn_annotations"]
-
-    # node Alpha Over
-    alpha_over = mn_compositor.nodes.new("CompositorNodeAlphaOver")
-    alpha_over.name = "Alpha Over"
-
-    # Factor
-    if IS_BLENDER_5:
-        alpha_over.inputs["Factor"].default_value = 1.0
-    else:
-        alpha_over.inputs["Fac"].default_value = 1.0
-
-    # Set locations
-    group_output.location = (380.0, 20.0)
-    group_input.location = (0.0, 20.0)
-    image.location = (0.0, -80.0)
-    alpha_over.location = (200.0, -80.0)
-
-    # Set dimensions
-    group_output.width, group_output.height = 140.0, 100.0
-    group_input.width, group_input.height = 140.0, 100.0
-    image.width, image.height = 140.0, 100.0
-    alpha_over.width, alpha_over.height = 140.0, 100.0
-
-    # initialize mn_compositor links
-    if IS_BLENDER_5:
-        sockets = (
-            (alpha_over.outputs["Image"], group_output.inputs["Image"]),
-            (image.outputs["Image"], alpha_over.inputs["Foreground"]),
-            (group_input.outputs["Image"], alpha_over.inputs["Background"]),
-        )
-        for socket_pair in sockets:
-            mn_compositor.links.new(*socket_pair)
-    else:
-        # alpha_over.Image -> group_output.Image
-        mn_compositor.links.new(alpha_over.outputs[0], group_output.inputs[0])
-        # image.Image -> alpha_over.Image
-        mn_compositor.links.new(image.outputs[0], alpha_over.inputs[2])
-        # group_input.Image -> alpha_over.Image
-        mn_compositor.links.new(group_input.outputs[0], alpha_over.inputs[1])
-    return mn_compositor
+    return tree.tree

@@ -52,7 +52,7 @@ def load(
     return trajectory
 
 
-def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
+def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.1):
     """
     Load an oxDNA trajectory.
 
@@ -77,5 +77,5 @@ def load_oxdna(top, traj, name="oxDNA", style="oxdna", world_scale=0.01):
     univ = mda.Universe(
         top, traj, topology_format=oxdna.OXDNAParser, format=oxdna.OXDNAReader
     )
-    traj = oxdna.OXDNA(univ, name=name, world_scale=world_scale).add_style(style=style)
+    traj = oxdna.OXDNA(univ, name=name, world_scale=world_scale).add_style("ribbon")
     return traj

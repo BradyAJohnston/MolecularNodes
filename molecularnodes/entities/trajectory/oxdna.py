@@ -15,7 +15,6 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
-from ...nodes import nodes
 from ..base import EntityType
 from .base import Trajectory
 
@@ -384,7 +383,7 @@ class OXDNA(Trajectory):
         self,
         universe: Universe,
         name: str = "NewOXDNAObject",
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         create_object: bool = True,
     ):
         super().__init__(
@@ -410,24 +409,6 @@ class OXDNA(Trajectory):
             "res_name": self._compute_res_name_int,
             "Color": self._compute_color,
         }
-
-    def _create_object(
-        self,
-        name: str = "NewUniverseObject",
-    ) -> None:
-        """
-        Create a new object with the trajectory data.
-
-        Parameters
-        ----------
-        style : str, optional
-            Style of the object representation, by default "oxdna"
-        name : str, optional
-            Name of the new object, by default "NewUniverseObject"
-        """
-        super()._create_object(name=name)
-        self.set_frame(0)
-        nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
 
     def set_frame(self, frame: int) -> None:
         super()._update_positions(frame)

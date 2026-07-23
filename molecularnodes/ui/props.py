@@ -13,7 +13,6 @@ from ..blender.utils import set_object_visibility
 from ..entities.base import EntityType
 from ..handlers import _update_entities
 from ..session import get_entity
-from .style import STYLE_ITEMS
 
 uuid_property = StringProperty(
     name="UUID",
@@ -41,7 +40,7 @@ SURFACE_STYLE_ITEMS = (
     (
         "density_surface",
         "Surface",
-        "Style Density Surface",
+        "Density Style Surface",
     ),
     # (
     #     "density_iso_surface",
@@ -105,13 +104,13 @@ class EntityProperties(bpy.types.PropertyGroup):
     # type value is one of EntityType enum
     __slots__ = []
     type: StringProperty(name="Entity Type", default="")  # type: ignore
-    visible: BoolProperty(
+    visible: BoolProperty(  # type: ignore
         name="visible",
         description="Visibility of the entity",
         default=True,
         get=_get_entity_visibility,
         set=_set_entity_visibility,
-    )  # type: ignore
+    )
 
 
 def _update_dssp_display_option(self, context):
@@ -173,21 +172,21 @@ class DSSPProperties(bpy.types.PropertyGroup):
         default="per-frame",
         update=_update_dssp_display_option,
     )
-    window_size: IntProperty(
+    window_size: IntProperty(  # type: ignore
         name="Window Size",
         description="Number of frames in the sliding window",
         min=1,
         soft_max=10,
         default=5,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    apply_sw_threshold: BoolProperty(
+    )
+    apply_sw_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    sw_threshold: FloatProperty(
+    )
+    sw_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for sliding window average",
         subtype="FACTOR",
@@ -195,14 +194,14 @@ class DSSPProperties(bpy.types.PropertyGroup):
         max=1.0,
         default=0.5,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    apply_ta_threshold: BoolProperty(
+    )
+    apply_ta_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    ta_threshold: FloatProperty(
+    )
+    ta_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for trajectory average",
         subtype="FACTOR",
@@ -210,230 +209,27 @@ class DSSPProperties(bpy.types.PropertyGroup):
         max=1.0,
         default=0.5,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    applied: BoolProperty(
+    )
+    applied: BoolProperty(  # type: ignore
         default=True,
         update=_update_dssp_applied,
-    )  # type: ignore
+    )
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
     entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
-    entities_active_index: IntProperty(
+    entities_active_index: IntProperty(  # type: ignore
         name="Active entity index",
         default=-1,
         update=_entities_active_index_callback,
-    )  # type: ignore
-
-    import_del_hydrogen: BoolProperty(  # type: ignore
-        name="Remove Hydrogens",
-        description="Remove the hydrogens from a structure on import",
-        default=False,
-    )
-
-    import_local_path: StringProperty(  # type: ignore
-        name="File",
-        description="File path of the structure to open",
-        options={"TEXTEDIT_UPDATE"},
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-
-    import_code_alphafold: StringProperty(  # type: ignore
-        name="UniProt ID",
-        description="The UniProt ID to use for downloading from the AlphaFold databse",
-        options={"TEXTEDIT_UPDATE"},
-    )
-
-    import_format_fetch: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        items=(
-            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
-            ("cif", ".cif", "The new standard of .cif / .mmcif"),
-            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
-        ),
-    )
-
-    import_code_pdb: StringProperty(  # type: ignore
-        name="PDB",
-        description="The PDB code to download and import",
-        options={"TEXTEDIT_UPDATE"},
-        maxlen=12,
     )
 
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
         default=False,
-    )
-
-    import_centre: BoolProperty(  # type: ignore
-        name="Centre Structure",
-        description="Move the imported Molecule on the World Origin",
-        default=False,
-    )
-
-    import_centre_type: EnumProperty(  # type: ignore
-        name="Method",
-        default="mass",
-        items=(
-            (
-                "mass",
-                "Mass",
-                "Adjust the structure's centre of mass to be at the world origin",
-                1,
-            ),
-            (
-                "centroid",
-                "Centroid",
-                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-                2,
-            ),
-        ),
-    )
-
-    import_node_setup: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        default=True,
-        description="Create and set up a Geometry Nodes tree on import",
-    )
-
-    import_build_assembly: BoolProperty(  # type: ignore
-        name="Build Assembly",
-        description="Add a node to build the biological assembly on import",
-        default=False,
-    )
-
-    import_remove_solvent: BoolProperty(  # type: ignore
-        name="Remove Solvent",
-        description="Delete the solvent from the structure on import",
-        default=True,
-    )
-
-    import_oxdna_topology: StringProperty(  # type: ignore
-        name="Toplogy",
-        description="File path for the topology to import (.top)",
-        subtype="FILE_PATH",
-    )
-    import_oxdna_trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory to import (.oxdna / .dat)",
-        subtype="FILE_PATH",
-    )
-    import_oxdna_name: StringProperty(  # type: ignore
-        name="Name", description="Name of the created object.", default="NewOrigami"
-    )
-    import_style: EnumProperty(  # type: ignore
-        name="Style",
-        description="Default style for importing",
-        items=STYLE_ITEMS,
-        default="spheres",
-    )
-    import_md_topology: StringProperty(  # type: ignore
-        name="Topology",
-        description="File path for the toplogy file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_md_trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_md_name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name of the molecule on import",
-        default="NewTrajectory",
-        maxlen=0,
-    )
-    import_density_invert: BoolProperty(  # type: ignore
-        name="Invert Data",
-        description="Invert the values in the map. Low becomes high, high becomes low.",
-        default=False,
-    )
-    import_density_center: BoolProperty(  # type: ignore
-        name="Center Density",
-        description="Translate the density so that the center of the box is at the origin.",
-        default=False,
-    )
-    import_density_overwrite: BoolProperty(  # type: ignore
-        name="Overwrite Intermediate File",
-        description="Overwrite generated intermediate .vdb file.",
-        default=False,
-    )
-    import_density: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the map file.",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-
-    import_density_style: EnumProperty(  # type: ignore
-        name="Style",
-        items=(
-            (
-                "density_surface",
-                "Surface",
-                "A mesh surface based on the specified threshold",
-                0,
-            ),
-            (
-                "density_iso_surface",
-                "ISO Surface",
-                "A mesh surface based on the specified iso value",
-                1,
-            ),
-            (
-                "density_wire",
-                "Wire",
-                "A wire mesh surface based on the specified threshold",
-                2,
-            ),
-        ),
-    )
-
-    panel_selection: bpy.props.EnumProperty(  # type: ignore
-        name="Panel Selection",
-        items=(
-            ("import", "Import", "Import macromolecules", 0),
-            ("object", "Object", "Adjust settings affecting the selected object", 1),
-            (
-                "session",
-                "Session",
-                "Interacting with the Molecular Nodes session tracking all of the objects",
-                2,
-            ),
-        ),
-    )
-
-    panel_import_type: bpy.props.EnumProperty(  # type: ignore
-        name="Method",
-        items=(
-            ("pdb", "PDB", "Download from the PDB"),
-            ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
-            ("local", "Local", "Open a local file"),
-            ("md", "MD", "Import a molecular dynamics trajectory"),
-            ("density", "Density", "Import an EM Density Map"),
-            ("star", "Starfile", "Import a .starfile mapback file"),
-            ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
-            ("dna", "oxDNA", "Import an oxDNA file"),
-        ),
-    )
-    import_star_file_path: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the `.star` file to import.",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_cell_pack_path: bpy.props.StringProperty(  # type: ignore
-        name="File",
-        description="File to import (.cif, .bcif)",
-        subtype="FILE_PATH",
-        maxlen=0,
     )
 
 

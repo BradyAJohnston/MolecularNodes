@@ -5,7 +5,11 @@ import databpy
 import numpy as np
 from gridData import Grid
 from ...blender import coll
-from ...nodes import nodes
+from ...nodes.geometry import (
+    DensityStyleISOSurface,
+    DensityStyleSurface,
+    DensityStyleWire,
+)
 from .base import Density
 
 
@@ -103,7 +107,7 @@ class Grids(Density):
             )
 
     def create_object(
-        self, name="NewDensity", style="density_surface", setup_nodes=True
+        self, name="NewDensity", style="density_surface"
     ) -> bpy.types.Object:
         """
         Loads a grid into Blender as a volumetric object.
@@ -114,8 +118,6 @@ class Grids(Density):
             If not empty, renames the object with the new name. Default is "NewDensity".
         style : str, optional
             The style of the density object. Default is "density_surface".
-        setup_nodes : bool, optional
-            Whether to create starting node tree. Default is True.
 
         Returns
         -------
@@ -128,65 +130,30 @@ class Grids(Density):
         self.object.location = (0, 0, 0)
         self.object.mn.entity_type = self._entity_type.value
 
+        threshold = float(np.quantile(self.grid.grid, 0.995))
+
         if name and name != "":
             self.name = name
 
-        # TODO: setup_nodes is unused. Using it causes pytest failures
-        node_density = self.create_starting_node_tree(style=style)
-        # set the active index for UI to the added style
-        self.object.mn.styles_active_index = self.tree.nodes.find(node_density.name)
+        if style is not None:
+            with self.tree.reset(input="Volume") as (volume, join):
+                (
+                    volume
+                    >> {
+                        "density_iso_surface": DensityStyleISOSurface,
+                        "density_surface": DensityStyleSurface,
+                        "density_wire": DensityStyleWire,
+                    }[style](threshold=threshold)
+                    >> join
+                )
 
         return self.object
-
-    def create_starting_node_tree(self, style="density_surface"):
-        """
-        Creates a starting node tree for the density object.
-
-        Parameters
-        ----------
-        style : str, optional
-            The style of the density object, defaulting to 'density_surface'.
-        """
-
-        gobj = self.grid
-        grid = gobj.grid
-        threshold = np.quantile(grid, 0.995)
-        threshold_range = (np.min(grid), np.max(grid))
-        threshold_type = None
-        if np.issubdtype(grid.dtype, np.floating):
-            threshold_type = "NodeSocketFloat"
-        elif np.issubdtype(grid.dtype, np.floating):
-            threshold_type = "NodeSocketInt"
-
-        x_range = y_range = z_range = None
-        if gobj.origin.size == 3:
-            origin = gobj.origin.copy()
-            if gobj.metadata["center"]:
-                origin = -np.array(grid.shape) * 0.5 * gobj.delta
-            origin *= self._world_scale
-            # adjust offset because Blender uses cell-centered values
-            origin -= 0.5 * gobj.delta * self._world_scale
-            length = grid.shape * gobj.delta * self._world_scale
-            x_range = (origin[0], origin[0] + length[0])
-            y_range = (origin[1], origin[1] + length[1])
-            z_range = (origin[2], origin[2] + length[2])
-
-        return nodes.create_starting_nodes_density(
-            object=self.object,
-            style=style,
-            threshold=threshold,
-            threshold_range=threshold_range,
-            threshold_type=threshold_type,
-            x_range=x_range,
-            y_range=y_range,
-            z_range=z_range,
-        )
 
     def grid_to_vdb(
         self,
         file: str,
         invert: bool = False,
-        world_scale=0.01,
+        world_scale=0.1,
         center: bool = False,
         overwrite=False,
     ) -> str:

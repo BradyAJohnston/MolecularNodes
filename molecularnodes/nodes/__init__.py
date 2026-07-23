@@ -1,8 +1,3 @@
-from . import arrange, interface, material, nodes
+from . import arrange, geometry, interface, material, node_management, nodes
 
-__all__ = [
-    "nodes",
-    "arrange",
-    "material",
-    "interface",
-]
+__all__ = ["nodes", "arrange", "material", "interface", "node_management", "geometry"]

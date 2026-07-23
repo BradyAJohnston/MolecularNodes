@@ -116,7 +116,7 @@ class Lab:
 
 def random_rgb(seed=None):
     """Random Pastel RGB values"""
-    if seed:
+    if seed is not None:
         random.seed(seed)
     r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
     return np.array((r, g, b, 1))

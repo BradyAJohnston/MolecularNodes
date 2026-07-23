@@ -1,10 +1,10 @@
 [project]
 name = "molecularnodes"
-version = "4.5.13"
+version = "5.2.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.7.0",
+    "databpy>=0.8.0",
     "mdanalysis>=2.10",
     "biotite>=1.7.1",
     "mrcfile",
@@ -12,6 +12,8 @@ dependencies = [
     "PyYAML",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
+    "griddataformats>=1.2.0",
+    "nodebpy>=520.9",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -22,7 +24,7 @@ Repository = "https://github.com/bradyajohnston/MolecularNodes"
 Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
-bpy = ["bpy>=5.1.0"]
+bpy = ["bpy==5.2.*"]
 jupyter = ["jupyter", "ipython>=9.7.0"]
 docs = [
     "griffe<2.0",
@@ -32,12 +34,12 @@ docs = [
     "quartodoc>=0.11.1",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
-    "quarto-cli>=1.8.0",
+    "quarto-cli>=1.9.0",
     "setuptools<81",
     "tomlkit>=0.14.0",
 ]
 dev = [
-    "numpy<2.4",
+    "numpy>2.2",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
     "fake-bpy-module",
@@ -103,6 +105,9 @@ order-by-type = true
 [tool.ruff.lint.per-file-ignores]
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
+"molecularnodes/nodes/geometry.py" = ["E741"]
+# "molecularnodes/nodes/shader.py" = ["E741"]
+# "molecularnodes/nodes/compositor.py" = ["E741"]
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]

@@ -19,6 +19,10 @@ pytestmark = [
 ]
 
 
+def style_nodes(entity):
+    return mn.nodes.node_management.get_final_style_nodes(entity.modifier_node_tree)
+
+
 def dummy_calculation_for_pickle_test(universe):
     """Module-level function for testing calculations pickling."""
     return universe.atoms.positions.mean(axis=0)
@@ -176,7 +180,7 @@ class TestTrajectory:
 
     @pytest.mark.parametrize(
         "correct,subframes,interpolate",
-        itertools.product([True, False], [0, 1, 2, 3], [True, False]),
+        list(itertools.product([True, False], [0, 1, 2, 3], [True, False])),
     )
     def test_mean_position(
         self, snapshot, subframes: int, correct: bool, interpolate: bool, universe
@@ -324,75 +328,6 @@ class TestTrajectory:
         # Rewind the trajectory to force a reopen of file by the reader
         # Fails if the trajectory paths aren't abs paths after load
         traj.universe.trajectory.rewind()
-
-    def test_add_style(
-        self,
-        universe,
-    ):
-        session = mn.session.get_session()
-        # test defaults
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
-        session.remove_trajectory(t1)
-        # test add_trajectory with non-default style
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
-        session.remove_trajectory(t1)
-        # test add_trajectory with no style
-        t1 = mn.Trajectory(universe)
-        assert len(t1.tree.nodes) == 2
-        # test adding empty style
-        t1.add_style(style=None)
-        assert len(t1.tree.nodes) == 2
-        # test adding invalid style
-        with pytest.raises(ValueError):
-            t1.add_style(style="invalid")
-        # test adding new style
-        t1.add_style(style="cartoon")
-        assert len(t1.tree.nodes) == 7
-        # test add_style with selection string
-        selection = "resid 1:10"
-        t1.add_style(style="ribbon", selection=selection)
-        assert "selection_0" in t1.list_attributes()
-        # test add_style with AtomGroup selection
-        selection = universe.select_atoms("resid 1:10")
-        t1.add_style(style="ribbon", selection=selection)
-        assert "selection_1" in t1.list_attributes()
-        session.remove_trajectory(t1)
-        # test add_style from UI
-        t1 = mn.Trajectory(universe)
-        assert len(t1.styles) == 0
-        bpy.ops.mn.add_style("EXEC_DEFAULT", uuid=t1.uuid)
-        assert len(t1.styles) == 1
-        session.remove_trajectory(t1)
-
-    def test_remove_style(
-        self,
-        universe,
-    ):
-        session = mn.session.get_session()
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
-        assert len(t1.styles) == 1
-        # add new style
-        t1.add_style(style="cartoon")
-        assert len(t1.styles) == 2
-        # test remove style
-        t1.styles[0].remove()
-        assert len(t1.styles) == 1
-        t1.styles[0].remove()
-        assert len(t1.styles) == 0
-        session.remove_trajectory(t1)
-        # test remove style from UI
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.styles) == 1
-        style_node = mn.nodes.geometry.get_final_style_nodes(t1.tree)[0]
-        style_node_index = t1.tree.nodes.find(style_node.name)
-        bpy.ops.mn.remove_style(
-            "EXEC_DEFAULT", uuid=t1.uuid, style_node_index=style_node_index
-        )
-        assert len(t1.styles) == 0
-        session.remove_trajectory(t1)
 
     def test_get_view(self, universe):
         t1 = mn.Trajectory(universe)

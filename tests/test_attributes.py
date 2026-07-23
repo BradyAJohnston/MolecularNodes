@@ -2,20 +2,18 @@ import itertools
 import numpy as np
 import pytest
 import molecularnodes as mn
-from .constants import attributes, codes, data_dir
+from molecularnodes.nodes.geometry import StyleRibbon, StyleSpheres
+from .constants import codes, data_dir
+from .utils import GeometrySet
 
 formats = ["pdb", "cif", "bcif"]
 
 
-@pytest.mark.parametrize("code, format", itertools.product(codes, formats))
-def test_attribute(snapshot_custom, code, format):
+@pytest.mark.parametrize("code, format", list(itertools.product(codes, formats)))
+def test_attribute(snapshot, code, format):
     mol = mn.Molecule.fetch(code, cache=data_dir, format=format)
-    for attribute in attributes:
-        try:
-            print(f"{attribute=}")
-            assert snapshot_custom == mol.named_attribute(attribute)
-        except AttributeError as e:
-            assert snapshot_custom == e
+    # no style applied, so the geometry is the parsed file and is exact on all platforms
+    assert snapshot == GeometrySet(mol.object, strict=True).summary()
 
 
 def test_store_named_attribute(snapshot_custom):
@@ -28,17 +26,16 @@ def test_store_named_attribute(snapshot_custom):
 
 
 def test_uv_map(snapshot_custom):
-    mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif").add_style("ribbon")
-    mol.styles[0].uv_map = True
-    mol.styles[0].quality = 1
+    mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif")
+    with mol.tree.reset() as (atoms, join):
+        atoms >> StyleRibbon(uv_map=True, quality=1) >> join
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[:1000]
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]
 
 
-def test_bond_attributes(snapshot_custom):
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif").add_style(
-        mn.StyleBallAndStick(sphere_geometry="Mesh"),
-    )
+def test_bond_attributes(snapshot):
+    mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
+    with mol.tree.reset() as (atoms, join):
+        atoms >> StyleSpheres(geometry="Mesh") >> join
 
-    for attr in mol.list_attributes(evaluate=True, drop_hidden=True):
-        assert snapshot_custom == mol.named_attribute(attr, evaluate=True)
+    assert snapshot == GeometrySet(mol.object).summary()

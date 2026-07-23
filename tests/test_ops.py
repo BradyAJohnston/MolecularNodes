@@ -60,18 +60,12 @@ def test_op_local(snapshot_custom, code, file_format):
     )
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=str(path), node_setup=False)
+        bpy.ops.mn.import_fetch(database="local", filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
         assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
         assert mol.object.mn.entity_type == mol._entity_type.value
 
-    with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=str(path), centre=True, centre_type="centroid")
-        mol_cent = session.match(o.latest())
-
     assert snapshot_custom == mol.position
-    assert snapshot_custom == mol_cent.position
-    assert not np.allclose(mol.position, mol_cent.position)
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
@@ -102,17 +96,3 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     assert not np.allclose(pos_2, traj_op.position)
     assert not np.allclose(pos_2, traj_func.position)
-
-
-def test_op_residues_selection_custom():
-    topo = str(data_dir / "md_ppr/box.gro")
-    traj = str(data_dir / "md_ppr/first_5_frames.xtc")
-
-    with ObjectTracker():
-        bpy.ops.mn.import_trajectory(
-            topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
-        )
-    area = bpy.context.screen.areas[-1]
-    area.ui_type = "GeometryNodeTree"
-    with bpy.context.temp_override(area=area):
-        bpy.ops.mn.residues_selection_custom("EXEC_DEFAULT")

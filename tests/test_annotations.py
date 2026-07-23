@@ -1,5 +1,7 @@
 import pickle
+import shutil
 import tempfile
+from pathlib import Path
 import bpy
 import MDAnalysis as mda
 import numpy as np
@@ -19,10 +21,12 @@ class TestAnnotations:
         return mda.Universe(topo, traj)
 
     @pytest.fixture(scope="module")
-    def density_file(self):
-        file = data_dir / "emd_24805.map.gz"
-        vdb_file = data_dir / "emd_24805.vdb"
-        vdb_file.unlink(missing_ok=True)
+    def density_file(self, tmp_path_factory):
+        # copy into a temp dir so the generated .vdb doesn't clash with other tests
+        source = data_dir / "emd_24805.map.gz"
+        file = Path(
+            shutil.copy(source, tmp_path_factory.mktemp("density") / source.name)
+        )
         # Make all densities are removed
         for o in bpy.data.objects:
             if o.mn.entity_type == "density":

@@ -1,17 +1,16 @@
 from abc import ABCMeta
+from contextlib import contextmanager
 from enum import Enum
-from typing import List
+from typing import Iterator, List, NamedTuple, cast
 import bpy
+from bpy.types import GeometryNodeTree
 from databpy import (
     BlenderObject,
 )
+from nodebpy import geometry as g
+from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
-from ..nodes import nodes
-from ..nodes.geometry import (
-    GeometryNodeInterFace,
-    style_interfaces_from_tree,
-)
-from .utilities import BoolObjectMNProperty, _get_gn_modifier
+from .utilities import BoolObjectMNProperty
 
 
 # create a EntityType enum
@@ -27,7 +26,110 @@ class EntityType(Enum):
     ENSEMBLE_CELLPACK = "ensemble-cellpack"
 
 
-bpy.types.NodesModifier
+class ResetSockets(NamedTuple):
+    """The sockets to build between, as returned by `MolecularTree.reset()`."""
+
+    atoms: GeometrySocket
+    join: GeometrySocket
+
+
+class MolecularTree(TreeBuilder[GeometryNodeTree]):
+    def __init__(
+        self, entity: "MolecularEntity", tree: TreeBuilder | GeometryNodeTree | str
+    ) -> None:
+        self._entity = entity
+        if isinstance(tree, TreeBuilder):
+            super().__init__(cast(GeometryNodeTree, tree.tree))
+        elif isinstance(tree, GeometryNodeTree):
+            super().__init__(tree)
+        else:
+            super().__init__(tree)
+
+    def _wrap(self, socket: bpy.types.NodeSocket) -> GeometrySocket:
+        """Wrap an existing Blender socket as a socket bound to this tree."""
+        wrapped = GeometrySocket(socket)
+        wrapped._tree = self
+        return wrapped
+
+    def _interface_geometry(
+        self, in_out: str
+    ) -> bpy.types.NodeTreeInterfaceSocket | None:
+        """The tree's first geometry interface socket in the given direction, if any."""
+        for item in self.tree.interface.items_tree:
+            if (
+                item.item_type == "SOCKET"
+                and item.in_out == in_out
+                and item.socket_type == "NodeSocketGeometry"
+            ):
+                return item
+        return None
+
+    @property
+    def atoms(self) -> GeometrySocket:
+        """
+        The geometry input to build branches from, adding the input if it is missing.
+
+        >>> with mol.tree as tree:
+        ...     tree.atoms >> StyleCartoon() >> tree.join
+        """
+        item = self._interface_geometry("INPUT")
+        if item is None:
+            return self.inputs.geometry("Atoms")
+        return self._wrap(self._input_node().outputs[item.identifier])
+
+    @property
+    def geometry(self) -> GeometrySocket:
+        """The geometry output of the tree, adding the output if it is missing."""
+        item = self._interface_geometry("OUTPUT")
+        if item is None:
+            return self.outputs.geometry("Geometry")
+        return self._wrap(self._output_node().inputs[item.identifier])
+
+    @property
+    def join(self) -> GeometrySocket:
+        """
+        The join that feeds the tree output, which every branch ends in.
+
+        Adds the join if it is missing, keeping whatever already fed the output.
+        """
+        output = self.geometry
+        links = output.socket.links
+        if links:
+            node = links[0].from_socket.node
+            if node.bl_idname == "GeometryNodeJoinGeometry":
+                return self._wrap(node.inputs[0])
+
+        join = g.JoinGeometry()
+        if links and links[0].from_socket.node.bl_idname != "NodeGroupInput":
+            # real work already feeds the output, so join it rather than orphan it.
+            # a bare input -> output passthrough is just the tree's default state and
+            # is dropped, otherwise unstyled geometry is rendered alongside every branch
+            self._wrap(links[0].from_socket) >> join
+        join >> output
+        return join.i.geometry
+
+    @contextmanager
+    def reset(
+        self, input: str = "Atoms", output: str = "Geometry"
+    ) -> Iterator[ResetSockets]:
+        """
+        Clear the tree back to a default state and build within it.
+
+        Discards the existing tree, so use `with entity.tree` instead to add to it.
+
+        >>> with mol.tree.reset() as (atoms, join):
+        ...     atoms >> StyleCartoon() >> join
+        """
+        with self:
+            self.clear()
+            self.inputs.geometry(input)
+            self.outputs.geometry(output)
+            yield ResetSockets(self.atoms, self.join)
+
+    def clear(self) -> None:
+        self.tree.nodes.clear()
+        assert self.tree.interface
+        self.tree.interface.clear()
 
 
 class MolecularEntity(
@@ -35,34 +137,55 @@ class MolecularEntity(
     metaclass=ABCMeta,
 ):
     update_with_scene = BoolObjectMNProperty("update_with_scene")
-    _entity_type: EntityType = None  # Overridden by derived classes
+    _entity_type: EntityType | None = None
 
     def __init__(self) -> None:
         super().__init__(obj=None)
         self._register_with_session()
-        self._world_scale = 0.01
+        self._world_scale = 0.1
+        self._tree = None
+
+    def __getstate__(self):
+        """Custom serialization."""
+        state = self.__dict__.copy()
+        # the cached tree wraps live Blender data which can't be pickled, and is
+        # rebuilt on the next access of the `tree` property
+        state["_tree"] = None
+        return state
 
     @property
-    def node_group(self) -> bpy.types.GeometryNodeTree | None:
-        if "MolecularNodes" in self.object.modifiers:
-            return _get_gn_modifier(self.object, "MolecularNodes").node_group
-        return None
+    def node_group(self) -> bpy.types.GeometryNodeTree:
+        mod = self.modifier
+        mod.node_group = self.tree.tree
+        return mod.node_group
 
     @property
-    def tree(self) -> bpy.types.GeometryNodeTree:
-        mod: bpy.types.NodesModifier = self.object.modifiers["MolecularNodes"]
+    def modifier(self) -> bpy.types.NodesModifier:
+        for mod in self.object.modifiers:
+            if mod.type == "NODES" and mod.name == "Molecular Nodes":
+                return mod
+
+        mod = self.object.modifiers.new("GeometryNodes", "NODES")
+        return cast(bpy.types.NodesModifier, mod)
+
+    @property
+    def tree(self) -> MolecularTree:
+        if self._tree is None:
+            self._tree = MolecularTree(self, self.modifier_node_tree)
+        return self._tree
+
+    @property
+    def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:
+        mod: bpy.types.NodesModifier = self.object.modifiers.get("Molecular Nodes")
+
         if mod is None:
-            raise ValueError(
-                f"Unable to get MolecularNodes modifier for {self.object}, modifiers: {list(self.object.modifiers)}"
-            )
-        return mod.node_group  # type: ignore
+            mod = self.object.modifiers.new("Molecular Nodes", "NODES")
 
-    @property
-    def styles(self) -> List[GeometryNodeInterFace]:
-        """
-        Get the styles in the tree.
-        """
-        return style_interfaces_from_tree(self.tree)
+        if mod.node_group is None:
+            mod.node_group = g.tree().tree
+
+        mod.node_group.is_modifier = True
+        return cast(GeometryNodeTree, mod.node_group)
 
     def _register_with_session(self) -> None:
         bpy.context.scene.MNSession.register_entity(self)  # type: ignore
@@ -87,12 +210,11 @@ class MolecularEntity(
         """
         Create the modifiers for the molecule.
         """
-        self.object.modifiers.new("MolecularNodes", "NODES")
-        # fallback=False => new tree all the time
-        tree = nodes.new_tree(
-            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True, fallback=False
-        )
-        self.object.modifiers[0].node_group = tree
+        name = f"MN_{self.name}"
+        with TreeBuilder.geometry(name) as tree:
+            (tree.inputs.geometry("Atoms") >> tree.outputs.geometry("Geometry"))
+        self.object.modifiers.new("Molecular Nodes", "NODES")
+        self.object.modifiers[-1].node_group = tree.tree
 
     def get_view(self) -> List[tuple]:
         """
