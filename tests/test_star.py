@@ -52,7 +52,9 @@ def test_starfile_attributes(type, snapshot):
     assert geo.mesh
 
     rotation_quaternion = geo.named_attribute("rotation")
-    rotation_scipy_from_gn = Rotation.from_quat(rotation_quaternion, scalar_first=True)  # blender stores quaternions as scalar-first
+    rotation_scipy_from_gn = Rotation.from_quat(
+        rotation_quaternion, scalar_first=True
+    )  # blender stores quaternions as scalar-first
 
     # To compare the two rotation we multiply one with the inverse of the other and should get something very small
     assert (rotation_scipy * rotation_scipy_from_gn.inv()).magnitude().max() < 1e-5  # ty: ignore[unresolved-attribute]

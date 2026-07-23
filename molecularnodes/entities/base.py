@@ -9,8 +9,8 @@ from databpy import (
 )
 from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
+from nodebpy.nodes.geometry import JoinGeometry
 from ..blender import utils as blender_utils
-from ..nodes import nodes
 from .utilities import BoolObjectMNProperty
 
 
@@ -35,9 +35,15 @@ class ResetSockets(NamedTuple):
 
 
 class MolecularTree(TreeBuilder[GeometryNodeTree]):
-    def __init__(self, entity: "MolecularEntity", tree: TreeBuilder | str) -> None:
+    def __init__(self, entity: "MolecularEntity", tree: TreeBuilder | GeometryNodeTree | str) -> None:
         self._entity = entity
-        super().__init__(tree)
+        if isinstance(tree, TreeBuilder):
+            super().__init__(cast(GeometryNodeTree, tree.tree))
+        elif isinstance(tree, GeometryNodeTree):
+            super().__init__(tree)
+        else:
+            super().__init__(tree)
+
 
     def _wrap(self, socket: bpy.types.NodeSocket) -> GeometrySocket:
         """Wrap an existing Blender socket as a socket bound to this tree."""
@@ -160,7 +166,7 @@ class MolecularEntity(
                 return mod
 
         mod = self.object.modifiers.new("GeometryNodes", "NODES")
-        return mod
+        return cast(bpy.types.NodesModifier, mod)
 
     @property
     def tree(self) -> MolecularTree:
@@ -204,12 +210,14 @@ class MolecularEntity(
         """
         Create the modifiers for the molecule.
         """
+        name = f"MN_{self.name}"
+        with TreeBuilder.geometry(name) as tree:
+            (
+                tree.inputs.geometry("Atoms")
+                >> tree.outputs.geometry("Geometry")
+            )
         self.object.modifiers.new("Molecular Nodes", "NODES")
-        # fallback=False => new tree all the time
-        tree = nodes.new_tree(
-            name=f"MN_{self.name}", input_name="Atoms", is_modifier=True, fallback=False
-        )
-        self.object.modifiers[0].node_group = tree
+        self.object.modifiers[-1].node_group = tree.tree
 
     def get_view(self) -> List[tuple]:
         """
