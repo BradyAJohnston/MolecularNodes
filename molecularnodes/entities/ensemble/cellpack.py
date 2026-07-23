@@ -4,10 +4,10 @@ import bpy
 import numpy as np
 from biotite.structure import AtomArray
 from databpy import AttributeTypes, BlenderObject, store_named_attribute
-from molecularnodes.nodes.geometry import EnsembleInstance
 from ... import blender as bl
 from ... import color
 from ...nodes import nodes
+from ...nodes.geometry import EnsembleInstance
 from ..utilities import create_object
 from .base import Ensemble, EntityType
 from .reader import CellPackReader
