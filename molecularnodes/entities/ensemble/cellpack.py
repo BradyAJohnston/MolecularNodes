@@ -25,7 +25,7 @@ class CellPack(Ensemble):
         self._color_palette_path = Path(file_path).parent / "color_palette.json"
         self.object = self._create_data_object(name=f"{Path(file_path).name}")
         self.object.mn.entity_type = self._entity_type.value
-        self._create_object_instances(name=self.object.name, node_setup=False)
+        self._create_object_instances(name=self.object.name, node_setup=True)
 
         with self.tree.reset() as (atoms, join):
             (

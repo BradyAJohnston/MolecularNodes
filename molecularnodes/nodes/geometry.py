@@ -6811,6 +6811,83 @@ class OxDNARotation(AssetGeometryGroup):
         super().__init__(**{"Socket_1": index})
 
 
+class OxDNAStyleRibbon(AssetGeometryGroup):
+    """oxDNA Style Ribbon"""
+
+    _name = "oxDNA Style Ribbon"
+    _asset_name = "oxDNA Style Ribbon"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+        selection: BooleanSocket
+        """Selection"""
+        backbone_resolution: IntegerSocket
+        """Backbone Resolution"""
+        backbone_subdivisions: IntegerSocket
+        """Backbone Subdivisions"""
+        backbone_radius: FloatSocket
+        """Backbone Radius"""
+        a: ColorSocket
+        """A"""
+        c: ColorSocket
+        """C"""
+        g: ColorSocket
+        """G"""
+        t_u: ColorSocket
+        """T / U"""
+        base_scale: VectorSocket
+        """Base Scale"""
+        shade_smooth: BooleanSocket
+        """Shade Smooth"""
+        material: MaterialSocket
+        """Material"""
+
+    class _Outputs(SocketAccessor):
+        geometry: GeometrySocket
+        """Geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        geometry: InputGeometry = None,
+        selection: InputBoolean = True,
+        backbone_resolution: InputInteger = 6,
+        backbone_subdivisions: InputInteger = 1,
+        backbone_radius: InputFloat = 2.0,
+        a: InputColor = None,
+        c: InputColor = None,
+        g: InputColor = None,
+        t_u: InputColor = None,
+        base_scale: InputVector = None,
+        shade_smooth: InputBoolean = True,
+        material: InputMaterial = None,
+    ):
+        super().__init__(
+            **{
+                "Socket_1": geometry,
+                "Socket_11": selection,
+                "Socket_12": backbone_resolution,
+                "Socket_9": backbone_subdivisions,
+                "Socket_4": backbone_radius,
+                "Socket_5": a,
+                "Socket_6": c,
+                "Socket_7": g,
+                "Socket_8": t_u,
+                "Socket_2": base_scale,
+                "Socket_10": shade_smooth,
+                "Socket_15": material,
+            }
+        )
+
+
 class OxDNAVector(AssetGeometryGroup):
     """oxDNA Vector"""
 
@@ -11109,6 +11186,7 @@ __all__ = (
     "OxDNANormal",
     "OxDNAOffset",
     "OxDNARotation",
+    "OxDNAStyleRibbon",
     "OxDNAVector",
     "PeptideChi",
     "PeptideDihedral",

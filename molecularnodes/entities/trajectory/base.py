@@ -629,6 +629,10 @@ class Trajectory(MolecularEntity):
         If a selection is provided, it will be evaluated and stored as a new
         named attribute on the trajectory with an automatically generated name (sel_N).
         """
+
+        from ...nodes.geometry import OxDNAStyleRibbon
+        from . import OXDNA
+
         if isinstance(style, str) and style not in styles_mapping:
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
@@ -642,6 +646,9 @@ class Trajectory(MolecularEntity):
             elif isinstance(selection, AtomGroup):
                 sel = self.selections.from_atomgroup(selection)
             attribute_name = sel.name
+
+        if isinstance(self, OXDNA):
+            STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
 
         with self.tree as tree:
             (
