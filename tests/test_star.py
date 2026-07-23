@@ -59,22 +59,25 @@ def test_starfile_attributes(type, snapshot):
     assert snapshot == geo
 
 
-def test_load_starfiles():
+def test_load_starfiles(snapshot):
     file = data_dir / "starfile/clathrin.star"
-    _ensemble = mn.entities.ensemble.load_starfile(file)
-    assert _ensemble._entity_type == mn.entities.base.EntityType.ENSEMBLE_STAR
-    assert _ensemble.object.mn.entity_type == _ensemble._entity_type.value
+    ensemble = mn.entities.ensemble.load_starfile(file)
+    assert ensemble._entity_type == mn.entities.base.EntityType.ENSEMBLE_STAR
+    assert ensemble.object.mn.entity_type == ensemble._entity_type.value
+    assert snapshot == GeometrySet(ensemble.object)
 
 
-def test_categorical_attributes():
+def test_categorical_attributes(snapshot):
     file = data_dir / "starfile/cistem.star"
     ensemble = mn.entities.ensemble.load_starfile(file)
     assert "cisTEMOriginalImageFilename_categories" in ensemble.object
+    assert snapshot == GeometrySet(ensemble.object)
 
 
-def test_micrograph_conversion():
+def test_micrograph_conversion(snapshot):
     file = data_dir / "starfile/cistem.star"
     ensemble = mn.entities.ensemble.load_starfile(file)
     tiff_path = data_dir / "starfile/montage.tiff"
     ensemble._convert_mrc_to_tiff()
     assert tiff_path.exists()
+    assert snapshot == GeometrySet(ensemble.object)
