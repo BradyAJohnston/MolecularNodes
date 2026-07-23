@@ -9,7 +9,6 @@ from databpy import (
 )
 from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
-from nodebpy.nodes.geometry import JoinGeometry
 from ..blender import utils as blender_utils
 from .utilities import BoolObjectMNProperty
 
@@ -35,7 +34,9 @@ class ResetSockets(NamedTuple):
 
 
 class MolecularTree(TreeBuilder[GeometryNodeTree]):
-    def __init__(self, entity: "MolecularEntity", tree: TreeBuilder | GeometryNodeTree | str) -> None:
+    def __init__(
+        self, entity: "MolecularEntity", tree: TreeBuilder | GeometryNodeTree | str
+    ) -> None:
         self._entity = entity
         if isinstance(tree, TreeBuilder):
             super().__init__(cast(GeometryNodeTree, tree.tree))
@@ -43,7 +44,6 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
             super().__init__(tree)
         else:
             super().__init__(tree)
-
 
     def _wrap(self, socket: bpy.types.NodeSocket) -> GeometrySocket:
         """Wrap an existing Blender socket as a socket bound to this tree."""
@@ -212,10 +212,7 @@ class MolecularEntity(
         """
         name = f"MN_{self.name}"
         with TreeBuilder.geometry(name) as tree:
-            (
-                tree.inputs.geometry("Atoms")
-                >> tree.outputs.geometry("Geometry")
-            )
+            (tree.inputs.geometry("Atoms") >> tree.outputs.geometry("Geometry"))
         self.object.modifiers.new("Molecular Nodes", "NODES")
         self.object.modifiers[-1].node_group = tree.tree
 
