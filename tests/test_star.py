@@ -1,22 +1,30 @@
 import pytest
 import starfile
+from nodebpy.nodes.geometry import StoreNamedAttribute
+from pandas import DataFrame
 from scipy.spatial.transform import Rotation
 import molecularnodes as mn
+from tests.utils import GeometrySet
 from .constants import data_dir
 
 
 @pytest.mark.parametrize("type", ["cistem", "relion"])
-def test_starfile_attributes(type):
+def test_starfile_attributes(type, snapshot):
+    """
+    Test that our nodes correctly convert the starfile attribute columns to quaternions that matches the convention of scipy.spatial.transform.Rotation.from_euler.
+    """
     file = data_dir / f"starfile/{type}.star"
     ensemble = mn.entities.ensemble.load_starfile(file)
 
     star = starfile.read(file)
 
     if type == "relion":
-        df = star["particles"].merge(star["optics"], on="rlnOpticsGroup")
+        assert isinstance(star, dict)
+        df: DataFrame = star["particles"].merge(star["optics"], on="rlnOpticsGroup")  # ty: ignore[unresolved-attribute]
         euler_angles = df[["rlnAngleRot", "rlnAngleTilt", "rlnAnglePsi"]].to_numpy()
 
     elif type == "cistem":
+        assert isinstance(star, DataFrame)
         df = star
         euler_angles = df[
             ["cisTEMAnglePhi", "cisTEMAngleTheta", "cisTEMAnglePsi"]
@@ -24,16 +32,31 @@ def test_starfile_attributes(type):
 
     # Calculate Scipy rotation from the euler angles
     # Note: rot_from_euler = quats
-    rot_from_euler = Rotation.from_euler(
+    rotation_scipy = Rotation.from_euler(
         seq="ZYZ", angles=euler_angles, degrees=True
     ).inv()
 
-    # Convert from blender to scipy conventions and then into Scipy rotation
-    quat_attribute = ensemble.named_attribute("rotation")
-    rot_from_geo_nodes = Rotation.from_quat(quat_attribute[:, [1, 2, 3, 0]])
+    with ensemble.tree.reset() as (atoms, join):
+        rot = {
+            "cistem": mn.nodes.geometry.RotationCisTEM,
+            "relion": mn.nodes.geometry.RotationRELION,
+        }
 
-    # To compare the two rotation with multiply one with the inverse of the other
-    assert (rot_from_euler * rot_from_geo_nodes.inv()).magnitude().max() < 1e-5
+        (
+            atoms
+            >> StoreNamedAttribute.point.quaternion(name="rotation", value=rot[type]())
+            >> join
+        )
+
+    geo = GeometrySet(ensemble.object)
+    assert geo.mesh
+
+    rotation_quaternion = geo.named_attribute("rotation")
+    rotation_scipy_from_gn = Rotation.from_quat(rotation_quaternion, scalar_first=True)  # blender stores quaternions as scalar-first
+
+    # To compare the two rotation we multiply one with the inverse of the other and should get something very small
+    assert (rotation_scipy * rotation_scipy_from_gn.inv()).magnitude().max() < 1e-5  # ty: ignore[unresolved-attribute]
+    assert snapshot == geo
 
 
 def test_load_starfiles():

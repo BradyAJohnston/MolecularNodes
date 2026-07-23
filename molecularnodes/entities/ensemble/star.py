@@ -76,11 +76,11 @@ class EnsembleDataFrame:
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
-        bob.store_named_attribute(
-            self.rotation_as_quaternion(),
-            name="rotation",
-            atype=AttributeTypes.QUATERNION,
-        )
+        # bob.store_named_attribute(
+        #     self.rotation_as_quaternion(),
+        #     name="rotation",
+        #     atype=AttributeTypes.QUATERNION,
+        # )
 
         bob.store_named_attribute(
             self.image_id_values(),
