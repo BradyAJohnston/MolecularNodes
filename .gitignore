@@ -37,3 +37,4 @@ tests/data/cellpack/petworld/*.cif
 /docs/site_libs
 *.lock
 /docs/_inv
+.envrc

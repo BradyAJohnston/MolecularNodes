@@ -626,6 +626,18 @@ class MN_OT_Import_Star_File(ImportEnsemble):
         return {"FINISHED"}
 
 
+class MN_OT_Import_CryoSPARC_File(ImportEnsemble):
+    bl_idname = "mn.import_cryosparc_file"
+    bl_label = "Load"
+    bl_description = "Load CryoSPARC metadata from a .cs file"
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        ensemble.load_cryosparc(
+            file_path=path_resolve(self.filepath), node_setup=self.node_setup
+        )
+
+
 class MN_OT_Import_Cell_Pack(ImportEnsemble):
     bl_idname = "mn.import_cell_pack"
     bl_label = "Load"
@@ -1176,6 +1188,7 @@ CLASSES = [
     MN_OT_Reload_Trajectory,
     MN_OT_Import_Map,
     MN_OT_Import_Star_File,
+    MN_OT_Import_CryoSPARC_File,
     MN_OT_Import_Cell_Pack,
     MN_OT_Import_Protein_Local,
     MN_OT_Import_Molecule,

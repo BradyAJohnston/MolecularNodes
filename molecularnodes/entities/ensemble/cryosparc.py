@@ -1,0 +1,2 @@
+class CryoSPARC:
+    pass

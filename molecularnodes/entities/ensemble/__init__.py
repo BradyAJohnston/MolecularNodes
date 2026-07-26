@@ -1,6 +1,7 @@
 from .base import Ensemble
 from .cellpack import CellPack
-from .io import load_cellpack, load_starfile
+from .cryosparc import CryoSPARC
+from .io import load_cellpack, load_cryosparc, load_starfile
 from .star import StarFile
 
 __all__ = [
@@ -8,5 +9,7 @@ __all__ = [
     "CellPack",
     "load_cellpack",
     "load_starfile",
+    "load_cryosparc",
     "StarFile",
+    "CryoSPARC",
 ]

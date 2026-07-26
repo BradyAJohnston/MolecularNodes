@@ -12,6 +12,10 @@ def load_starfile(file_path, node_setup=True, world_scale=0.01):
     return ensemble
 
 
+def load_cryosparc(file_path: Path, node_setup=True, world_scale=0.01):
+    pass
+
+
 def load_cellpack(
     file_path,
     name="NewCellPackModel",

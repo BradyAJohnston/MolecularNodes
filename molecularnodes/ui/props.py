@@ -34,6 +34,7 @@ ENTITY_ITEMS = (
         "A streaming IMD molecular dynamics trajectory",
     ),
     ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
+    ("ensemble-cryosparc", "CryoSPARC Ensemble", "A CryoSPARC ensemble"),
     ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
 )
 
@@ -419,6 +420,7 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
             ("md", "MD", "Import a molecular dynamics trajectory"),
             ("density", "Density", "Import an EM Density Map"),
             ("star", "Starfile", "Import a .starfile mapback file"),
+            ("cryosparc", "CryoSPARC", "Import a .cs metadata file from CryoSPARC"),
             ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
             ("dna", "oxDNA", "Import an oxDNA file"),
         ),
@@ -434,6 +436,11 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
         description="File to import (.cif, .bcif)",
         subtype="FILE_PATH",
         maxlen=0,
+    )
+    import_cryosparc_file_path: StringProperty(  # type: ignore
+        name="File",
+        description="File path to `.cs` file",
+        subtype="FILE_PATH",
     )
 
 

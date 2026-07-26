@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 import bpy
 from bpy.types import UILayout
 from databpy.object import LinkedObjectError
@@ -10,6 +11,9 @@ from ..session import get_session
 from .pref import addon_preferences
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
+
+if TYPE_CHECKING:
+    from ..models.scene import MNScene
 
 
 def panel_wwpdb(layout, scene):
@@ -163,6 +167,16 @@ def panel_starfile(layout, scene):
     op.node_setup = scene.mn.import_node_setup
 
 
+def panel_cryosparc(layout: bpy.types.UILayout, scene: "MNScene"):
+    layout.label(text="Load CryoSPARC metadata file", icon="FILE_TICK")
+    layout.separator()
+    row_import = layout.row()
+    row_import.prop(scene.mn, "import_cryosparc_file_path")
+    op = row_import.operator("mn.import_cryosparc_file")
+    op.filepath = scene.mn.import_cryosparc_file_path
+    op.node_setup = scene.mn.import_node_setup
+
+
 def panel_cellpack(layout, scene):
     layout.label(text="Load CellPack Model", icon="FILE_TICK")
     layout.separator()
@@ -260,6 +274,7 @@ chosen_panel = {
     "local": panel_local,
     "alphafold": panel_alphafold,
     "star": panel_starfile,
+    "cryosparc": panel_cryosparc,
     "md": panel_trajectory,
     "density": panel_density,
     "cellpack": panel_cellpack,
