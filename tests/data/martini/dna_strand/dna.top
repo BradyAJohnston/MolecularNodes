@@ -1,0 +1,9 @@
+#include "martini_v2.1.itp"
+#include "dna.itp"
+
+[ system ]  
+36 base pair double stranded DNA 
+
+[ molecules ]
+;name	number
+dna	1
