@@ -632,6 +632,10 @@ class MN_OT_Import_CryoSPARC_File(ImportEnsemble):
     bl_description = "Load CryoSPARC metadata from a .cs file"
     bl_options = {"REGISTER"}
 
+    @classmethod
+    def poll(cls, context):
+        return context.scene.mn.import_cryosparc_file_path.endswith(".cs")
+
     def execute(self, context):
         ensemble.load_cryosparc(
             file_path=path_resolve(self.filepath), node_setup=self.node_setup
