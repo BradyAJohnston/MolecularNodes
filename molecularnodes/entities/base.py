@@ -24,6 +24,7 @@ class EntityType(Enum):
     ENSEMBLE = "ensemble"
     DENSITY = "density"
     ENSEMBLE_STAR = "ensemble-star"
+    ENSEMBLE_CRYOSPARC = "ensemble-cryosparc"
     ENSEMBLE_CELLPACK = "ensemble-cellpack"
 
 

@@ -1,5 +1,6 @@
 from pathlib import Path
 from .cellpack import CellPack
+from .cryosparc import CryoSPARC
 from .star import StarFile
 
 
@@ -13,7 +14,10 @@ def load_starfile(file_path, node_setup=True, world_scale=0.01):
 
 
 def load_cryosparc(file_path: Path, node_setup=True, world_scale=0.01):
-    pass
+    ensemble = CryoSPARC(file_path)
+    ensemble.create_object(node_setup=node_setup, world_scale=world_scale)
+
+    return ensemble
 
 
 def load_cellpack(

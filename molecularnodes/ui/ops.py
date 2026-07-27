@@ -636,6 +636,7 @@ class MN_OT_Import_CryoSPARC_File(ImportEnsemble):
         ensemble.load_cryosparc(
             file_path=path_resolve(self.filepath), node_setup=self.node_setup
         )
+        return {"FINISHED"}
 
 
 class MN_OT_Import_Cell_Pack(ImportEnsemble):
