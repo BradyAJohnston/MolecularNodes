@@ -9,9 +9,10 @@ from .base import Ensemble, EntityType
 if TYPE_CHECKING:
     from molecularnodes.ui.ops import MN_OT_Import_CryoSPARC_File
 
-BobField = TypedDict(
-    "BobField", {"name": str, "data": np.typing.NDArray, "atype": AttributeTypeNames}
-)
+    BobField = TypedDict(
+        "BobField",
+        {"name": str, "data": np.typing.NDArray, "atype": AttributeTypeNames},
+    )
 
 
 class Dataset:
@@ -158,7 +159,7 @@ class CryoSPARC(Ensemble):
         if len(self.dset) == 0:
             raise ValueError("Dataset has no rows")
 
-    def _construct_fields(self) -> list[BobField]:
+    def _construct_fields(self) -> "list[BobField]":
         """
         Construct named attributes from CryoSPARC fields.
 
@@ -166,7 +167,7 @@ class CryoSPARC(Ensemble):
         We sort them here so they are presented in the same order they would be in
         a CryoSPARC dataset.
         """
-        fields: list[BobField] = []
+        fields: "list[BobField]" = []
         if not np.allclose((defocus := self.dset.defocus), 0.0):
             fields.append(dict(data=defocus[:, 0], name="ctf/df1_um", atype="FLOAT"))
             fields.append(dict(data=defocus[:, 1], name="ctf/df2_um", atype="FLOAT"))
@@ -202,6 +203,7 @@ class CryoSPARC(Ensemble):
                     atype="FLOAT",
                 )
             )
+            component_coord += 1
 
         return sorted(fields, key=lambda field: field.get("name"))
 
