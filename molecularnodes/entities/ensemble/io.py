@@ -1,7 +1,12 @@
+import re
 from pathlib import Path
+from typing import TYPE_CHECKING
 from .cellpack import CellPack
 from .cryosparc import CryoSPARC
 from .star import StarFile
+
+if TYPE_CHECKING:
+    from ...ui.ops import MN_OT_Import_CryoSPARC_File
 
 
 def load_starfile(file_path, node_setup=True, world_scale=0.01):
@@ -13,9 +18,18 @@ def load_starfile(file_path, node_setup=True, world_scale=0.01):
     return ensemble
 
 
-def load_cryosparc(file_path: Path, node_setup=True, world_scale=0.01):
-    ensemble = CryoSPARC(file_path)
-    ensemble.create_object(node_setup=node_setup, world_scale=world_scale)
+def load_cryosparc(
+    file_path: Path,
+    op: "MN_OT_Import_CryoSPARC_File",
+    node_setup=True,
+    world_scale=0.01,
+):
+    ensemble = CryoSPARC(file_path=file_path, op=op)
+    if search_results := re.search(r"(J\d+)_(.+)_exported.cs", str(file_path)):
+        name = f"CryoSPARC {search_results.group(1)} {search_results.group(2)}"
+    else:
+        name = CryoSPARC.DEFAULT_NAME
+    ensemble.create_object(name=name, node_setup=node_setup, world_scale=world_scale)
 
     return ensemble
 
