@@ -1,112 +1,84 @@
-import json
 from pathlib import Path
+from typing import cast
 import bpy
-import numpy as np
-from biotite.structure import AtomArray
-from databpy import AttributeTypes, BlenderObject, store_named_attribute
+from databpy import BlenderObject
+from nodebpy.builder import TreeBuilder
 from ... import blender as bl
-from ... import color
-from ...nodes import nodes
-from ...nodes.geometry import EnsembleInstance
+from ...nodes import geometry, material
 from ..utilities import create_object
 from .base import Ensemble, EntityType
 from .reader import CellPackReader
 
 
 class CellPack(Ensemble):
-    def __init__(self, file_path):
+    def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
         self._entity_type = EntityType.ENSEMBLE_CELLPACK
-        self.file_type = self._file_type()
         self.file = CellPackReader(file_path)
-        self.file.get_molecules()
         self.transformations = self.file.get_assemblies()
-        self.color_entity = {}
-        self._color_palette_path = Path(file_path).parent / "color_palette.json"
-        self.object = self._create_data_object(name=f"{Path(file_path).name}")
+
+    @property
+    def molecules(self) -> dict:
+        return self.file.molecules
+
+    def create_object(
+        self,
+        name: str = "CellPack",
+        node_setup: bool = True,
+        world_scale: float = 0.01,
+        fraction: float = 1.0,
+        simplify: bool = False,
+    ) -> bpy.types.Object:
+        self.object = self._create_data_object(name=name)
         self.object.mn.entity_type = self._entity_type.value
-        self._create_object_instances(name=self.object.name, node_setup=True)
+        self._create_object_instances(name=name, node_setup=node_setup)
 
         with self.tree.reset() as (atoms, join):
             (
                 atoms
-                >> EnsembleInstance(instances=self.data_collection, fraction=0.1)
+                >> geometry.EnsembleInstance(
+                    instances=self.data_collection, fraction=fraction
+                )
                 >> join
             )
 
-    def _setup_colors(self):
-        if self._color_palette_path.exists():
-            self.color_palette = json.load(open(self._color_palette_path))
-
-        for entity in np.unique(self.array.entity_id):
-            ename = self.data.entities[entity]
-            if ename in self.color_palette:
-                rgb = [self.color_palette[ename][c] / 255.0 for c in "xyz"]
-                self.color_entity[entity] = np.array([*rgb, 1.0])
-            else:
-                self.color_entity[entity] = color.random_rgb(int(entity))
-
-            self.entity_chains[entity] = (
-                np.unique(self.array.asym_id[self.array.entity_id == entity]) @ property
-            )
-
-    @property
-    def molecules(self):
-        return self.file.molecules
-
-    def _file_type(self):
-        return Path(self.file_path).suffix.strip(".")
-
-    def _assign_colors(self, obj: bpy.types.Object, array: AtomArray):
-        # random color per chain
-        # could also do by entity, + chain-lighten + atom-lighten
-
-        entity = array.entity_id[0]
-        color_entity = self.color_entity[entity]
-        nc = len(self.entity_chains[entity])
-        ci = np.where(self.entity_chains[entity] == array.chain_name)[0][0] * 2
-        color_chain = color.Lab.lighten_color(color_entity, (float(ci) / nc))
-        colors = np.tile(color_chain, (len(array), 1))
-
-        store_named_attribute(
-            obj=obj,
-            name="Color",
-            data=colors,
-            atype=AttributeTypes.FLOAT_COLOR,
-        )
+        return self.object
 
     def _create_object_instances(
         self, name: str = "CellPack", node_setup: bool = True
     ) -> bpy.types.Collection:
         collection = bl.coll.cellpack(name)
 
-        for i, mol_id in enumerate(self.file.mol_ids):
-            array = self.molecules[mol_id]
+        # a single node group is shared by every instanced molecule rather than
+        # building an identical tree per-object
+        if node_setup:
+            with TreeBuilder.geometry(f"MN_pack_instance_{name}") as instance_tree:
+                atoms = instance_tree.inputs.geometry("Atoms")
+                style = geometry.StyleSpheres()
+                material.assign_material(style.node, "MN Ambient Occlusion")
+                atoms >> style >> instance_tree.outputs.geometry("Geometry")
 
+        for mol_id in self.file.mol_ids:
             obj = create_object(
-                array=array,
+                array=self.molecules[mol_id],
                 name=mol_id,
                 collection=collection,
             )
             obj.mn.entity_type = self._entity_type.value
 
-            if len(self.color_entity) > 0:
-                self._assign_colors(obj, array)
-
             if node_setup:
-                nodes.create_starting_node_tree(
-                    obj,
-                    name=f"MN_pack_instance_{name}",
-                    color=None,
-                    material="MN Ambient Occlusion",
+                mod = cast(
+                    bpy.types.NodesModifier,
+                    obj.modifiers.new("Molecular Nodes", "NODES"),
                 )
+                mod.node_group = instance_tree.tree
 
         self.data_collection = collection
         self.instance_collection = collection
 
         return collection
 
-    def _create_data_object(self, name="DataObject"):
+    def _create_data_object(self, name: str = "DataObject") -> bpy.types.Object:
         bob = BlenderObject(
             bl.mesh.create_data_object(
                 self.transformations, name=name, collection=bl.coll.mn()

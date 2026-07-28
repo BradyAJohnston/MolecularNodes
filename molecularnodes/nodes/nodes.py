@@ -1,8 +1,5 @@
-import math
 from typing import Iterable, Literal
 import bpy
-import databpy
-import numpy as np
 from databpy.nodes import (
     append_from_blend,
 )
@@ -40,10 +37,11 @@ STYLE_NODE_MAPPING = {
     "cartoon": mng.StyleCartoon,
     "ribbon": mng.StyleRibbon,
     "surface": mng.StyleSurface,
+    "sticks": mng.StyleSticks,
     "ball_and_stick": mng.StyleBallAndStick,
 }
 
-STYLE_LITERALS = Literal["spheres", "cartoon", "ribbon", "surface", "ball_and_stick"]
+STYLE_LITERALS = Literal["spheres", "cartoon", "ribbon", "surface", "sticks", "ball_and_stick"]
 
 # current implemented representations
 styles_mapping = {
@@ -77,19 +75,6 @@ def inputs(node):
     return items
 
 
-def outputs(node):
-    items = {}
-    for item in node.interface.items_tree:
-        if item.item_type == "SOCKET":
-            if item.in_out == "OUTPUT":
-                items[item.name] = item
-    return items
-
-
-def get_output_type(node, type="INT"):
-    for output in node.outputs:
-        if output.type == type:
-            return output
 
 
 def set_selection(group, node, selection):
@@ -205,12 +190,7 @@ def get_star_node(object):
     return star_node(group)
 
 
-def get_color_node(object):
-    "Walk back through the primary node connections until you find the first style node"
-    group = object.modifiers["Molecular Nodes"].node_group
-    for node in group.nodes:
-        if node.name == "Color Attribute Random":
-            return node
+
 
 
 def insert_last_node(group, node, link_input=True):
@@ -266,7 +246,7 @@ def new_tree(
     tree: bpy.types.GeometryNodeTree = bpy.data.node_groups.new(
         name=name,
         type="GeometryNodeTree",
-    )  # type: ignore
+    )
     input_node = tree.nodes.new("NodeGroupInput")
     output_node = tree.nodes.new("NodeGroupOutput")
     input_node.location.x = -200 - input_node.width
@@ -310,124 +290,6 @@ def add_custom(
     return node
 
 
-def create_starting_node_tree(
-    object: bpy.types.Object,
-    coll_frames: bpy.types.Collection | None = None,
-    style: str = "spheres",
-    name: str | None = None,
-    color: str | None = "common",
-    material: str | bpy.types.Material = "MN Default",
-    is_modifier: bool = True,
-):
-    """
-    Create a starting node tree for the inputted object.
-
-    Parameters
-    ----------
-    object : bpy.types.Object
-        Object to create the node tree for.
-    coll_frames : bpy.data.collections, optional
-        If None, no animation will be created.
-        The default is None.
-    style : str, optional
-        Starting style for the node tree. The default is "spheres".
-        Available options are stored as the keys of styles_mapping.
-    name : str, optional
-        Name of the node tree. If None, a default name will be generated.
-        The default is None.
-    color : str, optional
-        None doesn't add ay set_color nodes, 'common' adds the color by common elements
-        and 'plddt' adds color by pLDDT score.
-    """
-
-    # ensure there is a geometry nodes modifier called 'MolecularNodes' that is created and applied to the object
-    mod: bpy.types.NodesModifier = get_mod(object)
-
-    if not name:
-        name = f"MN_{object.name}"
-
-    with g.tree(name) as tree:
-        atoms = tree.inputs.geometry("Atoms")
-        join = g.JoinGeometry()
-        join >> tree.outputs.geometry("Geometry")
-
-        match color.lower():
-            case "pldtt":
-                color = g.ColorPLDDT()
-            case _:
-                color = g.ColorElement(c=g.RandomColor(g.ChainID()))
-
-        if coll_frames:
-            atoms = atoms >> g.AnimateFrames(
-                collection=coll_frames, factor=g.AnimateValue()
-            )
-
-        style_node = {
-            "ribbon": g.StyleRibbon,
-            "cartoon": g.StyleCartoon,
-            "surface": g.StyleSurface,
-            "ball_and_stick": g.StyleBallAndStick,
-            "sticks": g.StyleSticks,
-        }[style]
-
-        if isinstance(material, str):
-            material = bpy.data.materials()
-
-        assign_material(style_node.node, material)
-
-        atoms >> g.SetColor(color=color) >> style_node >> join
-
-    mod.node_group = tree.tree
-
-
-def combine_join_geometry(group, node_list, output="Geometry", join_offset=300):
-    link = group.links.new
-    max_x = max([node.location[0] for node in node_list])
-    node_to_instances = group.nodes.new("GeometryNodeJoinGeometry")
-    node_to_instances.location = [int(max_x + join_offset), 0]
-
-    for node in reversed(node_list):
-        link(node.outputs[output], node_to_instances.inputs["Geometry"])
-    return node_to_instances
-
-
-def split_geometry_to_instances(name, iter_list=("A", "B", "C"), attribute="chain_id"):
-    """Create a Node to Split Geometry by an Attribute into Instances
-
-    Splits the inputted geometry into instances, based on an attribute field. By
-    default this field is the `chain_id` but this can be selected for any field.
-    Will loop over each item of the list, so a list of arbitrary items that will
-    define how many times to create the required nodes.
-
-    """
-    group = new_tree(name)
-    node_input = get_input(group)
-    node_output = get_output(group)
-
-    named_att = group.nodes.new("GeometryNodeInputNamedAttribute")
-    named_att.location = [-200, -200]
-    named_att.data_type = "INT"
-    named_att.inputs[0].default_value = attribute
-
-    link = group.links.new
-    list_sep = []
-
-    for i, chain in enumerate(iter_list):
-        pos = [i % 10, math.floor(i / 10)]
-
-        node_split = add_custom(group, ".MN_utils_split_instance")
-        node_split.location = [int(250 * pos[0]), int(-300 * pos[1])]
-        node_split.inputs["Group ID"].default_value = i
-        link(named_att.outputs["Attribute"], node_split.inputs["Field"])
-        link(node_input.outputs[0], node_split.inputs["Geometry"])
-        list_sep.append(node_split)
-
-    node_instance = combine_join_geometry(group, list_sep, "Instance")
-    node_output.location = [int(10 * 250 + 400), 0]
-    link(node_instance.outputs[0], node_output.inputs[0])
-    return group
-
-
 def assembly_data_object_from_obj(obj: bpy.types.Object) -> bpy.types.Object:
     data_obj_name = f".data_{obj.name}_assemblies"
     data_obj = bpy.data.objects.get(data_obj_name)
@@ -436,138 +298,6 @@ def assembly_data_object_from_obj(obj: bpy.types.Object) -> bpy.types.Object:
         data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
 
     return data_obj
-
-
-def assembly_initialise(obj: bpy.types.Object):
-    """
-    Setup the required data object and nodes for building an assembly.
-    """
-    data_obj = assembly_data_object_from_obj(obj)
-    tree_assembly = create_assembly_node_tree(name=obj.name, data_object=data_obj)
-    return tree_assembly
-
-
-def assembly_insert(mol: bpy.types.Object):
-    """
-    Given a molecule, setup the required assembly node and insert it into the node tree.
-    """
-
-    tree_assembly = assembly_initialise(mol)
-    group = get_mod(mol).node_group
-    node = add_custom(group, tree_assembly.name)
-    insert_last_node(get_mod(mol).node_group, node)
-
-
-def create_assembly_node_tree(
-    name: str, data_object: bpy.types.Object
-) -> bpy.types.NodeTree:
-    node_group_name = f"Assembly {name}"
-    existing_node_tree = bpy.data.node_groups.get(node_group_name)
-    if existing_node_tree:
-        return existing_node_tree
-
-    tree: bpy.types.NodeTree = new_tree(name=node_group_name)
-    link = tree.links.new
-
-    node_split = add_custom(tree, "Split to Centred Instances", [-150, 0])
-
-    node_att: bpy.types.GeometryNodeInputNamedAttribute = tree.nodes.new(
-        "GeometryNodeInputNamedAttribute"
-    )
-    node_att.data_type = "INT"
-    node_att.inputs[0].default_value = "chain_id"
-    node_att.location = [-150, -200]
-    link(node_att.outputs["Attribute"], node_split.inputs["Group ID"])
-
-    node_group_assembly_instance = append(".MN_assembly_instance_chains")
-    node_assembly = add_custom(tree, node_group_assembly_instance.name, [150, 0])
-    node_assembly.inputs["data_object"].default_value = data_object
-
-    out_sockets = outputs(tree)
-    out_sockets[list(out_sockets)[0]].name = "Instances"
-
-    socket_info = (
-        {
-            "name": "Rotation",
-            "type": "NodeSocketFloat",
-            "min": 0,
-            "max": 1,
-            "default": 1,
-        },
-        {
-            "name": "Translation",
-            "type": "NodeSocketFloat",
-            "min": 0,
-            "max": 1,
-            "default": 1,
-        },
-        {
-            "name": "assembly_id",
-            "type": "NodeSocketInt",
-            "min": 1,
-            "max": max(databpy.named_attribute(data_object, "assembly_id")),
-            "default": 1,
-        },
-    )
-
-    for info in socket_info:
-        socket = tree.interface.items_tree.get(info["name"])
-        if not socket:
-            socket: bpy.types.NodeTreeInterfaceSocket = tree.interface.new_socket(
-                info["name"], in_out="INPUT", socket_type=info["type"]
-            )
-        socket.default_value = info["default"]
-        socket.min_value = info["min"]
-        socket.max_value = info["max"]
-
-        link(get_input(tree).outputs[info["name"]], node_assembly.inputs[info["name"]])
-
-    get_output(tree).location = [400, 0]
-    link(get_input(tree).outputs[0], node_split.inputs[0])
-    link(node_split.outputs[0], node_assembly.inputs[0])
-    link(node_assembly.outputs[0], get_output(tree).inputs[0])
-    if hasattr(tree, "color_tag"):
-        tree.color_tag = "GEOMETRY"
-    return tree
-
-
-def add_inverse_selection(group):
-    output = get_output(group)
-    if "Inverted" not in output.inputs.keys():
-        group.interface.new_socket(
-            "Inverted", in_out="OUTPUT", socket_type="NodeSocketBool"
-        )
-
-    loc = output.location
-    bool_math = group.nodes.new("FunctionNodeBooleanMath")
-    bool_math.location = [loc[0], -100]
-    bool_math.operation = "NOT"
-
-    group.links.new(
-        output.inputs["Selection"].links[0].from_socket, bool_math.inputs[0]
-    )
-    group.links.new(bool_math.outputs[0], output.inputs["Inverted"])
-
-
-def boolean_link_output(tree: bpy.types.NodeTree, node: bpy.types.Node) -> None:
-    link = tree.links.new
-    node_output = get_output(tree)
-    tree.interface.new_socket(
-        name="Selection", in_out="OUTPUT", socket_type=socket_types["BOOLEAN"]
-    )
-    tree.interface.new_socket(
-        name="Inverted", in_out="OUTPUT", socket_type=socket_types["BOOLEAN"]
-    )
-    final_output = node.outputs[0]
-    link(final_output, node_output.inputs["Selection"])
-    node_invert: bpy.types.FunctionNodeBooleanMath = tree.nodes.new(
-        "FunctionNodeBooleanMath"
-    )
-
-    node_invert.operation = "NOT"
-    node_invert.location = (np.array(node_output.location) - [0, 200]).tolist()
-    link(final_output, node_invert.inputs[0])
-    link(node_invert.outputs[0], node_output.inputs["Inverted"])
 
 
 def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
@@ -655,11 +385,6 @@ def insert_before(
         node = item
         to_socket = node.inputs[0]
         from_socket = to_socket.links[0].from_socket
-        # for socket in node.inputs:
-        #     if socket.is_linked:
-        #         from_socket = socket.links[0].from_socket
-        #         to_socket = socket
-        #         break
 
     tree = node.id_data
     try:

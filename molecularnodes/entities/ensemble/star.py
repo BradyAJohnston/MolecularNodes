@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List, Optional, Union
 import bpy
 import databpy
 import mrcfile
@@ -17,9 +16,9 @@ from .base import Ensemble, EntityType
 class EnsembleDataFrame:
     def __init__(self, data: DataFrame) -> None:
         self.data = data
-        self._coord_columns: List[str] = ["x", "y", "z"]
-        self._rot_columns: List[str] = ["Rot", "Tilt", "Psi"]
-        self._shift_column_names: List[str] = [
+        self._coord_columns: list[str] = ["x", "y", "z"]
+        self._rot_columns: list[str] = ["Rot", "Tilt", "Psi"]
+        self._shift_column_names: list[str] = [
             "OriginXAngst",
             "OriginYAngst",
             "OriginZAngst",
@@ -139,17 +138,17 @@ class CistemDataFrame(EnsembleDataFrame):
 
 
 class StarFile(Ensemble):
-    data_reader: Optional[DataFrame]
-    data_frame: Optional[Union[RelionDataFrame, CistemDataFrame]]
+    data_reader: DataFrame | None
+    data_frame: RelionDataFrame | CistemDataFrame | None
 
-    def __init__(self, file_path: Union[str, Path]) -> None:
+    def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
         self.type: str = "starfile"
         self.current_image: int = -1
         self._entity_type = EntityType.ENSEMBLE_STAR
 
     @classmethod
-    def from_starfile(cls, file_path: Union[str, Path]) -> "StarFile":
+    def from_starfile(cls, file_path: str | Path) -> "StarFile":
         self = cls(file_path)
         self.data_reader = self._read()
         self.data_frame = self._assign_df()
@@ -198,7 +197,7 @@ class StarFile(Ensemble):
     def _is_cistem(self) -> bool:
         return "cisTEMAnglePsi" in self.data_reader  # type: ignore
 
-    def _assign_df(self) -> Union[RelionDataFrame, CistemDataFrame]:
+    def _assign_df(self) -> RelionDataFrame | CistemDataFrame:
         if self.data_reader is None:
             raise ValueError("Data not loaded. Call from_starfile() first.")
         if self._is_relion():
