@@ -1,6 +1,7 @@
 from pathlib import Path
 import databpy as db
 import numpy as np
+from scipy.spatial.transform import Rotation
 from .base import Ensemble, EntityType
 
 
@@ -70,6 +71,15 @@ class Dataset:
             return np.zeros(len(self), np.float32)
         return np.mean(np.column_stack([df1, df2]) / 10_000, axis=1)
 
+    @property
+    def pose3d(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
+        """
+        Pose 3D
+        """
+        if (poses := self.get("alignments3D/pose")) is None:
+            return np.zeros((len(self), 4), np.float32)
+        return Rotation.from_rotvec(poses).as_quat()
+
 
 class CryoSPARC(Ensemble):
     def __init__(self, file_path: Path):
@@ -89,7 +99,10 @@ class CryoSPARC(Ensemble):
         fraction: float = 1.0,
         simplify=False,
     ) -> db.BlenderObject:
-        defocus = self.dset.defocus.reshape((len(self.dset), -1))
+        defocus = self.dset.defocus.reshape((len(self.dset), -1)) * world_scale
         positions = np.append(self.dset.positions, defocus, axis=1)
         bob = db.create_bob(positions, name=name)
+        bob.store_named_attribute(
+            data=self.dset.pose3d, name="rotation", atype="QUATERNION", domain="POINT"
+        )
         return bob
