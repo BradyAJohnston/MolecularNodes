@@ -6,10 +6,9 @@ from scipy.spatial.transform import Rotation
 from .base import Ensemble, EntityType
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, TypeVar
+    from typing import Any, Literal
 
     type BobField = Literal["data", "name", "atype", "domain"]
-    F = TypeVar("F")
 
 
 class Dataset:
