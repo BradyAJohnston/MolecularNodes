@@ -41,7 +41,9 @@ STYLE_NODE_MAPPING = {
     "ball_and_stick": mng.StyleBallAndStick,
 }
 
-STYLE_LITERALS = Literal["spheres", "cartoon", "ribbon", "surface", "sticks", "ball_and_stick"]
+STYLE_LITERALS = Literal[
+    "spheres", "cartoon", "ribbon", "surface", "sticks", "ball_and_stick"
+]
 
 # current implemented representations
 styles_mapping = {
@@ -73,8 +75,6 @@ def inputs(node):
             if item.in_out == "INPUT":
                 items[item.name] = item
     return items
-
-
 
 
 def set_selection(group, node, selection):
@@ -188,9 +188,6 @@ def get_star_node(object):
     "Walk back through the primary node connections until you find the first style node"
     group = object.modifiers["Molecular Nodes"].node_group
     return star_node(group)
-
-
-
 
 
 def insert_last_node(group, node, link_input=True):
