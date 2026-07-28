@@ -26,6 +26,12 @@ class Dataset:
     def __len__(self) -> int:
         return len(self.dset)
 
+    def bob_entry(self, name, atype) -> "dict[BobField, Any] | None":
+        if (data := self.get(name)) is None:
+            return None
+        else:
+            return dict(data=data, name=name, atype=atype)
+
     @overload
     def get(self, key: str, fallback: None = None) -> np.typing.NDArray | None: ...
     @overload
@@ -125,29 +131,26 @@ class CryoSPARC(Ensemble):
         We sort them here so they are presented in the same order they would be in
         a CryoSPARC dataset.
         """
-        fields = []
+        fields: "list[dict[BobField, Any]]" = []
         if not np.allclose((defocus := self.dset.defocus), 0.0):
             fields.append(dict(data=defocus[:, 0], name="ctf/df1_um", atype="FLOAT"))
             fields.append(dict(data=defocus[:, 1], name="ctf/df2_um", atype="FLOAT"))
-        if (shift3d := self.dset.shift3d) is not None:
-            fields.append(
-                dict(
-                    data=shift3d,
-                    name="alignments3D/shift",
-                    atype="FLOAT2",
-                )
-            )
-        if (shift2d := self.dset.shift2d) is not None:
-            fields.append(
-                dict(
-                    data=shift2d,
-                    name="alignments2D/shift",
-                    atype="FLOAT2",
-                )
-            )
+        fields_to_check = {
+            "ctf/df_angle_rad": "FLOAT",
+            "ctf/exp_group_id": "INT",
+            "alignments2D/shift": "FLOAT2",
+            "alignments2D/class": "INT",
+            "alignments3D/split": "INT",
+            "alignments3D/class": "INT",
+            "alignments3D/shift": "FLOAT2",
+            "alignments3D/alpha_min": "FLOAT",
+            # cannot support string fields since databpy does not support strings
+        }
+        for name, atype in fields_to_check.items():
+            if (bob_entry := self.dset.bob_entry(name=name, atype=atype)) is not None:
+                fields.append(bob_entry)
 
-        # type checking complains about no matching overload here, but it's wrong
-        return sorted(fields, key=lambda field: field.get("name"))  # type: ignore
+        return sorted(fields, key=lambda field: field.get("name"))
 
     def create_object(
         self,
