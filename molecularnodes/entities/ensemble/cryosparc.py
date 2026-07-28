@@ -29,25 +29,44 @@ class Dataset:
             return fallback
 
     @property
-    def alignment_psize(self) -> np.ndarray[tuple[int], np.dtype[np.float32]] | None:
+    def psize_2d(self) -> np.ndarray[tuple[int], np.dtype[np.float32]] | None:
         """
         Pixel size used during alignment.
 
         The pixel size used during alignment in CryoSPARC may differ from extracted pixel
         size. Shifts are always reported in aligned pixel size.
         """
-        return self.get("alignments3D/psize_A", self.get("alignments2D/psize_A"))
+        return self.get("alignments2D/psize_A")
 
     @property
-    def shifts(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
+    def psize_3d(self) -> np.ndarray[tuple[int], np.dtype[np.float32]] | None:
+        """
+        Pixel size used during alignment.
+
+        The pixel size used during alignment in CryoSPARC may differ from extracted pixel
+        size. Shifts are always reported in aligned pixel size.
+        """
+        return self.get("alignments3D/psize_A")
+
+    @property
+    def shift2d(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]] | None:
+        """
+        Shifts aligned during 2D Classification
+        """
+        if (
+            shifts := self.get("alignments2D/shift")
+        ) is not None and self.psize_2d is not None:
+            return shifts.astype(np.float32) * self.psize_2d.reshape(len(self), -1)
+
+    @property
+    def shift3d(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]] | None:
         """
         Aligned particle shifts in A.
         """
-        shifts = self.get("alignments3D/shift", self.get("alignments2D/shift"))
-        if shifts is None or self.alignment_psize is None:
-            return np.zeros((len(self), 2), np.float32)
-        else:
-            return shifts * self.alignment_psize
+        if (
+            shifts := self.get("alignments3D/shift")
+        ) is not None and self.psize_3d is not None:
+            return shifts * self.psize_3d.reshape(len(self), -1)
 
     @property
     def positions(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
@@ -103,6 +122,18 @@ class CryoSPARC(Ensemble):
         positions = np.append(self.dset.positions, defocus, axis=1)
         bob = db.create_bob(positions, name=name)
         bob.store_named_attribute(
-            data=self.dset.pose3d, name="rotation", atype="QUATERNION", domain="POINT"
+            data=self.dset.pose3d, name="rotation", atype="QUATERNION"
         )
+        if (shift3d := self.dset.shift3d) is not None:
+            bob.store_named_attribute(
+                data=shift3d * world_scale,
+                name="alignments3D/shift",
+                atype="FLOAT2",
+            )
+        if (shift2d := self.dset.shift2d) is not None:
+            bob.store_named_attribute(
+                data=shift2d * world_scale,
+                name="alignments2D/shift",
+                atype="FLOAT2",
+            )
         return bob
