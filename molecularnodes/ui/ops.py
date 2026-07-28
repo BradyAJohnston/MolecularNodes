@@ -355,13 +355,13 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
     def execute(self, context):
         file_path = path_resolve(self.filepath)
         if self.ensemble_type == "cellpack":
-            ensemble.load_cellpack(
+            ensemble.CellPack.load(
                 file_path=file_path,
                 name=Path(self.filepath).name,
                 node_setup=self.node_setup,
             )
         else:
-            ensemble.load_starfile(
+            ensemble.StarFile.load(
                 file_path=file_path,
                 node_setup=self.node_setup,
             )

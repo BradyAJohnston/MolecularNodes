@@ -146,19 +146,13 @@ class StarFile(Ensemble):
         self.type: str = "starfile"
         self.current_image: int = -1
         self._entity_type = EntityType.ENSEMBLE_STAR
-
-    @classmethod
-    def from_starfile(cls, file_path: str | Path) -> "StarFile":
-        self = cls(file_path)
         self.data_reader = self._read()
         self.data_frame = self._assign_df()
-        return self
 
     @classmethod
     def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
         self = cls(blender_object["starfile_path"])
         self.object = blender_object
-        self.data_reader = self._read()
         return self
 
     @property
@@ -199,7 +193,7 @@ class StarFile(Ensemble):
 
     def _assign_df(self) -> RelionDataFrame | CistemDataFrame:
         if self.data_reader is None:
-            raise ValueError("Data not loaded. Call from_starfile() first.")
+            raise ValueError("Data not loaded. Call StarFile.load() first.")
         if self._is_relion():
             return RelionDataFrame(self.data_reader)
         elif self._is_cistem():
@@ -265,15 +259,12 @@ class StarFile(Ensemble):
         self,
         name: str = "StarFileObject",
         node_setup: bool = True,
-        world_scale: float = 0.1,
-        fraction: float = 1.0,
-        simplify: bool = True,
     ) -> bpy.types.Object:
         if self.data_frame is None:
-            raise ValueError("DataFrame not assigned. Call from_starfile() first.")
+            raise ValueError("DataFrame not assigned. Call StarFile.load() first.")
 
         self.object = databpy.create_object(
-            self.data_frame.coordinates_scaled * world_scale,
+            self.data_frame.coordinates_scaled,
             collection=bl.coll.mn(),
             name=name,
         )

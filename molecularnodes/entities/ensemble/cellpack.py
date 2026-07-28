@@ -25,22 +25,13 @@ class CellPack(Ensemble):
         self,
         name: str = "CellPack",
         node_setup: bool = True,
-        world_scale: float = 0.01,
-        fraction: float = 1.0,
-        simplify: bool = False,
     ) -> bpy.types.Object:
         self.object = self._create_data_object(name=name)
         self.object.mn.entity_type = self._entity_type.value
         self._create_object_instances(name=name, node_setup=node_setup)
 
         with self.tree.reset() as (atoms, join):
-            (
-                atoms
-                >> geometry.EnsembleInstance(
-                    instances=self.data_collection, fraction=fraction
-                )
-                >> join
-            )
+            (atoms >> geometry.EnsembleInstance(instances=self.data_collection) >> join)
 
         return self.object
 

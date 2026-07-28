@@ -14,7 +14,7 @@ def test_starfile_attributes(type, snapshot):
     Test that our nodes correctly convert the starfile attribute columns to quaternions that matches the convention of scipy.spatial.transform.Rotation.from_euler.
     """
     file = data_dir / f"starfile/{type}.star"
-    ensemble = mn.entities.ensemble.load_starfile(file)
+    ensemble = mn.entities.ensemble.StarFile.load(file)
 
     star = starfile.read(file)
 
@@ -63,7 +63,7 @@ def test_starfile_attributes(type, snapshot):
 
 def test_load_starfiles(snapshot):
     file = data_dir / "starfile/clathrin.star"
-    ensemble = mn.entities.ensemble.load_starfile(file)
+    ensemble = mn.entities.ensemble.StarFile.load(file)
     assert ensemble._entity_type == mn.entities.base.EntityType.ENSEMBLE_STAR
     assert ensemble.object.mn.entity_type == ensemble._entity_type.value
     assert snapshot == GeometrySet(ensemble.object)
@@ -71,14 +71,14 @@ def test_load_starfiles(snapshot):
 
 def test_categorical_attributes(snapshot):
     file = data_dir / "starfile/cistem.star"
-    ensemble = mn.entities.ensemble.load_starfile(file)
+    ensemble = mn.entities.ensemble.StarFile.load(file)
     assert "cisTEMOriginalImageFilename_categories" in ensemble.object
     assert snapshot == GeometrySet(ensemble.object)
 
 
 def test_micrograph_conversion(snapshot):
     file = data_dir / "starfile/cistem.star"
-    ensemble = mn.entities.ensemble.load_starfile(file)
+    ensemble = mn.entities.ensemble.StarFile.load(file)
     tiff_path = data_dir / "starfile/montage.tiff"
     ensemble._convert_mrc_to_tiff()
     assert tiff_path.exists()
