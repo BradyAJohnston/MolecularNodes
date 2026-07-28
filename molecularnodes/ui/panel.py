@@ -1,3 +1,4 @@
+from typing import cast
 import bpy
 from bpy.types import UILayout
 from databpy.object import LinkedObjectError
@@ -11,6 +12,37 @@ from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
 
 
+def import_options(layout: UILayout) -> None:
+    # fetching requires online access, so gate only those entries
+    online = check_online_access_for_ui(layout.column())
+    op = online.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
+    op.database = "wwpdb"
+    op = online.operator(
+        "mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT"
+    )
+    op.database = "alphafold"
+
+    op = layout.operator("mn.import_fetch", text="Import Local File", icon="IMPORT")
+    op.database = "local"
+
+    layout.separator()
+    op = layout.operator("mn.import_ensemble", text="Starfile", icon="IMPORT")
+    op.ensemble_type = "starfile"
+    op = layout.operator("mn.import_ensemble", text="CellPack", icon="IMPORT")
+    op.ensemble_type = "cellpack"
+
+    layout.separator()
+    op = layout.operator(
+        "mn.import_trajectory", text="MD Trajectory", icon="IMPORT"
+    )
+    op.format = "md"
+    op = layout.operator("mn.import_trajectory", text="oxDNA", icon="IMPORT")
+    op.format = "oxdna"
+
+    layout.separator()
+    layout.operator("mn.import_density", text="Density Map", icon="IMPORT")
+
+
 class MN_MT_Add(bpy.types.Menu):
     bl_idname = "MN_MT_Add"
     bl_label = "Molecular Nodes"
@@ -20,35 +52,10 @@ class MN_MT_Add(bpy.types.Menu):
         assert layout
         # the Add menu defaults to EXEC_REGION_WIN, which would run the operator
         # directly; force INVOKE so the operators' popup dialogs are shown instead
-        layout.operator_context = "INVOKE_DEFAULT"
+        with context.temp_override(operator_context="INVOKE_DEFAULT"):
+            import_options(layout)
 
-        op = layout.operator("mn.import_fetch", text="Import Local File", icon="IMPORT")
-        op.database = "local"
-        # fetching requires online access, so gate only those entries
-        online = check_online_access_for_ui(layout.column())
-        op = online.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
-        op.database = "wwpdb"
-        op = online.operator(
-            "mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT"
-        )
-        op.database = "alphafold"
 
-        layout.separator()
-        op = layout.operator("mn.import_ensemble", text="Starfile", icon="IMPORT")
-        op.ensemble_type = "starfile"
-        op = layout.operator("mn.import_ensemble", text="CellPack", icon="IMPORT")
-        op.ensemble_type = "cellpack"
-
-        layout.separator()
-        op = layout.operator(
-            "mn.import_trajectory", text="MD Trajectory", icon="IMPORT"
-        )
-        op.format = "md"
-        op = layout.operator("mn.import_trajectory", text="oxDNA", icon="IMPORT")
-        op.format = "oxdna"
-
-        layout.separator()
-        layout.operator("mn.import_density", text="Density Map", icon="IMPORT")
 
 
 def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
@@ -66,11 +73,8 @@ class MN_MT_Import(bpy.types.Menu):
         assert layout
         # force INVOKE so the operators' popup dialogs are shown instead of
         # being executed directly
-        layout.operator_context = "INVOKE_DEFAULT"
-        layout.operator("mn.import_fetch", text="Molecule", icon="IMPORT")
-        layout.operator("mn.import_ensemble", text="Ensemble", icon="IMPORT")
-        layout.operator("mn.import_trajectory", text="Trajectory", icon="IMPORT")
-        layout.operator("mn.import_density", text="Density", icon="IMPORT")
+        with context.temp_override(operator_context="INVOKE_DEFAULT"):
+            import_options(layout)
 
 
 def pt_object_context(self, context):
@@ -228,8 +232,8 @@ def panel_md_properties(layout, context):
     layout_selection_manage(layout, traj)
 
 
-def panel_object(layout, context):
-    object = context.active_object
+def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context):
+    object = cast(bpy.types.Object, context.active_object)
     if object is None:
         # When an object is deleted, context.ative_object is None
         return

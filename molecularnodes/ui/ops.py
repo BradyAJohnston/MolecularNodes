@@ -592,8 +592,9 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 message=f"Streaming trajectory '{traj.name}' from '{self.trajectory}'",
             )
         else:
-            n_frames = int(traj.object.mn.n_frames - 1)
-            context.scene.frame_end = n_frames
+            n_frames = int(traj.object.mn.n_frames)
+            if n_frames > 1:
+                context.scene.frame_end = n_frames
             self.report(
                 {"INFO"},
                 message=f"Imported '{self.topology}' as {traj.name} "
