@@ -2,6 +2,7 @@ from abc import ABCMeta
 from pathlib import Path
 from typing import Union
 import bpy
+import databpy as db
 from ... import blender as bl
 from ..base import EntityType, MolecularEntity
 
@@ -59,7 +60,7 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         world_scale: float = 0.01,
         fraction: float = 1.0,
         simplify=False,
-    ) -> bpy.types.Object:
+    ) -> bpy.types.Object | db.BlenderObject:
         """
         Create a 3D object for the ensemble.
 
