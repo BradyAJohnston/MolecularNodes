@@ -17,9 +17,7 @@ def import_options(layout: UILayout) -> None:
     online = check_online_access_for_ui(layout.column())
     op = online.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
     op.database = "wwpdb"
-    op = online.operator(
-        "mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT"
-    )
+    op = online.operator("mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT")
     op.database = "alphafold"
 
     op = layout.operator("mn.import_fetch", text="Import Local File", icon="IMPORT")
@@ -32,9 +30,7 @@ def import_options(layout: UILayout) -> None:
     op.ensemble_type = "cellpack"
 
     layout.separator()
-    op = layout.operator(
-        "mn.import_trajectory", text="MD Trajectory", icon="IMPORT"
-    )
+    op = layout.operator("mn.import_trajectory", text="MD Trajectory", icon="IMPORT")
     op.format = "md"
     op = layout.operator("mn.import_trajectory", text="oxDNA", icon="IMPORT")
     op.format = "oxdna"
@@ -54,8 +50,6 @@ class MN_MT_Add(bpy.types.Menu):
         # directly; force INVOKE so the operators' popup dialogs are shown instead
         with context.temp_override(operator_context="INVOKE_DEFAULT"):
             import_options(layout)
-
-
 
 
 def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
