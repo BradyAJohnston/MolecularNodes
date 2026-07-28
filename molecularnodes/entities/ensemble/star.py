@@ -15,6 +15,7 @@ from .base import Ensemble, EntityType
 
 class EnsembleDataFrame:
     def __init__(self, data: DataFrame) -> None:
+        self._world_scale = 0.1
         self.data = data
         self._coord_columns: list[str] = ["x", "y", "z"]
         self._rot_columns: list[str] = ["Rot", "Tilt", "Psi"]
@@ -44,7 +45,7 @@ class EnsembleDataFrame:
 
     @property
     def coordinates_scaled(self) -> np.ndarray:
-        return self.coordinates * self.scale
+        return self.coordinates * self.scale * self._world_scale
 
     def rotation_as_quaternion(self) -> np.ndarray:
         rot_tilt_psi_cols = self.data[self._rot_columns].to_numpy()
