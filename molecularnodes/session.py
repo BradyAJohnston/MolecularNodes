@@ -102,7 +102,11 @@ class MNSession:
                 entity.type = EntityType.MD.value
             elif isinstance(item, Ensemble):
                 entity.type = EntityType.ENSEMBLE.value
-            props.entities_active_index = len(entities) - 1
+            # make the new entity the active selection in the Entities list;
+            # the object may not be created yet at registration time
+            obj = self.get_object(item.uuid)
+            if obj is not None:
+                props.entities_active_index = bpy.data.objects.find(obj.name)
 
     def remove_entity(self, uuid: str) -> None:
         """Remove entity from the dictionary"""
@@ -113,7 +117,6 @@ class MNSession:
         index = entities.find(uuid)
         if index != -1:
             entities.remove(index)  # remove entity from collection
-            props.entities_active_index = len(entities) - 1
 
     def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
         return self.get(obj.uuid)
@@ -124,7 +127,10 @@ class MNSession:
 
         If nothing is be found to match, return None.
         """
-        return get_from_uuid(uuid)
+        try:
+            return get_from_uuid(uuid)
+        except LinkedObjectError:
+            return None
 
     def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
         return self.entities.get(uuid)
@@ -151,7 +157,6 @@ class MNSession:
             for i in reversed_indices:
                 if i < len(entities):
                     entities.remove(i)
-            props.entities_active_index = len(entities) - 1
 
     @property
     def n_items(self) -> int:

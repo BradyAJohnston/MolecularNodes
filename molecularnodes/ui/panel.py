@@ -1,7 +1,6 @@
 from typing import cast
 import bpy
 from bpy.types import UILayout
-from databpy.object import LinkedObjectError
 from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, Trajectory, density, trajectory
 from ..entities.base import EntityType
@@ -329,9 +328,30 @@ class MN_PT_Object(bpy.types.Panel):
         panel_object(layout, context)
 
 
+def get_active_entity_object(context: bpy.types.Context) -> bpy.types.Object | None:
+    """
+    The object currently selected in the Entities list, or None.
+
+    The Entities list displays `bpy.data.objects` filtered to molecular entities
+    (objects with `mn.entity_type` set), so the active index is an index into
+    `bpy.data.objects` and can point at a non-entity object after filtering.
+    """
+    index = context.scene.mn.entities_active_index
+    objects = bpy.data.objects
+    if 0 <= index < len(objects):
+        obj = objects[index]
+        if obj.mn.entity_type != "None":
+            return obj
+    return None
+
+
 class MN_UL_EntitiesList(bpy.types.UIList):
     """
-    UIList of entities in Entities panel (Viewport)
+    UIList of molecular entity objects in the Entities panel (Viewport).
+
+    Lists `bpy.data.objects`, filtered down to objects that have
+    `mn.entity_type` set. Each object may or may not have a matching entity
+    tracked in the session's MNSession, indicated by the link icon.
     """
 
     def draw_item(
@@ -346,49 +366,37 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         index=0,
         flt_flag=0,
     ):
-        custom_icon = "WORLD"
+        obj = cast(bpy.types.Object, item)
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            seqno = f"{index + 1}. "
-            split = row.split(factor=0.1)
-            col = split.column()
-            col.label(text=seqno)
-            col = split.column()
-            session = context.scene.MNSession
-            entity = session.get(item.name)
-            col.prop(entity.object, "name", text="", emboss=False)
+            linked = context.scene.MNSession.get(obj.uuid) is not None
+            row.label(text="", icon="LINKED" if linked else "UNLINKED")
+            row.prop(obj, "name", text="", emboss=False)
             # use the object viewport visibility to determine the icon
             # we do not have direct callbacks for raw object visibility changes
-            hide_icon = "HIDE_OFF" if entity.object.visible_get() else "HIDE_ON"
-            row.prop(
-                item,
-                "visible",
-                icon_only=True,
-                icon=hide_icon,
-            )
+            hide_icon = "HIDE_OFF" if obj.mn.visible else "HIDE_ON"
+            row.prop(obj.mn, "visible", icon_only=True, icon=hide_icon)
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
-            layout.label(text="", icon=custom_icon)
+            layout.label(text="", icon="OBJECT_DATA")
 
     def filter_items(self, context, data, propname):
         if data is None:
             return [], []
-        items = getattr(data, propname)
-        # Filter valid entities
+        objects = getattr(data, propname)
+        # show only molecular entities, then apply the name filter on top
         sort_data = []
-        filtered = [0] * len(items)
-        for i, item in enumerate(items):
-            try:
-                name = context.scene.MNSession.get(item.name).name
-                sort_data.append((i, name))
-                if (
-                    not self.filter_name
-                    or bool(self.filter_name.lower() in name.lower())
-                    is not self.use_filter_invert
-                ):
-                    filtered[i] |= self.bitflag_filter_item
-            except (LinkedObjectError, AttributeError):
-                sort_data.append((i, ""))
+        filtered = [0] * len(objects)
+        for i, obj in enumerate(objects):
+            sort_data.append((i, obj.name))
+            if obj.mn.entity_type == "None":
+                continue
+            if (
+                not self.filter_name
+                or (self.filter_name.lower() in obj.name.lower())
+                is not self.use_filter_invert
+            ):
+                filtered[i] |= self.bitflag_filter_item
         # Sort
         ordered = []
         if self.use_filter_sort_alpha:
@@ -415,12 +423,16 @@ class MN_PT_Entities(bpy.types.Panel):
         row.template_list(
             "MN_UL_EntitiesList",
             "entities_list",
-            props,
-            "entities",
+            bpy.data,
+            "objects",
             props,
             "entities_active_index",
             rows=3,
         )
+
+        obj = get_active_entity_object(context)
+        entity = context.scene.MNSession.get(obj.uuid) if obj is not None else None
+
         col = row.column()
         row = col.row()
         row.operator("mn.session_prune", icon="FILE_REFRESH", text="")
@@ -429,24 +441,22 @@ class MN_PT_Entities(bpy.types.Panel):
         row.enabled = False  # TODO: create object or create entity or remove?
         row = col.row()
         op = row.operator("mn.session_remove_item", icon="REMOVE", text="")
-        if props.entities_active_index == -1:
+        if entity is None:
             row.enabled = False
         else:
-            op.uuid = props.entities[props.entities_active_index].name
+            op.uuid = obj.uuid
 
-        if props.entities_active_index == -1:
+        if obj is None:
             return
-        # display entity type of the selected entity
-        uuid = props.entities[props.entities_active_index].name
-        entity = context.scene.MNSession.get(uuid)
-        if entity is None:
-            return
+        # display details of the selected entity object
         row = layout.row()
-        try:
-            row.prop(entity.object.mn, "entity_type")
-        except LinkedObjectError:
-            pass
+        row.prop(obj.mn, "entity_type")
         row.enabled = False
+        row = layout.row()
+        if entity is not None:
+            row.label(text="Linked to session entity", icon="LINKED")
+        else:
+            row.label(text="No linked entity in session", icon="UNLINKED")
 
 
 class MN_PT_trajectory(bpy.types.Panel):
@@ -463,19 +473,14 @@ class MN_PT_trajectory(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         """Visible only if entity selected is a trajectory"""
-        scene = context.scene
-        active_index = scene.mn.entities_active_index
-        if active_index == -1:
+        obj = get_active_entity_object(context)
+        if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
-        uuid = scene.mn.entities[active_index].name
-        try:
-            return scene.MNSession.get(uuid).object.mn.entity_type in (
-                EntityType.MD.value,
-                EntityType.MD_STREAMING.value,
-                EntityType.MD_OXDNA.value,
-            )
-        except (LinkedObjectError, AttributeError):
-            return False
+        return obj.mn.entity_type in (
+            EntityType.MD.value,
+            EntityType.MD_STREAMING.value,
+            EntityType.MD_OXDNA.value,
+        )
 
     def draw(self, context):
         layout = cast(UILayout, self.layout)
@@ -483,11 +488,8 @@ class MN_PT_trajectory(bpy.types.Panel):
         # To enable the animatate dot next to property in UI
         # layout.use_property_split = True
         # layout.use_property_decorate = True
-        scene = context.scene
-        active_index = scene.mn.entities_active_index
-        uuid = scene.mn.entities[active_index].name
-        # Use the object corresponding to the entity
-        traj = scene.MNSession.get(uuid)
+        obj = get_active_entity_object(context)
+        traj = context.scene.MNSession.get(obj.uuid)
 
         layout_trajectory_playback(layout, traj, panel=False)
 
@@ -506,27 +508,20 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         """Visible only if entity selected is a trajectory"""
-        scene = context.scene
-        active_index = scene.mn.entities_active_index
-        if active_index == -1:
+        obj = get_active_entity_object(context)
+        if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
-        uuid = scene.mn.entities[active_index].name
-        try:
-            return scene.MNSession.get(uuid).object.mn.entity_type in (
-                EntityType.MD.value,
-                EntityType.MD_STREAMING.value,
-            )
-        except (LinkedObjectError, AttributeError):
-            return False
+        return obj.mn.entity_type in (
+            EntityType.MD.value,
+            EntityType.MD_STREAMING.value,
+        )
 
     def draw(self, context):
         layout = self.layout
         assert layout
-        scene = context.scene
-        active_index = scene.mn.entities_active_index
-        uuid = scene.mn.entities[active_index].name
-        # Use the object corresponding to the entity
-        traj = scene.MNSession.get(uuid)
+        obj = get_active_entity_object(context)
+        uuid = obj.uuid
+        traj = context.scene.MNSession.get(uuid)
         if traj.dssp._DSSP is None:
             row = layout.row()
             op = row.operator("mn.dssp_init")
@@ -664,27 +659,23 @@ class MN_PT_Styles(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         """Visible only if entity selected is a trajectory or molecule"""
-        scene = context.scene
-        active_index = scene.mn.entities_active_index
-        if active_index == -1:
+        obj = get_active_entity_object(context)
+        if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
-        uuid = scene.mn.entities[active_index].name
-        try:
-            return scene.MNSession.get(uuid).object.mn.entity_type in (
-                EntityType.MD.value,
-                EntityType.MD_STREAMING.value,
-                EntityType.MOLECULE.value,
-                EntityType.DENSITY.value,
-            )
-        except (LinkedObjectError, AttributeError):
-            return False
+        return obj.mn.entity_type in (
+            EntityType.MD.value,
+            EntityType.MD_STREAMING.value,
+            EntityType.MOLECULE.value,
+            EntityType.DENSITY.value,
+        )
 
     def draw(self, context):
-        scene = context.scene
         layout = self.layout
         assert layout is not None
-        entities_active_index: int = scene.mn.entities_active_index
-        uuid: str = scene.mn.entities[entities_active_index].name
+        obj = get_active_entity_object(context)
+        if obj is None:
+            return
+        uuid: str = obj.uuid
         entity = get_session().get(uuid)
         if entity is None:
             return
@@ -860,27 +851,25 @@ class MN_PT_Annotations(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         """Visible only if entity selected is a trajectory or molecule"""
-        scene = context.scene
-        active_index = scene.mn.entities_active_index
-        if active_index == -1:
+        obj = get_active_entity_object(context)
+        if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
-        uuid = scene.mn.entities[active_index].name
-        try:
-            return scene.MNSession.get(uuid).object.mn.entity_type in (
-                EntityType.MD.value,
-                EntityType.MD_STREAMING.value,
-                EntityType.MOLECULE.value,
-                EntityType.DENSITY.value,
-            )
-        except (LinkedObjectError, AttributeError):
-            return False
+        return obj.mn.entity_type in (
+            EntityType.MD.value,
+            EntityType.MD_STREAMING.value,
+            EntityType.MOLECULE.value,
+            EntityType.DENSITY.value,
+        )
 
     def draw(self, context):
         scene = context.scene
-        entities_active_index = scene.mn.entities_active_index
-        uuid = scene.mn.entities[entities_active_index].name
+        object = get_active_entity_object(context)
+        if object is None:
+            return
+        uuid = object.uuid
         entity = scene.MNSession.get(uuid)
-        object = entity.object
+        if entity is None:
+            return
         annotations_active_index = object.mn.annotations_active_index
         valid_selection = annotations_active_index != -1
 

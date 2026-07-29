@@ -8,7 +8,6 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
-from databpy.object import LinkedObjectError
 from ..blender.utils import set_object_visibility
 from ..entities.base import EntityType
 from ..handlers import _update_entities
@@ -80,23 +79,53 @@ def _set_entity_visibility(self, visible: bool) -> None:
         entity.annotations._update_annotation_object()
 
 
-def _entities_active_index_callback(self, context: bpy.context) -> None:  # type: ignore
-    """update callback for entities active_index change"""
-    if self.entities_active_index == -1:
-        return
-    uuid = context.scene.mn.entities[self.entities_active_index].name
+def _get_object_visibility(self) -> bool:
+    """get callback for object visibility property"""
     try:
-        # object might not yet be created during session entity registration
-        entity_object = context.scene.MNSession.get(uuid).object
-    except (LinkedObjectError, AttributeError):
+        return self.id_data.visible_get()
+    except RuntimeError:
+        # object not in the current view layer
+        return True
+
+
+def _set_object_visibility(self, visible: bool) -> None:
+    """set callback for object visibility property"""
+    obj = self.id_data
+    set_object_visibility(obj, visible)
+    entity = bpy.context.scene.MNSession.get(obj.uuid)
+    if entity is not None:
+        entity.annotations._update_annotation_object()
+
+
+def _get_entities_active_index(self) -> int:
+    """
+    Derive the list selection from the scene's active object.
+
+    The active object is the single source of truth for the Entities list, so
+    selecting an entity object in the outliner or viewport is mirrored in the
+    list. Returns -1 when the active object is not a molecular entity.
+    """
+    obj = bpy.context.view_layer.objects.active
+    if obj is None or obj.mn.entity_type == "None":
+        return -1
+    return bpy.data.objects.find(obj.name)
+
+
+def _set_entities_active_index(self, index: int) -> None:
+    """set callback: mirror the list selection into the scene selection"""
+    # the index points into bpy.data.objects (the Entities list data source)
+    if index < 0 or index >= len(bpy.data.objects):
         return
-    # just setting view_layer.objects.active is not enough
-    bpy.ops.object.select_all(action="DESELECT")  # deselect all objects
-    if entity_object.name in context.view_layer.objects:
-        context.view_layer.objects.active = entity_object  # make active object
-    bpy.context.view_layer.update()  # update view layer to reflect changes
-    if bpy.context.active_object:  # can be None for hidden objects
-        bpy.context.active_object.select_set(True)  # set as selected object
+    entity_object = bpy.data.objects[index]
+    if entity_object.mn.entity_type == "None":
+        return
+    context = bpy.context
+    if entity_object.name not in context.view_layer.objects:
+        return
+    for obj in list(context.selected_objects):
+        obj.select_set(False)
+    context.view_layer.objects.active = entity_object
+    entity_object.select_set(True)
 
 
 class EntityProperties(bpy.types.PropertyGroup):
@@ -222,8 +251,11 @@ class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
     entities_active_index: IntProperty(  # type: ignore
         name="Active entity index",
+        description="Index into bpy.data.objects of the entity object active in"
+        " the Entities list, derived from the scene's active object",
         default=-1,
-        update=_entities_active_index_callback,
+        get=_get_entities_active_index,
+        set=_set_entities_active_index,
     )
 
     is_updating: BoolProperty(  # type: ignore
@@ -267,6 +299,13 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="How the file was imported, dictating how MN interacts with it",
         items=ENTITY_ITEMS,
         default="None",
+    )
+
+    visible: BoolProperty(  # type: ignore
+        name="Visible",
+        description="Visibility of the entity object in the viewport and renders",
+        get=_get_object_visibility,
+        set=_set_object_visibility,
     )
 
     code: StringProperty(  # type: ignore
