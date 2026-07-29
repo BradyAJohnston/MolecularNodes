@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, overload
 import databpy as db
@@ -13,6 +14,18 @@ if TYPE_CHECKING:
         "BobField",
         {"name": str, "data": np.typing.NDArray, "atype": AttributeTypeNames},
     )
+
+UID_RIGHT_MASK = np.uint64(2**32 - 1)
+UID_REGEX = rb"(\d{21})_"
+
+
+def uid_as_i32_vec(
+    uids: np.ndarray[tuple[int], np.dtype[np.uint64]],
+) -> np.ndarray[tuple[int, int], np.dtype[np.int32]]:
+    # store the u64 UID as two i32
+    left_half = (uids >> 32).astype(np.int32)
+    right_half = np.bitwise_and(UID_RIGHT_MASK, uids).astype(np.int32)
+    return np.column_stack((left_half, right_half))
 
 
 class Dataset:
@@ -48,14 +61,6 @@ class Dataset:
             return fallback
 
     @property
-    def uid_as_i32(self) -> np.ndarray[tuple[int], np.dtype[np.int32]]:
-        uids = self["uid"].astype(np.int32)
-        counts = np.unique(uids, return_counts=True)[1]
-        if np.any(counts != 1):
-            self.op.report({"WARNING"}, "UID collisions due to i32 coercion.")
-        return uids
-
-    @property
     def psize_2d(self) -> np.ndarray[tuple[int], np.dtype[np.float32]] | None:
         """
         Pixel size used during alignment.
@@ -83,7 +88,7 @@ class Dataset:
         if (
             shifts := self.get("alignments2D/shift")
         ) is not None and self.psize_2d is not None:
-            return shifts.astype(np.float32) * self.psize_2d.reshape(len(self), -1)
+            return shifts.astype(np.float32) * self.psize_2d[:, np.newaxis]
 
     @property
     def shift3d(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]] | None:
@@ -93,28 +98,52 @@ class Dataset:
         if (
             shifts := self.get("alignments3D/shift")
         ) is not None and self.psize_3d is not None:
-            return shifts * self.psize_3d.reshape(len(self), -1)
+            return shifts * self.psize_3d[:, np.newaxis]
 
     @property
     def defocus(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
         """
-        Defocus in microns.
+        Defocus in Angstroms.
         """
         df1 = self.get("ctf/df1_A")
         df2 = self.get("ctf/df2_A")
         if df1 is None or df2 is None:
             return np.zeros((len(self), 2), np.float32)
-        return np.column_stack([df1, df2]) / 10_000
+        return np.column_stack([df1, df2])
 
     @property
-    def positions(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
+    def location_frac(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
+        xpos = self.get("location/center_x_frac", np.zeros(len(self), dtype=np.float32))
+        ypos = self.get("location/center_y_frac", np.zeros_like(xpos))
+        return np.column_stack((xpos, ypos))
+
+    @property
+    def position(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
         """
         Particle positions in micrograph fractions (X, Y).
         """
-        xpos = self.get("location/center_x_frac", np.zeros(len(self), dtype=np.float32))
-        ypos = self.get("location/center_y_frac", np.zeros_like(xpos))
+        xypos = self.location_frac
+        xypos *= (
+            self.get("location/micrograph_shape", np.ones_like(xypos))
+            * self.get("location/micrograph_psize_A", np.ones(len(self)))[:, np.newaxis]
+        )
         zpos = np.mean(self.defocus, axis=1, keepdims=True)
-        return np.column_stack([xpos, ypos, zpos])
+        zpos = np.median(zpos) - zpos
+        return np.append(xypos, zpos, axis=1)
+
+    @property
+    def blob_path_uids(self) -> np.ndarray[tuple[int, int], np.dtype[np.int32]] | None:
+        if (blob_paths := self.get("blob/path")) is None:
+            return None
+        try:
+            # ignore type here because we handle the None.group() exception
+            blob_uids = [
+                np.uint64(re.search(UID_REGEX, s).group(1))  # type: ignore
+                for s in blob_paths
+            ]
+            return uid_as_i32_vec(np.array(blob_uids))
+        except (IndexError, AttributeError):
+            return None
 
     @property
     def pose2d_as_quat(
@@ -168,9 +197,6 @@ class CryoSPARC(Ensemble):
         a CryoSPARC dataset.
         """
         fields: "list[BobField]" = []
-        if not np.allclose((defocus := self.dset.defocus), 0.0):
-            fields.append(dict(data=defocus[:, 0], name="ctf/df1_um", atype="FLOAT"))
-            fields.append(dict(data=defocus[:, 1], name="ctf/df2_um", atype="FLOAT"))
         fields_to_check = {
             "ctf/df_angle_rad": "FLOAT",
             "ctf/exp_group_id": "INT",
@@ -180,17 +206,32 @@ class CryoSPARC(Ensemble):
             "alignments3D/class": "INT",
             "alignments3D/shift": "FLOAT2",
             "alignments3D/alpha_min": "FLOAT",
+            "blob/idx": "INT",
+            "blob/shape": "INT32_2D",
+            "blob/psize_A": "FLOAT",
             # cannot support string fields since databpy does not support strings
         }
         for name, atype in fields_to_check.items():
             if (bob_entry := self.dset.bob_entry(name=name, atype=atype)) is not None:
                 fields.append(bob_entry)
 
-        fields.append(dict(name="uid", data=self.dset.uid_as_i32, atype="INT"))
+        if not np.allclose((defocus := self.dset.defocus), 0.0):
+            fields.append(dict(data=defocus, name="ctf/df_A", atype="FLOAT2"))
+        if not np.allclose((location_frac := self.dset.location_frac), 0.0):
+            fields.append(
+                dict(name="location/center_frac", data=location_frac, atype="FLOAT2")
+            )
+        fields.append(
+            dict(name="uid", data=uid_as_i32_vec(self.dset["uid"]), atype="INT32_2D")
+        )
         if (rots := self.dset.pose3d_as_quat) is not None:
             fields.append(dict(name="alignments3D/pose", data=rots, atype="QUATERNION"))
         if (rots := self.dset.pose2d_as_quat) is not None:
             fields.append(dict(name="alignments2D/pose", data=rots, atype="QUATERNION"))
+        if (blob_path_uids := self.dset.blob_path_uids) is not None:
+            fields.append(
+                dict(name="blob/path_uid", data=blob_path_uids, atype="INT32_2D")
+            )
 
         component_coord = 0
         while (
@@ -217,9 +258,7 @@ class CryoSPARC(Ensemble):
     ) -> db.BlenderObject:
         # build positions and rotation outside _construct_fields because we want
         # them to appear first, like they would with a normal Blender object.
-        position_scaler = np.ones_like(self.dset.positions)
-        position_scaler[:, 2] = world_scale
-        bob = db.create_bob(self.dset.positions * position_scaler, name=name)
+        bob = db.create_bob(self.dset.position * world_scale, name=name)
         bob.store_named_attribute(
             data=self.dset.rotations, name="rotation", atype="QUATERNION"
         )
