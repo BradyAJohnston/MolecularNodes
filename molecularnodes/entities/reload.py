@@ -68,7 +68,7 @@ def _reload_density(obj: bpy.types.Object) -> Grids:
 
 
 def _reload_ensemble_star(obj: bpy.types.Object) -> StarFile:
-    # StarFile records its source path in the "starfile_path" custom property
+    # StarFile records its source path in the `mn.filepath` property
     return StarFile.from_blender_object(obj)
 
 

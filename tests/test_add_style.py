@@ -39,9 +39,9 @@ def test_styles_panel_style_node_selection():
     # the panel treats styles_active_index as an index into node_group.nodes and
     # only shows details when it points at a style node
     index = node_group.nodes.find(style_names[0])
-    mol.object.mn.styles_active_index = index
+    mol.props.styles_active_index = index
 
-    active = node_group.nodes[mol.object.mn.styles_active_index]
+    active = node_group.nodes[mol.props.styles_active_index]
     assert is_style_node(active)
     assert active.name == style_names[0]
 

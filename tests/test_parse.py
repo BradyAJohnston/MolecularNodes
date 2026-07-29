@@ -21,6 +21,6 @@ def test_bcif_assemblies(filepath):
 
 def test_bcif_entity_ids(filepath):
     mol = mn.Molecule.load(filepath)
-    entity_ids = list(mol.object["entity_ids"])
+    entity_ids = list(mol.props.entity_ids)
     assert entity_ids is not None
     assert entity_ids == ["CAPSID PROTEIN", "CALCIUM ION", "water"]

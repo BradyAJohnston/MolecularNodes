@@ -220,7 +220,7 @@ def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
         try:
             tree = bpy.data.node_groups[tree]
         except KeyError:
-            tree = append(tree)  # type: ignore
+            tree = append(tree)
     # only change the label if it hasn't been customised away from the tree name
     if node.label == node.node_tree.name:
         node.label = tree.name
@@ -436,7 +436,7 @@ def custom_boolean_iswitch(
 
 def custom_color_iswitch(
     name: str,
-    items: dict[str, tuple[float, float, float, float]] | Iterable[int | float],
+    items: dict[str, tuple[float, float, float, float]] | Iterable[int | float | str],
     attribute_name: str = "chain_id",
     offset: int = 0,
 ) -> bpy.types.GeometryNodeTree:

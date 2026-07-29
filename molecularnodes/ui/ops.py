@@ -143,6 +143,9 @@ class MN_OT_Import_Molecule(Import_Molecule):
                 mol = Molecule.load(
                     file_path=Path(self.directory, file.name), name=file.name
                 )
+                nodes.custom_boolean_iswitch(
+                    name=f"Select Chain {mol.name}", items=mol.props.chain_ids
+                ).asset_mark()
 
                 with mol.tree.reset() as (atoms, join):
                     (

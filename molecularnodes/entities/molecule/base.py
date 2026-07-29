@@ -14,14 +14,14 @@ from ... import blender as bl
 from ... import download, utils
 from ...nodes import geometry as g
 from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING, styles_mapping
+from .. import utilities
 from ..base import EntityType, MolecularEntity
-from ..utilities import create_object
 from . import pdb, pdbx, sdf
 from .annotations import MoleculeAnnotationManager
 from .reader import ReaderBase
 
 if TYPE_CHECKING:
-    from ...ui.props import MolecularNodesObjectProperties
+    pass
 
 
 class Molecule(MolecularEntity, metaclass=ABCMeta):
@@ -74,21 +74,17 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         """
         Create a 3D model of the molecule, with one vertex for each atom.
         """
-        self.object = create_object(
+        self.object = utilities.create_object(
             array=self.array,
             name=name,
             collection=bl.coll.mn(),
         )
         self.props.entity_type = self._entity_type.value
         if self._reader is not None:
-            self._store_object_custom_properties(self.object, self._reader)
+            self._store_object_custom_properties(self._reader)
         self._setup_frames_collection()
         self._setup_modifiers()
-
-    @property
-    def props(self) -> "MolecularNodesObjectProperties":
-        """The custom Blender properties for the molecule object."""
-        return self.object.mn  # ty: ignore[unresolved-attribute]
+        self._register_asset_nodes()
 
     def create_data_object(self) -> bpy.types.Object:
         from ... import utils
@@ -131,6 +127,7 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         mol = cls(reader.array, reader=reader)
 
         mol.create_object(name=name)
+
         mol._reader = reader
         # record the source so the entity can be reloaded into a fresh session
         if not isinstance(file_path, io.BytesIO):
@@ -364,11 +361,10 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
                     collection=self.frames,
                 )
 
-    @staticmethod
-    def _store_object_custom_properties(obj, reader: ReaderBase):
-        obj["entity_ids"] = reader.entity_ids()
-        obj["chain_ids"] = reader.chain_ids()
-        obj.mn.biological_assemblies = reader.assemblies(as_json_string=True)
+    def _store_object_custom_properties(self, reader: ReaderBase):
+        self.props.entity_ids = reader.entity_ids()
+        self.props.chain_ids = reader.chain_ids()
+        self.props.biological_assemblies = reader.assemblies(as_json_string=True)
 
     def assemblies(self, as_array=False):
         """

@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import cast
 import bpy
-from databpy import BlenderObject
 from nodebpy.builder import TreeBuilder
 from ... import blender as bl
 from ...nodes import geometry, material
@@ -26,8 +25,7 @@ class CellPack(Ensemble):
         name: str = "CellPack",
         node_setup: bool = True,
     ) -> bpy.types.Object:
-        self.object = self._create_data_object(name=name)
-        self.object.mn.entity_type = self._entity_type.value
+        self._create_data_object(name=name)
         self._create_object_instances(name=name, node_setup=node_setup)
 
         with self.tree.reset() as (atoms, join):
@@ -70,16 +68,15 @@ class CellPack(Ensemble):
 
         return collection
 
-    def _create_data_object(self, name: str = "DataObject") -> bpy.types.Object:
-        bob = BlenderObject(
-            bl.mesh.create_data_object(
-                self.transformations, name=name, collection=bl.coll.mn()
-            )
+    def _create_data_object(self, name: str = "DataObject") -> None:
+        self.object = bl.mesh.create_data_object(
+            self.transformations, name=name, collection=bl.coll.mn()
         )
-        bob.object["chain_ids"] = self.file.mol_ids
+        self.props.chain_ids = self.file.mol_ids.tolist()
+        self.props.entity_type = self._entity_type.value
 
         # if we are dealing with petworld data, overwrite the chain_id for the data object
         if self.file._is_petworld:
-            bob.store_named_attribute(bob.named_attribute("pdb_model_num"), "chain_id")
-
-        return bob.object
+            self.store_named_attribute(
+                self.named_attribute("pdb_model_num"), "chain_id"
+            )

@@ -7376,8 +7376,8 @@ class RandomColor(AssetGeometryGroup):
         """HSL Lightness"""
 
     class _Outputs(SocketAccessor):
-        output: ColorSocket
-        """Output"""
+        color: ColorSocket
+        """Color"""
 
     if TYPE_CHECKING:
 
@@ -8108,46 +8108,6 @@ class SelectBonded(AssetGeometryGroup):
         depth: InputInteger = 1,
     ):
         super().__init__(**{"Input_0": selection, "Input_1": depth})
-
-
-class SelectChain8H1B(AssetGeometryGroup):
-    """Select Chain 8H1B"""
-
-    _name = "Select Chain 8H1B"
-    _asset_name = "Select Chain 8H1B"
-    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
-
-    class _Inputs(SocketAccessor):
-        a: BooleanSocket
-        """A"""
-        b: BooleanSocket
-        """B"""
-        c: BooleanSocket
-        """C"""
-        d: BooleanSocket
-        """D"""
-
-    class _Outputs(SocketAccessor):
-        selection: BooleanSocket
-        """Selection"""
-        inverted: BooleanSocket
-        """Inverted"""
-
-    if TYPE_CHECKING:
-
-        @property
-        def i(self) -> _Inputs: ...
-        @property
-        def o(self) -> _Outputs: ...
-
-    def __init__(
-        self,
-        a: InputBoolean = False,
-        b: InputBoolean = False,
-        c: InputBoolean = False,
-        d: InputBoolean = False,
-    ):
-        super().__init__(**{"Socket_0": a, "Socket_1": b, "Socket_2": c, "Socket_3": d})
 
 
 class SelectCube(AssetGeometryGroup):
@@ -11154,7 +11114,6 @@ __all__ = (
     "SelectAtomicNumber",
     "SelectAttribute",
     "SelectBonded",
-    "SelectChain8H1B",
     "SelectCube",
     "SelectElement",
     "SelectNucleicType",

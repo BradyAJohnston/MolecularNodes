@@ -1,7 +1,7 @@
 from abc import ABCMeta
 from contextlib import contextmanager
 from enum import Enum
-from typing import Iterator, List, NamedTuple, cast
+from typing import TYPE_CHECKING, Iterator, List, NamedTuple, cast
 import bpy
 from bpy.types import GeometryNodeTree, NodesModifier
 from databpy import (
@@ -10,7 +10,11 @@ from databpy import (
 from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
+from ..nodes.nodes import custom_boolean_iswitch, custom_color_iswitch
 from .utilities import BoolObjectMNProperty
+
+if TYPE_CHECKING:
+    from ..ui.props import MolecularNodesObjectProperties
 
 
 # create a EntityType enum
@@ -152,6 +156,27 @@ class MolecularEntity(
         # rebuilt on the next access of the `tree` property
         state["_tree"] = None
         return state
+
+    def _register_asset_nodes(self) -> None:
+
+        prop_combinations = (
+            ("Chain", self.props.chain_ids),
+            ("Entity", self.props.entity_ids),
+            ("Segment", self.props.segments),
+        )
+
+        for prefix, prop in prop_combinations:
+            if len(prop) == 0:
+                continue
+            custom_boolean_iswitch(
+                f"Select {prefix} {self.name}", items=prop
+            ).asset_mark()
+            custom_color_iswitch(f"Color {prefix} {self.name}", items=prop).asset_mark()
+
+    @property
+    def props(self) -> "MolecularNodesObjectProperties":
+        """The custom Blender properties for the molecule object."""
+        return self.object.mn  # ty: ignore[unresolved-attribute]
 
     @property
     def node_group(self) -> bpy.types.GeometryNodeTree:

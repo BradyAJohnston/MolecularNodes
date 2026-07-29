@@ -1,3 +1,4 @@
+import json
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -258,11 +259,29 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         update=_update_annotations_visibility,
     )
 
-    biological_assemblies: StringProperty(  # type: ignore
+    internal_biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
         description="A list of biological assemblies to be created",
         default="",
+        options={"HIDDEN"},
     )
+
+    @property
+    def biological_assemblies(self) -> dict:
+        """Return the biological assemblies for the entity object"""
+        if not self.internal_biological_assemblies:
+            return {}
+        return json.loads(self.internal_biological_assemblies)
+
+    @biological_assemblies.setter
+    def biological_assemblies(self, value: dict | str | None) -> None:
+        """Set the biological assemblies for the entity object"""
+        if value is None or value == "":
+            self.internal_biological_assemblies = ""
+        elif isinstance(value, str):
+            self.internal_biological_assemblies = value
+        else:
+            self.internal_biological_assemblies = json.dumps(value)
 
     entity_type: EnumProperty(  # type: ignore
         name="Entity Type",
@@ -297,6 +316,114 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default="",
         options={"HIDDEN"},
     )
+
+    internal_chain_ids: StringProperty(  # type: ignore
+        name="Chain IDs",
+        description="A list of chain IDs for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def chain_ids(self) -> list[str]:
+        """Return a list of chain IDs for the entity object"""
+        return self.internal_chain_ids.split(",") if self.internal_chain_ids else []
+
+    @chain_ids.setter
+    def chain_ids(self, value: list[str] | None) -> None:
+        """Set the list of chain IDs for the entity object"""
+        if value is None:
+            self.internal_chain_ids = ""
+        else:
+            self.internal_chain_ids = ",".join(value)
+
+    internal_entity_ids: StringProperty(  # type: ignore
+        name="Entity IDs",
+        description="A list of entity IDs for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def entity_ids(self) -> list[str]:
+        """Return a list of entity IDs for the entity object"""
+        return self.internal_entity_ids.split(",") if self.internal_entity_ids else []
+
+    @entity_ids.setter
+    def entity_ids(self, value: list[str] | None) -> None:
+        """Set the list of entity IDs for the entity object"""
+        if value is None:
+            self.internal_entity_ids = ""
+        else:
+            self.internal_entity_ids = ",".join(value)
+
+    internal_segments: StringProperty(  # type: ignore
+        name="Segments",
+        description="A list of segment IDs for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def segments(self) -> list[str]:
+        """Return a list of segment IDs for the entity object"""
+        return self.internal_segments.split(",") if self.internal_segments else []
+
+    @segments.setter
+    def segments(self, value: list[str] | None) -> None:
+        """Set the list of segment IDs for the entity object"""
+        if value is None:
+            self.internal_segments = ""
+        else:
+            self.internal_segments = ",".join(str(v) for v in value)
+
+    internal_atom_type_unique: StringProperty(  # type: ignore
+        name="Unique Atom Types",
+        description="A list of the unique atom types for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def atom_type_unique(self) -> list[str]:
+        """Return a list of the unique atom types for the entity object"""
+        return (
+            self.internal_atom_type_unique.split(",")
+            if self.internal_atom_type_unique
+            else []
+        )
+
+    @atom_type_unique.setter
+    def atom_type_unique(self, value: list[str] | None) -> None:
+        """Set the list of the unique atom types for the entity object"""
+        if value is None:
+            self.internal_atom_type_unique = ""
+        else:
+            self.internal_atom_type_unique = ",".join(str(v) for v in value)
+
+    internal_categories: StringProperty(  # type: ignore
+        name="Categories",
+        description="Per-column category labels for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def categories(self) -> dict[str, list[str]]:
+        """Return the per-column category labels for the entity object"""
+        if not self.internal_categories:
+            return {}
+        return json.loads(self.internal_categories)
+
+    @categories.setter
+    def categories(self, value: dict[str, list[str]] | str | None) -> None:
+        """Set the per-column category labels for the entity object"""
+        if value is None or value == "":
+            self.internal_categories = ""
+        elif isinstance(value, str):
+            self.internal_categories = value
+        else:
+            self.internal_categories = json.dumps(value)
 
     @property
     def is_entity(self) -> bool:

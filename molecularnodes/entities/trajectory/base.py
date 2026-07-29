@@ -310,7 +310,7 @@ class Trajectory(MolecularEntity):
 
         else:
             try:
-                self.object["segments"] = segs
+                self.props.segments = segs
             except db.LinkedObjectError:
                 logger.warning("Failed to store segments metadata on object")
 
@@ -320,7 +320,7 @@ class Trajectory(MolecularEntity):
         chain_ids, chain_id_index = np.unique(self.atoms.chainIDs, return_inverse=True)
 
         try:
-            self.object["chain_ids"] = chain_ids.astype(str).tolist()
+            self.props.chain_ids = chain_ids.astype(str).tolist()
         except db.LinkedObjectError:
             logger.warning("Failed to store chain_ids metadata on object")
 
@@ -332,7 +332,7 @@ class Trajectory(MolecularEntity):
         )
 
         try:
-            self.object["atom_type_unique"] = atom_type_unique
+            self.props.atom_type_unique = atom_type_unique.tolist()
         except db.LinkedObjectError:
             logger.warning("Failed to store atom_type_unique metadata on object")
 
@@ -474,6 +474,7 @@ class Trajectory(MolecularEntity):
         self._store_extra_attributes()
         self._setup_modifiers()
         self._save_filepaths_on_object()
+        self._register_asset_nodes()
         set_obj_active(self.object)
         return self.object
 

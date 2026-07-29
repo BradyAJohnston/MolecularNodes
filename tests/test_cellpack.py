@@ -44,7 +44,7 @@ def test_load_cellpack(snapshot, format):
     assert ens.object.mn.entity_type == ens._entity_type.value
 
     assert ens.name == Path(file_path).name
-    assert snapshot == str(ens.object["chain_ids"])
+    assert snapshot == str(ens.object.mn.chain_ids)
     obj_names = [obj.name for obj in ens.instance_collection.objects]
     assert snapshot == "\n".join(obj_names)
 

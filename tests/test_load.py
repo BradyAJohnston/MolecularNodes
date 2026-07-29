@@ -67,7 +67,7 @@ def test_style_1(snapshot, code, assembly, style):
 def test_download_format(code, format):
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
     assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-    assert mol.object.mn.entity_type == mol._entity_type.value
+    assert mol.props.entity_type == mol._entity_type.value
     with db.ObjectTracker() as o:
         bpy.ops.mn.import_fetch(code=code, file_format=format, cache_dir=str(data_dir))
         mol2 = bpy.context.scene.MNSession.match(o.latest())
@@ -118,5 +118,5 @@ def test_rcsb_nmr(snapshot_custom):
 def test_load_small_mol(snapshot):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
     assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-    assert mol.object.mn.entity_type == mol._entity_type.value
+    assert mol.props.entity_type == mol._entity_type.value
     assert snapshot == GeometrySet(mol.object, strict=True).summary()

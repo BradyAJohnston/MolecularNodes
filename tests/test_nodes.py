@@ -50,7 +50,7 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
     mol = mn.Molecule.fetch(code, cache=data_dir).add_style("ribbon")
     group = mol.node_group
     node_sel = nodes.add_selection(
-        group, mol.name, mol.object[f"{attribute}s"], attribute
+        group, mol.name, getattr(mol.props, f"{attribute}s"), attribute
     )
 
     _n = len(node_sel.inputs)
@@ -72,7 +72,7 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
 
     group_col = nodes.custom_color_iswitch(
         name=f"Color Entity {mol.name}",
-        items=mol.object[f"{attribute}s"],
+        items=getattr(mol.props, f"{attribute}s"),
         attribute_name=attribute,
     )
     with mol.tree.reset() as (atoms, join):
@@ -109,7 +109,7 @@ def test_op_custom_color():
     mol = mn.Molecule.load(data_dir / "1cd3.cif")
     mol.object.select_set(True)
     group = nodes.custom_color_iswitch(
-        name=f"Color Chain {mol.name}", items=mol.object["chain_ids"]
+        name=f"Color Chain {mol.name}", items=mol.props.chain_ids
     )
 
     assert group

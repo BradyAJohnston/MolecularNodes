@@ -83,13 +83,16 @@ class EnsembleDataFrame:
             atype=AttributeTypes.INT,
         )
 
+        categories: dict[str, list] = {}
         for col in self.data.columns:
             if isinstance(self.data[col].dtype, CategoricalDtype):
-                bob.object[f"{col}_categories"] = list(self.data[col].cat.categories)
+                categories[col] = self.data[col].cat.categories.tolist()
                 data = self.data[col].cat.codes.to_numpy()
                 bob.store_named_attribute(data, name=col, atype=AttributeTypes.INT)
             else:
                 bob.store_named_attribute(self.data[col].to_numpy(), name=col)
+
+        bob.object.mn.categories = categories
 
 
 class RelionDataFrame(EnsembleDataFrame):
@@ -152,7 +155,7 @@ class StarFile(Ensemble):
 
     @classmethod
     def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
-        self = cls(blender_object["starfile_path"])
+        self = cls(blender_object.mn.filepath)
         self.object = blender_object
         return self
 
@@ -208,13 +211,13 @@ class StarFile(Ensemble):
         if self.object is None:
             raise ValueError("Object not set. Call from_blender_object() first.")
 
+        categories = self.object.mn.categories
+        image_index = self.star_node.inputs["Image"].default_value - 1
         if self._is_relion():
-            micrograph_path = self.object["rlnMicrographName_categories"][
-                self.star_node.inputs["Image"].default_value - 1
-            ]
+            micrograph_path = categories["rlnMicrographName"][image_index]
         elif self._is_cistem():
-            micrograph_path = self.object["cisTEMOriginalImageFilename_categories"][
-                self.star_node.inputs["Image"].default_value - 1
+            micrograph_path = categories["cisTEMOriginalImageFilename"][
+                image_index
             ].strip("'")
         else:
             raise ValueError("File is not a valid RELION>=3.1 or cisTEM STAR file")
@@ -276,5 +279,5 @@ class StarFile(Ensemble):
             with self.tree.reset() as (input, join):
                 input >> geometry.StarfileInstances() >> join
 
-        self.object["starfile_path"] = str(self.file_path)
+        self.object.mn.filepath = str(self.file_path)
         return self.object
