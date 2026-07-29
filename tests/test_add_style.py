@@ -63,3 +63,23 @@ def test_styles_panel_node_group_lookup_without_session():
     assert node_group is not None
     style_names = [n.name for n in node_group.nodes if is_style_node(n)]
     assert style_names
+
+
+def test_swap_style_operator():
+    """mn.swap_style swaps the style node's tree in place, keeping connections."""
+    from molecularnodes.ui.panel import is_style_node
+
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    ng = mol.modifier_node_tree
+    style = [n for n in ng.nodes if is_style_node(n)][0]
+    assert style.node_tree.name == "Style Cartoon"
+
+    res = bpy.ops.mn.swap_style(
+        name_tree=ng.name, name_node=style.name, style="surface"
+    )
+    assert res == {"FINISHED"}
+
+    # still exactly one style node, now referencing the Surface style tree
+    style_nodes = [n for n in ng.nodes if is_style_node(n)]
+    assert len(style_nodes) == 1
+    assert style_nodes[0].node_tree.name == "Style Surface"

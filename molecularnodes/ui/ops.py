@@ -712,6 +712,39 @@ class MN_OT_Remove_Style(Operator):
         return context.window_manager.invoke_confirm(self, event, title="Remove Style?")
 
 
+def _swap_style_items(self, context):
+    # module-level tuples, so the references stay alive (avoids the dynamic-enum
+    # garbage-collection crash)
+    obj = context.active_object
+    if obj is not None and obj.mn.entity_type == "density":
+        return DENSITY_STYLE_ITEMS
+    return STYLE_ITEMS
+
+
+class MN_OT_Swap_Style(Operator):
+    """
+    Operator to swap a style node for a different style, keeping its connections.
+    """
+
+    bl_idname = "mn.swap_style"
+    bl_label = "Swap Style"
+    bl_description = "Swap the selected style node for a different style"
+    bl_options = {"REGISTER", "UNDO"}
+
+    # the node is identified by tree + node name, as operators can't take pointers
+    name_tree: StringProperty()  # type: ignore
+    name_node: StringProperty()  # type: ignore
+    style: EnumProperty(items=_swap_style_items)  # type: ignore
+
+    def execute(self, context: Context):
+        tree = bpy.data.node_groups.get(self.name_tree)
+        if tree is None or self.name_node not in tree.nodes:
+            self.report({"ERROR"}, "Style node to swap was not found")
+            return {"CANCELLED"}
+        nodes.swap(tree.nodes[self.name_node], nodes.styles_mapping[self.style])
+        return {"FINISHED"}
+
+
 def _register_temp_annotation_add_op(entity):
     """Register a temporary annotation add operator with custom input properties"""
 
@@ -951,6 +984,7 @@ CLASSES = [
     MN_FH_Import_Molecule,
     MN_OT_Add_Style,
     MN_OT_Remove_Style,
+    MN_OT_Swap_Style,
     MN_OT_Add_Annotation,
     MN_OT_Remove_Annotation,
     MN_OT_Setup_Compositor,

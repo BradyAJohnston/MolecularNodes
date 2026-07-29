@@ -696,6 +696,17 @@ class MN_PT_Styles(bpy.types.Panel):
             layout.label(text="Select a style to edit its properties")
             return
 
+        # swap the selected style node for a different style
+        row = layout.row(align=True)
+        row.label(text="Style:")
+        op = row.operator_menu_enum(
+            "mn.swap_style",
+            "style",
+            text=style_node.node_tree.name.replace("Style ", ""),
+        )
+        op.name_tree = node_group.name
+        op.name_node = style_node.name
+
         # display the selected style node's name and its input properties
         header, body = layout.panel(idname="style_properties")
         header.label(text=style_node.label or style_node.name)

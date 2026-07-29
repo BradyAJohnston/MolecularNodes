@@ -2,6 +2,7 @@ from typing import Iterable, Literal
 import bpy
 from databpy.nodes import (
     append_from_blend,
+    swap_tree,
 )
 from mathutils import Vector
 from nodebpy import geometry as g
@@ -211,6 +212,19 @@ def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
     "Append a GN node from the MN data file"
     GN_TREES_PATH = MN_DATA_FILE / "NodeTree"
     return append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
+
+
+def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
+    "Swap out the node's node_tree, maintaining the old socket connections"
+    if isinstance(tree, str):
+        try:
+            tree = bpy.data.node_groups[tree]
+        except KeyError:
+            tree = append(tree)  # type: ignore
+    # only change the label if it hasn't been customised away from the tree name
+    if node.label == node.node_tree.name:
+        node.label = tree.name
+    swap_tree(node=node, tree=tree)
 
 
 def micrograph_material():
