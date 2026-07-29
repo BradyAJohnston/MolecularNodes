@@ -168,7 +168,7 @@ def panel_starfile(layout, scene):
 
 
 def panel_cryosparc(layout: bpy.types.UILayout, scene: "MNScene"):
-    layout.label(text="Load CryoSPARC metadata file", icon="FILE_TICK")
+    layout.label(text="Load CryoSPARC metadata file")
     layout.separator()
     row_import = layout.row()
     row_import.prop(scene.mn, "import_cryosparc_file_path")
