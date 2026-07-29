@@ -177,7 +177,9 @@ class MolecularEntity(
     @property
     def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:
         if "Molecular Nodes" not in self.object.modifiers:
-            mod = cast(NodesModifier, self.object.modifiers.new("Molecular Nodes", "NODES"))
+            mod = cast(
+                NodesModifier, self.object.modifiers.new("Molecular Nodes", "NODES")
+            )
             mod.node_group = g.tree().tree
             mod.node_group.is_modifier = True
         else:
