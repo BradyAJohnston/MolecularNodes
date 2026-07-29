@@ -1,6 +1,7 @@
 import bpy
 import pytest
 import molecularnodes as mn
+from .constants import data_dir
 
 
 def test_add_style_with_selection():
@@ -24,3 +25,41 @@ def test_add_style_with_selection():
 
     with pytest.warns(UserWarning):
         mol.add_style("cartoon", selection="non_existing_selection")
+
+
+def test_styles_panel_style_node_selection():
+    """The Styles panel identifies the active style node from the list index."""
+    from molecularnodes.ui.panel import is_style_node
+
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    node_group = mol.modifier_node_tree
+    style_names = [n.name for n in node_group.nodes if is_style_node(n)]
+    assert style_names, "adding a style should create a style node"
+
+    # the panel treats styles_active_index as an index into node_group.nodes and
+    # only shows details when it points at a style node
+    index = node_group.nodes.find(style_names[0])
+    mol.object.mn.styles_active_index = index
+
+    active = node_group.nodes[mol.object.mn.styles_active_index]
+    assert is_style_node(active)
+    assert active.name == style_names[0]
+
+
+def test_styles_panel_node_group_lookup_without_session():
+    """Style nodes are found from the object alone, without a session link."""
+    from molecularnodes.ui.panel import get_entity_node_group, is_style_node
+
+    session = mn.session.get_session()
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    obj = mol.object
+
+    # drop the session link (as after re-opening a .blend without the pickle)
+    session.remove_entity(obj.uuid)
+    assert session.get(obj.uuid) is None
+
+    # the node group and its style nodes are still reachable from the object
+    node_group = get_entity_node_group(obj)
+    assert node_group is not None
+    style_names = [n.name for n in node_group.nodes if is_style_node(n)]
+    assert style_names

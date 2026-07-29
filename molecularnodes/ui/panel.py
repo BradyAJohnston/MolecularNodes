@@ -1,8 +1,7 @@
 from typing import cast
 import bpy
 from bpy.types import UILayout
-from ..blender import IS_BLENDER_5
-from ..entities import StreamingTrajectory, Trajectory, density, trajectory
+from ..entities import StreamingTrajectory, Trajectory, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..session import get_session
@@ -339,6 +338,18 @@ def get_active_entity_object(context: bpy.types.Context) -> bpy.types.Object | N
     return None
 
 
+def get_entity_node_group(
+    obj: bpy.types.Object | None,
+) -> bpy.types.GeometryNodeTree | None:
+    """The node tree of the object's "Molecular Nodes" modifier, or None."""
+    if obj is None:
+        return None
+    mod = obj.modifiers.get("Molecular Nodes")
+    if mod is None:
+        return None
+    return getattr(mod, "node_group", None)
+
+
 class MN_UL_EntitiesList(bpy.types.UIList):
     """
     UIList of molecular entity objects in the Entities panel (Viewport).
@@ -586,14 +597,14 @@ class MN_UL_StylesList(bpy.types.UIList):
         layout: bpy.types.UILayout = layout
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            # number within the visible style nodes, in tree order
-            style_nodes = [n for n in data.nodes if is_style_node(n)]
-            seqno = f"{style_nodes.index(item) + 1}"
-            split = row.split(factor=0.1)
-            col = split.column()
-            col.label(text=seqno)
-            col = split.column()
-            col.prop(item, "label", text="", emboss=False)
+            row.prop(item, "name", text="", emboss=False)
+            row.prop(
+                item,
+                "mute",
+                emboss=True,
+                icon_only=True,
+                icon="RESTRICT_RENDER_OFF" if not item.mute else "RESTRICT_RENDER_ON",
+            )
             if "Visible" in item.inputs:
                 input = item.inputs["Visible"]
                 hide_icon = "HIDE_OFF" if input.default_value else "HIDE_ON"
@@ -628,20 +639,6 @@ class MN_UL_StylesList(bpy.types.UIList):
         return filtered, ordered
 
 
-def panel_selection_node(
-    layout: bpy.types.UILayout, node: bpy.types.GeometryNode, entity
-):
-    sel_node = nodes.get_selection(node)
-    if sel_node is None:
-        return
-    assert isinstance(sel_node, bpy.types.GeometryNodeInputNamedAttribute)
-    attr_name = sel_node.inputs[0].default_value
-    item: TrajectorySelectionItem = entity.selections.ui_items[attr_name]
-    row = selection_string_input(layout, item)
-    row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
-    row.prop(item, "periodic", icon_only=True, icon="CUBE")
-
-
 class MN_PT_Styles(bpy.types.Panel):
     """
     Panel for styles
@@ -655,11 +652,9 @@ class MN_PT_Styles(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        """Visible only if entity selected is a trajectory or molecule"""
+        """Visible only if the active entity is a trajectory, molecule or density"""
         obj = get_active_entity_object(context)
-        if obj is None or context.scene.MNSession.get(obj.uuid) is None:
-            return False
-        return obj.mn.entity_type in (
+        return obj is not None and obj.mn.entity_type in (
             EntityType.MD.value,
             EntityType.MD_STREAMING.value,
             EntityType.MOLECULE.value,
@@ -672,109 +667,40 @@ class MN_PT_Styles(bpy.types.Panel):
         obj = get_active_entity_object(context)
         if obj is None:
             return
-        uuid: str = obj.uuid
-        entity = get_session().get(uuid)
-        if entity is None:
-            return
-        node_group = entity.modifier_node_tree
+        # style nodes live in the object's node tree — read them directly from
+        # Blender data so the panel does not depend on the session being linked
+        node_group = get_entity_node_group(obj)
         if node_group is None:
+            layout.label(text="No Molecular Nodes modifier on this object")
             return
-        styles_active_index: int = entity.object.mn.styles_active_index  # type: ignore
-        valid_selection = False
 
-        row = layout.row()
-        row.template_list(
+        # list the style nodes in the tree and let the user select one
+        layout.template_list(
             "MN_UL_StylesList",
             "styles_list",
             node_group,
             "nodes",
-            entity.object.mn,  # type: ignore
+            obj.mn,
             "styles_active_index",
             rows=3,
         )
-        if not isinstance(entity, density.Density):
-            col = row.column()
-            row = col.row()
-            op = row.operator("mn.add_style", icon="ADD", text="")
-            op.uuid = uuid
-            row = col.row()
-            op = row.operator("mn.remove_style", icon="REMOVE", text="")
-            if valid_selection:
-                op.uuid = uuid
-                op.style_node_index = styles_active_index
-            else:
-                row.enabled = False
 
-        if not valid_selection:
+        # the style node selected in the list, if any
+        index = obj.mn.styles_active_index
+        style_node = None
+        if 0 <= index < len(node_group.nodes):
+            node = node_group.nodes[index]
+            if is_style_node(node):
+                style_node = node
+        if style_node is None:
+            layout.label(text="Select a style to edit its properties")
             return
 
-        style_node = node_group.nodes[styles_active_index]
-
-        col = layout.column()
-        panel_selection_node(col, style_node, entity)
-        row = col.split(factor=0.25)
-        row.label(text="Style:")
-        op = row.operator_menu_enum(
-            operator="mn.node_swap_style_menu",
-            property="node_items",
-            text=style_node.node_tree.name.replace("Style ", ""),
-        )
-        op.name_tree = style_node.id_data.name
-        op.name_node = style_node.name
-        col.separator()
-
-        panels = {}
-        header, layout = layout.panel(idname="style_properties")
-        header.label(text="Geometry")
-        if layout is None:
-            return
-
-        for item in style_node.node_tree.interface.items_tree.values():
-            if item.item_type == "PANEL":
-                header = None
-                if item.parent.name and item.parent.name in panels:
-                    panel = panels[item.parent.name]
-                    if panel:
-                        header, panel = panel.panel(item.name, default_closed=False)
-                else:
-                    header, panel = layout.panel(item.name, default_closed=False)
-                if header:
-                    header.label(text=item.name)
-                panels[item.name] = panel
-            elif item.name == "Selection":
-                continue
-            else:
-                if item.in_out != "INPUT":
-                    continue
-                if item.name in ("Visible"):
-                    continue
-                input: bpy.types.NodeGroupInput = style_node.inputs[item.identifier]
-                if not hasattr(input, "default_value"):
-                    continue
-                if input.is_inactive:
-                    continue
-                row = None
-                if item.parent.name and item.parent.name in panels:
-                    panel = panels[item.parent.name]
-                    if panel:
-                        row = panel.row()
-                else:
-                    row = layout.row()
-                if row:
-                    is_expanded = False
-                    if input.type == "MENU" and IS_BLENDER_5:
-                        row.label(text=item.name)
-                        is_expanded: bool = item.id_data.interface.items_tree[
-                            item.identifier
-                        ].menu_expanded
-
-                    row.prop(
-                        data=input,
-                        property="default_value",
-                        text=input.name,
-                        expand=is_expanded,
-                    )
-        row = layout.row()
+        # display the selected style node's name and its input properties
+        header, body = layout.panel(idname="style_properties")
+        header.label(text=style_node.label or style_node.name)
+        if body is not None:
+            body.template_node_inputs(style_node)
 
 
 class MN_UL_AnnotationsList(bpy.types.UIList):
