@@ -169,6 +169,8 @@ class AnimateDihedrals(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
         """Atoms"""
+        selection: BooleanSocket
+        """Selection"""
         frames: CollectionSocket
         """Frames"""
         smoother_step: BooleanSocket
@@ -192,6 +194,7 @@ class AnimateDihedrals(AssetGeometryGroup):
     def __init__(
         self,
         atoms: InputGeometry = None,
+        selection: InputBoolean = True,
         frames: InputCollection = None,
         smoother_step: InputBoolean = False,
         interpolate: InputBoolean = True,
@@ -200,6 +203,7 @@ class AnimateDihedrals(AssetGeometryGroup):
         super().__init__(
             **{
                 "Input_4": atoms,
+                "Input_16": selection,
                 "Input_0": frames,
                 "Input_7": smoother_step,
                 "Input_8": interpolate,
@@ -1865,41 +1869,6 @@ class ColorBackbone(AssetGeometryGroup):
         super().__init__(**{"Input_0": backbone, "Input_1": side_chain})
 
 
-class ColorChain(AssetGeometryGroup):
-    """Color Chain_"""
-
-    _name = "Color Chain_"
-    _asset_name = "Color Chain_"
-    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
-
-    class _Inputs(SocketAccessor):
-        chain_a: ColorSocket
-        """Chain A"""
-        chain_b: ColorSocket
-        """Chain B"""
-        _: ColorSocket
-        """..."""
-
-    class _Outputs(SocketAccessor):
-        color: ColorSocket
-        """Color"""
-
-    if TYPE_CHECKING:
-
-        @property
-        def i(self) -> _Inputs: ...
-        @property
-        def o(self) -> _Outputs: ...
-
-    def __init__(
-        self,
-        chain_a: InputColor = None,
-        chain_b: InputColor = None,
-        _: InputColor = None,
-    ):
-        super().__init__(**{"Input_0": chain_a, "Input_2": chain_b, "Input_3": _})
-
-
 class ColorCommon(AssetGeometryGroup):
     """Color Common"""
 
@@ -2701,20 +2670,22 @@ class ColorResName(AssetGeometryGroup):
         )
 
 
-class ColorSecStruct(AssetGeometryGroup):
-    """Color Sec Struct"""
+class ColorSecondaryStructure(AssetGeometryGroup):
+    """Color Secondary Structure"""
 
-    _name = "Color Sec Struct"
-    _asset_name = "Color Sec Struct"
+    _name = "Color Secondary Structure"
+    _asset_name = "Color Secondary Structure"
     _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
-        alpha_helix: ColorSocket
-        """Alpha Helix"""
-        beta_sheet: ColorSocket
-        """Beta Sheet"""
+        helix: ColorSocket
+        """Helix"""
+        sheet: ColorSocket
+        """Sheet"""
         loop: ColorSocket
         """Loop"""
+        other: ColorSocket
+        """Other"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
@@ -2729,48 +2700,14 @@ class ColorSecStruct(AssetGeometryGroup):
 
     def __init__(
         self,
-        alpha_helix: InputColor = None,
-        beta_sheet: InputColor = None,
+        helix: InputColor = None,
+        sheet: InputColor = None,
         loop: InputColor = None,
+        other: InputColor = None,
     ):
         super().__init__(
-            **{"Input_0": alpha_helix, "Input_2": beta_sheet, "Input_3": loop}
+            **{"Input_0": helix, "Input_2": sheet, "Input_3": loop, "Socket_0": other}
         )
-
-
-class ColorSegment(AssetGeometryGroup):
-    """Color Segment_"""
-
-    _name = "Color Segment_"
-    _asset_name = "Color Segment_"
-    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
-
-    class _Inputs(SocketAccessor):
-        segment_a: ColorSocket
-        """Segment A"""
-        segment_b: ColorSocket
-        """Segment B"""
-        _: ColorSocket
-        """..."""
-
-    class _Outputs(SocketAccessor):
-        color: ColorSocket
-        """Color"""
-
-    if TYPE_CHECKING:
-
-        @property
-        def i(self) -> _Inputs: ...
-        @property
-        def o(self) -> _Outputs: ...
-
-    def __init__(
-        self,
-        segment_a: InputColor = None,
-        segment_b: InputColor = None,
-        _: InputColor = None,
-    ):
-        super().__init__(**{"Input_0": segment_a, "Input_2": segment_b, "Input_3": _})
 
 
 class ColorToLCh(AssetGeometryGroup):
@@ -11071,7 +11008,6 @@ __all__ = (
     "ColorAttributeMap",
     "ColorAttributeRandom",
     "ColorBackbone",
-    "ColorChain",
     "ColorCommon",
     "ColorElement",
     "ColorGoodsell",
@@ -11081,8 +11017,7 @@ __all__ = (
     "ColorPLDDT",
     "ColorRainbow",
     "ColorResName",
-    "ColorSecStruct",
-    "ColorSegment",
+    "ColorSecondaryStructure",
     "ColorToLCh",
     "ColorToOKLab",
     "ContainsGeometry",

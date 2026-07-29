@@ -48,6 +48,7 @@ class CellPack(Ensemble):
                 style = geometry.StyleSpheres()
                 material.assign_material(style.node, "MN Ambient Occlusion")
                 atoms >> style >> instance_tree.outputs.geometry("Geometry")
+            instance_tree.tree.is_modifier = True
 
         for mol_id in self.file.mol_ids:
             obj = create_object(

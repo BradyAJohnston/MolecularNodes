@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from enum import Enum
 from typing import Iterator, List, NamedTuple, cast
 import bpy
-from bpy.types import GeometryNodeTree
+from bpy.types import GeometryNodeTree, NodesModifier
 from databpy import (
     BlenderObject,
 )
@@ -176,15 +176,16 @@ class MolecularEntity(
 
     @property
     def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:
-        mod: bpy.types.NodesModifier = self.object.modifiers.get("Molecular Nodes")
-
-        if mod is None:
-            mod = self.object.modifiers.new("Molecular Nodes", "NODES")
-
-        if mod.node_group is None:
+        if "Molecular Nodes" not in self.object.modifiers:
+            mod = cast(NodesModifier, self.object.modifiers.new("Molecular Nodes", "NODES"))
             mod.node_group = g.tree().tree
+            mod.node_group.is_modifier = True
+        else:
+            mod = cast(NodesModifier, self.object.modifiers["Molecular Nodes"])
+            if mod.node_group is None:
+                mod.node_group = g.tree().tree
+                mod.node_group.is_modifier = True
 
-        mod.node_group.is_modifier = True
         return cast(GeometryNodeTree, mod.node_group)
 
     def _register_with_session(self) -> None:
@@ -213,6 +214,7 @@ class MolecularEntity(
         name = f"MN_{self.name}"
         with TreeBuilder.geometry(name) as tree:
             (tree.inputs.geometry("Atoms") >> tree.outputs.geometry("Geometry"))
+        tree.tree.is_modifier = True
         self.object.modifiers.new("Molecular Nodes", "NODES")
         self.object.modifiers[-1].node_group = tree.tree
 

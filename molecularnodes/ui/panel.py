@@ -302,6 +302,7 @@ class MN_PT_Scene(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        assert layout
 
         # import operators live in a single drop-down menu at the top
         layout.menu("MN_MT_Import", text="Import", icon="IMPORT")
@@ -321,8 +322,11 @@ class MN_PT_Object(bpy.types.Panel):
     bl_ui_units_x = 0
 
     def draw(self, context):
+        layout = self.layout
+        assert layout
+
         # display the information for the selected object
-        panel_object(self.layout, context)
+        panel_object(layout, context)
 
 
 class MN_UL_EntitiesList(bpy.types.UIList):
@@ -405,6 +409,7 @@ class MN_PT_Entities(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        assert layout
         props = context.scene.mn
         row = layout.row()
         row.template_list(
@@ -473,7 +478,8 @@ class MN_PT_trajectory(bpy.types.Panel):
             return False
 
     def draw(self, context):
-        layout: UILayout = self.layout
+        layout = cast(UILayout, self.layout)
+        assert layout
         # To enable the animatate dot next to property in UI
         # layout.use_property_split = True
         # layout.use_property_decorate = True
@@ -515,6 +521,7 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        assert layout
         scene = context.scene
         active_index = scene.mn.entities_active_index
         uuid = scene.mn.entities[active_index].name
@@ -586,8 +593,9 @@ class MN_UL_StylesList(bpy.types.UIList):
         layout: bpy.types.UILayout = layout
         custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
+            assert self.style_nodes
             row = layout.row()
-            seqno = f"{MN_UL_StylesList.style_nodes.index(item) + 1}"
+            seqno = f"{self.style_nodes.index(item) + 1}"
             split = row.split(factor=0.1)
             col = split.column()
             col.label(text=seqno)
