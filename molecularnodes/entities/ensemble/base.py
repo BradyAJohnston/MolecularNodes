@@ -45,6 +45,8 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         """
         self = cls(file_path)
         self.create_object(name=name or Path(file_path).name, node_setup=node_setup)
+        # record the source so the entity can be reloaded into a fresh session
+        self.object.mn.filepath = str(file_path)
         return self
 
     @property

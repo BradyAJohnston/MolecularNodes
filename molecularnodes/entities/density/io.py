@@ -14,4 +14,6 @@ def load(
         file_path=file_path, center=center, invert=invert, overwrite=overwrite
     )
     density.create_object(name=Path(file_path).name, style=style)
+    # record the source so the entity can be reloaded into a fresh session
+    density.object.mn.filepath = str(file_path)
     return density

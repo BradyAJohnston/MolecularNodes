@@ -5,7 +5,6 @@ from ..blender import IS_BLENDER_5
 from ..entities import StreamingTrajectory, Trajectory, density, trajectory
 from ..entities.base import EntityType
 from ..nodes import nodes
-from ..nodes.node_management import get_final_style_nodes
 from ..session import get_session
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
@@ -72,11 +71,6 @@ class MN_MT_Import(bpy.types.Menu):
 
 def pt_object_context(self, context):
     return None
-
-
-def is_style_node(context):
-    node = context.space_data.edit_tree.nodes.active
-    return node.name.startswith("Style")
 
 
 def ui_from_node(
@@ -237,7 +231,7 @@ def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context):
         mol_type = object.mn.entity_type
     except AttributeError:
         return None
-    if mol_type == "None":
+    if not object.mn.is_entity:
         layout.label(text="No MN object selected")
         return None
     if mol_type.startswith("md"):
@@ -340,7 +334,7 @@ def get_active_entity_object(context: bpy.types.Context) -> bpy.types.Object | N
     objects = bpy.data.objects
     if 0 <= index < len(objects):
         obj = objects[index]
-        if obj.mn.entity_type != "None":
+        if obj.mn.is_entity:
             return obj
     return None
 
@@ -389,7 +383,7 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         filtered = [0] * len(objects)
         for i, obj in enumerate(objects):
             sort_data.append((i, obj.name))
-            if obj.mn.entity_type == "None":
+            if not obj.mn.is_entity:
                 continue
             if (
                 not self.filter_name
@@ -434,11 +428,9 @@ class MN_PT_Entities(bpy.types.Panel):
         entity = context.scene.MNSession.get(obj.uuid) if obj is not None else None
 
         col = row.column()
+        # reload/relink the entity into the session from its recorded source
         row = col.row()
-        row.operator("mn.session_prune", icon="FILE_REFRESH", text="")
-        row = col.row()
-        row.operator("mn.session_create_object", icon="ADD", text="")
-        row.enabled = False  # TODO: create object or create entity or remove?
+        row.operator("mn.session_reload_item", icon="FILE_REFRESH", text="")
         row = col.row()
         op = row.operator("mn.session_remove_item", icon="REMOVE", text="")
         if entity is None:
@@ -456,7 +448,7 @@ class MN_PT_Entities(bpy.types.Panel):
         if entity is not None:
             row.label(text="Linked to session entity", icon="LINKED")
         else:
-            row.label(text="No linked entity in session", icon="UNLINKED")
+            row.label(text="Not linked — use Reload to relink", icon="UNLINKED")
 
 
 class MN_PT_trajectory(bpy.types.Panel):
@@ -565,12 +557,18 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
             op.uuid = uuid
 
 
+def is_style_node(node: bpy.types.Node) -> bool:
+    """Whether a node is a style node, identified by "Style" in its name."""
+    return "Style" in node.name
+
+
 class MN_UL_StylesList(bpy.types.UIList):
     """
-    UIList of styles for an entity
-    """
+    UIList of styles for an entity.
 
-    style_nodes = None
+    Displays the style nodes of the entity's node tree, filtered directly to the
+    nodes with "Style" in their name.
+    """
 
     def draw_item(
         self,
@@ -586,11 +584,11 @@ class MN_UL_StylesList(bpy.types.UIList):
     ):
         item: bpy.types.GeometryNode = item
         layout: bpy.types.UILayout = layout
-        custom_icon = "WORLD"
         if self.layout_type in {"DEFAULT", "COMPACT"}:
-            assert self.style_nodes
             row = layout.row()
-            seqno = f"{self.style_nodes.index(item) + 1}"
+            # number within the visible style nodes, in tree order
+            style_nodes = [n for n in data.nodes if is_style_node(n)]
+            seqno = f"{style_nodes.index(item) + 1}"
             split = row.split(factor=0.1)
             col = split.column()
             col.label(text=seqno)
@@ -602,28 +600,27 @@ class MN_UL_StylesList(bpy.types.UIList):
                 row.prop(input, "default_value", icon_only=True, icon=hide_icon)
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
-            layout.label(text="", icon=custom_icon)
+            layout.label(text="", icon="WORLD")
 
     def filter_items(self, context, data, propname):
         if data is None:
             return [], []
         items = getattr(data, propname)
-        # Filter only style nodes
+        # show only style nodes, then apply the name filter on top
         sort_data = []
         filtered = [0] * len(items)
-        style_nodes = get_final_style_nodes(data)
         for i, item in enumerate(items):
-            if item in style_nodes:
-                name = item.label
-                sort_data.append((i, name))
-                if (
-                    not self.filter_name
-                    or bool(self.filter_name.lower() in name.lower())
-                    is not self.use_filter_invert
-                ):
-                    filtered[i] |= self.bitflag_filter_item
-            else:
+            if not is_style_node(item):
                 sort_data.append((i, ""))
+                continue
+            name = item.label
+            sort_data.append((i, name))
+            if (
+                not self.filter_name
+                or (self.filter_name.lower() in name.lower())
+                is not self.use_filter_invert
+            ):
+                filtered[i] |= self.bitflag_filter_item
         # Sort
         ordered = []
         if self.use_filter_sort_alpha:
@@ -684,10 +681,8 @@ class MN_PT_Styles(bpy.types.Panel):
             return
         styles_active_index: int = entity.object.mn.styles_active_index  # type: ignore
         valid_selection = False
-        style_nodes = get_final_style_nodes(node_group)
 
         row = layout.row()
-        MN_UL_StylesList.style_nodes = style_nodes
         row.template_list(
             "MN_UL_StylesList",
             "styles_list",

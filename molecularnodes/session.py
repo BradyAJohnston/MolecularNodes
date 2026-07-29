@@ -10,8 +10,9 @@ from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
 from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
-from .entities.base import EntityType, MolecularEntity
+from .entities.base import MolecularEntity
 from .entities.ensemble.base import Ensemble
+from .entities.reload import can_reload, reload_entity
 from .entities.trajectory.base import Trajectory
 from .nodes.nodes import styles_mapping
 
@@ -85,38 +86,12 @@ class MNSession:
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
     def register_entity(self, item: MolecularEntity) -> None:
-        """Add entity to the dictionary"""
+        """Add entity to the session, keyed by its uuid."""
         self.entities[item.uuid] = item
-        # add entity to blender properties if it doesn't exist
-        props = bpy.context.scene.mn
-        entities = props.entities  # entities collection
-        if entities.find(item.uuid) == -1:
-            entity = entities.add()  # add new entity to collection
-            entity.name = item.uuid  # immutable name that allows find to get index
-            # EntityType is not available here in most cases as it is set after __init__
-            # In other cases, it is reset later like in case of MD_OXDNA
-            # So, use a simple check based on supported entity types here
-            if isinstance(item, Molecule):
-                entity.type = EntityType.MOLECULE.value
-            elif isinstance(item, Trajectory):
-                entity.type = EntityType.MD.value
-            elif isinstance(item, Ensemble):
-                entity.type = EntityType.ENSEMBLE.value
-            # make the new entity the active selection in the Entities list;
-            # the object may not be created yet at registration time
-            obj = self.get_object(item.uuid)
-            if obj is not None:
-                props.entities_active_index = bpy.data.objects.find(obj.name)
 
     def remove_entity(self, uuid: str) -> None:
-        """Remove entity from the dictionary"""
+        """Remove entity from the session."""
         del self.entities[uuid]
-        # remove entity from blender properties
-        props = bpy.context.scene.mn
-        entities = props.entities
-        index = entities.find(uuid)
-        if index != -1:
-            entities.remove(index)  # remove entity from collection
 
     def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
         return self.get(obj.uuid)
@@ -137,26 +112,13 @@ class MNSession:
 
     def prune(self) -> None:
         """
-        Remove any entities that no longer exist in Blender
+        Remove any session entities whose Blender object no longer exists.
         """
-        # remove any entities that don't have linked objects
         for uuid in list(self.entities):
             try:
                 _ = self.entities[uuid].name
             except LinkedObjectError:
                 self.remove_entity(uuid)
-        # remove any properties that don't exist in session
-        props = bpy.context.scene.mn
-        entities = props.entities
-        remove_indices = [
-            i for i, entity in enumerate(entities) if entity.name not in self.entities
-        ]
-        if remove_indices:
-            # remove indices in the reverse sorted order for correctness
-            reversed_indices = sorted(remove_indices, reverse=True)
-            for i in reversed_indices:
-                if i < len(entities):
-                    entities.remove(i)
 
     @property
     def n_items(self) -> int:
@@ -417,31 +379,31 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Session_Create_Object(bpy.types.Operator):
-    bl_idname = "mn.session_create_object"
-    bl_label = "Create Object"
-    bl_description = "Create a new object linked to this item"
+class MN_OT_Session_Reload_Item(bpy.types.Operator):
+    bl_idname = "mn.session_reload_item"
+    bl_label = "Reload"
+    bl_description = (
+        "Reload this entity's data into the session from its source file or PDB "
+        "code, relinking the object to a live Molecular Nodes entity"
+    )
     bl_options = {"REGISTER", "UNDO"}
 
-    uuid: StringProperty()  # type: ignore
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        return obj is not None and can_reload(obj)
 
     def execute(self, context: Context):
-        item = get_session().get(self.uuid)
-        if item is None:
-            self.report({"ERROR"}, f"No item with UUID '{self.uuid}'")
+        obj = context.active_object
+        try:
+            reload_entity(obj)
+        except Exception as e:
+            self.report({"ERROR"}, f"Failed to reload entity: {e}")
             return {"CANCELLED"}
-        item.create_object()
         return {"FINISHED"}
 
 
-class MN_OT_Session_Prune(bpy.types.Operator):
-    bl_idname = "mn.session_prune"
-    bl_label = "Session Prune"
-    bl_description = "Prune session entities by removing ones that no longer exist"
-
-    def execute(self, context: Context):
-        get_session().prune()
-        return {"FINISHED"}
-
-
-CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object, MN_OT_Session_Prune]
+CLASSES = [
+    MN_OT_Session_Remove_Item,
+    MN_OT_Session_Reload_Item,
+]

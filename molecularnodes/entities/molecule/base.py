@@ -132,6 +132,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
 
         mol.create_object(name=name)
         mol._reader = reader
+        # record the source so the entity can be reloaded into a fresh session
+        if not isinstance(file_path, io.BytesIO):
+            mol.props.filepath = str(file_path)
 
         try:
             mol._assemblies = reader._assemblies()
@@ -217,6 +220,9 @@ class Molecule(MolecularEntity, metaclass=ABCMeta):
         )
         mol = cls.load(file_path, name=code)
         mol._code = code
+        # record the source so the entity can be re-fetched into a fresh session
+        mol.props.code = code
+        mol.props.database = database
 
         return mol
 

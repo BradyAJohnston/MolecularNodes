@@ -1,7 +1,6 @@
 import bpy
 from bpy.props import (
     BoolProperty,
-    CollectionProperty,
     EnumProperty,
     FloatProperty,
     IntProperty,
@@ -65,20 +64,6 @@ def _set_frame(self, frame):
     _update_entities(self, bpy.context)
 
 
-def _get_entity_visibility(self) -> bool:
-    """get callback for entity visibility property"""
-    return self.get("visible", True)
-
-
-def _set_entity_visibility(self, visible: bool) -> None:
-    """set callback for entity visibility property"""
-    self["visible"] = visible
-    entity = bpy.context.scene.MNSession.get(self.name)
-    if entity is not None:
-        set_object_visibility(entity.object, self.visible)
-        entity.annotations._update_annotation_object()
-
-
 def _get_object_visibility(self) -> bool:
     """get callback for object visibility property"""
     try:
@@ -106,7 +91,7 @@ def _get_entities_active_index(self) -> int:
     list. Returns -1 when the active object is not a molecular entity.
     """
     obj = bpy.context.view_layer.objects.active
-    if obj is None or obj.mn.entity_type == "None":
+    if obj is None or not obj.mn.is_entity:
         return -1
     return bpy.data.objects.find(obj.name)
 
@@ -117,7 +102,7 @@ def _set_entities_active_index(self, index: int) -> None:
     if index < 0 or index >= len(bpy.data.objects):
         return
     entity_object = bpy.data.objects[index]
-    if entity_object.mn.entity_type == "None":
+    if not entity_object.mn.is_entity:
         return
     context = bpy.context
     if entity_object.name not in context.view_layer.objects:
@@ -126,20 +111,6 @@ def _set_entities_active_index(self, index: int) -> None:
         obj.select_set(False)
     context.view_layer.objects.active = entity_object
     entity_object.select_set(True)
-
-
-class EntityProperties(bpy.types.PropertyGroup):
-    # name property is implicit and is set to uuid for find lookups
-    # type value is one of EntityType enum
-    __slots__ = []
-    type: StringProperty(name="Entity Type", default="")  # type: ignore
-    visible: BoolProperty(  # type: ignore
-        name="visible",
-        description="Visibility of the entity",
-        default=True,
-        get=_get_entity_visibility,
-        set=_set_entity_visibility,
-    )
 
 
 def _update_dssp_display_option(self, context):
@@ -248,7 +219,6 @@ class DSSPProperties(bpy.types.PropertyGroup):
 
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
-    entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
     entities_active_index: IntProperty(  # type: ignore
         name="Active entity index",
         description="Index into bpy.data.objects of the entity object active in"
@@ -314,6 +284,25 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         maxlen=12,
         options={"HIDDEN"},
     )
+    filepath: StringProperty(  # type: ignore
+        name="File Path",
+        description="Source file this entity was loaded from, used to reload it",
+        subtype="FILE_PATH",
+        default="",
+        options={"HIDDEN"},
+    )
+    database: StringProperty(  # type: ignore
+        name="Database",
+        description="Database this structure was fetched from, used to reload it",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def is_entity(self) -> bool:
+        """Whether this object is a Molecular Nodes entity."""
+        return self.entity_type != "None"
+
     trajectory_selection_index: IntProperty(  # type: ignore
         name="Index of selection",
         description="Index of selection, that is selected for the UI",
@@ -513,7 +502,6 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 
 CLASSES = [
-    EntityProperties,
     DSSPProperties,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
