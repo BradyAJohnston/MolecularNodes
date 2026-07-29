@@ -695,6 +695,7 @@ class MN_PT_Styles(bpy.types.Panel):
         if style_node is None:
             layout.label(text="Select a style to edit its properties")
             return
+        
 
         # swap the selected style node for a different style
         row = layout.row(align=True)
@@ -706,6 +707,16 @@ class MN_PT_Styles(bpy.types.Panel):
         )
         op.name_tree = node_group.name
         op.name_node = style_node.name
+
+        # display the selection string if using a named attribute
+        entity = context.scene.MNSession.get(obj.uuid)
+        if style_node.inputs["Selection"].links and entity is not None:
+            node = style_node.inputs["Selection"].links[0].from_node
+            if isinstance(node, bpy.types.GeometryNodeInputNamedAttribute):
+                if isinstance(entity, (Trajectory, StreamingTrajectory)):
+                    selection = entity.selections.get(node.inputs["Name"].default_value)
+                    layout.prop(selection, "string", text="Selection")
+        
 
         # display the selected style node's name and its input properties
         header, body = layout.panel(idname="style_properties")
