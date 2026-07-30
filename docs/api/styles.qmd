@@ -12,22 +12,13 @@ cv = mn.Canvas(resolution=(860, 540), transparent=True)
 
 
 ```{python}
-codes = ["4ozs", "8H1B", "8U8W"]
-styles = [
-    mn.StyleCartoon(),
-    mn.StyleRibbon(),
-    mn.StyleSpheres(geometry="Instance", subdivisions=4),
-]
-materials = [
-    mn.material.Default(),
-    mn.material.AmbientOcclusion(),
-    mn.material.FlatOutline(),
-]
+codes = ["4ozs", "8H1B", "6N2Y"]
+styles = ["cartoon", "ribbon", "surface"]
 
-for code, style, material in zip(codes, styles, materials):
+for code, style in zip(codes, styles):
     mol = mn.Molecule.fetch(code)
-    mol.add_style(style, material=material)
-    cv.frame_object(mol)
+    mol.add_style(style, material="MN Flat")
+    cv.frame_object(mol, viewpoint="right")
     cv.snapshot()
     cv.clear()
 
@@ -36,34 +27,35 @@ for code, style, material in zip(codes, styles, materials):
 ```{python}
 mol = (
     mn.Molecule.fetch("8H1B")
-    .add_style("cartoon", material = mn.material.AmbientOcclusion())
+    .add_style("cartoon", material = "MN Ambient Occlusion")
     .add_style(
         style="surface",
-        # selection=mn.MoleculeSelector().is_peptide(),
-        color=(0.6, 0.6, 0.8, 1.0),
-        material=mn.material.TransparentOutline()
+        selection="protein",
+        material="MN Transparent Outline"
         )
 )
 cv.frame_object(mol)
 cv.snapshot()
 ```
 
-```{python}
-mol.styles[0].remove()
-cv.snapshot()
-```
-
 
 ```{python}
-(
-    mol
-    .add_style('ribbon', selection="is_peptide")
-    .add_style('surface', selection="is_nucleic")
-)
-style = mol.styles[1]
-style.backbone_radius = 1.5
-style.quality = 5
-style.material = mn.material.AmbientOcclusion()
+with mol.tree.reset() as (atoms, join):
+    (
+        atoms
+        >> mn.nodes.geometry.StyleRibbon(
+            selection=mn.nodes.geometry.IsPeptide(),
+            peptide_radius=1.5,
+            quality=5,
+            material=mn.material.append_material("MN Ambient Occlusion")
+        )
+        >> mn.nodes.geometry.StyleSurface(
+            selection=mn.nodes.geometry.IsPeptide(),
+            material=mn.material.append_material("MN Transparent Outline")
+        )
+        >> join
+        
+    )
 cv.snapshot()
 ```
 
@@ -73,13 +65,14 @@ cv.clear()
 cv.engine = mn.scene.Cycles(samples=32)
 mol = (
     mn.Molecule.fetch("9EYM")
-    .add_style("cartoon", material = mn.material.AmbientOcclusion(), selection = "is_peptide")
-    .add_style("ball_and_stick", selection=mn.entities.MoleculeSelector().not_peptide())
+    .add_style("cartoon",  selection = "is_peptide", material = "MN Ambient Occlusion",)
+    .add_style("ball_and_stick", selection = "not protein", material = "MN Default", bond_find = True)
 )
-mol.styles[1].bond_find = True
+
 cv.frame_view(mol)
 cv.snapshot()
 ```
+
 ```{python}
 cv.frame_view(mol, (-3.14, 0, 0))
 cv.snapshot()
