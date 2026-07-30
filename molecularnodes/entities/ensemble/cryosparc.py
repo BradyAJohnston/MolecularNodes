@@ -8,8 +8,6 @@ from scipy.spatial.transform import Rotation
 from .base import Ensemble, EntityType
 
 if TYPE_CHECKING:
-    from molecularnodes.ui.ops import MN_OT_Import_CryoSPARC_File
-
     BobField = TypedDict(
         "BobField",
         {"name": str, "data": np.typing.NDArray, "atype": AttributeTypeNames},
@@ -29,9 +27,8 @@ def uid_as_i32_vec(
 
 
 class Dataset:
-    def __init__(self, dset: np.typing.NDArray, op: "MN_OT_Import_CryoSPARC_File"):
+    def __init__(self, dset: np.typing.NDArray):
         self.dset = dset
-        self.op = op
 
     def __getitem__(self, key: str) -> np.typing.NDArray:
         return self.dset[key]
@@ -178,13 +175,12 @@ class Dataset:
 class CryoSPARC(Ensemble):
     DEFAULT_NAME = "CryoSPARC Ensemble"
 
-    def __init__(self, file_path: Path, op: "MN_OT_Import_CryoSPARC_File"):
+    def __init__(self, file_path: Path):
         if file_path.suffix != ".cs":
             raise ValueError(f"{file_path.name} is not a CryoSPARC .cs file")
         super().__init__(file_path=file_path)
         self._entity_type = EntityType.ENSEMBLE_CRYOSPARC
-        self.op = op
-        self.dset = Dataset(np.load(self.file_path), op=op)
+        self.dset = Dataset(np.load(self.file_path))
         if len(self.dset) == 0:
             raise ValueError("Dataset has no rows")
 
