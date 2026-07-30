@@ -65,14 +65,14 @@ def test_load_starfiles(snapshot):
     file = data_dir / "starfile/clathrin.star"
     ensemble = mn.entities.ensemble.StarFile.load(file)
     assert ensemble._entity_type == mn.entities.base.EntityType.ENSEMBLE_STAR
-    assert ensemble.object.mn.entity_type == ensemble._entity_type.value
+    assert ensemble.props.entity_type == ensemble._entity_type.value
     assert snapshot == GeometrySet(ensemble.object)
 
 
 def test_categorical_attributes(snapshot):
     file = data_dir / "starfile/cistem.star"
     ensemble = mn.entities.ensemble.StarFile.load(file)
-    assert "cisTEMOriginalImageFilename_categories" in ensemble.object
+    assert "cisTEMOriginalImageFilename" in ensemble.props.categories
     assert snapshot == GeometrySet(ensemble.object)
 
 

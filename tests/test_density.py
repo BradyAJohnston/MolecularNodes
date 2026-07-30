@@ -31,7 +31,7 @@ def test_density_load(density_file):
 
     print(f"{list(bpy.data.objects)=}")
 
-    assert density.object.mn.entity_type == "density"
+    assert density.props.entity_type == "density"
     assert density.object.users_collection[0] == mn.blender.coll.mn()
 
 
@@ -68,8 +68,8 @@ def test_density_multiple_load(isolated_density_file):
     density1 = mn.entities.density.load(file)
     density2 = mn.entities.density.load(file)
 
-    assert density1.object.mn.entity_type == "density"
-    assert density2.object.mn.entity_type == "density"
+    assert density1.props.entity_type == "density"
+    assert density2.props.entity_type == "density"
     assert density1.object.users_collection[0] == mn.blender.coll.mn()
     assert density2.object.users_collection[0] == mn.blender.coll.mn()
 
@@ -111,7 +111,7 @@ def density_file_dx(isolated_density_file):
 def test_density_load_dx(density_file_dx):
     density = mn.entities.density.load(density_file_dx)
     print(f"{list(bpy.data.objects)=}")
-    assert density.object.mn.entity_type == "density"
+    assert density.props.entity_type == "density"
     assert density.object.users_collection[0] == mn.blender.coll.mn()
 
 

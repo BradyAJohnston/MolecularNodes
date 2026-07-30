@@ -530,7 +530,7 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
             op = row.operator("mn.dssp_init")
             op.uuid = uuid
             return
-        props = traj.object.mn.dssp
+        props = traj.props.dssp
         # display options
         if traj._entity_type == EntityType.MD:
             row = layout.row()

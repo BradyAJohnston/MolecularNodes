@@ -41,10 +41,10 @@ def test_load_cellpack(snapshot, format):
 
     ens = mn.entities.ensemble.CellPack.load(file_path, node_setup=False)
     assert ens._entity_type == mn.entities.base.EntityType.ENSEMBLE_CELLPACK
-    assert ens.object.mn.entity_type == ens._entity_type.value
+    assert ens.props.entity_type == ens._entity_type.value
 
     assert ens.name == Path(file_path).name
-    assert snapshot == str(ens.object.mn.chain_ids)
+    assert snapshot == str(ens.props.chain_ids)
     obj_names = [obj.name for obj in ens.instance_collection.objects]
     assert snapshot == "\n".join(obj_names)
 

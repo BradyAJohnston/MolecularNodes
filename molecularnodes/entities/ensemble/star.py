@@ -211,7 +211,7 @@ class StarFile(Ensemble):
         if self.object is None:
             raise ValueError("Object not set. Call from_blender_object() first.")
 
-        categories = self.object.mn.categories
+        categories = self.props.categories
         image_index = self.star_node.inputs["Image"].default_value - 1
         if self._is_relion():
             micrograph_path = categories["rlnMicrographName"][image_index]
@@ -272,12 +272,12 @@ class StarFile(Ensemble):
             collection=bl.coll.mn(),
             name=name,
         )
-        self.object.mn.entity_type = self._entity_type.value
+        self.props.entity_type = self._entity_type.value
         self.data_frame.store_data_on_object(self.object)
 
         if node_setup:
             with self.tree.reset() as (input, join):
                 input >> geometry.StarfileInstances() >> join
 
-        self.object.mn.filepath = str(self.file_path)
+        self.props.filepath = str(self.file_path)
         return self.object

@@ -595,7 +595,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 message=f"Streaming trajectory '{traj.name}' from '{self.trajectory}'",
             )
         else:
-            n_frames = int(traj.object.mn.n_frames)
+            n_frames = int(traj.props.n_frames)
             if n_frames > 1:
                 context.scene.frame_end = n_frames
             self.report(
@@ -934,7 +934,7 @@ class MN_OT_DSSP_apply(Operator):
         entity = get_session().get(self.uuid)
         if entity is None:
             return {"CANCELLED"}
-        props = entity.object.mn.dssp
+        props = entity.props.dssp
         if props.display_option == "trajectory-average":
             if self.apply_ta_threshold:
                 entity.dssp.show_trajectory_average(threshold=self.ta_threshold)
@@ -958,7 +958,7 @@ class MN_OT_DSSP_cancel(Operator):
         entity = get_session().get(self.uuid)
         if entity is None:
             return {"CANCELLED"}
-        props = entity.object.mn.dssp
+        props = entity.props.dssp
         props.cancelling = True
         props.display_option = entity.dssp._display_option
         props.window_size = entity.dssp._window_size

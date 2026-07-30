@@ -19,5 +19,5 @@ def test_emdb_api_density_load(emdb_density_map):
     avg = np.mean(pos, axis=0)
     assert np.linalg.norm(avg) > 0.1
 
-    assert density.object.mn.entity_type == "density"
+    assert density.props.entity_type == "density"
     assert density.object.users_collection[0] == mn.blender.coll.mn()
