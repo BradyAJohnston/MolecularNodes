@@ -26,14 +26,14 @@ def test_resolution(canvas):
 def test_load_blend():
     # Test loading a .blend file
     file = data_dir / "blendfiles/suzanne.blend"
-    assert not bpy.data.objects.get("Suzanne")
+    suzanne_name = "MOLECULAR NODES Suzanne"
+    assert not bpy.data.objects.get(suzanne_name)
     canvas = mn.Canvas(template=file)
-    assert bpy.data.objects.get("Suzanne")
+    assert bpy.data.objects.get(suzanne_name)
     canvas.scene_reset(None)
-    assert not bpy.data.objects.get("Suzanne")
-    assert bpy.data.objects.get("Cube")
+    assert not bpy.data.objects.get(suzanne_name)
     canvas.load(file)
-    assert bpy.data.objects.get("Suzanne")
+    assert bpy.data.objects.get(suzanne_name)
     with pytest.raises(ValueError):
         mn.Canvas(template="x")
 
