@@ -173,6 +173,10 @@ def layout_trajectory_playback(
     row.enabled = traj._is_orthorhombic
     col.prop(obj.mn, "interpolate")
 
+    # bake frames into a collection for use directly in geometry nodes
+    playback.separator()
+    playback.operator("mn.frames_to_collection", icon="RENDERLAYERS")
+
 
 def layout_selection_manage(
     layout: UILayout, traj: Molecule, panel: bool = True

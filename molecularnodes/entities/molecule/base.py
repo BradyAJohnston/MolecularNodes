@@ -799,6 +799,74 @@ class Molecule(MolecularEntity):
         finally:
             self._updating_in_progress = False
 
+    def frames_to_collection(
+        self,
+        start: int = 0,
+        stop: int | None = None,
+        step: int = 1,
+        name: str | None = None,
+    ) -> bpy.types.Collection:
+        """Bake a range of trajectory frames into a collection of frame objects.
+
+        Each object in the returned collection holds the atom positions (in Blender world
+        units) for a single frame, in the same vertex order as this molecule's mesh. The
+        collection can then be read inside geometry nodes (e.g. with the *Animate Frames*
+        node) to drive positions from baked data, rather than updating the ``Universe``
+        every scene frame.
+
+        Re-baking replaces any objects previously baked into the same collection.
+
+        Parameters
+        ----------
+        start : int, default=0
+            First trajectory frame to bake (inclusive).
+        stop : int | None, optional
+            One past the last frame to bake. Defaults to the number of frames in the
+            trajectory (i.e. bake through the final frame).
+        step : int, default=1
+            Stride between baked frames.
+        name : str | None, optional
+            Name for the frames collection. Defaults to this molecule's name.
+
+        Returns
+        -------
+        bpy.types.Collection
+            The collection of baked frame objects.
+
+        Raises
+        ------
+        ValueError
+            If ``step`` is not a positive integer.
+        """
+        if step < 1:
+            raise ValueError("step must be a positive integer")
+
+        n_frames = self.universe.trajectory.n_frames
+        if stop is None:
+            stop = n_frames
+        start = max(0, min(start, n_frames))
+        stop = max(0, min(stop, n_frames))
+
+        frames = coll.frames(name or self.name)
+        # clear any previously-baked frames so re-baking replaces rather than appends
+        for obj in list(frames.objects):
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+        # bake each requested frame, restoring the current frame afterwards
+        original_uframe = self.uframe
+        try:
+            for i, frame in enumerate(range(start, stop, step)):
+                self.uframe = frame
+                db.create_object(
+                    vertices=self._scaled_position,
+                    name=f"{self.name}_frame_{i}",
+                    collection=frames,
+                )
+        finally:
+            self.uframe = original_uframe
+
+        return frames
+
     def _update_positions(self, frame: int) -> None:
         """
         Internal method to update atom positions.

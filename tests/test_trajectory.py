@@ -58,6 +58,35 @@ class TestTrajectory:
         traj = mn.entities.Molecule(universe_with_bonds)
         assert len(traj.data.edges) == 28015
 
+    def test_frames_to_collection(self, universe):
+        traj = mn.entities.Molecule(universe, name="TestFramesToCollection")
+        n_frames = traj.universe.trajectory.n_frames
+        n_atoms = traj.universe.atoms.n_atoms
+
+        # bake every frame
+        frames = traj.frames_to_collection()
+        assert len(frames.objects) == n_frames
+        # each frame object has one vertex per atom
+        for obj in frames.objects:
+            assert len(obj.data.vertices) == n_atoms
+
+        # a baked frame's positions match the universe at that frame
+        traj.uframe = 2
+        expected = traj._scaled_position
+        got = databpy.named_attribute(
+            frames.objects[f"{traj.name}_frame_2"], "position"
+        )
+        assert np.allclose(got, expected)
+
+        # a stepped range bakes fewer frames, and re-baking replaces (not appends)
+        stepped = traj.frames_to_collection(start=0, stop=4, step=2)
+        assert stepped is frames
+        assert len(stepped.objects) == 2
+
+        # step must be positive
+        with pytest.raises(ValueError):
+            traj.frames_to_collection(step=0)
+
     def test_attributes_added(self, universe):
         traj = mn.entities.Molecule(universe)
         attributes = traj.list_attributes()

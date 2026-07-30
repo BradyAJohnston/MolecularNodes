@@ -491,6 +491,71 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class MN_OT_Frames_To_Collection(bpy.types.Operator):
+    bl_idname = "mn.frames_to_collection"
+    bl_label = "Bake Frames to Collection"
+    bl_description = (
+        "Bake a range of trajectory frames into a collection of objects (one per frame) "
+        "whose positions can be read inside geometry nodes with the Animate Frames node"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    start: IntProperty(  # type: ignore
+        name="Start",
+        default=0,
+        min=0,
+        description="First trajectory frame to bake",
+    )
+    stop: IntProperty(  # type: ignore
+        name="Stop",
+        default=0,
+        min=0,
+        description="One past the last frame to bake (0 bakes through the final frame)",
+    )
+    step: IntProperty(  # type: ignore
+        name="Step",
+        default=1,
+        min=1,
+        description="Stride between baked frames",
+    )
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        if obj is None:
+            return False
+        entity = context.scene.MNSession.match(obj)
+        return isinstance(entity, Molecule) and obj.mn.n_frames > 1
+
+    def invoke(self, context, event):
+        # default the stop to the trajectory length for convenience
+        if self.stop == 0:
+            self.stop = context.active_object.mn.n_frames
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        obj = context.active_object
+        entity = context.scene.MNSession.match(obj)
+        if entity is None:
+            self.report({"ERROR"}, "Active object is not linked to a molecule")
+            return {"CANCELLED"}
+
+        stop = self.stop if self.stop > 0 else None
+        try:
+            frames = entity.frames_to_collection(
+                start=self.start, stop=stop, step=self.step
+            )
+        except ValueError as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
+
+        self.report(
+            {"INFO"},
+            f"Baked {len(frames.objects)} frames into collection '{frames.name}'",
+        )
+        return {"FINISHED"}
+
+
 class MN_OT_Import_Trajectory(bpy.types.Operator):
     bl_idname = "mn.import_trajectory"
     bl_label = "Import Trajectory"
@@ -978,6 +1043,7 @@ CLASSES = [
     MN_OT_Import_Fetch,
     MN_OT_Import_Trajectory,
     MN_OT_Reload_Trajectory,
+    MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,
     MN_OT_Import_Ensemble,
     MN_OT_Import_Molecule,
