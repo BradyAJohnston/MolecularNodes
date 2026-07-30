@@ -231,33 +231,30 @@ class ReaderBase(metaclass=ABCMeta):
             "O2'",
         ]
 
-        is_backbone_atom = np.isin(array.get_annotation("atom_name"), backbone_atom_names)
+        is_backbone_atom = np.isin(
+            array.get_annotation("atom_name"), backbone_atom_names
+        )
         is_not_solvent = np.logical_not(filter.filter_solvent(array))
 
         return np.logical_and(is_backbone_atom, is_not_solvent)
 
-
-
     @staticmethod
     def _compute_is_peptide(array):
         return np.logical_or(
-            filter.filter_canonical_amino_acids(array),
-            filter.filter_amino_acids(array)
+            filter.filter_canonical_amino_acids(array), filter.filter_amino_acids(array)
         )
 
     @staticmethod
     def _compute_is_side_chain(array):
         backbone = ReaderBase._compute_is_backbone(array)
         is_polymer = np.logical_or(
-            ReaderBase._compute_is_peptide(array),
-            filter.filter_nucleotides(array)
+            ReaderBase._compute_is_peptide(array), filter.filter_nucleotides(array)
         )
 
         return np.logical_and(
             np.logical_or(~backbone, ReaderBase._compute_is_alpha_carbon(array)),
-            is_polymer
+            is_polymer,
         )
-
 
     @staticmethod
     def _compute_ures_id(array):
