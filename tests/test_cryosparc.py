@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from molecularnodes.entities.ensemble.cryosparc import Dataset
+from molecularnodes.entities.ensemble.cryosparc import Dataset, uid_as_i32_vec
 from .constants import data_dir
 
 
@@ -11,10 +11,10 @@ def dset():
 
 
 class TestDataset:
-    def test_cryosparc_dset_len(self, dset):
+    def test_dset_len(self, dset):
         assert len(dset) == 100
 
-    def test_cryosparc_dset_fields(self, dset):
+    def test_dset_fields(self, dset):
         d = np.load(data_dir / "cryosparc" / "J123_particles_exported.cs")
         for field_name in d.dtype.names:
             assert field_name in dset
@@ -24,10 +24,25 @@ class TestDataset:
         assert dset.get("BAD_FIELD") is None
         assert np.array_equal(dset.get("BAD_FIELD", np.arange(3)), np.arange(3))
 
-    def test_cryosparc_dset_bob_entry(self, dset):
+    def test_dset_bob_entry(self, dset):
         field_name = "location/center_x_frac"
         field_type = "FLOAT"
         bob = dset.bob_entry(field_name, field_type)
         assert bob["name"] == field_name
         assert np.array_equal(bob["data"], dset[field_name])
         assert bob["atype"] == field_type
+
+    def test_uid_as_i32(self, dset):
+        split_uids = uid_as_i32_vec(dset["uid"])
+        assert split_uids.shape == (len(dset), 2)
+        split_uids = split_uids.astype(np.uint64)
+        shifts = np.zeros(split_uids.shape, dtype=np.uint32)
+        shifts[:, 0] = 32
+        masks = np.zeros(split_uids.shape, dtype=np.uint64)
+        # have to mask the lower 32 because numpy will pad with 1s if
+        # the signed int32 is negative
+        masks[:, :] = 2**32 - 1
+        masks = masks << shifts
+        split_uids = np.bitwise_and(split_uids << shifts, masks)
+        combined_uids = np.sum(split_uids, axis=1)
+        assert np.array_equal(combined_uids, dset["uid"])
