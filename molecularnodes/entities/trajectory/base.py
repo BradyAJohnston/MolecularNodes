@@ -230,12 +230,20 @@ class Trajectory(MolecularEntity):
         """Return cached elements (for backwards compatibility)"""
         return self._elements
 
+    @property
+    def _titled_elements(self) -> np.ndarray:
+        # title-case the element symbols so lookups match the data tables (e.g. "FE" ->
+        # "Fe"); this mirrors the biotite reader so both backends agree. Cast to a string
+        # dtype first since MDAnalysis may hand back an object array.
+        return np.char.title(np.asarray(self._elements, dtype=str))
+
     def _compute_atomic_number(self) -> np.ndarray:
         return np.array(
             [
-                data.elements.get(element, data.elements["X"]).get("atomic_number")
-                for element in self._elements
-            ]
+                data.elements.get(element, {}).get("atomic_number", 0)
+                for element in self._titled_elements
+            ],
+            dtype=int,
         )
 
     def _compute_vdw_radii(self) -> np.ndarray:
@@ -243,7 +251,7 @@ class Trajectory(MolecularEntity):
             np.array(
                 [
                     data.elements.get(element, {}).get("vdw_radii", 100)
-                    for element in self._elements
+                    for element in self._titled_elements
                 ]
             )
             * 0.01  # pm to Angstrom
@@ -355,6 +363,86 @@ class Trajectory(MolecularEntity):
         name_is_solvent = np.isin(self.atoms.names, data.NAMES_SOLVENT)
         return np.logical_or(resname_is_solvent, name_is_solvent)
 
+    # atom names that make up the peptide and nucleic acid backbones. Matches the
+    # biotite reader's definition (ReaderBase._compute_is_backbone) so that the two
+    # backends agree, while "BB" preserves coarse-grained (Martini) backbone support.
+    _BACKBONE_ATOM_NAMES = (
+        # Peptide backbone atoms
+        "N",
+        "C",
+        "CA",
+        "H",
+        "HA",
+        "O",
+        # Continuous nucleic backbone atoms
+        "P",
+        "O5'",
+        "C5'",
+        "C4'",
+        "C3'",
+        "O3'",
+        # Alternative names for phosphate O's
+        "O1P",
+        "OP1",
+        "O2P",
+        "OP2",
+        # Remaining ribose atoms
+        "O4'",
+        "C1'",
+        "C2'",
+        "O2'",
+        # Coarse-grained backbone bead
+        "BB",
+    )
+
+    def _sel_bool(self, selection: str) -> np.ndarray:
+        """Evaluate an MDAnalysis selection string to a per-atom boolean mask."""
+        return _ag_to_bool(self.universe.select_atoms(selection))
+
+    def _compute_is_backbone(self) -> np.ndarray:
+        is_backbone_atom = np.isin(self.atoms.names, self._BACKBONE_ATOM_NAMES)
+        return np.logical_and(is_backbone_atom, ~self._compute_is_solvent())
+
+    def _compute_is_side_chain(self) -> np.ndarray:
+        # side chain = polymer atoms that are not backbone, but the alpha carbon
+        # (or CG backbone bead) is counted as side chain. Mirrors the biotite reader.
+        backbone = self._compute_is_backbone()
+        is_alpha_carbon = np.isin(self.atoms.names, ("CA", "BB"))
+        is_polymer = np.logical_or(
+            self._sel_bool("protein or (name BB SC*)"), self._sel_bool("nucleic")
+        )
+        return np.logical_and(np.logical_or(~backbone, is_alpha_carbon), is_polymer)
+
+    def _compute_lipophobicity(self) -> np.ndarray:
+        return np.array(
+            [
+                data.lipophobicity.get(res, {}).get(atom, 0)
+                for res, atom in zip(self.atoms.resnames, self.atoms.names)
+            ],
+            dtype=float,
+        )
+
+    def _compute_color(self) -> np.ndarray:
+        from ... import color
+
+        return color.color_chains(self._compute_atomic_number(), self.atoms.chainIDs)
+
+    def _compute_is_hetero(self) -> np.ndarray:
+        # carried across from biotite by the converter as a custom topology attribute
+        return self.atoms.heteros
+
+    def _compute_is_carb(self) -> np.ndarray:
+        # carried across from biotite (filter_carbohydrates has no MDAnalysis equivalent)
+        return self.atoms.is_carbs
+
+    def _compute_entity_id(self) -> np.ndarray:
+        # carried across from the structure file by the converter
+        return self.atoms.entity_ids
+
+    def _compute_sec_struct(self) -> np.ndarray:
+        # carried across from the structure file by the converter
+        return self.atoms.sec_structs
+
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
         if isinstance(self.universe.filename, (str, Path)):
@@ -399,12 +487,19 @@ class Trajectory(MolecularEntity):
             "chain_id": self._compute_chain_id_int,
             "atom_types": self._compute_atom_type_int,
             "atom_name": self._compute_atom_name_int,
+            "lipophobicity": self._compute_lipophobicity,
+            "Color": self._compute_color,
             "is_alpha_carbon": "name CA or name BB",
-            "is_backbone": "backbone or nucleicbackbone or name BB",
+            "is_backbone": self._compute_is_backbone,
+            "is_side_chain": self._compute_is_side_chain,
             "is_solvent": self._compute_is_solvent,
             "is_nucleic": "nucleic",
             "is_lipid": self._compute_is_lipid,
             "is_peptide": "protein or (name BB SC*)",
+            "is_hetero": self._compute_is_hetero,
+            "is_carb": self._compute_is_carb,
+            "entity_id": self._compute_entity_id,
+            "sec_struct": self._compute_sec_struct,
         }
 
     def _store_default_attributes(self) -> None:
@@ -418,9 +513,13 @@ class Trajectory(MolecularEntity):
                     data = item()
                 else:
                     raise ValueError("Unable to convert to attribute for storage")
+                # "Color" is an (n, 4) RGBA array which would otherwise be guessed as a
+                # generic 4-vector; store it as a colour attribute explicitly.
+                atype = db.AttributeTypes.FLOAT_COLOR if name == "Color" else None
                 self.store_named_attribute(
                     data=data,
                     name=name,
+                    atype=atype,
                 )
             except (mda.NoDataError, AttributeError) as e:
                 logger.debug(f"Skipping attribute '{name}': {e}")

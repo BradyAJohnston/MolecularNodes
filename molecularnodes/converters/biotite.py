@@ -1,9 +1,13 @@
+import MDAnalysis as mda
 from biotite.structure import AtomArray, AtomArrayStack
 from MDAnalysis.coordinates.base import SingleFrameReaderBase
+from MDAnalysis.coordinates.memory import MemoryReader
 from MDAnalysis.core.topology import Topology
 from MDAnalysis.core.topologyattrs import (
+    AtomAttr,
     Atomids,
     Atomnames,
+    Bonds,
     ChainIDs,
     Charges,
     Elements,
@@ -137,6 +141,13 @@ class BiotiteParser(TopologyReaderBase):
                 continue
             attrs.append(Attr(atom_array.get_annotation(category)))
 
+        # Carry the connectivity across so that `universe.atoms.bonds` is populated.
+        # Biotite stores bonds as (atom_i, atom_j, bond_type); MDAnalysis only wants
+        # the index pairs (bond order/type is handled separately on the mesh).
+        if atom_array.bonds is not None:
+            bond_indices = atom_array.bonds.as_array()[:, :2]
+            attrs.append(Bonds([tuple(bond) for bond in bond_indices]))
+
         return Topology(
             n_atoms,
             n_residues,
@@ -145,3 +156,89 @@ class BiotiteParser(TopologyReaderBase):
             atom_resindex=residx,
             residue_segindex=segidx,
         )
+
+
+class EntityIDs(AtomAttr):
+    """Per-atom entity id parsed from the structure file (mmCIF ``label_entity_id``)."""
+
+    attrname = "entity_ids"
+    singular = "entity_id"
+    dtype = int
+
+
+class SecStructs(AtomAttr):
+    """Per-atom secondary structure code parsed from the structure file."""
+
+    attrname = "sec_structs"
+    singular = "sec_struct"
+    dtype = int
+
+
+class Heteros(AtomAttr):
+    """Per-atom HETATM flag parsed from the structure file."""
+
+    attrname = "heteros"
+    singular = "hetero"
+    dtype = bool
+
+
+class IsCarbs(AtomAttr):
+    """Per-atom carbohydrate flag, computed by biotite at parse time.
+
+    Carried across rather than recomputed because it relies on biotite's built-in
+    residue knowledge (``filter_carbohydrates``), which has no MDAnalysis equivalent.
+    """
+
+    attrname = "is_carbs"
+    singular = "is_carb"
+    dtype = bool
+
+
+# Annotations that are read/derived at biotite parse time and cannot be recomputed
+# from the topology alone MDAnalysis-side, so they ride across the conversion as custom
+# topology attributes. All other (derived) attributes are recomputed by the entity class.
+_EXTRA_ANNOTATIONS: dict[str, type[AtomAttr]] = {
+    "entity_id": EntityIDs,
+    "sec_struct": SecStructs,
+    "hetero": Heteros,
+    "is_carb": IsCarbs,
+}
+
+
+def universe_from_atoms(
+    structure: AtomArray | AtomArrayStack,
+) -> mda.Universe:
+    """Convert a biotite ``AtomArray``/``AtomArrayStack`` into an MDAnalysis ``Universe``.
+
+    The topology (including bonds) is parsed by :class:`BiotiteParser`. When the input
+    is a stack with more than one model, every model is loaded as a trajectory frame so
+    multi-model structures (NMR ensembles, multi-model PDB) become multi-frame universes.
+    File-parsed annotations that cannot be recomputed from the topology (see
+    ``_EXTRA_ANNOTATIONS``) are carried across as custom topology attributes.
+
+    Parameters
+    ----------
+    structure : AtomArray | AtomArrayStack
+        The biotite structure to convert.
+
+    Returns
+    -------
+    mda.Universe
+        A Universe wrapping the structure, with bonds, all coordinate frames, and the
+        carried-over file-parsed annotations.
+    """
+    universe = mda.Universe(BiotiteWrapper(structure))
+
+    # Load every model of a stack as a trajectory frame. `structure.coord` has shape
+    # (n_models, n_atoms, 3), exactly what MemoryReader expects.
+    if isinstance(structure, AtomArrayStack) and structure.stack_depth() > 1:
+        universe.load_new(structure.coord, format=MemoryReader)
+
+    # Carry file-parsed, non-recomputable annotations across as custom attributes.
+    reference = structure[0] if isinstance(structure, AtomArrayStack) else structure
+    present = reference.get_annotation_categories()
+    for name, Attr in _EXTRA_ANNOTATIONS.items():
+        if name in present:
+            universe.add_TopologyAttr(Attr(reference.get_annotation(name)))
+
+    return universe
