@@ -9,8 +9,10 @@ def filepath():
 
 
 def test_bcif_init(filepath):
-    bcif = mn.Molecule.load(filepath)
-    assert bcif._reader.file_path == filepath
+    from molecularnodes.entities.molecule.reader import read_structure
+
+    reader = read_structure(filepath)
+    assert reader.file_path == filepath
 
 
 def test_bcif_assemblies(filepath):

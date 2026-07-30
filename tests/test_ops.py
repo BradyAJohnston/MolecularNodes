@@ -42,8 +42,7 @@ def test_op_local(snapshot_custom, code, file_format):
     with ObjectTracker() as o:
         bpy.ops.mn.import_fetch(database="local", filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
-        assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-        assert mol.props.entity_type == mol._entity_type.value
+        assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
 
     assert snapshot_custom == mol.position
 

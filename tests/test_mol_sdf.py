@@ -12,7 +12,7 @@ formats = ["mol", "sdf"]
 def test_open(format):
     molecule = mn.Molecule.load(data_dir / f"caffeine.{format}")
 
-    assert molecule.array
+    assert molecule.universe.atoms.n_atoms > 0
 
 
 @pytest.mark.parametrize("format", formats)

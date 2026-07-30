@@ -20,7 +20,7 @@ def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
     mol = mn.Molecule.load(data_dir / "1cd3.cif")
     random.seed(6)
     random_idx = random.sample(range(len(mol)), 100)
-    assert snapshot_custom == mol.array.sec_struct[random_idx]
+    assert snapshot_custom == mol.named_attribute("sec_struct")[random_idx]
 
 
 def test_secondary_structure_no_helix(snapshot_custom):

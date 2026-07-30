@@ -1,4 +1,5 @@
 import MDAnalysis as mda
+import numpy as np
 from biotite.structure import AtomArray, AtomArrayStack
 from MDAnalysis.coordinates.base import SingleFrameReaderBase
 from MDAnalysis.coordinates.memory import MemoryReader
@@ -240,5 +241,23 @@ def universe_from_atoms(
     for name, Attr in _EXTRA_ANNOTATIONS.items():
         if name in present:
             universe.add_TopologyAttr(Attr(reference.get_annotation(name)))
+
+    # Bond order/type is not part of an MDAnalysis topology, and MDAnalysis reorders
+    # bonds, so we carry the biotite bond types as an array aligned to the universe's own
+    # bond ordering (``atoms.bonds.indices``). The entity stores this on the mesh edge
+    # domain when it builds the object. Attached as a plain attribute since it is only
+    # needed once, at object-creation time.
+    if reference.bonds is not None and hasattr(universe.atoms, "bonds"):
+        bond_type_by_pair = {
+            frozenset((int(i), int(j))): int(t)
+            for i, j, t in reference.bonds.as_array()
+        }
+        universe._mn_bond_types = np.array(
+            [
+                bond_type_by_pair.get(frozenset((int(i), int(j))), 0)
+                for i, j in universe.atoms.bonds.indices
+            ],
+            dtype=int,
+        )
 
     return universe

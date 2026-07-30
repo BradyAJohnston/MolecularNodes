@@ -10,6 +10,48 @@ from ...assets import data
 from ...utils import count_value_changes
 
 
+def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
+    """Open a structure file and return the appropriate reader for its format.
+
+    Dispatches on the file suffix to the biotite-backed reader that can parse it
+    (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer is treated
+    as BinaryCIF.
+
+    Parameters
+    ----------
+    file_path : str | Path | BytesIO
+        Path to the structure file, or an in-memory ``bcif`` buffer.
+
+    Returns
+    -------
+    ReaderBase
+        A reader whose ``.array`` holds the parsed biotite structure.
+
+    Raises
+    ------
+    InvalidFileError
+        If the file format is not supported.
+    """
+    # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
+    from . import pdb, pdbx, sdf
+
+    if isinstance(file_path, BytesIO):
+        return pdbx.PDBXReader(file_path)
+
+    if isinstance(file_path, str):
+        file_path = Path(file_path)
+
+    match file_path.suffix:
+        case ".cif" | ".bcif":
+            return pdbx.PDBXReader(file_path)
+        case ".pdb":
+            return pdb.PDBReader(file_path)
+        case ".sdf" | ".mol":
+            return sdf.SDFReader(file_path)
+        case _:
+            raise InvalidFileError("The file format is not supported.")
+
+
 class ReaderBase(metaclass=ABCMeta):
     """
     Abstract base class for reading molecular data from a file.

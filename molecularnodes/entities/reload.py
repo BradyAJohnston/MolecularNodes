@@ -12,13 +12,14 @@ existing Blender object, without rebuilding its geometry.
 import bpy
 import MDAnalysis as mda
 from ..blender.utils import path_resolve
+from ..converters import universe_from_atoms
 from ..download import StructureDownloader
 from .base import EntityType, MolecularEntity
 from .density.grids import Grids
 from .ensemble.cellpack import CellPack
 from .ensemble.star import StarFile
-from .molecule.base import Molecule
-from .trajectory import OXDNA, Trajectory
+from .molecule.reader import read_structure
+from .trajectory import OXDNA, Molecule, Trajectory
 from .trajectory.oxdna import OXDNAParser, OXDNAReader
 
 
@@ -32,9 +33,9 @@ def _reload_molecule(obj: bpy.types.Object) -> Molecule:
         file_path = path_resolve(mn.filepath)
     else:
         raise ValueError("No source file or PDB code recorded for this molecule")
-    reader = Molecule._read(file_path)
-    entity = Molecule(reader.array, reader=reader)
-    entity._code = mn.code or None
+    reader = read_structure(file_path)
+    universe = universe_from_atoms(reader.array)
+    entity = Molecule(universe, create_object=False)
     entity.object = obj
     return entity
 

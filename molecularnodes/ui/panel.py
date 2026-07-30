@@ -132,6 +132,13 @@ def layout_trajectory_playback(
     obj = traj.object
     is_streaming = isinstance(traj, StreamingTrajectory)
 
+    # a single static structure (one topology, no trajectory) has nothing to play back,
+    # so the playback controls are only shown when there are multiple frames
+    if not is_streaming and obj.mn.n_frames <= 1:
+        if panel:
+            layout.label(text="Single frame; no playback")
+        return
+
     if is_streaming:
         label = "Streaming trajectory; cannot alter playback"
     else:
@@ -233,7 +240,9 @@ def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context):
     if not object.mn.is_entity:
         layout.label(text="No MN object selected")
         return None
-    if mol_type.startswith("md"):
+    if mol_type.startswith("md") or mol_type == EntityType.MOLECULE.value:
+        # molecules and trajectories are both Universe-backed, so both expose selections
+        # and (frame-count permitting) playback
         panel_md_properties(layout, context)
     if mol_type == "ensemble-star":
         layout.label(text="Ensemble")
@@ -475,14 +484,20 @@ class MN_PT_trajectory(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        """Visible only if entity selected is a trajectory"""
+        """Visible for a Universe-backed entity that has something to play back."""
         obj = get_active_entity_object(context)
         if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
-        return obj.mn.entity_type in (
+        if obj.mn.entity_type not in (
             EntityType.MD.value,
             EntityType.MD_STREAMING.value,
             EntityType.MD_OXDNA.value,
+            EntityType.MOLECULE.value,
+        ):
+            return False
+        # a single static structure has no playback; streaming has an unknown frame count
+        return (
+            obj.mn.entity_type == EntityType.MD_STREAMING.value or obj.mn.n_frames > 1
         )
 
     def draw(self, context):

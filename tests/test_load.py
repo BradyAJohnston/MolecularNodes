@@ -5,8 +5,6 @@ import numpy as np
 import pytest
 import molecularnodes as mn
 from molecularnodes.nodes.geometry import (
-    AnimateFrames,
-    AnimateValue,
     StyleBallAndStick,
     StyleCartoon,
     StyleRibbon,
@@ -66,8 +64,7 @@ def test_style_1(snapshot, code, assembly, style):
 )
 def test_download_format(code, format):
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
-    assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-    assert mol.props.entity_type == mol._entity_type.value
+    assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
     with db.ObjectTracker() as o:
         bpy.ops.mn.import_fetch(code=code, file_format=format, cache_dir=str(data_dir))
         mol2 = bpy.context.scene.MNSession.match(o.latest())
@@ -97,26 +94,21 @@ def test_pdb_no_bonds(snapshot):
 
 def test_rcsb_nmr(snapshot_custom):
     mol = mn.Molecule.fetch("2M6Q", cache=data_dir)
+    # multi-model (NMR) structures now load as trajectory frames of the Universe
+    assert mol.universe.trajectory.n_frames > 1
 
-    with mol.tree.reset() as (atoms, join):
-        (
-            atoms
-            >> AnimateFrames(frames=mol.frames, frame=AnimateValue(value_max=9))
-            >> StyleCartoon()
-            >> join
-        )
+    mol.add_style("cartoon")
     assert snapshot_custom == mol.named_attribute("position")
 
-    bpy.context.scene.frame_set(1)
-    pos_1 = mol.named_attribute("position", evaluate=True)
-    bpy.context.scene.frame_set(100)
-    pos_2 = mol.named_attribute("position", evaluate=True)
-    bpy.context.scene.frame_set(1)
-    assert not np.allclose(pos_1, pos_2)
+    # advancing the frame pushes the corresponding model's positions onto the mesh
+    mol.set_frame(0)
+    pos_0 = mol.named_attribute("position")
+    mol.set_frame(5)
+    pos_5 = mol.named_attribute("position")
+    assert not np.allclose(pos_0, pos_5)
 
 
 def test_load_small_mol(snapshot):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
-    assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-    assert mol.props.entity_type == mol._entity_type.value
+    assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
     assert snapshot == GeometrySet(mol.object, strict=True).summary()

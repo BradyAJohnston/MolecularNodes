@@ -140,9 +140,7 @@ class MN_OT_Import_Molecule(Import_Molecule):
 
         for file in self.files:
             try:
-                mol = Molecule.load(
-                    file_path=Path(self.directory, file.name), name=file.name
-                )
+                mol = Molecule.load(Path(self.directory, file.name), name=file.name)
                 nodes.custom_boolean_iswitch(
                     name=f"Select Chain {mol.name}", items=mol.props.chain_ids
                 ).asset_mark()
@@ -270,7 +268,7 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
     def execute(self, context):
         try:
             if self.database == "local":
-                mol = Molecule.load(file_path=path_resolve(self.filepath))
+                mol = Molecule.load(path_resolve(self.filepath))
                 message = f"Imported '{self.filepath}' as {mol.name}"
             else:
                 mol = entities.Molecule.fetch(

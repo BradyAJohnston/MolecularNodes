@@ -11,6 +11,9 @@ from ..base import EntityType
 if TYPE_CHECKING:
     from .. import StreamingTrajectory, Trajectory
 __all__ = [
+    "MoleculeAnnotation",
+    "MoleculeAnnotationManager",
+    "MoleculeInfo",
     "TrajectoryAnnotation",
     "TrajectoryAnnotationManager",
     "AtomInfo",
@@ -21,14 +24,14 @@ __all__ = [
 ]
 
 
-class TrajectoryAnnotation(BaseAnnotation):
+class MoleculeAnnotation(BaseAnnotation):
     """
-    Base class for a Trajectory Annotation
+    Base class for a Molecule Annotation
 
-    All trajectory annotations should derive from this base class and implement
-    the 'draw' method. All derived classes will have access to the trajectory
-    instance (self.trajectory) and all the annotation inputs and common params
-    via self.interface.<property>
+    All annotations for the Universe-backed ``Molecule`` entity derive from this base
+    class and implement the 'draw' method. Derived classes have access to the entity
+    instance (``self.trajectory``) and all the annotation inputs and common params via
+    ``self.interface.<property>``.
 
     An optional 'defaults' method can be provided to set default values
     to the annotation.
@@ -38,18 +41,26 @@ class TrajectoryAnnotation(BaseAnnotation):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         # Auto-register any sub classes with the annotation manager
-        TrajectoryAnnotationManager.register_class(cls)
+        MoleculeAnnotationManager.register_class(cls)
 
     def __init__(self, trajectory):
-        # Allow access to the trajectory entity within the annotations
+        # Allow access to the entity within the annotations
         self.trajectory: StreamingTrajectory | Trajectory = trajectory
         super().__init__()
 
 
-class TrajectoryAnnotationManager(BaseAnnotationManager):
-    """
-    Annotation Manager for Trajectory Entity
+# Backwards-compatible alias: annotations were historically named `TrajectoryAnnotation`.
+# Defined before the annotation subclasses below so their `(TrajectoryAnnotation)` bases
+# still resolve during the migration to the unified `Molecule` entity.
+TrajectoryAnnotation = MoleculeAnnotation
 
+
+class MoleculeAnnotationManager(BaseAnnotationManager):
+    """
+    Annotation Manager for the Universe-backed ``Molecule`` entity.
+
+    Shared by molecules loaded from structure files and MD trajectories, since both
+    are backed by an MDAnalysis ``Universe``.
     """
 
     _entity_type = EntityType.MD
@@ -59,6 +70,60 @@ class TrajectoryAnnotationManager(BaseAnnotationManager):
         super().__init__(entity)
         self._interfaces = {}  # Entity instance specific annotation interfaces
         self._restore_annotation_instances_from_props()
+
+
+# Backwards-compatible alias for the former manager name.
+TrajectoryAnnotationManager = MoleculeAnnotationManager
+
+
+class MoleculeInfo(MoleculeAnnotation):
+    """
+    Molecule Info Annotation
+
+    Shows the number of models (trajectory frames) and/or atoms of the molecule.
+
+    Attributes
+    ----------
+    location: tuple[float, float]
+        Normalized coordinates (0.0 - 1.0) of the position in viewport / render
+    show_models: bool
+        Whether to show the number of models (frames) in the molecule
+    show_atoms: bool
+        Whether to show the number of atoms in the molecule
+    custom_text: str
+        Any custom text to add at the end of the annotation
+    """
+
+    annotation_type = "molecule_info"
+
+    location: tuple[float, float] = (0.025, 0.05)
+    show_models: bool = True
+    show_atoms: bool = True
+    custom_text: str = ""
+
+    def defaults(self) -> None:
+        self.interface.text_align = "left"
+
+    def validate(self, input_name: str = None) -> bool:
+        params = self.interface
+        if input_name == "location":
+            x, y = params.location
+            if (not 0 <= x <= 1) or (not 0 <= y <= 1):
+                raise ValueError("Normalized coordinates should lie between 0 and 1")
+        return True
+
+    def draw(self) -> None:
+        params = self.interface
+        universe = self.trajectory.universe
+        text = ""
+        if params.show_models:
+            text = f"Models: {universe.trajectory.n_frames}"
+        if params.show_atoms:
+            text = text + f"|Atoms: {universe.atoms.n_atoms}"
+        if params.custom_text != "":
+            text = text + "|" + params.custom_text
+        # Draw text at normalized coordinates wrt viewport / render
+        self.draw_text_2d(params.location, text)
 
 
 class AtomInfo(TrajectoryAnnotation):

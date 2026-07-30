@@ -7,6 +7,7 @@ using MDAnalysis.
 import functools
 import io
 import logging
+import warnings
 from pathlib import Path
 from typing import Callable, Dict
 import bpy
@@ -40,7 +41,7 @@ from .selections import SelectionManager
 logger = logging.getLogger(__name__)
 
 
-class Trajectory(MolecularEntity):
+class Molecule(MolecularEntity):
     """MD trajectory entity for Blender visualization.
 
     Complete interface for loading, visualizing, and manipulating MD trajectories
@@ -550,6 +551,17 @@ class Trajectory(MolecularEntity):
             edges=self.atoms.bonds.indices if hasattr(self.atoms, "bonds") else None,
         )
 
+        # carry bond order/type onto the edge domain (set by the biotite converter,
+        # aligned to the universe's bond ordering used for the edges above)
+        bond_types = getattr(self.universe, "_mn_bond_types", None)
+        if bond_types is not None:
+            self.store_named_attribute(
+                data=bond_types,
+                name="bond_type",
+                domain=db.AttributeDomains.EDGE,
+                atype=db.AttributeTypes.INT,
+            )
+
         self._mn_entity_type = self._entity_type.value
         try:
             self._mn_n_frames = self.universe.trajectory.n_frames
@@ -584,13 +596,39 @@ class Trajectory(MolecularEntity):
     def load(
         cls,
         topology: Path | str,
-        coordinates: Path | str,
-        name: str = "NewTrajectory",
+        coordinates: Path | str | None = None,
+        name: str | None = None,
         create_object: bool = True,
     ) -> "Trajectory":
+        """Load a single structure file, or an MD topology + trajectory.
+
+        With only ``topology`` given, it is treated as a single structure file
+        (``.pdb``/``.cif``/``.bcif``/``.sdf``/``.mol``) and routed through the biotite
+        reader and converter (see :meth:`from_file`). When ``coordinates`` is also
+        given, the two are read as an MD topology and trajectory into an
+        MDAnalysis ``Universe``.
+
+        Parameters
+        ----------
+        topology : Path | str
+            Structure file, or MD topology file when ``coordinates`` is given.
+        coordinates : Path | str | None, optional
+            MD trajectory/coordinates file. If omitted, ``topology`` is loaded as a
+            single structure file.
+        name : str | None, optional
+            Name for the Blender object.
+        create_object : bool, optional
+            Whether to create the Blender object immediately (MD route only).
+
+        Returns
+        -------
+        Trajectory
+            The loaded entity.
+        """
+        if coordinates is None:
+            return cls.from_file(topology, name=name)
         u = mda.Universe(topology, coordinates)
-        traj = cls(u, name=name, create_object=create_object)
-        return traj
+        return cls(u, name=name or "NewTrajectory", create_object=create_object)
 
     @classmethod
     def from_file(
@@ -618,10 +656,9 @@ class Trajectory(MolecularEntity):
         Trajectory
             The Universe-backed entity representing the structure.
         """
-        # imported lazily to avoid any import-order coupling between the entity modules
-        from ..molecule.base import Molecule
+        from ..molecule.reader import read_structure
 
-        reader = Molecule._read(file_path)
+        reader = read_structure(file_path)
         universe = universe_from_atoms(reader.array)
         if name is None:
             name = Path(file_path).stem if not isinstance(file_path, io.BytesIO) else ""
@@ -668,6 +705,9 @@ class Trajectory(MolecularEntity):
         self, reader, file_path: str | Path | io.BytesIO
     ) -> None:
         """Store file-parsed assembly/entity/chain metadata on the Blender object."""
+        # a structure loaded from a single file is a "molecule" rather than an MD
+        # trajectory; whether playback UI is shown is decided by the frame count.
+        self.props.entity_type = EntityType.MOLECULE.value
         self.props.entity_ids = reader.entity_ids()
         self.props.chain_ids = reader.chain_ids()
         self.props.biological_assemblies = reader.assemblies(as_json_string=True)
@@ -805,6 +845,38 @@ class Trajectory(MolecularEntity):
     def __repr__(self) -> str:
         return f"<Trajectory, `universe`: {self.universe}, `object`: {self.object}"
 
+    def _resolve_style_selection(self, selection: str | AtomGroup | None) -> str | None:
+        """Resolve an ``add_style`` selection to a boolean-attribute name (or None).
+
+        A string is treated as an existing attribute name first; if no such attribute
+        exists it is interpreted as an MDAnalysis selection phrase and stored as a new
+        managed selection. A string that is neither raises a ``UserWarning`` and results
+        in no selection. An ``AtomGroup`` always becomes a new managed selection.
+        """
+        if selection is None:
+            return None
+        if isinstance(selection, AtomGroup):
+            return self.selections.from_atomgroup(selection).name
+        if isinstance(selection, str):
+            # an existing boolean attribute is used directly, without creating a
+            # managed selection
+            if selection in self.list_attributes(drop_hidden=False):
+                return selection
+            # otherwise interpret it as an MDAnalysis selection phrase, validating it
+            # first so an invalid phrase warns rather than storing a broken selection
+            try:
+                self.universe.select_atoms(selection)
+            except Exception:
+                warnings.warn(
+                    f"Selection '{selection}' is neither an existing named attribute "
+                    "nor a valid MDAnalysis selection. The style will be added but "
+                    "nothing will be displayed unless that attribute is created.",
+                    category=UserWarning,
+                )
+                return None
+            return self.selections.from_string(selection).name
+        return None
+
     def add_style(
         self,
         style: STYLE_LITERALS = "spheres",
@@ -827,9 +899,14 @@ class Trajectory(MolecularEntity):
 
         selection : str | AtomGroup | None, optional
             Apply the style only to atoms matching this selection. Can be:
-            - A string referring to an existing boolean attribute on the trajectory
+            - A string naming an existing boolean attribute on the molecule (used directly)
+            - A string MDAnalysis selection phrase (evaluated and stored as a new
+              managed selection attribute)
             - A AtomGroup object defining a selection criteria
             - None to apply to all atoms (default)
+
+            A string is treated as an existing attribute name first; only if no such
+            attribute exists is it interpreted as an MDAnalysis selection phrase.
 
         material : bpy.types.Material | str | None, optional
             The material to apply to the styled atoms. Can be a Blender Material object,
@@ -861,15 +938,7 @@ class Trajectory(MolecularEntity):
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
             )
-        if selection is None:
-            attribute_name = None
-        else:
-            if isinstance(selection, str):
-                # TODO: There are currently no validations for the selection phrase
-                sel = self.selections.from_string(selection)
-            elif isinstance(selection, AtomGroup):
-                sel = self.selections.from_atomgroup(selection)
-            attribute_name = sel.name
+        attribute_name = self._resolve_style_selection(selection)
 
         if isinstance(self, OXDNA):
             STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
@@ -901,10 +970,20 @@ class Trajectory(MolecularEntity):
                     self.universe.trajectory, "filename", None
                 )
 
-                if topology_filename is not None:
+                if isinstance(topology_filename, (str, Path)):
+                    # MD universe backed by on-disk topology (+ trajectory) files
                     state["_universe_topology"] = str(topology_filename)
-                if trajectory_filename is not None:
-                    state["_universe_trajectory"] = str(trajectory_filename)
+                    if isinstance(trajectory_filename, (str, Path)):
+                        state["_universe_trajectory"] = str(trajectory_filename)
+                else:
+                    # universe was converted from a structure file (in-memory, so the
+                    # filename is a BiotiteWrapper or None); record the source file/code
+                    # so it can be rebuilt via the biotite reader + converter on restore.
+                    if self.props.filepath:
+                        state["_structure_filepath"] = self.props.filepath
+                    if self.props.code:
+                        state["_structure_code"] = self.props.code
+                        state["_structure_database"] = self.props.database
 
                 state["_universe_frame"] = self.universe.trajectory.frame
 
@@ -949,7 +1028,7 @@ class Trajectory(MolecularEntity):
         # Restore universe from saved file paths
         if "_universe_topology" in state:
             topology = state.pop("_universe_topology")
-            trajectory = state.pop("_universe_trajectory")
+            trajectory = state.pop("_universe_trajectory", None)
             frame = state.pop("_universe_frame", None)
             if topology and trajectory:
                 try:
@@ -964,6 +1043,32 @@ class Trajectory(MolecularEntity):
                         f"The files may have been moved, deleted, or corrupted. "
                         f"Original error: {e}"
                     ) from e
+        elif "_structure_filepath" in state or "_structure_code" in state:
+            # universe was converted from a structure file; rebuild it the same way
+            from ...converters import universe_from_atoms
+            from ...download import StructureDownloader
+            from ..molecule.reader import read_structure
+
+            frame = state.pop("_universe_frame", None)
+            filepath = state.pop("_structure_filepath", None)
+            code = state.pop("_structure_code", None)
+            database = state.pop("_structure_database", "rcsb")
+            try:
+                if filepath:
+                    source = path_resolve(filepath)
+                else:
+                    source = StructureDownloader().download(
+                        code=code, format="bcif", database=database or "rcsb"
+                    )
+                self.universe = universe_from_atoms(read_structure(source).array)
+                if frame is not None:
+                    self.universe.trajectory[frame]
+            except Exception as e:
+                raise RuntimeError(
+                    f"Failed to restore Molecule from saved session. Could not rebuild "
+                    f"the structure from source '{filepath or code}'. The file may have "
+                    f"been moved, deleted, or corrupted. Original error: {e}"
+                ) from e
 
         self.__dict__.update(state)
 
@@ -1044,3 +1149,9 @@ class Trajectory(MolecularEntity):
 
             # return the 3D bounding box vertices of the selected AtomGroup
             return self._get_3d_bbox(atom_group)
+
+
+# Compatibility alias: the Universe-backed entity was historically called `Trajectory`.
+# It is being unified under `Molecule`; `Trajectory` remains as an alias so existing
+# imports, isinstance checks and subclasses keep working during the migration.
+Trajectory = Molecule

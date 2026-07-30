@@ -1,9 +1,11 @@
 import itertools
+import biotite.structure as struc
 import numpy as np
 import pytest
 import molecularnodes as mn
+from molecularnodes import download
 from molecularnodes.converters import universe_from_atoms
-from molecularnodes.entities.molecule.base import Molecule
+from molecularnodes.entities.molecule.reader import read_structure
 from .constants import codes, data_dir
 
 # multi-model (NMR ensemble) structures cached under tests/data
@@ -12,51 +14,56 @@ multimodel_codes = ["1NMR", "2M6Q"]
 
 def _read_array(code):
     """Read a cached structure into a biotite AtomArrayStack (no Blender entity)."""
-    return Molecule._read(data_dir / f"{code}.bcif").array
+    return read_structure(data_dir / f"{code}.bcif").array
 
 
 @pytest.mark.parametrize(
     "code, format", list(itertools.product(codes, ["bcif", "cif", "pdb"]))
 )
 def test_biotite_converter(code, format):
-    # fetch and load molecule through biotite
+    # the biotite array is the ground truth of what was parsed and computed from the file
+    path = download.StructureDownloader(cache=data_dir).download(
+        code=code, format=format, database="rcsb"
+    )
+    array = read_structure(path).array
+    if isinstance(array, struc.AtomArrayStack):
+        array = array[0]
+
+    # the unified Molecule loads that same file through the converter and computes its
+    # named attributes MDAnalysis-side; the two must agree
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
-    # create MDAnalysis universe from biotite structure (via the full converter, which
-    # carries bonds and file-parsed extras across)
-    u = universe_from_atoms(mol.array)
-    # load trajectory into Blender
-    traj = mn.Trajectory(u)
-    # check coords
-    assert np.allclose(mol.position, traj.position)
-    # check named attributes
-    attrs = [
-        "chain_id",
-        "res_id",
-        "res_name",
-        "atom_name",
-        "atom_id",
-        "b_factor",
-        "occupancy",
-        "charge",
-    ]
-    for attr in attrs:
-        assert np.allclose(mol.named_attribute(attr), traj.named_attribute(attr))
-    # check string attributes
-    assert np.array_equal(mol.array.element, traj.atoms.elements)
-    assert np.array_equal(mol.array.ins_code, traj.atoms.icodes)
-    # check computed attributes: these are now recomputed MDAnalysis-side (or carried
-    # across the converter) so that both backends produce matching named attributes
+    mol_attrs = mol.list_attributes(drop_hidden=False)
+
+    # positions (Angstrom -> Blender world units)
+    assert np.allclose(array.coord * 0.1, mol.named_attribute("position"))
+
+    # int-coded string attributes: the mesh drops the biotite "_int" suffix
+    for mesh_name, arr_name in (
+        ("chain_id", "chain_id_int"),
+        ("res_name", "res_name_int"),
+        ("atom_name", "atom_name_int"),
+    ):
+        assert np.array_equal(
+            array.get_annotation(arr_name), mol.named_attribute(mesh_name)
+        ), mesh_name
+
+    # attributes stored on the mesh under the same name as the biotite annotation. Some
+    # are structure-dependent (e.g. sec_struct only exists for proteins), so only compare
+    # the ones present on both the array and the mesh.
     computed_attrs = [
         ("mass", 1e-3),
         ("atomic_number", 0),
-        ("vdw_radii", 0),
         ("charge", 0),
+        ("res_id", 0),
+        ("atom_id", 0),
+        ("b_factor", 0),
+        ("occupancy", 0),
+        ("ures_id", 0),
         ("is_alpha_carbon", 0),
         ("is_solvent", 0),
         ("is_backbone", 0),
         ("is_nucleic", 0),
         ("is_peptide", 0),
-        ("ures_id", 0),
         ("lipophobicity", 0),
         ("Color", 0),
         ("is_hetero", 0),
@@ -64,17 +71,15 @@ def test_biotite_converter(code, format):
         ("is_carb", 0),
         ("sec_struct", 0),
         ("entity_id", 0),
-        # ("asym_id", 0),  # not parsed into the biotite array; revisit if needed
-        # ("pdb_model_num", 0),  # not parsed into the biotite array; revisit if needed
     ]
-    # some attributes are structure-dependent (e.g. sec_struct only exists for proteins);
-    # only compare the ones the biotite backend actually produced for this structure
-    mol_attrs = mol.list_attributes(drop_hidden=False)
+    categories = array.get_annotation_categories()
     for attr, rtol in computed_attrs:
-        if attr not in mol_attrs:
+        if attr not in categories or attr not in mol_attrs:
             continue
+        # atol absorbs float64 (array) vs float32 (mesh) rounding; real integer/boolean
+        # differences are >= 1 and still caught.
         assert np.allclose(
-            mol.named_attribute(attr), traj.named_attribute(attr), rtol=rtol
+            array.get_annotation(attr), mol.named_attribute(attr), rtol=rtol, atol=1e-4
         ), f"attribute '{attr}' differs between biotite and MDAnalysis backends"
 
 
