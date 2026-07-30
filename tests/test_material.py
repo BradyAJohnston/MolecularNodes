@@ -2,6 +2,9 @@ import bpy
 import pytest
 from numpy.testing import assert_allclose
 import molecularnodes as mn
+from .constants import data_dir
+
+MATERIALS_SCENE = data_dir / "blendfiles" / "suzanne.blend"
 
 
 def test_setting_material():
@@ -65,6 +68,7 @@ def test_material_creator():
 
 
 def test_generic_material():
+    mn.Canvas(template=MATERIALS_SCENE)
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     s = mol.styles[0]
     s.material = bpy.data.materials["Material"]
@@ -95,6 +99,7 @@ def test_ambient_occlusion():
 
 
 def test_material_attribute_access():
+    mn.Canvas(template=MATERIALS_SCENE)
     for material in [
         mn.material.AmbientOcclusion,
         mn.material.Default,
