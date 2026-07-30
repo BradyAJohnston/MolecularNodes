@@ -1,6 +1,7 @@
 import os
 import pickle as pk
 from contextlib import chdir
+from pathlib import Path
 from typing import Dict, Union
 import bpy
 import MDAnalysis as mda
@@ -25,10 +26,22 @@ def trim(dictionary: dict):
     return dic
 
 
+def _has_ondisk_trajectory(traj: Trajectory) -> bool:
+    """Whether a trajectory is backed by a relocatable on-disk trajectory file.
+
+    Streaming (IMD) trajectories and in-memory universes (e.g. biotite-converted
+    molecules, whose ``filename`` is a ``BiotiteWrapper`` or ``None``) have no
+    on-disk trajectory file whose path can be made relative/absolute.
+    """
+    filename = traj.universe.trajectory.filename
+    if not isinstance(filename, (str, Path)):
+        return False
+    return not str(filename).startswith("imd://")
+
+
 def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
-        # skip streaming trajectories
-        if traj.universe.trajectory.filename.startswith("imd://"):
+        if not _has_ondisk_trajectory(traj):
             continue
         # save linked universe frame
         uframe = traj.uframe
@@ -40,8 +53,7 @@ def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None
 
 def _make_trajectory_paths_absolute(trajectories: Dict[str, Trajectory]) -> None:
     for key, traj in trajectories.items():
-        # skip streaming trajectories
-        if traj.universe.trajectory.filename.startswith("imd://"):
+        if not _has_ondisk_trajectory(traj):
             continue
         # save linked universe frame
         uframe = traj.uframe

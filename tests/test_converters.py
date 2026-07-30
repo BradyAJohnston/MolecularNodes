@@ -128,3 +128,71 @@ def test_universe_from_atoms_multimodel(code):
     assert np.array_equal(u.atoms.elements, stack[0].element)
     if stack[0].bonds is not None:
         assert len(u.atoms.bonds) == stack[0].bonds.as_array().shape[0]
+
+
+# --- Stage 3: the unified loader (structure file -> Universe-backed entity) ---------
+
+# attributes that the unified entity should compute for a file-loaded structure
+_EXPECTED_ATTRS = [
+    "atomic_number",
+    "vdw_radii",
+    "mass",
+    "res_id",
+    "chain_id",
+    "atom_name",
+    "Color",
+    "is_backbone",
+    "is_side_chain",
+    "is_solvent",
+]
+
+
+@pytest.mark.parametrize("suffix", ["pdb", "cif", "bcif"])
+def test_from_file_loads_universe_backed_entity(suffix):
+    """A structure file loads into the Universe-backed entity with the full attr set."""
+    traj = mn.Trajectory.from_file(data_dir / f"1BNA.{suffix}")
+
+    # it is genuinely Universe-backed
+    assert traj.universe.atoms.n_atoms > 0
+    assert traj.universe.trajectory.n_frames == 1
+
+    attributes = traj.list_attributes()
+    for attr in _EXPECTED_ATTRS:
+        assert attr in attributes, f"missing attribute '{attr}'"
+
+    # metadata parsed from the file is stored on the object
+    assert traj.props.chain_ids == ["A", "B"]
+    assert traj.props.filepath.endswith(f"1BNA.{suffix}")
+
+
+def test_from_file_selections_work():
+    """MDAnalysis selection strings work on a file-loaded structure."""
+    traj = mn.Trajectory.from_file(data_dir / "1BNA.pdb")
+    item = traj.selections.from_string("resid 1-4")
+    assert item.name in traj.list_attributes()
+    # the boolean selection actually selects a subset of atoms
+    mask = traj.named_attribute(item.name)
+    assert 0 < mask.sum() < traj.universe.atoms.n_atoms
+
+
+def test_from_file_sdf_has_bonds():
+    """A small-molecule SDF loads with connectivity (edges) intact."""
+    traj = mn.Trajectory.from_file(data_dir / "caffeine.sdf")
+    assert len(traj.data.edges) > 0
+
+
+@pytest.mark.parametrize("code", multimodel_codes)
+def test_from_file_multimodel_frames(code):
+    """A multi-model structure file becomes a multi-frame Universe-backed entity."""
+    n_models = _read_array(code).stack_depth()
+    traj = mn.Trajectory.from_file(data_dir / f"{code}.bcif")
+    assert traj.universe.trajectory.n_frames == n_models
+
+
+def test_fetch_stores_source_and_assemblies():
+    """fetch records the code/database and exposes biological assemblies."""
+    traj = mn.Trajectory.fetch("4ozs", format=".bcif", cache=data_dir)
+    assert traj.props.code == "4ozs"
+    assert traj.props.database == "rcsb"
+    assemblies = traj.assemblies()
+    assert assemblies is not None and len(assemblies) > 0

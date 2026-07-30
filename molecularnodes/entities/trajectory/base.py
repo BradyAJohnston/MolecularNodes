@@ -5,6 +5,7 @@ using MDAnalysis.
 """
 
 import functools
+import io
 import logging
 from pathlib import Path
 from typing import Callable, Dict
@@ -14,9 +15,11 @@ import MDAnalysis as mda
 import numpy as np
 from MDAnalysis.core.groups import AtomGroup
 from nodebpy.nodes.geometry import NamedAttribute
+from ... import download
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
+from ...converters import universe_from_atoms
 from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING, styles_mapping
 from ...utils import (
     count_value_changes,
@@ -588,6 +591,127 @@ class Trajectory(MolecularEntity):
         u = mda.Universe(topology, coordinates)
         traj = cls(u, name=name, create_object=create_object)
         return traj
+
+    @classmethod
+    def from_file(
+        cls,
+        file_path: str | Path | io.BytesIO,
+        name: str | None = None,
+    ) -> "Trajectory":
+        """Load a single structure file into a Universe-backed entity.
+
+        The file (``.pdb``/``.cif``/``.bcif``/``.sdf``/``.mol``) is parsed by the biotite
+        readers and converted into an MDAnalysis ``Universe`` via
+        :func:`~molecularnodes.converters.universe_from_atoms`. Multi-model files become
+        multi-frame universes. Biological assembly and entity/chain metadata parsed from
+        the file are stored on the Blender object.
+
+        Parameters
+        ----------
+        file_path : str | Path | io.BytesIO
+            Path to the structure file (or an in-memory ``bcif`` buffer).
+        name : str | None, optional
+            Name for the Blender object. Defaults to the file stem.
+
+        Returns
+        -------
+        Trajectory
+            The Universe-backed entity representing the structure.
+        """
+        # imported lazily to avoid any import-order coupling between the entity modules
+        from ..molecule.base import Molecule
+
+        reader = Molecule._read(file_path)
+        universe = universe_from_atoms(reader.array)
+        if name is None:
+            name = Path(file_path).stem if not isinstance(file_path, io.BytesIO) else ""
+        entity = cls(universe, name=name)
+        entity._store_structure_metadata(reader, file_path)
+        return entity
+
+    @classmethod
+    def fetch(
+        cls,
+        code: str,
+        format: str = ".bcif",
+        cache: Path | str | None = download.CACHE_DIR,
+        database: str = "rcsb",
+    ) -> "Trajectory":
+        """Fetch a structure from an online database into a Universe-backed entity.
+
+        Parameters
+        ----------
+        code : str
+            The database accession code (e.g. a PDB id).
+        format : str, optional
+            File format to download, by default ``".bcif"``.
+        cache : Path | str | None, optional
+            Directory to cache downloads in.
+        database : str, optional
+            The database to fetch from, by default ``"rcsb"``.
+
+        Returns
+        -------
+        Trajectory
+            The Universe-backed entity representing the fetched structure.
+        """
+        file_path = download.StructureDownloader(cache=cache).download(
+            code=code, format=format, database=database
+        )
+        entity = cls.from_file(file_path, name=code)
+        # record the source so the entity can be re-fetched into a fresh session
+        entity.props.code = code
+        entity.props.database = database
+        return entity
+
+    def _store_structure_metadata(
+        self, reader, file_path: str | Path | io.BytesIO
+    ) -> None:
+        """Store file-parsed assembly/entity/chain metadata on the Blender object."""
+        self.props.entity_ids = reader.entity_ids()
+        self.props.chain_ids = reader.chain_ids()
+        self.props.biological_assemblies = reader.assemblies(as_json_string=True)
+        # record the source so the entity can be reloaded into a fresh session
+        if not isinstance(file_path, io.BytesIO):
+            self.props.filepath = str(file_path)
+
+    def assemblies(self, as_array: bool = False):
+        """Get the biological assemblies parsed from the source file.
+
+        Parameters
+        ----------
+        as_array : bool, optional
+            Return the assemblies as an array of quaternions rather than a dict.
+
+        Returns
+        -------
+        dict | np.ndarray | None
+            The biological assemblies as transformation matrices (or quaternions when
+            ``as_array`` is True), or ``None`` when the structure has no assembly data.
+        """
+        from ... import utils
+
+        assemblies_info = self.props.biological_assemblies
+        if not assemblies_info:
+            return None
+        if as_array:
+            return utils.array_quaternions_from_dict(assemblies_info)
+        return assemblies_info
+
+    def create_data_object(self) -> bpy.types.Object:
+        """Create the data object holding the biological assembly transforms."""
+        from ... import utils
+        from ...blender import mesh
+
+        data_obj_name = f".data_{self.name}_assemblies"
+        data_obj = bpy.data.objects.get(data_obj_name)
+        if not data_obj:
+            transforms = utils.array_quaternions_from_dict(
+                self.props.biological_assemblies
+            )
+            data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
+
+        return data_obj
 
     def _update_calculations(self) -> None:
         """Update all registered calculations for the current frame"""
