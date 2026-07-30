@@ -155,7 +155,7 @@ _EXPECTED_ATTRS = [
 @pytest.mark.parametrize("suffix", ["pdb", "cif", "bcif"])
 def test_from_file_loads_universe_backed_entity(suffix):
     """A structure file loads into the Universe-backed entity with the full attr set."""
-    traj = mn.Trajectory.from_file(data_dir / f"1BNA.{suffix}")
+    traj = mn.Molecule.from_file(data_dir / f"1BNA.{suffix}")
 
     # it is genuinely Universe-backed
     assert traj.universe.atoms.n_atoms > 0
@@ -172,7 +172,7 @@ def test_from_file_loads_universe_backed_entity(suffix):
 
 def test_from_file_selections_work():
     """MDAnalysis selection strings work on a file-loaded structure."""
-    traj = mn.Trajectory.from_file(data_dir / "1BNA.pdb")
+    traj = mn.Molecule.from_file(data_dir / "1BNA.pdb")
     item = traj.selections.from_string("resid 1-4")
     assert item.name in traj.list_attributes()
     # the boolean selection actually selects a subset of atoms
@@ -182,7 +182,7 @@ def test_from_file_selections_work():
 
 def test_from_file_sdf_has_bonds():
     """A small-molecule SDF loads with connectivity (edges) intact."""
-    traj = mn.Trajectory.from_file(data_dir / "caffeine.sdf")
+    traj = mn.Molecule.from_file(data_dir / "caffeine.sdf")
     assert len(traj.data.edges) > 0
 
 
@@ -190,13 +190,13 @@ def test_from_file_sdf_has_bonds():
 def test_from_file_multimodel_frames(code):
     """A multi-model structure file becomes a multi-frame Universe-backed entity."""
     n_models = _read_array(code).stack_depth()
-    traj = mn.Trajectory.from_file(data_dir / f"{code}.bcif")
+    traj = mn.Molecule.from_file(data_dir / f"{code}.bcif")
     assert traj.universe.trajectory.n_frames == n_models
 
 
 def test_fetch_stores_source_and_assemblies():
     """fetch records the code/database and exposes biological assemblies."""
-    traj = mn.Trajectory.fetch("4ozs", format=".bcif", cache=data_dir)
+    traj = mn.Molecule.fetch("4ozs", format=".bcif", cache=data_dir)
     assert traj.props.code == "4ozs"
     assert traj.props.database == "rcsb"
     assemblies = traj.assemblies()

@@ -260,9 +260,9 @@ class MolecularEntity(
         to the parent entity type to re-use annotations of the parent.
         By default, this returns the string value of the Entity type.
 
-        Eg: OXDNA and StreamingTrajectory that derive from Trajectory entity
+        Eg: OXDNA and StreamingTrajectory that derive from the Molecule entity
         can return EntityType.MD.value to re-use the annotations from
-        the parent Trajectory entity.
+        the parent Molecule entity.
 
         """
         return self._entity_type.value

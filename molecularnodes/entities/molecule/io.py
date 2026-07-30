@@ -8,7 +8,7 @@ __author__ = "Brady Johnston"
 from pathlib import Path
 import MDAnalysis as mda
 from . import StreamingTrajectory, imd, oxdna
-from .base import Trajectory
+from .base import Molecule
 
 
 def load(
@@ -38,14 +38,14 @@ def load(
 
     Returns
     -------
-    Trajectory
+    Molecule
         Loaded trajectory object (may be StreamingTrajectory for IMD)
     """
     if imd.is_imd_url(traj):
         trajectory = StreamingTrajectory.load(top, traj, name=name)
     else:
         universe = mda.Universe(top, traj)
-        trajectory = Trajectory(universe=universe, name=name)
+        trajectory = Molecule(universe=universe, name=name)
 
     trajectory.add_style(style=style, selection=selection)
 

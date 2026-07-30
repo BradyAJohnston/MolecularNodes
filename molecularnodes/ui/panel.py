@@ -1,7 +1,7 @@
 from typing import cast
 import bpy
 from bpy.types import UILayout
-from ..entities import StreamingTrajectory, Trajectory, trajectory
+from ..entities import Molecule, StreamingTrajectory, molecule
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..session import get_session
@@ -122,7 +122,7 @@ def selection_string_input(layout: bpy.types.UILayout, item: TrajectorySelection
 
 
 def layout_trajectory_playback(
-    layout: UILayout, traj: Trajectory, panel: bool = True
+    layout: UILayout, traj: Molecule, panel: bool = True
 ) -> None:
     if panel:
         header, layout = layout.panel(idname="layout_playback")
@@ -175,7 +175,7 @@ def layout_trajectory_playback(
 
 
 def layout_selection_manage(
-    layout: UILayout, traj: Trajectory, panel: bool = True
+    layout: UILayout, traj: Molecule, panel: bool = True
 ) -> None:
     if panel:
         header, layout = layout.panel(idname="selection_panel")
@@ -206,9 +206,9 @@ def layout_selection_manage(
 def panel_md_properties(layout, context):
     obj = context.active_object
     session = get_session()
-    traj: trajectory.Trajectory = session.match(obj)
+    traj: molecule.Molecule = session.match(obj)
     traj_is_linked = bool(traj)
-    if traj is not None and not isinstance(traj, trajectory.Trajectory):
+    if traj is not None and not isinstance(traj, molecule.Molecule):
         raise TypeError(f"Expected a trajectory, got {type(traj)}")
 
     col = layout.column()
@@ -727,7 +727,7 @@ class MN_PT_Styles(bpy.types.Panel):
         if style_node.inputs["Selection"].links and entity is not None:
             node = style_node.inputs["Selection"].links[0].from_node
             if isinstance(node, bpy.types.GeometryNodeInputNamedAttribute):
-                if isinstance(entity, (Trajectory, StreamingTrajectory)):
+                if isinstance(entity, Molecule):
                     selection = entity.selections.get(node.inputs["Name"].default_value)
                     layout.prop(selection, "string", text="Selection")
 

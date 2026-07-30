@@ -63,7 +63,7 @@ def test_frame_object(canvas):
 
 
 def test_frame_view(canvas, universe):
-    t1 = mn.Trajectory(universe)
+    t1 = mn.Molecule(universe)
 
     # save views for later framing
     # view of resid 1

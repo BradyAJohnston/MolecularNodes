@@ -18,9 +18,9 @@ from .base import EntityType, MolecularEntity
 from .density.grids import Grids
 from .ensemble.cellpack import CellPack
 from .ensemble.star import StarFile
+from .molecule import OXDNA, Molecule
+from .molecule.oxdna import OXDNAParser, OXDNAReader
 from .molecule.reader import read_structure
-from .trajectory import OXDNA, Molecule, Trajectory
-from .trajectory.oxdna import OXDNAParser, OXDNAReader
 
 
 def _reload_molecule(obj: bpy.types.Object) -> Molecule:
@@ -40,7 +40,7 @@ def _reload_molecule(obj: bpy.types.Object) -> Molecule:
     return entity
 
 
-def _reload_trajectory(obj: bpy.types.Object) -> Trajectory:
+def _reload_trajectory(obj: bpy.types.Object) -> Molecule:
     mn = obj.mn
     path_topo = path_resolve(mn.filepath_topology)
     path_traj = path_resolve(mn.filepath_trajectory)
@@ -53,7 +53,7 @@ def _reload_trajectory(obj: bpy.types.Object) -> Trajectory:
         )
         entity = OXDNA(universe, create_object=False)
     else:
-        entity = Trajectory.load(path_topo, path_traj, create_object=False)
+        entity = Molecule.load(path_topo, path_traj, create_object=False)
     entity.object = obj
     entity.set_frame(bpy.context.scene.frame_current)
     return entity

@@ -276,7 +276,7 @@ def test_reuse_node_group():
     assert n_nodes == len(tree.nodes)
 
 
-def _insert_periodic_array(traj: mn.Trajectory):
+def _insert_periodic_array(traj: mn.Molecule):
     node = mn.nodes.nodes.add_custom(traj.modifier_node_tree, "Periodic Array")
     mn.nodes.nodes.insert_last_node(group=traj.tree.tree, node=node)
     return node
@@ -296,7 +296,7 @@ def _get_node_defaults(node) -> list[Any]:
 
 
 def test_periodic_array(snapshot, tmp_path):
-    traj = mn.Trajectory.load(GRO, XTC)
+    traj = mn.Molecule.load(GRO, XTC)
     node = _insert_periodic_array(traj)
 
     traj.set_frame(1)
@@ -320,7 +320,7 @@ def test_periodic_array(snapshot, tmp_path):
 # update the positions and _attempt_ to update the periodic box but fail not do so quietly
 # and everything remains 0
 def test_periodic_array_no_dimensions():
-    traj = mn.Trajectory.load(PSF, DCD)
+    traj = mn.Molecule.load(PSF, DCD)
     node = _insert_periodic_array(traj)
 
     traj.set_frame(1)

@@ -16,7 +16,7 @@ from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
 from ..base import EntityType
-from .base import Trajectory
+from .base import Molecule
 
 DNA_SCALE = 10
 
@@ -352,7 +352,7 @@ class OXDNAReader(ReaderBase):
         self._oxdnafile.close()
 
 
-class OXDNA(Trajectory):
+class OXDNA(Molecule):
     """
     A class to handle oxDNA trajectory data.
 
@@ -429,5 +429,5 @@ class OXDNA(Trajectory):
                 print(e)
 
     def _get_annotation_entity_type(self) -> str:
-        "Interna: Re-use the annotations for Trajectory entity"
+        "Interna: Re-use the annotations for Molecule entity"
         return EntityType.MD.value

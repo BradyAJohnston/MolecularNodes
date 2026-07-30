@@ -65,7 +65,7 @@ def test_reload_trajectory_from_file():
     from molecularnodes.entities.reload import can_reload, reload_entity
 
     session = mn.session.get_session()
-    traj = mn.entities.trajectory.load(
+    traj = mn.entities.molecule.load(
         top=data_dir / "md_ppr/box.gro",
         traj=data_dir / "md_ppr/first_5_frames.xtc",
     )
@@ -75,7 +75,7 @@ def test_reload_trajectory_from_file():
 
     session.remove_entity(obj.uuid)
     reloaded = reload_entity(obj)
-    assert isinstance(reloaded, mn.Trajectory)
+    assert isinstance(reloaded, mn.Molecule)
     assert session.get(obj.uuid) is reloaded
 
 

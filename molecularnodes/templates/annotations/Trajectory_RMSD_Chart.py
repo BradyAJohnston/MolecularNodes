@@ -12,13 +12,13 @@ matplotlib.use("Agg")
 # Annotations are auto-registered
 # Unregister previous class if any while debugging / iterating code
 if hasattr(
-    mn.entities.trajectory.TrajectoryAnnotationManager,
+    mn.entities.molecule.MoleculeAnnotationManager,
     "add_rmsd_chart",
 ):
-    mn.entities.trajectory.TrajectoryAnnotationManager.unregister_type("rmsd_chart")
+    mn.entities.molecule.MoleculeAnnotationManager.unregister_type("rmsd_chart")
 
 
-class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
+class TrajectoryRMSDChart(mn.entities.molecule.MoleculeAnnotation):
     annotation_type = "rmsd_chart"
 
     selection: str = "protein"
@@ -45,7 +45,7 @@ class TrajectoryRMSDChart(mn.entities.trajectory.TrajectoryAnnotation):
         params = self.interface
         u = self.trajectory.universe
 
-        if type(self.trajectory) is not mn.entities.trajectory.Trajectory:
+        if type(self.trajectory) is not mn.entities.molecule.Molecule:
             raise ValueError("This annotation requires a Trajectory entity")
 
         label = params.text

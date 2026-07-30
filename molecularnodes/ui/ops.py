@@ -17,10 +17,9 @@ from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import (
     Molecule,
     StreamingTrajectory,
-    Trajectory,
     density,
     ensemble,
-    trajectory,
+    molecule,
 )
 from ..nodes import geometry as g
 from ..nodes import nodes
@@ -478,14 +477,14 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
             uni = mda.Universe(
                 path_topo,
                 path_traj,
-                topology_format=trajectory.oxdna.OXDNAParser,
-                format=trajectory.oxdna.OXDNAReader,
+                topology_format=molecule.oxdna.OXDNAParser,
+                format=molecule.oxdna.OXDNAReader,
             )
-            traj = trajectory.oxdna.OXDNA(uni, create_object=False)
+            traj = molecule.oxdna.OXDNA(uni, create_object=False)
         elif "streaming" in obj.mn.entity_type:
             traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
         else:
-            traj = Trajectory.load(path_topo, path_traj, create_object=False)
+            traj = Molecule.load(path_topo, path_traj, create_object=False)
 
         traj.object = obj
         traj.set_frame(context.scene.frame_current)
@@ -557,7 +556,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         if self.format == "oxdna":
-            trajectory.load_oxdna(
+            molecule.load_oxdna(
                 top=path_resolve(self.topology),
                 traj=path_resolve(self.trajectory),
                 name=self.name,
@@ -576,7 +575,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 selection="all",
             )
         else:
-            traj = Trajectory.load(
+            traj = Molecule.load(
                 topology=topology,
                 coordinates=coordinates,
                 name=self.name,

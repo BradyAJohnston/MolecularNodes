@@ -14,7 +14,6 @@ from .entities import Molecule
 from .entities.base import MolecularEntity
 from .entities.ensemble.base import Ensemble
 from .entities.reload import can_reload, reload_entity
-from .entities.trajectory.base import Trajectory
 from .nodes.nodes import styles_mapping
 
 
@@ -26,7 +25,7 @@ def trim(dictionary: dict):
     return dic
 
 
-def _has_ondisk_trajectory(traj: Trajectory) -> bool:
+def _has_ondisk_trajectory(traj: Molecule) -> bool:
     """Whether a trajectory is backed by a relocatable on-disk trajectory file.
 
     Streaming (IMD) trajectories and in-memory universes (e.g. biotite-converted
@@ -39,7 +38,7 @@ def _has_ondisk_trajectory(traj: Trajectory) -> bool:
     return not str(filename).startswith("imd://")
 
 
-def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
+def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:
     for key, traj in trajectories.items():
         if not _has_ondisk_trajectory(traj):
             continue
@@ -51,7 +50,7 @@ def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None
         traj._save_filepaths_on_object()
 
 
-def _make_trajectory_paths_absolute(trajectories: Dict[str, Trajectory]) -> None:
+def _make_trajectory_paths_absolute(trajectories: Dict[str, Molecule]) -> None:
     for key, traj in trajectories.items():
         if not _has_ondisk_trajectory(traj):
             continue
@@ -81,16 +80,16 @@ def _make_path_absolute(filepath):
 
 class MNSession:
     def __init__(self) -> None:
-        self.entities: Dict[str, Union[Molecule, Trajectory, Ensemble]] = {}
+        self.entities: Dict[str, Union[Molecule, Ensemble]] = {}
 
     @property
     def molecules(self) -> Dict[str, Molecule]:
         return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
 
     @property
-    def trajectories(self) -> Dict[str, Trajectory]:
-        # return a filtered dictionary of only the trajectories using isinstance(item, Trajectory)
-        return {k: v for k, v in self.entities.items() if isinstance(v, Trajectory)}
+    def trajectories(self) -> Dict[str, Molecule]:
+        # return a filtered dictionary of only the trajectories using isinstance(item, Molecule)
+        return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
 
     @property
     def ensembles(self) -> Dict[str, Ensemble]:
@@ -105,7 +104,7 @@ class MNSession:
         """Remove entity from the session."""
         del self.entities[uuid]
 
-    def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
+    def match(self, obj: bpy.types.Object) -> Union[Molecule, Ensemble]:
         return self.get(obj.uuid)
 
     def get_object(self, uuid: str) -> bpy.types.Object | None:
@@ -119,7 +118,7 @@ class MNSession:
         except LinkedObjectError:
             return None
 
-    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
+    def get(self, uuid: str) -> Union[Molecule, Ensemble] | None:
         return self.entities.get(uuid)
 
     def prune(self) -> None:
@@ -218,7 +217,7 @@ class MNSession:
         universe: mda.Universe | AtomGroup,
         style: str | None = "spheres",
         name: str = "NewUniverseObject",
-    ) -> Trajectory:
+    ) -> Molecule:
         """
         Add a new trajectory
 
@@ -235,8 +234,8 @@ class MNSession:
 
         Returns
         -------
-        Trajectory
-            The newly added Trajectory instance
+        Molecule
+            The newly added Molecule instance
 
         """
         if style is not None and style not in styles_mapping:
@@ -245,17 +244,17 @@ class MNSession:
             )
         selection = None
         if isinstance(universe, AtomGroup):
-            traj = Trajectory(universe.universe, name=name)  # AtomGroup universe
+            traj = Molecule(universe.universe, name=name)  # AtomGroup universe
             selection = universe  # AtomGroup
         else:
-            traj = Trajectory(universe, name=name)  # Universe
+            traj = Molecule(universe, name=name)  # Universe
         traj.add_style(style=style, selection=selection)
         return traj
 
     def get_trajectory(
         self,
         name: str,
-    ) -> Trajectory:
+    ) -> Molecule:
         """
         Get trajectory instance by name
 
@@ -266,8 +265,8 @@ class MNSession:
 
         Returns
         -------
-        Trajectory
-            A Trajectory instance
+        Molecule
+            A Molecule instance
 
         Raises
         ------
@@ -275,21 +274,21 @@ class MNSession:
 
         """
         for v in self.entities.values():
-            if isinstance(v, Trajectory) and v.object.name == name:
+            if isinstance(v, Molecule) and v.object.name == name:
                 return v
         raise ValueError(f"No trajectory named '{name}'")
 
     def remove_trajectory(
         self,
-        trajectory: Trajectory | str,
+        trajectory: Molecule | str,
     ) -> None:
         """
         Remove an existing trajectory
 
         Parameters
         ----------
-        trajectory: Trajectory | str, required
-            A Trajectory instance or name of the trajectory
+        trajectory: Molecule | str, required
+            A Molecule instance or name of the trajectory
 
         Returns
         -------
@@ -312,7 +311,7 @@ def get_session(context: Context | None = None) -> MNSession:
     return context.scene.MNSession
 
 
-def get_entity(context: Context | None = None) -> Molecule | Trajectory | Ensemble:
+def get_entity(context: Context | None = None) -> Molecule | Ensemble:
     session = get_session(context)
     return session.match(context.active_object)
 
