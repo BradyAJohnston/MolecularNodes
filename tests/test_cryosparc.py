@@ -27,8 +27,8 @@ def drop_fields(a: np.typing.NDArray, *fields) -> np.typing.NDArray:
 
 
 class TestDataset:
-    def test_dset_len(self, dset):
-        assert len(dset) == 100
+    def test_dset_len(self, dset, darray):
+        assert len(dset) == len(darray)
 
     def test_dset_fields(self, darray, dset):
         for field_name in darray.dtype.names:
@@ -79,3 +79,36 @@ class TestDataset:
         )
         dset.dset = drop_fields(dset.dset, "alignments3D/psize_A")
         assert dset.shift3d is None
+
+    def test_positions(self, dset, darray):
+        positions = dset.position
+        mic_size = (
+            darray["location/micrograph_shape"]
+            * darray["location/micrograph_psize_A"][:, np.newaxis]
+        )
+        darray_positions = mic_size * np.column_stack(
+            (darray["location/center_x_frac"], darray["location/center_y_frac"])
+        )
+        darray_defocus = np.mean([darray["ctf/df1_A"], darray["ctf/df2_A"]], axis=0)
+        darray_defocus = np.median(darray_defocus) - darray_defocus
+        assert np.allclose(positions[:, :2], darray_positions)
+        assert np.allclose(positions[:, 2], darray_defocus)
+
+        dset.dset = drop_fields(dset.dset, "location/center_x_frac")
+        assert np.array_equal(
+            dset.position[:, 0], np.zeros(len(dset), dtype=np.float32)
+        )
+        assert np.array_equal(dset.position[:, 1], positions[:, 1])
+
+        dset.dset = drop_fields(dset.dset, "location/center_y_frac")
+        assert np.allclose(dset.position[:, :2], 0)
+
+        dset.dset = darray.copy()
+        dset.dset = drop_fields(dset.dset, "location/center_y_frac")
+        assert np.array_equal(dset.position[:, 0], positions[:, 0])
+        assert np.array_equal(
+            dset.position[:, 1], np.zeros(len(dset), dtype=np.float32)
+        )
+
+        dset.dset = drop_fields(dset.dset, "ctf/df1_A", "ctf/df2_A")
+        assert np.allclose(dset.position[:, 2], 0)
