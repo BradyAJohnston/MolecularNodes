@@ -5,8 +5,6 @@ website:
     - href: api/index.qmd
       text: Introduction
     - api/styles.qmd
-    - api/materials.qmd
-    - api/density.qmd
     - api/annotations.qmd
     - api/canvas.qmd
     - api/blender.qmd
@@ -17,31 +15,25 @@ website:
       - api/reference/index.qmd
       - contents:
         - api/reference/Molecule.qmd
-        - api/reference/MoleculeSelector.qmd
-        - api/reference/Trajectory.qmd
         - api/reference/entities.Ensemble.qmd
         - api/reference/entities.OXDNA.qmd
         section: Entity
       - contents:
-        - api/reference/Trajectory.qmd
-        - api/reference/entities.trajectory.SelectionManager.qmd
-        - api/reference/entities.trajectory.DSSPManager.qmd
+        - api/reference/entities.molecule.SelectionManager.qmd
+        - api/reference/entities.molecule.DSSPManager.qmd
         - api/reference/entities.StreamingTrajectory.qmd
         section: Trajectory
       - contents:
-        - api/reference/StyleSpheres.qmd
-        - api/reference/StyleRibbon.qmd
-        - api/reference/StyleCartoon.qmd
-        - api/reference/StyleSurface.qmd
-        - api/reference/StyleSticks.qmd
-        - api/reference/StyleBallAndStick.qmd
+        - api/reference/nodes.geometry.StyleSpheres.qmd
+        - api/reference/nodes.geometry.StyleRibbon.qmd
+        - api/reference/nodes.geometry.StyleCartoon.qmd
+        - api/reference/nodes.geometry.StyleSurface.qmd
+        - api/reference/nodes.geometry.StyleSticks.qmd
+        - api/reference/nodes.geometry.StyleBallAndStick.qmd
         section: Styles
       - contents:
-        - api/reference/material.AmbientOcclusion.qmd
-        - api/reference/material.Default.qmd
-        - api/reference/material.Squishy.qmd
-        - api/reference/material.FlatOutline.qmd
-        - api/reference/material.TransparentOutline.qmd
+        - api/reference/material.append_material.qmd
+        - api/reference/material.add_all_materials.qmd
         section: Materials
       - contents:
         - api/reference/session.MNSession.qmd
@@ -50,7 +42,6 @@ website:
         - api/reference/annotations.base.qmd
         - api/reference/annotations.interface.qmd
         - api/reference/annotations.manager.qmd
-        - api/reference/entities.trajectory.annotations.qmd
         - api/reference/entities.molecule.annotations.qmd
         - api/reference/entities.density.annotations.qmd
         section: Annotations

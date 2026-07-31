@@ -48,19 +48,23 @@ pip install molecularnodes[bpy]
 
 ## Getting Started
 
-There are two main classes you will interact with, the [](`~mn.Molecule`) and the [](`~mn.Trajectory`).
+The main class you will interact with is the [](`~mn.Molecule`). A single `Molecule`
+represents any structure — a static structure downloaded from the PDB, a local file, or
+a molecular dynamics trajectory — using an [](`MDAnalysis.Universe`) as its underlying
+data model.
 
 - [](`~mn.Molecule`)
-    - Intended for static structures, downloaded from the PDB or loaded locally
-    - Uses [](`biotite`) as the backend for parsing files and storing data as a [](`biotite.structure.AtomArray`)
-    - doesn't support selection strings
+    - Load static structures with [](`mn.Molecule.fetch`) / [](`mn.Molecule.load`), or
+      wrap an existing [](`MDAnalysis.Universe`) directly
+    - Structure files are parsed with [](`biotite`) and converted to a `Universe`; large
+      datasets and ensembles still use `biotite` as a lightweight backend
+    - Supports MDAnalysis selection strings on every structure
+    - A multi-model structure or trajectory simply has more than one frame, updated from
+      the `Universe` as the scene frame changes
 
-- [](`~mn.Trajectory`)
-    - For MD simulation data
-    - Uses [](`MDAnalysis`) as the backend, keeping a [](`MDAnalysis.Universe`) updating in the background to update positions
-    - supports selection strings and transformations
-
-How you script with each is unfortunately slightly different when it comes to selections, but will hopefully in the future [be unified](https://github.com/BradyAJohnston/MolecularNodes/discussions/949).
+Previously static structures and trajectories were separate `Molecule` and `Trajectory`
+classes; these have now been [unified](https://github.com/BradyAJohnston/MolecularNodes/discussions/949)
+into the single `Molecule`.
 
 
 ## Molecules
@@ -81,7 +85,7 @@ After loading the molecule, to be able to see anything we must first add a style
 
 ```{python}
 mol = mn.Molecule.fetch("4ozs")
-mol.add_style(mn.StyleCartoon())
+mol.add_style("cartoon")
 canvas.frame_object(mol)
 canvas.snapshot()
 ```
@@ -90,9 +94,7 @@ canvas.clear()
 canvas.background = (0, 0.5, 0.5, 1.0)
 canvas.camera.lens = 130
 mol = mn.Molecule.fetch("9MD2")
-mol.add_style(
-    mn.StyleCartoon(peptide_loop_radius=0.4), material=mn.material.AmbientOcclusion()
-)
+mol.add_style("cartoon", loop_radius=0.4, material="MN Ambient Occlusion")
 canvas.frame_object(mol)
 canvas.snapshot()
 ```
@@ -110,7 +112,15 @@ canvas.resolution = (800, 800)
 canvas.transparent = True
 
 mol = mn.Molecule.fetch("Q8W3K0", database="alphafold")
-mol.add_style(mn.StyleCartoon(), color="pLDDT", material=mn.material.AmbientOcclusion())
+with mol.tree.reset() as (atoms, join):
+    (
+        atoms
+        >> mn.nodes.geometry.SetColor(color=mn.nodes.geometry.ColorPLDDT())
+        >> mn.nodes.geometry.StyleCartoon(
+            material=mn.material.append_material("MN Ambient Occlusion")
+        )
+        >> join
+    )
 canvas.frame_view(mol)
 canvas.snapshot()
 ```
@@ -125,35 +135,37 @@ from MDAnalysisData import datasets
 from MDAnalysis import transformations
 from MDAnalysis.analysis import rms, align
 import numpy as np
-import matplotlib.cm as cm
+from matplotlib import colormaps
 
 canvas = mn.Canvas(mn.scene.Cycles(samples=16), (800, 800), transparent=True)
 ```
 
 ### Initial snapshot of the Universe
-The simplest rendering is just loading in the `Trajectory`, adding a style and then rendering an image. The style can be specified as a string, or using `mn.StyleSpheres()` to also specify values for the style rather than updating them later.
+The simplest rendering is just loading the `Molecule`, adding a style and then rendering an image. The style is specified as a string, with any style-specific options passed as keyword arguments to `add_style`.
 ```{python}
 #| warning: false
 #| label: fig-simple
 #| fig-cap: A simple render of the atoms in the `mda.Universe`.
 u = mda.Universe(PSF, DCD)
-traj = mn.Trajectory(u)
+traj = mn.Molecule(u)
 traj.add_style("spheres")
 canvas.frame_view(traj)
 canvas.snapshot()
 ```
 
-### Add styles to the universe based on some MDA selectrion string
-We can clear all existing styles on the Trajectory, and selectively add them based on some selection. The selections can be `AtomGroup` or strings. If a string, first the existence of a `Named Attribute` is checked and if it exists that is uses as a boolean to apply the selection. If the attribute doesn't exist, the string is used as an MDAnalysis selection string. This is equivalent to doing `u.select_atoms()` and passing that atom group as a selection.
+### Add styles to the molecule based on some MDA selection string
+We can reset the node tree to clear existing styles, and selectively add them based on some selection. The selections can be an `AtomGroup` or a string. If a string, first the existence of a `Named Attribute` is checked and if it exists that is used as a boolean to apply the selection. If the attribute doesn't exist, the string is used as an MDAnalysis selection string. This is equivalent to doing `u.select_atoms()` and passing that atom group as a selection.
 ```{python}
 #| label: fig-selections
 #| fig-cap: Selectively apply the style using an MDAnalysis selection string.
 median = np.median(traj.atoms.positions, axis=0)
-traj.styles.clear()
+# reset the tree to clear the previously added style
+with traj.tree.reset() as (atoms, join):
+    pass
 (
     traj
-    .add_style(mn.StyleSpheres(), selection = f"prop x > {median[0]}")
-    .add_style(mn.StyleSpheres(), selection=f"prop x <= {median[0]}", color=(0,0,0,1))
+    .add_style("spheres", selection=f"prop x > {median[0]}")
+    .add_style("spheres", selection=f"prop x <= {median[0]}", material="MN Flat Outline")
 )
 canvas.frame_view(traj)
 canvas.snapshot()
@@ -168,7 +180,7 @@ canvas.clear()
 rot = [transformations.rotate.rotateby(90,direction=[0,1,0],point=np.zeros(3))]
 u = mda.Universe(PSF, DCD, transformations=rot)
 
-g2 = mn.Trajectory(u).add_style(mn.StyleSpheres())
+g2 = mn.Molecule(u).add_style("spheres")
 canvas.frame_view(g2)
 canvas.snapshot()
 ```
@@ -196,16 +208,16 @@ for residue, r_value in zip(protein.residues, R.results.rmsf):
 
 Compute a numpy array of color values `(Red, Green, Blue, Alpha)` that we can then store on the mesh object inside of Blender that will be used for coloring in the final render.
 ```{python}
-viridis = cm.get_cmap('inferno')
+viridis = colormaps["inferno"]
 col_array = u.atoms.tempfactors
 col_array /= col_array.max()
 col_array = viridis(col_array)
 col_array
 ```
 
-Create the `Trajectory` object that will be visualised inside of Blender. After initialising it, we store the computed colors as a `Named Attribute` on the mesh with the `store_named_attribute()` function. These values can now be accessed in the rendering pipeline.
+Create the `Molecule` object that will be visualised inside of Blender. After initialising it, we store the computed colors as a `Named Attribute` on the mesh with the `store_named_attribute()` function. These values can now be accessed in the rendering pipeline.
 
-When we add our style, we given it the name of our `Named Attribute` which will be used for coloring the final mesh. In this example I render both as spheres and also as ribbon backbone - both of which use the colors we computed. The ribbon backbone takes whatever color value is stored on the alpha carbon.
+To colour by our `Named Attribute` we build the node tree ourselves, reading the attribute with a `SetColor` node before the style. In this example I render both as spheres and also as ribbon backbone - both of which use the colors we computed. The ribbon backbone takes whatever color value is stored on the alpha carbon.
 ```{python}
 # | label: fig-compute-color
 # | fig-cap: "We can compute custom color values and then use those in the final render."
@@ -213,16 +225,34 @@ When we add our style, we given it the name of our `Named Attribute` which will 
 # | fig-subcap:
 # |   - "Spheres each use the atom's color."
 # |   - "Ribbon and cartoon use the color from the alpha carbon."
+from nodebpy.nodes.geometry import NamedAttribute
+
 canvas.clear()
-traj = mn.Trajectory(u)
+traj = mn.Molecule(u)
 traj.store_named_attribute(col_array, "custom_color")
 
-traj.add_style(mn.StyleSpheres(radius=0.8), color="custom_color")
+# NamedAttribute nodes must be created inside the tree-builder context
+with traj.tree.reset() as (atoms, join):
+    (
+        atoms
+        >> mn.nodes.geometry.SetColor(
+            color=NamedAttribute("custom_color", data_type="FLOAT_COLOR")
+        )
+        >> mn.nodes.geometry.StyleSpheres(scale=0.8)
+        >> join
+    )
 canvas.frame_view(traj)
 canvas.snapshot()
 
-traj.styles.clear()
-traj.add_style(mn.StyleRibbon(quality=6, backbone_radius=1.5), color="custom_color")
+with traj.tree.reset() as (atoms, join):
+    (
+        atoms
+        >> mn.nodes.geometry.SetColor(
+            color=NamedAttribute("custom_color", data_type="FLOAT_COLOR")
+        )
+        >> mn.nodes.geometry.StyleRibbon(quality=6, peptide_radius=1.5)
+        >> join
+    )
 canvas.frame_view(traj)
 canvas.snapshot()
 ```
@@ -235,8 +265,8 @@ When adding a style, we can ensure it is only applied to some selection of atoms
 canvas.clear()
 adk = datasets.fetch_adk_equilibrium()
 u = mda.Universe(adk.topology, adk.trajectory)
-traj = mn.Trajectory(u)
-traj.add_style(mn.StyleSpheres(), selection=u.atoms[u.atoms.names == "CA"])
+traj = mn.Molecule(u)
+traj.add_style("spheres", selection=u.atoms[u.atoms.names == "CA"])
 canvas.frame_view(traj.get_view())
 canvas.snapshot()
 ```

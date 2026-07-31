@@ -4,6 +4,8 @@ Provides the ``Molecule`` class for loading and visualizing molecular structures
 molecular dynamics trajectories in Blender, using an MDAnalysis ``Universe`` as the
 underlying data model.
 """
+from nodebpy.builder import MaterialBuilder
+
 import functools
 import io
 import logging
@@ -91,7 +93,7 @@ class Molecule(MolecularEntity):
     canvas = mn.Canvas()
     u = mda.Universe(PSF, DCD)
     traj = mn.Molecule(u)
-    traj.add_style(mn.StyleSpheres(geometry="Mesh"), selection="resname LYS")
+    traj.add_style("spheres", geometry="Mesh", selection="resname LYS")
     canvas.frame_view(traj)
     canvas.snapshot()
     ```
@@ -950,7 +952,7 @@ class Molecule(MolecularEntity):
         self,
         style: STYLE_LITERALS = "spheres",
         selection: str | AtomGroup | None = None,
-        material: bpy.types.Material | str | None = None,
+        material: bpy.types.Material | MaterialBuilder | str | None = None,
         **kwargs,
     ) -> "Molecule":
         """
@@ -977,7 +979,7 @@ class Molecule(MolecularEntity):
             A string is treated as an existing attribute name first; only if no such
             attribute exists is it interpreted as an MDAnalysis selection phrase.
 
-        material : bpy.types.Material | str | None, optional
+        material : bpy.types.Material | MaterialBuilder | str | None, optional
             The material to apply to the styled atoms. Can be a Blender Material object,
             a string with a material name to append from the asset file, or None to use
             default materials. Default is None.
@@ -1012,6 +1014,9 @@ class Molecule(MolecularEntity):
 
         if isinstance(self, OXDNA):
             STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+        
+        if isinstance(material, MaterialBuilder):
+            material = material.material
 
         material = append_material(material) if isinstance(material, str) else material
 

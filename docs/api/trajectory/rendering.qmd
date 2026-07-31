@@ -21,12 +21,10 @@ canvas = mn.Canvas()
 ```{python}
 #| warning: false
 u = mda.Universe(PSF, DCD)
-t = mn.Trajectory(u).add_style("cartoon")
+t = mn.Molecule(u).add_style("cartoon")
 
-# add resid 1 and 129 with spheres style
-t.add_style('spheres', selection="resid 1 129")
-# set the sphere geometry to mesh
-t.styles[1].geometry = "mesh"
+# add resid 1 and 129 with spheres style, using mesh geometry
+t.add_style("spheres", selection="resid 1 129", geometry="Mesh")
 ```
 
 ## Add annotations to Universe

@@ -1,5 +1,4 @@
 import bpy
-from ..blender import IS_BLENDER_5
 from ..nodes.arrange import arrange_tree
 from ..nodes.compositor import default_5x_compositor_node_tree, mn_compositor_node_tree
 
@@ -8,12 +7,8 @@ mn_compositor_node_name = "MN Compositor"
 
 
 def setup_compositor(scene: bpy.types.Scene):
-    if IS_BLENDER_5:
-        node_tree = scene.compositing_node_group
-        use_nodes = True
-    else:
-        node_tree = scene.node_tree
-        use_nodes = scene.use_nodes
+    node_tree = scene.compositing_node_group
+    use_nodes = True
     # lock interface when rendering
     scene.render.use_lock_interface = True
     # add a quick check to see if everything is setup correctly
@@ -28,15 +23,8 @@ def setup_compositor(scene: bpy.types.Scene):
             return
     else:
         # no node tree, create one
-        if IS_BLENDER_5:
-            # Staring 5.x compositor node trees can be re-used
-            # Technically we don't have to create a new one if we import from
-            # assets, but this is the safest when generating from code
-            scene.compositing_node_group = default_5x_compositor_node_tree()
-            node_tree = scene.compositing_node_group
-        else:
-            scene.use_nodes = True
-            node_tree = scene.node_tree
+        scene.compositing_node_group = default_5x_compositor_node_tree()
+        node_tree = scene.compositing_node_group
     # setup the compositor node tree
     nodes = node_tree.nodes
     links = node_tree.links

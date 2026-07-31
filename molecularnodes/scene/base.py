@@ -9,7 +9,6 @@ import bpy
 from tqdm.auto import tqdm
 from .. import assets
 from ..assets.template import list_templates
-from ..blender import IS_BLENDER_5
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..scene.compositor import setup_compositor
@@ -144,7 +143,7 @@ class Canvas:
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
-        setup_compositor(self.scene)
+        # setup_compositor(self.scene)
 
     @property
     def scene(self) -> bpy.types.Scene:
@@ -561,8 +560,7 @@ class Canvas:
             (render_settings, "use_file_extension", True),
             (scene, "frame_current", render_frame),
         ]
-        if IS_BLENDER_5:
-            override_props.append((image_settings, "media_type", "IMAGE"))
+        override_props.append((image_settings, "media_type", "IMAGE"))
         override_props.append((image_settings, "file_format", file_format))
         with ExitStack() as stack:
             # set the use_file_extension to auto generate file extension
@@ -639,8 +637,7 @@ class Canvas:
             (render_settings, "filepath", ""),
             (scene, "frame_current", start),
         ]
-        if IS_BLENDER_5:
-            override_props.append((image_settings, "media_type", "IMAGE"))
+        override_props.append((image_settings, "media_type", "IMAGE"))
         override_props.append((image_settings, "file_format", "PNG"))
         # create a temporary directory
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -682,8 +679,7 @@ class Canvas:
                 (scene, "frame_start", start),
                 (scene, "frame_end", end),
             ]
-            if IS_BLENDER_5:
-                override_props.append((image_settings, "media_type", "VIDEO"))
+            override_props.append((image_settings, "media_type", "VIDEO"))
             override_props.append((image_settings, "file_format", "FFMPEG"))
             override_props.append((render_settings.ffmpeg, "format", "MPEG4"))
             with ExitStack() as stack:

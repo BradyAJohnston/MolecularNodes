@@ -27,8 +27,8 @@ u1 = mda.Universe(PSF, DCD)
 u2 = mda.Universe(TPR, XTC)
 
 # add universes to Blender
-t1 = mn.Trajectory(u1).add_style("cartoon")
-t2 = mn.Trajectory(u2)
+t1 = mn.Molecule(u1).add_style("cartoon")
+t2 = mn.Molecule(u2)
 ```
 
 ## Add Styles and Annotations to Trajectories
@@ -37,15 +37,12 @@ t2 = mn.Trajectory(u2)
 # styles
 # trajectory 1
 
-t1.add_style(style=mn.StyleBallAndStick(quality=4), selection="resid 184")
-t1.add_style(
-    style=mn.StyleSpheres(subdivisions=4, geometry="Instance"),
-    selection="resid 1 129",
-)
+t1.add_style("ball_and_stick", quality=4, selection="resid 184")
+t1.add_style("spheres", geometry="Instance", selection="resid 1 129")
 
 # trajectory 2
-t2.add_style(style="ribbon", color=(0.162, 0.624, 0.196, 0.5))
-t2.add_style(selection="resid 141", style="ball_and_stick")
+t2.add_style("ribbon")
+t2.add_style("ball_and_stick", selection="resid 141")
 
 # annotations
 # trajectory 1
@@ -98,7 +95,7 @@ canvas.snapshot()
 
 The [](`~molecularnodes.Canvas.frame_view`) method can be used to frame one or more views. Views can be specific selections within entities or across entities. Multiple views can be combined with a `+` sign before passing to the [](`~molecularnodes.Canvas.frame_view`) method. An optional `viewpoint` param can be passed to specify the viewpoint like before.
 
-All entities have a `get_view` method that returns the entity object by default. The [](`~molecularnodes.entities.Trajectory.get_view`) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
+All entities have a `get_view` method that returns the entity object by default. The [](`~molecularnodes.entities.Molecule.get_view`) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
 
 ```{python}
 # frame resid 184 in trajectory 1 from the front
