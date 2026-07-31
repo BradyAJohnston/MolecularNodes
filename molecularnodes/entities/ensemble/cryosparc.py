@@ -58,73 +58,47 @@ class MNDataset:
             return fallback
 
     @property
-    def psize_2d(self) -> np.ndarray[tuple[int], np.dtype[np.float32]] | None:
-        """
-        Pixel size used during alignment.
-
-        The pixel size used during alignment in CryoSPARC may differ from extracted pixel
-        size. Shifts are always reported in aligned pixel size.
-        """
-        return self.get("alignments2D/psize_A")
-
-    @property
-    def psize_3d(self) -> np.ndarray[tuple[int], np.dtype[np.float32]] | None:
-        """
-        Pixel size used during alignment.
-
-        The pixel size used during alignment in CryoSPARC may differ from extracted pixel
-        size. Shifts are always reported in aligned pixel size.
-        """
-        return self.get("alignments3D/psize_A")
-
-    @property
     def shift2d(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]] | None:
         """
         Shifts aligned during 2D Classification
         """
-        if (
-            shifts := self.get("alignments2D/shift")
-        ) is not None and self.psize_2d is not None:
-            return shifts.astype(np.float32) * self.psize_2d[:, np.newaxis]
+        if (shifts := self.get("alignments2D/shift")) is not None and (
+            psize := self.get("alignments2D/psize_A")
+        ) is not None:
+            return shifts.astype(np.float32) * psize[:, np.newaxis]
 
     @property
     def shift3d(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]] | None:
         """
         Aligned particle shifts in A.
         """
-        if (
-            shifts := self.get("alignments3D/shift")
-        ) is not None and self.psize_3d is not None:
-            return shifts * self.psize_3d[:, np.newaxis]
-
-    @property
-    def defocus(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
-        """
-        Defocus in Angstroms.
-        """
-        df1 = self.get("ctf/df1_A")
-        df2 = self.get("ctf/df2_A")
-        if df1 is None or df2 is None:
-            return np.zeros((len(self), 2), np.float32)
-        return np.column_stack([df1, df2])
-
-    @property
-    def location_frac(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
-        xpos = self.get("location/center_x_frac", np.zeros(len(self), dtype=np.float32))
-        ypos = self.get("location/center_y_frac", np.zeros_like(xpos))
-        return np.column_stack((xpos, ypos))
+        if (shifts := self.get("alignments3D/shift")) is not None and (
+            psize := self.get("alignments3D/psize_A")
+        ) is not None:
+            return shifts * psize[:, np.newaxis]
 
     @property
     def position(self) -> np.ndarray[tuple[int, int], np.dtype[np.float32]]:
         """
         Particle positions in micrograph fractions (X, Y).
         """
-        xypos = self.location_frac
+        xpos = self.get("location/center_x_frac", np.zeros(len(self), dtype=np.float32))
+        ypos = self.get("location/center_y_frac", np.zeros_like(xpos))
+        xypos = np.column_stack((xpos, ypos))
         xypos *= (
             self.get("location/micrograph_shape", np.ones_like(xypos))
             * self.get("location/micrograph_psize_A", np.ones(len(self)))[:, np.newaxis]
         )
-        zpos = np.mean(self.defocus, axis=1, keepdims=True)
+        zpos = np.mean(
+            np.column_stack(
+                [
+                    self.get("ctf/df1_A", np.ones_like(xpos)),
+                    self.get("ctf/df2_A", np.ones_like(xpos)),
+                ]
+            ),
+            axis=1,
+            keepdims=True,
+        )
         zpos = np.median(zpos) - zpos
         return np.append(xypos, zpos, axis=1)
 
@@ -211,12 +185,28 @@ class CryoSPARC(Ensemble):
             if (bob_entry := self.dset.bob_entry(name=name, atype=atype)) is not None:
                 fields.append(bob_entry)
 
-        if not np.allclose((defocus := self.dset.defocus), 0.0):
-            fields.append(dict(data=defocus, name="ctf/df_A", atype="FLOAT2"))
-        if not np.allclose((location_frac := self.dset.location_frac), 0.0):
+        df1 = self.dset.get("ctf/df1_A")
+        df2 = self.dset.get("ctf/df2_A")
+        if df1 is not None and df2 is not None:
             fields.append(
-                dict(name="location/center_frac", data=location_frac, atype="FLOAT2")
+                dict(
+                    name="ctf/df_A",
+                    data=np.mean(np.column_stack((df1, df2)), axis=1),
+                    atype="FLOAT",
+                )
             )
+
+        loc_x = self.dset.get("location/center_x_frac")
+        loc_y = self.dset.get("location/center_y_frac")
+        if loc_x is not None and loc_y is not None:
+            fields.append(
+                dict(
+                    name="location/center_frac",
+                    data=np.column_stack((loc_x, loc_y)),
+                    atype="FLOAT2",
+                )
+            )
+
         fields.append(
             dict(name="uid", data=uid_as_i32_vec(self.dset["uid"]), atype="INT32_2D")
         )
