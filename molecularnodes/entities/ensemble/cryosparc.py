@@ -146,7 +146,7 @@ class MNDataset:
         return np.zeros((len(self), 4), dtype=np.float32)
 
 
-class CryoSPARC(Ensemble):
+class CryoSPARCEnsemble(Ensemble):
     DEFAULT_NAME = "CryoSPARC Ensemble"
 
     def __init__(self, file_path: Path):

@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 from .cellpack import CellPack
-from .cryosparc import CryoSPARC
+from .cryosparc import CryoSPARCEnsemble
 from .star import StarFile
 
 
@@ -19,11 +19,11 @@ def load_cryosparc(
     node_setup=True,
     world_scale=0.01,
 ):
-    ensemble = CryoSPARC(file_path=file_path)
+    ensemble = CryoSPARCEnsemble(file_path=file_path)
     if search_results := re.search(r"(J\d+)_(.+)_exported.cs", str(file_path)):
         name = f"CryoSPARC {search_results.group(1)} {search_results.group(2)}"
     else:
-        name = CryoSPARC.DEFAULT_NAME
+        name = CryoSPARCEnsemble.DEFAULT_NAME
     ensemble.create_object(name=name, node_setup=node_setup, world_scale=world_scale)
 
     return ensemble
