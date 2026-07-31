@@ -3,22 +3,37 @@ import pytest
 from molecularnodes.entities.ensemble.cryosparc import MNDataset, uid_as_i32_vec
 from .constants import data_dir
 
+CS_FILE_NAME = "J123_particles_exported.cs"
+
+
+@pytest.fixture
+def darray():
+    return np.load(data_dir / "cryosparc" / CS_FILE_NAME)
+
 
 @pytest.fixture
 def dset():
-    d = np.load(data_dir / "cryosparc" / "J123_particles_exported.cs")
+    d = np.load(data_dir / "cryosparc" / CS_FILE_NAME)
     return MNDataset(dset=d)
+
+
+def drop_fields(a: np.typing.NDArray, *fields) -> np.typing.NDArray:
+    if a.dtype.names is None:
+        raise AttributeError("Array is not structured")
+    for f in fields:
+        if f not in a.dtype.names:
+            raise ValueError(f"{f} not in array names")
+    return a[[f for f in a.dtype.names if f not in fields]]
 
 
 class TestDataset:
     def test_dset_len(self, dset):
         assert len(dset) == 100
 
-    def test_dset_fields(self, dset):
-        d = np.load(data_dir / "cryosparc" / "J123_particles_exported.cs")
-        for field_name in d.dtype.names:
+    def test_dset_fields(self, darray, dset):
+        for field_name in darray.dtype.names:
             assert field_name in dset
-            assert np.array_equal(d[field_name], dset[field_name])
+            assert np.array_equal(darray[field_name], dset[field_name])
             assert np.array_equal(dset[field_name], dset.get(field_name))
 
         assert dset.get("BAD_FIELD") is None
@@ -46,3 +61,21 @@ class TestDataset:
         split_uids = np.bitwise_and(split_uids << shifts, masks)
         combined_uids = np.sum(split_uids, axis=1)
         assert np.array_equal(combined_uids, dset["uid"])
+
+    def test_shift2d(self, darray, dset):
+        assert np.allclose(
+            dset.shift2d,
+            darray["alignments2D/shift"]
+            * darray["alignments2D/psize_A"][:, np.newaxis],
+        )
+        dset.dset = drop_fields(dset.dset, "alignments2D/psize_A")
+        assert dset.shift2d is None
+
+    def test_shift3d(self, darray, dset):
+        assert np.allclose(
+            dset.shift3d,
+            darray["alignments3D/shift"]
+            * darray["alignments3D/psize_A"][:, np.newaxis],
+        )
+        dset.dset = drop_fields(dset.dset, "alignments3D/psize_A")
+        assert dset.shift3d is None
