@@ -15,6 +15,7 @@ from ..session import get_session
 from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoints
+from .compositor import setup_compositor
 from .engines import EEVEE, Cycles
 
 try:
@@ -142,7 +143,7 @@ class Canvas:
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
-        # setup_compositor(self.scene)
+        setup_compositor(self.scene)
 
     @property
     def scene(self) -> bpy.types.Scene:

@@ -5,24 +5,25 @@ website:
     - href: api/index.qmd
       text: Introduction
     - api/styles.qmd
+    - api/trajectories.qmd
+    - api/rendering.qmd
+    - api/materials.qmd
     - api/annotations.qmd
     - api/canvas.qmd
     - api/blender.qmd
-    - contents: api/trajectory/*
-      section: Trajectory
     - text: '---'
     - contents:
       - api/reference/index.qmd
       - contents:
         - api/reference/Molecule.qmd
-        - api/reference/entities.Ensemble.qmd
-        - api/reference/entities.OXDNA.qmd
-        section: Entity
-      - contents:
         - api/reference/entities.molecule.SelectionManager.qmd
         - api/reference/entities.molecule.DSSPManager.qmd
         - api/reference/entities.StreamingTrajectory.qmd
-        section: Trajectory
+        section: Molecule
+      - contents:
+        - api/reference/entities.Ensemble.qmd
+        - api/reference/entities.OXDNA.qmd
+        section: Other Entities
       - contents:
         - api/reference/nodes.geometry.StyleSpheres.qmd
         - api/reference/nodes.geometry.StyleRibbon.qmd

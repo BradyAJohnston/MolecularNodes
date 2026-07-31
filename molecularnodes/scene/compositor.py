@@ -42,14 +42,9 @@ def setup_compositor(scene: bpy.types.Scene):
     mn_compositor_node = nodes[mn_compositor_node_name]
     # insert MN Compositor right before the Composite node
     # add "Composite" node to node tree if not present
-    if IS_BLENDER_5:
-        if "Group Output" not in nodes:
-            nodes.new(type="NodeGroupOutput")
-        output_node = nodes["Group Output"]
-    else:
-        if "Composite" not in nodes:
-            nodes.new(type="CompositorNodeComposite")
-        output_node = nodes["Composite"]
+    if "Group Output" not in nodes:
+        nodes.new(type="NodeGroupOutput")
+    output_node = nodes["Group Output"]
     # add "Render Layers" node to node tree if not present
     if "Render Layers" not in nodes:
         nodes.new(type="CompositorNodeRLayers")

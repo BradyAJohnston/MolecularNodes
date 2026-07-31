@@ -119,13 +119,8 @@ def test_frame_view(canvas, universe):
 
 
 def test_compositor_setup(canvas):
-    if mn.blender.IS_BLENDER_5:
-        node_tree = canvas.scene.compositing_node_group
-        output_node_name = "Group Output"
-    else:
-        assert canvas.scene.use_nodes
-        node_tree = canvas.scene.node_tree
-        output_node_name = "Composite"
+    node_tree = canvas.scene.compositing_node_group
+    output_node_name = "Group Output"
     assert node_tree is not None
     mn_compositor_node_name = mn.scene.compositor.mn_compositor_node_name
     assert mn_compositor_node_name in node_tree.nodes
