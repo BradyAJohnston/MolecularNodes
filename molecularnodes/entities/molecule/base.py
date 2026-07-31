@@ -1035,7 +1035,9 @@ class Molecule(MolecularEntity):
             (
                 tree.atoms
                 >> STYLE_NODE_MAPPING[style](
-                    selection=NamedAttribute.boolean(attribute_name) if attribute_name else None,
+                    selection=NamedAttribute.boolean(attribute_name)
+                    if attribute_name
+                    else None,
                     material=material,
                     **kwargs,
                 )
