@@ -26,7 +26,7 @@ def uid_as_i32_vec(
     return np.column_stack((left_half, right_half))
 
 
-class Dataset:
+class MNDataset:
     def __init__(self, dset: np.typing.NDArray):
         self.dset = dset
 
@@ -180,7 +180,7 @@ class CryoSPARC(Ensemble):
             raise ValueError(f"{file_path.name} is not a CryoSPARC .cs file")
         super().__init__(file_path=file_path)
         self._entity_type = EntityType.ENSEMBLE_CRYOSPARC
-        self.dset = Dataset(np.load(self.file_path))
+        self.dset = MNDataset(np.load(self.file_path))
         if len(self.dset) == 0:
             raise ValueError("Dataset has no rows")
 

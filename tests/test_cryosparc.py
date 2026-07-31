@@ -1,13 +1,13 @@
 import numpy as np
 import pytest
-from molecularnodes.entities.ensemble.cryosparc import Dataset, uid_as_i32_vec
+from molecularnodes.entities.ensemble.cryosparc import MNDataset, uid_as_i32_vec
 from .constants import data_dir
 
 
 @pytest.fixture
 def dset():
     d = np.load(data_dir / "cryosparc" / "J123_particles_exported.cs")
-    return Dataset(dset=d)
+    return MNDataset(dset=d)
 
 
 class TestDataset:
