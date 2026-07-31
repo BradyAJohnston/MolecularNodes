@@ -638,7 +638,8 @@ class MN_OT_Import_CryoSPARC_File(ImportEnsemble):
 
     def execute(self, context):
         ensemble.load_cryosparc(
-            file_path=path_resolve(self.filepath), node_setup=self.node_setup, op=self
+            file_path=path_resolve(self.filepath),
+            node_setup=self.node_setup,
         )
         return {"FINISHED"}
 
