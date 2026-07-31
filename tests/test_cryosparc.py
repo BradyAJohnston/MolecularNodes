@@ -1,6 +1,8 @@
+import re
 import numpy as np
 import pytest
 from molecularnodes.entities.ensemble.cryosparc import (
+    UID_REGEX,
     MNDataset,
     i32_vec_to_uid,
     uid_as_i32_vec,
@@ -107,3 +109,15 @@ class TestDataset:
 
         dset.dset = drop_fields(dset.dset, "ctf/df1_A", "ctf/df2_A")
         assert np.allclose(dset.position[:, 2], 0)
+
+    def test_blob_uids(self, dset):
+        cs_blob_uids = np.array(
+            # ignore type b/c if the test dataset is missing UIDs we want to know about it
+            [re.search(UID_REGEX, s).group(1) for s in dset.dset["blob/path"]],  # type: ignore
+            dtype=np.uint64,
+        )
+        assert np.array_equal(i32_vec_to_uid(dset.blob_path_uids), cs_blob_uids)
+        dset.dset["blob/path"][0] = "test missing uid"
+        assert dset.blob_path_uids is None
+        dset.dset = drop_fields(dset.dset, "blob/path")
+        assert dset.blob_path_uids is None
