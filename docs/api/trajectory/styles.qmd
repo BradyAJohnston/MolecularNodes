@@ -13,6 +13,7 @@ Different styles or representations can be added to molecules.
 ```{python}
 #| warning: false
 import molecularnodes as mn
+from molecularnodes.nodes import geometry as g
 import MDAnalysis as mda
 from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 
@@ -28,8 +29,8 @@ string, with any style-specific options passed as keyword arguments to
 [](`~mn.Molecule.add_style`).
 
 ```{python}
-t = mn.Molecule(u).add_style("ribbon", quality=4, peptide_radius=0.5)
-canvas.frame_object(t)
+mol = mn.Molecule(u).add_style("ribbon", quality=4, peptide_radius=0.5)
+canvas.frame_object(mol)
 canvas.snapshot()
 ```
 
@@ -47,6 +48,7 @@ Molecule.add_style(
 )
 ```
 
+
 - `style` param
   - A string, one of `ball_and_stick`, `cartoon`, `ribbon`, `spheres`, `sticks` or `surface`.
 - `selection` param
@@ -59,36 +61,26 @@ Molecule.add_style(
   - Any remaining keyword arguments are passed to the style node, e.g. `geometry`,
     `quality`, `scale`, `peptide_radius`.
 
-```{python}
-# add spheres style to resid 1 and 129
-t.add_style("spheres", geometry="Instance", selection="resid 1 129")
-```
+Add `StyleSpheres` to just residues 1 and 129. The string is used as a selection string to create an `mda.AtomGroup` which is used to create a boolean attribute, and that is used inside of the node tree for rendering.
 
 ```{python}
-# frame trajectory and render
-canvas.frame_object(t)
+mol.add_style("spheres", geometry="Instance", selection="resid 1 129")
+canvas.frame_object(mol)
 canvas.snapshot()
 ```
 
-```{python}
-# add surface style for resids between 100 and 150 with transparent material
-t.add_style("surface", selection="resid 100:150", material="MN Transparent Outline")
-```
 
 ```{python}
-# frame trajectory and render
-canvas.frame_object(t)
+mol.add_style("surface", selection="resid 100:150", material="MN Transparent Outline")
+canvas.frame_object(mol)
 canvas.snapshot()
 ```
 
-```{python}
-# a selection can also be an AtomGroup
-t.add_style("ball_and_stick", quality=4, selection=u.select_atoms("resid 180:200"))
-```
+A selection can also be an `mda.AtomGroup`.
 
 ```{python}
-# frame trajectory and render
-canvas.frame_object(t)
+mol.add_style("ball_and_stick", quality=4, selection=u.select_atoms("resid 180:200"))
+canvas.frame_object(mol)
 canvas.snapshot()
 ```
 
@@ -97,18 +89,23 @@ canvas.snapshot()
 To take full control — or to start from a clean slate — build the node tree yourself with
 the [](`~mn.Molecule.tree`) context manager. `tree.reset()` clears the existing tree and
 yields the input `atoms` and output `join` sockets, so you can compose exactly the styles
-you want with their specific parameters. This is the recommended way to change styling,
-rather than removing individual styles.
+you want with their specific parameters. This is the recommended way to create styling
+that is more complex than simple styles and their selections. 
+
+Attempting to expose the branching tree structure of Geometry Nodes via a Python API is 
+a truly difficult task, and so instead we build the node tree using [](`nodebpy`) as a 
+specialised scripting interface for node trees.
 
 ```{python}
-g = mn.nodes.geometry
-with t.tree.reset() as (atoms, join):
-    (
-        atoms
-        >> g.StyleCartoon()
-        >> g.StyleSticks(scale=0.3)
-        >> join
-    )
-canvas.frame_object(t)
+mat = mn.nodes.material.append_material("MN Ambient Occlusion")
+
+mol.dssp.init()
+sel = mol.selections.from_string("resname LYS")
+
+with mol.tree.reset() as (atoms, join):
+  atoms >> g.StyleSticks(selection = sel.node(), scale=0.3, material=mat) >> join
+  atoms >> g.SetColor(color=g.ColorRainbow()) >> g.StyleCartoon(material=mat) >> join
+    
+canvas.frame_object(mol)
 canvas.snapshot()
 ```

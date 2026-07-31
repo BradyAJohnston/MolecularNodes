@@ -19,10 +19,6 @@ pytestmark = [
 ]
 
 
-def style_nodes(entity):
-    return mn.nodes.node_management.get_final_style_nodes(entity.modifier_node_tree)
-
-
 def dummy_calculation_for_pickle_test(universe):
     """Module-level function for testing calculations pickling."""
     return universe.atoms.positions.mean(axis=0)

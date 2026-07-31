@@ -4,7 +4,6 @@ Provides the ``Molecule`` class for loading and visualizing molecular structures
 molecular dynamics trajectories in Blender, using an MDAnalysis ``Universe`` as the
 underlying data model.
 """
-from nodebpy.builder import MaterialBuilder
 
 import functools
 import io
@@ -17,6 +16,7 @@ import databpy as db
 import MDAnalysis as mda
 import numpy as np
 from MDAnalysis.core.groups import AtomGroup
+from nodebpy.builder import MaterialBuilder
 from nodebpy.nodes.geometry import NamedAttribute
 from ... import download
 from ...assets import data
@@ -432,7 +432,18 @@ class Molecule(MolecularEntity):
     def _compute_color(self) -> np.ndarray:
         from ... import color
 
-        return color.color_chains(self._compute_atomic_number(), self.atoms.chainIDs)
+        atomic_numbers = self._compute_atomic_number()
+        # Colour by chain when chain information is available, otherwise fall back
+        # to element-only colouring so that a valid `Color` attribute is *always*
+        # produced. Some universes (e.g. trajectory-only formats) carry no
+        # `chainIDs` topology attribute, which would otherwise raise and cause the
+        # `Color` attribute to be skipped entirely.
+        try:
+            chain_ids = self.atoms.chainIDs
+        except (mda.NoDataError, AttributeError):
+            return color.colors_from_elements(atomic_numbers) / 255
+
+        return color.color_chains(atomic_numbers, chain_ids)
 
     def _compute_is_hetero(self) -> np.ndarray:
         # carried across from biotite by the converter as a custom topology attribute
@@ -952,7 +963,7 @@ class Molecule(MolecularEntity):
         self,
         style: STYLE_LITERALS = "spheres",
         selection: str | AtomGroup | None = None,
-        material: bpy.types.Material | MaterialBuilder | str | None = None,
+        material: bpy.types.Material | MaterialBuilder | str | None = "MN Default",
         **kwargs,
     ) -> "Molecule":
         """
@@ -1014,7 +1025,7 @@ class Molecule(MolecularEntity):
 
         if isinstance(self, OXDNA):
             STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
-        
+
         if isinstance(material, MaterialBuilder):
             material = material.material
 
@@ -1024,9 +1035,7 @@ class Molecule(MolecularEntity):
             (
                 tree.atoms
                 >> STYLE_NODE_MAPPING[style](
-                    selection=NamedAttribute(attribute_name)
-                    if attribute_name
-                    else None,
+                    selection=NamedAttribute.boolean(attribute_name) if attribute_name else None,
                     material=material,
                     **kwargs,
                 )

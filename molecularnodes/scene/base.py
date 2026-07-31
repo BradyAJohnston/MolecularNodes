@@ -11,7 +11,6 @@ from .. import assets
 from ..assets.template import list_templates
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
-from ..scene.compositor import setup_compositor
 from ..session import get_session
 from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties

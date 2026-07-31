@@ -8,6 +8,7 @@ from bpy.props import (
     PointerProperty,
     StringProperty,
 )
+from nodebpy.nodes.geometry import NamedAttribute
 from ..blender.utils import set_object_visibility
 from ..entities.base import EntityType
 from ..handlers import _update_entities
@@ -514,6 +515,10 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
     __slots__ = []
+
+    def node(self) -> NamedAttribute:
+        """Creates and returns a NamedAttribute node inside the active node tree for this selection."""
+        return NamedAttribute.boolean(name=self.name)
 
     name: StringProperty(  # type: ignore
         name="Attribute Name",

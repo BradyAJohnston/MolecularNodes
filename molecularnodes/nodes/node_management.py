@@ -8,15 +8,10 @@ from .arrange import arrange_tree
 from .interface import (
     input_named_attribute,
 )
-from .material import (
-    assign_material,
-)
 from .nodes import (
     NODE_SPACING,
     final_join,
     insert_before,
-    insert_join_last,
-    loc_between,
 )
 
 
@@ -73,76 +68,6 @@ def insert_animate_frames(
     tree.links.new(node_an.outputs[0], node_af.inputs["Frame"])
 
     return node_af
-
-
-def add_style_branch(
-    tree: bpy.types.GeometryNodeTree,
-    style: str | bpy.types.GeometryNodeTree,
-    color: str | None = None,
-    selection: str | None = None,
-    material: bpy.types.Material | str | None = None,
-    frames: bpy.types.Collection | str | None = None,
-    name: str | None = None,
-) -> bpy.types.GeometryNodeGroup:
-    """
-    Add a style branch to the tree.
-    """
-    _frame = True
-    link = tree.links.new
-    input = nodes.get_input(tree)
-    node_join = final_join(tree)
-    if node_join is None:
-        node_join = insert_join_last(tree)
-
-    current_min_y = min(node.location[1] for node in tree.nodes)
-    ypos = current_min_y - 200
-    xpos = loc_between(input, node_join, 0.75)[0]
-
-    if isinstance(style, str):
-        style_name = nodes.styles_mapping[style]
-        nodes.append(style_name)
-    elif isinstance(style, bpy.types.GeometryNodeTree):
-        style_name = style.name
-    else:
-        raise ValueError(
-            f"Style must be a string or a GeometryNodeTree, not {type(style)=}"
-        )
-
-    node_style = nodes.add_custom(
-        group=tree,
-        name=style_name,
-        location=[xpos, ypos],
-    )
-
-    link(
-        input.outputs[0],
-        node_style.inputs[0],
-    )
-    link(
-        node_style.outputs[0],
-        node_join.inputs[0],
-    )
-
-    for nodelink in node_join.inputs[0].links:
-        if nodelink.from_socket.node == nodes.get_input(tree):
-            tree.links.remove(nodelink)
-
-    # Apply style modifications
-    if material:
-        assign_material(node_style, material)
-    if selection:
-        input_named_attribute(node_style.inputs["Selection"], selection, "BOOLEAN")
-    if color:
-        insert_set_color(node_style, color)
-    if frames:
-        insert_animate_frames(node_style, frames)
-
-    arrange_tree(tree)
-
-    if name is not None:
-        node_style.label = name
-
-    return node_style
 
 
 def get_final_style_nodes(
