@@ -26,6 +26,21 @@ def uid_as_i32_vec(
     return np.column_stack((left_half, right_half))
 
 
+def i32_vec_to_uid(
+    split_uids: np.ndarray[tuple[int, int], np.dtype[np.int32]],
+) -> np.ndarray[tuple[int], np.dtype[np.uint64]]:
+    split_uids = split_uids.astype(np.uint64)
+    shifts = np.zeros(split_uids.shape, dtype=np.uint32)
+    shifts[:, 0] = 32
+    masks = np.zeros(split_uids.shape, dtype=np.uint64)
+    # have to mask the lower 32 because numpy will pad with 1s if
+    # the signed int32 is negative
+    masks[:, :] = 2**32 - 1
+    masks = masks << shifts
+    split_uids = np.bitwise_and(split_uids << shifts, masks)
+    return np.bitwise_or(split_uids[:, 0], split_uids[:, 1])
+
+
 class MNDataset:
     def __init__(self, dset: np.typing.NDArray):
         self.dset = dset

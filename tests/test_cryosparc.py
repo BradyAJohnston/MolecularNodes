@@ -1,6 +1,10 @@
 import numpy as np
 import pytest
-from molecularnodes.entities.ensemble.cryosparc import MNDataset, uid_as_i32_vec
+from molecularnodes.entities.ensemble.cryosparc import (
+    MNDataset,
+    i32_vec_to_uid,
+    uid_as_i32_vec,
+)
 from .constants import data_dir
 
 CS_FILE_NAME = "J123_particles_exported.cs"
@@ -50,16 +54,7 @@ class TestDataset:
     def test_uid_as_i32(self, dset):
         split_uids = uid_as_i32_vec(dset["uid"])
         assert split_uids.shape == (len(dset), 2)
-        split_uids = split_uids.astype(np.uint64)
-        shifts = np.zeros(split_uids.shape, dtype=np.uint32)
-        shifts[:, 0] = 32
-        masks = np.zeros(split_uids.shape, dtype=np.uint64)
-        # have to mask the lower 32 because numpy will pad with 1s if
-        # the signed int32 is negative
-        masks[:, :] = 2**32 - 1
-        masks = masks << shifts
-        split_uids = np.bitwise_and(split_uids << shifts, masks)
-        combined_uids = np.sum(split_uids, axis=1)
+        combined_uids = i32_vec_to_uid(split_uids=split_uids)
         assert np.array_equal(combined_uids, dset["uid"])
 
     def test_shift2d(self, darray, dset):
