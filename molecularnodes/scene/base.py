@@ -15,8 +15,9 @@ from ..session import get_session
 from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoints
-from .compositor import setup_compositor
+from .compositor import CompositorTree, setup_compositor
 from .engines import EEVEE, Cycles
+from .world import WorldTree
 
 try:
     from IPython.display import Image, Video, display
@@ -48,6 +49,21 @@ _view_transform = Literal[
     ViewTransform.FALSE_COLOR.value,
     ViewTransform.RAW.value,
 ]
+
+# render passes commonly needed for compositor effects, mapped to the
+# `bpy.types.ViewLayer` toggle that enables each one
+RENDER_PASSES = {
+    "combined": "use_pass_combined",
+    "z": "use_pass_z",
+    "mist": "use_pass_mist",
+    "normal": "use_pass_normal",
+    "position": "use_pass_position",
+    "vector": "use_pass_vector",
+    "diffuse_color": "use_pass_diffuse_color",
+    "emit": "use_pass_emit",
+    "environment": "use_pass_environment",
+    "ambient_occlusion": "use_pass_ambient_occlusion",
+}
 
 
 class Canvas:
@@ -97,6 +113,26 @@ class Canvas:
         World background color as RGBA in the range [0, 1].
     view_transform : {"Standard", "Khronos PBR Neutral", "AgX", "Filmic", "Filmic Log", "False Color", "Raw"}
         Active view transform for color management.
+    compositor : molecularnodes.scene.compositor.CompositorTree
+        Builder for the scene compositor node tree (post-processing effects).
+    world : molecularnodes.scene.world.WorldTree
+        Builder for the world shader node tree (lighting and background).
+    samples : int
+        Render sample count on the active engine.
+    frame : int
+        Current scene frame.
+    frame_range : tuple[int, int]
+        Scene ``(frame_start, frame_end)``.
+    render_scale : int
+        Render resolution percentage (100 = full).
+    exposure : float
+        Color-management exposure.
+    gamma : float
+        Color-management gamma.
+    look : str
+        Color-management look (contrast preset).
+    passes : list[str]
+        Enabled render passes (see :data:`RENDER_PASSES`).
 
     Examples
     --------
@@ -143,6 +179,8 @@ class Canvas:
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
+        self._compositor: CompositorTree | None = None
+        self._world: WorldTree | None = None
         setup_compositor(self.scene)
 
     @property
@@ -331,6 +369,38 @@ class Canvas:
         self.scene.render.film_transparent = value
 
     @property
+    def compositor(self) -> CompositorTree:
+        """
+        The scene compositor node tree.
+
+        Build post-processing effects with ``nodebpy.compositor`` nodes, either
+        by appending (``with canvas.compositor as tree``) or from a clean graph
+        (``canvas.compositor.reset()``).
+
+        Returns
+        -------
+        molecularnodes.scene.compositor.CompositorTree
+            Builder bound to the active scene's compositor tree.
+        """
+        if self._compositor is None:
+            self._compositor = CompositorTree(self.scene)
+        return self._compositor
+
+    @property
+    def world(self) -> WorldTree:
+        """
+        The scene world shader node tree (lighting & background).
+
+        Returns
+        -------
+        molecularnodes.scene.world.WorldTree
+            Builder bound to the active scene's world shader tree.
+        """
+        if self._world is None:
+            self._world = WorldTree(self.scene)
+        return self._world
+
+    @property
     def background(self) -> Tuple[float, float, float, float]:
         """
         Get the world background color.
@@ -340,9 +410,7 @@ class Canvas:
         tuple[float, float, float, float]
             RGBA values in the range [0, 1].
         """
-        return (
-            self.scene.world.node_tree.nodes["MN_world_shader"].inputs[3].default_value
-        )
+        return self.world.background
 
     @background.setter
     def background(self, value: Tuple[float, float, float, float]) -> None:
@@ -354,12 +422,219 @@ class Canvas:
         value : tuple[float, float, float, float]
             RGBA values in the range [0, 1].
         """
-        self.scene.world.node_tree.nodes["MN_world_shader"].inputs[
-            3
-        ].default_value = value
+        self.world.background = value
 
-    # @property
-    # def hdri_strength
+    @property
+    def samples(self) -> int:
+        """
+        Get the render sample count from the active engine.
+
+        Returns
+        -------
+        int
+            Number of samples the active render engine is configured for.
+        """
+        return self.engine.samples
+
+    @samples.setter
+    def samples(self, value: int) -> None:
+        """
+        Set the render sample count on the active engine.
+
+        Parameters
+        ----------
+        value : int
+            Number of samples to render with.
+        """
+        self.engine.samples = value
+
+    @property
+    def frame(self) -> int:
+        """
+        Get the current scene frame.
+
+        Returns
+        -------
+        int
+            The current frame number.
+        """
+        return self.scene.frame_current
+
+    @frame.setter
+    def frame(self, value: int) -> None:
+        """
+        Set the current scene frame.
+
+        Parameters
+        ----------
+        value : int
+            The frame number to set. Uses ``frame_set`` so animation data updates.
+        """
+        self.scene.frame_set(value)
+
+    @property
+    def frame_range(self) -> tuple[int, int]:
+        """
+        Get the scene frame range.
+
+        Returns
+        -------
+        tuple[int, int]
+            The ``(frame_start, frame_end)`` of the scene.
+        """
+        return (self.scene.frame_start, self.scene.frame_end)
+
+    @frame_range.setter
+    def frame_range(self, value: tuple[int, int]) -> None:
+        """
+        Set the scene frame range.
+
+        Parameters
+        ----------
+        value : tuple[int, int]
+            The ``(frame_start, frame_end)`` to set.
+        """
+        self.scene.frame_start, self.scene.frame_end = value
+
+    @property
+    def render_scale(self) -> int:
+        """
+        Get the render resolution percentage.
+
+        Returns
+        -------
+        int
+            The resolution percentage applied to the render (100 = full).
+        """
+        return self.scene.render.resolution_percentage
+
+    @render_scale.setter
+    def render_scale(self, value: int) -> None:
+        """
+        Set the render resolution percentage.
+
+        Parameters
+        ----------
+        value : int
+            Percentage of the resolution to render at (100 = full).
+        """
+        self.scene.render.resolution_percentage = value
+
+    @property
+    def exposure(self) -> float:
+        """
+        Get the color-management exposure.
+
+        Returns
+        -------
+        float
+            Exposure applied in the view transform.
+        """
+        return self.scene.view_settings.exposure
+
+    @exposure.setter
+    def exposure(self, value: float) -> None:
+        """
+        Set the color-management exposure.
+
+        Parameters
+        ----------
+        value : float
+            Exposure to apply in the view transform.
+        """
+        self.scene.view_settings.exposure = value
+
+    @property
+    def gamma(self) -> float:
+        """
+        Get the color-management gamma.
+
+        Returns
+        -------
+        float
+            Gamma applied in the view transform.
+        """
+        return self.scene.view_settings.gamma
+
+    @gamma.setter
+    def gamma(self, value: float) -> None:
+        """
+        Set the color-management gamma.
+
+        Parameters
+        ----------
+        value : float
+            Gamma to apply in the view transform.
+        """
+        self.scene.view_settings.gamma = value
+
+    @property
+    def look(self) -> str:
+        """
+        Get the color-management look (contrast preset).
+
+        Returns
+        -------
+        str
+            The active look, e.g. ``"None"`` or ``"AgX - Medium High Contrast"``.
+        """
+        return self.scene.view_settings.look
+
+    @look.setter
+    def look(self, value: str) -> None:
+        """
+        Set the color-management look (contrast preset).
+
+        Parameters
+        ----------
+        value : str
+            The look to apply. Valid values depend on the active view transform.
+        """
+        self.scene.view_settings.look = value
+
+    @property
+    def passes(self) -> list[str]:
+        """
+        Get the enabled render passes.
+
+        Returns
+        -------
+        list[str]
+            Names of the enabled passes from :data:`RENDER_PASSES`.
+        """
+        view_layer = self.scene.view_layers[0]
+        return [
+            name
+            for name, attr in RENDER_PASSES.items()
+            if getattr(view_layer, attr)
+        ]
+
+    @passes.setter
+    def passes(self, value: list[str]) -> None:
+        """
+        Enable a set of render passes (for use in the compositor).
+
+        Parameters
+        ----------
+        value : list[str]
+            Names of passes to enable from :data:`RENDER_PASSES`; all others are
+            disabled.
+
+        Raises
+        ------
+        ValueError
+            If a name is not a recognised pass.
+        """
+        view_layer = self.scene.view_layers[0]
+        requested = set(value)
+        unknown = requested - set(RENDER_PASSES)
+        if unknown:
+            raise ValueError(
+                f"Unknown render pass(es): {sorted(unknown)}. "
+                f"Valid passes are {sorted(RENDER_PASSES)}."
+            )
+        for name, attr in RENDER_PASSES.items():
+            setattr(view_layer, attr, name in requested)
 
     @property
     def view_transform(self) -> _view_transform:

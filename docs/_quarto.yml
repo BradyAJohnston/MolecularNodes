@@ -175,3 +175,5 @@ quartodoc:
     contents:
     - Canvas
     - scene.camera
+    - scene.compositor.CompositorTree
+    - scene.world.WorldTree
