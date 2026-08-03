@@ -31,10 +31,13 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
     ``Render Layers -> output`` graph and build the post-processing chain
     yourself with ``nodebpy.compositor`` nodes.
 
-    >>> from nodebpy import compositor as c
-    >>> with canvas.compositor.reset() as (image, output):
-    ...     image >> c.Glare(type="Bloom") >> output
-    >>> canvas.compositor.add_annotations()
+    ```python
+    from nodebpy import compositor as c
+
+    with canvas.compositor.reset() as (image, output):
+        image >> c.Glare(type="Bloom") >> output
+    canvas.compositor.add_annotations()
+    ```
 
     Notes
     -----
@@ -69,14 +72,23 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
     def image(self) -> ColorSocket:
         """The rendered image to build the compositor chain from.
 
-        >>> with canvas.compositor as tree:
-        ...     tree.image >> c.Glare() >> tree.output
+        ```python
+        with canvas.compositor as tree:
+            tree.image >> c.Glare() >> tree.output
+        ```
         """
         return self._wrap(self._render_layers_node().outputs["Image"])
 
     @property
     def output(self) -> ColorSocket:
-        """The final image output of the tree, adding it if it is missing."""
+        """The final image output of the tree, adding it if it is missing.
+
+        ```python
+        with canvas.compositor as tree:
+            tree.clear() # remove all nodes and interface items
+            tree.image >> c.Glare() >> tree.output
+        ```
+        """
         for item in self.tree.interface.items_tree:
             if (
                 item.item_type == "SOCKET"
@@ -94,8 +106,10 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         be restored with :meth:`add_annotations`. Use ``with canvas.compositor``
         instead to append to the existing tree.
 
-        >>> with canvas.compositor.reset() as (image, output):
-        ...     image >> c.Glare(type="Bloom") >> output
+        ```python
+        with canvas.compositor.reset() as (image, output):
+            image >> c.Glare(type="Bloom") >> output
+        ```
         """
         with self:
             self.clear()

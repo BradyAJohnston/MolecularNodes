@@ -266,6 +266,7 @@ The [](`~molecularnodes.Canvas.animation`) method can be used to render animatio
 ```{python}
 # frame resid 1 and 129 in trajectory 1 at frame 97 from the front
 canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint="front")
+t1.average = 1
 # add a universe info annotation to trajectory 1
 t1.annotations.add_universe_info()
 ```
