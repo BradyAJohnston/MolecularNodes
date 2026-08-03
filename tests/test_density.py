@@ -21,7 +21,7 @@ def density_file(isolated_density_file):
 
 
 def test_density_load(density_file):
-    density = mn.entities.density.load(density_file)
+    density = mn.entities.density.Grids.load(density_file)
     pos = density.named_attribute("position")
 
     assert len(pos) > 1000
@@ -37,7 +37,7 @@ def test_density_load(density_file):
 
 def test_density_centered(density_file):
     # First load using standard parameters to test recreation of vdb
-    density = mn.entities.density.load(density_file, center=True, overwrite=True)
+    density = mn.entities.density.Grids.load(density_file, center=True, overwrite=True)
     pos = density.named_attribute("position")
     avg = np.mean(pos, axis=0)
     assert len(pos) > 1000
@@ -47,12 +47,12 @@ def test_density_centered(density_file):
 
 def test_density_invert(density_file):
     # First load using standard parameters to test recreation of vdb
-    density = mn.entities.density.load(density_file)
+    density = mn.entities.density.Grids.load(density_file)
 
     # Then refresh the scene
     bpy.data.objects.remove(density.object, do_unlink=True)
 
-    density = mn.entities.density.load(density_file, invert=True)
+    density = mn.entities.density.Grids.load(density_file, invert=True)
     style_node = nodes.get_style_node(density.object)
     style_node.inputs["Threshold"].default_value = 0.01
 
@@ -65,8 +65,8 @@ def test_density_invert(density_file):
 
 def test_density_multiple_load(isolated_density_file):
     file = isolated_density_file(data_dir / "emd_24805.map.gz")
-    density1 = mn.entities.density.load(file)
-    density2 = mn.entities.density.load(file)
+    density1 = mn.entities.density.Grids.load(file)
+    density2 = mn.entities.density.Grids.load(file)
 
     assert density1.props.entity_type == "density"
     assert density2.props.entity_type == "density"
@@ -109,7 +109,7 @@ def density_file_dx(isolated_density_file):
 
 
 def test_density_load_dx(density_file_dx):
-    density = mn.entities.density.load(density_file_dx)
+    density = mn.entities.density.Grids.load(density_file_dx)
     print(f"{list(bpy.data.objects)=}")
     assert density.props.entity_type == "density"
     assert density.object.users_collection[0] == mn.blender.coll.mn()
@@ -117,12 +117,14 @@ def test_density_load_dx(density_file_dx):
 
 # this test fails without the fallback using mrcfile
 def test_fallback_reading(isolated_density_file):
-    mn.entities.density.load(isolated_density_file(data_dir / "62270-small_sg0.mrc"))
+    mn.entities.density.Grids.load(
+        isolated_density_file(data_dir / "62270-small_sg0.mrc")
+    )
 
 
 def test_fallback_transforms(isolated_density_file):
     def evaluated_obj(file):
-        density = mn.entities.density.load(file, overwrite=True)
+        density = mn.entities.density.Grids.load(file, overwrite=True)
         return mn.blender.mesh.evaluate_using_mesh(density.object)
 
     space_group_one = evaluated_obj(

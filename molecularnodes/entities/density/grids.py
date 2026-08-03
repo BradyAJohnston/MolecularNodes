@@ -37,6 +37,47 @@ class Grids(Density):
             str(self.file_path), center=center, invert=invert, overwrite=overwrite
         )
 
+    @classmethod
+    def load(
+        cls,
+        file_path: str | Path,
+        name: str | None = None,
+        style: str | None = "density_surface",
+        invert: bool = False,
+        center: bool = False,
+        overwrite: bool = False,
+    ) -> "Grids":
+        """Load a density grid file and create its volumetric object.
+
+        Parameters
+        ----------
+        file_path : str | Path
+            Path to the grid file (see the class docstring for supported formats).
+        name : str | None, optional
+            Name for the created object. If None, the file name is used.
+        style : str | None, optional
+            The density style to apply, by default "density_surface". If None, no
+            style is added.
+        invert : bool, optional
+            Whether to invert the density values, by default False.
+        center : bool, optional
+            Whether to center the density at the origin, by default False.
+        overwrite : bool, optional
+            Whether to overwrite an existing converted ``.vdb`` file, by default False.
+
+        Returns
+        -------
+        Grids
+            The loaded density entity.
+        """
+        density = cls(
+            file_path=file_path, center=center, invert=invert, overwrite=overwrite
+        )
+        density.create_object(name=name or Path(file_path).name, style=style)
+        # record the source so the entity can be reloaded into a fresh session
+        density.object.mn.filepath = str(file_path)
+        return density
+
     def _parse_grid_with_fallback(
         self,
         file: str,

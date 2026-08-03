@@ -612,6 +612,8 @@ class Molecule(MolecularEntity):
         topology: Path | str,
         coordinates: Path | str | None = None,
         name: str | None = None,
+        style: str | None = None,
+        selection: str | None = None,
         create_object: bool = True,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
@@ -631,6 +633,11 @@ class Molecule(MolecularEntity):
             single structure file.
         name : str | None, optional
             Name for the Blender object.
+        style : str | None, optional
+            If given, the visual style to apply to the loaded entity. If None (the
+            default) no style is added, leaving the node tree empty for manual setup.
+        selection : str | None, optional
+            Atom selection to restrict the style to, passed to :meth:`add_style`.
         create_object : bool, optional
             Whether to create the Blender object immediately (MD route only).
 
@@ -640,9 +647,15 @@ class Molecule(MolecularEntity):
             The loaded entity.
         """
         if coordinates is None:
-            return cls.from_file(topology, name=name)
-        u = mda.Universe(topology, coordinates)
-        return cls(u, name=name or "NewMolecule", create_object=create_object)
+            entity = cls.from_file(topology, name=name)
+        else:
+            u = mda.Universe(topology, coordinates)
+            entity = cls(u, name=name or "NewMolecule", create_object=create_object)
+
+        if style is not None and create_object:
+            entity.add_style(style=style, selection=selection)
+
+        return entity
 
     @classmethod
     def from_file(

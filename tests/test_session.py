@@ -65,9 +65,9 @@ def test_reload_trajectory_from_file():
     from molecularnodes.entities.reload import can_reload, reload_entity
 
     session = mn.session.get_session()
-    traj = mn.entities.molecule.load(
-        top=data_dir / "md_ppr/box.gro",
-        traj=data_dir / "md_ppr/first_5_frames.xtc",
+    traj = mn.Molecule.load(
+        topology=data_dir / "md_ppr/box.gro",
+        coordinates=data_dir / "md_ppr/first_5_frames.xtc",
     )
     obj = traj.object
     assert obj.mn.filepath_topology != ""
@@ -83,7 +83,7 @@ def test_reload_density_from_file():
     from molecularnodes.entities.reload import can_reload, reload_entity
 
     session = mn.session.get_session()
-    density = mn.entities.density.load(data_dir / "emd_24805.map.gz")
+    density = mn.entities.density.Grids.load(data_dir / "emd_24805.map.gz")
     obj = density.object
     assert obj.mn.filepath != ""
     assert can_reload(obj)

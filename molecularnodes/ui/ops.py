@@ -15,6 +15,7 @@ from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import (
+    OXDNA,
     Molecule,
     StreamingTrajectory,
     density,
@@ -444,7 +445,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        density.load(
+        density.Grids.load(
             file_path=path_resolve(self.filepath),
             invert=self.invert,
             style=self.style if self.setup_nodes else None,
@@ -621,9 +622,9 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         if self.format == "oxdna":
-            molecule.load_oxdna(
-                top=path_resolve(self.topology),
-                traj=path_resolve(self.trajectory),
+            OXDNA.load(
+                topology=path_resolve(self.topology),
+                coordinates=path_resolve(self.trajectory),
                 name=self.name,
             )
             return {"FINISHED"}

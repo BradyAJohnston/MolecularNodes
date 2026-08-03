@@ -270,7 +270,7 @@ class TestAnnotations:
         assert len(mol.annotations) == 0
 
     def test_annotation_ops_density(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         # add annotation operator
         # first annotation type due to no invoke - must have no required inputs
@@ -437,19 +437,19 @@ class TestAnnotations:
         assert len(mol.annotations) == 1
 
     def test_density_annotation_density_info(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         d1.annotations.add_density_info()
         assert len(d1.annotations) == 1
 
     def test_density_annotation_grid_axes(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         d1.annotations.add_grid_axes()
         assert len(d1.annotations) == 1
 
     def test_density_annotation_grid_axes_3d(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         d1.annotations.add_grid_axes_3d()
         assert len(d1.annotations) == 1
@@ -588,7 +588,7 @@ class TestAnnotations:
                     raise
 
     def test_density_pickling(self, density_file):
-        e = mn.entities.density.load(density_file)
+        e = mn.entities.density.Grids.load(density_file)
         ant = e.annotations.add_density_info()
         ant.show_filename = False
         with tempfile.NamedTemporaryFile() as tmp_file:

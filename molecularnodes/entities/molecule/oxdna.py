@@ -1,3 +1,4 @@
+from pathlib import Path
 import databpy as db
 import numpy as np
 from MDAnalysis import Universe
@@ -392,6 +393,51 @@ class OXDNA(Molecule):
             world_scale=world_scale * DNA_SCALE,
             create_object=create_object,
         )
+
+    @classmethod
+    def load(
+        cls,
+        topology: str | Path,
+        coordinates: str | Path,
+        name: str = "oxDNA",
+        style: str | None = "ribbon",
+        world_scale: float = 0.1,
+        create_object: bool = True,
+    ) -> "OXDNA":
+        """Load an oxDNA topology and trajectory.
+
+        Parameters
+        ----------
+        topology : str | Path
+            Path to the oxDNA topology file.
+        coordinates : str | Path
+            Path to the oxDNA trajectory/configuration file.
+        name : str, optional
+            Name for the created object, by default "oxDNA".
+        style : str | None, optional
+            Visual style to apply, by default "ribbon". If None, no style is added.
+        world_scale : float, optional
+            Scaling factor for world coordinates, by default 0.1.
+        create_object : bool, optional
+            Whether to create the Blender object immediately, by default True.
+
+        Returns
+        -------
+        OXDNA
+            The created oxDNA trajectory entity.
+        """
+        universe = Universe(
+            topology,
+            coordinates,
+            topology_format=OXDNAParser,
+            format=OXDNAReader,
+        )
+        entity = cls(
+            universe, name=name, world_scale=world_scale, create_object=create_object
+        )
+        if style is not None and create_object:
+            entity.add_style(style=style)
+        return entity
 
     def _compute_color(self) -> np.ndarray:
         """Compute equidistant chain coloring for OXDNA"""
