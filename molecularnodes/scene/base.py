@@ -602,7 +602,7 @@ class Canvas:
         value : str
             The look to apply. Valid values depend on the active view transform.
         """
-        self._view_settings.look = value
+        self._view_settings.look = value  # ty: ignore[invalid-assignment]
 
     @property
     def passes(self) -> list[str]:
@@ -671,7 +671,7 @@ class Canvas:
             (case-insensitive), or its short enum name (e.g. ``"agx"``,
             ``"filmic_log"``).
         """
-        self._view_settings.view_transform = ViewTransform(value)
+        self._view_settings.view_transform = ViewTransform(value)  # ty: ignore[invalid-assignment]
 
     def frame_object(
         self,
