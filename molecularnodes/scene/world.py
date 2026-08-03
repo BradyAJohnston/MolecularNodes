@@ -15,12 +15,14 @@ class WorldTree(TreeBuilder[ShaderNodeTree]):
     convenience properties for the common controls, or :meth:`reset` to build a
     world shader from scratch with ``nodebpy.shader`` nodes.
 
-    >>> canvas.world.hdri_strength = 1.5
-    >>> canvas.world.background = (0.0, 0.5, 0.5, 1.0)
+    ```python
+    from nodebpy import shader as s
 
-    >>> from nodebpy import shader as s
-    >>> with canvas.world.reset() as surface:
-    ...     s.Background(color=(0.05, 0.05, 0.05, 1.0), strength=1.0) >> surface
+    canvas.world.hdri_strength = 1.5
+    canvas.world.background = (0.0, 0.5, 0.5, 1.0)
+    with canvas.world.reset() as surface:
+        s.Background(color=(0.05, 0.05, 0.05, 1.0), strength=1.0) >> surface
+    ```
     """
 
     def __init__(self, scene: bpy.types.Scene) -> None:

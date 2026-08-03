@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 from contextlib import ExitStack
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal, Tuple
 import bpy
@@ -14,7 +14,7 @@ from ..entities.base import MolecularEntity
 from ..session import get_session
 from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
-from .camera import Camera, Viewpoints
+from .camera import Camera, Viewpoint
 from .compositor import CompositorTree, setup_compositor
 from .engines import EEVEE, Cycles
 from .world import WorldTree
@@ -30,7 +30,7 @@ IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
 IS_SELF_HOSTED = os.getenv("RUNNER_ENVIRONMENT") == "self-hosted"
 
 
-class ViewTransform(Enum):
+class ViewTransform(StrEnum):
     STANDARD = "Standard"
     KHRONOS = "Khronos PBR Neutral"
     AGX = "AgX"
@@ -39,16 +39,19 @@ class ViewTransform(Enum):
     FALSE_COLOR = "False Color"
     RAW = "Raw"
 
+    @classmethod
+    def _missing_(cls, value: object) -> "ViewTransform | None":
+        # called only when the exact-value lookup fails; allow the full name or the
+        # short enum name, case-insensitively (e.g. "agx", "filmic_log")
+        if isinstance(value, str):
+            key = value.strip().lower()
+            for member in cls:
+                if key in (member.value.lower(), member.name.lower()):
+                    return member
+        return None
 
-_view_transform = Literal[
-    ViewTransform.STANDARD.value,
-    ViewTransform.KHRONOS.value,
-    ViewTransform.AGX.value,
-    ViewTransform.FILMIC.value,
-    ViewTransform.FILMIC_LOG.value,
-    ViewTransform.FALSE_COLOR.value,
-    ViewTransform.RAW.value,
-]
+
+_RENDER_ENGINES = Literal["EEVEE", "CYCLES"]
 
 # render passes commonly needed for compositor effects, mapped to the
 # `bpy.types.ViewLayer` toggle that enables each one
@@ -151,7 +154,7 @@ class Canvas:
 
     def __init__(
         self,
-        engine: EEVEE | Cycles | str = "EEVEE",
+        engine: EEVEE | Cycles | _RENDER_ENGINES = "EEVEE",
         resolution=(1280, 720),
         transparent: bool = False,
         template: Path | str | None = "Molecular Nodes",
@@ -193,7 +196,9 @@ class Canvas:
         bpy.types.Scene
             The current context scene.
         """
-        return bpy.context.scene
+        scene = bpy.context.scene
+        assert scene
+        return scene
 
     @property
     def resolution(self) -> tuple[int, int]:
@@ -235,7 +240,7 @@ class Canvas:
         return self._engine
 
     @engine.setter
-    def engine(self, value: Cycles | EEVEE | str) -> None:
+    def engine(self, value: Cycles | EEVEE | _RENDER_ENGINES) -> None:
         """
         Set the render engine.
 
@@ -521,6 +526,15 @@ class Canvas:
         self.scene.render.resolution_percentage = value
 
     @property
+    def _view_settings(self) -> bpy.types.ColorManagedViewSettings:
+        """
+
+        """
+        view_settings = self.scene.view_settings
+        assert view_settings
+        return view_settings
+
+    @property
     def exposure(self) -> float:
         """
         Get the color-management exposure.
@@ -530,7 +544,7 @@ class Canvas:
         float
             Exposure applied in the view transform.
         """
-        return self.scene.view_settings.exposure
+        return self._view_settings.exposure
 
     @exposure.setter
     def exposure(self, value: float) -> None:
@@ -542,7 +556,7 @@ class Canvas:
         value : float
             Exposure to apply in the view transform.
         """
-        self.scene.view_settings.exposure = value
+        self._view_settings.exposure = value
 
     @property
     def gamma(self) -> float:
@@ -554,7 +568,7 @@ class Canvas:
         float
             Gamma applied in the view transform.
         """
-        return self.scene.view_settings.gamma
+        return self._view_settings.gamma
 
     @gamma.setter
     def gamma(self, value: float) -> None:
@@ -566,7 +580,7 @@ class Canvas:
         value : float
             Gamma to apply in the view transform.
         """
-        self.scene.view_settings.gamma = value
+        self._view_settings.gamma = value
 
     @property
     def look(self) -> str:
@@ -578,7 +592,7 @@ class Canvas:
         str
             The active look, e.g. ``"None"`` or ``"AgX - Medium High Contrast"``.
         """
-        return self.scene.view_settings.look
+        return self._view_settings.look
 
     @look.setter
     def look(self, value: str) -> None:
@@ -590,7 +604,7 @@ class Canvas:
         value : str
             The look to apply. Valid values depend on the active view transform.
         """
-        self.scene.view_settings.look = value
+        self._view_settings.look = value
 
     @property
     def passes(self) -> list[str]:
@@ -635,54 +649,36 @@ class Canvas:
             setattr(view_layer, attr, name in requested)
 
     @property
-    def view_transform(self) -> _view_transform:
+    def view_transform(self) -> ViewTransform:
         """
         Get the current view transform setting.
 
         Returns
         -------
-        str
-            The current view transform value.
+        ViewTransform
+            The current view transform. As a ``StrEnum`` this also compares equal
+            to its Blender string value.
         """
-        return self.scene.view_settings.view_transform
+        return ViewTransform(self._view_settings.view_transform)
 
     @view_transform.setter
-    def view_transform(self, value: _view_transform | ViewTransform | str) -> None:
+    def view_transform(self, value: ViewTransform | str) -> None:
         """
         Set the view transform setting.
 
         Parameters
         ----------
-        value : str | ViewTransform
-            The view transform value to set. Accepts enum, full name, or lowercase/shortened name.
+        value : ViewTransform | str
+            The view transform to set. Accepts a ``ViewTransform``, its full name
+            (case-insensitive), or its short enum name (e.g. ``"agx"``,
+            ``"filmic_log"``).
         """
-        # Normalize input
-        if isinstance(value, ViewTransform):
-            vt_value = value.value
-        elif isinstance(value, str):
-            value_lower = value.strip().lower()
-            # Try to match full name (case-insensitive)
-            for vt in ViewTransform:
-                if value_lower == vt.value.lower():
-                    vt_value = vt.value
-                    break
-            else:
-                # Try to match shortened name (e.g., "standard", "agx", "filmic", etc.)
-                for vt in ViewTransform:
-                    if value_lower == vt.name.lower():
-                        vt_value = vt.value
-                        break
-                else:
-                    raise ValueError(
-                        f"Invalid view transform '{value}'. Must be one of {[vt.value for vt in ViewTransform]} or a valid enum name."
-                    )
-        else:
-            raise TypeError("view_transform must be a str or ViewTransform enum.")
-
-        self.scene.view_settings.view_transform = vt_value
+        self._view_settings.view_transform = ViewTransform(value)
 
     def frame_object(
-        self, obj: bpy.types.Object | MolecularEntity, viewpoint: Viewpoints = None
+        self,
+        obj: bpy.types.Object | MolecularEntity,
+        viewpoint: Viewpoint | str | None = None,
     ) -> None:
         """
         Frame an object or MolecularEntity in the active camera view.
@@ -691,7 +687,7 @@ class Canvas:
         ----------
         obj : bpy.types.Object | MolecularEntity
             Blender object or Molecular Nodes entity to frame.
-        viewpoint : Viewpoints | str, optional
+        viewpoint : Viewpoint | str, optional
             Viewing direction along a principal axis. One of
             {"default", "front", "back", "top", "bottom", "left", "right"}.
 
@@ -705,7 +701,9 @@ class Canvas:
         blender_utils.look_at_object(obj)
 
     def frame_view(
-        self, view: list[tuple] | MolecularEntity, viewpoint: Viewpoints | None = None
+        self,
+        view: list[tuple] | MolecularEntity,
+        viewpoint: Viewpoint | str | None = None,
     ) -> None:
         """
         Frame one or more views of Molecular entities.
@@ -716,7 +714,7 @@ class Canvas:
         view : list[tuple] | MolecularEntity
             A bounding box represented by 8 three-dimensional vertices
             ``[(x, y, z), ...]`` or an entity from which a view is derived.
-        viewpoint : Viewpoints | str, optional
+        viewpoint : Viewpoint | str, optional
             Viewing direction along a principal axis. One of
             {"default", "front", "back", "top", "bottom", "left", "right"}.
 
@@ -747,7 +745,7 @@ class Canvas:
     def scene_reset(
         self,
         template: Path | str | None = "Molecular Nodes",
-        engine: Cycles | EEVEE | str = "EEVEE",
+        engine: Cycles | EEVEE | _RENDER_ENGINES = "EEVEE",
     ) -> None:
         """
         Reset the scene from a template or startup file.
