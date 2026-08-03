@@ -604,9 +604,7 @@ class Canvas:
         """
         view_layer = self.scene.view_layers[0]
         return [
-            name
-            for name, attr in RENDER_PASSES.items()
-            if getattr(view_layer, attr)
+            name for name, attr in RENDER_PASSES.items() if getattr(view_layer, attr)
         ]
 
     @passes.setter
