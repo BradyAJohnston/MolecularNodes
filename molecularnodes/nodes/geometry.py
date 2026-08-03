@@ -9711,8 +9711,8 @@ class StyleSpheres(AssetGeometryGroup):
         """Atoms"""
         selection: BooleanSocket
         """Selection"""
-        geometry: MenuSocket
-        """Geometry"""
+        sphere_geometry: MenuSocket
+        """Sphere Geometry"""
         scale: FloatSocket
         """Scale"""
         material: MaterialSocket
@@ -9733,7 +9733,7 @@ class StyleSpheres(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Point",
+        sphere_geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Point",
         scale: InputFloat = 0.8,
         material: InputMaterial = None,
     ):
@@ -9741,7 +9741,7 @@ class StyleSpheres(AssetGeometryGroup):
             **{
                 "Input_0": atoms,
                 "Input_1": selection,
-                "Input_2": geometry,
+                "Input_2": sphere_geometry,
                 "Input_3": scale,
                 "Input_6": material,
             }
@@ -9760,8 +9760,8 @@ class StyleSticks(AssetGeometryGroup):
         """Atoms"""
         selection: BooleanSocket
         """Selection"""
-        geometry: MenuSocket
-        """Geometry"""
+        sphere_geometry: MenuSocket
+        """Sphere Geometry"""
         quality: IntegerSocket
         """Quality"""
         scale: FloatSocket
@@ -9786,7 +9786,7 @@ class StyleSticks(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Instance",
+        sphere_geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Instance",
         quality: InputInteger = 3,
         scale: InputFloat = 0.2,
         shade_smooth: InputBoolean = True,
@@ -9796,7 +9796,7 @@ class StyleSticks(AssetGeometryGroup):
             **{
                 "Socket_0": atoms,
                 "Socket_1": selection,
-                "Socket_9": geometry,
+                "Socket_9": sphere_geometry,
                 "Socket_4": quality,
                 "Socket_3": scale,
                 "Socket_5": shade_smooth,
