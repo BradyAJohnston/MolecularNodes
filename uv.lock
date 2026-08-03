@@ -1355,7 +1355,6 @@ dependencies = [
     { name = "mrcfile" },
     { name = "nodebpy" },
     { name = "pandas" },
-    { name = "pyyaml" },
     { name = "starfile" },
 ]
 
@@ -1424,7 +1423,6 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
     { name = "pytest-xdist", marker = "extra == 'dev'" },
-    { name = "pyyaml" },
     { name = "quarto-cli", marker = "extra == 'docs'", specifier = ">=1.9.0" },
     { name = "quartodoc", marker = "extra == 'docs'", specifier = ">=0.11.1" },
     { name = "rdkit", marker = "extra == 'dev'" },

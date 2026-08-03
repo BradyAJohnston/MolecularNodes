@@ -9,7 +9,6 @@ dependencies = [
     "biotite>=1.7.1",
     "mrcfile",
     "starfile",
-    "PyYAML",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
