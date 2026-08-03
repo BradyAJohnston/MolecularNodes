@@ -299,7 +299,7 @@ class Canvas:
         value : float
             The FPS value to set.
         """
-        self.scene.render.fps = value
+        self.scene.render.fps = value  # ty: ignore[invalid-assignment]
 
     @property
     def frame_start(self) -> int:
