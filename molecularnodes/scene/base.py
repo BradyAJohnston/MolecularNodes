@@ -527,9 +527,7 @@ class Canvas:
 
     @property
     def _view_settings(self) -> bpy.types.ColorManagedViewSettings:
-        """
 
-        """
         view_settings = self.scene.view_settings
         assert view_settings
         return view_settings

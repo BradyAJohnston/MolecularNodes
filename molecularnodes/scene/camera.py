@@ -112,6 +112,8 @@ class Camera:
         # Viewpoint is a StrEnum, so named viewpoints (including bare strings) are
         # caught here; a Sequence[float] of Euler angles falls through
         if isinstance(viewpoint, str):
-            self.camera.rotation_euler = _viewpoint_rotation_eulers[Viewpoint(viewpoint)]
+            self.camera.rotation_euler = _viewpoint_rotation_eulers[
+                Viewpoint(viewpoint)
+            ]
         else:
             self.camera.rotation_euler = viewpoint
