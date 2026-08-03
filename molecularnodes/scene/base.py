@@ -660,7 +660,7 @@ class Canvas:
         return ViewTransform(self._view_settings.view_transform)
 
     @view_transform.setter
-    def view_transform(self, value: ViewTransform | str) -> None:
+    def view_transform(self, value: ViewTransform) -> None:
         """
         Set the view transform setting.
 

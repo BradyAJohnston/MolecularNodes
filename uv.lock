@@ -1388,6 +1388,7 @@ docs = [
     { name = "quartodoc" },
     { name = "setuptools" },
     { name = "tomlkit" },
+    { name = "tree-clipper" },
 ]
 jupyter = [
     { name = "ipython" },
@@ -1414,7 +1415,7 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodebpy", specifier = ">=520.10" },
+    { name = "nodebpy", specifier = ">=520.11" },
     { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.3.0" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
     { name = "pandas", specifier = "<3.0.0" },
@@ -1431,6 +1432,7 @@ requires-dist = [
     { name = "starfile" },
     { name = "syrupy", marker = "extra == 'dev'" },
     { name = "tomlkit", marker = "extra == 'docs'", specifier = ">=0.14.0" },
+    { name = "tree-clipper", marker = "extra == 'docs'" },
 ]
 provides-extras = ["bpy", "jupyter", "docs", "dev"]
 
@@ -1549,11 +1551,11 @@ wheels = [
 
 [[package]]
 name = "nodebpy"
-version = "520.10.0"
+version = "520.11.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/08/a6/76eba3556607b24cd54f632869ee25a5f42f457c52279efd7ef6562033f2/nodebpy-520.10.0.tar.gz", hash = "sha256:74d04c2238f73b66daa7c76b1ad21f384c66b3b705e3b0355feca2942aa6e88d", size = 323334, upload-time = "2026-08-03T15:43:19.425Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3d/a9/567424b97cafe1dcd56652059ccd908f1b66b21ed8e0e1c1e0570f40b554/nodebpy-520.11.0.tar.gz", hash = "sha256:e488457588610de71a847f22356f631774b2ce6f2153c0a9ecbcf82310e73f6f", size = 323333, upload-time = "2026-08-03T18:44:57.631Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ac/d4/587c6d58e0fb3872d399eb4969bf780bce61778a1e637f18b5d1842e2c0b/nodebpy-520.10.0-py3-none-any.whl", hash = "sha256:262c9c2f39748f9cab13f1218c2fab533a9cd59f329504addc7c48c5f316ad3d", size = 364291, upload-time = "2026-08-03T15:43:17.747Z" },
+    { url = "https://files.pythonhosted.org/packages/4f/cb/54e88ee2fb0e90f004a03089947751d602a1ec87b1055c365c078790a795/nodebpy-520.11.0-py3-none-any.whl", hash = "sha256:d96e31860423dd685abe2097600bb8ec67884638be0b32bce0e704b1827fb894", size = 364282, upload-time = "2026-08-03T18:44:56.114Z" },
 ]
 
 [[package]]
@@ -2495,6 +2497,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/57/a9/a2584b8313b89f94869ddb3c4074617a691de1812a614d2d50e32ca5a7a6/traitlets-5.15.1.tar.gz", hash = "sha256:7b1c07854fe25acb39e009bae49f11b79ff6cbb2f27999104e9110e7a6b53722", size = 163344, upload-time = "2026-06-03T12:26:06.181Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/96/8d/1080ee4c231f361b6ce4470d556c8c435b67c7e0753aaa641497ee92f88b/traitlets-5.15.1-py3-none-any.whl", hash = "sha256:770a53705f84b81ac107e83a1b3328ff2dae16094d8fc3cfc004e4b22dfd8e92", size = 85858, upload-time = "2026-06-03T12:26:04.395Z" },
+]
+
+[[package]]
+name = "tree-clipper"
+version = "0.1.9"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b9/ab/c1f634f161d2c34c7ab9aee68508a2f75ab5f92f4aee470e7b8fbbf555df/tree_clipper-0.1.9.tar.gz", hash = "sha256:6bf524e3a51d550ec74052f8f50ac31e923ee09a84a92630d5c7b39666a606d2", size = 39458, upload-time = "2026-07-28T12:42:02.209Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/71/2b/fd239a02ada86be50cd28dff8d28baceb81aada8c5a37d9cdc4f34a27bb9/tree_clipper-0.1.9-py3-none-any.whl", hash = "sha256:e81b80309839c5f5b221be338369de10911a11f543002480d5baf88093174ae6", size = 45158, upload-time = "2026-07-28T12:42:00.922Z" },
 ]
 
 [[package]]

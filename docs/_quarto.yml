@@ -9,6 +9,8 @@ filters:
 - quarto
 - quarto-pdb
 
+lightbox: true
+
 website:
   title: "Molecular Nodes"
   google-analytics: G-W3K8TDXSCF
@@ -67,6 +69,7 @@ format:
     theme:
     - darkly
     - style.scss
+    include-in-header: shiki.html
 
     toc: true
     toc-depth: 3
@@ -108,6 +111,7 @@ quartodoc:
       href: api/index.qmd
     - api/styles.qmd
     - api/trajectories.qmd
+    - api/nodebpy.qmd
     - api/rendering.qmd
     - api/materials.qmd
     # - api/density.qmd
@@ -126,8 +130,7 @@ quartodoc:
   sections:
   - title: Molecule
     desc: >
-      The unified `Molecule` entity and its facets. A `Molecule` represents any
-      structure — static or trajectory — backed by an `MDAnalysis.Universe`.
+      The unified `Molecule` entity and its facets. A `Molecule` represents any structure — static or trajectory — backed by an `MDAnalysis.Universe`.
     contents:
     - Molecule
     - entities.molecule.SelectionManager

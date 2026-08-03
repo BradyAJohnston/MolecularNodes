@@ -35,7 +35,7 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
     from nodebpy import compositor as c
 
     with canvas.compositor.reset() as (image, output):
-        image >> c.Glare(type="Bloom") >> output
+        image >> c.Glare.bloom() >> output
     canvas.compositor.add_annotations()
     ```
 
@@ -108,7 +108,7 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
 
         ```python
         with canvas.compositor.reset() as (image, output):
-            image >> c.Glare(type="Bloom") >> output
+            image >> c.Glare.bloom(strength=2.0) >> output
         ```
         """
         with self:

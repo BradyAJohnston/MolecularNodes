@@ -149,11 +149,8 @@ properties, so you rarely need to reach into `bpy`. The render engine and its sa
 count, the colour-management transform, exposure and gamma can all be set directly.
 
 ```{python}
-# engine sample count (proxied to the active engine)
 canvas.samples = 64
-
-# colour management
-canvas.view_transform = "AgX"
+canvas.view_transform = mn.scene.ViewTransform.KHRONOS
 canvas.exposure = 0.5
 canvas.gamma = 1.0
 
@@ -231,7 +228,7 @@ canvas.frame_object(t1, viewpoint="front")
 
 # add a bloom glare, then draw annotations back on top
 with canvas.compositor.reset() as (image, output):
-    image >> c.Glare(type="Bloom", strength=0.4) >> output
+    image >> c.Glare.bloom(strength=0.4) >> output
 canvas.compositor.add_annotations()
 canvas.snapshot()
 ```
@@ -244,18 +241,18 @@ with canvas.compositor.reset() as (image, output):
     (
         image
         >> c.Glare.bloom(strength=3.0, highlights_threshold=0.4)
-        >> c.Brightnesscontrast(contrast=0.3)
+        >> c.BrightnessContrast(contrast=0.3)
+        >> c.AlphaOver(foreground=c.Image(mn.scene.compositor._annotations_image()))
         >> output
     )
-canvas.compositor.add_annotations()
+# canvas.compositor.add_annotations()
 canvas.snapshot()
 ```
 
 To restore the plain render, reset the compositor and re-add the annotations.
 
 ```{python}
-with canvas.compositor.reset():
-    pass
+canvas.compositor.reset()
 canvas.compositor.add_annotations()
 ```
 
@@ -265,7 +262,7 @@ The [](`~molecularnodes.Canvas.animation`) method can be used to render animatio
 
 ```{python}
 # frame resid 1 and 129 in trajectory 1 at frame 97 from the front
-canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint="front")
+canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint=mn.scene.Viewpoint.FRONT)
 t1.average = 1
 # add a universe info annotation to trajectory 1
 t1.annotations.add_universe_info()
