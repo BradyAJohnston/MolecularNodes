@@ -346,6 +346,10 @@ class AnimateTrails(AssetGeometryGroup):
         """Trail Radius"""
         trail_resolution: IntegerSocket
         """Trail Resolution"""
+        trail_subdivisions: IntegerSocket
+        """Trail Subdivisions"""
+        trail_cutoff: FloatSocket
+        """Trail Cutoff"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -371,6 +375,8 @@ class AnimateTrails(AssetGeometryGroup):
         trail_frames: InputInteger = 5,
         trail_radius: InputFloat = 1.0,
         trail_resolution: InputInteger = 6,
+        trail_subdivisions: InputInteger = 6,
+        trail_cutoff: InputFloat = 10.0,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -383,6 +389,8 @@ class AnimateTrails(AssetGeometryGroup):
                 "Socket_2": trail_frames,
                 "Socket_11": trail_radius,
                 "Socket_10": trail_resolution,
+                "Socket_12": trail_subdivisions,
+                "Socket_5": trail_cutoff,
                 "Socket_7": shade_smooth,
                 "Socket_3": material,
             }
@@ -1806,6 +1814,10 @@ class ColorAttributeRandom(AssetGeometryGroup):
         """HSL Saturation"""
         hsl_lightness: FloatSocket
         """HSL Lightness"""
+        oklab_luminance: FloatSocket
+        """OKLab Luminance"""
+        oklab_chroma: FloatSocket
+        """OKLab Chroma"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
@@ -1825,6 +1837,8 @@ class ColorAttributeRandom(AssetGeometryGroup):
         color_seed: InputInteger = 0,
         hsl_saturation: InputFloat = 0.6,
         hsl_lightness: InputFloat = 0.6,
+        oklab_luminance: InputFloat = 0.9,
+        oklab_chroma: InputFloat = 0.2,
     ):
         super().__init__(
             **{
@@ -1833,6 +1847,8 @@ class ColorAttributeRandom(AssetGeometryGroup):
                 "Input_4": color_seed,
                 "Input_2": hsl_saturation,
                 "Input_3": hsl_lightness,
+                "Socket_3": oklab_luminance,
+                "Socket_4": oklab_chroma,
             }
         )
 
@@ -2318,10 +2334,12 @@ class ColorMixIntermediate(AssetGeometryGroup):
         """Factor"""
         menu: MenuSocket
         """Menu"""
-        intermediate: BooleanSocket
+        socket_1: BooleanSocket
         """Intermediate"""
         a: ColorSocket
         """A"""
+        socket_2: ColorSocket
+        """Intermediate"""
         b: ColorSocket
         """B"""
 
@@ -2340,16 +2358,18 @@ class ColorMixIntermediate(AssetGeometryGroup):
         self,
         factor: InputFloat = 0.5,
         menu: InputMenu | Literal["Linear", "OKLab"] = "Linear",
-        intermediate: InputBoolean = False,
+        socket_1: InputBoolean = False,
         a: InputColor = None,
+        socket_2: InputColor = None,
         b: InputColor = None,
     ):
         super().__init__(
             **{
                 "Socket_6": factor,
                 "Socket_5": menu,
-                "Socket_1": intermediate,
+                "Socket_1": socket_1,
                 "Socket_4": a,
+                "Socket_2": socket_2,
                 "Socket_3": b,
             }
         )
@@ -2404,6 +2424,10 @@ class ColorOKLabOffset(AssetGeometryGroup):
         """Colorspace"""
         luminance: FloatSocket
         """Luminance"""
+        saturation: FloatSocket
+        """Saturation"""
+        lightness: FloatSocket
+        """Lightness"""
         hue: FloatSocket
         """Hue"""
 
@@ -2423,6 +2447,8 @@ class ColorOKLabOffset(AssetGeometryGroup):
         color: InputColor = None,
         colorspace: InputMenu | Literal["OKLab", "HSL"] = "OKLab",
         luminance: InputFloat = 0.0,
+        saturation: InputFloat = 0.0,
+        lightness: InputFloat = 0.0,
         hue: InputFloat = 0.0,
     ):
         super().__init__(
@@ -2430,6 +2456,8 @@ class ColorOKLabOffset(AssetGeometryGroup):
                 "Socket_1": color,
                 "Socket_6": colorspace,
                 "Socket_3": luminance,
+                "Socket_4": saturation,
+                "Socket_5": lightness,
                 "Socket_2": hue,
             }
         )
@@ -2498,6 +2526,10 @@ class ColorRainbow(AssetGeometryGroup):
         """HSL Saturation"""
         hsl_value: FloatSocket
         """HSL Value"""
+        oklab_luminance: FloatSocket
+        """OKLab Luminance"""
+        oklab_chroma: FloatSocket
+        """OKLab Chroma"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
@@ -2517,6 +2549,8 @@ class ColorRainbow(AssetGeometryGroup):
         offset: InputFloat = 0.0,
         hsl_saturation: InputFloat = 0.8,
         hsl_value: InputFloat = 0.8,
+        oklab_luminance: InputFloat = 0.94,
+        oklab_chroma: InputFloat = 0.2,
     ):
         super().__init__(
             **{
@@ -2525,6 +2559,8 @@ class ColorRainbow(AssetGeometryGroup):
                 "Socket_19": offset,
                 "Socket_7": hsl_saturation,
                 "Socket_8": hsl_value,
+                "Socket_16": oklab_luminance,
+                "Socket_17": oklab_chroma,
             }
         )
 
@@ -2843,6 +2879,8 @@ class CurveCustomProfile(AssetGeometryGroup):
         """Profile Type"""
         uv_map: BooleanSocket
         """UV Map"""
+        u_component: MenuSocket
+        """U Component"""
         socket_6: RotationSocket
         """Profile Rotation"""
         profile_scale: VectorSocket
@@ -2874,6 +2912,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         profile_type: InputMenu
         | Literal["Default Profile", "Custom Profile"] = "Custom Profile",
         uv_map: InputBoolean = False,
+        u_component: InputMenu | Literal["Factor", "Length"] = "Factor",
         socket_6: InputRotation = None,
         profile_scale: InputVector = None,
         profile_curve: InputGeometry = None,
@@ -2887,6 +2926,7 @@ class CurveCustomProfile(AssetGeometryGroup):
                 "Input_15": subdivisions,
                 "Socket_8": profile_type,
                 "Socket_9": uv_map,
+                "Socket_10": u_component,
                 "Socket_6": socket_6,
                 "Input_2": profile_scale,
                 "Input_0": profile_curve,
@@ -3150,8 +3190,12 @@ class CurveVisualize(AssetGeometryGroup):
         """Selection"""
         position: VectorSocket
         """Position"""
+        normal: VectorSocket
+        """Normal"""
         handles: BooleanSocket
         """Handles"""
+        value: FloatSocket
+        """Value"""
         arrow_size: FloatSocket
         """Arrow Size"""
 
@@ -3171,7 +3215,9 @@ class CurveVisualize(AssetGeometryGroup):
         curve: InputGeometry = None,
         selection: InputBoolean = True,
         position: InputVector = None,
+        normal: InputVector = None,
         handles: InputBoolean = False,
+        value: InputFloat = 3.0,
         arrow_size: InputFloat = 2.0,
     ):
         super().__init__(
@@ -3179,7 +3225,9 @@ class CurveVisualize(AssetGeometryGroup):
                 "Socket_0": curve,
                 "Socket_8": selection,
                 "Socket_2": position,
+                "Socket_7": normal,
                 "Socket_4": handles,
+                "Socket_5": value,
                 "Socket_6": arrow_size,
             }
         )
@@ -3908,6 +3956,8 @@ class EvaluatePerGroup(AssetGeometryGroup):
         """Closure"""
         group: MenuSocket
         """Group"""
+        group_id: IntegerSocket
+        """Group ID"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -3927,9 +3977,15 @@ class EvaluatePerGroup(AssetGeometryGroup):
         geometry: InputGeometry = None,
         closure: InputClosure = None,
         group: InputMenu | Literal["chain_id", "Group ID"] = "chain_id",
+        group_id: InputInteger = 0,
     ):
         super().__init__(
-            **{"Socket_0": geometry, "Socket_1": closure, "Socket_4": group}
+            **{
+                "Socket_0": geometry,
+                "Socket_1": closure,
+                "Socket_4": group,
+                "Socket_3": group_id,
+            }
         )
 
 
@@ -6965,6 +7021,8 @@ class PeriodicArray(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
         """Geometry"""
+        update: BooleanSocket
+        """Update"""
         a: FloatSocket
         b: FloatSocket
         c: FloatSocket
@@ -6992,6 +7050,7 @@ class PeriodicArray(AssetGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
+        update: InputBoolean = True,
         a: InputFloat = 0.0,
         b: InputFloat = 0.0,
         c: InputFloat = 0.0,
@@ -7005,6 +7064,7 @@ class PeriodicArray(AssetGeometryGroup):
         super().__init__(
             **{
                 "Socket_9": geometry,
+                "Socket_15": update,
                 "Socket_0": a,
                 "Socket_1": b,
                 "Socket_2": c,
@@ -7026,6 +7086,8 @@ class PeriodicBox(AssetGeometryGroup):
     _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
 
     class _Inputs(SocketAccessor):
+        update: BooleanSocket
+        """Update"""
         a: FloatSocket
         b: FloatSocket
         c: FloatSocket
@@ -7050,6 +7112,7 @@ class PeriodicBox(AssetGeometryGroup):
 
     def __init__(
         self,
+        update: InputBoolean = True,
         a: InputFloat = 0.0,
         b: InputFloat = 0.0,
         c: InputFloat = 0.0,
@@ -7059,6 +7122,7 @@ class PeriodicBox(AssetGeometryGroup):
     ):
         super().__init__(
             **{
+                "Socket_7": update,
                 "Socket_9": a,
                 "Socket_10": b,
                 "Socket_11": c,
@@ -7374,6 +7438,10 @@ class RandomColor(AssetGeometryGroup):
         """HSL Saturation"""
         hsl_lightness: FloatSocket
         """HSL Lightness"""
+        oklab_luminance: FloatSocket
+        """OKLab Luminance"""
+        oklab_chroma: FloatSocket
+        """OKLab Chroma"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
@@ -7393,6 +7461,8 @@ class RandomColor(AssetGeometryGroup):
         colorspace: InputMenu | Literal["HSL", "OKLab"] = "HSL",
         hsl_saturation: InputFloat = 0.6,
         hsl_lightness: InputFloat = 0.6,
+        oklab_luminance: InputFloat = 0.9,
+        oklab_chroma: InputFloat = 0.2,
     ):
         super().__init__(
             **{
@@ -7401,6 +7471,8 @@ class RandomColor(AssetGeometryGroup):
                 "Socket_6": colorspace,
                 "Socket_0": hsl_saturation,
                 "Socket_1": hsl_lightness,
+                "Socket_4": oklab_luminance,
+                "Socket_5": oklab_chroma,
             }
         )
 
@@ -9363,6 +9435,8 @@ class StarfileInstances(AssetGeometryGroup):
         """Points"""
         point_selection: MenuSocket
         """Point Selection"""
+        selection: BooleanSocket
+        """Selection"""
         image: IntegerSocket
         """Image"""
         menu: MenuSocket
@@ -9387,6 +9461,7 @@ class StarfileInstances(AssetGeometryGroup):
         self,
         points: InputGeometry = None,
         point_selection: InputMenu | Literal["Image", "Selection"] = "Image",
+        selection: InputBoolean = True,
         image: InputInteger = 0,
         menu: InputMenu | Literal["Instance", "Simple"] = "Instance",
         instance: InputObject = None,
@@ -9396,6 +9471,7 @@ class StarfileInstances(AssetGeometryGroup):
             **{
                 "Socket_0": points,
                 "Socket_17": point_selection,
+                "Socket_16": selection,
                 "Socket_3": image,
                 "Socket_14": menu,
                 "Socket_2": instance,
@@ -9467,6 +9543,8 @@ class StyleBallAndStick(AssetGeometryGroup):
         """Bond Scale"""
         bond_find: BooleanSocket
         """Bond Find"""
+        bond_find_scale: FloatSocket
+        """Bond Find Scale"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -9493,6 +9571,7 @@ class StyleBallAndStick(AssetGeometryGroup):
         bond_split: InputMenu | Literal["Single", "Double"] = "Double",
         bond_scale: InputFloat = 0.3,
         bond_find: InputBoolean = False,
+        bond_find_scale: InputFloat = 1.0,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -9506,6 +9585,7 @@ class StyleBallAndStick(AssetGeometryGroup):
                 "Socket_22": bond_split,
                 "Input_7": bond_scale,
                 "Socket_3": bond_find,
+                "Socket_16": bond_find_scale,
                 "Input_4": shade_smooth,
                 "Input_5": material,
             }
@@ -9546,12 +9626,20 @@ class StyleCartoon(AssetGeometryGroup):
         """Loop Radius"""
         backbone_shape: MenuSocket
         """Backbone Shape"""
+        nucleic_width: FloatSocket
+        """Nucleic Width"""
+        nucleic_thickness: FloatSocket
+        """Nucleic Thickness"""
         nucleic_radius: FloatSocket
         """Nucleic Radius"""
         base_shape: MenuSocket
         """Base Shape"""
+        base_scale_cylinder: VectorSocket
+        """Base Scale Cylinder"""
         base_scale_rectangle: VectorSocket
         """Base Scale Rectangle"""
+        color_blur: BooleanSocket
+        """Color Blur"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -9583,9 +9671,13 @@ class StyleCartoon(AssetGeometryGroup):
         sheet_smoothing: InputFloat = 0.5,
         loop_radius: InputFloat = 0.4,
         backbone_shape: InputMenu | Literal["Cylinder", "Rectangle"] = "Cylinder",
+        nucleic_width: InputFloat = 3.0,
+        nucleic_thickness: InputFloat = 1.0,
         nucleic_radius: InputFloat = 1.5,
         base_shape: InputMenu | Literal["Cylinder", "Rectangle"] = "Rectangle",
+        base_scale_cylinder: InputVector = None,
         base_scale_rectangle: InputVector = None,
+        color_blur: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -9604,9 +9696,13 @@ class StyleCartoon(AssetGeometryGroup):
                 "Input_7": sheet_smoothing,
                 "Input_12": loop_radius,
                 "Socket_32": backbone_shape,
+                "Socket_35": nucleic_width,
+                "Socket_36": nucleic_thickness,
                 "Socket_24": nucleic_radius,
                 "Socket_22": base_shape,
+                "Socket_63": base_scale_cylinder,
                 "Socket_64": base_scale_rectangle,
+                "Socket_1": color_blur,
                 "Input_8": shade_smooth,
                 "Input_9": material,
             }
@@ -9635,16 +9731,24 @@ class StyleRibbon(AssetGeometryGroup):
         """Backbone Threshold"""
         uv_map: BooleanSocket
         """UV Map"""
+        u_component: MenuSocket
+        """U Component"""
         nucleic_backbone_shape: MenuSocket
         """Nucleic Backbone Shape"""
         nucleic_backbone_radius: FloatSocket
         """Nucleic Backbone Radius"""
+        nucleic_backbone_width: FloatSocket
+        """Nucleic Backbone Width"""
+        nucleic_backbone_thickness: FloatSocket
+        """Nucleic Backbone Thickness"""
         base_geometry: GeometrySocket
         """Base Geometry"""
         base_scale: VectorSocket
         """Base Scale"""
         base_resolution: IntegerSocket
         """Base Resolution"""
+        base_realize: BooleanSocket
+        """Base Realize"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -9670,12 +9774,16 @@ class StyleRibbon(AssetGeometryGroup):
         backbone_smoothing: InputFloat = 0.5,
         backbone_threshold: InputFloat = 4.5,
         uv_map: InputBoolean = False,
+        u_component: InputMenu | Literal["Factor", "Length"] = "Factor",
         nucleic_backbone_shape: InputMenu
         | Literal["Cicular", "Rectangular"] = "Cicular",
         nucleic_backbone_radius: InputFloat = 2.0,
+        nucleic_backbone_width: InputFloat = 4.0,
+        nucleic_backbone_thickness: InputFloat = 1.0,
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
         base_resolution: InputInteger = 4,
+        base_realize: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -9688,11 +9796,15 @@ class StyleRibbon(AssetGeometryGroup):
                 "Socket_7": backbone_smoothing,
                 "Socket_40": backbone_threshold,
                 "Socket_29": uv_map,
+                "Socket_30": u_component,
                 "Socket_26": nucleic_backbone_shape,
                 "Socket_51": nucleic_backbone_radius,
+                "Socket_49": nucleic_backbone_width,
+                "Socket_50": nucleic_backbone_thickness,
                 "Socket_21": base_geometry,
                 "Socket_22": base_scale,
                 "Socket_18": base_resolution,
+                "Socket_19": base_realize,
                 "Socket_5": shade_smooth,
                 "Socket_6": material,
             }
@@ -9713,8 +9825,12 @@ class StyleSpheres(AssetGeometryGroup):
         """Selection"""
         sphere_geometry: MenuSocket
         """Sphere Geometry"""
+        quality: IntegerSocket
+        """Quality"""
         scale: FloatSocket
         """Scale"""
+        shade_smooth: BooleanSocket
+        """Shade Smooth"""
         material: MaterialSocket
         """Material"""
 
@@ -9734,7 +9850,9 @@ class StyleSpheres(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         sphere_geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Point",
+        quality: InputInteger = 2,
         scale: InputFloat = 0.8,
+        shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
         super().__init__(
@@ -9742,7 +9860,9 @@ class StyleSpheres(AssetGeometryGroup):
                 "Input_0": atoms,
                 "Input_1": selection,
                 "Input_2": sphere_geometry,
+                "Input_4": quality,
                 "Input_3": scale,
+                "Input_5": shade_smooth,
                 "Input_6": material,
             }
         )
@@ -9833,6 +9953,8 @@ class StyleSurface(AssetGeometryGroup):
         """Mean Iterations"""
         separate_by: MenuSocket
         """Separate By"""
+        group_id: IntegerSocket
+        """Group ID"""
         color_source: MenuSocket
         """Color Source"""
         color_blur: IntegerSocket
@@ -9865,6 +9987,7 @@ class StyleSurface(AssetGeometryGroup):
         mean_width: InputInteger = 1,
         mean_iterations: InputInteger = 1,
         separate_by: InputMenu | Literal["chain_id", "Group ID"] = "chain_id",
+        group_id: InputInteger = 0,
         color_source: InputMenu | Literal["Alpha Carbon", "Nearest"] = "Alpha Carbon",
         color_blur: InputInteger = 2,
         shade_smooth: InputBoolean = True,
@@ -9882,6 +10005,7 @@ class StyleSurface(AssetGeometryGroup):
                 "Socket_35": mean_width,
                 "Socket_36": mean_iterations,
                 "Socket_22": separate_by,
+                "Socket_21": group_id,
                 "Socket_19": color_source,
                 "Socket_9": color_blur,
                 "Socket_10": shade_smooth,
@@ -10290,6 +10414,12 @@ class TransformMix(AssetGeometryGroup):
         """B"""
         menu: MenuSocket
         """Menu"""
+        translation: FloatSocket
+        """Translation"""
+        rotation: FloatSocket
+        """Rotation"""
+        scale: FloatSocket
+        """Scale"""
         factor: FloatSocket
         """Factor"""
 
@@ -10309,10 +10439,21 @@ class TransformMix(AssetGeometryGroup):
         a: InputMatrix = None,
         b: InputMatrix = None,
         menu: InputMenu | Literal["Single", "Split"] = "Single",
+        translation: InputFloat = 0.5,
+        rotation: InputFloat = 0.5,
+        scale: InputFloat = 0.5,
         factor: InputFloat = 0.5,
     ):
         super().__init__(
-            **{"Socket_0": a, "Socket_5": b, "Socket_6": menu, "Socket_7": factor}
+            **{
+                "Socket_0": a,
+                "Socket_5": b,
+                "Socket_6": menu,
+                "Socket_3": translation,
+                "Socket_2": rotation,
+                "Socket_4": scale,
+                "Socket_7": factor,
+            }
         )
 
 
