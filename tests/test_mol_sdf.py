@@ -28,7 +28,7 @@ def test_load(snapshot, format, style):
             case "ball_and_stick":
                 node = StyleBallAndStick(sphere_geometry="Mesh")
             case "spheres":
-                node = StyleSpheres(geometry="Mesh")
+                node = StyleSpheres(sphere_geometry="Mesh")
             case "surface":
                 node = StyleSurface()
         (tree.atoms >> node >> tree.join)

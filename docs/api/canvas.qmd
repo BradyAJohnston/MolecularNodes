@@ -35,7 +35,7 @@ t2 = mn.Molecule.load(TPR, XTC)
     t1
     .add_style("ribbon", peptide_radius=0.5)
     .add_style("ball_and_stick", quality=4, selection="resid 184")
-    .add_style("spheres", geometry="Instance", selection="resid 1 129")
+    .add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
 )
 
 t2.add_style("ribbon", material="MN Ambient Occlusion")

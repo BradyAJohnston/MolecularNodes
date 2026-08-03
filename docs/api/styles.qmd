@@ -68,7 +68,7 @@ create an `mda.AtomGroup` which is used to create a boolean attribute, and that 
 inside of the node tree for rendering.
 
 ```{python}
-mol.add_style("spheres", geometry="Instance", selection="resid 1 129")
+mol.add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
 canvas.frame_object(mol)
 canvas.snapshot()
 ```

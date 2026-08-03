@@ -41,7 +41,7 @@ def test_style_1(snapshot, code, assembly, style):
             case "ball_and_stick":
                 style_node = StyleBallAndStick(sphere_geometry="Mesh")
             case "spheres":
-                style_node = StyleSpheres(geometry="Mesh")
+                style_node = StyleSpheres(sphere_geometry="Mesh")
             case "cartoon":
                 style_node = StyleCartoon()
             case "ribbon":

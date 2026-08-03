@@ -67,7 +67,7 @@ protein_center = np.mean(protein.atoms.positions, axis=0)
 t = mn.Molecule(u).add_style("ribbon", quality=5, peptide_radius=2)
 t.add_style(
     "spheres",
-    geometry="Instance",
+    sphere_geometry="Instance",
     selection=f"not protein and prop y >= {protein_center[1]}",
 )
 
