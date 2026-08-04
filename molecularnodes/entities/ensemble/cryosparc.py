@@ -238,7 +238,7 @@ class CryoSPARC(Ensemble):
         self,
         name: str = "CryoSPARC Ensemble",
         node_setup: bool = True,
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         fraction: float = 1.0,
         simplify=False,
     ) -> db.BlenderObject:
