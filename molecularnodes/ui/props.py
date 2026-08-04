@@ -1,19 +1,18 @@
+import json
 import bpy
 from bpy.props import (
     BoolProperty,
-    CollectionProperty,
     EnumProperty,
     FloatProperty,
     IntProperty,
     PointerProperty,
     StringProperty,
 )
-from databpy.object import LinkedObjectError
+from nodebpy.nodes.geometry import NamedAttribute
 from ..blender.utils import set_object_visibility
 from ..entities.base import EntityType
 from ..handlers import _update_entities
 from ..session import get_entity
-from .style import STYLE_ITEMS
 
 uuid_property = StringProperty(
     name="UUID",
@@ -42,7 +41,7 @@ SURFACE_STYLE_ITEMS = (
     (
         "density_surface",
         "Surface",
-        "Style Density Surface",
+        "Density Style Surface",
     ),
     # (
     #     "density_iso_surface",
@@ -68,51 +67,53 @@ def _set_frame(self, frame):
     _update_entities(self, bpy.context)
 
 
-def _get_entity_visibility(self) -> bool:
-    """get callback for entity visibility property"""
-    return self.get("visible", True)
+def _get_object_visibility(self) -> bool:
+    """get callback for object visibility property"""
+    try:
+        return self.id_data.visible_get()
+    except RuntimeError:
+        # object not in the current view layer
+        return True
 
 
-def _set_entity_visibility(self, visible: bool) -> None:
-    """set callback for entity visibility property"""
-    self["visible"] = visible
-    entity = bpy.context.scene.MNSession.get(self.name)
+def _set_object_visibility(self, visible: bool) -> None:
+    """set callback for object visibility property"""
+    obj = self.id_data
+    set_object_visibility(obj, visible)
+    entity = bpy.context.scene.MNSession.get(obj.uuid)
     if entity is not None:
-        set_object_visibility(entity.object, self.visible)
         entity.annotations._update_annotation_object()
 
 
-def _entities_active_index_callback(self, context: bpy.context) -> None:  # type: ignore
-    """update callback for entities active_index change"""
-    if self.entities_active_index == -1:
-        return
-    uuid = context.scene.mn.entities[self.entities_active_index].name
-    try:
-        # object might not yet be created during session entity registration
-        entity_object = context.scene.MNSession.get(uuid).object
-    except (LinkedObjectError, AttributeError):
-        return
-    # just setting view_layer.objects.active is not enough
-    bpy.ops.object.select_all(action="DESELECT")  # deselect all objects
-    if entity_object.name in context.view_layer.objects:
-        context.view_layer.objects.active = entity_object  # make active object
-    bpy.context.view_layer.update()  # update view layer to reflect changes
-    if bpy.context.active_object:  # can be None for hidden objects
-        bpy.context.active_object.select_set(True)  # set as selected object
+def _get_entities_active_index(self) -> int:
+    """
+    Derive the list selection from the scene's active object.
+
+    The active object is the single source of truth for the Entities list, so
+    selecting an entity object in the outliner or viewport is mirrored in the
+    list. Returns -1 when the active object is not a molecular entity.
+    """
+    obj = bpy.context.view_layer.objects.active
+    if obj is None or not obj.mn.is_entity:
+        return -1
+    return bpy.data.objects.find(obj.name)
 
 
-class EntityProperties(bpy.types.PropertyGroup):
-    # name property is implicit and is set to uuid for find lookups
-    # type value is one of EntityType enum
-    __slots__ = []
-    type: StringProperty(name="Entity Type", default="")  # type: ignore
-    visible: BoolProperty(
-        name="visible",
-        description="Visibility of the entity",
-        default=True,
-        get=_get_entity_visibility,
-        set=_set_entity_visibility,
-    )  # type: ignore
+def _set_entities_active_index(self, index: int) -> None:
+    """set callback: mirror the list selection into the scene selection"""
+    # the index points into bpy.data.objects (the Entities list data source)
+    if index < 0 or index >= len(bpy.data.objects):
+        return
+    entity_object = bpy.data.objects[index]
+    if not entity_object.mn.is_entity:
+        return
+    context = bpy.context
+    if entity_object.name not in context.view_layer.objects:
+        return
+    for obj in list(context.selected_objects):
+        obj.select_set(False)
+    context.view_layer.objects.active = entity_object
+    entity_object.select_set(True)
 
 
 def _update_dssp_display_option(self, context):
@@ -174,21 +175,21 @@ class DSSPProperties(bpy.types.PropertyGroup):
         default="per-frame",
         update=_update_dssp_display_option,
     )
-    window_size: IntProperty(
+    window_size: IntProperty(  # type: ignore
         name="Window Size",
         description="Number of frames in the sliding window",
         min=1,
         soft_max=10,
         default=5,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    apply_sw_threshold: BoolProperty(
+    )
+    apply_sw_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    sw_threshold: FloatProperty(
+    )
+    sw_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for sliding window average",
         subtype="FACTOR",
@@ -196,14 +197,14 @@ class DSSPProperties(bpy.types.PropertyGroup):
         max=1.0,
         default=0.5,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    apply_ta_threshold: BoolProperty(
+    )
+    apply_ta_threshold: BoolProperty(  # type: ignore
         name="Apply Threshold",
         description="Apply a threshold comparison to calculated mean",
         default=False,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    ta_threshold: FloatProperty(
+    )
+    ta_threshold: FloatProperty(  # type: ignore
         name="Threshold",
         description="Threshold fraction of frames for trajectory average",
         subtype="FACTOR",
@@ -211,236 +212,29 @@ class DSSPProperties(bpy.types.PropertyGroup):
         max=1.0,
         default=0.5,
         update=_update_dssp_display_option,
-    )  # type: ignore
-    applied: BoolProperty(
+    )
+    applied: BoolProperty(  # type: ignore
         default=True,
         update=_update_dssp_applied,
-    )  # type: ignore
+    )
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
-    entities: CollectionProperty(name="Entities", type=EntityProperties)  # type: ignore
-    entities_active_index: IntProperty(
+    entities_active_index: IntProperty(  # type: ignore
         name="Active entity index",
+        description="Index into bpy.data.objects of the entity object active in"
+        " the Entities list, derived from the scene's active object",
         default=-1,
-        update=_entities_active_index_callback,
-    )  # type: ignore
-
-    import_del_hydrogen: BoolProperty(  # type: ignore
-        name="Remove Hydrogens",
-        description="Remove the hydrogens from a structure on import",
-        default=False,
-    )
-
-    import_local_path: StringProperty(  # type: ignore
-        name="File",
-        description="File path of the structure to open",
-        options={"TEXTEDIT_UPDATE"},
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-
-    import_code_alphafold: StringProperty(  # type: ignore
-        name="UniProt ID",
-        description="The UniProt ID to use for downloading from the AlphaFold databse",
-        options={"TEXTEDIT_UPDATE"},
-    )
-
-    import_format_fetch: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        items=(
-            ("bcif", ".bcif", "Binary compressed .cif file, fastest for downloading"),
-            ("cif", ".cif", "The new standard of .cif / .mmcif"),
-            ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
-        ),
-    )
-
-    import_code_pdb: StringProperty(  # type: ignore
-        name="PDB",
-        description="The PDB code to download and import",
-        options={"TEXTEDIT_UPDATE"},
-        maxlen=12,
+        get=_get_entities_active_index,
+        set=_set_entities_active_index,
     )
 
     is_updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Currently updating data in the scene, don't trigger more updates",
         default=False,
-    )
-
-    import_centre: BoolProperty(  # type: ignore
-        name="Centre Structure",
-        description="Move the imported Molecule on the World Origin",
-        default=False,
-    )
-
-    import_centre_type: EnumProperty(  # type: ignore
-        name="Method",
-        default="mass",
-        items=(
-            (
-                "mass",
-                "Mass",
-                "Adjust the structure's centre of mass to be at the world origin",
-                1,
-            ),
-            (
-                "centroid",
-                "Centroid",
-                "Adjust the structure's centroid (centre of geometry) to be at the world origin",
-                2,
-            ),
-        ),
-    )
-
-    import_node_setup: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        default=True,
-        description="Create and set up a Geometry Nodes tree on import",
-    )
-
-    import_build_assembly: BoolProperty(  # type: ignore
-        name="Build Assembly",
-        description="Add a node to build the biological assembly on import",
-        default=False,
-    )
-
-    import_remove_solvent: BoolProperty(  # type: ignore
-        name="Remove Solvent",
-        description="Delete the solvent from the structure on import",
-        default=True,
-    )
-
-    import_oxdna_topology: StringProperty(  # type: ignore
-        name="Toplogy",
-        description="File path for the topology to import (.top)",
-        subtype="FILE_PATH",
-    )
-    import_oxdna_trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory to import (.oxdna / .dat)",
-        subtype="FILE_PATH",
-    )
-    import_oxdna_name: StringProperty(  # type: ignore
-        name="Name", description="Name of the created object.", default="NewOrigami"
-    )
-    import_style: EnumProperty(  # type: ignore
-        name="Style",
-        description="Default style for importing",
-        items=STYLE_ITEMS,
-        default="spheres",
-    )
-    import_md_topology: StringProperty(  # type: ignore
-        name="Topology",
-        description="File path for the toplogy file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_md_trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_md_name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name of the molecule on import",
-        default="NewTrajectory",
-        maxlen=0,
-    )
-    import_density_invert: BoolProperty(  # type: ignore
-        name="Invert Data",
-        description="Invert the values in the map. Low becomes high, high becomes low.",
-        default=False,
-    )
-    import_density_center: BoolProperty(  # type: ignore
-        name="Center Density",
-        description="Translate the density so that the center of the box is at the origin.",
-        default=False,
-    )
-    import_density_overwrite: BoolProperty(  # type: ignore
-        name="Overwrite Intermediate File",
-        description="Overwrite generated intermediate .vdb file.",
-        default=False,
-    )
-    import_density: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the map file.",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-
-    import_density_style: EnumProperty(  # type: ignore
-        name="Style",
-        items=(
-            (
-                "density_surface",
-                "Surface",
-                "A mesh surface based on the specified threshold",
-                0,
-            ),
-            (
-                "density_iso_surface",
-                "ISO Surface",
-                "A mesh surface based on the specified iso value",
-                1,
-            ),
-            (
-                "density_wire",
-                "Wire",
-                "A wire mesh surface based on the specified threshold",
-                2,
-            ),
-        ),
-    )
-
-    panel_selection: bpy.props.EnumProperty(  # type: ignore
-        name="Panel Selection",
-        items=(
-            ("import", "Import", "Import macromolecules", 0),
-            ("object", "Object", "Adjust settings affecting the selected object", 1),
-            (
-                "session",
-                "Session",
-                "Interacting with the Molecular Nodes session tracking all of the objects",
-                2,
-            ),
-        ),
-    )
-
-    panel_import_type: bpy.props.EnumProperty(  # type: ignore
-        name="Method",
-        items=(
-            ("pdb", "PDB", "Download from the PDB"),
-            ("alphafold", "AlphaFold", "Download from the AlphaFold DB"),
-            ("local", "Local", "Open a local file"),
-            ("md", "MD", "Import a molecular dynamics trajectory"),
-            ("density", "Density", "Import an EM Density Map"),
-            ("star", "Starfile", "Import a .starfile mapback file"),
-            ("cryosparc", "CryoSPARC", "Import a .cs metadata file from CryoSPARC"),
-            ("cellpack", "CellPack", "Import a CellPack .cif/.bcif file"),
-            ("dna", "oxDNA", "Import an oxDNA file"),
-        ),
-    )
-    import_star_file_path: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the `.star` file to import.",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_cell_pack_path: bpy.props.StringProperty(  # type: ignore
-        name="File",
-        description="File to import (.cif, .bcif)",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    import_cryosparc_file_path: StringProperty(  # type: ignore
-        name="File",
-        description="File path to `.cs` file",
-        subtype="FILE_PATH",
     )
 
 
@@ -467,11 +261,29 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         update=_update_annotations_visibility,
     )
 
-    biological_assemblies: StringProperty(  # type: ignore
+    internal_biological_assemblies: StringProperty(  # type: ignore
         name="Biological Assemblies",
         description="A list of biological assemblies to be created",
         default="",
+        options={"HIDDEN"},
     )
+
+    @property
+    def biological_assemblies(self) -> dict:
+        """Return the biological assemblies for the entity object"""
+        if not self.internal_biological_assemblies:
+            return {}
+        return json.loads(self.internal_biological_assemblies)
+
+    @biological_assemblies.setter
+    def biological_assemblies(self, value: dict | str | None) -> None:
+        """Set the biological assemblies for the entity object"""
+        if value is None or value == "":
+            self.internal_biological_assemblies = ""
+        elif isinstance(value, str):
+            self.internal_biological_assemblies = value
+        else:
+            self.internal_biological_assemblies = json.dumps(value)
 
     entity_type: EnumProperty(  # type: ignore
         name="Entity Type",
@@ -480,12 +292,146 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default="None",
     )
 
+    visible: BoolProperty(  # type: ignore
+        name="Visible",
+        description="Visibility of the entity object in the viewport and renders",
+        get=_get_object_visibility,
+        set=_set_object_visibility,
+    )
+
     code: StringProperty(  # type: ignore
         name="PDB",
         description="PDB code used to download this structure",
         maxlen=12,
         options={"HIDDEN"},
     )
+    filepath: StringProperty(  # type: ignore
+        name="File Path",
+        description="Source file this entity was loaded from, used to reload it",
+        subtype="FILE_PATH",
+        default="",
+        options={"HIDDEN"},
+    )
+    database: StringProperty(  # type: ignore
+        name="Database",
+        description="Database this structure was fetched from, used to reload it",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    internal_chain_ids: StringProperty(  # type: ignore
+        name="Chain IDs",
+        description="A list of chain IDs for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def chain_ids(self) -> list[str]:
+        """Return a list of chain IDs for the entity object"""
+        return self.internal_chain_ids.split(",") if self.internal_chain_ids else []
+
+    @chain_ids.setter
+    def chain_ids(self, value: list[str] | None) -> None:
+        """Set the list of chain IDs for the entity object"""
+        if value is None:
+            self.internal_chain_ids = ""
+        else:
+            self.internal_chain_ids = ",".join(value)
+
+    internal_entity_ids: StringProperty(  # type: ignore
+        name="Entity IDs",
+        description="A list of entity IDs for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def entity_ids(self) -> list[str]:
+        """Return a list of entity IDs for the entity object"""
+        return self.internal_entity_ids.split(",") if self.internal_entity_ids else []
+
+    @entity_ids.setter
+    def entity_ids(self, value: list[str] | None) -> None:
+        """Set the list of entity IDs for the entity object"""
+        if value is None:
+            self.internal_entity_ids = ""
+        else:
+            self.internal_entity_ids = ",".join(value)
+
+    internal_segments: StringProperty(  # type: ignore
+        name="Segments",
+        description="A list of segment IDs for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def segments(self) -> list[str]:
+        """Return a list of segment IDs for the entity object"""
+        return self.internal_segments.split(",") if self.internal_segments else []
+
+    @segments.setter
+    def segments(self, value: list[str] | None) -> None:
+        """Set the list of segment IDs for the entity object"""
+        if value is None:
+            self.internal_segments = ""
+        else:
+            self.internal_segments = ",".join(str(v) for v in value)
+
+    internal_atom_type_unique: StringProperty(  # type: ignore
+        name="Unique Atom Types",
+        description="A list of the unique atom types for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def atom_type_unique(self) -> list[str]:
+        """Return a list of the unique atom types for the entity object"""
+        return (
+            self.internal_atom_type_unique.split(",")
+            if self.internal_atom_type_unique
+            else []
+        )
+
+    @atom_type_unique.setter
+    def atom_type_unique(self, value: list[str] | None) -> None:
+        """Set the list of the unique atom types for the entity object"""
+        if value is None:
+            self.internal_atom_type_unique = ""
+        else:
+            self.internal_atom_type_unique = ",".join(str(v) for v in value)
+
+    internal_categories: StringProperty(  # type: ignore
+        name="Categories",
+        description="Per-column category labels for the entity object",
+        default="",
+        options={"HIDDEN"},
+    )
+
+    @property
+    def categories(self) -> dict[str, list[str]]:
+        """Return the per-column category labels for the entity object"""
+        if not self.internal_categories:
+            return {}
+        return json.loads(self.internal_categories)
+
+    @categories.setter
+    def categories(self, value: dict[str, list[str]] | str | None) -> None:
+        """Set the per-column category labels for the entity object"""
+        if value is None or value == "":
+            self.internal_categories = ""
+        elif isinstance(value, str):
+            self.internal_categories = value
+        else:
+            self.internal_categories = json.dumps(value)
+
+    @property
+    def is_entity(self) -> bool:
+        """Whether this object is a Molecular Nodes entity."""
+        return self.entity_type != "None"
+
     trajectory_selection_index: IntProperty(  # type: ignore
         name="Index of selection",
         description="Index of selection, that is selected for the UI",
@@ -570,6 +516,10 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     """Group of properties for custom selections for MDAnalysis import."""
 
     __slots__ = []
+
+    def node(self) -> NamedAttribute:
+        """Creates and returns a NamedAttribute node inside the active node tree for this selection."""
+        return NamedAttribute.boolean(name=self.name)
 
     name: StringProperty(  # type: ignore
         name="Attribute Name",
@@ -685,7 +635,6 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 
 CLASSES = [
-    EntityProperties,
     DSSPProperties,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,

@@ -51,11 +51,40 @@ class TestTrajectory:
         return mn.session.get_session()
 
     def test_include_bonds(self, universe_with_bonds):
-        traj = mn.entities.Trajectory(universe_with_bonds)
+        traj = mn.entities.Molecule(universe_with_bonds)
         assert len(traj.data.edges) == 28015
 
+    def test_frames_to_collection(self, universe):
+        traj = mn.entities.Molecule(universe, name="TestFramesToCollection")
+        n_frames = traj.universe.trajectory.n_frames
+        n_atoms = traj.universe.atoms.n_atoms
+
+        # bake every frame
+        frames = traj.frames_to_collection()
+        assert len(frames.objects) == n_frames
+        # each frame object has one vertex per atom
+        for obj in frames.objects:
+            assert len(obj.data.vertices) == n_atoms
+
+        # a baked frame's positions match the universe at that frame
+        traj.uframe = 2
+        expected = traj._scaled_position
+        got = databpy.named_attribute(
+            frames.objects[f"{traj.name}_frame_2"], "position"
+        )
+        assert np.allclose(got, expected)
+
+        # a stepped range bakes fewer frames, and re-baking replaces (not appends)
+        stepped = traj.frames_to_collection(start=0, stop=4, step=2)
+        assert stepped is frames
+        assert len(stepped.objects) == 2
+
+        # step must be positive
+        with pytest.raises(ValueError):
+            traj.frames_to_collection(step=0)
+
     def test_attributes_added(self, universe):
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         attributes = traj.list_attributes()
         # check if all attributes are added.
 
@@ -79,7 +108,7 @@ class TestTrajectory:
             assert att in attributes
 
     def test_trajectory_update(self, snapshot, universe):
-        traj = mn.entities.Trajectory(universe, name="TestTrajectoryUpdate")
+        traj = mn.entities.Molecule(universe, name="TestTrajectoryUpdate")
         print(f"{bpy.context.scene.frame_current=}")
         print(f"{list(bpy.app.handlers.frame_change_pre)=}")
         bpy.context.scene.frame_set(0)
@@ -99,7 +128,7 @@ class TestTrajectory:
 
     @pytest.mark.parametrize("offset", [-2, 2])
     def test_trajectory_offset(self, universe, offset: bool):
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         bpy.context.scene.frame_set(0)
         pos_0 = traj.position
 
@@ -121,7 +150,7 @@ class TestTrajectory:
 
     @pytest.mark.parametrize("interpolate", [True, False])
     def test_subframes(self, universe, interpolate: bool):
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         bpy.context.scene.frame_set(0)
         traj.subframes = 0
         traj.interpolate = interpolate
@@ -156,7 +185,7 @@ class TestTrajectory:
         snapshot_custom: NumpySnapshotExtension,
         univ_across_boundary,
     ):
-        traj = mn.entities.Trajectory(univ_across_boundary)
+        traj = mn.entities.Molecule(univ_across_boundary)
         traj.subframes = 5
         bpy.context.scene.frame_set(2)
         pos_a = traj.position
@@ -168,7 +197,7 @@ class TestTrajectory:
         traj.correct_periodic = False
 
     def test_position_at_frame(self, universe):
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         assert not np.allclose(
             traj.frame_manager._position_at_frame(1),
             traj.frame_manager._position_at_frame(3),
@@ -176,12 +205,12 @@ class TestTrajectory:
 
     @pytest.mark.parametrize(
         "correct,subframes,interpolate",
-        itertools.product([True, False], [0, 1, 2, 3], [True, False]),
+        list(itertools.product([True, False], [0, 1, 2, 3], [True, False])),
     )
     def test_mean_position(
         self, snapshot, subframes: int, correct: bool, interpolate: bool, universe
     ):
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         traj.correct_periodic = correct
         traj.subframes = subframes
         traj.interpolate = interpolate
@@ -196,7 +225,7 @@ class TestTrajectory:
         )
 
     def test_gui_selection_add_remove(self, universe):
-        traj = mn.Trajectory(universe)
+        traj = mn.Molecule(universe)
         assert "selection_0" not in traj.list_attributes()
         bpy.ops.mn.trajectory_selection_add()
         assert "selection_0" in traj.list_attributes()
@@ -231,7 +260,7 @@ class TestTrajectory:
         # to API add selections we currently have to operate on the UIList rather than the
         # universe itself, which isn't great
 
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         bpy.context.scene.frame_set(0)
         sel = traj.selections.from_string("around 3.5 protein", name="custom_sel_1")
         bpy.context.scene.frame_set(2)
@@ -258,7 +287,7 @@ class TestTrajectory:
     ):
         ca_ag = universe.select_atoms("name CA")
         around_protein = universe.select_atoms("around 3.5 protein", updating=True)
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         bpy.context.scene.frame_set(0)
         traj.selections.from_atomgroup(atomgroup=ca_ag, name="ca")
         traj.selections.from_atomgroup(atomgroup=around_protein, name="around_protein")
@@ -279,7 +308,7 @@ class TestTrajectory:
         top = data_dir / "md_ppr/box.gro"
         traj = data_dir / "md_ppr/first_5_frames.xtc"
         universe = mda.Universe(top, traj)
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         traj.reset_playback()
         uuid = traj.uuid
         bpy.context.scene.frame_set(2)
@@ -325,77 +354,8 @@ class TestTrajectory:
         # Fails if the trajectory paths aren't abs paths after load
         traj.universe.trajectory.rewind()
 
-    def test_add_style(
-        self,
-        universe,
-    ):
-        session = mn.session.get_session()
-        # test defaults
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
-        session.remove_trajectory(t1)
-        # test add_trajectory with non-default style
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
-        session.remove_trajectory(t1)
-        # test add_trajectory with no style
-        t1 = mn.Trajectory(universe)
-        assert len(t1.tree.nodes) == 2
-        # test adding empty style
-        t1.add_style(style=None)
-        assert len(t1.tree.nodes) == 2
-        # test adding invalid style
-        with pytest.raises(ValueError):
-            t1.add_style(style="invalid")
-        # test adding new style
-        t1.add_style(style="cartoon")
-        assert len(t1.tree.nodes) == 7
-        # test add_style with selection string
-        selection = "resid 1:10"
-        t1.add_style(style="ribbon", selection=selection)
-        assert "selection_0" in t1.list_attributes()
-        # test add_style with AtomGroup selection
-        selection = universe.select_atoms("resid 1:10")
-        t1.add_style(style="ribbon", selection=selection)
-        assert "selection_1" in t1.list_attributes()
-        session.remove_trajectory(t1)
-        # test add_style from UI
-        t1 = mn.Trajectory(universe)
-        assert len(t1.styles) == 0
-        bpy.ops.mn.add_style("EXEC_DEFAULT", uuid=t1.uuid)
-        assert len(t1.styles) == 1
-        session.remove_trajectory(t1)
-
-    def test_remove_style(
-        self,
-        universe,
-    ):
-        session = mn.session.get_session()
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.tree.nodes) == 7
-        assert len(t1.styles) == 1
-        # add new style
-        t1.add_style(style="cartoon")
-        assert len(t1.styles) == 2
-        # test remove style
-        t1.styles[0].remove()
-        assert len(t1.styles) == 1
-        t1.styles[0].remove()
-        assert len(t1.styles) == 0
-        session.remove_trajectory(t1)
-        # test remove style from UI
-        t1 = mn.Trajectory(universe).add_style("cartoon")
-        assert len(t1.styles) == 1
-        style_node = mn.nodes.geometry.get_final_style_nodes(t1.tree)[0]
-        style_node_index = t1.tree.nodes.find(style_node.name)
-        bpy.ops.mn.remove_style(
-            "EXEC_DEFAULT", uuid=t1.uuid, style_node_index=style_node_index
-        )
-        assert len(t1.styles) == 0
-        session.remove_trajectory(t1)
-
     def test_get_view(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         # Note: When a frame is not specified, whatever is the current
         # universe frame should be used. In some random test failures
         # with bpy, the frame value was 3 for both cases leading to
@@ -420,11 +380,11 @@ class TestTrajectory:
         # from the SMILES representation of a simple molecule
         ethanol_smiles = "CCO"
         u = mda.Universe.from_smiles(ethanol_smiles)
-        mn.Trajectory(u)
+        mn.Molecule(u)
 
     def test_trajectory_pickle_no_pycapsule_error(self, universe):
         """Test that Trajectory objects can be pickled without PyCapsule errors."""
-        traj = mn.entities.Trajectory(universe, name="TestPickleTrajectory")
+        traj = mn.entities.Molecule(universe, name="TestPickleTrajectory")
 
         # Add selections and calculations
         traj.selections.from_string("protein", name="protein_sel")
@@ -468,7 +428,7 @@ class TestTrajectory:
 
     def test_trajectory_pickle_deserialization_failure(self, universe):
         """Test that trajectory deserialization fails fast with clear errors when files are missing."""
-        traj = mn.entities.Trajectory(universe, name="TestFailedDeserialization")
+        traj = mn.entities.Molecule(universe, name="TestFailedDeserialization")
 
         # Pickle the trajectory
         with tempfile.NamedTemporaryFile() as tmp_file:
@@ -486,19 +446,19 @@ class TestTrajectory:
             state["_universe_trajectory"] = "/nonexistent/path/trajectory.xtc"
 
             # Attempt to restore - this should raise RuntimeError, not create broken object
-            new_traj = mn.entities.Trajectory.__new__(mn.entities.Trajectory)
+            new_traj = mn.entities.Molecule.__new__(mn.entities.Molecule)
             with pytest.raises(RuntimeError) as exc_info:
                 new_traj.__setstate__(state)
 
             # Verify the error message is descriptive
             error_msg = str(exc_info.value)
-            assert "Failed to restore Trajectory from saved session" in error_msg
+            assert "Failed to restore Molecule from saved session" in error_msg
             assert "Could not recreate MDAnalysis Universe" in error_msg
             assert "/nonexistent/path/topology.pdb" in error_msg
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
     def test_dssp(self, snapshot, universe):
-        t = mn.Trajectory(universe).add_style("cartoon")
+        t = mn.Molecule(universe).add_style("cartoon")
         # test no sec_struct attribute without initializing dssp
         with pytest.raises(
             KeyError,
@@ -534,7 +494,7 @@ class TestTrajectory:
         assert not np.allclose(no_sec_struct, avg_sec_struct)
 
     def test_reload_operator(self, universe):
-        traj = mn.entities.Trajectory(universe)
+        traj = mn.entities.Molecule(universe)
         traj.add_style("cartoon")
         obj_name = traj.name
         session = mn.session.get_session()
@@ -551,7 +511,7 @@ def test_martini(snapshot, topology):
     universe = mda.Universe(
         data_dir / "martini" / topology, data_dir / "martini/pent/PENT2_100frames.xtc"
     )
-    traj = mn.entities.Trajectory(universe)
+    traj = mn.entities.Molecule(universe)
     bpy.context.scene.frame_set(0)
     pos_a = traj.named_attribute("position")
 

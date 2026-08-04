@@ -63,7 +63,9 @@ jobs:
     needs: [lint]
     runs-on: ${{ matrix.os }}
     strategy:
-      max-parallel: 4
+      max-parallel: 6
+      # without this the first OS to fail cancels the others, hiding whether a failure
+      # is platform-specific
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -74,22 +76,17 @@ jobs:
       - name: Install molecularnodes
         run: |
           uv sync --all-extras
-      - name: Run Tests "not density"
-        timeout-minutes: 5
-        continue-on-error: true
+      - name: Run Tests
+        timeout-minutes: 8
         run: |
-          uv run pytest -n auto -k "not density"
-
-      - name: Run Tests "density"
-        timeout-minutes: 3
-        continue-on-error: true
-        run: |
-          uv run pytest -k density
+          uv run pytest -n auto
 
   test-blender:
     name: Test in Blender
     needs: [lint]
     runs-on: ${{ matrix.os }}
+    # the daily build is a moving target - report its failures without failing the run
+    continue-on-error: ${{ matrix.version == 'daily' }}
     strategy:
       max-parallel: 6
       fail-fast: false

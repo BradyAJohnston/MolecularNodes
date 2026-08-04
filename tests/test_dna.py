@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from databpy.object import LinkedObjectError
 import molecularnodes as mn
-from molecularnodes.entities.trajectory import oxdna
+from molecularnodes.entities.molecule import oxdna
 from .constants import data_dir
 
 pytestmark = pytest.mark.filterwarnings(

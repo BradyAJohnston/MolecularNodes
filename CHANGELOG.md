@@ -192,10 +192,10 @@ Fixed created during refactor that disabled the custom selection list for MD imp
 import molecularnodes as mn
 
 # to fetch structures from the protein data bank
-struc_list = ['4ozs', '1xi4', '6n2y']
+struc_list = ["4ozs", "1xi4", "6n2y"]
 for pdb in struc_list:
-    mn.load.molecule_rcsb(pdb, starting_style = 1)
+    mn.load.molecule_rcsb(pdb, starting_style=1)
 
 # to open a local structure file
-mn.load.molecule_local('file_path_here.pdb', 'SomeMoleculeName', starting_style = 2)
+mn.load.molecule_local("file_path_here.pdb", "SomeMoleculeName", starting_style=2)
 ```

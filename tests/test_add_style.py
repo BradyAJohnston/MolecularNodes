@@ -1,101 +1,85 @@
 import bpy
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 import molecularnodes as mn
-from molecularnodes.nodes import geometry
-from molecularnodes.nodes.geometry import add_style_branch
-
-
-def test_style_interface():
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
-    assert len(mol.tree.nodes) == 7
-    add_style_branch(mol.tree, "cartoon")
-    assert len(mol.tree.nodes) == 8
-    geometry.input_named_attribute(
-        mol.tree.nodes["Style Cartoon"].inputs["Selection"], "is_backbone", "BOOLEAN"
-    )
-    assert len(mol.tree.nodes) == 9
-    add_style_branch(mol.tree, "surface", selection="is_backbone")
-    assert len(mol.tree.nodes) == 11
-    print(f"{list(mol.tree.nodes)}")
-
-    assert (
-        mol.tree.nodes["Style Surface"]
-        .inputs["Selection"]
-        .links[0]
-        .from_node.inputs["Name"]
-        .default_value
-        == "is_backbone"
-    )
-    add_style_branch(mol.tree, "spheres")
-
-    style = mol.styles[0]
-    assert_allclose(
-        style.peptide_width,
-        bpy.data.node_groups["Style Cartoon"]
-        .interface.items_tree["Peptide Width"]
-        .default_value,
-    )
-    style.peptide_width = 1.0
-    assert_allclose(style.peptide_width, 1.0)
-
-    assert len(mol.tree.nodes) == 12
-    mol.add_style("cartoon", color="is_peptide")
-    assert len(mol.tree.nodes) == 15
-    mol.styles[-1].remove()
-    assert len(mol.tree.nodes) == 12
-
-
-def test_add_color_node():
-    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
-    assert len(mol.tree.nodes) == 7
-    add_style_branch(mol.tree, "spheres")
-    assert len(mol.tree.nodes) == 8
-    # if we are adding a style with a Set Color node, we check that 3 extra nodes
-    # have been added rather than just 1 (style, color & named attribute), then we check
-    # that the Set Color nodes has an input for the "Color" socket that is a named attribute
-    # node, checking that the name is the one that we set
-    add_style_branch(mol.tree, "cartoon", color="is_peptide")
-    assert len(mol.tree.nodes) == 11
-    node_sc = mol.tree.nodes["Style Cartoon"].inputs[0].links[0].from_node
-    assert node_sc.inputs["Color"].is_linked
-    node_na = node_sc.inputs["Color"].links[0].from_socket.node
-    assert node_na.inputs["Name"].default_value == "is_peptide"
-    assert node_na.data_type == "FLOAT_COLOR"
+from .constants import data_dir
 
 
 def test_add_style_with_selection():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
-    mol.select.res_id(range(50)).is_side_chain().store_selection("show_side_chains")
-    mol.add_style("ball+stick", selection="show_side_chains")
-    mol.add_style("cartoon")
+    mol.store_named_attribute(mol.named_attribute("is_side_chain"), "show_side_chains")
+    mol.add_style("ball_and_stick", selection="show_side_chains")
 
-    sel = (
-        mn.entities.MoleculeSelector()
-        .res_id(range(50, 500))
-        .is_side_chain()
-        .res_name(["ARG", "LYS", "VAL"])
+    node_style = [
+        node
+        for node in mol.modifier_node_tree.nodes
+        if (
+            isinstance(node, bpy.types.GeometryNodeGroup)
+            and node.node_tree.name == "Style Ball and Stick"
+        )
+    ][0]
+
+    assert (
+        node_style.inputs["Selection"].links[0].from_node.inputs["Name"].default_value
+        == "show_side_chains"
     )
-
-    mol.add_style(
-        "ball+stick",
-        selection=sel,
-    )
-
-    assert "sel_0" in mol.list_attributes()
-    assert np.allclose(mol.named_attribute("sel_0"), sel.evaluate_on_array(mol.array))
 
     with pytest.warns(UserWarning):
         mol.add_style("cartoon", selection="non_existing_selection")
 
 
-def test_change_style_values():
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
-    pre = mol.named_attribute("position", evaluate=True)
-    mol.styles[0].quality = 5
-    post = mol.named_attribute("position", evaluate=True)
+def test_styles_panel_style_node_selection():
+    """The Styles panel identifies the active style node from the list index."""
+    from molecularnodes.ui.panel import is_style_node
 
-    assert len(pre) < len(post)
-    with pytest.raises(ValueError):
-        mol.styles[0].quality = 1.0
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    node_group = mol.modifier_node_tree
+    style_names = [n.name for n in node_group.nodes if is_style_node(n)]
+    assert style_names, "adding a style should create a style node"
+
+    # the panel treats styles_active_index as an index into node_group.nodes and
+    # only shows details when it points at a style node
+    index = node_group.nodes.find(style_names[0])
+    mol.props.styles_active_index = index
+
+    active = node_group.nodes[mol.props.styles_active_index]
+    assert is_style_node(active)
+    assert active.name == style_names[0]
+
+
+def test_styles_panel_node_group_lookup_without_session():
+    """Style nodes are found from the object alone, without a session link."""
+    from molecularnodes.ui.panel import get_entity_node_group, is_style_node
+
+    session = mn.session.get_session()
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    obj = mol.object
+
+    # drop the session link (as after re-opening a .blend without the pickle)
+    session.remove_entity(obj.uuid)
+    assert session.get(obj.uuid) is None
+
+    # the node group and its style nodes are still reachable from the object
+    node_group = get_entity_node_group(obj)
+    assert node_group is not None
+    style_names = [n.name for n in node_group.nodes if is_style_node(n)]
+    assert style_names
+
+
+def test_swap_style_operator():
+    """mn.swap_style swaps the style node's tree in place, keeping connections."""
+    from molecularnodes.ui.panel import is_style_node
+
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    ng = mol.modifier_node_tree
+    style = [n for n in ng.nodes if is_style_node(n)][0]
+    assert style.node_tree.name == "Style Cartoon"
+
+    res = bpy.ops.mn.swap_style(
+        name_tree=ng.name, name_node=style.name, style="surface"
+    )
+    assert res == {"FINISHED"}
+
+    # still exactly one style node, now referencing the Surface style tree
+    style_nodes = [n for n in ng.nodes if is_style_node(n)]
+    assert len(style_nodes) == 1
+    assert style_nodes[0].node_tree.name == "Style Surface"

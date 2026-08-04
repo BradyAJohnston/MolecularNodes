@@ -1,0 +1,50 @@
+---
+title: Authoring Node Trees
+subtitle: Using `nodebpy` to create and edit node trees
+---
+
+Molecular Nodes uses `nodebpy` for creating and changing the node trees - Geometry, Shader and Compositor.
+
+This allows for replicating the node-based workflows from the GUI, enabling the full power of Geometry Nodes (GN) and the other node editors from within a script.
+
+We can access and edit the GN node tree using the `mol.tree` property. This is a `nodebpy.TreeBuilder` subclass for editing the tree.
+
+
+```{python}
+import molecularnodes as mn
+from molecularnodes.nodes import geometry as mg
+from nodebpy import geometry as g
+
+cv = mn.Canvas()
+mol = mn.Molecule.fetch("8H1B")
+
+with mol.tree.reset() as (atoms, join):
+    # creating one branch / chain of nodes for Ball and Stick style
+    (
+        atoms
+        >> mg.SetColor(color=mg.ColorCommon(carbon=mg.RandomColor(id=mg.ChainID())))
+        >> mg.StyleBallAndStick(
+            selection=mg.IsSideChain(),
+            material=mn.material.AmbientOcclusion().material
+        )
+        >> join
+    )
+
+    # creating a second branch, where we apply a different color and style
+    # but join it back into the same `Join Geometry` node
+    (
+        atoms
+        >> mg.SetColor(color=mg.ColorRainbow())
+        >> mg.StyleCartoon(quality=5,loop_radius=0.6, material=mn.material.Flat().material)
+        >> join
+    )
+
+mol.tree
+```
+
+
+
+```{python}
+cv.frame_object(mol)
+cv.snapshot()
+```

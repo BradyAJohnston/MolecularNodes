@@ -1,9 +1,13 @@
-from typing import Tuple
+from typing import Generic, TypeVar, overload
 import bpy
-from bpy.types import Material, ShaderNodeTree
 from databpy.material import append_from_blend
+from nodebpy import shader as sh
+from nodebpy.builder import MaterialBuilder
 from ..assets import MN_DATA_FILE
-from .interface import TreeInterface, check_linked, remove_linked, socket
+from .interface import remove_linked
+from .shader import ColorAO, MNColor
+from .shader import Flat as FlatShader
+from .shader import TransparentOutline as TransparentOutlineShader
 
 MATERIAL_NAMES = [
     "MN Default",
@@ -19,66 +23,340 @@ def append_material(name: str) -> bpy.types.Material:
     return append_from_blend(name, str(MN_DATA_FILE))
 
 
-def add_all_materials() -> None:
+def add_all_materials() -> dict[str, bpy.types.Material]:
     "Append all pre-defined materials from the MN_DATA_FILE."
-    for name in MATERIAL_NAMES:
-        append_material(name)
+    return {name: append_material(name) for name in MATERIAL_NAMES}
 
 
-# class to interact with a bpy.types.Material node tree and change some of the default
-# values of the nodes inside of it
-class MaterialTreeInterface(TreeInterface):
-    def __init__(self, material: Material):
-        super().__init__()
-        self._allowable_properties.add("material")
-        if isinstance(material, str):
-            material = bpy.data.materials[material]
-        elif isinstance(material, Material):
-            material = material
-        elif isinstance(
-            material, bpy.types.Material
-        ):  # note this is equivalent class to the above.
-            material = material
-        else:
-            raise ValueError(
-                f"Material must be a string or a Material object. Found {type(material)}"
+T = TypeVar("T")
+
+
+class SocketValue(Generic[T]):
+    """
+    Expose a node input's ``default_value`` as a property on a `PresetMaterial`.
+
+    The descriptor reads and writes the input socket of a node handle stored on
+    the preset instance, so parameters remain tweakable after the material has
+    been created.
+    """
+
+    def __init__(self, node_attr: str, input_name: str, doc: str = ""):
+        self._node_attr = node_attr
+        self._input_name = input_name
+        self.__doc__ = doc or None
+
+    def _socket(self, obj: "PresetMaterial"):
+        return getattr(getattr(obj, self._node_attr).i, self._input_name)
+
+    @overload
+    def __get__(self, obj: None, objtype: type) -> "SocketValue[T]": ...
+    @overload
+    def __get__(self, obj: "PresetMaterial", objtype: type | None = ...) -> T: ...
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return self._socket(obj).default_value
+
+    def __set__(self, obj: "PresetMaterial", value: T) -> None:
+        self._socket(obj).default_value = value
+
+
+class PresetMaterial:
+    """
+    Base class for the pre-built MolecularNodes materials.
+
+    Instantiating a preset creates a new, independent material datablock built
+    with `nodebpy`, so tweaking one instance never affects the materials of
+    other styles. The nodes used to build the material are kept as attributes
+    on the instance and the key parameters are exposed as properties that read
+    and write the underlying node inputs directly.
+    """
+
+    name = "Material"
+
+    def _create(self, name: str | None = None) -> MaterialBuilder:
+        "Create the material datablock and return its tree builder for a `with` block."
+        self._tree = sh.material(name if name is not None else type(self).name)
+        self._tree.nodes.clear()
+        return self._tree
+
+    @property
+    def material(self) -> bpy.types.Material:
+        "The underlying Blender material datablock."
+        return self._tree.material
+
+    @property
+    def tree(self) -> MaterialBuilder:
+        "The nodebpy tree builder for the material's node tree."
+        return self._tree
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}(material={self.material.name!r})"
+
+
+class Default(PresetMaterial):
+    """
+    The default MolecularNodes material.
+
+    A principled BSDF with the atom colors darkened by a small amount of
+    ambient occlusion, so crevices between atoms read clearly.
+
+    Parameters
+    ----------
+    roughness : float
+        Roughness of the surface.
+    ao_distance : float
+        Distance (in world units) that the ambient occlusion samples.
+    ao_exponent : float
+        Exponent applied to the occlusion factor; higher values darken
+        crevices more aggressively.
+    name : str, optional
+        Name for the created material datablock. Defaults to ``"Default"``.
+    """
+
+    name = "Default"
+
+    def __init__(
+        self,
+        roughness: float = 0.264,
+        ao_distance: float = 0.5,
+        ao_exponent: float = 1.0,
+        *,
+        name: str | None = None,
+    ):
+        with self._create(name):
+            color = MNColor()
+            self.ao = ColorAO(color.o.color, distance=ao_distance, exponent=ao_exponent)
+            self.bsdf = sh.PrincipledBSDF(
+                base_color=self.ao.o.result,
+                roughness=roughness,
+                ior=1.45,
+                alpha=color.o.alpha,
             )
+            self.bsdf.o.bsdf >> sh.MaterialOutput().i.surface
 
-        self.material: Material = material
-        self.tree: ShaderNodeTree = self.material.node_tree  # type: ignore
+    roughness = SocketValue[float]("bsdf", "roughness", "Roughness of the surface.")
+    ao_distance = SocketValue[float](
+        "ao", "distance", "Distance that the ambient occlusion samples."
+    )
+    ao_exponent = SocketValue[float](
+        "ao", "exponent", "Exponent applied to the occlusion factor."
+    )
 
-    def _expose_all_inputs(self):
-        for node in self.tree.nodes:
-            if "Material Output" in node.name:
-                continue
-            for input in node.inputs:
-                if input.is_unavailable:
-                    continue
-                input_name = input.name.lower().replace(" ", "_")
-                node_name = (
-                    (node.name if node.label == "" else node.label)
-                    .lower()
-                    .replace(" ", "_")
-                )
-                prop_name = f"{node_name}_{input_name}"
 
-                if hasattr(input, "default_value"):
-                    self._register_property(prop_name)
-                    setattr(self.__class__, prop_name, socket(input))
+class AmbientOcclusion(PresetMaterial):
+    """
+    Colors shaded only by ambient occlusion.
+
+    An emission shader that ignores scene lighting entirely, so it is cheap to
+    render and looks similar in Cycles and EEVEE.
+
+    Parameters
+    ----------
+    distance : float
+        Distance in metres (nm) that the ambient occlusion samples.
+    exponent : float
+        Exponent applied to the occlusion factor; higher values darken
+        crevices more aggressively.
+    name : str, optional
+        Name for the created material datablock. Defaults to
+        ``"Ambient Occlusion"``.
+    """
+
+    name = "Ambient Occlusion"
+
+    def __init__(
+        self,
+        distance: float = 1.0,
+        exponent: float = 2.0,
+        *,
+        name: str | None = None,
+    ):
+        with self._create(name):
+            color = MNColor()
+            self.ao = ColorAO(color.o.color, distance=distance, exponent=exponent)
+            emission = sh.Emission(color=self.ao.o.result)
+            emission.o.emission >> sh.MaterialOutput().i.surface
+
+    distance = SocketValue[float](
+        "ao", "distance", "Distance that the ambient occlusion samples."
+    )
+    exponent = SocketValue[float](
+        "ao", "exponent", "Exponent applied to the occlusion factor."
+    )
+
+
+class Flat(PresetMaterial):
+    """
+    Flat cartoon-like shading with an optional dark outline.
+
+    Parameters
+    ----------
+    outline : bool
+        Whether to render the dark outline around the object.
+    threshold : float
+        Threshold for the edge detection that forms the outline.
+    thickness : float
+        Thickness of the outline.
+    name : str, optional
+        Name for the created material datablock. Defaults to ``"Flat"``.
+    """
+
+    name = "Flat"
+
+    def __init__(
+        self,
+        outline: bool = True,
+        threshold: float = 0.8,
+        thickness: float = 0.15,
+        *,
+        name: str | None = None,
+    ):
+        with self._create(name):
+            self.node = FlatShader(
+                outline="Outline" if outline else "None",
+                threshold=threshold,
+                thickness=thickness,
+            )
+            self.node.o.emission >> sh.MaterialOutput().i.surface
+
+    threshold = SocketValue[float](
+        "node", "threshold", "Threshold for the outline edge detection."
+    )
+    thickness = SocketValue[float]("node", "thickness", "Thickness of the outline.")
+
+    @property
+    def outline(self) -> bool:
+        "Whether the dark outline is rendered."
+        return self.node.i.outline.default_value == "Outline"
+
+    @outline.setter
+    def outline(self, value: bool) -> None:
+        self.node.i.outline.default_value = "Outline" if value else "None"
+
+
+class Squishy(PresetMaterial):
+    """
+    A soft, subsurface-scattering material that makes molecules look jelly-like.
+
+    Parameters
+    ----------
+    subsurface_scale : float
+        Scale of the subsurface scattering radius; larger values look softer.
+    roughness : float
+        Roughness of the surface.
+    name : str, optional
+        Name for the created material datablock. Defaults to ``"Squishy"``.
+    """
+
+    name = "Squishy"
+
+    def __init__(
+        self,
+        subsurface_scale: float = 0.2,
+        roughness: float = 1.0,
+        *,
+        name: str | None = None,
+    ):
+        with self._create(name):
+            color = MNColor()
+            self.bsdf = sh.PrincipledBSDF(
+                base_color=color.o.color,
+                alpha=color.o.alpha,
+                roughness=roughness,
+                ior=1.05,
+                diffuse_roughness=1.0,
+                subsurface_weight=1.0,
+                subsurface_radius=(1.0, 0.2, 0.1),
+                subsurface_scale=subsurface_scale,
+                coat_weight=1.0,
+                coat_roughness=0.246,
+            )
+            self.bsdf.o.bsdf >> sh.MaterialOutput().i.surface
+
+    subsurface_scale = SocketValue[float](
+        "bsdf", "subsurface_scale", "Scale of the subsurface scattering radius."
+    )
+    roughness = SocketValue[float]("bsdf", "roughness", "Roughness of the surface.")
+
+
+class TransparentOutline(PresetMaterial):
+    """
+    A partially transparent material with an optional solid outline.
+
+    Parameters
+    ----------
+    alpha : float
+        Opacity of the surface; ``0`` is fully transparent, ``1`` fully opaque.
+    outline : bool
+        Whether to render the solid outline around the object.
+    outline_color : tuple[float, float, float, float]
+        Color of the outline.
+    threshold : float
+        Threshold for the edge detection that forms the outline.
+    thickness : float
+        Thickness of the outline.
+    name : str, optional
+        Name for the created material datablock. Defaults to
+        ``"Transparent Outline"``.
+    """
+
+    name = "Transparent Outline"
+
+    def __init__(
+        self,
+        alpha: float = 0.7,
+        outline: bool = True,
+        outline_color: tuple[float, float, float, float] = (0.0, 0.0, 0.0, 1.0),
+        threshold: float = 0.2,
+        thickness: float = 0.15,
+        *,
+        name: str | None = None,
+    ):
+        with self._create(name):
+            self.node = TransparentOutlineShader(
+                alpha=alpha,
+                menu="Outline" if outline else "Transparent",
+                outline_color=outline_color,
+                threshold=threshold,
+                thickness=thickness,
+            )
+            self.node.o.shader >> sh.MaterialOutput().i.surface
+        self.material.surface_render_method = "BLENDED"
+
+    alpha = SocketValue[float]("node", "alpha", "Opacity of the surface.")
+    outline_color = SocketValue[tuple[float, float, float, float]](
+        "node", "outline_color", "Color of the outline."
+    )
+    threshold = SocketValue[float](
+        "node", "threshold", "Threshold for the outline edge detection."
+    )
+    thickness = SocketValue[float]("node", "thickness", "Thickness of the outline.")
+
+    @property
+    def outline(self) -> bool:
+        "Whether the solid outline is rendered."
+        return self.node.i.menu.default_value == "Outline"
+
+    @outline.setter
+    def outline(self, value: bool) -> None:
+        self.node.i.menu.default_value = "Outline" if value else "Transparent"
 
 
 def set_socket_material(
     socket: bpy.types.NodeSocketMaterial,
-    mat: MaterialTreeInterface
-    | bpy.types.Material
+    mat: bpy.types.Material
     | bpy.types.NodeSocketMaterial
+    | PresetMaterial
+    | MaterialBuilder
     | str
     | None,
 ) -> None:
     remove_linked(socket)
     if mat is None:
         socket.default_value = None
-    elif isinstance(mat, MaterialTreeInterface):
+    elif isinstance(mat, (PresetMaterial, MaterialBuilder)):
         socket.default_value = mat.material
     elif isinstance(mat, bpy.types.Material):
         socket.default_value = mat
@@ -93,9 +371,10 @@ def set_socket_material(
 
 def assign_material(
     node: bpy.types.GeometryNodeGroup,
-    new_material: MaterialTreeInterface
-    | bpy.types.Material
+    new_material: bpy.types.Material
     | bpy.types.NodeSocketMaterial
+    | PresetMaterial
+    | MaterialBuilder
     | str
     | None = "default",
 ) -> None:
@@ -120,337 +399,3 @@ def assign_material(
         )
     except KeyError:
         return "Material input not found on node."
-
-
-def dynamic_material_interface(material: bpy.types.Material) -> MaterialTreeInterface:
-    class_name = (
-        f"DynamicMaterialInterface_{material.name.replace(' ', '_').replace('.', '_')}"
-    )
-
-    DynaicMaterialInterface = type(
-        class_name,
-        (MaterialTreeInterface,),
-        {},
-    )
-
-    interface = DynaicMaterialInterface(material)
-    interface._expose_all_inputs()
-    return interface
-
-
-def getset_material(socket: bpy.types.NodeSocketMaterial):
-    def getter(self) -> MaterialTreeInterface | None:
-        check_linked(socket)
-        mat = getattr(socket, "default_value")
-        if mat is None:
-            return None
-        else:
-            interface = dynamic_material_interface(mat)
-            return interface
-
-    def setter(
-        self,
-        mat: MaterialTreeInterface
-        | bpy.types.Material
-        | bpy.types.NodeSocketMaterial
-        | str
-        | None,
-    ) -> None:
-        set_socket_material(socket, mat)
-
-    return property(getter, setter)
-
-
-class MaterialConstructor(MaterialTreeInterface):
-    def __init__(self, material_name: str, **kwargs):
-        super().__init__(append_material(material_name))
-        self._expose_all_inputs()
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-            else:
-                raise ValueError(f"Material does not have property {key}")
-
-
-class AmbientOcclusion(MaterialConstructor):
-    def __init__(self, **kwargs):
-        super().__init__("MN Ambient Occlusion", **kwargs)
-
-
-class Default(MaterialConstructor):
-    def __init__(self, **kwargs):
-        super().__init__("MN Default", **kwargs)
-
-
-class FlatOutline(MaterialConstructor):
-    def __init__(self, **kwargs):
-        super().__init__("MN Flat Outline", **kwargs)
-
-
-class Squishy(MaterialConstructor):
-    def __init__(self, **kwargs):
-        super().__init__("MN Squishy", **kwargs)
-
-
-class TransparentOutline(MaterialConstructor):
-    def __init__(self, **kwargs):
-        super().__init__("MN Transparent Outline", **kwargs)
-
-
-class Material:
-    """
-    Note: if this is a nice route we could add fns that will create MN_materials here and remove them from the blend file.
-
-    Materials:
-    - AmbientOcclusion
-    - Default  ( tried to replicate the defaults below )
-    - FlatOutlineq
-    - Squishy
-    - TransparentOutline
-
-    """
-
-    @staticmethod
-    def glass() -> bpy.types.Material:
-        return create_material(
-            name="MN Glass",  # Add a descriptive name
-            base_color=(0.8, 0.9, 1.0, 0.2),
-            transmission_weight=0.95,
-            roughness=0.0,
-            ior=1.45,
-            specular_ior_level=0.6,  # Note: Renamed to "Specular IOR" in create_material
-        )
-
-    @staticmethod
-    def gold() -> bpy.types.Material:
-        return create_material(
-            name="MN Gold",
-            base_color=(1.0, 0.8, 0.2, 1.0),
-            metallic=1.0,
-            roughness=0.3,
-            anisotropic=0.8,
-            anisotropic_rotation=0.5,
-        )
-
-    @staticmethod
-    def green_glow() -> bpy.types.Material:
-        return create_material(
-            name="MN GreenGlow",
-            base_color=(0.0, 1.0, 0.0, 1.0),
-            emission_strength=5.0,
-            emission_color=(0.0, 1.0, 0.0, 1.0),
-            metallic=0.0,
-            roughness=0.2,
-        )
-
-    @staticmethod
-    def holo() -> bpy.types.Material:
-        return create_material(
-            name="MN Holo",
-            base_color=(0.2, 0.6, 1.0, 0.3),
-            emission_strength=2.0,
-            emission_color=(0.2, 0.6, 1.0, 1.0),
-            transmission_weight=0.8,
-            thin_film_thickness=1000,
-        )
-
-    @staticmethod
-    def iridescent() -> bpy.types.Material:
-        return create_material(
-            name="MN Iridescent",
-            base_color=(0.8, 0.8, 0.8, 0.3),
-            metallic=0.8,
-            transmission_weight=0.5,
-            thin_film_thickness=1200,
-            thin_film_ior=1.5,
-            coat_weight=1.0,
-        )
-
-    @staticmethod
-    def metallic() -> bpy.types.Material:
-        return create_material(
-            name="MN Metallic",
-            base_color=(0.7, 0.7, 0.7, 1.0),
-            metallic=1.0,
-            roughness=0.1,
-            specular_ior_level=0.9,
-            coat_weight=1.0,
-        )
-
-    @staticmethod
-    def neon() -> bpy.types.Material:
-        return create_material(
-            name="MN Neon",
-            base_color=(0.0, 1.0, 0.8, 1.0),
-            emission_strength=5.0,
-            emission_color=(0.0, 1.0, 0.8, 1.0),
-            metallic=0.8,
-            roughness=0.1,
-        )
-
-    @staticmethod
-    def new() -> bpy.types.Material:
-        return create_material(name="MN Default 02")
-
-    @staticmethod
-    def pearl() -> bpy.types.Material:
-        return create_material(
-            name="MN Pearl",
-            base_color=(0.9, 0.9, 0.9, 1.0),
-            metallic=0.7,
-            roughness=0.15,
-            coat_weight=1.0,
-            coat_ior=2.0,
-            thin_film_thickness=500,
-        )
-
-    @staticmethod
-    def subsurface() -> bpy.types.Material:
-        return create_material(
-            name="MN Subsurface",
-            base_color=(1.0, 0.4, 0.4, 1.0),
-            subsurface_weight=1.0,
-            subsurface_radius=(1.0, 0.2, 0.1),
-            subsurface_scale=0.5,
-            emission_strength=0.3,
-        )
-
-    @staticmethod
-    def toon() -> bpy.types.Material:
-        return create_material(
-            name="MN Toon",
-            base_color=(0.2, 0.6, 1.0, 1.0),
-            metallic=0,
-            roughness=1.0,
-            specular_ior_level=0.0,
-            diffuse_roughness=1.0,
-            coat_weight=0.2,
-        )
-
-    @staticmethod
-    def velvet() -> bpy.types.Material:
-        return create_material(
-            name="MN Velvet",
-            base_color=(0.5, 0.0, 0.2, 1.0),
-            sheen_weight=1.0,
-            sheen_roughness=0.3,
-            sheen_tint=(1.0, 0.8, 0.9, 1.0),
-            roughness=0.8,
-        )
-
-    @staticmethod
-    def waxy() -> bpy.types.Material:
-        return create_material(
-            name="MN Waxy",
-            base_color=(0.9, 0.87, 0.82, 1.0),
-            subsurface_weight=0.3,
-            subsurface_radius=(0.5, 0.4, 0.3),
-            subsurface_scale=0.1,
-            roughness=0.4,
-            specular_ior_level=0.2,
-            metallic=0.0,
-            coat_weight=0.1,
-            coat_roughness=0.3,
-            sheen_weight=0.1,
-            sheen_roughness=0.3,
-        )
-
-
-def create_material(
-    name: str | None = None,
-    base_color: Tuple[float, float, float, float] = (0.8, 0.8, 0.8, 0.05),
-    metallic: float = 0.0,
-    roughness: float = 0.2,
-    ior: float = 1.45,
-    alpha: float = 1.0,
-    normal: Tuple[float, float, float] = (0.0, 0.0, 0.0),
-    weight: float = 0.0,
-    diffuse_roughness: float = 0.0,
-    subsurface_weight: float = 0.0,
-    subsurface_radius: Tuple[float, float, float] = (1.0, 0.2, 0.1),
-    subsurface_scale: float = 0.05,
-    subsurface_ior: float = 1.4,
-    subsurface_anisotropy: float = 0.0,
-    specular_ior_level: float = 0.5,
-    specular_tint: Tuple[float, float, float, float] = (1.0, 1.0, 1.0, 1.0),
-    anisotropic: float = 0.0,
-    anisotropic_rotation: float = 0.0,
-    tangent: Tuple[float, float, float] = (0.0, 0.0, 0.0),
-    transmission_weight: float = 0.0,
-    coat_weight: float = 0.0,
-    coat_roughness: float = 0.03,
-    coat_ior: float = 1.5,
-    coat_tint: Tuple[float, float, float, float] = (1.0, 1.0, 1.0, 1.0),
-    coat_normal: Tuple[float, float, float] = (0.0, 0.0, 0.0),
-    sheen_weight: float = 0.0,
-    sheen_roughness: float = 0.5,
-    sheen_tint: Tuple[float, float, float, float] = (0.5, 0.5, 0.5, 1.0),
-    emission_color: Tuple[float, float, float, float] = (0.0, 0.0, 0.0, 1.0),
-    emission_strength: float = 0.0,
-    thin_film_thickness: float = 0.0,
-    thin_film_ior: float = 1.3,
-) -> bpy.types.Material:
-    """Create a Blender material from provided shader properties."""
-    from ..blender import IS_BLENDER_5
-
-    key_map = {
-        "Base Color": base_color,
-        "Metallic": metallic,
-        "Roughness": roughness,
-        "IOR": ior,
-        "Alpha": alpha,
-        "Normal": normal,
-        "Weight": weight,
-        "Diffuse Roughness": diffuse_roughness,
-        "Subsurface Weight": subsurface_weight,
-        "Subsurface Radius": subsurface_radius,
-        "Subsurface Scale": subsurface_scale,
-        "Subsurface IOR": subsurface_ior,
-        "Subsurface Anisotropy": subsurface_anisotropy,
-        "Specular IOR Level": specular_ior_level,
-        "Specular Tint": specular_tint,
-        "Anisotropic": anisotropic,
-        "Anisotropic Rotation": anisotropic_rotation,
-        "Tangent": tangent,
-        "Transmission Weight": transmission_weight,
-        "Coat Weight": coat_weight,
-        "Coat Roughness": coat_roughness,
-        "Coat IOR": coat_ior,
-        "Coat Tint": coat_tint,
-        "Coat Normal": coat_normal,
-        "Sheen Weight": sheen_weight,
-        "Sheen Roughness": sheen_roughness,
-        "Sheen Tint": sheen_tint,
-        "Emission Color": emission_color,
-        "Emission Strength": emission_strength,
-        "Thin Film Thickness": thin_film_thickness,
-        "Thin Film IOR": thin_film_ior,
-    }
-
-    if name is None:
-        name = f"material_func_{id(key_map)}"
-
-    if name in bpy.data.materials:
-        return bpy.data.materials[name]
-
-    mat = bpy.data.materials.new(name)
-
-    if not IS_BLENDER_5:
-        mat.use_nodes = True
-
-    tree = mat.node_tree
-    if tree is None:
-        raise RuntimeError("Material does not have a node tree")
-    try:
-        bsdf = mat.node_tree.nodes["Principled BSDF"]
-    except KeyError:
-        output = tree.nodes.new("ShaderNodeOutputMaterial")
-        bsdf = tree.nodes.new("ShaderNodeBsdfPrincipled")
-        bsdf.location = (-200, 0)
-        tree.links.new(bsdf.outputs["BSDF"], output.inputs["Surface"])
-
-    for input_socket in bsdf.inputs:
-        if input_socket.name in key_map:
-            input_socket.default_value = key_map[input_socket.name]
-
-    return mat

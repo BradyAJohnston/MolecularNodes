@@ -1,0 +1,52 @@
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>

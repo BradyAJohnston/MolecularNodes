@@ -14,8 +14,7 @@ files_to_test = [f for f in cellpack_dir.glob("*") if str(f).endswith((".gz", ".
 
 def maybe_unzip(file):
     if str(file).endswith(".gz"):
-        # Create a temporary unzipped file
-        unzipped_path = str(file)[:-3]  # Remove .gz extension
+        unzipped_path = str(file)[:-3]
         if not Path(unzipped_path).exists():
             with gzip.open(file, "rb") as f_in:
                 with open(unzipped_path, "wb") as f_out:
@@ -29,11 +28,10 @@ def maybe_unzip(file):
 def test_load_petworld(file):
     file_path = maybe_unzip(data_dir / "cellpack" / file)
 
-    _ens = mn.entities.ensemble.load_cellpack(
+    _ens = mn.entities.ensemble.CellPack.load(
         file_path=file_path,
         name="CellPack",
         node_setup=False,
-        fraction=0.1,
     )
 
 
@@ -41,12 +39,12 @@ def test_load_petworld(file):
 def test_load_cellpack(snapshot, format):
     file_path = data_dir / f"cellpack/square1.{format}"
 
-    ens = mn.entities.ensemble.load_cellpack(file_path, node_setup=False, fraction=0.1)
+    ens = mn.entities.ensemble.CellPack.load(file_path, node_setup=False)
     assert ens._entity_type == mn.entities.base.EntityType.ENSEMBLE_CELLPACK
-    assert ens.object.mn.entity_type == ens._entity_type.value
+    assert ens.props.entity_type == ens._entity_type.value
 
     assert ens.name == Path(file_path).name
-    assert snapshot == str(ens.object["chain_ids"])
+    assert snapshot == str(ens.props.chain_ids)
     obj_names = [obj.name for obj in ens.instance_collection.objects]
     assert snapshot == "\n".join(obj_names)
 

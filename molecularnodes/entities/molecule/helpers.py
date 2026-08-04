@@ -150,8 +150,8 @@ class FrameManager:
 
     Parameters
     ----------
-    trajectory : Trajectory
-        Parent Trajectory instance
+    trajectory : Molecule
+        Parent Molecule instance
     """
 
     def __init__(self, trajectory):
@@ -159,8 +159,8 @@ class FrameManager:
 
         Parameters
         ----------
-        trajectory : Trajectory
-            Parent Trajectory instance
+        trajectory : Molecule
+            Parent Molecule instance
         """
         self.trajectory = trajectory
         self.cache = PositionCache()

@@ -1,0 +1,58 @@
+---
+title: "Rendering"
+description: "Rendering images and animations with the Canvas."
+execute:
+  daemon: false
+---
+
+The [](`~mn.Canvas`) is used to render images and animations of any [](`~mn.Molecule`),
+whether it is a single static structure or a multi-frame trajectory. Annotations can be
+attached to the molecule and will appear in the render.
+
+```{python}
+import molecularnodes as mn
+import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import PSF, DCD
+
+canvas = mn.Canvas()
+```
+
+## Add a Molecule to Blender
+
+```{python}
+#| warning: false
+u = mda.Universe(PSF, DCD)
+mol = mn.Molecule(u).add_style("cartoon")
+
+# add resid 1 and 129 with spheres style, using mesh geometry
+mol.add_style("spheres", selection="resid 1 129", sphere_geometry="Mesh")
+```
+
+## Add annotations
+
+```{python}
+# add universe info annotation
+mol.annotations.add_universe_info()
+
+# add COM distance between resid 1 and 129 annotation
+mol.annotations.add_com_distance(
+    selection1="resid 1", selection2="resid 129", text1="r1", text2="r129"
+)
+```
+
+## Render an Image
+
+```{python}
+# frame the molecule
+canvas.frame_object(mol)
+
+# render image of scene at frame 75
+canvas.snapshot(frame=75)
+```
+
+## Render an Animation
+
+```{python}
+# render animation of scene from frame 10 to 50 at 50% scale
+canvas.animation(frame_start=10, frame_end=50, render_scale=50)
+```
