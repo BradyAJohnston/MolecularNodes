@@ -2,11 +2,25 @@ import json
 import os
 import sys
 from contextlib import ExitStack
-from typing import List
+from typing import List, cast
 import addon_utils
 import bpy
 import numpy as np
 from mathutils import Matrix
+
+_INCREASED_CLIP_END = 1e4
+
+
+def _increase_view_distance():
+    context = bpy.context
+    scene = context.scene
+    assert scene
+    camera = cast(bpy.types.Camera, scene.camera.data)
+    if camera is not None and camera.clip_end == 1e2:
+        camera.clip_end = _INCREASED_CLIP_END
+
+    # TODO: Increase view distance for the viewports as well
+    # but it seems to be on a area-by-area basis rather than globally
 
 
 def load_extension_module():
