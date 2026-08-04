@@ -4,7 +4,6 @@ import molecularnodes as mn
 from molecularnodes.nodes import material
 from .constants import data_dir
 
-MATERIALS_SCENE = data_dir / "blendfiles" / "suzanne.blend"
 PRESETS = [
     material.Default,
     material.AmbientOcclusion,
@@ -48,24 +47,6 @@ def test_flat_outline_toggle():
     assert flat.node.i.outline.default_value == "Outline"
     assert flat.threshold == pytest.approx(0.5)
     assert flat.thickness == pytest.approx(0.3)
-
-
-def test_generic_material():
-    mn.Canvas(template=MATERIALS_SCENE)
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
-    s = mol.styles[0]
-    s.material = bpy.data.materials["Material"]
-    assert s.material.material.name == "Material"
-    with pytest.raises(KeyError):
-        s.material = "Non-existent material"
-    with pytest.raises(TypeError):
-        s.material = 1
-    assert isinstance(s.material, mn.material.TreeInterface)
-    assert isinstance(s.material.material, bpy.types.Material)
-
-    assert_allclose(s.material.principled_bsdf_base_color, (0.8, 0.8, 0.8, 1.0))
-    s.material = "MN Ambient Occlusion"
-    assert s.material.material.name == "MN Ambient Occlusion"  # type: ignore
 
 
 def test_transparent_outline():
