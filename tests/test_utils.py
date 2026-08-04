@@ -2,20 +2,35 @@ from typing import cast
 import bpy
 import numpy as np
 import pytest
-from bpy.types import Camera
+from bpy.types import Camera, SpaceView3D
 import molecularnodes as mn
 from molecularnodes.utils import frame_mapper
 from .constants import codes
 
 
-def test_view_distance_increaeses():
+def _viewport_spaces():
+    return [
+        cast(SpaceView3D, space)
+        for screen in bpy.data.screens
+        for area in screen.areas
+        if area.type == "VIEW_3D"
+        for space in area.spaces
+        if space.type == "VIEW_3D"
+    ]
+
+
+def test_view_distance_increases():
     context = bpy.context
     scene = context.scene
     assert scene
     camera = cast(Camera, scene.camera.data)
     assert camera.clip_end == pytest.approx(100.0)
+    for space in _viewport_spaces():
+        assert space.clip_end == pytest.approx(1000.0)
     bpy.ops.mn.import_fetch(code=codes[0])
     assert camera.clip_end == pytest.approx(mn.utils._INCREASED_CLIP_END)
+    for space in _viewport_spaces():
+        assert space.clip_end == pytest.approx(mn.utils._INCREASED_CLIP_END)
 
 
 def test_correct_1d():
