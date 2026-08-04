@@ -1,9 +1,9 @@
-from bpy.types import Object
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, overload
 import databpy as db
 import numpy as np
+from bpy.types import Object
 from databpy.attribute import AttributeTypeNames
 from scipy.spatial.transform import Rotation
 from .base import Ensemble, EntityType
@@ -248,7 +248,9 @@ class CryoSPARC(Ensemble):
         # them to appear first, like they would with a normal Blender object.
         self.object = db.create_object(self.dset.position * world_scale, name=name)
         self.store_named_attribute(
-            data=self.dset.rotations, name="rotation", atype=db.AttributeTypes.QUATERNION
+            data=self.dset.rotations,
+            name="rotation",
+            atype=db.AttributeTypes.QUATERNION,
         )
         for field in self._construct_fields():
             self.store_named_attribute(**field)
