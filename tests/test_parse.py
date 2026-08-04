@@ -9,8 +9,10 @@ def filepath():
 
 
 def test_bcif_init(filepath):
-    bcif = mn.Molecule.load(filepath)
-    assert bcif._reader.file_path == filepath
+    from molecularnodes.entities.molecule.reader import read_structure
+
+    reader = read_structure(filepath)
+    assert reader.file_path == filepath
 
 
 def test_bcif_assemblies(filepath):
@@ -21,6 +23,6 @@ def test_bcif_assemblies(filepath):
 
 def test_bcif_entity_ids(filepath):
     mol = mn.Molecule.load(filepath)
-    entity_ids = list(mol.object["entity_ids"])
+    entity_ids = list(mol.props.entity_ids)
     assert entity_ids is not None
     assert entity_ids == ["CAPSID PROTEIN", "CALCIUM ION", "water"]

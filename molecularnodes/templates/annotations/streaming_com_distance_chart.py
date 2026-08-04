@@ -13,15 +13,15 @@ matplotlib.use("Agg")
 # Annotations are auto-registered
 # Unregister previous class if any while debugging / iterating code
 if hasattr(
-    mn.entities.trajectory.TrajectoryAnnotationManager,
+    mn.entities.molecule.MoleculeAnnotationManager,
     "add_streaming_com_distance_chart",
 ):
-    mn.entities.trajectory.TrajectoryAnnotationManager.unregister_type(
+    mn.entities.molecule.MoleculeAnnotationManager.unregister_type(
         "streaming_com_distance_chart"
     )
 
 
-class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
+class StreamingComDistanceChart(mn.entities.molecule.MoleculeAnnotation):
     annotation_type = "streaming_com_distance_chart"
 
     selection1: str | AtomGroup = "resid 1"
@@ -56,7 +56,7 @@ class StreamingComDistanceChart(mn.entities.trajectory.TrajectoryAnnotation):
         params = self.interface
         u = self.trajectory.universe
 
-        if not isinstance(self.trajectory, mn.entities.trajectory.StreamingTrajectory):
+        if not isinstance(self.trajectory, mn.entities.molecule.StreamingTrajectory):
             raise ValueError("This annotation requires a Streaming Trajectory")
 
         label1 = params.text1

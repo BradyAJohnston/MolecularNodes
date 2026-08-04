@@ -1,5 +1,7 @@
 import pickle
+import shutil
 import tempfile
+from pathlib import Path
 import bpy
 import MDAnalysis as mda
 import numpy as np
@@ -19,10 +21,12 @@ class TestAnnotations:
         return mda.Universe(topo, traj)
 
     @pytest.fixture(scope="module")
-    def density_file(self):
-        file = data_dir / "emd_24805.map.gz"
-        vdb_file = data_dir / "emd_24805.vdb"
-        vdb_file.unlink(missing_ok=True)
+    def density_file(self, tmp_path_factory):
+        # copy into a temp dir so the generated .vdb doesn't clash with other tests
+        source = data_dir / "emd_24805.map.gz"
+        file = Path(
+            shutil.copy(source, tmp_path_factory.mktemp("density") / source.name)
+        )
         # Make all densities are removed
         for o in bpy.data.objects:
             if o.mn.entity_type == "density":
@@ -31,7 +35,7 @@ class TestAnnotations:
 
     def test_registered_trajectory_annotations(self):
         # test if trajectory annotations are correctly auto registered
-        manager = mn.entities.trajectory.TrajectoryAnnotationManager
+        manager = mn.entities.molecule.MoleculeAnnotationManager
         # atom_info
         assert "atom_info" in manager._classes
         assert hasattr(manager, "add_atom_info")
@@ -98,7 +102,7 @@ class TestAnnotations:
         assert callable(getattr(manager, "add_label_3d"))
 
     def test_trajectory_annotations_registration(self, universe):
-        manager = mn.entities.trajectory.TrajectoryAnnotationManager
+        manager = mn.entities.molecule.MoleculeAnnotationManager
 
         # test register exceptions
         class TestAnnotation:
@@ -118,7 +122,7 @@ class TestAnnotations:
         # test no draw method
         with pytest.raises(ValueError):
 
-            class TestAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
+            class TestAnnotation(mn.entities.molecule.MoleculeAnnotation):
                 annotation_type = "test_annotation"
 
         class TestAnnotation:
@@ -128,7 +132,7 @@ class TestAnnotations:
         with pytest.raises(ValueError):
             manager.unregister_type("test_annotation")
 
-        class TestAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
+        class TestAnnotation(mn.entities.molecule.MoleculeAnnotation):
             annotation_type = "test_annotation"
 
             selection: str  # required param
@@ -155,7 +159,7 @@ class TestAnnotations:
         assert "test_annotation" in manager._classes
         assert hasattr(manager, "add_test_annotation")
         # test add
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         # test add with required param missing
         with pytest.raises(ValueError):
             a1 = t1.annotations.add_test_annotation()
@@ -167,7 +171,7 @@ class TestAnnotations:
         a1._instance.draw()
 
     def test_trajectory_annotation_lifecycle(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         # test annotation atom_info add
         assert len(t1.annotations._interfaces) == 0
         a1 = t1.annotations.add_atom_info(selection="all")
@@ -238,7 +242,7 @@ class TestAnnotations:
             t1.annotations._remove_annotation_by_uuid("InvalidUUID")
 
     def test_annotation_ops_md(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         # add annotation operator
         # first annotation type due to no invoke - must have no required inputs
@@ -266,7 +270,7 @@ class TestAnnotations:
         assert len(mol.annotations) == 0
 
     def test_annotation_ops_density(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         # add annotation operator
         # first annotation type due to no invoke - must have no required inputs
@@ -280,7 +284,7 @@ class TestAnnotations:
         assert len(d1.annotations) == 0
 
     def test_trajectory_annotation_atom_info(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         # test defaults
         t1.annotations.add_atom_info()
@@ -303,7 +307,7 @@ class TestAnnotations:
             t1.annotations.add_atom_info(selection=1)
 
     def test_trajectory_annotation_com(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         # test defaults
         t1.annotations.add_com()
@@ -326,7 +330,7 @@ class TestAnnotations:
             t1.annotations.add_com(selection=1)
 
     def test_trajectory_annotation_com_distance(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         # test defaults
         with pytest.raises(ValueError):
@@ -353,7 +357,7 @@ class TestAnnotations:
             t1.annotations.add_com_distance(selection1=1, selection2=2)
 
     def test_trajectory_annotation_canonical_dihedrals(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         # test defaults - needs resid input
         with pytest.raises(ValueError):
@@ -370,14 +374,14 @@ class TestAnnotations:
         a1.resid = 2
 
     def test_trajectory_annotation_universe_info(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_universe_info()
         assert len(t1.annotations) == 1
 
     def test_trajectory_annotation_simulation_box(self, universe):
         universe_copy = universe.copy()
-        t1 = mn.Trajectory(universe_copy, name="TestUniverse")
+        t1 = mn.Molecule(universe_copy, name="TestUniverse")
         assert len(t1.annotations) == 0
         box = t1.annotations.add_simulation_box()
         assert len(t1.annotations) == 1
@@ -433,31 +437,31 @@ class TestAnnotations:
         assert len(mol.annotations) == 1
 
     def test_density_annotation_density_info(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         d1.annotations.add_density_info()
         assert len(d1.annotations) == 1
 
     def test_density_annotation_grid_axes(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         d1.annotations.add_grid_axes()
         assert len(d1.annotations) == 1
 
     def test_density_annotation_grid_axes_3d(self, density_file):
-        d1 = mn.entities.density.load(density_file)
+        d1 = mn.entities.density.Grids.load(density_file)
         assert len(d1.annotations) == 0
         d1.annotations.add_grid_axes_3d()
         assert len(d1.annotations) == 1
 
     def test_common_annotation_label_2d(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_label_2d(text="2D Text", location=(0.25, 0.75))
         assert len(t1.annotations) == 1
 
     def test_common_annotation_label_3d(self, universe):
-        t1 = mn.Trajectory(universe)
+        t1 = mn.Molecule(universe)
         assert len(t1.annotations) == 0
         t1.annotations.add_label_3d(text="3D Text", location=(0.25, 0.5, 0.75))
         assert len(t1.annotations) == 1
@@ -468,13 +472,13 @@ class TestAnnotations:
         canvas = mn.Canvas(resolution=(192, 108))
         canvas.engine = "CYCLES"  # Only works for this
         canvas.engine.samples = 1
-        t1 = mn.Trajectory(mda.Merge(universe.select_atoms("resid 1")))
+        t1 = mn.Molecule(mda.Merge(universe.select_atoms("resid 1")))
         t1.annotations.add_com(selection="resid 1")
         bpy.ops.render.render()
         assert mn.scene.compositor.annotations_image in bpy.data.images
 
     def test_line_mode(self, universe):
-        t = mn.Trajectory(universe, name="TestUniverse")
+        t = mn.Molecule(universe, name="TestUniverse")
         # test automatic annotation object creation
         name = "MN_an_TestUniverse"
         assert name not in bpy.data.objects
@@ -548,7 +552,7 @@ class TestAnnotations:
                     raise
 
     def test_md_pickling(self, universe):
-        e = mn.Trajectory(universe, name="TestUniverse")
+        e = mn.Molecule(universe, name="TestUniverse")
         # no inputs
         ant1 = e.annotations.add_universe_info()
         ant1.show_frame = False
@@ -584,7 +588,7 @@ class TestAnnotations:
                     raise
 
     def test_density_pickling(self, density_file):
-        e = mn.entities.density.load(density_file)
+        e = mn.entities.density.Grids.load(density_file)
         ant = e.annotations.add_density_info()
         ant.show_filename = False
         with tempfile.NamedTemporaryFile() as tmp_file:

@@ -74,18 +74,18 @@ In Blender add-on development, `import bpy` is your gateway to the Blender Pytho
 ```python
 import bpy
 
-bpy.data                        # Access all of the data blocks inside of Blender
-bpy.data.objects                # access all of the objects in the scene by name
+bpy.data  # Access all of the data blocks inside of Blender
+bpy.data.objects  # access all of the objects in the scene by name
 
-cube = bpy.data.objects['Cube'] # get the data block for an object in Blender
-cube.data                       # the data associated with the cube, such as edges, vertices, faces
+cube = bpy.data.objects["Cube"]  # get the data block for an object in Blender
+cube.data  # the data associated with the cube, such as edges, vertices, faces
 cube.data.attributes
 cube.data.vertices
 
-bpy.ops                         # all of the pre-defined operators inside of Blender
+bpy.ops  # all of the pre-defined operators inside of Blender
 
-bpy.context                     # all of the global context values, i.e. different properties set in the UI
-bpy.types                       # the different pre-defined types used through bpy
+bpy.context  # all of the global context values, i.e. different properties set in the UI
+bpy.types  # the different pre-defined types used through bpy
 ```
 
 `bpy` exposes a wide range of classes and functions, enabling you to perform tasks like creating objects, applying materials, setting animations, and much more, all programmatically.
@@ -108,22 +108,25 @@ Below is the minimum required to create an add-on for Blender. We define a custo
 ```py
 import bpy
 
+
 def my_function():
     print("hello world!")
+
 
 class SimpleOperator(bpy.types.Operator):
     bl_idname = "wm.simple_operator"
     bl_label = "Simple Operator"
 
     def execute(self, context):
-        #code to be executed by the operator goes in the `execute()` function
+        # code to be executed by the operator goes in the `execute()` function
         my_function()
 
         # operators inside of Blender return `{'FINISHED'}` to signal they have completed
         # correctly and Blender can return control of the program back to the user.
         # This is why they are useful for UI operations, but less useful for scripting
         # other potential returns are 'CANCELLED', 'RUNNING_MODAL', 'PASS_THROUGH'
-        return {'FINISHED'}
+        return {"FINISHED"}
+
 
 # define a menu that will appear inside of the Blender's UI
 # the layout function `layout.operator()` will take a string name of the operator,
@@ -144,6 +147,7 @@ def register():
     bpy.utils.register_class(SimpleOperator)
     bpy.types.VIEW3D_MT_mesh.append(menu_func)
 
+
 def unregister():
     bpy.utils.unregister_class(SimpleOperator)
     bpy.types.VIEW3D_MT_mesh.remove(menu_func)
@@ -155,6 +159,7 @@ These functions are called automatically when using Blender via the GUI, but hav
 
 ```py
 import molecularnodes as mn
+
 mn.register()
 # other code here
 ```

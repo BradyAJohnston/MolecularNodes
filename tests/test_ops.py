@@ -31,26 +31,6 @@ def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
         np.testing.assert_allclose(test1.position, test2.position)
 
 
-# TODO: Fix intermittent test failures
-# def test_op_fetch_alphafold(tmpdir):
-#     scene = bpy.context.scene
-#     style = "ribbon"
-#     code = "K4PA18"
-
-#     with ObjectTracker() as o:
-#         bpy.ops.mn.import_fetch(
-#             code=code,
-#             style=style,
-#             cache_dir=str(tmpdir),
-#             database="alphafold",
-#         )
-#         mol = scene.MNSession.match(o.latest())
-#         assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-#         assert mol.object.mn.entity_type == mol._entity_type.value
-
-#     assert mol.name == code
-
-
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
@@ -60,18 +40,11 @@ def test_op_local(snapshot_custom, code, file_format):
     )
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=str(path), node_setup=False)
+        bpy.ops.mn.import_fetch(database="local", filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
-        assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-        assert mol.object.mn.entity_type == mol._entity_type.value
-
-    with ObjectTracker() as o:
-        bpy.ops.mn.import_local(filepath=str(path), centre=True, centre_type="centroid")
-        mol_cent = session.match(o.latest())
+        assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
 
     assert snapshot_custom == mol.position
-    assert snapshot_custom == mol_cent.position
-    assert not np.allclose(mol.position, mol_cent.position)
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
@@ -91,7 +64,9 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     assert traj_op.name == name
     assert traj_op._mn_entity_type == mn.entities.base.EntityType.MD.value
 
-    traj_func = mn.entities.trajectory.load(topo, traj, name="test", style="ribbon")
+    traj_func = mn.entities.molecule.Molecule.load(
+        topo, traj, name="test", style="ribbon"
+    )
 
     bpy.context.scene.frame_set(2)
     assert np.allclose(traj_func.position, traj_op.position)
@@ -102,17 +77,3 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
     assert not np.allclose(pos_2, traj_op.position)
     assert not np.allclose(pos_2, traj_func.position)
-
-
-def test_op_residues_selection_custom():
-    topo = str(data_dir / "md_ppr/box.gro")
-    traj = str(data_dir / "md_ppr/first_5_frames.xtc")
-
-    with ObjectTracker():
-        bpy.ops.mn.import_trajectory(
-            topology=topo, trajectory=traj, name="NewTrajectory", style="ribbon"
-        )
-    area = bpy.context.screen.areas[-1]
-    area.ui_type = "GeometryNodeTree"
-    with bpy.context.temp_override(area=area):
-        bpy.ops.mn.residues_selection_custom("EXEC_DEFAULT")

@@ -4,11 +4,52 @@ from io import BytesIO
 from pathlib import Path
 import numpy as np
 from biotite.file import File, InvalidFileError
-from biotite.structure import AtomArray, AtomArrayStack
+from biotite.structure import AtomArray, AtomArrayStack, filter
 from ... import color
 from ...assets import data
 from ...utils import count_value_changes
-from . import selections
+
+
+def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
+    """Open a structure file and return the appropriate reader for its format.
+
+    Dispatches on the file suffix to the biotite-backed reader that can parse it
+    (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer is treated
+    as BinaryCIF.
+
+    Parameters
+    ----------
+    file_path : str | Path | BytesIO
+        Path to the structure file, or an in-memory ``bcif`` buffer.
+
+    Returns
+    -------
+    ReaderBase
+        A reader whose ``.array`` holds the parsed biotite structure.
+
+    Raises
+    ------
+    InvalidFileError
+        If the file format is not supported.
+    """
+    # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
+    from . import pdb, pdbx, sdf
+
+    if isinstance(file_path, BytesIO):
+        return pdbx.PDBXReader(file_path)
+
+    if isinstance(file_path, str):
+        file_path = Path(file_path)
+
+    match file_path.suffix:
+        case ".cif" | ".bcif":
+            return pdbx.PDBXReader(file_path)
+        case ".pdb":
+            return pdb.PDBReader(file_path)
+        case ".sdf" | ".mol":
+            return sdf.SDFReader(file_path)
+        case _:
+            raise InvalidFileError("The file format is not supported.")
 
 
 class ReaderBase(metaclass=ABCMeta):
@@ -28,7 +69,7 @@ class ReaderBase(metaclass=ABCMeta):
 
     @property
     def n_models(self) -> int:
-        return self.array.stack_depth()  # type: ignore
+        return self.array.stack_depth()
 
     def read(self, file_path: str | Path | BytesIO) -> File:
         raise NotImplementedError("Subclasses must implement this method.")
@@ -49,13 +90,13 @@ class ReaderBase(metaclass=ABCMeta):
             "lipophobicity": cls._compute_lipophobicity,
             "Color": cls._compute_color,
             "is_alpha_carbon": cls._compute_is_alpha_carbon,
-            "is_solvent": cls._compute_is_solvent,
+            "is_solvent": filter.filter_solvent,
             "is_backbone": cls._compute_is_backbone,
-            "is_nucleic": cls._compute_is_nucleic,
+            "is_nucleic": filter.filter_nucleotides,
             "is_peptide": cls._compute_is_peptide,
             "is_hetero": cls._compute_is_hetero,
             "is_side_chain": cls._compute_is_side_chain,
-            "is_carb": cls._compute_is_carb,
+            "is_carb": filter.filter_carbohydrates,
         }
         for key, func in annotations.items():
             try:
@@ -189,8 +230,8 @@ class ReaderBase(metaclass=ABCMeta):
             return color.color_chains(array.atomic_number, array.chain_id)
 
     @staticmethod
-    def _compute_is_alpha_carbon(array):
-        return selections.select_alpha_carbon(array)
+    def _compute_is_alpha_carbon(array: AtomArray):
+        return array.get_annotation("atom_name") == "CA"
 
     @staticmethod
     def _compute_is_hetero(array):
@@ -198,27 +239,64 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_is_backbone(array):
-        return selections.select_backbone(array)
+        """
+        Get the atoms that appear in peptide backbone or nucleic acid phosphate backbones.
+        Filter differs from the Biotite's `struc.filter_peptide_backbone()` in that this
+        includes the peptide backbone oxygen atom, which biotite excludes. Additionally
+        this selection also includes all of the atoms from the ribose in nucleic acids,
+        and the other phosphate oxygens.
+        """
+        backbone_atom_names = [
+            # Peptide backbone atoms
+            "N",
+            "C",
+            "CA",
+            "H",
+            "HA",
+            "O",
+            # Continuous nucleic backbone atoms
+            "P",
+            "O5'",
+            "C5'",
+            "C4'",
+            "C3'",
+            "O3'",
+            # Alternative names for phosphate O's
+            "O1P",
+            "OP1",
+            "O2P",
+            "OP2",
+            # Remaining ribose atoms
+            "O4'",
+            "C1'",
+            "C2'",
+            "O2'",
+        ]
 
-    @staticmethod
-    def _compute_is_solvent(array):
-        return selections.select_solvent(array)
+        is_backbone_atom = np.isin(
+            array.get_annotation("atom_name"), backbone_atom_names
+        )
+        is_not_solvent = np.logical_not(filter.filter_solvent(array))
 
-    @staticmethod
-    def _compute_is_nucleic(array):
-        return selections.select_nucleotides(array)
+        return np.logical_and(is_backbone_atom, is_not_solvent)
 
     @staticmethod
     def _compute_is_peptide(array):
-        return selections.select_peptide(array)
+        return np.logical_or(
+            filter.filter_canonical_amino_acids(array), filter.filter_amino_acids(array)
+        )
 
     @staticmethod
     def _compute_is_side_chain(array):
-        return selections.select_side_chain(array)
+        backbone = ReaderBase._compute_is_backbone(array)
+        is_polymer = np.logical_or(
+            ReaderBase._compute_is_peptide(array), filter.filter_nucleotides(array)
+        )
 
-    @staticmethod
-    def _compute_is_carb(array):
-        return selections.select_carbohydrates(array)
+        return np.logical_and(
+            np.logical_or(~backbone, ReaderBase._compute_is_alpha_carbon(array)),
+            is_polymer,
+        )
 
     @staticmethod
     def _compute_ures_id(array):

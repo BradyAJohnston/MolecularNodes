@@ -60,19 +60,23 @@ dens.results.density.export("water.dx")
 
 ## Add Universe to Blender
 
-Import universe as a `Trajectory` and add a ribbon style to represent the protein. We also add a style to the non-rotein atoms, sliced along the `y` axis. After taking the snapshot for visual reference we remove the sphere style as we will be showing the water as a density.
+Import universe as a `Molecule` and add a ribbon style to represent the protein. We also add a style to the non-protein atoms, sliced along the `y` axis. After taking the snapshot for visual reference we rebuild the tree with just the ribbon style, as we will be showing the water as a density.
 ```{python}
 protein_center = np.mean(protein.atoms.positions, axis=0)
 
-t = mn.Trajectory(u).add_style(mn.StyleRibbon(quality=5, backbone_radius=2))
+t = mn.Molecule(u).add_style("ribbon", quality=5, peptide_radius=2)
 t.add_style(
-    mn.StyleSpheres("Instance", subdivisions=4),
+    "spheres",
+    sphere_geometry="Instance",
     selection=f"not protein and prop y >= {protein_center[1]}",
 )
 
 canvas.frame_view(t, (np.pi / 2, 0, np.pi / 3))
 canvas.snapshot()
-t.styles[-1].remove()
+
+# rebuild the tree with just the ribbon style
+with t.tree.reset() as (atoms, join):
+    atoms >> mn.nodes.geometry.StyleRibbon(quality=5, peptide_radius=2) >> join
 ```
 
 ## Add density component
