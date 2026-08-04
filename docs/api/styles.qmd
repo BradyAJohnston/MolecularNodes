@@ -52,8 +52,9 @@ Molecule.add_style(
   - An MDAnalysis selection phrase, an `AtomGroup`, or the name of an existing boolean
     attribute. A selection phrase is stored as a named attribute and used to mask the style.
 - `material` param
-  - A material name to append from the asset file, e.g. `MN Default`, `MN Flat Outline`,
-    `MN Squishy`, `MN Transparent Outline` or `MN Ambient Occlusion`.
+  - One of the pre-built materials from `mn.material`, e.g.
+    `mn.material.AmbientOcclusion(distance=0.5)`, a Blender material, or a material
+    name to append from the asset file, e.g. `MN Default` or `MN Squishy`.
 - `**kwargs`
   - Any remaining keyword arguments are passed to the style node, e.g. `geometry`,
     `quality`, `scale`, `peptide_radius`.
@@ -100,14 +101,14 @@ a truly difficult task, and so instead we build the node tree using [](`nodebpy`
 specialised scripting interface for node trees.
 
 ```{python}
-mat = mn.nodes.material.append_material("MN Ambient Occlusion")
+mat = mn.material.AmbientOcclusion()
 
 mol.dssp.init()
 sel = mol.selections.from_string("resname LYS")
 
 with mol.tree.reset() as (atoms, join):
-  atoms >> g.StyleSticks(selection = sel.node(), scale=0.3, material=mat) >> join
-  atoms >> g.SetColor(color=g.ColorRainbow()) >> g.StyleCartoon(material=mat) >> join
+  atoms >> g.StyleSticks(selection = sel.node(), scale=0.3, material=mat.material) >> join
+  atoms >> g.SetColor(color=g.ColorRainbow()) >> g.StyleCartoon(material=mat.material) >> join
 
 canvas.frame_object(mol)
 canvas.snapshot()

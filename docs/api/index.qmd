@@ -117,7 +117,7 @@ with mol.tree.reset() as (atoms, join):
         atoms
         >> mn.nodes.geometry.SetColor(color=mn.nodes.geometry.ColorPLDDT())
         >> mn.nodes.geometry.StyleCartoon(
-            material=mn.material.append_material("MN Ambient Occlusion")
+            material=mn.material.AmbientOcclusion().material
         )
         >> join
     )

@@ -4,8 +4,10 @@ jupyter: python3
 fig-align: center
 ---
 
-We can progrommatically access the properties of the materials like this:
-
+MolecularNodes ships a small set of pre-built materials, available as classes in
+`mn.material`. Instantiating one creates a new, independent Blender material —
+starting values are set through the constructor, and every parameter remains
+tweakable on the instance afterwards.
 
 ```{python}
 import molecularnodes as mn
@@ -15,48 +17,72 @@ from nodebpy import shader as s
 cv = mn.Canvas(engine="EEVEE", resolution=(800, 800), transparent=True)
 ```
 
+## Pre-built materials
+
+Pass a preset directly to `add_style()`. The parameters map onto the inputs of
+the nodes inside the material, so changing them updates the render immediately.
 
 ```{python}
-# | label: fig-material-example
-# | fig-cap: A simple Ambient Occlusion material that is performant and aesthetically pleasing. Material properties can be changed through the material interface.
+# | label: fig-material-preset
+# | fig-cap: The Ambient Occlusion material is performant and aesthetically pleasing. Parameters can be tweaked on the instance after creation.
 # | layout-ncol: 2
 # | fig-subcap:
-# |   - "distance=2.0, samples=128"
-# |   - "distance=0.15, samples=128"
+# |   - "distance=2.0"
+# |   - "distance=0.15"
 
-with s.material("Custom Material") as mat:
-    mat.nodes.clear()
-    col = mn.nodes.shader.MNColor()
-    ao = s.AmbientOcclusion(col, distance=2.0, samples=128)
-    ao.o.color >> s.MaterialOutput().i.surface
-
+mat = mn.material.AmbientOcclusion(distance=2.0)
 mol = mn.Molecule.fetch("8H1B").add_style("surface", material=mat)
 
 cv.frame_object(mol)
 cv.snapshot()
 
-ao.i.distance.default_value = 0.15
+mat.distance = 0.15
 cv.snapshot()
 ```
 
+To swap the material on an already-created style, assign a new material to the
+style node's material socket:
 
 ```{python}
 # | label: fig-change-material-flat
 # | layout-ncol: 1
 # | fig-subcap:
-# |   - "Reduced AO distance detection"
-# |   - "Flat Outline material"
-mol.tree.tree.nodes["Style Surface"].inputs["Material"].default_value = mn.material.append_material("MN Flat")
+# |   - "Flat material with outline"
+flat = mn.material.Flat(thickness=0.2)
+mol.tree.tree.nodes["Style Surface"].inputs["Material"].default_value = (
+    flat.material
+)
 cv.snapshot()
-
-# mol.styles[0].material.math_value = 0.1
-# cv.snapshot()
 ```
 
-Propeties for the material interface are based on the inputs of the nodes in the material.
+Each preset is a separate material datablock, so tweaking one style's material
+never affects another's. The underlying Blender material is always available as
+`.material`, and the nodes used to build it are kept as attributes on the
+instance (e.g. `mat.ao`, `mat.bsdf`) for access to anything not exposed as a
+parameter.
+
+## Custom materials
+
+For full control, build a material from scratch with the
+[`nodebpy`](https://bradyajohnston.github.io/nodebpy) shader nodes. Anything
+built inside the `with s.material()` block becomes the material's node tree,
+and the `MNColor` node provides the per-atom colors.
 
 ```{python}
-# [x for x in dir(mn.material.AmbientOcclusion()) if not x.startswith("_")]
+# | label: fig-material-custom
+# | fig-cap: A custom material built with nodebpy's shader nodes.
+
+with s.material("Custom Material") as custom:
+    custom.nodes.clear()
+    col = mn.nodes.shader.MNColor()
+    ao = s.AmbientOcclusion(col, distance=1.0, samples=128)
+    ao.o.color >> s.MaterialOutput().i.surface
+
+# regular node lookup and property assignment
+mol.tree.tree.nodes["Style Surface"].inputs["Material"].default_value = (
+    custom.material
+)
+cv.snapshot()
 ```
 
 ## Render Engines and Materials
@@ -81,8 +107,8 @@ cv = mn.Canvas(resolution=(800, 800), transparent=True)
 # |   - "EEVEE + Default"
 # |   - "Cycles + Ambient Occlusion"
 # |   - "EEVEE + Ambient Occlusion"
-# |   - "Cycles + Flat Outline"
-# |   - "EEVEE + Flat Outline"
+# |   - "Cycles + Flat"
+# |   - "EEVEE + Flat"
 # |   - "Cycles + Squishy"
 # |   - "EEVEE + Squishy"
 
@@ -96,13 +122,13 @@ with mol.tree.reset() as (atoms, join):
 cv.frame_view(mol)
 engines = [mn.scene.Cycles(samples=32), mn.scene.EEVEE()]
 materials = [
-    "MN Default",
-    "MN Ambient Occlusion",
-    "MN Flat",
-    "MN Squishy",
+    mn.material.Default(),
+    mn.material.AmbientOcclusion(),
+    mn.material.Flat(),
+    mn.material.Squishy(),
 ]
 for mat, eng in itertools.product(materials, engines):
     cv.engine = eng
-    style.i.material.default_value = mn.material.append_material(mat)
+    style.i.material.default_value = mat.material
     cv.snapshot()
 ```

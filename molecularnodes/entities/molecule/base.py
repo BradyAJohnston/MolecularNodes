@@ -23,7 +23,7 @@ from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
-from ...nodes.material import append_material
+from ...nodes.material import PresetMaterial, append_material
 from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING, styles_mapping
 from ...utils import (
     count_value_changes,
@@ -976,7 +976,11 @@ class Molecule(MolecularEntity):
         self,
         style: STYLE_LITERALS = "spheres",
         selection: str | AtomGroup | None = None,
-        material: bpy.types.Material | MaterialBuilder | str | None = "MN Default",
+        material: bpy.types.Material
+        | PresetMaterial
+        | MaterialBuilder
+        | str
+        | None = "MN Default",
         **kwargs,
     ) -> "Molecule":
         """
@@ -1003,10 +1007,12 @@ class Molecule(MolecularEntity):
             A string is treated as an existing attribute name first; only if no such
             attribute exists is it interpreted as an MDAnalysis selection phrase.
 
-        material : bpy.types.Material | MaterialBuilder | str | None, optional
-            The material to apply to the styled atoms. Can be a Blender Material object,
-            a string with a material name to append from the asset file, or None to use
-            default materials. Default is None.
+        material : bpy.types.Material | PresetMaterial | MaterialBuilder | str | None, optional
+            The material to apply to the styled atoms. Can be one of the preset
+            materials from `mn.material` (e.g. ``mn.material.AmbientOcclusion()``),
+            a Blender Material object, a nodebpy MaterialBuilder, a string with a
+            material name to append from the asset file, or None for no material.
+            Default is "MN Default".
 
         **kwargs : optional
             Additional keyword arguments to pass to the added style node.
@@ -1039,7 +1045,7 @@ class Molecule(MolecularEntity):
         if isinstance(self, OXDNA):
             STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
 
-        if isinstance(material, MaterialBuilder):
+        if isinstance(material, (PresetMaterial, MaterialBuilder)):
             material = material.material
 
         material = append_material(material) if isinstance(material, str) else material

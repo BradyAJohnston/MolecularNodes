@@ -25,7 +25,7 @@ with mol.tree.reset() as (atoms, join):
         >> mg.SetColor(color=mg.ColorCommon(carbon=mg.RandomColor(id=mg.ChainID())))
         >> mg.StyleBallAndStick(
             selection=mg.IsSideChain(),
-            material=mn.nodes.material.append_material("MN Ambient Occlusion")
+            material=mn.material.AmbientOcclusion().material
         )
         >> join
     )
@@ -35,7 +35,7 @@ with mol.tree.reset() as (atoms, join):
     (
         atoms
         >> mg.SetColor(color=mg.ColorRainbow())
-        >> mg.StyleCartoon(quality=5,loop_radius=0.6, material=mn.nodes.material.append_material("MN Flat"))
+        >> mg.StyleCartoon(quality=5,loop_radius=0.6, material=mn.material.Flat().material)
         >> join
     )
 

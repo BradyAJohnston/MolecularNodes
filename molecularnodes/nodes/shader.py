@@ -157,9 +157,59 @@ class OutlineMask(AssetShaderGroup):
         super().__init__(**{"Socket_2": threshold, "Socket_1": thickness})
 
 
+class TransparentOutline(AssetShaderGroup):
+    """Transparent Outline"""
+
+    _name = "Transparent Outline"
+    _asset_name = "Transparent Outline"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        alpha: FloatSocket
+        """Alpha"""
+        menu: MenuSocket
+        """Menu"""
+        outline_color: ColorSocket
+        """Outline Color"""
+        threshold: FloatSocket
+        """Threshold"""
+        thickness: FloatSocket
+        """Thickness"""
+
+    class _Outputs(SocketAccessor):
+        shader: ShaderSocket
+        """Shader"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        alpha: InputFloat = 0.95,
+        menu: InputMenu | Literal["Transparent", "Outline"] = "Transparent",
+        outline_color: InputColor = None,
+        threshold: InputFloat = 0.2,
+        thickness: InputFloat = 0.15,
+    ):
+        super().__init__(
+            **{
+                "Socket_2": alpha,
+                "Socket_3": menu,
+                "Socket_1": outline_color,
+                "Socket_4": threshold,
+                "Socket_5": thickness,
+            }
+        )
+
+
 __all__ = (
     "ColorAO",
     "Flat",
     "MNColor",
     "OutlineMask",
+    "TransparentOutline",
 )

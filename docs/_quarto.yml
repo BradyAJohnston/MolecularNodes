@@ -154,8 +154,14 @@ quartodoc:
     - nodes.geometry.StyleBallAndStick
 
   - title: Materials
-    desc: Applying the built-in materials by name
+    desc: The pre-built materials and their tweakable parameters
     contents:
+    - material.Default
+    - material.AmbientOcclusion
+    - material.Flat
+    - material.Squishy
+    - material.TransparentOutline
+    - material.PresetMaterial
     - material.append_material
     - material.add_all_materials
 
