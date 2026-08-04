@@ -13,6 +13,7 @@ The [](`~mn.Canvas`) object can be used to configure different render settings, 
 ```{python}
 import molecularnodes as mn
 import MDAnalysis as mda
+from molecularnodes.nodes.geometry import StyleRibbon
 from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 
 # create a canvas object
@@ -23,53 +24,28 @@ canvas = mn.Canvas()
 
 ```{python}
 # | warning: false
-u1 = mda.Universe(PSF, DCD)
-u2 = mda.Universe(TPR, XTC)
-
-# add universes to Blender
-t1 = mn.Trajectory(u1).add_style("cartoon")
-t2 = mn.Trajectory(u2)
+t1 = mn.Molecule.load(PSF, DCD)
+t2 = mn.Molecule.load(TPR, XTC)
 ```
 
 ## Add Styles and Annotations to Trajectories
 
 ```{python}
-# styles
-# trajectory 1
-
-t1.add_style(style=mn.StyleBallAndStick(quality=4), selection="resid 184")
-t1.add_style(
-    style=mn.StyleSpheres(subdivisions=4, geometry="Instance"),
-    selection="resid 1 129",
+(
+    t1
+    .add_style("ribbon", peptide_radius=0.5)
+    .add_style("ball_and_stick", quality=4, selection="resid 184")
+    .add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
 )
 
-# trajectory 2
-t2.add_style(style="ribbon", color=(0.162, 0.624, 0.196, 0.5))
-t2.add_style(selection="resid 141", style="ball_and_stick")
+t2.add_style("ribbon", material="MN Ambient Occlusion")
+t2.add_style("ball_and_stick", selection="resid 141")
 
-# annotations
-# trajectory 1
 t1.annotations.add_com_distance(
     selection1="resid 1", selection2="resid 129", text1="resid 1", text2="resid 129"
 )
 t1.annotations.add_atom_info(selection="name CA and resid 184", show_resid=True)
-# trajectory 2
 t2.annotations.add_atom_info(selection="name CA and resid 141", show_resid=True)
-```
-
-## Add Density component
-
-```{python}
-from pathlib import Path
-
-d1_path = Path("../../") / "tests/data/emd_24805.map.gz"
-
-# load density file
-d1 = mn.entities.density.io.load(
-    file_path=d1_path,
-    style="density_iso_surface",
-    overwrite=True,
-)
 ```
 
 ## Frame Objects
@@ -88,17 +64,12 @@ canvas.frame_object(t2, viewpoint="front")
 canvas.snapshot()
 ```
 
-```{python}
-# frame density object from right and render
-canvas.frame_object(d1, viewpoint="right")
-canvas.snapshot()
-```
 
 ## Frame Views
 
 The [](`~molecularnodes.Canvas.frame_view`) method can be used to frame one or more views. Views can be specific selections within entities or across entities. Multiple views can be combined with a `+` sign before passing to the [](`~molecularnodes.Canvas.frame_view`) method. An optional `viewpoint` param can be passed to specify the viewpoint like before.
 
-All entities have a `get_view` method that returns the entity object by default. The [](`~molecularnodes.entities.Trajectory.get_view`) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
+All entities have a `get_view` method that returns the entity object by default. The [](`~molecularnodes.entities.Molecule.get_view`) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
 
 ```{python}
 # frame resid 184 in trajectory 1 from the front
@@ -123,7 +94,7 @@ canvas.snapshot()
 
 ```{python}
 # frame trajectory 2 and density component from left
-canvas.frame_view(t2.get_view() + d1.get_view(), viewpoint="left")
+canvas.frame_view(t2.get_view() + t1.get_view(), viewpoint="left")
 canvas.snapshot()
 ```
 
@@ -131,26 +102,21 @@ canvas.snapshot()
 
 Camera can be zoomed in our out using the camera [](`~molecularnodes.scene.camera.Camera.lens`) settings of the [](`~mn.Canvas`) camera object once framed.
 
-```{python}
-# frame density object from front and render - default
-canvas.frame_object(d1, viewpoint="front")
-canvas.snapshot()
-```
+### Zoom in
 
 ```{python}
-# zoom in
 canvas.camera.lens = 150
 canvas.snapshot()
 ```
 
+### Zoom out
 ```{python}
-# zoom out
 canvas.camera.lens = 35
 canvas.snapshot()
 ```
 
+Reset camera lens to default (50mm)
 ```{python}
-# reset camera lens to default (50mm)
 canvas.camera.lens = 50
 ```
 
@@ -166,14 +132,128 @@ canvas.camera.rotation
 ```{python}
 # rotate 45 degrees to left from the front view
 # frame density object - note that viewpoint is not specified
-canvas.frame_view(d1, (90, 0, -45))
+canvas.frame_view(t2, (90, 0, -45))
 canvas.snapshot()
 ```
 
 ```{python}
 # frame density object and render
-canvas.frame_view(d1, (90, 0, 45))
+canvas.frame_view(t2, (90, 0, 45))
 canvas.snapshot()
+```
+
+## Render Settings
+
+The [](`~mn.Canvas`) exposes the most commonly tweaked render settings as plain
+properties, so you rarely need to reach into `bpy`. The render engine and its sample
+count, the colour-management transform, exposure and gamma can all be set directly.
+
+```{python}
+canvas.samples = 64
+canvas.view_transform = mn.scene.ViewTransform.KHRONOS
+canvas.exposure = 0.5
+canvas.gamma = 1.0
+
+canvas.frame_object(t1, viewpoint="front")
+canvas.snapshot()
+```
+
+Playback and output settings are equally accessible. `frame` sets the current scene frame,
+`frame_range` sets the `(start, end)` of the animation as a tuple, and `render_scale`
+renders at a percentage of the full resolution for quick previews.
+
+```{python}
+canvas.frame = 12
+canvas.frame_range = (1, 50)
+canvas.render_scale = 50
+canvas.frame
+```
+
+For compositor effects that rely on extra render passes (depth, mist, cryptomatte, …),
+enable them with `passes`. Any pass not listed is disabled.
+
+```{python}
+canvas.passes = ["combined", "z", "mist"]
+canvas.passes
+```
+
+## World & Lighting
+
+The world shader — the scene lighting and background — is controlled through
+[](`~mn.Canvas.world`), a [](`~molecularnodes.scene.world.WorldTree`). The two most common
+controls have convenience properties.
+
+```{python}
+canvas.render_scale = 100
+canvas.transparent = False
+canvas.world.background = (0.02, 0.02, 0.04, 1.0)
+canvas.frame_object(t1, viewpoint="front")
+canvas.snapshot()
+```
+
+```{python}
+# brighten the world lighting
+canvas.world.hdri_strength = 2.0
+canvas.snapshot()
+```
+
+For full control, [](`~molecularnodes.scene.world.WorldTree.reset`) clears the world shader
+and yields the world-output `surface` socket to build towards with `nodebpy.shader` nodes.
+
+```{python}
+from nodebpy import shader as s
+
+with canvas.world.reset() as surface:
+    s.Background(color=(0.05, 0.05, 0.08, 1.0), strength=1.0) >> surface
+canvas.snapshot()
+```
+
+## Compositor
+
+Post-processing effects are applied through [](`~mn.Canvas.compositor`), a
+[](`~molecularnodes.scene.compositor.CompositorTree`). It works just like the node tree of a
+molecule: [](`~molecularnodes.scene.compositor.CompositorTree.reset`) clears the tree and
+yields the rendered `image` and the final `output`, and you build the chain between them
+with `nodebpy.compositor` nodes.
+
+By default the compositor already composites Molecular Nodes annotations on top of the
+render. A `reset()` clears everything — **including** the annotations — so re-add them
+explicitly with [](`~molecularnodes.scene.compositor.CompositorTree.add_annotations`) when
+you want them drawn over your effects.
+
+```{python}
+from nodebpy import compositor as c
+
+canvas.frame_object(t1, viewpoint="front")
+
+# add a bloom glare, then draw annotations back on top
+with canvas.compositor.reset() as (image, output):
+    image >> c.Glare.bloom(strength=0.4) >> output
+canvas.compositor.add_annotations()
+canvas.snapshot()
+```
+
+Effects can be chained. Here a brightness/contrast adjustment follows the glare before the
+annotations are composited.
+
+```{python}
+with canvas.compositor.reset() as (image, output):
+    (
+        image
+        >> c.Glare.bloom(strength=3.0, highlights_threshold=0.4)
+        >> c.BrightnessContrast(contrast=0.3)
+        >> c.AlphaOver(foreground=c.Image(mn.scene.compositor._annotations_image()))
+        >> output
+    )
+# canvas.compositor.add_annotations()
+canvas.snapshot()
+```
+
+To restore the plain render, reset the compositor and re-add the annotations.
+
+```{python}
+canvas.compositor.reset()
+canvas.compositor.add_annotations()
 ```
 
 ## Animations
@@ -182,7 +262,8 @@ The [](`~molecularnodes.Canvas.animation`) method can be used to render animatio
 
 ```{python}
 # frame resid 1 and 129 in trajectory 1 at frame 97 from the front
-canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint="front")
+canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint=mn.scene.Viewpoint.FRONT)
+t1.average = 1
 # add a universe info annotation to trajectory 1
 t1.annotations.add_universe_info()
 ```

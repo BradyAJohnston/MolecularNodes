@@ -4,6 +4,7 @@
 
 
 *.blend1
+tests/blend_files/*.blend
 __pycache__/*
 .vscode/*
 molecularnodes*.zip
@@ -37,4 +38,5 @@ tests/data/cellpack/petworld/*.cif
 /docs/site_libs
 *.lock
 /docs/_inv
+/tests/blend_files/**.blend
 .envrc

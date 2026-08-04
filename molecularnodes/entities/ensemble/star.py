@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List, Optional, Union
 import bpy
 import databpy
 import mrcfile
@@ -10,16 +9,17 @@ from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
-from ...nodes import nodes
+from ...nodes import geometry, nodes
 from .base import Ensemble, EntityType
 
 
 class EnsembleDataFrame:
     def __init__(self, data: DataFrame) -> None:
+        self._world_scale = 0.1
         self.data = data
-        self._coord_columns: List[str] = ["x", "y", "z"]
-        self._rot_columns: List[str] = ["Rot", "Tilt", "Psi"]
-        self._shift_column_names: List[str] = [
+        self._coord_columns: list[str] = ["x", "y", "z"]
+        self._rot_columns: list[str] = ["Rot", "Tilt", "Psi"]
+        self._shift_column_names: list[str] = [
             "OriginXAngst",
             "OriginYAngst",
             "OriginZAngst",
@@ -45,7 +45,7 @@ class EnsembleDataFrame:
 
     @property
     def coordinates_scaled(self) -> np.ndarray:
-        return self.coordinates * self.scale
+        return self.coordinates * self.scale * self._world_scale
 
     def rotation_as_quaternion(self) -> np.ndarray:
         rot_tilt_psi_cols = self.data[self._rot_columns].to_numpy()
@@ -76,11 +76,6 @@ class EnsembleDataFrame:
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
-        bob.store_named_attribute(
-            self.rotation_as_quaternion(),
-            name="rotation",
-            atype=AttributeTypes.QUATERNION,
-        )
 
         bob.store_named_attribute(
             self.image_id_values(),
@@ -88,13 +83,16 @@ class EnsembleDataFrame:
             atype=AttributeTypes.INT,
         )
 
+        categories: dict[str, list] = {}
         for col in self.data.columns:
             if isinstance(self.data[col].dtype, CategoricalDtype):
-                bob.object[f"{col}_categories"] = list(self.data[col].cat.categories)
+                categories[col] = self.data[col].cat.categories.tolist()
                 data = self.data[col].cat.codes.to_numpy()
                 bob.store_named_attribute(data, name=col, atype=AttributeTypes.INT)
             else:
                 bob.store_named_attribute(self.data[col].to_numpy(), name=col)
+
+        bob.object.mn.categories = categories
 
 
 class RelionDataFrame(EnsembleDataFrame):
@@ -144,27 +142,21 @@ class CistemDataFrame(EnsembleDataFrame):
 
 
 class StarFile(Ensemble):
-    data_reader: Optional[DataFrame]
-    data_frame: Optional[Union[RelionDataFrame, CistemDataFrame]]
+    data_reader: DataFrame | None
+    data_frame: RelionDataFrame | CistemDataFrame | None
 
-    def __init__(self, file_path: Union[str, Path]) -> None:
+    def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
         self.type: str = "starfile"
         self.current_image: int = -1
         self._entity_type = EntityType.ENSEMBLE_STAR
-
-    @classmethod
-    def from_starfile(cls, file_path: Union[str, Path]) -> "StarFile":
-        self = cls(file_path)
         self.data_reader = self._read()
         self.data_frame = self._assign_df()
-        return self
 
     @classmethod
     def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
-        self = cls(blender_object["starfile_path"])
+        self = cls(blender_object.mn.filepath)
         self.object = blender_object
-        self.data_reader = self._read()
         return self
 
     @property
@@ -203,9 +195,9 @@ class StarFile(Ensemble):
     def _is_cistem(self) -> bool:
         return "cisTEMAnglePsi" in self.data_reader  # type: ignore
 
-    def _assign_df(self) -> Union[RelionDataFrame, CistemDataFrame]:
+    def _assign_df(self) -> RelionDataFrame | CistemDataFrame:
         if self.data_reader is None:
-            raise ValueError("Data not loaded. Call from_starfile() first.")
+            raise ValueError("Data not loaded. Call StarFile.load() first.")
         if self._is_relion():
             return RelionDataFrame(self.data_reader)
         elif self._is_cistem():
@@ -219,13 +211,13 @@ class StarFile(Ensemble):
         if self.object is None:
             raise ValueError("Object not set. Call from_blender_object() first.")
 
+        categories = self.props.categories
+        image_index = self.star_node.inputs["Image"].default_value - 1
         if self._is_relion():
-            micrograph_path = self.object["rlnMicrographName_categories"][
-                self.star_node.inputs["Image"].default_value - 1
-            ]
+            micrograph_path = categories["rlnMicrographName"][image_index]
         elif self._is_cistem():
-            micrograph_path = self.object["cisTEMOriginalImageFilename_categories"][
-                self.star_node.inputs["Image"].default_value - 1
+            micrograph_path = categories["cisTEMOriginalImageFilename"][
+                image_index
             ].strip("'")
         else:
             raise ValueError("File is not a valid RELION>=3.1 or cisTEM STAR file")
@@ -271,23 +263,21 @@ class StarFile(Ensemble):
         self,
         name: str = "StarFileObject",
         node_setup: bool = True,
-        world_scale: float = 0.01,
-        fraction: float = 1.0,
-        simplify: bool = True,
     ) -> bpy.types.Object:
         if self.data_frame is None:
-            raise ValueError("DataFrame not assigned. Call from_starfile() first.")
+            raise ValueError("DataFrame not assigned. Call StarFile.load() first.")
 
         self.object = databpy.create_object(
-            self.data_frame.coordinates_scaled * world_scale,
+            self.data_frame.coordinates_scaled,
             collection=bl.coll.mn(),
             name=name,
         )
-        self.object.mn.entity_type = self._entity_type.value
+        self.props.entity_type = self._entity_type.value
         self.data_frame.store_data_on_object(self.object)
 
         if node_setup:
-            nodes.create_starting_nodes_starfile(self.object)
+            with self.tree.reset() as (input, join):
+                input >> geometry.StarfileInstances() >> join
 
-        self.object["starfile_path"] = str(self.file_path)
+        self.props.filepath = str(self.file_path)
         return self.object

@@ -1,6 +1,7 @@
 import os
 import pickle as pk
 from contextlib import chdir
+from pathlib import Path
 from typing import Dict, Union
 import bpy
 import MDAnalysis as mda
@@ -10,9 +11,9 @@ from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
 from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
-from .entities.base import EntityType, MolecularEntity
+from .entities.base import MolecularEntity
 from .entities.ensemble.base import Ensemble
-from .entities.trajectory.base import Trajectory
+from .entities.reload import can_reload, reload_entity
 from .nodes.nodes import styles_mapping
 
 
@@ -24,10 +25,22 @@ def trim(dictionary: dict):
     return dic
 
 
-def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None:
+def _has_ondisk_trajectory(traj: Molecule) -> bool:
+    """Whether a trajectory is backed by a relocatable on-disk trajectory file.
+
+    Streaming (IMD) trajectories and in-memory universes (e.g. biotite-converted
+    molecules, whose ``filename`` is a ``BiotiteWrapper`` or ``None``) have no
+    on-disk trajectory file whose path can be made relative/absolute.
+    """
+    filename = traj.universe.trajectory.filename
+    if not isinstance(filename, (str, Path)):
+        return False
+    return not str(filename).startswith("imd://")
+
+
+def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:
     for key, traj in trajectories.items():
-        # skip streaming trajectories
-        if traj.universe.trajectory.filename.startswith("imd://"):
+        if not _has_ondisk_trajectory(traj):
             continue
         # save linked universe frame
         uframe = traj.uframe
@@ -37,10 +50,9 @@ def _make_trajectory_paths_relative(trajectories: Dict[str, Trajectory]) -> None
         traj._save_filepaths_on_object()
 
 
-def _make_trajectory_paths_absolute(trajectories: Dict[str, Trajectory]) -> None:
+def _make_trajectory_paths_absolute(trajectories: Dict[str, Molecule]) -> None:
     for key, traj in trajectories.items():
-        # skip streaming trajectories
-        if traj.universe.trajectory.filename.startswith("imd://"):
+        if not _has_ondisk_trajectory(traj):
             continue
         # save linked universe frame
         uframe = traj.uframe
@@ -68,16 +80,16 @@ def _make_path_absolute(filepath):
 
 class MNSession:
     def __init__(self) -> None:
-        self.entities: Dict[str, Union[Molecule, Trajectory, Ensemble]] = {}
+        self.entities: Dict[str, Union[Molecule, Ensemble]] = {}
 
     @property
     def molecules(self) -> Dict[str, Molecule]:
         return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
 
     @property
-    def trajectories(self) -> Dict[str, Trajectory]:
-        # return a filtered dictionary of only the trajectories using isinstance(item, Trajectory)
-        return {k: v for k, v in self.entities.items() if isinstance(v, Trajectory)}
+    def trajectories(self) -> Dict[str, Molecule]:
+        # return a filtered dictionary of only the trajectories using isinstance(item, Molecule)
+        return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
 
     @property
     def ensembles(self) -> Dict[str, Ensemble]:
@@ -85,37 +97,14 @@ class MNSession:
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
     def register_entity(self, item: MolecularEntity) -> None:
-        """Add entity to the dictionary"""
+        """Add entity to the session, keyed by its uuid."""
         self.entities[item.uuid] = item
-        # add entity to blender properties if it doesn't exist
-        props = bpy.context.scene.mn
-        entities = props.entities  # entities collection
-        if entities.find(item.uuid) == -1:
-            entity = entities.add()  # add new entity to collection
-            entity.name = item.uuid  # immutable name that allows find to get index
-            # EntityType is not available here in most cases as it is set after __init__
-            # In other cases, it is reset later like in case of MD_OXDNA
-            # So, use a simple check based on supported entity types here
-            if isinstance(item, Molecule):
-                entity.type = EntityType.MOLECULE.value
-            elif isinstance(item, Trajectory):
-                entity.type = EntityType.MD.value
-            elif isinstance(item, Ensemble):
-                entity.type = EntityType.ENSEMBLE.value
-            props.entities_active_index = len(entities) - 1
 
     def remove_entity(self, uuid: str) -> None:
-        """Remove entity from the dictionary"""
+        """Remove entity from the session."""
         del self.entities[uuid]
-        # remove entity from blender properties
-        props = bpy.context.scene.mn
-        entities = props.entities
-        index = entities.find(uuid)
-        if index != -1:
-            entities.remove(index)  # remove entity from collection
-            props.entities_active_index = len(entities) - 1
 
-    def match(self, obj: bpy.types.Object) -> Union[Molecule, Trajectory, Ensemble]:
+    def match(self, obj: bpy.types.Object) -> Union[Molecule, Ensemble]:
         return self.get(obj.uuid)
 
     def get_object(self, uuid: str) -> bpy.types.Object | None:
@@ -124,34 +113,23 @@ class MNSession:
 
         If nothing is be found to match, return None.
         """
-        return get_from_uuid(uuid)
+        try:
+            return get_from_uuid(uuid)
+        except LinkedObjectError:
+            return None
 
-    def get(self, uuid: str) -> Union[Molecule, Trajectory, Ensemble] | None:
+    def get(self, uuid: str) -> Union[Molecule, Ensemble] | None:
         return self.entities.get(uuid)
 
     def prune(self) -> None:
         """
-        Remove any entities that no longer exist in Blender
+        Remove any session entities whose Blender object no longer exists.
         """
-        # remove any entities that don't have linked objects
         for uuid in list(self.entities):
             try:
                 _ = self.entities[uuid].name
             except LinkedObjectError:
                 self.remove_entity(uuid)
-        # remove any properties that don't exist in session
-        props = bpy.context.scene.mn
-        entities = props.entities
-        remove_indices = [
-            i for i, entity in enumerate(entities) if entity.name not in self.entities
-        ]
-        if remove_indices:
-            # remove indices in the reverse sorted order for correctness
-            reversed_indices = sorted(remove_indices, reverse=True)
-            for i in reversed_indices:
-                if i < len(entities):
-                    entities.remove(i)
-            props.entities_active_index = len(entities) - 1
 
     @property
     def n_items(self) -> int:
@@ -237,9 +215,9 @@ class MNSession:
     def add_trajectory(
         self,
         universe: mda.Universe | AtomGroup,
-        style: str | None = "vdw",
+        style: str | None = "spheres",
         name: str = "NewUniverseObject",
-    ) -> Trajectory:
+    ) -> Molecule:
         """
         Add a new trajectory
 
@@ -256,8 +234,8 @@ class MNSession:
 
         Returns
         -------
-        Trajectory
-            The newly added Trajectory instance
+        Molecule
+            The newly added Molecule instance
 
         """
         if style is not None and style not in styles_mapping:
@@ -266,17 +244,17 @@ class MNSession:
             )
         selection = None
         if isinstance(universe, AtomGroup):
-            traj = Trajectory(universe.universe, name=name)  # AtomGroup universe
+            traj = Molecule(universe.universe, name=name)  # AtomGroup universe
             selection = universe  # AtomGroup
         else:
-            traj = Trajectory(universe, name=name)  # Universe
+            traj = Molecule(universe, name=name)  # Universe
         traj.add_style(style=style, selection=selection)
         return traj
 
     def get_trajectory(
         self,
         name: str,
-    ) -> Trajectory:
+    ) -> Molecule:
         """
         Get trajectory instance by name
 
@@ -287,8 +265,8 @@ class MNSession:
 
         Returns
         -------
-        Trajectory
-            A Trajectory instance
+        Molecule
+            A Molecule instance
 
         Raises
         ------
@@ -296,21 +274,21 @@ class MNSession:
 
         """
         for v in self.entities.values():
-            if isinstance(v, Trajectory) and v.object.name == name:
+            if isinstance(v, Molecule) and v.object.name == name:
                 return v
         raise ValueError(f"No trajectory named '{name}'")
 
     def remove_trajectory(
         self,
-        trajectory: Trajectory | str,
+        trajectory: Molecule | str,
     ) -> None:
         """
         Remove an existing trajectory
 
         Parameters
         ----------
-        trajectory: Trajectory | str, required
-            A Trajectory instance or name of the trajectory
+        trajectory: Molecule | str, required
+            A Molecule instance or name of the trajectory
 
         Returns
         -------
@@ -333,7 +311,7 @@ def get_session(context: Context | None = None) -> MNSession:
     return context.scene.MNSession
 
 
-def get_entity(context: Context | None = None) -> Molecule | Trajectory | Ensemble:
+def get_entity(context: Context | None = None) -> Molecule | Ensemble:
     session = get_session(context)
     return session.match(context.active_object)
 
@@ -412,31 +390,31 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Session_Create_Object(bpy.types.Operator):
-    bl_idname = "mn.session_create_object"
-    bl_label = "Create Object"
-    bl_description = "Create a new object linked to this item"
+class MN_OT_Session_Reload_Item(bpy.types.Operator):
+    bl_idname = "mn.session_reload_item"
+    bl_label = "Reload"
+    bl_description = (
+        "Reload this entity's data into the session from its source file or PDB "
+        "code, relinking the object to a live Molecular Nodes entity"
+    )
     bl_options = {"REGISTER", "UNDO"}
 
-    uuid: StringProperty()  # type: ignore
+    @classmethod
+    def poll(cls, context: Context) -> bool:
+        obj = context.active_object
+        return obj is not None and can_reload(obj)
 
     def execute(self, context: Context):
-        item = get_session().get(self.uuid)
-        if item is None:
-            self.report({"ERROR"}, f"No item with UUID '{self.uuid}'")
+        obj = context.active_object
+        try:
+            reload_entity(obj)
+        except Exception as e:
+            self.report({"ERROR"}, f"Failed to reload entity: {e}")
             return {"CANCELLED"}
-        item.create_object()
         return {"FINISHED"}
 
 
-class MN_OT_Session_Prune(bpy.types.Operator):
-    bl_idname = "mn.session_prune"
-    bl_label = "Session Prune"
-    bl_description = "Prune session entities by removing ones that no longer exist"
-
-    def execute(self, context: Context):
-        get_session().prune()
-        return {"FINISHED"}
-
-
-CLASSES = [MN_OT_Session_Remove_Item, MN_OT_Session_Create_Object, MN_OT_Session_Prune]
+CLASSES = [
+    MN_OT_Session_Remove_Item,
+    MN_OT_Session_Reload_Item,
+]

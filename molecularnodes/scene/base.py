@@ -2,22 +2,22 @@ import os
 import shutil
 import tempfile
 from contextlib import ExitStack
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal, Tuple
 import bpy
 from tqdm.auto import tqdm
 from .. import assets
 from ..assets.template import list_templates
-from ..blender import IS_BLENDER_5
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
-from ..scene.compositor import setup_compositor
 from ..session import get_session
 from ..ui import addon
 from ..utils import suppress_stdout, temp_override_properties
-from .camera import Camera, Viewpoints
+from .camera import Camera, Viewpoint
+from .compositor import CompositorTree, setup_compositor
 from .engines import EEVEE, Cycles
+from .world import WorldTree
 
 try:
     from IPython.display import Image, Video, display
@@ -30,7 +30,7 @@ IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
 IS_SELF_HOSTED = os.getenv("RUNNER_ENVIRONMENT") == "self-hosted"
 
 
-class ViewTransform(Enum):
+class ViewTransform(StrEnum):
     STANDARD = "Standard"
     KHRONOS = "Khronos PBR Neutral"
     AGX = "AgX"
@@ -39,16 +39,34 @@ class ViewTransform(Enum):
     FALSE_COLOR = "False Color"
     RAW = "Raw"
 
+    @classmethod
+    def _missing_(cls, value: object) -> "ViewTransform | None":
+        # called only when the exact-value lookup fails; allow the full name or the
+        # short enum name, case-insensitively (e.g. "agx", "filmic_log")
+        if isinstance(value, str):
+            key = value.strip().lower()
+            for member in cls:
+                if key in (member.value.lower(), member.name.lower()):
+                    return member
+        return None
 
-_view_transform = Literal[
-    ViewTransform.STANDARD.value,
-    ViewTransform.KHRONOS.value,
-    ViewTransform.AGX.value,
-    ViewTransform.FILMIC.value,
-    ViewTransform.FILMIC_LOG.value,
-    ViewTransform.FALSE_COLOR.value,
-    ViewTransform.RAW.value,
-]
+
+_RENDER_ENGINES = Literal["EEVEE", "CYCLES"]
+
+# render passes commonly needed for compositor effects, mapped to the
+# `bpy.types.ViewLayer` toggle that enables each one
+RENDER_PASSES = {
+    "combined": "use_pass_combined",
+    "z": "use_pass_z",
+    "mist": "use_pass_mist",
+    "normal": "use_pass_normal",
+    "position": "use_pass_position",
+    "vector": "use_pass_vector",
+    "diffuse_color": "use_pass_diffuse_color",
+    "emit": "use_pass_emit",
+    "environment": "use_pass_environment",
+    "ambient_occlusion": "use_pass_ambient_occlusion",
+}
 
 
 class Canvas:
@@ -98,6 +116,26 @@ class Canvas:
         World background color as RGBA in the range [0, 1].
     view_transform : {"Standard", "Khronos PBR Neutral", "AgX", "Filmic", "Filmic Log", "False Color", "Raw"}
         Active view transform for color management.
+    compositor : molecularnodes.scene.compositor.CompositorTree
+        Builder for the scene compositor node tree (post-processing effects).
+    world : molecularnodes.scene.world.WorldTree
+        Builder for the world shader node tree (lighting and background).
+    samples : int
+        Render sample count on the active engine.
+    frame : int
+        Current scene frame.
+    frame_range : tuple[int, int]
+        Scene ``(frame_start, frame_end)``.
+    render_scale : int
+        Render resolution percentage (100 = full).
+    exposure : float
+        Color-management exposure.
+    gamma : float
+        Color-management gamma.
+    look : str
+        Color-management look (contrast preset).
+    passes : list[str]
+        Enabled render passes (see :data:`RENDER_PASSES`).
 
     Examples
     --------
@@ -116,7 +154,7 @@ class Canvas:
 
     def __init__(
         self,
-        engine: EEVEE | Cycles | str = "EEVEE",
+        engine: EEVEE | Cycles | _RENDER_ENGINES = "EEVEE",
         resolution=(1280, 720),
         transparent: bool = False,
         template: Path | str | None = "Molecular Nodes",
@@ -144,6 +182,8 @@ class Canvas:
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
+        self._compositor: CompositorTree | None = None
+        self._world: WorldTree | None = None
         setup_compositor(self.scene)
 
     @property
@@ -156,7 +196,9 @@ class Canvas:
         bpy.types.Scene
             The current context scene.
         """
-        return bpy.context.scene
+        scene = bpy.context.scene
+        assert scene
+        return scene
 
     @property
     def resolution(self) -> tuple[int, int]:
@@ -198,7 +240,7 @@ class Canvas:
         return self._engine
 
     @engine.setter
-    def engine(self, value: Cycles | EEVEE | str) -> None:
+    def engine(self, value: Cycles | EEVEE | _RENDER_ENGINES) -> None:
         """
         Set the render engine.
 
@@ -257,7 +299,7 @@ class Canvas:
         value : float
             The FPS value to set.
         """
-        self.scene.render.fps = value
+        self.scene.render.fps = value  # ty: ignore[invalid-assignment]
 
     @property
     def frame_start(self) -> int:
@@ -332,6 +374,38 @@ class Canvas:
         self.scene.render.film_transparent = value
 
     @property
+    def compositor(self) -> CompositorTree:
+        """
+        The scene compositor node tree.
+
+        Build post-processing effects with ``nodebpy.compositor`` nodes, either
+        by appending (``with canvas.compositor as tree``) or from a clean graph
+        (``canvas.compositor.reset()``).
+
+        Returns
+        -------
+        molecularnodes.scene.compositor.CompositorTree
+            Builder bound to the active scene's compositor tree.
+        """
+        if self._compositor is None:
+            self._compositor = CompositorTree(self.scene)
+        return self._compositor
+
+    @property
+    def world(self) -> WorldTree:
+        """
+        The scene world shader node tree (lighting & background).
+
+        Returns
+        -------
+        molecularnodes.scene.world.WorldTree
+            Builder bound to the active scene's world shader tree.
+        """
+        if self._world is None:
+            self._world = WorldTree(self.scene)
+        return self._world
+
+    @property
     def background(self) -> Tuple[float, float, float, float]:
         """
         Get the world background color.
@@ -341,9 +415,7 @@ class Canvas:
         tuple[float, float, float, float]
             RGBA values in the range [0, 1].
         """
-        return (
-            self.scene.world.node_tree.nodes["MN_world_shader"].inputs[3].default_value
-        )
+        return self.world.background
 
     @background.setter
     def background(self, value: Tuple[float, float, float, float]) -> None:
@@ -355,62 +427,256 @@ class Canvas:
         value : tuple[float, float, float, float]
             RGBA values in the range [0, 1].
         """
-        self.scene.world.node_tree.nodes["MN_world_shader"].inputs[
-            3
-        ].default_value = value
-
-    # @property
-    # def hdri_strength
+        self.world.background = value
 
     @property
-    def view_transform(self) -> _view_transform:
+    def samples(self) -> int:
+        """
+        Get the render sample count from the active engine.
+
+        Returns
+        -------
+        int
+            Number of samples the active render engine is configured for.
+        """
+        return self.engine.samples
+
+    @samples.setter
+    def samples(self, value: int) -> None:
+        """
+        Set the render sample count on the active engine.
+
+        Parameters
+        ----------
+        value : int
+            Number of samples to render with.
+        """
+        self.engine.samples = value
+
+    @property
+    def frame(self) -> int:
+        """
+        Get the current scene frame.
+
+        Returns
+        -------
+        int
+            The current frame number.
+        """
+        return self.scene.frame_current
+
+    @frame.setter
+    def frame(self, value: int) -> None:
+        """
+        Set the current scene frame.
+
+        Parameters
+        ----------
+        value : int
+            The frame number to set. Uses ``frame_set`` so animation data updates.
+        """
+        self.scene.frame_set(value)
+
+    @property
+    def frame_range(self) -> tuple[int, int]:
+        """
+        Get the scene frame range.
+
+        Returns
+        -------
+        tuple[int, int]
+            The ``(frame_start, frame_end)`` of the scene.
+        """
+        return (self.scene.frame_start, self.scene.frame_end)
+
+    @frame_range.setter
+    def frame_range(self, value: tuple[int, int]) -> None:
+        """
+        Set the scene frame range.
+
+        Parameters
+        ----------
+        value : tuple[int, int]
+            The ``(frame_start, frame_end)`` to set.
+        """
+        self.scene.frame_start, self.scene.frame_end = value
+
+    @property
+    def render_scale(self) -> int:
+        """
+        Get the render resolution percentage.
+
+        Returns
+        -------
+        int
+            The resolution percentage applied to the render (100 = full).
+        """
+        return self.scene.render.resolution_percentage
+
+    @render_scale.setter
+    def render_scale(self, value: int) -> None:
+        """
+        Set the render resolution percentage.
+
+        Parameters
+        ----------
+        value : int
+            Percentage of the resolution to render at (100 = full).
+        """
+        self.scene.render.resolution_percentage = value
+
+    @property
+    def _view_settings(self) -> bpy.types.ColorManagedViewSettings:
+
+        view_settings = self.scene.view_settings
+        assert view_settings
+        return view_settings
+
+    @property
+    def exposure(self) -> float:
+        """
+        Get the color-management exposure.
+
+        Returns
+        -------
+        float
+            Exposure applied in the view transform.
+        """
+        return self._view_settings.exposure
+
+    @exposure.setter
+    def exposure(self, value: float) -> None:
+        """
+        Set the color-management exposure.
+
+        Parameters
+        ----------
+        value : float
+            Exposure to apply in the view transform.
+        """
+        self._view_settings.exposure = value
+
+    @property
+    def gamma(self) -> float:
+        """
+        Get the color-management gamma.
+
+        Returns
+        -------
+        float
+            Gamma applied in the view transform.
+        """
+        return self._view_settings.gamma
+
+    @gamma.setter
+    def gamma(self, value: float) -> None:
+        """
+        Set the color-management gamma.
+
+        Parameters
+        ----------
+        value : float
+            Gamma to apply in the view transform.
+        """
+        self._view_settings.gamma = value
+
+    @property
+    def look(self) -> str:
+        """
+        Get the color-management look (contrast preset).
+
+        Returns
+        -------
+        str
+            The active look, e.g. ``"None"`` or ``"AgX - Medium High Contrast"``.
+        """
+        return self._view_settings.look
+
+    @look.setter
+    def look(self, value: str) -> None:
+        """
+        Set the color-management look (contrast preset).
+
+        Parameters
+        ----------
+        value : str
+            The look to apply. Valid values depend on the active view transform.
+        """
+        self._view_settings.look = value  # ty: ignore[invalid-assignment]
+
+    @property
+    def passes(self) -> list[str]:
+        """
+        Get the enabled render passes.
+
+        Returns
+        -------
+        list[str]
+            Names of the enabled passes from :data:`RENDER_PASSES`.
+        """
+        view_layer = self.scene.view_layers[0]
+        return [
+            name for name, attr in RENDER_PASSES.items() if getattr(view_layer, attr)
+        ]
+
+    @passes.setter
+    def passes(self, value: list[str]) -> None:
+        """
+        Enable a set of render passes (for use in the compositor).
+
+        Parameters
+        ----------
+        value : list[str]
+            Names of passes to enable from :data:`RENDER_PASSES`; all others are
+            disabled.
+
+        Raises
+        ------
+        ValueError
+            If a name is not a recognised pass.
+        """
+        view_layer = self.scene.view_layers[0]
+        requested = set(value)
+        unknown = requested - set(RENDER_PASSES)
+        if unknown:
+            raise ValueError(
+                f"Unknown render pass(es): {sorted(unknown)}. "
+                f"Valid passes are {sorted(RENDER_PASSES)}."
+            )
+        for name, attr in RENDER_PASSES.items():
+            setattr(view_layer, attr, name in requested)
+
+    @property
+    def view_transform(self) -> ViewTransform:
         """
         Get the current view transform setting.
 
         Returns
         -------
-        str
-            The current view transform value.
+        ViewTransform
+            The current view transform. As a ``StrEnum`` this also compares equal
+            to its Blender string value.
         """
-        return self.scene.view_settings.view_transform
+        return ViewTransform(self._view_settings.view_transform)
 
     @view_transform.setter
-    def view_transform(self, value: _view_transform | ViewTransform | str) -> None:
+    def view_transform(self, value: ViewTransform) -> None:
         """
         Set the view transform setting.
 
         Parameters
         ----------
-        value : str | ViewTransform
-            The view transform value to set. Accepts enum, full name, or lowercase/shortened name.
+        value : ViewTransform | str
+            The view transform to set. Accepts a ``ViewTransform``, its full name
+            (case-insensitive), or its short enum name (e.g. ``"agx"``,
+            ``"filmic_log"``).
         """
-        # Normalize input
-        if isinstance(value, ViewTransform):
-            vt_value = value.value
-        elif isinstance(value, str):
-            value_lower = value.strip().lower()
-            # Try to match full name (case-insensitive)
-            for vt in ViewTransform:
-                if value_lower == vt.value.lower():
-                    vt_value = vt.value
-                    break
-            else:
-                # Try to match shortened name (e.g., "standard", "agx", "filmic", etc.)
-                for vt in ViewTransform:
-                    if value_lower == vt.name.lower():
-                        vt_value = vt.value
-                        break
-                else:
-                    raise ValueError(
-                        f"Invalid view transform '{value}'. Must be one of {[vt.value for vt in ViewTransform]} or a valid enum name."
-                    )
-        else:
-            raise TypeError("view_transform must be a str or ViewTransform enum.")
-
-        self.scene.view_settings.view_transform = vt_value
+        self._view_settings.view_transform = ViewTransform(value)  # ty: ignore[invalid-assignment]
 
     def frame_object(
-        self, obj: bpy.types.Object | MolecularEntity, viewpoint: Viewpoints = None
+        self,
+        obj: bpy.types.Object | MolecularEntity,
+        viewpoint: Viewpoint | str | None = None,
     ) -> None:
         """
         Frame an object or MolecularEntity in the active camera view.
@@ -419,7 +685,7 @@ class Canvas:
         ----------
         obj : bpy.types.Object | MolecularEntity
             Blender object or Molecular Nodes entity to frame.
-        viewpoint : Viewpoints | str, optional
+        viewpoint : Viewpoint | str, optional
             Viewing direction along a principal axis. One of
             {"default", "front", "back", "top", "bottom", "left", "right"}.
 
@@ -433,7 +699,9 @@ class Canvas:
         blender_utils.look_at_object(obj)
 
     def frame_view(
-        self, view: list[tuple] | MolecularEntity, viewpoint: Viewpoints | None = None
+        self,
+        view: list[tuple] | MolecularEntity,
+        viewpoint: Viewpoint | str | None = None,
     ) -> None:
         """
         Frame one or more views of Molecular entities.
@@ -444,7 +712,7 @@ class Canvas:
         view : list[tuple] | MolecularEntity
             A bounding box represented by 8 three-dimensional vertices
             ``[(x, y, z), ...]`` or an entity from which a view is derived.
-        viewpoint : Viewpoints | str, optional
+        viewpoint : Viewpoint | str, optional
             Viewing direction along a principal axis. One of
             {"default", "front", "back", "top", "bottom", "left", "right"}.
 
@@ -475,7 +743,7 @@ class Canvas:
     def scene_reset(
         self,
         template: Path | str | None = "Molecular Nodes",
-        engine: Cycles | EEVEE | str = "EEVEE",
+        engine: Cycles | EEVEE | _RENDER_ENGINES = "EEVEE",
     ) -> None:
         """
         Reset the scene from a template or startup file.
@@ -561,8 +829,7 @@ class Canvas:
             (render_settings, "use_file_extension", True),
             (scene, "frame_current", render_frame),
         ]
-        if IS_BLENDER_5:
-            override_props.append((image_settings, "media_type", "IMAGE"))
+        override_props.append((image_settings, "media_type", "IMAGE"))
         override_props.append((image_settings, "file_format", file_format))
         with ExitStack() as stack:
             # set the use_file_extension to auto generate file extension
@@ -639,8 +906,7 @@ class Canvas:
             (render_settings, "filepath", ""),
             (scene, "frame_current", start),
         ]
-        if IS_BLENDER_5:
-            override_props.append((image_settings, "media_type", "IMAGE"))
+        override_props.append((image_settings, "media_type", "IMAGE"))
         override_props.append((image_settings, "file_format", "PNG"))
         # create a temporary directory
         with tempfile.TemporaryDirectory() as tmp_dir:
@@ -682,8 +948,7 @@ class Canvas:
                 (scene, "frame_start", start),
                 (scene, "frame_end", end),
             ]
-            if IS_BLENDER_5:
-                override_props.append((image_settings, "media_type", "VIDEO"))
+            override_props.append((image_settings, "media_type", "VIDEO"))
             override_props.append((image_settings, "file_format", "FFMPEG"))
             override_props.append((render_settings.ffmpeg, "format", "MPEG4"))
             with ExitStack() as stack:

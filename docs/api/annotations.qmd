@@ -24,7 +24,7 @@ canvas = mn.Canvas()
 ```{python}
 #| warning: false
 u = mda.Universe(PSF, DCD)
-t = mn.Trajectory(u).add_style("cartoon")
+t = mn.Molecule(u).add_style("cartoon")
 ```
 
 ## Adding Annotations
@@ -33,13 +33,13 @@ Annotations can be added using the `add_<annotation_type>` method of the annotat
 
 The bundled annotation types for Trajectories are:
 
-- [`add_atom_info()`](`~mn.entities.trajectory.annotations.AtomInfo`) - For some basic atom info
-- [`add_com()`](`~mn.entities.trajectory.annotations.COM) - For center-of-mass of a selection
-- [`add_com_distance()`](`~mn.entities.trajectory.annotations.COMDistance`) - For distance between two center-of-masses
-- [`add_canonical_dihedrals()`](`~mn.entities.trajectory.annotations.CanonicalDihedrals`) - For canonical dihedrals of a residue
-- [`add_universe_info()`](`~mn.entities.trajectory.annotations.UniverseInfo`) - For universe info
-- [`add_label_2d()`](`~mn.entities.trajectory.annotations.Label2D`) - For adding a generic 2d label in viewport / render
-- [`add_label_3d()`](`~mn.entities.trajectory.annotations.Label3D`) - For adding a generic 3d label
+- [`add_atom_info()`](`~mn.entities.molecule.annotations.AtomInfo`) - For some basic atom info
+- [`add_com()`](`~mn.entities.molecule.annotations.COM) - For center-of-mass of a selection
+- [`add_com_distance()`](`~mn.entities.molecule.annotations.COMDistance`) - For distance between two center-of-masses
+- [`add_canonical_dihedrals()`](`~mn.entities.molecule.annotations.CanonicalDihedrals`) - For canonical dihedrals of a residue
+- [`add_universe_info()`](`~mn.entities.molecule.annotations.UniverseInfo`) - For universe info
+- [`add_label_2d()`](`~mn.entities.molecule.annotations.Label2D`) - For adding a generic 2d label in viewport / render
+- [`add_label_3d()`](`~mn.entities.molecule.annotations.Label3D`) - For adding a generic 3d label
 
 All selections used in the annotation APIs can be either MDAnalysis selection phrases (strings) or instances of `AtomGroup`s.
 
@@ -69,7 +69,7 @@ t.annotations.add_atom_info.func.__signature__
 
 ## Annotation Examples
 
-### [atom_info](`~molecularnodes.entities.trajectory.annotations.AtomInfo`)
+### [atom_info](`~molecularnodes.entities.molecule.annotations.AtomInfo`)
 
 Display the atom info of a selection.
 
@@ -80,10 +80,8 @@ The input parameters for this annotation are:
 - `show_segid` - Whether to show the segid
 
 ```{python}
-# add a style to display all the alpha carbons as spheres
-t.add_style(
-    selection="name CA", style="ball_and_stick", color=(0.162, 0.624, 0.196, 1.0)
-)
+# add a style to display all the alpha carbons as ball and stick
+t.add_style("ball_and_stick", selection="name CA")
 # add the atom_info annotation
 a1 = t.annotations.add_atom_info(
     selection="resid 73:78 and name CA",
@@ -102,12 +100,11 @@ canvas.snapshot()
 ```
 
 ```{python}
-# hide the annotation and remove the added style
+# hide the annotation
 a1.visible = False
-t.styles[1].remove()
 ```
 
-### [com](`molecularnodes.entities.trajectory.annotations.COM`)
+### [com](`molecularnodes.entities.molecule.annotations.COM`)
 
 Display the center-of-mass of a selection.
 
@@ -135,7 +132,7 @@ a2.visible = False
 a3.visible = False
 ```
 
-### [com_distance](`molecularnodes.entities.trajectory.annotations.COMDistance`)
+### [com_distance](`molecularnodes.entities.molecule.annotations.COMDistance`)
 
 Display the distance between center-of-masses of two selections.
 
@@ -172,7 +169,7 @@ canvas.snapshot()
 a4.visible = False
 ```
 
-### [canonical_dihedrals](`molecularnodes.entities.trajectory.annotations.CanonicalDihedrals`)
+### [canonical_dihedrals](`molecularnodes.entities.molecule.annotations.CanonicalDihedrals`)
 
 Display the canonical dihedrals of a residue
 
@@ -198,7 +195,7 @@ canvas.snapshot()
 a5.visible = False
 ```
 
-### [universe_info](`molecularnodes.entities.trajectory.annotations.UniverseInfo`)
+### [universe_info](`molecularnodes.entities.molecule.annotations.UniverseInfo`)
 
 Display the universe info of the trajectory.
 
@@ -228,7 +225,7 @@ canvas.snapshot(frame=50)
 a6.visible = False
 ```
 
-### [simulation_box](`molecularnodes.entities.trajectory.annotations.SimulationBox`)
+### [simulation_box](`molecularnodes.entities.molecule.annotations.SimulationBox`)
 
 Display the simulation box of the trajectory if box dimensions are present.
 
@@ -243,7 +240,7 @@ The input parameters for this annotation are:
 t.annotations.add_simulation_box()
 ```
 
-### [label_2d](`molecularnodes.entities.trajectory.annotations.Label2D`)
+### [label_2d](`molecularnodes.entities.molecule.annotations.Label2D`)
 
 Display a generic 2d label in the viewport / render.
 
@@ -268,7 +265,7 @@ canvas.snapshot()
 a7.visible = False
 ```
 
-### [label_3d](`molecularnodes.entities.trajectory.annotations.Label3D`)
+### [label_3d](`molecularnodes.entities.molecule.annotations.Label3D`)
 
 Display a generic 3d label on the universe.
 
@@ -278,12 +275,8 @@ The input parameters for this annotation are:
 - `location` - 3d coordinates in universe to display text
 
 ```{python}
-# show the alpha carbon of resid 1 as a sphere
-t.add_style(
-    selection="resid 1 and name CA",
-    style="ball_and_stick",
-    color=(0.162, 0.624, 0.196, 1.0),
-)
+# show the alpha carbon of resid 1 as ball and stick
+t.add_style("ball_and_stick", selection="resid 1 and name CA")
 # select the alpha carbon of resid 1
 r1 = t.universe.select_atoms("resid 1 and name CA")
 atom = r1.atoms[0]
@@ -303,8 +296,6 @@ canvas.snapshot()
 ```{python}
 # hide the added annotation
 a8.visible = False
-# remove the added style
-t.styles[1].remove()
 ```
 
 ## Accessing Annotations
@@ -418,16 +409,16 @@ t.annotations.clear()
 
 ## Custom Annotations
 
-In addition to the above bundled annotations for Trajectories, custom annotation types can be created by extending the [](`~molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation`) class. These custom annotation types will be automatically registered and can be added using the same `add_<annotation_type>` method of a trajectory instance. The GUI to add and configure the annotation will also be automatically available.
+In addition to the above bundled annotations for Trajectories, custom annotation types can be created by extending the [](`~molecularnodes.entities.molecule.annotations.MoleculeAnnotation`) class. These custom annotation types will be automatically registered and can be added using the same `add_<annotation_type>` method of a trajectory instance. The GUI to add and configure the annotation will also be automatically available.
 
 ### Create a custom annotation
 
-A custom trajectory annotation class has to extend [](`~molecularnodes.entities.trajectory.annotations.TrajectoryAnnotation`) and implement the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) method. Optional [](`~molecularnodes.annotations.base.BaseAnnotation.defaults`) method can be used to set defaults for the annotation and a [](`~molecularnodes.annotations.base.BaseAnnotation.validate`) method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via `self.trajectory`, universe via `self.trajectory.universe` and the annotation params via `self.interface`. Please see the drawing utilities section for all the methods available to draw onto the viewport / renders from the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) code.
+A custom trajectory annotation class has to extend [](`~molecularnodes.entities.molecule.annotations.MoleculeAnnotation`) and implement the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) method. Optional [](`~molecularnodes.annotations.base.BaseAnnotation.defaults`) method can be used to set defaults for the annotation and a [](`~molecularnodes.annotations.base.BaseAnnotation.validate`) method that can validate inputs when they change can be implemented. The custom class will have access to the trajectory entity via `self.trajectory`, universe via `self.trajectory.universe` and the annotation params via `self.interface`. Please see the drawing utilities section for all the methods available to draw onto the viewport / renders from the [](`~molecularnodes.annotations.base.BaseAnnotation.draw`) code.
 
 ```{python}
 # Add a CutomAnnotation class
 # This class will auto-register with the Trajectory entities
-class CustomAnnotation(mn.entities.trajectory.TrajectoryAnnotation):
+class CustomAnnotation(mn.entities.molecule.MoleculeAnnotation):
     annotation_type = "custom_annotation"
 
     selection: str  # required param
@@ -502,11 +493,11 @@ ca.visible = False
 
 ### Unregister a custom annotation
 
-Custom annotations get automatically registered with the [](`~mn.entities.trajectory.annotations.TrajectoryAnnotationManager`). They can be manually unregistered and re-registered using the [](`~mn.annotations.manager.BaseAnnotationManager.unregister_type`) and [](`~mn.annotations.manager.BaseAnnotationManager.register_class`) methods if required.
+Custom annotations get automatically registered with the [](`~mn.entities.molecule.annotations.MoleculeAnnotationManager`). They can be manually unregistered and re-registered using the [](`~mn.annotations.manager.BaseAnnotationManager.unregister_type`) and [](`~mn.annotations.manager.BaseAnnotationManager.register_class`) methods if required.
 
 ```{python}
 # unregister the annotation
-manager = mn.entities.trajectory.TrajectoryAnnotationManager
+manager = mn.entities.molecule.MoleculeAnnotationManager
 manager.unregister_type("custom_annotation")
 ```
 ### Input types

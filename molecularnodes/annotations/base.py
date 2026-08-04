@@ -63,7 +63,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     interface: AnnotationInterface
 
     def __init__(self):
-        self._world_scale = 0.01
+        self._world_scale = 0.1
         self._rad45 = radians(45)
         self._rad315 = radians(315)
         self._shader_line = (

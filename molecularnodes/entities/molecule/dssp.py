@@ -140,7 +140,7 @@ class DSSPManager:
         universe = self._entity.universe
         self._DSSP = DSSP(universe)
         self._entity.calculations["sec_struct"] = self._calculate_sec_struct
-        self._props = self._entity.object.mn.dssp
+        self._props = self._entity.props.dssp
         # calculate no secondary structs attribute
         # protein - 3 (loop), rest - 0 (none)
         self._protein_residues = universe.select_atoms("protein").residues

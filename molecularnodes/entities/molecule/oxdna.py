@@ -1,3 +1,4 @@
+from pathlib import Path
 import databpy as db
 import numpy as np
 from MDAnalysis import Universe
@@ -15,9 +16,8 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
-from ...nodes import nodes
 from ..base import EntityType
-from .base import Trajectory
+from .base import Molecule
 
 DNA_SCALE = 10
 
@@ -353,7 +353,7 @@ class OXDNAReader(ReaderBase):
         self._oxdnafile.close()
 
 
-class OXDNA(Trajectory):
+class OXDNA(Molecule):
     """
     A class to handle oxDNA trajectory data.
 
@@ -384,7 +384,7 @@ class OXDNA(Trajectory):
         self,
         universe: Universe,
         name: str = "NewOXDNAObject",
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         create_object: bool = True,
     ):
         super().__init__(
@@ -393,6 +393,51 @@ class OXDNA(Trajectory):
             world_scale=world_scale * DNA_SCALE,
             create_object=create_object,
         )
+
+    @classmethod
+    def load(
+        cls,
+        topology: str | Path,
+        coordinates: str | Path,
+        name: str = "oxDNA",
+        style: str | None = "ribbon",
+        world_scale: float = 0.1,
+        create_object: bool = True,
+    ) -> "OXDNA":
+        """Load an oxDNA topology and trajectory.
+
+        Parameters
+        ----------
+        topology : str | Path
+            Path to the oxDNA topology file.
+        coordinates : str | Path
+            Path to the oxDNA trajectory/configuration file.
+        name : str, optional
+            Name for the created object, by default "oxDNA".
+        style : str | None, optional
+            Visual style to apply, by default "ribbon". If None, no style is added.
+        world_scale : float, optional
+            Scaling factor for world coordinates, by default 0.1.
+        create_object : bool, optional
+            Whether to create the Blender object immediately, by default True.
+
+        Returns
+        -------
+        OXDNA
+            The created oxDNA trajectory entity.
+        """
+        universe = Universe(
+            topology,
+            coordinates,
+            topology_format=OXDNAParser,
+            format=OXDNAReader,
+        )
+        entity = cls(
+            universe, name=name, world_scale=world_scale, create_object=create_object
+        )
+        if style is not None and create_object:
+            entity.add_style(style=style)
+        return entity
 
     def _compute_color(self) -> np.ndarray:
         """Compute equidistant chain coloring for OXDNA"""
@@ -410,24 +455,6 @@ class OXDNA(Trajectory):
             "res_name": self._compute_res_name_int,
             "Color": self._compute_color,
         }
-
-    def _create_object(
-        self,
-        name: str = "NewUniverseObject",
-    ) -> None:
-        """
-        Create a new object with the trajectory data.
-
-        Parameters
-        ----------
-        style : str, optional
-            Style of the object representation, by default "oxdna"
-        name : str, optional
-            Name of the new object, by default "NewUniverseObject"
-        """
-        super()._create_object(name=name)
-        self.set_frame(0)
-        nodes.create_starting_node_tree(self.object, style="oxdna", color=None)
 
     def set_frame(self, frame: int) -> None:
         super()._update_positions(frame)
@@ -448,5 +475,5 @@ class OXDNA(Trajectory):
                 print(e)
 
     def _get_annotation_entity_type(self) -> str:
-        "Interna: Re-use the annotations for Trajectory entity"
+        "Interna: Re-use the annotations for Molecule entity"
         return EntityType.MD.value

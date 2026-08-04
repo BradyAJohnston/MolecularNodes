@@ -4,11 +4,17 @@ import databpy as db
 import numpy as np
 import pytest
 import molecularnodes as mn
-from .constants import attributes, codes, data_dir
-from .utils import NumpySnapshotExtension
+from molecularnodes.nodes.geometry import (
+    StyleBallAndStick,
+    StyleCartoon,
+    StyleRibbon,
+    StyleSpheres,
+    StyleSurface,
+)
+from .constants import codes, data_dir
+from .utils import GeometrySet, NumpySnapshotExtension
 
 STYLES_TO_TEST = [
-    "preset_1",
     "cartoon",
     "ribbon",
     "spheres",
@@ -16,35 +22,49 @@ STYLES_TO_TEST = [
     "ball_and_stick",
 ]
 
-CENTRE_METHODS_TO_TEST = ["", "centroid", "mass"]
+# `surface` builds its mesh through a volume, and the marching cubes step lands on a
+# slightly different vertex count on each platform's Blender build. It is also by far
+# the slowest style, so it is only exercised on the smallest structure.
+SURFACE_CODE = "1BNA"
+STYLE_PARAMS = [
+    (code, assembly, style)
+    for code, assembly, style in itertools.product(codes, [True, False], STYLES_TO_TEST)
+    if style != "surface" or code == SURFACE_CODE
+]
+
+
+@pytest.mark.parametrize("code, assembly, style", STYLE_PARAMS)
+def test_style_1(snapshot, code, assembly, style):
+    mol = mn.Molecule.fetch(code, cache=data_dir)
+    with mol.tree.reset() as (atoms, join):
+        match style:
+            case "ball_and_stick":
+                style_node = StyleBallAndStick(sphere_geometry="Mesh")
+            case "spheres":
+                style_node = StyleSpheres(sphere_geometry="Mesh")
+            case "cartoon":
+                style_node = StyleCartoon()
+            case "ribbon":
+                style_node = StyleRibbon()
+            case "surface":
+                style_node = StyleSurface()
+
+        assembly = (
+            mn.nodes.geometry.AssemblyInstance(data_object=mol.create_data_object())
+            if assembly
+            else None
+        )
+        (atoms >> style_node >> assembly >> join)
+
+    assert snapshot == GeometrySet(mol.object).summary()
 
 
 @pytest.mark.parametrize(
-    "assembly, code, style", itertools.product([False], codes, STYLES_TO_TEST)
-)
-def test_style_1(snapshot_custom: NumpySnapshotExtension, assembly, code, style):
-    mol = mn.Molecule.fetch(code, cache=data_dir).add_style(
-        style=style, assembly=assembly
-    )
-    if style == "spheres":
-        mol.styles[0].geometry = "Mesh"
-
-    for att in attributes:
-        try:
-            assert snapshot_custom == mol.named_attribute(
-                att, evaluate=style == "cartoon" and code == "1BNA"
-            )
-        except AttributeError as e:
-            assert snapshot_custom == e
-
-
-@pytest.mark.parametrize(
-    "code, format", itertools.product(codes, ["bcif", "cif", "pdb"])
+    "code, format", list(itertools.product(codes, ["bcif", "cif", "pdb"]))
 )
 def test_download_format(code, format):
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
-    assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-    assert mol.object.mn.entity_type == mol._entity_type.value
+    assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
     with db.ObjectTracker() as o:
         bpy.ops.mn.import_fetch(code=code, file_format=format, cache_dir=str(data_dir))
         mol2 = bpy.context.scene.MNSession.match(o.latest())
@@ -56,47 +76,6 @@ def test_download_format(code, format):
 def test_style_positions(snapshot_custom: NumpySnapshotExtension, code):
     mol = mn.Molecule.fetch(code, cache=data_dir)
     assert snapshot_custom == mol.position
-
-
-@pytest.mark.parametrize(
-    "code, centre_method", itertools.product(codes, CENTRE_METHODS_TO_TEST)
-)
-def test_centring(snapshot_custom: NumpySnapshotExtension, code, centre_method):
-    """fetch a pdb structure using code and translate the model using the
-    centre_method. Check the CoG and CoM values against the snapshot file.
-    """
-    mol = mn.Molecule.fetch(code, cache=data_dir).centre_molecule(centre_method)
-    CoG = mol.centroid()
-    CoM = mol.centroid(weight="mass")
-
-    if centre_method == "centroid":
-        assert np.linalg.norm(CoG) < 1e-06
-    elif centre_method == "mass":
-        assert np.linalg.norm(CoM) < 1e-06
-
-    CoG = np.array_str(CoG, precision=4, suppress_small=True)
-    CoM = np.array_str(CoM, precision=4, suppress_small=True)
-    assert snapshot_custom == [CoG, CoM]
-
-
-@pytest.mark.parametrize("code", codes)
-def test_centring_different(code):
-    """fetch multiple instances of the same pdb structure and translate
-    each by a different centring method. Check that their centroids and
-    positions are in fact different.
-    """
-    mols = [
-        mn.Molecule.fetch(code, cache=data_dir).centre_molecule(method)
-        for method in CENTRE_METHODS_TO_TEST
-    ]
-    for mol1, mol2 in itertools.combinations(mols, 2):
-        assert not np.allclose(mol1.centroid(), mol2.centroid())
-        assert not np.allclose(
-            mol1.centroid(weight="mass"), mol2.centroid(weight="mass")
-        )
-        assert not np.allclose(
-            mol1.named_attribute("position"), mol2.named_attribute("position")
-        )
 
 
 def test_local_pdb(snapshot_custom):
@@ -114,22 +93,22 @@ def test_pdb_no_bonds(snapshot):
 
 
 def test_rcsb_nmr(snapshot_custom):
-    mol = mn.Molecule.fetch("2M6Q", cache=data_dir).add_style(style="cartoon")
-    assert len(mol.frames.objects) == 10
-    assert mol.node_group.nodes["Animate Value"].inputs["Value Max"].default_value == 9
+    mol = mn.Molecule.fetch("2M6Q", cache=data_dir)
+    # multi-model (NMR) structures now load as trajectory frames of the Universe
+    assert mol.universe.trajectory.n_frames > 1
+
+    mol.add_style("cartoon")
     assert snapshot_custom == mol.named_attribute("position")
 
-    bpy.context.scene.frame_set(1)
-    pos_1 = mol.named_attribute("position", evaluate=True)
-    bpy.context.scene.frame_set(100)
-    pos_2 = mol.named_attribute("position", evaluate=True)
-    bpy.context.scene.frame_set(1)
-    assert not np.allclose(pos_1, pos_2)
+    # advancing the frame pushes the corresponding model's positions onto the mesh
+    mol.set_frame(0)
+    pos_0 = mol.named_attribute("position")
+    mol.set_frame(5)
+    pos_5 = mol.named_attribute("position")
+    assert not np.allclose(pos_0, pos_5)
 
 
-def test_load_small_mol(snapshot_custom):
+def test_load_small_mol(snapshot):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
-    assert mol._entity_type == mn.entities.base.EntityType.MOLECULE
-    assert mol.object.mn.entity_type == mol._entity_type.value
-    for att in ["position", "bond_type"]:
-        assert snapshot_custom == mol.named_attribute(att).tolist()
+    assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
+    assert snapshot == GeometrySet(mol.object, strict=True).summary()

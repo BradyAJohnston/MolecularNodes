@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional
 import MDAnalysis as mda
 from ..base import EntityType
-from .base import Trajectory
+from .base import Molecule
 
 logger = logging.getLogger(__name__)
 
@@ -52,8 +52,8 @@ def is_imd_url(path: str | Path) -> bool:
     return str(path).startswith("imd:")
 
 
-class StreamingTrajectory(Trajectory):
-    """Trajectory subclass for IMD streaming connections.
+class StreamingTrajectory(Molecule):
+    """Molecule subclass for IMD streaming connections.
 
     Handles real-time molecular dynamics trajectories streamed via the IMD
     protocol. Unlike regular trajectories with random frame access, streaming
@@ -146,5 +146,5 @@ class StreamingTrajectory(Trajectory):
         return traj
 
     def _get_annotation_entity_type(self) -> str:
-        "Interna: Re-use the annotations for Trajectory entity"
+        "Interna: Re-use the annotations for Molecule entity"
         return EntityType.MD.value

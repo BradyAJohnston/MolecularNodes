@@ -2,6 +2,7 @@ import os
 import numpy as np
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
+from ...nodes.node_management import get_final_style_nodes
 from ..annotations import Label2D, Label3D
 from ..base import EntityType
 
@@ -106,12 +107,13 @@ class DensityInfo(DensityAnnotation):
             text = f"Filename: {filename}"
         if params.show_threshold:
             if self.density.node_group:
-                iso_value = getattr(self.density.styles[0], "iso_value", None)
-                if iso_value is None:
-                    threshold = self.density.styles[0].threshold
+                style_node = get_final_style_nodes(self.density.modifier_node_tree)[0]
+                iso_socket = style_node.inputs.get("ISO Value")
+                if iso_socket is None:
+                    threshold = style_node.inputs["Threshold"].default_value
                     text = text + f"|Threshold: {threshold:.2f}"
                 else:
-                    text = text + f"|ISO Value: {iso_value:.2f}"
+                    text = text + f"|ISO Value: {iso_socket.default_value:.2f}"
         if params.show_origin:
             if grid.metadata["center"]:
                 origin = -np.array(grid.grid.shape) * 0.5 * grid.delta

@@ -13,13 +13,13 @@ matplotlib.use("Agg")
 # Annotations are auto-registered
 # Unregister previous class if any while debugging / iterating code
 if hasattr(
-    mn.entities.trajectory.TrajectoryAnnotationManager,
+    mn.entities.molecule.MoleculeAnnotationManager,
     "add_helix_analysis",
 ):
-    mn.entities.trajectory.TrajectoryAnnotationManager.unregister_type("helix_analysis")
+    mn.entities.molecule.MoleculeAnnotationManager.unregister_type("helix_analysis")
 
 
-class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
+class TrajectoryHelixAnalysis(mn.entities.molecule.MoleculeAnnotation):
     annotation_type = "helix_analysis"
 
     # selection has to be atleast 9 residues
@@ -62,7 +62,7 @@ class TrajectoryHelixAnalysis(mn.entities.trajectory.TrajectoryAnnotation):
         params = self.interface
         u = self.trajectory.universe
 
-        if type(self.trajectory) is not mn.entities.trajectory.Trajectory:
+        if type(self.trajectory) is not mn.entities.molecule.Molecule:
             raise ValueError("This annotation requires a Trajectory entity")
 
         # run analysis initially or when selection input changes

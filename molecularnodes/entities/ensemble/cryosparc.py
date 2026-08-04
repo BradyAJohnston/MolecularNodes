@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, overload
 import databpy as db
 import numpy as np
+from bpy.types import Object
 from databpy.attribute import AttributeTypeNames
 from scipy.spatial.transform import Rotation
 from .base import Ensemble, EntityType
@@ -181,19 +182,20 @@ class CryoSPARCEnsemble(Ensemble):
         We sort them here so they are presented in the same order they would be in
         a CryoSPARC dataset.
         """
+        a = db.AttributeTypes
         fields: "list[BobField]" = []
         fields_to_check = {
-            "ctf/df_angle_rad": "FLOAT",
-            "ctf/exp_group_id": "INT",
-            "alignments2D/shift": "FLOAT2",
-            "alignments2D/class": "INT",
-            "alignments3D/split": "INT",
-            "alignments3D/class": "INT",
-            "alignments3D/shift": "FLOAT2",
-            "alignments3D/alpha_min": "FLOAT",
-            "blob/idx": "INT",
-            "blob/shape": "INT32_2D",
-            "blob/psize_A": "FLOAT",
+            "ctf/df_angle_rad": a.FLOAT,
+            "ctf/exp_group_id": a.INT,
+            "alignments2D/shift": a.FLOAT2,
+            "alignments2D/class": a.INT,
+            "alignments3D/split": a.INT,
+            "alignments3D/class": a.INT,
+            "alignments3D/shift": a.FLOAT2,
+            "alignments3D/alpha_min": a.FLOAT,
+            "blob/idx": a.INT,
+            "blob/shape": a.INT32_2D,
+            "blob/psize_A": a.FLOAT,
             # cannot support string fields since databpy does not support strings
         }
         for name, atype in fields_to_check.items():
@@ -207,7 +209,7 @@ class CryoSPARCEnsemble(Ensemble):
                 dict(
                     name="ctf/df_A",
                     data=np.mean(np.column_stack((df1, df2)), axis=1),
-                    atype="FLOAT",
+                    atype=a.FLOAT,
                 )
             )
 
@@ -253,19 +255,21 @@ class CryoSPARCEnsemble(Ensemble):
         self,
         name: str = "CryoSPARC Ensemble",
         node_setup: bool = True,
-        world_scale: float = 0.01,
+        world_scale: float = 0.1,
         fraction: float = 1.0,
         simplify=False,
-    ) -> db.BlenderObject:
+    ) -> Object:
         # build positions and rotation outside _construct_fields because we want
         # them to appear first, like they would with a normal Blender object.
-        bob = db.create_bob(self.dset.position * world_scale, name=name)
-        bob.store_named_attribute(
-            data=self.dset.rotations, name="rotation", atype="QUATERNION"
+        self.object = db.create_object(self.dset.position * world_scale, name=name)
+        self.store_named_attribute(
+            data=self.dset.rotations,
+            name="rotation",
+            atype=db.AttributeTypes.QUATERNION,
         )
         for field in self._construct_fields():
-            bob.store_named_attribute(**field)
+            self.store_named_attribute(**field)
         if node_setup:
             # TODO: make nodes etc.
             print(simplify, fraction)
-        return bob
+        return self.object

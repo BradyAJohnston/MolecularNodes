@@ -1,91 +1,154 @@
+from contextlib import contextmanager
+from typing import Iterator, NamedTuple
 import bpy
-from ..blender import IS_BLENDER_5
-from ..nodes.arrange import arrange_tree
-from ..nodes.compositor import default_5x_compositor_node_tree, mn_compositor_node_tree
+from bpy.types import CompositorNodeTree
+from nodebpy import compositor as c
+from nodebpy.builder import ColorSocket, TreeBuilder
 
 annotations_image = "mn_annotations"
-mn_compositor_node_name = "MN Compositor"
 
 
-def setup_compositor(scene: bpy.types.Scene):
-    if IS_BLENDER_5:
-        node_tree = scene.compositing_node_group
-        use_nodes = True
-    else:
-        node_tree = scene.node_tree
-        use_nodes = scene.use_nodes
+class ResetCompositorSockets(NamedTuple):
+    """The sockets to build between, as returned by `CompositorTree.reset()`."""
+
+    image: ColorSocket
+    output: ColorSocket
+
+
+def _annotations_image() -> bpy.types.Image:
+    """The placeholder image annotations are drawn into, created on demand."""
+    image = bpy.data.images.get(annotations_image)
+    if image is None:
+        image = bpy.data.images.new(annotations_image, 1, 1)
+    return image
+
+
+class CompositorTree(TreeBuilder[CompositorNodeTree]):
+    """Builder for the scene's compositor node tree.
+
+    Mirrors :class:`~molecularnodes.entities.base.MolecularTree`: use it as a
+    context manager to append nodes, or :meth:`reset` to start from a clean
+    ``Render Layers -> output`` graph and build the post-processing chain
+    yourself with ``nodebpy.compositor`` nodes.
+
+    ```python
+    from nodebpy import compositor as c
+
+    with canvas.compositor.reset() as (image, output):
+        image >> c.Glare.bloom() >> output
+    canvas.compositor.add_annotations()
+    ```
+
+    Notes
+    -----
+    The surface is intentionally minimal — raw ``nodebpy`` node construction. We
+    may later add higher-level convenience wrappers (e.g. ``add_glare()``,
+    ``add_vignette()``) that build common effects in one call, but for now
+    effects are composed by the user directly.
+    """
+
+    def __init__(self, scene: bpy.types.Scene) -> None:
+        self._scene = scene
+        if scene.compositing_node_group is None:
+            scene.compositing_node_group = bpy.data.node_groups.new(
+                "Compositor Nodes", "CompositorNodeTree"
+            )
+        super().__init__(scene.compositing_node_group)
+
+    def _wrap(self, socket: bpy.types.NodeSocket) -> ColorSocket:
+        """Wrap an existing Blender socket as a socket bound to this tree."""
+        wrapped = ColorSocket(socket)
+        wrapped._tree = self
+        return wrapped
+
+    def _render_layers_node(self) -> bpy.types.Node:
+        """The Render Layers node feeding the tree, adding it if it is missing."""
+        for node in self.tree.nodes:
+            if node.bl_idname == "CompositorNodeRLayers":
+                return node
+        return self.tree.nodes.new("CompositorNodeRLayers")
+
+    @property
+    def image(self) -> ColorSocket:
+        """The rendered image to build the compositor chain from.
+
+        ```python
+        with canvas.compositor as tree:
+            tree.image >> c.Glare() >> tree.output
+        ```
+        """
+        return self._wrap(self._render_layers_node().outputs["Image"])
+
+    @property
+    def output(self) -> ColorSocket:
+        """The final image output of the tree, adding it if it is missing.
+
+        ```python
+        with canvas.compositor as tree:
+            tree.clear() # remove all nodes and interface items
+            tree.image >> c.Glare() >> tree.output
+        ```
+        """
+        for item in self.tree.interface.items_tree:
+            if (
+                item.item_type == "SOCKET"
+                and item.in_out == "OUTPUT"
+                and item.socket_type == "NodeSocketColor"
+            ):
+                return self._wrap(self._output_node().inputs[item.identifier])
+        return self.outputs.color("Image")
+
+    @contextmanager
+    def reset(self) -> Iterator[ResetCompositorSockets]:
+        """Clear the tree back to a default state and build within it.
+
+        Discards the existing tree — including any annotation overlay, which can
+        be restored with :meth:`add_annotations`. Use ``with canvas.compositor``
+        instead to append to the existing tree.
+
+        ```python
+        with canvas.compositor.reset() as (image, output):
+            image >> c.Glare.bloom(strength=2.0) >> output
+        ```
+        """
+        with self:
+            self.clear()
+            render = c.RenderLayers()
+            output = self.outputs.color("Image")
+            # default passthrough so an empty reset still renders the raw image
+            render.o.image >> output
+            yield ResetCompositorSockets(render.o.image, output)
+
+    def clear(self) -> None:
+        self.tree.nodes.clear()
+        if self.tree.interface:
+            self.tree.interface.clear()
+
+    def add_annotations(self) -> None:
+        """Composite Molecular Nodes annotations on top of the current output.
+
+        Alpha-composites the ``mn_annotations`` image over whatever currently
+        feeds the output. Annotations are opt-in: :meth:`reset` clears them, so
+        call this after building a custom compositor chain to draw them on top.
+        """
+        with self:
+            output = self.output
+            links = output.socket.links
+            source = (
+                links[0].from_socket
+                if links
+                else self._render_layers_node().outputs["Image"]
+            )
+            annotations = c.Image(image=_annotations_image())
+            c.AlphaOver(self._wrap(source), annotations, 1.0) >> output
+
+
+def setup_compositor(scene: bpy.types.Scene) -> CompositorTree:
+    """Prepare the scene compositor with the default annotation overlay."""
     # lock interface when rendering
     scene.render.use_lock_interface = True
-    # add a quick check to see if everything is setup correctly
-    if node_tree:
-        if (
-            use_nodes
-            and mn_compositor_node_name in node_tree.nodes
-            and node_tree.nodes[mn_compositor_node_name].inputs["Image"].is_linked
-            and node_tree.nodes[mn_compositor_node_name].outputs["Image"].is_linked
-        ):
-            # MN Compositor node is present and both inputs and output are linked
-            return
-    else:
-        # no node tree, create one
-        if IS_BLENDER_5:
-            # Staring 5.x compositor node trees can be re-used
-            # Technically we don't have to create a new one if we import from
-            # assets, but this is the safest when generating from code
-            scene.compositing_node_group = default_5x_compositor_node_tree()
-            node_tree = scene.compositing_node_group
-        else:
-            scene.use_nodes = True
-            node_tree = scene.node_tree
-    # setup the compositor node tree
-    nodes = node_tree.nodes
-    links = node_tree.links
-    # create placeholder annotation image if not present
-    if annotations_image not in bpy.data.images:
-        bpy.data.images.new(annotations_image, 1, 1)
-    # add MN Compositor node group to data block if not present
-    if mn_compositor_node_name not in bpy.data.node_groups:
-        mn_compositor_node_tree()
-    # add MN Compositor node to the node tree if not present
-    if mn_compositor_node_name not in nodes:
-        mn_compositor_node = nodes.new("CompositorNodeGroup")
-        mn_compositor_node.node_tree = bpy.data.node_groups[mn_compositor_node_name]
-        mn_compositor_node.name = mn_compositor_node_name
-    mn_compositor_node = nodes[mn_compositor_node_name]
-    # insert MN Compositor right before the Composite node
-    # add "Composite" node to node tree if not present
-    if IS_BLENDER_5:
-        if "Group Output" not in nodes:
-            nodes.new(type="NodeGroupOutput")
-        output_node = nodes["Group Output"]
-    else:
-        if "Composite" not in nodes:
-            nodes.new(type="CompositorNodeComposite")
-        output_node = nodes["Composite"]
-    # add "Render Layers" node to node tree if not present
-    if "Render Layers" not in nodes:
-        nodes.new(type="CompositorNodeRLayers")
-    render_layers_node = nodes["Render Layers"]
-    if output_node.inputs["Image"].is_linked:
-        # Composite node input is linked - ensure it is from MN Compositor
-        from_node = output_node.inputs["Image"].links[0].from_node
-        if from_node.name != mn_compositor_node_name:
-            # Composite node input is not MN Compositor node, re-link correctly
-            from_socket = output_node.inputs["Image"].links[0].from_socket
-            links.new(from_socket, mn_compositor_node.inputs["Image"])
-            links.new(mn_compositor_node.outputs["Image"], output_node.inputs["Image"])
-    else:
-        # Composite node input is not linked
-        from_socket = render_layers_node.outputs["Image"]
-        links.new(from_socket, mn_compositor_node.inputs["Image"])
-        links.new(mn_compositor_node.outputs["Image"], output_node.inputs["Image"])
-    # link MN Compositor node input if not linked
-    if not mn_compositor_node.inputs["Image"].is_linked:
-        from_socket = render_layers_node.outputs["Image"]
-        links.new(from_socket, mn_compositor_node.inputs["Image"])
-    # link to Viewer node if present
-    if "Viewer" in nodes:
-        viewer = nodes["Viewer"]
-        links.new(mn_compositor_node.outputs["Image"], viewer.inputs["Image"])
-    # arrange the composite node tree
-    arrange_tree(node_tree, add_group_input=False)
+    tree = CompositorTree(scene)
+    with tree.reset():
+        pass
+    tree.add_annotations()
+    return tree

@@ -6,7 +6,7 @@ import bpy
 from PIL import Image
 
 if TYPE_CHECKING:
-    from ..entities.trajectory import TrajectoryAnnotationManager
+    from ..entities.molecule import MoleculeAnnotationManager
     from ..session import MNSession
 
 
@@ -65,7 +65,7 @@ def render_annotations(
     for entity in session.entities.values():
         if not hasattr(entity, "annotations"):
             continue
-        manager: TrajectoryAnnotationManager = entity.annotations
+        manager: MoleculeAnnotationManager = entity.annotations
         manager._enable_render_mode(scene, render_scale, image, image_scale)
         manager._draw_annotations()
         manager._disable_render_mode()
