@@ -2,11 +2,36 @@ import json
 import os
 import sys
 from contextlib import ExitStack
-from typing import List
+from typing import List, cast
 import addon_utils
 import bpy
 import numpy as np
 from mathutils import Matrix
+
+_INCREASED_CLIP_END = 1e4
+_DEFAULT_CAMERA_CLIP_END = 1e2
+_DEFAULT_VIEWPORT_CLIP_END = 1e3
+
+
+def _increase_view_distance():
+    scene = bpy.context.scene
+    assert scene
+    if scene.camera is not None:
+        camera = cast(bpy.types.Camera, scene.camera.data)
+        if camera.clip_end == _DEFAULT_CAMERA_CLIP_END:
+            camera.clip_end = _INCREASED_CLIP_END
+
+    # viewport clip end is stored per 3D Viewport space, so update every
+    # VIEW_3D area across all screens (covers currently inactive workspaces)
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            if area.type != "VIEW_3D":
+                continue
+            for space in area.spaces:
+                if space.type == "VIEW_3D":
+                    space = cast(bpy.types.SpaceView3D, space)
+                    if space.clip_end == _DEFAULT_VIEWPORT_CLIP_END:
+                        space.clip_end = _INCREASED_CLIP_END
 
 
 def load_extension_module():

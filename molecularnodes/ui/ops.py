@@ -30,6 +30,7 @@ from ..nodes.node_management import (
 )
 from ..scene.compositor import setup_compositor
 from ..session import get_session
+from ..utils import _increase_view_distance
 from .pref import addon_preferences
 from .style import STYLE_ITEMS
 
@@ -159,6 +160,7 @@ class MN_OT_Import_Molecule(Import_Molecule):
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
+        _increase_view_distance()
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -310,6 +312,7 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
 
         self.report({"INFO"}, message=message)
 
+        _increase_view_distance()
         return {"FINISHED"}
 
 
@@ -366,6 +369,8 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
                 file_path=file_path,
                 node_setup=self.node_setup,
             )
+
+        _increase_view_distance()
         return {"FINISHED"}
 
 
@@ -452,6 +457,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
             center=self.center,
             overwrite=self.overwrite,
         )
+        _increase_view_distance()
         return {"FINISHED"}
 
 
@@ -667,6 +673,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 f"with {n_frames} frames from '{self.trajectory}'.",
             )
 
+        _increase_view_distance()
         return {"FINISHED"}
 
 
