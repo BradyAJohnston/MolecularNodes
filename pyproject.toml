@@ -14,6 +14,7 @@ dependencies = [
     "numpy>=2.3",
     "griddataformats>=1.2.0",
     "nodebpy>=520.11",
+    "cryosparc-tools>=5.0.3",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"

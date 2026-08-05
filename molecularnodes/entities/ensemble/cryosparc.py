@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, TypedDict, overload
 import databpy as db
 import numpy as np
 from bpy.types import Object
+from cryosparc.dataset import Dataset
 from databpy.attribute import AttributeTypeNames
 from scipy.spatial.transform import Rotation
 from .base import Ensemble, EntityType
@@ -170,7 +171,7 @@ class CryoSPARCParticles(Ensemble):
             raise ValueError(f"{file_path.name} is not a CryoSPARC .cs file")
         super().__init__(file_path=file_path)
         self._entity_type = EntityType.ENSEMBLE_CRYOSPARC
-        self.dset = MNDataset(np.load(self.file_path))
+        self.dset = MNDataset(Dataset.load(self.file_path))
         if len(self.dset) == 0:
             raise ValueError("Dataset has no rows")
 
