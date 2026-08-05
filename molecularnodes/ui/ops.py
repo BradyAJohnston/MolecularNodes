@@ -316,7 +316,11 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
 ENSEMBLE_TYPES = (
     ("starfile", "Starfile", "Import a .star mapback file"),
     ("cellpack", "CellPack", "Import a CellPack .cif / .bcif model"),
-    ("cryosparc", "CryoSPARC", "Load CryoSPARC metadata from a .cs file"),
+    (
+        "cryosparc-particles",
+        "CryoSPARC Particles",
+        "Load CryoSPARC particle metadata from a .cs file",
+    ),
 )
 
 
@@ -363,8 +367,8 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
                     name=Path(self.filepath).name,
                     node_setup=self.node_setup,
                 )
-            case "cryosparc":
-                ensemble.CryoSPARC.load(
+            case "cryosparc-particles":
+                ensemble.CryoSPARCParticles.load(
                     file_path=file_path, name=self.name, node_setup=self.node_setup
                 )
             case "starfile":
