@@ -22,6 +22,8 @@ website:
       text: Documentation
     - text: API
       href: api/
+    - text: Changelog
+      href: changelog.qmd
     - href: examples/
       text: Examples
     - href: citations/
