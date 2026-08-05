@@ -1,0 +1,8 @@
+---
+title: "Changelog"
+---
+
+# 5.2.0 - UNRELEASED
+
+## Added
+- On using the import operators, the camera and viewport end clipping distance is increased to 10000 from 100 so users aren't confused when importing larger structures and systems #1150
