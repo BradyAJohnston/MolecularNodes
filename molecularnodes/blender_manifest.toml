@@ -24,6 +24,8 @@ copyright = [
 ]
 
 wheels = [
+	"./wheels/annotated_types-0.7.0-py3-none-any.whl",
+	"./wheels/anyio-4.14.2-py3-none-any.whl",
 	"./wheels/biotite-1.7.1-cp313-cp313-macosx_11_0_arm64.whl",
 	"./wheels/biotite-1.7.1-cp313-cp313-manylinux_2_28_x86_64.whl",
 	"./wheels/biotite-1.7.1-cp313-cp313-win_amd64.whl",
@@ -34,6 +36,9 @@ wheels = [
 	"./wheels/contourpy-1.3.3-cp313-cp313-macosx_11_0_arm64.whl",
 	"./wheels/contourpy-1.3.3-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
 	"./wheels/contourpy-1.3.3-cp313-cp313-win_amd64.whl",
+	"./wheels/cryosparc_tools-5.0.3-cp313-cp313-macosx_10_13_universal2.whl",
+	"./wheels/cryosparc_tools-5.0.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl",
+	"./wheels/cryosparc_tools-5.0.3-cp313-cp313-win_amd64.whl",
 	"./wheels/cycler-0.12.1-py3-none-any.whl",
 	"./wheels/databpy-0.8.0-py3-none-any.whl",
 	"./wheels/filelock-3.29.7-py3-none-any.whl",
@@ -41,6 +46,9 @@ wheels = [
 	"./wheels/fonttools-4.63.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
 	"./wheels/fonttools-4.63.0-cp313-cp313-win_amd64.whl",
 	"./wheels/griddataformats-1.2.0-py3-none-any.whl",
+	"./wheels/h11-0.16.0-py3-none-any.whl",
+	"./wheels/httpcore-1.0.9-py3-none-any.whl",
+	"./wheels/httpx-0.28.1-py3-none-any.whl",
 	"./wheels/imdclient-0.2.4-py3-none-any.whl",
 	"./wheels/joblib-1.5.3-py3-none-any.whl",
 	"./wheels/kiwisolver-1.5.0-cp313-cp313-macosx_10_13_universal2.whl",
@@ -67,6 +75,10 @@ wheels = [
 	"./wheels/pillow-12.3.0-cp313-cp313-macosx_11_0_arm64.whl",
 	"./wheels/pillow-12.3.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
 	"./wheels/pillow-12.3.0-cp313-cp313-win_amd64.whl",
+	"./wheels/pydantic-2.13.4-py3-none-any.whl",
+	"./wheels/pydantic_core-2.46.4-cp313-cp313-macosx_11_0_arm64.whl",
+	"./wheels/pydantic_core-2.46.4-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/pydantic_core-2.46.4-cp313-cp313-win_amd64.whl",
 	"./wheels/pyparsing-3.3.2-py3-none-any.whl",
 	"./wheels/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
 	"./wheels/pytz-2026.2-py2.py3-none-any.whl",
@@ -78,10 +90,10 @@ wheels = [
 	"./wheels/threadpoolctl-3.6.0-py3-none-any.whl",
 	"./wheels/tqdm-4.68.4-py3-none-any.whl",
 	"./wheels/typing_extensions-4.16.0-py3-none-any.whl",
+	"./wheels/typing_inspection-0.4.2-py3-none-any.whl",
 	"./wheels/tzdata-2026.3-py2.py3-none-any.whl",
 ]
 
 [permissions]
 network = "Downloading structural data from the PDB and AFPDB"
 files = "Importing data files from disk and caching downloads"
-

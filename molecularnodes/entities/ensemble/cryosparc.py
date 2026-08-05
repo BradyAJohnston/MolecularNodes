@@ -10,13 +10,15 @@ from scipy.spatial.transform import Rotation
 from .base import Ensemble, EntityType
 
 if TYPE_CHECKING:
+    from cryosparc.dataset import Column
+
     BobField = TypedDict(
         "BobField",
         {"name": str, "data": np.typing.NDArray, "atype": AttributeTypeNames},
     )
 
 UID_RIGHT_MASK = np.uint64(2**32 - 1)
-UID_REGEX = rb"(\d{21})_"
+UID_REGEX = r"(\d{21})_"
 
 
 def uid_as_i32_vec(
@@ -44,16 +46,14 @@ def i32_vec_to_uid(
 
 
 class MNDataset:
-    def __init__(self, dset: np.typing.NDArray):
+    def __init__(self, dset: Dataset):
         self.dset = dset
 
-    def __getitem__(self, key: str) -> np.typing.NDArray:
+    def __getitem__(self, key: str) -> "Column":
         return self.dset[key]
 
     def __contains__(self, key: str) -> bool:
-        if self.dset.dtype.names is None:
-            return False
-        return key in self.dset.dtype.names
+        return key in self.dset
 
     def __len__(self) -> int:
         return len(self.dset)
@@ -70,7 +70,7 @@ class MNDataset:
     def get(self, key: str, fallback: np.typing.NDArray) -> np.typing.NDArray: ...
     def get(self, key, fallback=None):
         if key in self:
-            return self[key]
+            return np.array(self[key])
         else:
             return fallback
 
@@ -164,8 +164,6 @@ class MNDataset:
 
 
 class CryoSPARCParticles(Ensemble):
-    DEFAULT_NAME = "CryoSPARC Ensemble"
-
     def __init__(self, file_path: Path):
         if file_path.suffix != ".cs":
             raise ValueError(f"{file_path.name} is not a CryoSPARC .cs file")
