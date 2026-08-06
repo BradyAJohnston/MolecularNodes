@@ -5,6 +5,7 @@ from ..entities import Molecule, StreamingTrajectory, molecule
 from ..entities.base import EntityType
 from ..nodes import nodes
 from ..session import get_session
+from .ops import MN_OT_add_selection_to_style
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
 
@@ -728,12 +729,19 @@ class MN_PT_Styles(bpy.types.Panel):
 
         # display the selection string if using a named attribute
         entity = context.scene.MNSession.get(obj.uuid)
+
         if style_node.inputs["Selection"].links and entity is not None:
             node = style_node.inputs["Selection"].links[0].from_node
             if isinstance(node, bpy.types.GeometryNodeInputNamedAttribute):
                 if isinstance(entity, Molecule):
                     selection = entity.selections.get(node.inputs["Name"].default_value)
                     layout.prop(selection, "string", text="Selection")
+        else:
+            op: MN_OT_add_selection_to_style = layout.operator(
+                operator="mn.add_selection_to_style"
+            )
+            op.node_tree = node_group.name
+            op.node_name = style_node.name
 
         # display the selected style node's name and its input properties
         header, body = layout.panel(idname="style_properties")

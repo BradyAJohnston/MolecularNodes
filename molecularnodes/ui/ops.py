@@ -1,6 +1,8 @@
 from pathlib import Path
+from typing import cast
 import bpy
 import MDAnalysis as mda
+import nodebpy
 from bpy.props import (
     BoolProperty,
     CollectionProperty,
@@ -677,6 +679,39 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class MN_OT_add_selection_to_style(Operator):
+    """
+    Create a new selection and add the corresponding `Named Attribute` node to the node tree's style
+    """
+
+    bl_idname = "mn.add_selection_to_style"
+    bl_label = "Add Style Selection"
+    bl_description = ""
+
+    node_tree: StringProperty()  # type: ignore
+    node_name: StringProperty()  # type: ignore
+
+    def execute(self, context: bpy.types.Context):
+        obj = context.active_object
+        assert obj
+        session = get_session(context)
+        mol = cast(Molecule, session.match(obj))
+
+        if mol is None:
+            self.report({"ERROR"}, message="No molecule found for this object")
+            return {"CANCELLED"}
+
+        selection = mol.selections.from_string("all")
+
+        node_group = bpy.data.node_groups.get(self.node_tree)
+
+        with nodebpy.TreeBuilder(node_group):
+            style = nodebpy.geometry.Group._from_node(node_group.get(self.node_name))
+            selection.node() >> style.i["Selection"]
+
+        return {"FINISHED"}
+
+
 class MN_OT_Add_Style(Operator):
     """
     Operator to add a new style to an entity
@@ -1048,6 +1083,7 @@ class MN_OT_DSSP_cancel(Operator):
 
 
 CLASSES = [
+    MN_OT_add_selection_to_style,
     MN_OT_Import_Fetch,
     MN_OT_Import_Trajectory,
     MN_OT_Reload_Trajectory,
