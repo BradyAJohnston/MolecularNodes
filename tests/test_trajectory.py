@@ -7,10 +7,10 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from numpy.testing import assert_almost_equal
 import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
-from numpy.testing import assert_almost_equal
 
 pytestmark = [
     pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning"),
