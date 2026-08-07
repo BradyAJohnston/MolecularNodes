@@ -338,7 +338,7 @@ class TestTrajectory:
         del traj
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
-        traj = mn.session.get_session().trajectories[uuid]
+        traj = mn.session.get_session().get(uuid)
 
         # Verify selections were restored
         assert "protein_sel" in traj.list_attributes()

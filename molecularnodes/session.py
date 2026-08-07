@@ -87,11 +87,6 @@ class MNSession:
         return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
 
     @property
-    def trajectories(self) -> Dict[str, Molecule]:
-        # return a filtered dictionary of only the trajectories using isinstance(item, Molecule)
-        return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
-
-    @property
     def ensembles(self) -> Dict[str, Ensemble]:
         # return a filtered dictionary of only the ensembles using isinstance(item, Ensemble)
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
@@ -137,7 +132,7 @@ class MNSession:
         return len(self.entities)
 
     def __repr__(self) -> str:
-        return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
+        return f"MNSession with {len(self.molecules)} molecules and {len(self.ensembles)} ensembles."
 
     def pickle(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
@@ -148,12 +143,12 @@ class MNSession:
         if self.n_items == 0:
             return None
 
-        _make_trajectory_paths_relative(self.trajectories)
+        _make_trajectory_paths_relative(self.molecules)
 
         with open(pickle_path, "wb") as f:
             pk.dump(self, f)
 
-        _make_trajectory_paths_absolute(self.trajectories)
+        _make_trajectory_paths_absolute(self.molecules)
 
         print(f"Saved session to: {pickle_path}")
 
@@ -179,7 +174,7 @@ class MNSession:
             for ens in session.ensembles.values():
                 self.register_entity(ens)
 
-        _make_trajectory_paths_absolute(self.trajectories)
+        _make_trajectory_paths_absolute(self.molecules)
 
         print(f"Loaded a MNSession from: {pickle_path}")
 
@@ -211,98 +206,6 @@ class MNSession:
             if entity.annotations.bob:
                 bpy.data.objects.remove(entity.annotations.bob.object, do_unlink=True)
         self.remove_entity(uuid)
-
-    def add_trajectory(
-        self,
-        universe: mda.Universe | AtomGroup,
-        style: str | None = "spheres",
-        name: str = "NewUniverseObject",
-    ) -> Molecule:
-        """
-        Add a new trajectory
-
-        Parameters
-        ----------
-        universe: mda.Universe | AtomGroup, required
-            MDAnalysis Universe or AtomGroup instance
-
-        style: str | None, optional
-            The style to apply to the Universe or AtomGroup.
-
-        name: str, optional
-            Name of the trajectory object in Blender
-
-        Returns
-        -------
-        Molecule
-            The newly added Molecule instance
-
-        """
-        if style is not None and style not in styles_mapping:
-            raise ValueError(
-                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
-            )
-        selection = None
-        if isinstance(universe, AtomGroup):
-            traj = Molecule(universe.universe, name=name)  # AtomGroup universe
-            selection = universe  # AtomGroup
-        else:
-            traj = Molecule(universe, name=name)  # Universe
-        traj.add_style(style=style, selection=selection)
-        return traj
-
-    def get_trajectory(
-        self,
-        name: str,
-    ) -> Molecule:
-        """
-        Get trajectory instance by name
-
-        Parameters
-        ----------
-        name: str, required
-            Name of the trajectory object
-
-        Returns
-        -------
-        Molecule
-            A Molecule instance
-
-        Raises
-        ------
-        ValueError if trajectory is not found
-
-        """
-        for v in self.entities.values():
-            if isinstance(v, Molecule) and v.object.name == name:
-                return v
-        raise ValueError(f"No trajectory named '{name}'")
-
-    def remove_trajectory(
-        self,
-        trajectory: Molecule | str,
-    ) -> None:
-        """
-        Remove an existing trajectory
-
-        Parameters
-        ----------
-        trajectory: Molecule | str, required
-            A Molecule instance or name of the trajectory
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        ValueError if trajectory name is not found
-
-        """
-        instance = trajectory
-        if isinstance(trajectory, str):
-            instance = self.get_trajectory(trajectory)
-        self.remove(instance.uuid)
 
 
 def get_session(context: Context | None = None) -> MNSession:

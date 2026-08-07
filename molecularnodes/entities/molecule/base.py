@@ -612,7 +612,7 @@ class Molecule(MolecularEntity):
         topology: Path | str,
         coordinates: Path | str | None = None,
         name: str | None = None,
-        style: str | None = None,
+        style: STYLE_LITERALS | None = None,
         selection: str | None = None,
         create_object: bool = True,
     ) -> "Molecule":
@@ -885,7 +885,7 @@ class Molecule(MolecularEntity):
                 self.uframe = frame
                 db.create_object(
                     vertices=self._scaled_position,
-                    name=f"{self.name}_frame_{i}",
+                    name=f"{self.name}_frame_{i:04d}",
                     collection=frames,
                 )
         finally:
