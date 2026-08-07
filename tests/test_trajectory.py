@@ -10,6 +10,7 @@ import pytest
 import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
+from numpy.testing import assert_almost_equal
 
 pytestmark = [
     pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning"),
@@ -22,6 +23,24 @@ pytestmark = [
 def dummy_calculation_for_pickle_test(universe):
     """Module-level function for testing calculations pickling."""
     return universe.atoms.positions.mean(axis=0)
+
+
+class TestMoleculeSingleStructure:
+    @pytest.fixture
+    def mol(self) -> mn.Molecule:
+        return mn.Molecule.fetch("4ozs", cache=data_dir)
+
+    def test_positions(self, mol: mn.Molecule):
+        pos_0 = mol.position
+        mol.position -= mol.centroid()
+        pos_moved = mol.position
+        assert not np.allclose(pos_0, pos_moved)
+        # changing the scene frame calls set_frame() on all entities; a
+        # single-frame structure should keep manually modified positions
+        # rather than having them reset to the universe coordinates
+        bpy.context.scene.frame_set(1)
+        bpy.context.scene.frame_set(0)
+        assert_almost_equal(pos_moved, mol.position)
 
 
 class TestTrajectory:
