@@ -179,7 +179,11 @@ cv.frame_object(mol,  viewpoint = "left")
 
 with mol.tree.reset() as (atoms, join):
     fac = mg.ChainParameter().o.factor
-    sel = fac < mg.AnimateValue(frame_end=animation_length)
+
+    # the `.frame` value changes to reflect current scene.frame_current
+    # we map that value to a range of 0 to 1 over the animation length, 
+    # and use that to select fraction of the chain that is selected and drawn
+    sel = fac < g.SceneTime().o.frame.map_range(1, animation_length, 0, 1)
 
     (
         atoms
@@ -189,4 +193,9 @@ with mol.tree.reset() as (atoms, join):
     )
 
 cv.animation()
+```
+
+
+```{python}
+mol.tree
 ```
