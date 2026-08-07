@@ -4,17 +4,14 @@ from contextlib import chdir
 from pathlib import Path
 from typing import Dict, Union
 import bpy
-import MDAnalysis as mda
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
-from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
 from .entities.base import MolecularEntity
 from .entities.ensemble.base import Ensemble
 from .entities.reload import can_reload, reload_entity
-from .nodes.nodes import styles_mapping
 
 
 def trim(dictionary: dict):
