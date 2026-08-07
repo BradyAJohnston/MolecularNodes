@@ -1,5 +1,5 @@
 ---
-title: Authoring Node Trees
+title: Node Trees
 subtitle: Using `nodebpy` to create and edit node trees
 ---
 
@@ -156,4 +156,37 @@ with mol.tree.reset() as (atoms, join):
 cv.snapshot()
 
 mol.tree
+```
+
+
+## When is code evaluated
+
+The `nodebpy` code is evaluated once, but the tree that is created will be re-evaluated every time a value or the Blender scene's frame changes.
+We can set up a node tree that will animate as the frames change. The `AnimateValue` node uses the scene's current frame to interpolate between a starting and ending value (by default, `0` to `1`).
+
+The node tree creation code below is evaluated once, but the selection changes on each frame so during the animation the resulting geometry that is created changes.
+
+
+```{python}
+cv.clear()
+animation_length = 100
+cv.resolution = (1280, 720)
+cv.samples = 8
+cv.frame_range = (1, animation_length)
+
+mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+cv.frame_object(mol,  viewpoint = "left")
+
+with mol.tree.reset() as (atoms, join):
+    fac = mg.ChainParameter().o.factor
+    sel = fac < mg.AnimateValue(frame_end=animation_length)
+
+    (
+        atoms
+        >> mg.SetColor(color=mg.ColorRainbow())
+        >> mg.StyleCartoon(selection=sel, material=mat)
+        >> join
+    )
+
+cv.animation()
 ```
