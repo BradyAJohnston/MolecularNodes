@@ -89,7 +89,7 @@ class TestTrajectory:
         traj.uframe = 2
         expected = traj._scaled_position
         got = databpy.named_attribute(
-            frames.objects[f"{traj.name}_frame_2"], "position"
+            frames.objects[f"{traj.name}_frame_0002"], "position"
         )
         assert np.allclose(got, expected)
 
