@@ -497,11 +497,11 @@ wheels = [
 
 [[package]]
 name = "fake-bpy-module"
-version = "20260501"
+version = "20260816"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/15/cc/386fe67fc1e4406f915e2ca8dee6ef4fdf4846438d89e212bb420a7f2f24/fake_bpy_module-20260501.tar.gz", hash = "sha256:ff96946f8fc1592742e9a3379e3b289beb5443df7704a6f4500ba83f4ce108c7", size = 899538, upload-time = "2026-05-01T08:02:12.68Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/86/ea/483ce3706673d1deb243ee97e624d27a37b8dd079dcebb66e6af593ec72f/fake_bpy_module-20260816.tar.gz", hash = "sha256:ebdcf45bb834dd65ca75b736cab04c5e38492162b7244b2c0c2674e743ecf86b", size = 958904, upload-time = "2026-08-16T06:23:31.765Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d6/54/4a5e80073c6a194852100a020dfbcbddcb80d46e4c878547ab51b5508006/fake_bpy_module-20260501-py3-none-any.whl", hash = "sha256:7bf96430c7794ad6cbe265791d9b042b07d3104c3e5c8476f8e800fc32af0e08", size = 1044612, upload-time = "2026-05-01T08:02:10.903Z" },
+    { url = "https://files.pythonhosted.org/packages/92/fd/6dd9a538e37254c4041ad3598bed3c510530a54589bb13130aaf9270d0c7/fake_bpy_module-20260816-py3-none-any.whl", hash = "sha256:c6da3143e1665dc41b708fecebb7ea671e2dc1c3e4d53edd342acc13b315b776", size = 1106333, upload-time = "2026-08-16T06:23:29.871Z" },
 ]
 
 [[package]]
@@ -1400,7 +1400,7 @@ requires-dist = [
     { name = "biotite", specifier = ">=1.7.1" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = "==5.2.*" },
     { name = "databpy", specifier = ">=0.8.0" },
-    { name = "fake-bpy-module", marker = "extra == 'dev'" },
+    { name = "fake-bpy-module", marker = "extra == 'dev'", specifier = ">=20260816" },
     { name = "griddataformats", specifier = ">=1.2.0" },
     { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0" },
     { name = "imdclient", specifier = ">=0.2.3" },

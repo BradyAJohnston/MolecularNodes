@@ -42,7 +42,7 @@ dev = [
     "numpy>2.2",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
-    "fake-bpy-module",
+    "fake-bpy-module>=20260816",
     "nodepad>=0.3.0",
     "pooch>=1.8",
     "pre-commit",
