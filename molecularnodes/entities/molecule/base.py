@@ -809,6 +809,12 @@ class Molecule(MolecularEntity):
         -----
         Typically called automatically by frame change handlers, not user code.
         """
+        # single-frame structures have no trajectory to update; skip so that
+        # manually modified positions aren't reset on scene frame changes.
+        # n_frames is None for streaming trajectories, which must still update.
+        n_frames = self.frame_manager.n_frames
+        if n_frames is not None and n_frames <= 1:
+            return
         if self._updating_in_progress:
             logger.debug("Update already in progress, skipping nested update")
             return
