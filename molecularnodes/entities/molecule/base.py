@@ -615,6 +615,7 @@ class Molecule(MolecularEntity):
         style: STYLE_LITERALS | None = None,
         selection: str | None = None,
         create_object: bool = True,
+        **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
 
@@ -640,6 +641,8 @@ class Molecule(MolecularEntity):
             Atom selection to restrict the style to, passed to :meth:`add_style`.
         create_object : bool, optional
             Whether to create the Blender object immediately (MD route only).
+        kwargs : dict, optional
+            Additional keyword arguments to pass to the `MDAnalysis.Universe()` constructor.
 
         Returns
         -------
@@ -649,7 +652,7 @@ class Molecule(MolecularEntity):
         if coordinates is None:
             entity = cls.from_file(topology, name=name)
         else:
-            u = mda.Universe(topology, coordinates)
+            u = mda.Universe(topology, coordinates, **kwargs)
             entity = cls(u, name=name or "NewMolecule", create_object=create_object)
 
         if style is not None and create_object:

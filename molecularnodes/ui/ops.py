@@ -610,6 +610,12 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         default=True,
     )
 
+    additional_arguments: StringProperty(  # type: ignore
+        name="Arguments",
+        description="Additional arguments to pass to the `mda.Universe(topology, trajectory, **kwargs)` constructor",
+        default="",
+    )
+
     def draw(self, context):
         layout = self.layout
         assert layout
@@ -619,6 +625,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         layout.prop(self, "trajectory")
         # oxDNA imports don't set up a style/node tree in the same way
         if self.format == "md":
+            layout.prop(self, "additional_arguments")
             row = layout.row()
             row.prop(self, "setup_nodes", text="")
             col = row.column()
@@ -649,10 +656,27 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 selection="all",
             )
         else:
+            if self.additional_arguments == "":
+                kwargs = {}
+            else:
+                try:
+                    kwargs = {
+                        key.strip(): arg.strip()
+                        for key, arg in [
+                            kv.split("=") for kv in self.additional_arguments.split(",")
+                        ]
+                    }
+                except Exception as e:
+                    self.report(
+                        {"WARNING"},
+                        message=f"Failed to parse additional arguments: {e}",
+                    )
+                    kwargs = {}
             traj = Molecule.load(
                 topology=topology,
                 coordinates=coordinates,
                 name=self.name,
+                **kwargs,
             )
             if self.setup_nodes:
                 traj.add_style(style=self.style)
