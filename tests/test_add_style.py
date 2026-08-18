@@ -83,3 +83,48 @@ def test_swap_style_operator():
     style_nodes = [n for n in ng.nodes if is_style_node(n)]
     assert len(style_nodes) == 1
     assert style_nodes[0].node_tree.name == "Style Surface"
+
+
+def test_add_selection_to_style_operator():
+    """mn.add_selection_to_style wires a named-attribute selection into the style node."""
+    from molecularnodes.ui.panel import is_style_node
+
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    ng = mol.modifier_node_tree
+    style = [n for n in ng.nodes if is_style_node(n)][0]
+    assert not style.inputs["Selection"].links
+
+    bpy.context.view_layer.objects.active = mol.object
+    res = bpy.ops.mn.add_selection_to_style(node_tree=ng.name, node_name=style.name)
+    assert res == {"FINISHED"}
+
+    # the style's Selection input is now driven by a named attribute node whose
+    # name matches a selection on the molecule, as the panel expects
+    links = style.inputs["Selection"].links
+    assert links
+    attr_node = links[0].from_node
+    assert isinstance(attr_node, bpy.types.GeometryNodeInputNamedAttribute)
+    selection = mol.selections.get(attr_node.inputs["Name"].default_value)
+    assert selection is not None
+    assert selection.string == "all"
+
+
+def test_add_selection_to_style_operator_missing_targets():
+    """mn.add_selection_to_style errors cleanly when the tree or node is gone."""
+    from molecularnodes.ui.panel import is_style_node
+
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    ng = mol.modifier_node_tree
+    style = [n for n in ng.nodes if is_style_node(n)][0]
+    bpy.context.view_layer.objects.active = mol.object
+
+    with pytest.raises(RuntimeError, match="not found"):
+        bpy.ops.mn.add_selection_to_style(
+            node_tree="does not exist", node_name=style.name
+        )
+
+    with pytest.raises(RuntimeError, match="not found"):
+        bpy.ops.mn.add_selection_to_style(node_tree=ng.name, node_name="does not exist")
+
+    # the style node is untouched by the failed attempts
+    assert not style.inputs["Selection"].links
