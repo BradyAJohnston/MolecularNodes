@@ -205,14 +205,14 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
         default="wwpdb",
         items=(
             (
-                "local",
-                "Local File",
-                "Open a structure file already on disk",
-            ),
-            (
                 "wwpdb",
                 "wwPDB",
                 "The world-wide Protein Data Bank (wwPDB)",
+            ),
+            (
+                "local",
+                "Local File",
+                "Open a structure file already on disk",
             ),
             (
                 "alphafold",

@@ -751,13 +751,14 @@ class Molecule(MolecularEntity):
         Parameters
         ----------
         as_array : bool, optional
-            Return the assemblies as an array of quaternions rather than a dict.
+            Return the assemblies as a structured array of per-chain 4x4 transforms
+            rather than a dict.
 
         Returns
         -------
         dict | np.ndarray | None
-            The biological assemblies as transformation matrices (or quaternions when
-            ``as_array`` is True), or ``None`` when the structure has no assembly data.
+            The biological assemblies as transformation matrices, or ``None`` when
+            the structure has no assembly data.
         """
         from ... import utils
 
@@ -765,7 +766,7 @@ class Molecule(MolecularEntity):
         if not assemblies_info:
             return None
         if as_array:
-            return utils.array_quaternions_from_dict(assemblies_info)
+            return utils.array_transforms_from_dict(assemblies_info)
         return assemblies_info
 
     def create_data_object(self) -> bpy.types.Object:
@@ -776,7 +777,7 @@ class Molecule(MolecularEntity):
         data_obj_name = f".data_{self.name}_assemblies"
         data_obj = bpy.data.objects.get(data_obj_name)
         if not data_obj:
-            transforms = utils.array_quaternions_from_dict(
+            transforms = utils.array_transforms_from_dict(
                 self.props.biological_assemblies
             )
             data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)

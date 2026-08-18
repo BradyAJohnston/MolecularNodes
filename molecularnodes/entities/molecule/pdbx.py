@@ -75,7 +75,8 @@ class PDBXReader(ReaderBase):
         ]
 
         columns = [category[name].as_array().astype(float) for name in matrix_columns]
-        matrices = np.empty((len(columns[0]), 4, 4), float)
+        matrices = np.zeros((len(columns[0]), 4, 4), float)
+        matrices[:, 3, 3] = 1.0
 
         col_mask = np.tile((0, 1, 2, 3), 3)
         row_mask = np.repeat((0, 1, 2), 4)
@@ -325,7 +326,9 @@ def _extract_matrices(category, scale=True):
 
     columns = [category[name].as_array().astype(float) for name in matrix_columns]
     n = 4 if scale else 3
-    matrices = np.empty((len(columns[0]), n, 4), float)
+    matrices = np.zeros((len(columns[0]), n, 4), float)
+    if scale:
+        matrices[:, 3, 3] = 1.0
 
     col_mask = np.tile((0, 1, 2, 3), 3)
     row_mask = np.repeat((0, 1, 2), 4)

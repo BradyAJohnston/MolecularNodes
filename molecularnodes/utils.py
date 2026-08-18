@@ -6,7 +6,6 @@ from typing import List, cast
 import addon_utils
 import bpy
 import numpy as np
-from mathutils import Matrix
 
 _INCREASED_CLIP_END = 1e4
 _DEFAULT_CAMERA_CLIP_END = 1e2
@@ -116,40 +115,27 @@ def frames_to_average(
 # data types for the np.array that will store per-chain symmetry operations
 
 
-def array_quaternions_from_dict(transforms_dict):
-    n_transforms = 0
-
+def array_transforms_from_dict(transforms_dict):
     if isinstance(transforms_dict, str):
         transforms_dict = json.loads(transforms_dict.replace("nan", "0.0"))
 
-    for assembly in transforms_dict.values():
-        # add the number of chains for each transform together, this gives us the total
-        # number of transforms we need to initialise
-        n_transforms += sum(len(transform["chain_ids"]) for transform in assembly)
-
     dtype = [
         ("assembly_id", int),
-        ("transform_id", int),
+        ("sym_id", int),
         ("chain_id", "U10"),
-        ("rotation", float, 4),  # quaternion form
-        ("translation", float, 3),
+        ("transform", float, (4, 4)),
         ("pdb_model_num", int),
     ]
-
-    arr = np.array((n_transforms), dtype=dtype)
 
     transforms = []
     for i, assembly in enumerate(transforms_dict.values()):
         for j, transform in enumerate(assembly):
             chains = transform["chain_ids"]
             arr = np.zeros((len(chains)), dtype=dtype)
-            matrix = transform["matrix"]
-            translation, rotation, scale = Matrix(matrix).decompose()
             arr["assembly_id"] = i + 1
-            arr["transform_id"] = j
+            arr["sym_id"] = j
             arr["chain_id"] = chains
-            arr["rotation"] = rotation
-            arr["translation"] = translation
+            arr["transform"] = transform["matrix"]
             arr["pdb_model_num"] = transform["pdb_model_num"]
             transforms.append(arr)
 

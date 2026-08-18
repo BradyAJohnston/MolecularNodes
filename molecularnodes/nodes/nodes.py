@@ -305,7 +305,7 @@ def assembly_data_object_from_obj(obj: bpy.types.Object) -> bpy.types.Object:
     data_obj_name = f".data_{obj.name}_assemblies"
     data_obj = bpy.data.objects.get(data_obj_name)
     if not data_obj:
-        transforms = utils.array_quaternions_from_dict(obj.mn.biological_assemblies)
+        transforms = utils.array_transforms_from_dict(obj.mn.biological_assemblies)
         data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
 
     return data_obj
