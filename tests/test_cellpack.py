@@ -5,6 +5,7 @@ import pytest
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
+from .utils import round_significant
 
 cellpack_dir = data_dir / "cellpack/petworld"
 
@@ -55,6 +56,8 @@ def test_load_cellpack(snapshot, format):
 
     pos_eval = ens.named_attribute("position", evaluate=True)
     assert snapshot == pos_eval.shape
-    assert snapshot == pos_eval
+    # positions evaluated through geometry nodes carry platform-specific last-bit
+    # differences, so quantise before comparing
+    assert snapshot == round_significant(pos_eval)
 
     _obj = ens.object
