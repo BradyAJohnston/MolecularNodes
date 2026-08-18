@@ -124,9 +124,7 @@ def test_add_selection_to_style_operator_missing_targets():
         )
 
     with pytest.raises(RuntimeError, match="not found"):
-        bpy.ops.mn.add_selection_to_style(
-            node_tree=ng.name, node_name="does not exist"
-        )
+        bpy.ops.mn.add_selection_to_style(node_tree=ng.name, node_name="does not exist")
 
     # the style node is untouched by the failed attempts
     assert not style.inputs["Selection"].links
