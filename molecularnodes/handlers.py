@@ -22,6 +22,17 @@ def _update_entities(self, context: bpy.types.Context) -> None:
     update_entities(context.scene)
 
 
+def _update_selections(self, context: bpy.types.Context) -> None:
+    """
+    Update callback for `TrajectorySelectionItem` properties. Re-evaluates the
+    selections on the owning entity directly, rather than going through the frame
+    update machinery which skips single-frame entities entirely
+    """
+    entity = context.scene.MNSession.match(self.id_data)
+    if entity is not None and hasattr(entity, "selections"):
+        entity.selections.update_attributes()
+
+
 # this is the 'perisisent' function which can be appended onto the
 # `bpy.app.handlers.frame_change_*` functions. Either before or after the frame changes
 # this function will then be called - ensuring all of the trajectories are up to date. We

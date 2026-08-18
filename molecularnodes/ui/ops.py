@@ -725,12 +725,23 @@ class MN_OT_add_selection_to_style(Operator):
             self.report({"ERROR"}, message="No molecule found for this object")
             return {"CANCELLED"}
 
+        node_group = bpy.data.node_groups.get(self.node_tree)
+        if node_group is None:
+            self.report({"ERROR"}, message=f"Node tree '{self.node_tree}' not found")
+            return {"CANCELLED"}
+
+        node = node_group.nodes.get(self.node_name)
+        if node is None:
+            self.report(
+                {"ERROR"},
+                message=f"Node '{self.node_name}' not found in '{self.node_tree}'",
+            )
+            return {"CANCELLED"}
+
         selection = mol.selections.from_string("all")
 
-        node_group = bpy.data.node_groups.get(self.node_tree)
-
         with nodebpy.TreeBuilder(node_group):
-            style = nodebpy.geometry.Group._from_node(node_group.get(self.node_name))
+            style = nodebpy.geometry.Group._from_node(node)
             selection.node() >> style.i["Selection"]
 
         return {"FINISHED"}

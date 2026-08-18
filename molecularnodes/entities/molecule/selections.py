@@ -398,17 +398,22 @@ class SelectionManager:
             # creating the AtomGroup we set the messag to "" as a signal everything is OK
             # and continue on with setting the attribute value
             # We also have to track if we need to update the AtomGroup because the user has
-            # changed the input string at all. We just track with a "previous_string" which
-            # should only be updated if an AtomGroup has successfully been created with the
-            # input selection string
-            if item.string != item.previous_string or item.message != "":
+            # changed any of the selection inputs at all. We just track with "previous_*"
+            # values which should only be updated if an AtomGroup has successfully been
+            # created with the input selection parameters
+            if (
+                item.string != item.previous_string
+                or item.updating != item.previous_updating
+                or item.periodic != item.previous_periodic
+                or item.message != ""
+            ):
                 try:
-                    ag = self.universe.select_atoms(
-                        item.string, updating=item.updating, periodic=item.periodic
-                    )
+                    ag = self.ui_item_to_ag(item)
                     self.atomgroups[item.name] = ag
                     item.message = ""
                     item.previous_string = item.string
+                    item.previous_updating = item.updating
+                    item.previous_periodic = item.periodic
                     selection_has_changed = True
                 except Exception as e:
                     item.message = str(e)
