@@ -612,9 +612,10 @@ class Molecule(MolecularEntity):
         topology: Path | str,
         coordinates: Path | str | None = None,
         name: str | None = None,
-        style: str | None = None,
+        style: STYLE_LITERALS | None = None,
         selection: str | None = None,
         create_object: bool = True,
+        **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
 
@@ -640,6 +641,8 @@ class Molecule(MolecularEntity):
             Atom selection to restrict the style to, passed to :meth:`add_style`.
         create_object : bool, optional
             Whether to create the Blender object immediately (MD route only).
+        kwargs : dict, optional
+            Additional keyword arguments to pass to the `MDAnalysis.Universe()` constructor.
 
         Returns
         -------
@@ -649,7 +652,7 @@ class Molecule(MolecularEntity):
         if coordinates is None:
             entity = cls.from_file(topology, name=name)
         else:
-            u = mda.Universe(topology, coordinates)
+            u = mda.Universe(topology, coordinates, **kwargs)
             entity = cls(u, name=name or "NewMolecule", create_object=create_object)
 
         if style is not None and create_object:
@@ -748,13 +751,14 @@ class Molecule(MolecularEntity):
         Parameters
         ----------
         as_array : bool, optional
-            Return the assemblies as an array of quaternions rather than a dict.
+            Return the assemblies as a structured array of per-chain 4x4 transforms
+            rather than a dict.
 
         Returns
         -------
         dict | np.ndarray | None
-            The biological assemblies as transformation matrices (or quaternions when
-            ``as_array`` is True), or ``None`` when the structure has no assembly data.
+            The biological assemblies as transformation matrices, or ``None`` when
+            the structure has no assembly data.
         """
         from ... import utils
 
@@ -762,7 +766,7 @@ class Molecule(MolecularEntity):
         if not assemblies_info:
             return None
         if as_array:
-            return utils.array_quaternions_from_dict(assemblies_info)
+            return utils.array_transforms_from_dict(assemblies_info)
         return assemblies_info
 
     def create_data_object(self) -> bpy.types.Object:
@@ -773,7 +777,7 @@ class Molecule(MolecularEntity):
         data_obj_name = f".data_{self.name}_assemblies"
         data_obj = bpy.data.objects.get(data_obj_name)
         if not data_obj:
-            transforms = utils.array_quaternions_from_dict(
+            transforms = utils.array_transforms_from_dict(
                 self.props.biological_assemblies
             )
             data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
@@ -891,7 +895,7 @@ class Molecule(MolecularEntity):
                 self.uframe = frame
                 db.create_object(
                     vertices=self._scaled_position,
-                    name=f"{self.name}_frame_{i}",
+                    name=f"{self.name}_frame_{i:04d}",
                     collection=frames,
                 )
         finally:

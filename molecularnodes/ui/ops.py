@@ -1,6 +1,8 @@
 from pathlib import Path
+from typing import cast
 import bpy
 import MDAnalysis as mda
+import nodebpy
 from bpy.props import (
     BoolProperty,
     CollectionProperty,
@@ -203,14 +205,14 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
         default="wwpdb",
         items=(
             (
-                "local",
-                "Local File",
-                "Open a structure file already on disk",
-            ),
-            (
                 "wwpdb",
                 "wwPDB",
                 "The world-wide Protein Data Bank (wwPDB)",
+            ),
+            (
+                "local",
+                "Local File",
+                "Open a structure file already on disk",
             ),
             (
                 "alphafold",
@@ -608,6 +610,12 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         default=True,
     )
 
+    additional_arguments: StringProperty(  # type: ignore
+        name="Arguments",
+        description="Additional arguments to pass to the `mda.Universe(topology, trajectory, **kwargs)` constructor",
+        default="",
+    )
+
     def draw(self, context):
         layout = self.layout
         assert layout
@@ -617,6 +625,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
         layout.prop(self, "trajectory")
         # oxDNA imports don't set up a style/node tree in the same way
         if self.format == "md":
+            layout.prop(self, "additional_arguments")
             row = layout.row()
             row.prop(self, "setup_nodes", text="")
             col = row.column()
@@ -647,10 +656,27 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 selection="all",
             )
         else:
+            if self.additional_arguments == "":
+                kwargs = {}
+            else:
+                try:
+                    kwargs = {
+                        key.strip(): arg.strip()
+                        for key, arg in [
+                            kv.split("=") for kv in self.additional_arguments.split(",")
+                        ]
+                    }
+                except Exception as e:
+                    self.report(
+                        {"WARNING"},
+                        message=f"Failed to parse additional arguments: {e}",
+                    )
+                    kwargs = {}
             traj = Molecule.load(
                 topology=topology,
                 coordinates=coordinates,
                 name=self.name,
+                **kwargs,
             )
             if self.setup_nodes:
                 traj.add_style(style=self.style)
@@ -674,6 +700,39 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
             )
 
         _increase_view_distance()
+        return {"FINISHED"}
+
+
+class MN_OT_add_selection_to_style(Operator):
+    """
+    Create a new selection and add the corresponding `Named Attribute` node to the node tree's style
+    """
+
+    bl_idname = "mn.add_selection_to_style"
+    bl_label = "Add Style Selection"
+    bl_description = ""
+
+    node_tree: StringProperty()  # type: ignore
+    node_name: StringProperty()  # type: ignore
+
+    def execute(self, context: bpy.types.Context):
+        obj = context.active_object
+        assert obj
+        session = get_session(context)
+        mol = cast(Molecule, session.match(obj))
+
+        if mol is None:
+            self.report({"ERROR"}, message="No molecule found for this object")
+            return {"CANCELLED"}
+
+        selection = mol.selections.from_string("all")
+
+        node_group = bpy.data.node_groups.get(self.node_tree)
+
+        with nodebpy.TreeBuilder(node_group):
+            style = nodebpy.geometry.Group._from_node(node_group.get(self.node_name))
+            selection.node() >> style.i["Selection"]
+
         return {"FINISHED"}
 
 
@@ -1048,6 +1107,7 @@ class MN_OT_DSSP_cancel(Operator):
 
 
 CLASSES = [
+    MN_OT_add_selection_to_style,
     MN_OT_Import_Fetch,
     MN_OT_Import_Trajectory,
     MN_OT_Reload_Trajectory,

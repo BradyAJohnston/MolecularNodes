@@ -2,6 +2,7 @@ import bpy
 import MDAnalysis as mda
 import pytest
 import molecularnodes as mn
+from molecularnodes.session import MNSession
 from .constants import data_dir
 
 
@@ -127,6 +128,42 @@ def test_reload_ensemble_cellpack_from_file():
     assert session.get(obj.uuid) is reloaded
 
 
+def test_session_pickle_roundtrip_cellpack(tmp_path):
+    session = mn.session.get_session()
+    ensemble = mn.entities.ensemble.CellPack.load(
+        data_dir / "cellpack/square1.bcif", node_setup=False
+    )
+    blend_path = tmp_path / "test.blend"
+
+    session.pickle(blend_path)
+
+    session.clear()
+    session.load(blend_path)
+    restored = session.get(ensemble.uuid)
+    assert isinstance(restored, mn.entities.ensemble.CellPack)
+    assert restored.name == ensemble.name
+    assert restored.instance_collection is not None
+
+
+def test_session_pickle_skips_unpicklable_entity(tmp_path):
+    import threading
+
+    session = mn.session.get_session()
+    good = mn.Molecule.load(data_dir / "1cd3.cif")
+    bad = mn.Molecule.load(data_dir / "1cd3.cif")
+    bad._unpicklable = threading.Lock()
+    blend_path = tmp_path / "test.blend"
+
+    with pytest.warns(UserWarning, match="cannot be serialized"):
+        session.pickle(blend_path)
+
+    # the failed entity is skipped, but doesn't stop the rest of the session saving
+    session.clear()
+    session.load(blend_path)
+    assert session.get(good.uuid) is not None
+    assert session.get(bad.uuid) is None
+
+
 @pytest.fixture()
 def session():
     return mn.session.get_session()
@@ -139,44 +176,9 @@ def universe():
     return mda.Universe(topo, traj)
 
 
-@pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning")
-def test_add_trajectory(session, universe):
-    # add Universe as trajectory
-    t1 = session.add_trajectory(universe, name="u1")
-    assert "u1" in bpy.data.objects
-    assert t1._mn_entity_type == mn.entities.base.EntityType.MD.value
-    # add AtomGroup as trajectory
-    ag = universe.select_atoms("name CA")
-    session.add_trajectory(ag, name="ag1")
-    assert "ag1" in bpy.data.objects
-
-
-def test_remove_trajectory(session, universe):
-    t1 = session.add_trajectory(universe, name="u1")
-    assert "u1" in bpy.data.objects
-    # remove by trajectory instance
-    session.remove_trajectory(t1)
-    assert "u1" not in bpy.data.objects
-    session.add_trajectory(universe, name="u2")
-    assert "u2" in bpy.data.objects
-    # remove by trajectory name
-    session.remove_trajectory("u2")
-    t3 = session.add_trajectory(universe, name="u3")
-    assert "u3" in bpy.data.objects
-    # remove trajectory from UI using operator
-    bpy.ops.mn.session_remove_item("EXEC_DEFAULT", uuid=t3.uuid)
-    assert "u3" not in bpy.data.objects
-
-
-def test_get_trajectory(session, universe):
-    t1 = session.add_trajectory(universe, name="u1")
-    t2 = session.get_trajectory("u1")
-    assert t1 == t2
-
-
-def test_entity_blender_properties(session, universe):
+def test_entity_blender_properties(session: MNSession, universe):
     assert len(session.entities) == 0
-    t1 = session.add_trajectory(universe, name="u1")
+    t1 = mn.Molecule(universe, name="u1")
     # entity is tracked in the session, keyed by uuid
     assert len(session.entities) == 1
     assert t1.uuid in session.entities
@@ -190,5 +192,5 @@ def test_entity_blender_properties(session, universe):
     obj.mn.visible = False
     assert not obj.visible_get()
     # removal drops the entity from the session
-    session.remove_trajectory("u1")
+    session.remove_entity(t1.uuid)
     assert len(session.entities) == 0

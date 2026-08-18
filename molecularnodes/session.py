@@ -1,20 +1,17 @@
-import os
 import pickle as pk
+import warnings
 from contextlib import chdir
 from pathlib import Path
 from typing import Dict, Union
 import bpy
-import MDAnalysis as mda
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
-from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
 from .entities.base import MolecularEntity
 from .entities.ensemble.base import Ensemble
 from .entities.reload import can_reload, reload_entity
-from .nodes.nodes import styles_mapping
 
 
 def trim(dictionary: dict):
@@ -65,7 +62,7 @@ def _make_trajectory_paths_absolute(trajectories: Dict[str, Molecule]) -> None:
 def _make_path_relative(filepath):
     "Take a path and make it relative"
     try:
-        return os.path.relpath(filepath)
+        return Path(filepath).relative_to(Path.cwd(), walk_up=True)
     except ValueError:
         return filepath
 
@@ -73,7 +70,7 @@ def _make_path_relative(filepath):
 def _make_path_absolute(filepath):
     "Take a path and make it absolute"
     try:
-        return os.path.abspath(filepath)
+        return Path(filepath).resolve()
     except ValueError:
         return filepath
 
@@ -84,11 +81,6 @@ class MNSession:
 
     @property
     def molecules(self) -> Dict[str, Molecule]:
-        return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
-
-    @property
-    def trajectories(self) -> Dict[str, Molecule]:
-        # return a filtered dictionary of only the trajectories using isinstance(item, Molecule)
         return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
 
     @property
@@ -137,7 +129,7 @@ class MNSession:
         return len(self.entities)
 
     def __repr__(self) -> str:
-        return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
+        return f"MNSession with {len(self.molecules)} molecules and {len(self.ensembles)} ensembles."
 
     def pickle(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
@@ -148,18 +140,41 @@ class MNSession:
         if self.n_items == 0:
             return None
 
-        _make_trajectory_paths_relative(self.trajectories)
+        # skip entities that can't be pickled, so that one bad entity doesn't lose
+        # the session state for everything else in the scene
+        picklable = {}
+        for uuid, entity in self.entities.items():
+            try:
+                pk.dumps(entity)
+                picklable[uuid] = entity
+            except Exception as e:
+                warnings.warn(
+                    f"Not saving `{entity.name}` with the session, "
+                    f"as it cannot be serialized: {e}"
+                )
+        if len(picklable) == 0:
+            return None
 
-        with open(pickle_path, "wb") as f:
-            pk.dump(self, f)
-
-        _make_trajectory_paths_absolute(self.trajectories)
+        all_entities = self.entities
+        self.entities = picklable
+        _make_trajectory_paths_relative(self.molecules)
+        # dump to a temporary file and swap it into place, so that a failed dump
+        # can't leave a truncated session file next to the .blend
+        temp_path = pickle_path.with_name(f"{pickle_path.name}.tmp")
+        try:
+            with open(temp_path, "wb") as f:
+                pk.dump(self, f)
+            temp_path.replace(pickle_path)
+        finally:
+            temp_path.unlink(missing_ok=True)
+            _make_trajectory_paths_absolute(self.molecules)
+            self.entities = all_entities
 
         print(f"Saved session to: {pickle_path}")
 
     def load(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
-        if not os.path.exists(pickle_path):
+        if not pickle_path.exists():
             raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
@@ -179,7 +194,7 @@ class MNSession:
             for ens in session.ensembles.values():
                 self.register_entity(ens)
 
-        _make_trajectory_paths_absolute(self.trajectories)
+        _make_trajectory_paths_absolute(self.molecules)
 
         print(f"Loaded a MNSession from: {pickle_path}")
 
@@ -194,8 +209,8 @@ class MNSession:
             if hasattr(e, "annotations") and e.annotations.visible:
                 e.annotations._draw_handler_add()
 
-    def stashpath(self, filepath) -> str:
-        return f"{filepath}.MNSession"
+    def stashpath(self, filepath) -> Path:
+        return Path(f"{filepath}.MNSession")
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
@@ -212,98 +227,6 @@ class MNSession:
                 bpy.data.objects.remove(entity.annotations.bob.object, do_unlink=True)
         self.remove_entity(uuid)
 
-    def add_trajectory(
-        self,
-        universe: mda.Universe | AtomGroup,
-        style: str | None = "spheres",
-        name: str = "NewUniverseObject",
-    ) -> Molecule:
-        """
-        Add a new trajectory
-
-        Parameters
-        ----------
-        universe: mda.Universe | AtomGroup, required
-            MDAnalysis Universe or AtomGroup instance
-
-        style: str | None, optional
-            The style to apply to the Universe or AtomGroup.
-
-        name: str, optional
-            Name of the trajectory object in Blender
-
-        Returns
-        -------
-        Molecule
-            The newly added Molecule instance
-
-        """
-        if style is not None and style not in styles_mapping:
-            raise ValueError(
-                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
-            )
-        selection = None
-        if isinstance(universe, AtomGroup):
-            traj = Molecule(universe.universe, name=name)  # AtomGroup universe
-            selection = universe  # AtomGroup
-        else:
-            traj = Molecule(universe, name=name)  # Universe
-        traj.add_style(style=style, selection=selection)
-        return traj
-
-    def get_trajectory(
-        self,
-        name: str,
-    ) -> Molecule:
-        """
-        Get trajectory instance by name
-
-        Parameters
-        ----------
-        name: str, required
-            Name of the trajectory object
-
-        Returns
-        -------
-        Molecule
-            A Molecule instance
-
-        Raises
-        ------
-        ValueError if trajectory is not found
-
-        """
-        for v in self.entities.values():
-            if isinstance(v, Molecule) and v.object.name == name:
-                return v
-        raise ValueError(f"No trajectory named '{name}'")
-
-    def remove_trajectory(
-        self,
-        trajectory: Molecule | str,
-    ) -> None:
-        """
-        Remove an existing trajectory
-
-        Parameters
-        ----------
-        trajectory: Molecule | str, required
-            A Molecule instance or name of the trajectory
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        ValueError if trajectory name is not found
-
-        """
-        instance = trajectory
-        if isinstance(trajectory, str):
-            instance = self.get_trajectory(trajectory)
-        self.remove(instance.uuid)
-
 
 def get_session(context: Context | None = None) -> MNSession:
     if not context:
@@ -318,7 +241,7 @@ def get_entity(context: Context | None = None) -> Molecule | Ensemble:
 
 @persistent
 def _pickle(filepath) -> None:
-    with chdir(os.path.dirname(filepath)):
+    with chdir(Path(filepath).parent):
         get_session().pickle(filepath)
 
 
@@ -352,7 +275,7 @@ def _load(filepath: str, printing: str = "quiet") -> None:
     if filepath == "":
         return None
     try:
-        with chdir(os.path.dirname(filepath)):
+        with chdir(Path(filepath).parent):
             get_session().load(filepath)
     except FileNotFoundError:
         if printing == "verbose":

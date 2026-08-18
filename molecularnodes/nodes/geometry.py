@@ -4548,6 +4548,34 @@ class FractionateFloat(AssetGeometryGroup):
         super().__init__(**{"Socket_4": menu, "Socket_3": value})
 
 
+class FrameID(AssetGeometryGroup):
+    """Read the `frame_id` attribute, created when multiple frames from a trajectory are merged into a single structure"""
+
+    _name = "Frame ID"
+    _asset_name = "Frame ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        frame_id: IntegerSocket
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_4": index})
+
+
 class GeoemtryToPlanar(AssetGeometryGroup):
     """Geoemtry to Planar"""
 
@@ -11163,6 +11191,7 @@ __all__ = (
     "FindBondedAtom",
     "FindBonds",
     "FractionateFloat",
+    "FrameID",
     "GeoemtryToPlanar",
     "GeometryFieldRemap",
     "GetGeometryAtoms",

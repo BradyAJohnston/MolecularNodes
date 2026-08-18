@@ -5,17 +5,18 @@ import pytest
 import molecularnodes as mn
 from molecularnodes.nodes import nodes
 from .constants import data_dir
+from .utils import round_significant
 
 cellpack_dir = data_dir / "cellpack/petworld"
 
 
-files_to_test = [f for f in cellpack_dir.glob("*") if str(f).endswith((".gz", ".bcif"))]
+files_to_test = [f for f in cellpack_dir.glob("*") if f.suffix in (".gz", ".bcif")]
 
 
-def maybe_unzip(file):
-    if str(file).endswith(".gz"):
-        unzipped_path = str(file)[:-3]
-        if not Path(unzipped_path).exists():
+def maybe_unzip(file: Path) -> Path:
+    if file.suffix == ".gz":
+        unzipped_path = file.with_suffix("")
+        if not unzipped_path.exists():
             with gzip.open(file, "rb") as f_in:
                 with open(unzipped_path, "wb") as f_out:
                     shutil.copyfileobj(f_in, f_out)
@@ -55,6 +56,8 @@ def test_load_cellpack(snapshot, format):
 
     pos_eval = ens.named_attribute("position", evaluate=True)
     assert snapshot == pos_eval.shape
-    assert snapshot == pos_eval
+    # positions evaluated through geometry nodes carry platform-specific last-bit
+    # differences, so quantise before comparing
+    assert snapshot == round_significant(pos_eval)
 
     _obj = ens.object

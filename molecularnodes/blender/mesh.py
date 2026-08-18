@@ -42,21 +42,17 @@ def create_data_object(
     collection: bpy.types.Collection | None = None,
     world_scale: float = 0.1,
 ) -> bpy.types.Object:
-    # still requires a unique call TODO: figure out why
-    # I think this has to do with the bcif instancing extraction
-    # array = np.unique(array)
-    locations = array["translation"] * world_scale
     bob = create_bob(
-        locations,
+        array["transform"][:, :3, 3] * world_scale,
         collection=collection if collection is not None else coll.data(),
         name=name,
     )
 
     attributes = [
-        ("rotation", AttributeTypes.QUATERNION),
+        ("transform", AttributeTypes.FLOAT4X4),
         ("assembly_id", AttributeTypes.INT),
+        ("sym_id", AttributeTypes.INT),
         ("chain_id", AttributeTypes.INT),
-        ("transform_id", AttributeTypes.INT),
         ("pdb_model_num", AttributeTypes.INT),
     ]
 
@@ -69,6 +65,11 @@ def create_data_object(
         # attribute, as GN doesn't support strings currently
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
+
+        # Blender stores float4x4 attributes column-major, so the row-major
+        # numpy matrices must be transposed or GN sees the inverse rotation
+        if type == AttributeTypes.FLOAT4X4:
+            data = data.transpose(0, 2, 1)
 
         bob.store_named_attribute(data=data, name=column, atype=type)
 
