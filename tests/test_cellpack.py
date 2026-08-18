@@ -10,13 +10,13 @@ from .utils import round_significant
 cellpack_dir = data_dir / "cellpack/petworld"
 
 
-files_to_test = [f for f in cellpack_dir.glob("*") if str(f).endswith((".gz", ".bcif"))]
+files_to_test = [f for f in cellpack_dir.glob("*") if f.suffix in (".gz", ".bcif")]
 
 
-def maybe_unzip(file):
-    if str(file).endswith(".gz"):
-        unzipped_path = str(file)[:-3]
-        if not Path(unzipped_path).exists():
+def maybe_unzip(file: Path) -> Path:
+    if file.suffix == ".gz":
+        unzipped_path = file.with_suffix("")
+        if not unzipped_path.exists():
             with gzip.open(file, "rb") as f_in:
                 with open(unzipped_path, "wb") as f_out:
                     shutil.copyfileobj(f_in, f_out)

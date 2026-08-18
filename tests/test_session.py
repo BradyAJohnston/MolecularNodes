@@ -128,6 +128,42 @@ def test_reload_ensemble_cellpack_from_file():
     assert session.get(obj.uuid) is reloaded
 
 
+def test_session_pickle_roundtrip_cellpack(tmp_path):
+    session = mn.session.get_session()
+    ensemble = mn.entities.ensemble.CellPack.load(
+        data_dir / "cellpack/square1.bcif", node_setup=False
+    )
+    blend_path = tmp_path / "test.blend"
+
+    session.pickle(blend_path)
+
+    session.clear()
+    session.load(blend_path)
+    restored = session.get(ensemble.uuid)
+    assert isinstance(restored, mn.entities.ensemble.CellPack)
+    assert restored.name == ensemble.name
+    assert restored.instance_collection is not None
+
+
+def test_session_pickle_skips_unpicklable_entity(tmp_path):
+    import threading
+
+    session = mn.session.get_session()
+    good = mn.Molecule.load(data_dir / "1cd3.cif")
+    bad = mn.Molecule.load(data_dir / "1cd3.cif")
+    bad._unpicklable = threading.Lock()
+    blend_path = tmp_path / "test.blend"
+
+    with pytest.warns(UserWarning, match="cannot be serialized"):
+        session.pickle(blend_path)
+
+    # the failed entity is skipped, but doesn't stop the rest of the session saving
+    session.clear()
+    session.load(blend_path)
+    assert session.get(good.uuid) is not None
+    assert session.get(bad.uuid) is None
+
+
 @pytest.fixture()
 def session():
     return mn.session.get_session()

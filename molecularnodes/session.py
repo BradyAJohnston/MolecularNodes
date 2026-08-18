@@ -1,5 +1,5 @@
-import os
 import pickle as pk
+import warnings
 from contextlib import chdir
 from pathlib import Path
 from typing import Dict, Union
@@ -62,7 +62,7 @@ def _make_trajectory_paths_absolute(trajectories: Dict[str, Molecule]) -> None:
 def _make_path_relative(filepath):
     "Take a path and make it relative"
     try:
-        return os.path.relpath(filepath)
+        return Path(filepath).relative_to(Path.cwd(), walk_up=True)
     except ValueError:
         return filepath
 
@@ -70,7 +70,7 @@ def _make_path_relative(filepath):
 def _make_path_absolute(filepath):
     "Take a path and make it absolute"
     try:
-        return os.path.abspath(filepath)
+        return Path(filepath).resolve()
     except ValueError:
         return filepath
 
@@ -140,18 +140,41 @@ class MNSession:
         if self.n_items == 0:
             return None
 
+        # skip entities that can't be pickled, so that one bad entity doesn't lose
+        # the session state for everything else in the scene
+        picklable = {}
+        for uuid, entity in self.entities.items():
+            try:
+                pk.dumps(entity)
+                picklable[uuid] = entity
+            except Exception as e:
+                warnings.warn(
+                    f"Not saving `{entity.name}` with the session, "
+                    f"as it cannot be serialized: {e}"
+                )
+        if len(picklable) == 0:
+            return None
+
+        all_entities = self.entities
+        self.entities = picklable
         _make_trajectory_paths_relative(self.molecules)
-
-        with open(pickle_path, "wb") as f:
-            pk.dump(self, f)
-
-        _make_trajectory_paths_absolute(self.molecules)
+        # dump to a temporary file and swap it into place, so that a failed dump
+        # can't leave a truncated session file next to the .blend
+        temp_path = pickle_path.with_name(f"{pickle_path.name}.tmp")
+        try:
+            with open(temp_path, "wb") as f:
+                pk.dump(self, f)
+            temp_path.replace(pickle_path)
+        finally:
+            temp_path.unlink(missing_ok=True)
+            _make_trajectory_paths_absolute(self.molecules)
+            self.entities = all_entities
 
         print(f"Saved session to: {pickle_path}")
 
     def load(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
-        if not os.path.exists(pickle_path):
+        if not pickle_path.exists():
             raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
@@ -186,8 +209,8 @@ class MNSession:
             if hasattr(e, "annotations") and e.annotations.visible:
                 e.annotations._draw_handler_add()
 
-    def stashpath(self, filepath) -> str:
-        return f"{filepath}.MNSession"
+    def stashpath(self, filepath) -> Path:
+        return Path(f"{filepath}.MNSession")
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
@@ -218,7 +241,7 @@ def get_entity(context: Context | None = None) -> Molecule | Ensemble:
 
 @persistent
 def _pickle(filepath) -> None:
-    with chdir(os.path.dirname(filepath)):
+    with chdir(Path(filepath).parent):
         get_session().pickle(filepath)
 
 
@@ -252,7 +275,7 @@ def _load(filepath: str, printing: str = "quiet") -> None:
     if filepath == "":
         return None
     try:
-        with chdir(os.path.dirname(filepath)):
+        with chdir(Path(filepath).parent):
             get_session().load(filepath)
     except FileNotFoundError:
         if printing == "verbose":
