@@ -34,6 +34,12 @@ website:
         - api/reference/nodes.geometry.StyleBallAndStick.qmd
         section: Styles
       - contents:
+        - api/reference/material.Default.qmd
+        - api/reference/material.AmbientOcclusion.qmd
+        - api/reference/material.Flat.qmd
+        - api/reference/material.Squishy.qmd
+        - api/reference/material.TransparentOutline.qmd
+        - api/reference/material.PresetMaterial.qmd
         - api/reference/material.append_material.qmd
         - api/reference/material.add_all_materials.qmd
         section: Materials

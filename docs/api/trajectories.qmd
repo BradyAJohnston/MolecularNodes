@@ -2,8 +2,6 @@
 title: Trajectories
 description: "Working with multi-frame molecules and molecular dynamics data"
 jupyter: python3
-execute:
-  daemon: false
 ---
 
 A trajectory is not a special class — it is simply a [](`~mn.Molecule`) whose underlying
@@ -71,17 +69,32 @@ string — equivalent to doing `u.select_atoms()` and passing that atom group as
 ```{python}
 #| label: fig-selections
 #| fig-cap: Selectively apply the style using an MDAnalysis selection string.
+from molecularnodes.nodes import geometry as mg
+from nodebpy.nodes import geometry as g
+
 median = np.median(traj.atoms.positions, axis=0)
-# reset the tree to clear the previously added style
+
+# traj.tree.reset() # resets the geometry nodes tree so we can add new styles cleanly
+# (
+#     traj
+#     .add_style("spheres", selection=f"prop x > {median[0]}")
+#     .add_style("spheres", selection=f"prop x <= {median[0]}", material="MN Flat Outline")
+# )
+
 with traj.tree.reset() as (atoms, join):
-    pass
-(
-    traj
-    .add_style("spheres", selection=f"prop x > {median[0]}")
-    .add_style("spheres", selection=f"prop x <= {median[0]}", material="MN Flat Outline")
-)
+    pos = g.Position().o.position
+    sel = pos.x > pos.x.point.median()
+
+    mg.StyleSpheres(atoms, sel, material=mn.material.Flat().material) >> join
+    mg.StyleSpheres(atoms, ~sel, material=mn.material.Default().material) >> join
+
 canvas.frame_view(traj)
 canvas.snapshot()
+```
+
+
+```{python}
+traj.tree
 ```
 
 Transformations applied to the `Universe` (such as rotations or unwrapping) carry through to
@@ -134,13 +147,10 @@ col_array
 
 Create the `Molecule` object that will be visualised inside of Blender. After initialising
 it, we store the computed colors as a `Named Attribute` on the mesh with the
-`store_named_attribute()` function. These values can now be accessed in the rendering
-pipeline.
-
-To colour by our `Named Attribute` we build the node tree ourselves, reading the attribute
-with a `SetColor` node before the style. In this example we render both as spheres and also
-as a ribbon backbone — both of which use the colors we computed. The ribbon backbone takes
-whatever color value is stored on the alpha carbon.
+`store_named_attribute()` function, or directly by doing `Molecule["Color"] = col_array`. 
+We have direct access to the named attributes on the mesh of the Molecule object, to get 
+and set the values. By defualt the Nodes will use the `Color` named attribute for assigning
+the final color that is used in the render.
 
 ```{python}
 # | label: fig-compute-color
@@ -149,34 +159,16 @@ whatever color value is stored on the alpha carbon.
 # | fig-subcap:
 # |   - "Spheres each use the atom's color."
 # |   - "Ribbon and cartoon use the color from the alpha carbon."
-from nodebpy.nodes.geometry import NamedAttribute
-
 canvas.clear()
 traj = mn.Molecule(u)
-traj.store_named_attribute(col_array, "custom_color")
+traj["Color"] = col_array
+traj.add_style("spheres")
 
-# NamedAttribute nodes must be created inside the tree-builder context
-with traj.tree.reset() as (atoms, join):
-    (
-        atoms
-        >> mn.nodes.geometry.SetColor(
-            color=NamedAttribute("custom_color", data_type="FLOAT_COLOR")
-        )
-        >> mn.nodes.geometry.StyleSpheres(scale=0.8)
-        >> join
-    )
 canvas.frame_view(traj)
 canvas.snapshot()
+traj.tree.reset()
 
-with traj.tree.reset() as (atoms, join):
-    (
-        atoms
-        >> mn.nodes.geometry.SetColor(
-            color=NamedAttribute("custom_color", data_type="FLOAT_COLOR")
-        )
-        >> mn.nodes.geometry.StyleRibbon(quality=6, peptide_radius=1.5)
-        >> join
-    )
+traj.add_style("ribbon", quality=6, peptide_radius=1.5)
 canvas.frame_view(traj)
 canvas.snapshot()
 ```
@@ -192,8 +184,10 @@ selection is only applied to those atoms from the group.
 canvas.clear()
 adk = datasets.fetch_adk_equilibrium()
 u = mda.Universe(adk.topology, adk.trajectory)
+
 traj = mn.Molecule(u)
 traj.add_style("spheres", selection=u.atoms[u.atoms.names == "CA"])
+
 canvas.frame_view(traj.get_view())
 canvas.snapshot()
 ```
