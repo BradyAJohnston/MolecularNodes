@@ -38,6 +38,7 @@ traj = mn.Molecule(u)
 traj.add_style("spheres")
 canvas.frame_view(traj)
 canvas.snapshot()
+canvas.clear()
 ```
 
 ## Playback
@@ -54,6 +55,7 @@ sampled and interpolated:
 - [](`~mn.Molecule.correct_periodic`) — apply periodic boundary corrections.
 
 ```{python}
+traj = mn.Molecule(u)
 traj.subframes = 2
 traj.interpolate = True
 ```
@@ -66,6 +68,18 @@ of a `Named Attribute` is checked and if it exists that is used as a boolean to 
 selection. If the attribute doesn't exist, the string is used as an MDAnalysis selection
 string — equivalent to doing `u.select_atoms()` and passing that atom group as a selection.
 
+::: { .callout-note }
+
+# Materials on Point Clouds
+
+The default geometry for `StyleSpheres()` is `"Point"` which uses point cloud rendering 
+inside of Blender. It's a limitation of Blender that we can't have multiple materials
+on the same point cloud, so we get issues if we try to assign different materials and join
+them back together. To get around this we have to use the `"Instance"` geometry (which can 
+be combined with a point cloud that has a different material).
+
+:::
+
 ```{python}
 #| label: fig-selections
 #| fig-cap: Selectively apply the style using an MDAnalysis selection string.
@@ -73,20 +87,25 @@ from molecularnodes.nodes import geometry as mg
 from nodebpy.nodes import geometry as g
 
 median = np.median(traj.atoms.positions, axis=0)
-
-# traj.tree.reset() # resets the geometry nodes tree so we can add new styles cleanly
-# (
-#     traj
-#     .add_style("spheres", selection=f"prop x > {median[0]}")
-#     .add_style("spheres", selection=f"prop x <= {median[0]}", material="MN Flat Outline")
-# )
+sel = traj.selections.from_string(f"prop x > {median[0]}")
 
 with traj.tree.reset() as (atoms, join):
-    pos = g.Position().o.position
-    sel = pos.x > pos.x.point.median()
-
-    mg.StyleSpheres(atoms, sel, material=mn.material.Flat().material) >> join
-    mg.StyleSpheres(atoms, ~sel, material=mn.material.Default().material) >> join
+    selection = sel.node()
+    (
+        atoms
+        >> mg.StyleSpheres(
+            ...,
+            selection,
+            "Instance",
+            quality=5,
+            material=mn.material.Flat().material
+            )
+        >> mg.StyleSpheres(
+            ...,
+            ~selection,
+            material=mn.material.Default().material
+            ) >> join
+    )
 
 canvas.frame_view(traj)
 canvas.snapshot()
@@ -104,7 +123,9 @@ the rendered molecule.
 #| warning: false
 canvas.clear()
 
-rot = [transformations.rotate.rotateby(90, direction=[0, 1, 0], point=np.zeros(3))]
+rot = [
+    transformations.rotate.rotateby(90, direction=[0, 1, 0], point=np.zeros(3))
+    ]
 u = mda.Universe(PSF, DCD, transformations=rot)
 
 g2 = mn.Molecule(u).add_style("spheres")
@@ -166,9 +187,14 @@ traj.add_style("spheres")
 
 canvas.frame_view(traj)
 canvas.snapshot()
-traj.tree.reset()
 
-traj.add_style("ribbon", quality=6, peptide_radius=1.5)
+with traj.tree.reset() as (atoms, join):
+    atoms >> mg.StyleRibbon(
+        quality=6,
+        peptide_radius=1.5,
+        material=mn.material.Default().material
+        ) >> join
+
 canvas.frame_view(traj)
 canvas.snapshot()
 ```
