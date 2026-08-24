@@ -62,21 +62,26 @@ dens.results.density.export("water.dx")
 
 Import universe as a `Molecule` and add a ribbon style to represent the protein. We also add a style to the non-protein atoms, sliced along the `y` axis. After taking the snapshot for visual reference we rebuild the tree with just the ribbon style, as we will be showing the water as a density.
 ```{python}
-protein_center = np.mean(protein.atoms.positions, axis=0)
+from molecularnodes.nodes import geometry as mg
+from nodebpy.nodes import geometry as g
 
-t = mn.Molecule(u).add_style("ribbon", quality=5, peptide_radius=2)
-t.add_style(
-    "spheres",
-    sphere_geometry="Instance",
-    selection=f"not protein and prop y >= {protein_center[1]}",
-)
+t = mn.Molecule(u)
+
+with t.tree.reset() as (atoms, join):
+    (
+        atoms
+        >> mg.StyleRibbon(quality=5, peptide_radius=2)
+        >> mg.StyleSpheres(
+            selection=g.Position().o.position.y < mg.Centroid(),
+            sphere_geometry="Instance"
+            )
+        >> g.SetMaterial(material=mn.material.Default().material)
+        >> join
+    )
+    atoms >> mn.nodes.geometry.StyleRibbon(quality=5, peptide_radius=2) >> join
 
 canvas.frame_view(t, (np.pi / 2, 0, np.pi / 3))
 canvas.snapshot()
-
-# rebuild the tree with just the ribbon style
-with t.tree.reset() as (atoms, join):
-    atoms >> mn.nodes.geometry.StyleRibbon(quality=5, peptide_radius=2) >> join
 ```
 
 ## Add density component
@@ -84,14 +89,22 @@ with t.tree.reset() as (atoms, join):
 We can load the density that was written-out from the analysis performed previously as a `Density` entity.
 ```{python}
 # load density file
-d = mn.entities.density.io.load(
+canvas.engine = "EEVEE"
+d = mn.entities.density.Grids.load(
     file_path="water.dx",
-    style="density_iso_surface",
     overwrite=True,
 )
-# add a density info annotation for the density entity
+
+with d.tree.reset() as (geo, join):
+    (
+        geo
+        >> mg.DensityStyleISOSurface()
+        >> g.SetMaterial(material=mn.material.TransparentOutline().material)
+        >> join
+    )
+
+
 da = d.annotations.add_density_info()
-# only show the filename and ISO value
 da.show_origin = da.show_delta = da.show_shape = False
 ```
 
@@ -101,16 +114,16 @@ da.show_origin = da.show_delta = da.show_shape = False
 
 ```{python}
 # get the density style
-ds = d.styles[0]
+# ds = d.styles[0]
 # set the positive color to blue with 50% opacity
-ds.positive_color = (0, 0, 1, 0.5)
+# ds.positive_color = (0, 0, 1, 0.5)
 ```
 
 ### ISO Value 0.5
 
 ```{python}
 # set ISO value to 0.5
-ds.iso_value = 0.5
+# ds.iso_value = 0.5
 ```
 
 ```{python}
@@ -123,13 +136,13 @@ canvas.snapshot()
 
 ```{python}
 # set ISO value to 0.5
-ds.iso_value = 0.5
-# enable contours
-ds.show_contours = True
-# set contour thickness
-ds.contour_thickness = 0.25
-# set contour colors
-ds.contour_color = (1, 1, 1, 1)
+# ds.iso_value = 0.5
+# # enable contours
+# ds.show_contours = True
+# # set contour thickness
+# ds.contour_thickness = 0.25
+# # set contour colors
+# ds.contour_color = (1, 1, 1, 1)
 ```
 
 ```{python}
@@ -157,7 +170,7 @@ ga.visible = False
 
 ```{python}
 # slice the grid from the left 50%
-ds.slice_left = 50
+# ds.slice_left = 50
 ```
 
 ```{python}
@@ -170,9 +183,9 @@ canvas.snapshot()
 
 ```{python}
 # reset slicing
-ds.slice_left = 0
-# only show contours
-ds.only_contours = True
+# ds.slice_left = 0
+# # only show contours
+# ds.only_contours = True
 ```
 
 ```{python}
