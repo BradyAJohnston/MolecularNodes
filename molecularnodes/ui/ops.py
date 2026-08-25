@@ -12,7 +12,6 @@ from bpy.props import (
     StringProperty,
 )
 from bpy.types import Context, Operator
-from .. import entities
 from ..annotations.props import create_annotation_type_inputs
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
@@ -24,9 +23,7 @@ from ..entities import (
     ensemble,
     molecule,
 )
-from ..nodes import geometry as g
 from ..nodes import nodes
-from ..nodes.material import add_all_materials
 from ..nodes.node_management import (
     remove_style_node,
 )
@@ -35,15 +32,6 @@ from ..session import get_session
 from ..utils import _increase_view_distance
 from .pref import addon_preferences
 from .style import STYLE_ITEMS
-
-_STYLE_NODE = {
-    "spheres": g.StyleSpheres,
-    "ribbon": g.StyleRibbon,
-    "cartoon": g.StyleCartoon,
-    "sticks": g.StyleSticks,
-    "ball_and_stick": g.StyleBallAndStick,
-    "surface": g.StyleSurface,
-}
 
 
 class Import_Molecule(bpy.types.Operator):
@@ -65,19 +53,12 @@ class Import_Molecule(bpy.types.Operator):
         description="Build the biological assembly for the structure on import",
     )
 
-    @property
-    def style_node(
-        self,
-    ) -> type[
-        g.StyleSpheres
-        | g.StyleSurface
-        | g.StyleRibbon
-        | g.StyleSticks
-        | g.StyleBallAndStick
-        | g.StyleCartoon
-    ]:
-        "Helper to get the selected node class for adding to the tree"
-        return _STYLE_NODE[self.style]
+    def apply_import_options(self, mol: Molecule) -> None:
+        """Set up the default node tree on a freshly imported molecule."""
+        if not self.node_setup:
+            return
+        mol.create_asset_nodes()
+        mol.add_style(style=self.style, color="common", assembly=self.assembly)
 
     def draw(self, context):
         layout = self.layout
@@ -87,7 +68,6 @@ class Import_Molecule(bpy.types.Operator):
         col = row.column()
         col.prop(self, "style")
         col.enabled = self.node_setup
-        # row = layout.row()
         layout.prop(self, "assembly")
 
         return layout
@@ -118,23 +98,7 @@ class MN_OT_Import_Molecule(Import_Molecule):
         for file in self.files:
             try:
                 mol = Molecule.load(Path(self.directory, file.name), name=file.name)
-
-                if self.node_setup:
-                    mol.create_asset_nodes()
-                    with mol.tree.reset() as (atoms, join):
-                        (
-                            atoms
-                            >> self.style_node(
-                                material=add_all_materials()["MN Default"]
-                            )
-                            >> (
-                                g.AssemblyInstance(data_object=mol.create_data_object())
-                                if self.assembly
-                                else None
-                            )
-                            >> join
-                        )
-
+                self.apply_import_options(mol)
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
@@ -170,10 +134,13 @@ DOWNLOAD_FORMATS = (
 # operator that is called by the 'button' press which calls the fetch function
 
 
-class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
+class MN_OT_Import_Fetch(Import_Molecule):
     bl_idname = "mn.import_fetch"
     bl_label = "Import Molecule"
-    bl_description = "Open a local structure file or download one from a database"
+    bl_description = (
+        "Open a local structure file or MD trajectory, or download a structure "
+        "from a database"
+    )
     bl_options = {"REGISTER", "UNDO"}
 
     database: EnumProperty(  # type: ignore
@@ -188,7 +155,7 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
             (
                 "local",
                 "Local File",
-                "Open a structure file already on disk",
+                "Open a structure file or MD topology + trajectory already on disk",
             ),
             (
                 "alphafold",
@@ -204,8 +171,26 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
     )
     filepath: StringProperty(  # type: ignore
         name="File",
-        description="Path of the local structure file to open",
+        description="Path of the local structure (or MD topology) file to open",
         subtype="FILE_PATH",
+    )
+    trajectory: StringProperty(  # type: ignore
+        name="Trajectory",
+        description=(
+            "Optional trajectory file to load alongside the topology, "
+            "or an imd:// URL to stream frames from a running simulation"
+        ),
+        subtype="FILE_PATH",
+    )
+    name: StringProperty(  # type: ignore
+        name="Name",
+        description="Name of the molecule on import (defaults to the file name)",
+        default="",
+    )
+    additional_arguments: StringProperty(  # type: ignore
+        name="Arguments",
+        description="Additional arguments to pass to the `mda.Universe(topology, trajectory, **kwargs)` constructor",
+        default="",
     )
     file_format: EnumProperty(  # type: ignore
         name="Format",
@@ -226,32 +211,72 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
         assert layout
         layout.prop_tabs_enum(self, "database")
         if self.database == "local":
+            layout.prop(self, "name")
             layout.prop(self, "filepath")
+            layout.prop(self, "trajectory")
+            layout.prop(self, "additional_arguments")
         else:
             row = layout.row().split(factor=0.7)
             row.prop(self, "code")
             # file format only applies to wwPDB downloads; others pick their own
             if self.database == "wwpdb":
                 row.prop(self, "file_format", text="")
-        row = layout.row()
-        row.prop(self, "node_setup", text="")
-        col = row.column()
-        col.prop(self, "style")
-        col.enabled = self.node_setup
-        layout.prop(self, "assembly")
+        super().draw(context)
 
     def invoke(self, context, event):
         prefs = addon_preferences()
         self.cache_dir = str(prefs.cache_dir) if prefs is not None else bpy.app.tempdir
         return context.window_manager.invoke_props_dialog(self)
 
+    def _universe_kwargs(self) -> dict:
+        """Parse the additional arguments string into `mda.Universe` kwargs."""
+        if self.additional_arguments == "":
+            return {}
+        try:
+            return {
+                key.strip(): arg.strip()
+                for key, arg in [
+                    kv.split("=") for kv in self.additional_arguments.split(",")
+                ]
+            }
+        except Exception as e:
+            self.report(
+                {"WARNING"},
+                message=f"Failed to parse additional arguments: {e}",
+            )
+            return {}
+
     def execute(self, context):
         try:
             if self.database == "local":
-                mol = Molecule.load(path_resolve(self.filepath))
-                message = f"Imported '{self.filepath}' as {mol.name}"
+                name = self.name.strip() or None
+                topology = path_resolve(self.filepath)
+                if self.trajectory.startswith("imd://"):
+                    mol = StreamingTrajectory.load(
+                        topology=topology,
+                        coordinates=self.trajectory,
+                        name=name or "StreamingTrajectory",
+                        style=None,
+                    )
+                    message = (
+                        f"Streaming trajectory '{mol.name}' from '{self.trajectory}'"
+                    )
+                elif self.trajectory:
+                    mol = Molecule.load(
+                        topology,
+                        path_resolve(self.trajectory),
+                        name=name,
+                        **self._universe_kwargs(),
+                    )
+                    message = (
+                        f"Imported '{self.filepath}' as {mol.name} with "
+                        f"{int(mol.props.n_frames)} frames from '{self.trajectory}'."
+                    )
+                else:
+                    mol = Molecule.load(topology, name=name)
+                    message = f"Imported '{self.filepath}' as {mol.name}"
             else:
-                mol = entities.Molecule.fetch(
+                mol = Molecule.fetch(
                     code=self.code,
                     cache=self.cache_dir,
                     format=self.file_format,
@@ -267,26 +292,18 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
                 )
             return {"CANCELLED"}
 
-        if self.assembly:
-            nodes.assembly_data_object_from_obj(mol.object)
+        self.apply_import_options(mol)
 
-        if self.node_setup:
-            with mol.tree.reset() as (atoms, join):
-                mol.create_asset_nodes()
-                (
-                    atoms
-                    >> g.SetColor(color=g.ColorElement(c=g.RandomColor(g.ChainID(), 3)))
-                    >> self.style_node(material=add_all_materials()["MN Default"])
-                    >> (
-                        g.AssemblyInstance(data_object=mol.create_data_object())
-                        if self.assembly
-                        else None
-                    )
-                    >> join
-                )
+        if isinstance(mol, StreamingTrajectory):
+            context.scene.frame_start = 0
+        else:
+            n_frames = int(mol.props.n_frames)
+            if n_frames > 1:
+                context.scene.frame_start = 0
+                context.scene.frame_end = n_frames
 
         try:
-            bpy.context.view_layer.objects.active = mol.object  # type: ignore
+            context.view_layer.objects.active = mol.object  # type: ignore
         except RuntimeError:
             message += " - Molecular Nodes collection is disabled"
 
@@ -543,24 +560,15 @@ class MN_OT_Frames_To_Collection(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Import_Trajectory(bpy.types.Operator):
-    bl_idname = "mn.import_trajectory"
-    bl_label = "Import Trajectory"
-    bl_description = "Load a molecular dynamics or oxDNA trajectory"
+class MN_OT_Import_OxDNA(bpy.types.Operator):
+    bl_idname = "mn.import_oxdna"
+    bl_label = "Import oxDNA"
+    bl_description = "Load an oxDNA topology and trajectory"
     bl_options = {"REGISTER", "UNDO"}
 
-    format: EnumProperty(  # type: ignore
-        name="Format",
-        description="The kind of trajectory to import",
-        default="md",
-        items=(
-            ("md", "MD", "A molecular dynamics trajectory (via MDAnalysis)"),
-            ("oxdna", "oxDNA", "An oxDNA trajectory"),
-        ),
-    )
     topology: StringProperty(  # type: ignore
         name="Topology",
-        description="File path for the toplogy file for the trajectory",
+        description="File path for the topology file for the trajectory",
         subtype="FILE_PATH",
         maxlen=0,
     )
@@ -573,111 +581,26 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
     name: StringProperty(  # type: ignore
         name="Name",
         description="Name of the molecule on import",
-        default="NewTrajectory",
+        default="oxDNA",
         maxlen=0,
-    )
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        description="Default style for importing",
-        items=STYLE_ITEMS,
-        default="spheres",
-    )
-    setup_nodes: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        description="Add nodes to the scene to load the trajectory",
-        default=True,
-    )
-
-    additional_arguments: StringProperty(  # type: ignore
-        name="Arguments",
-        description="Additional arguments to pass to the `mda.Universe(topology, trajectory, **kwargs)` constructor",
-        default="",
     )
 
     def draw(self, context):
         layout = self.layout
         assert layout
-        layout.prop_tabs_enum(self, "format")
         layout.prop(self, "name")
         layout.prop(self, "topology")
         layout.prop(self, "trajectory")
-        # oxDNA imports don't set up a style/node tree in the same way
-        if self.format == "md":
-            layout.prop(self, "additional_arguments")
-            row = layout.row()
-            row.prop(self, "setup_nodes", text="")
-            col = row.column()
-            col.prop(self, "style")
-            col.enabled = self.setup_nodes
 
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        if self.format == "oxdna":
-            OXDNA.load(
-                topology=path_resolve(self.topology),
-                coordinates=path_resolve(self.trajectory),
-                name=self.name,
-            )
-            return {"FINISHED"}
-
-        topology = path_resolve(self.topology)
-        coordinates = path_resolve(self.trajectory)
-
-        if self.trajectory.startswith("imd://"):
-            traj = StreamingTrajectory.load(
-                topology=topology,
-                coordinates=coordinates,
-                name=self.name,
-                style=self.style,
-                selection="all",
-            )
-        else:
-            if self.additional_arguments == "":
-                kwargs = {}
-            else:
-                try:
-                    kwargs = {
-                        key.strip(): arg.strip()
-                        for key, arg in [
-                            kv.split("=") for kv in self.additional_arguments.split(",")
-                        ]
-                    }
-                except Exception as e:
-                    self.report(
-                        {"WARNING"},
-                        message=f"Failed to parse additional arguments: {e}",
-                    )
-                    kwargs = {}
-            traj = Molecule.load(
-                topology=topology,
-                coordinates=coordinates,
-                name=self.name,
-                **kwargs,
-            )
-            if self.setup_nodes:
-                traj.create_asset_nodes()
-                traj.add_style(style=self.style)
-
-        context.view_layer.objects.active = traj.object
-        context.scene.frame_start = 0
-
-        if isinstance(traj, StreamingTrajectory):
-            self.report(
-                {"INFO"},
-                message=f"Streaming trajectory '{traj.name}' from '{self.trajectory}'",
-            )
-        else:
-            n_frames = int(traj.props.n_frames)
-            if n_frames > 1:
-                context.scene.frame_end = n_frames
-            self.report(
-                {"INFO"},
-                message=f"Imported '{self.topology}' as {traj.name} "
-                f"with {n_frames} frames from '{self.trajectory}'.",
-            )
-
+        OXDNA.load(
+            topology=path_resolve(self.topology),
+            coordinates=path_resolve(self.trajectory),
+            name=self.name,
+        )
         _increase_view_distance()
         return {"FINISHED"}
 
@@ -1099,7 +1022,7 @@ class MN_OT_DSSP_cancel(Operator):
 CLASSES = [
     MN_OT_add_selection_to_style,
     MN_OT_Import_Fetch,
-    MN_OT_Import_Trajectory,
+    MN_OT_Import_OxDNA,
     MN_OT_Reload_Trajectory,
     MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,

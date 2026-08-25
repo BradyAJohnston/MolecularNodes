@@ -55,8 +55,12 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     name = "AnotherNewTrajectory"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_trajectory(
-            topology=topo, trajectory=traj, name=name, style="ribbon"
+        bpy.ops.mn.import_fetch(
+            database="local",
+            filepath=topo,
+            trajectory=traj,
+            name=name,
+            style="ribbon",
         )
         obj_1 = o.latest()
 

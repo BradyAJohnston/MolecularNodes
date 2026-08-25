@@ -10,7 +10,7 @@ import io
 import logging
 import warnings
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, Sequence
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -984,6 +984,20 @@ class Molecule(MolecularEntity):
             return self.selections.from_string(selection).name
         return None
 
+    def _style_color_input(self, color: str | Sequence[float]):
+        """Resolve `add_style`'s color argument into the `Set Color` node input."""
+        from ...nodes import geometry as g
+
+        if not isinstance(color, str):
+            return tuple(color)
+        if color.lower() in ("common", "default"):
+            # standard element colors, with carbons colored randomly per chain
+            return g.ColorElement(c=g.RandomColor(g.ChainID(), 3))
+        if color.lower() == "plddt":
+            return g.ColorPLDDT()
+        # otherwise treat it as the name of a color attribute on the geometry
+        return NamedAttribute.color(color)
+
     def add_style(
         self,
         style: STYLE_LITERALS = "spheres",
@@ -993,6 +1007,9 @@ class Molecule(MolecularEntity):
         | MaterialBuilder
         | str
         | None = "MN Default",
+        color: str | Sequence[float] | None = None,
+        assembly: bool = False,
+        name: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """
@@ -1026,6 +1043,24 @@ class Molecule(MolecularEntity):
             material name to append from the asset file, or None for no material.
             Default is "MN Default".
 
+        color : str | Sequence[float] | None, optional
+            Coloring to apply upstream of the style via a ``Set Color`` node. Can be:
+            - ``"common"`` / ``"default"`` for standard element colors with carbons
+              colored randomly per chain
+            - ``"plddt"`` to color by pLDDT (B-factor) confidence
+            - any other string, treated as the name of a color attribute on the geometry
+            - an RGBA sequence of floats for a single uniform color
+            - None (default) to add no color node, leaving the baked ``Color``
+              attribute in use.
+
+        assembly : bool, optional
+            Instance the style over the biological assembly transforms parsed from
+            the source file, via an ``Assembly Instance`` node. Default is False.
+
+        name : str | None, optional
+            Optional label for the added style node, shown in the node editor and
+            style lists. Default is None.
+
         **kwargs : optional
             Additional keyword arguments to pass to the added style node.
 
@@ -1045,7 +1080,7 @@ class Molecule(MolecularEntity):
         named attribute on the trajectory with an automatically generated name (sel_N).
         """
 
-        from ...nodes.geometry import OxDNAStyleRibbon
+        from ...nodes import geometry as g
         from . import OXDNA
 
         if isinstance(style, str) and style not in styles_mapping:
@@ -1055,7 +1090,7 @@ class Molecule(MolecularEntity):
         attribute_name = self._resolve_style_selection(selection)
 
         if isinstance(self, OXDNA):
-            STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+            STYLE_NODE_MAPPING["ribbon"] = g.OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
 
         if isinstance(material, (PresetMaterial, MaterialBuilder)):
             material = material.material
@@ -1063,14 +1098,27 @@ class Molecule(MolecularEntity):
         material = append_material(material) if isinstance(material, str) else material
 
         with self.tree as tree:
+            style_node = STYLE_NODE_MAPPING[style](
+                selection=NamedAttribute.boolean(attribute_name)
+                if attribute_name
+                else None,
+                material=material,
+                **kwargs,
+            )
+            if name:
+                style_node.node.label = name
             (
                 tree.atoms
-                >> STYLE_NODE_MAPPING[style](
-                    selection=NamedAttribute.boolean(attribute_name)
-                    if attribute_name
-                    else None,
-                    material=material,
-                    **kwargs,
+                >> (
+                    g.SetColor(color=self._style_color_input(color))
+                    if color is not None
+                    else None
+                )
+                >> style_node
+                >> (
+                    g.AssemblyInstance(data_object=self.create_data_object())
+                    if assembly
+                    else None
                 )
                 >> tree.join
             )

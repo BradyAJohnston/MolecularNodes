@@ -28,10 +28,10 @@ def import_options(layout: UILayout) -> None:
     op.ensemble_type = "cellpack"
 
     layout.separator()
-    op = layout.operator("mn.import_trajectory", text="MD Trajectory", icon="IMPORT")
-    op.format = "md"
-    op = layout.operator("mn.import_trajectory", text="oxDNA", icon="IMPORT")
-    op.format = "oxdna"
+    # MD trajectories are loaded through the same unified import dialog
+    op = layout.operator("mn.import_fetch", text="MD Trajectory", icon="IMPORT")
+    op.database = "local"
+    op = layout.operator("mn.import_oxdna", text="oxDNA", icon="IMPORT")
 
     layout.separator()
     layout.operator("mn.import_density", text="Density Map", icon="IMPORT")
