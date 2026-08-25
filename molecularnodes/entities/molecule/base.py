@@ -129,14 +129,14 @@ class Molecule(MolecularEntity):
             MDAnalysis Universe with topology and trajectory
         name : str, default="NewUniverseObject"
             Name for the Blender object
-        world_scale : float, default=0.01
-            Scale factor from Angstroms to Blender units
+        world_scale : float, default=0.1
+            Scale factor from nanometers to Blender units
         create_object : bool, default=True
             Whether to immediately create the Blender object
 
         Notes
         -----
-        Default world_scale of 0.01 converts Angstroms to Blender units.
+        Default world_scale of 0.1 converts nanometers to Blender units.
         """
         super().__init__()
         self.universe: mda.Universe = universe
@@ -602,7 +602,6 @@ class Molecule(MolecularEntity):
         self._store_extra_attributes()
         self._setup_modifiers()
         self._save_filepaths_on_object()
-        self._register_asset_nodes()
         set_obj_active(self.object)
         return self.object
 
@@ -652,8 +651,11 @@ class Molecule(MolecularEntity):
         if coordinates is None:
             entity = cls.from_file(topology, name=name)
         else:
-            u = mda.Universe(topology, coordinates, **kwargs)
-            entity = cls(u, name=name or "NewMolecule", create_object=create_object)
+            entity = cls(
+                universe=mda.Universe(topology, coordinates, **kwargs),
+                name=name or "NewMolecule",
+                create_object=create_object,
+            )
 
         if style is not None and create_object:
             entity.add_style(style=style, selection=selection)

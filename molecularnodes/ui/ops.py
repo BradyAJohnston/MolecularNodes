@@ -36,32 +36,6 @@ from ..utils import _increase_view_distance
 from .pref import addon_preferences
 from .style import STYLE_ITEMS
 
-
-def _add_node(node_name, context, show_options=False, material="default"):
-    """
-    Add a node group to the node tree and set the values.
-
-    intended to be called upon button press in the node tree, and not for use in general scripting
-    """
-
-    # actually invoke the operator to add a node to the current node tree
-    # use_transform=True ensures it appears where the user's mouse is and is currently
-    # being moved so the user can place it where they wish
-    bpy.ops.node.add_node(
-        "INVOKE_DEFAULT", type="GeometryNodeGroup", use_transform=True
-    )
-    node = context.active_node
-    node.node_tree = bpy.data.node_groups[node_name]
-    # set the label to the node tree name by default
-    node.label = node.node_tree.name
-    node.width = nodes.NODE_WIDTH
-    node.show_options = show_options
-    node.name = node_name
-
-    # if added node has a 'Material' input, set it to the default MN material
-    nodes.assign_material(node, new_material=material)
-
-
 _STYLE_NODE = {
     "spheres": g.StyleSpheres,
     "ribbon": g.StyleRibbon,
@@ -144,21 +118,23 @@ class MN_OT_Import_Molecule(Import_Molecule):
         for file in self.files:
             try:
                 mol = Molecule.load(Path(self.directory, file.name), name=file.name)
-                nodes.custom_boolean_iswitch(
-                    name=f"Select Chain {mol.name}", items=mol.props.chain_ids
-                ).asset_mark()
 
-                with mol.tree.reset() as (atoms, join):
-                    (
-                        atoms
-                        >> self.style_node(material=add_all_materials()["MN Default"])
-                        >> (
-                            g.AssemblyInstance(data_object=mol.create_data_object())
-                            if self.assembly
-                            else None
+                if self.node_setup:
+                    mol.create_asset_nodes()
+                    with mol.tree.reset() as (atoms, join):
+                        (
+                            atoms
+                            >> self.style_node(
+                                material=add_all_materials()["MN Default"]
+                            )
+                            >> (
+                                g.AssemblyInstance(data_object=mol.create_data_object())
+                                if self.assembly
+                                else None
+                            )
+                            >> join
                         )
-                        >> join
-                    )
+
             except Exception as e:
                 print(f"Failed importing {file}: {e}")
 
@@ -294,18 +270,20 @@ class MN_OT_Import_Fetch(Import_Molecule, bpy.types.Operator):
         if self.assembly:
             nodes.assembly_data_object_from_obj(mol.object)
 
-        with mol.tree.reset() as (atoms, join):
-            (
-                atoms
-                >> g.SetColor(color=g.ColorElement(c=g.RandomColor(g.ChainID(), 3)))
-                >> self.style_node(material=add_all_materials()["MN Default"])
-                >> (
-                    g.AssemblyInstance(data_object=mol.create_data_object())
-                    if self.assembly
-                    else None
+        if self.node_setup:
+            with mol.tree.reset() as (atoms, join):
+                mol.create_asset_nodes()
+                (
+                    atoms
+                    >> g.SetColor(color=g.ColorElement(c=g.RandomColor(g.ChainID(), 3)))
+                    >> self.style_node(material=add_all_materials()["MN Default"])
+                    >> (
+                        g.AssemblyInstance(data_object=mol.create_data_object())
+                        if self.assembly
+                        else None
+                    )
+                    >> join
                 )
-                >> join
-            )
 
         try:
             bpy.context.view_layer.objects.active = mol.object  # type: ignore
@@ -679,6 +657,7 @@ class MN_OT_Import_Trajectory(bpy.types.Operator):
                 **kwargs,
             )
             if self.setup_nodes:
+                traj.create_asset_nodes()
                 traj.add_style(style=self.style)
 
         context.view_layer.objects.active = traj.object
