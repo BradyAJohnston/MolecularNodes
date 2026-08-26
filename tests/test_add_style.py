@@ -27,6 +27,64 @@ def test_add_style_with_selection():
         mol.add_style("cartoon", selection="non_existing_selection")
 
 
+def _nodes_using_tree(node_group, tree_name):
+    return [
+        node
+        for node in node_group.nodes
+        if isinstance(node, bpy.types.GeometryNodeGroup)
+        and node.node_tree.name == tree_name
+    ]
+
+
+def test_add_style_color_scheme_and_name():
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style(
+        "cartoon", color="common", name="My Style"
+    )
+    ng = mol.modifier_node_tree
+
+    # a Set Color node is inserted upstream of the style, driven by the
+    # element-colors chain with per-chain random carbons
+    (set_color,) = _nodes_using_tree(ng, "Set Color")
+    color_source = set_color.inputs["Color"].links[0].from_node
+    assert color_source.node_tree.name == "Color Element"
+
+    (style,) = _nodes_using_tree(ng, "Style Cartoon")
+    assert style.label == "My Style"
+    assert style.inputs["Atoms"].links[0].from_node == set_color
+
+
+def test_add_style_uniform_color():
+    color = (0.1, 0.2, 0.3, 1.0)
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("spheres", color=color)
+    (set_color,) = _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+    assert not set_color.inputs["Color"].links
+    assert tuple(set_color.inputs["Color"].default_value) == pytest.approx(color)
+
+
+def test_add_style_assembly():
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon", assembly=True)
+    ng = mol.modifier_node_tree
+
+    (instance,) = _nodes_using_tree(ng, "Assembly Instance")
+    (style,) = _nodes_using_tree(ng, "Style Cartoon")
+    assert instance.inputs["Geometry"].links[0].from_node == style
+    assert instance.inputs["Data Object"].default_value is not None
+
+
+def test_add_style_operator_color_scheme():
+    """mn.add_style applies its color scheme and label through Molecule.add_style."""
+    mol = mn.Molecule.load(data_dir / "1cd3.cif")
+    res = bpy.ops.mn.add_style(
+        uuid=mol.uuid, style="spheres", color_scheme="common", name="Op Style"
+    )
+    assert res == {"FINISHED"}
+
+    ng = mol.modifier_node_tree
+    assert _nodes_using_tree(ng, "Set Color")
+    (style,) = _nodes_using_tree(ng, "Style Spheres")
+    assert style.label == "Op Style"
+
+
 def test_styles_panel_style_node_selection():
     """The Styles panel identifies the active style node from the list index."""
     from molecularnodes.ui.panel import is_style_node

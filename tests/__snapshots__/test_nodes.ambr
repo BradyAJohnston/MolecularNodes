@@ -29577,7 +29577,7 @@
         'position': 'shape=(0, 3), atype=FLOAT_VECTOR, unique=0, values=[]',
       }),
       'edges': '0',
-      'name': 'NewMolecule',
+      'name': 'adk_oplsaa.gro',
       'polys': '0',
       'verts': '0',
     }),

@@ -157,7 +157,15 @@ class MolecularEntity(
         state["_tree"] = None
         return state
 
-    def _register_asset_nodes(self) -> None:
+    def create_asset_nodes(self) -> None:
+        """
+        Create asset nodes for the entity object.
+
+        This creates `Select` and `Color` nodes for each property combination. Chains, entities,
+        and segments have nodes created for them if they have IDs. Nodes are created and
+        registered as assets for the current Blender session so they can be added through
+        drag-to-search in the node editor.
+        """
 
         prop_combinations = (
             ("Chain", self.props.chain_ids),
@@ -169,9 +177,11 @@ class MolecularEntity(
             if len(prop) == 0:
                 continue
             custom_boolean_iswitch(
-                f"Select {prefix} {self.name}", items=prop
+                name=f"Select {prefix} {self.name}", items=prop
             ).asset_mark()
-            custom_color_iswitch(f"Color {prefix} {self.name}", items=prop).asset_mark()
+            custom_color_iswitch(
+                name=f"Color {prefix} {self.name}", items=prop
+            ).asset_mark()
 
     @property
     def props(self) -> "MolecularNodesObjectProperties":
@@ -188,7 +198,7 @@ class MolecularEntity(
     def modifier(self) -> bpy.types.NodesModifier:
         for mod in self.object.modifiers:
             if mod.type == "NODES" and mod.name == "Molecular Nodes":
-                return mod
+                return cast(bpy.types.NodesModifier, mod)
 
         mod = self.object.modifiers.new("GeometryNodes", "NODES")
         return cast(bpy.types.NodesModifier, mod)

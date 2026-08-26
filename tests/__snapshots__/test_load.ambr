@@ -32,7 +32,7 @@
         'vdw_radii': "shape=(17,), atype=FLOAT, unique=4, values=['0.12', '0.152', '0.155', '0.17']",
       }),
       'edges': '16',
-      'name': 'ASN',
+      'name': 'ASN.cif',
       'polys': '0',
       'verts': '17',
     }),
@@ -66,7 +66,7 @@
    [ 4.2  2.0 -0.1]]
 # ---
 # name: test_pdb_no_bonds
-  AttributeArray(name='position', object='no_bonds', mesh='no_bonds', domain=POINT, type=FLOAT_VECTOR, shape=(16, 3), dtype=float32)
+  AttributeArray(name='position', object='no_bonds.pdb', mesh='no_bonds.pdb', domain=POINT, type=FLOAT_VECTOR, shape=(16, 3), dtype=float32)
   array([[ 0.1       ,  0.1       ,  0.1       ],
          [ 0.2       ,  0.2       ,  0.2       ],
          [ 0.3       ,  0.3       ,  0.3       ],
