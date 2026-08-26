@@ -118,6 +118,7 @@ quartodoc:
     - api/materials.qmd
     # - api/density.qmd
     - api/annotations.qmd
+    - api/solvent.qmd
     - api/canvas.qmd
     - api/blender.qmd
     - text: "---"

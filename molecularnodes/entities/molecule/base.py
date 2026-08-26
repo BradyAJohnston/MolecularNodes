@@ -94,7 +94,7 @@ class Molecule(MolecularEntity):
     u = mda.Universe(PSF, DCD)
     traj = mn.Molecule(u)
     traj.add_style("spheres", sphere_geometry="Mesh", selection="resname LYS")
-    canvas.frame_view(traj)
+    canvas.look_at(traj)
     canvas.snapshot()
     ```
     """

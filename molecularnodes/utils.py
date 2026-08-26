@@ -176,23 +176,33 @@ class suppress_stdout(object):
         with suppress_stdout():
             do_something()
 
+    Suppression is skipped when the ``MN_VERBOSE`` environment variable is
+    set, letting Blender's render output through for debugging.
+
     From: https://stackoverflow.com/a/14797594
 
     """
 
     def __init__(self, *args, **kw):
+        self._suppress = not os.environ.get("MN_VERBOSE")
+        if not self._suppress:
+            return
         sys.stdout.flush()
         self._origstdout = sys.stdout
         self._oldstdout_fno = os.dup(sys.stdout.fileno())
         self._devnull = os.open(os.devnull, os.O_WRONLY)
 
     def __enter__(self):
+        if not self._suppress:
+            return
         self._newstdout = os.dup(1)
         os.dup2(self._devnull, 1)
         os.close(self._devnull)
         sys.stdout = os.fdopen(self._newstdout, "w")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self._suppress:
+            return
         sys.stdout = self._origstdout
         sys.stdout.flush()
         os.dup2(self._oldstdout_fno, 1)
@@ -204,11 +214,13 @@ class temp_override_property:
 
     """
 
+    _UNSET = object()
+
     def __init__(self, obj, prop_name, value):
         self.obj = obj
         self.prop_name = prop_name
         self.value = value
-        self.orig_value = None
+        self.orig_value = self._UNSET
 
     def __enter__(self):
         if not hasattr(self.obj, self.prop_name):
@@ -218,7 +230,7 @@ class temp_override_property:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.orig_value is not None:
+        if self.orig_value is not self._UNSET:
             setattr(self.obj, self.prop_name, self.orig_value)
 
 

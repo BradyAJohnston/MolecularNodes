@@ -50,7 +50,7 @@ class Camera:
         self.clip_end = 1000
 
     @property
-    def camera(self) -> bpy.types.Camera:
+    def camera(self) -> bpy.types.Object:
         """Get Camera object"""
         return bpy.context.scene.camera
 
@@ -107,7 +107,8 @@ class Camera:
         ----------
         viewpoint : Viewpoint | str | Sequence[float]
             Either a named viewpoint (a ``Viewpoint`` or its name, e.g. "front",
-            "top") or a tuple/list of three Euler angles in radians.
+            "top") or a tuple/list of three Euler angles in degrees (XYZ),
+            matching :attr:`rotation`.
         """
         # Viewpoint is a StrEnum, so named viewpoints (including bare strings) are
         # caught here; a Sequence[float] of Euler angles falls through
@@ -116,4 +117,4 @@ class Camera:
                 Viewpoint(viewpoint)
             ]
         else:
-            self.camera.rotation_euler = viewpoint
+            self.rotation = viewpoint

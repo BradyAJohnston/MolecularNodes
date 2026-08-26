@@ -42,15 +42,35 @@ mol.annotations.add_com_distance(
 
 ## Render an Image
 
+[](`~mn.Canvas.snapshot`) renders a still image and returns it as an
+`IPython.display.Image`, which displays automatically when it is the result of a notebook
+cell. Pass `path=` to also save the image to disk, `render_scale=` for a quick lower-resolution
+preview, and `frame=` to render a specific frame of the scene.
+
 ```{python}
 # frame the molecule
-canvas.frame_object(mol)
+canvas.look_at(mol)
 
 # render image of scene at frame 75
 canvas.snapshot(frame=75)
 ```
 
+To show a render that isn't the last expression in a cell (e.g. inside a loop), wrap the
+call with `display()`:
+
+```python
+for frame in [1, 50, 90]:
+    display(canvas.snapshot(frame=frame))
+```
+
 ## Render an Animation
+
+[](`~mn.Canvas.animation`) renders the scene's frame range and returns the result for
+display in the notebook — an `IPython.display.Video` for MP4 (the default) or an
+`IPython.display.Image` for GIF output (`format="gif"`, which requires the `pillow`
+package). As with `snapshot()`, pass `path=` to also save the file to disk; a ``.gif``
+suffix on the path selects GIF output automatically. The frame rate can be overridden
+per-call with `fps=`.
 
 ```{python}
 # render animation of scene from frame 10 to 50 at 50% scale

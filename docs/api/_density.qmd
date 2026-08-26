@@ -26,7 +26,7 @@ mol = mn.Molecule.fetch("1EHE").add_style("cartoon", color=(0.2, 1.0, 0.3, 0.5))
 
 ```{python}
 # frame molecule and render
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
@@ -68,7 +68,7 @@ di = d.annotations.add_density_info()
 
 ```{python}
 # frame molecule and render
-canvas.frame_view(mol.get_view(), viewpoint="front")
+canvas.look_at(mol.get_view(), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -81,7 +81,7 @@ dg.visible = di.visible = False
 
 ```{python}
 # frame density and render
-canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.look_at(d.get_view(), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -94,7 +94,7 @@ ds.iso_value = 25
 
 ```{python}
 # frame density and render
-canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.look_at(d.get_view(), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -116,7 +116,7 @@ ds.contour_color = (1.0, 1.0, 1.0, 0.5)
 
 ```{python}
 # frame density and render
-canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.look_at(d.get_view(), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -136,7 +136,7 @@ ds.slice_left = 35
 
 ```{python}
 # frame density and render
-canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.look_at(d.get_view(), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -149,7 +149,7 @@ canvas.camera.rotation = (90, 0, -45)
 
 ```{python}
 # frame density and render
-canvas.frame_view(d.get_view())
+canvas.look_at(d.get_view())
 canvas.snapshot()
 ```
 
@@ -167,7 +167,7 @@ ds.material = "MN Flat Outline"
 
 ```{python}
 # frame density and render
-canvas.frame_view(d.get_view())
+canvas.look_at(d.get_view())
 canvas.snapshot()
 ```
 
@@ -182,7 +182,7 @@ ds.negative_color = (0.7, 0.0, 1.0, 1.0)
 
 ```{python}
 # frame density and render
-canvas.frame_view(d.get_view())
+canvas.look_at(d.get_view())
 canvas.snapshot()
 ```
 
