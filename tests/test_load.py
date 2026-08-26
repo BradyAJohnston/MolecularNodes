@@ -66,7 +66,9 @@ def test_download_format(code, format):
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
     assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
     with db.ObjectTracker() as o:
-        bpy.ops.mn.import_fetch(code=code, file_format=format, cache_dir=str(data_dir))
+        bpy.ops.mn.import_molecule(
+            code=code, file_format=format, cache_dir=str(data_dir)
+        )
         mol2 = bpy.context.scene.MNSession.match(o.latest())
 
     assert np.allclose(mol.position, mol2.position)
