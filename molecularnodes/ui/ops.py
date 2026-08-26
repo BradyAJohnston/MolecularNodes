@@ -221,7 +221,6 @@ class MN_OT_Import_Fetch(Import_Molecule):
             layout.prop(self, "trajectory")
             layout.prop(self, "additional_arguments")
         else:
-
             layout.prop_tabs_enum(self, "database")
             row = layout.row().split(factor=0.7)
             row.prop(self, "code")

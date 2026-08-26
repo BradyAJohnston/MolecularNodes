@@ -776,7 +776,6 @@ class Molecule(MolecularEntity):
 
     def create_data_object(self) -> bpy.types.Object:
         """Create the data object holding the biological assembly transforms."""
-        from ... import utils
         from ...blender import mesh
 
         data_obj_name = f".data_{self.name}_assemblies"
