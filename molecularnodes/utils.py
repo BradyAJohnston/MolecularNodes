@@ -176,23 +176,33 @@ class suppress_stdout(object):
         with suppress_stdout():
             do_something()
 
+    Suppression is skipped when the ``MN_VERBOSE`` environment variable is
+    set, letting Blender's render output through for debugging.
+
     From: https://stackoverflow.com/a/14797594
 
     """
 
     def __init__(self, *args, **kw):
+        self._suppress = not os.environ.get("MN_VERBOSE")
+        if not self._suppress:
+            return
         sys.stdout.flush()
         self._origstdout = sys.stdout
         self._oldstdout_fno = os.dup(sys.stdout.fileno())
         self._devnull = os.open(os.devnull, os.O_WRONLY)
 
     def __enter__(self):
+        if not self._suppress:
+            return
         self._newstdout = os.dup(1)
         os.dup2(self._devnull, 1)
         os.close(self._devnull)
         sys.stdout = os.fdopen(self._newstdout, "w")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self._suppress:
+            return
         sys.stdout = self._origstdout
         sys.stdout.flush()
         os.dup2(self._oldstdout_fno, 1)

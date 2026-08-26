@@ -195,9 +195,11 @@ def test_engine_settings_applied_on_activation(canvas):
 def render_canvas():
     # cheapest possible renders: tiny resolution, Cycles with a single sample
     # (EEVEE requires a GPU that GHA runners don't have access to). CPU
-    # explicitly, as the CI runners have no GPU
+    # explicitly - both for rendering and for the render-time compositor,
+    # which defaults to GPU in Blender 5.x - as the CI runners have no GPU
     canvas = mn.Canvas(resolution=(32, 32))
     canvas.engine = mn.scene.Cycles(samples=1, device="CPU")
+    canvas.scene.render.compositor_device = "CPU"
     return canvas
 
 
