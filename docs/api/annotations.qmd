@@ -122,7 +122,7 @@ a3 = t.annotations.add_com(selection="resid 150:170", text="resid 150:170|COM")
 
 ```{python}
 # frame the view and render
-canvas.look_at(t.get_view(), viewpoint="front")
+canvas.look_at(t, viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -317,7 +317,6 @@ print(a)
 
 ```{python}
 print("# annotations = ", len(t.annotations))
-# get the protein COM annotation by index
 a = t.annotations[1]
 a
 ```
@@ -325,7 +324,6 @@ a
 ### Iterable access
 
 ```{python}
-# access all annotations by iteration
 for a in t.annotations:
     print(a.name)
 ```
@@ -335,18 +333,15 @@ for a in t.annotations:
 All annotations of an entity can be collectively hidden or displayed using the `visible` attribute of the annotations manager.
 
 ```{python}
-# get current annotations visibility
 t.annotations.visible
 ```
 
 ```{python}
-# hide all annotations
 t.annotations.visible = False
 t.annotations.visible
 ```
 
 ```{python}
-# show all annotations
 t.annotations.visible = True
 t.annotations.visible
 ```
@@ -379,7 +374,6 @@ The common annotation params are:
 - `mesh_shade_smooth` - Whether to use shade smooth for 3d meshes
 
 ```{python}
-# common annotation params for a1
 [(p, getattr(a1, p)) for p in a1.__dir__() if not p.startswith("_")]
 ```
 
@@ -390,20 +384,17 @@ Individual annotaitons can be removed using the annotation name or annotation in
 ### Remove by name
 
 ```{python}
-# remove by an annotation name
 t.annotations.remove("r1 atom info")
 ```
 ### Remove by instance
 
 ```{python}
-# remove by an annotation instance
 t.annotations.remove(a4)
 ```
 
 ### Remove all annoations
 
 ```{python}
-# remove all annotations
 t.annotations.clear()
 ```
 
