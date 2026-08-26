@@ -194,10 +194,10 @@ def test_engine_settings_applied_on_activation(canvas):
 @pytest.fixture
 def render_canvas():
     # cheapest possible renders: tiny resolution, Cycles with a single sample
-    # (EEVEE requires a GPU context that isn't available headless)
+    # (EEVEE requires a GPU that GHA runners don't have access to). CPU
+    # explicitly, as the CI runners have no GPU
     canvas = mn.Canvas(resolution=(32, 32))
-    canvas.engine = "CYCLES"
-    canvas.samples = 1
+    canvas.engine = mn.scene.Cycles(samples=1, device="CPU")
     return canvas
 
 
