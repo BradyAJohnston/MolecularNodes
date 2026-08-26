@@ -35,28 +35,30 @@ def _has_ondisk_trajectory(traj: Molecule) -> bool:
     return not str(filename).startswith("imd://")
 
 
-def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:
+def _remap_trajectory_paths(trajectories: Dict[str, Molecule], remap) -> None:
     for key, traj in trajectories.items():
         if not _has_ondisk_trajectory(traj):
             continue
+        # multi-file universes (ChainReader) list every coordinate file in
+        # `filenames`, while `filename` only holds the first one
+        filenames = getattr(traj.universe.trajectory, "filenames", None)
         # save linked universe frame
         uframe = traj.uframe
-        traj.universe.load_new(_make_path_relative(traj.universe.trajectory.filename))
+        if filenames is not None:
+            traj.universe.load_new([remap(f) for f in filenames])
+        else:
+            traj.universe.load_new(remap(traj.universe.trajectory.filename))
         # restore linked universe frame
         traj.uframe = uframe
         traj._save_filepaths_on_object()
+
+
+def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:
+    _remap_trajectory_paths(trajectories, _make_path_relative)
 
 
 def _make_trajectory_paths_absolute(trajectories: Dict[str, Molecule]) -> None:
-    for key, traj in trajectories.items():
-        if not _has_ondisk_trajectory(traj):
-            continue
-        # save linked universe frame
-        uframe = traj.uframe
-        traj.universe.load_new(_make_path_absolute(traj.universe.trajectory.filename))
-        # restore linked universe frame
-        traj.uframe = uframe
-        traj._save_filepaths_on_object()
+    _remap_trajectory_paths(trajectories, _make_path_absolute)
 
 
 def _make_path_relative(filepath):

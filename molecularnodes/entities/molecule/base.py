@@ -1141,7 +1141,16 @@ class Molecule(MolecularEntity):
                 if isinstance(topology_filename, (str, Path)):
                     # MD universe backed by on-disk topology (+ trajectory) files
                     state["_universe_topology"] = str(topology_filename)
-                    if isinstance(trajectory_filename, (str, Path)):
+                    # multi-file universes (ChainReader) list every coordinate
+                    # file in `filenames`, while `filename` only holds the first
+                    trajectory_filenames = getattr(
+                        self.universe.trajectory, "filenames", None
+                    )
+                    if trajectory_filenames is not None:
+                        state["_universe_trajectory"] = [
+                            str(f) for f in trajectory_filenames
+                        ]
+                    elif isinstance(trajectory_filename, (str, Path)):
                         state["_universe_trajectory"] = str(trajectory_filename)
                 else:
                     # universe was converted from a structure file (in-memory, so the
