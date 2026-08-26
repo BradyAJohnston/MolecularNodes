@@ -204,11 +204,13 @@ class temp_override_property:
 
     """
 
+    _UNSET = object()
+
     def __init__(self, obj, prop_name, value):
         self.obj = obj
         self.prop_name = prop_name
         self.value = value
-        self.orig_value = None
+        self.orig_value = self._UNSET
 
     def __enter__(self):
         if not hasattr(self.obj, self.prop_name):
@@ -218,7 +220,7 @@ class temp_override_property:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.orig_value is not None:
+        if self.orig_value is not self._UNSET:
             setattr(self.obj, self.prop_name, self.orig_value)
 
 

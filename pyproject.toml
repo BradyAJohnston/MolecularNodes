@@ -24,7 +24,7 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 
 [project.optional-dependencies]
 bpy = ["bpy==5.2.*"]
-jupyter = ["jupyter", "ipython>=9.7.0"]
+jupyter = ["jupyter", "ipython>=9.7.0", "pillow"]
 docs = [
     "griffe<2.0",
     "ipython>=9.11.0",
@@ -44,6 +44,7 @@ dev = [
     "mdanalysistests>=2.7.0",
     "fake-bpy-module>=20260816",
     "nodepad>=0.3.0",
+    "pillow",
     "pooch>=1.8",
     "pre-commit",
     "pytest",

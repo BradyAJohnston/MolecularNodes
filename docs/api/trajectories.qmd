@@ -36,8 +36,8 @@ image — no different from a static structure.
 u = mda.Universe(PSF, DCD)
 traj = mn.Molecule(u)
 traj.add_style("spheres")
-canvas.frame_view(traj)
-canvas.snapshot()
+canvas.look_at(traj)
+display(canvas.snapshot())
 canvas.clear()
 ```
 
@@ -107,7 +107,7 @@ with traj.tree.reset() as (atoms, join):
             ) >> join
     )
 
-canvas.frame_view(traj)
+canvas.look_at(traj)
 canvas.snapshot()
 ```
 
@@ -129,7 +129,7 @@ rot = [
 u = mda.Universe(PSF, DCD, transformations=rot)
 
 g2 = mn.Molecule(u).add_style("spheres")
-canvas.frame_view(g2)
+canvas.look_at(g2)
 canvas.snapshot()
 ```
 
@@ -185,8 +185,8 @@ traj = mn.Molecule(u)
 traj["Color"] = col_array
 traj.add_style("spheres")
 
-canvas.frame_view(traj)
-canvas.snapshot()
+canvas.look_at(traj)
+display(canvas.snapshot())
 
 with traj.tree.reset() as (atoms, join):
     atoms >> mg.StyleRibbon(
@@ -195,7 +195,7 @@ with traj.tree.reset() as (atoms, join):
         material=mn.material.Default().material
         ) >> join
 
-canvas.frame_view(traj)
+canvas.look_at(traj)
 canvas.snapshot()
 ```
 
@@ -207,14 +207,10 @@ selection is only applied to those atoms from the group.
 
 ```{python}
 # | warning: false
-canvas.clear()
-adk = datasets.fetch_adk_equilibrium()
-u = mda.Universe(adk.topology, adk.trajectory)
+traj.tree.clear()
+traj.add_style("spheres", selection=u.atoms[u.atoms.names == "CA"], scale=1.75)
 
-traj = mn.Molecule(u)
-traj.add_style("spheres", selection=u.atoms[u.atoms.names == "CA"])
-
-canvas.frame_view(traj.get_view())
+canvas.look_at(traj.get_view())
 canvas.snapshot()
 ```
 

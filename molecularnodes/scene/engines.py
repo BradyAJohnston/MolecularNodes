@@ -5,6 +5,15 @@ from .render import enable_optimal_gpu
 
 
 class RenderEngine(ABC):
+    """
+    Configuration for a render engine.
+
+    Constructing an engine stores the requested settings without touching the
+    scene; they are applied when the engine is activated by assigning it to
+    ``Canvas.engine``. The properties always read from and write to the
+    active scene directly.
+    """
+
     _name = "RenderEngineName"
 
     @property
@@ -14,12 +23,20 @@ class RenderEngine(ABC):
     def _enable_engine(self):
         bpy.context.scene.render.engine = self.name  # type: ignore
 
+    def _apply_settings(self) -> None:
+        """Write the settings given at construction to the scene."""
+
 
 class EEVEE(RenderEngine):
+    _name = "BLENDER_EEVEE"
+
     def __init__(self, samples: int = 64, raytracing: bool = True):
-        self._name = "BLENDER_EEVEE"
-        self.samples = samples
-        self.raytracing = raytracing
+        self._init_samples = samples
+        self._init_raytracing = raytracing
+
+    def _apply_settings(self) -> None:
+        self.samples = self._init_samples
+        self.raytracing = self._init_raytracing
 
     @property
     def engine(self):
@@ -43,6 +60,8 @@ class EEVEE(RenderEngine):
 
 
 class Cycles(RenderEngine):
+    _name = "CYCLES"
+
     def __init__(
         self,
         samples: int = 256,
@@ -50,12 +69,16 @@ class Cycles(RenderEngine):
         denoise: bool = True,
         denoise_gpu: bool = True,
     ):
-        self._name = "CYCLES"
-        self.samples = samples
-        self.device = device
-        self.denoise = denoise
-        self.denoise_gpu = denoise_gpu
-        self._enable_engine()
+        self._init_samples = samples
+        self._init_device = device
+        self._init_denoise = denoise
+        self._init_denoise_gpu = denoise_gpu
+
+    def _apply_settings(self) -> None:
+        self.samples = self._init_samples
+        self.device = self._init_device
+        self.denoise = self._init_denoise
+        self.denoise_gpu = self._init_denoise_gpu
 
     @property
     def engine(self):
@@ -80,7 +103,7 @@ class Cycles(RenderEngine):
         if value == "GPU":
             try:
                 enable_optimal_gpu()
-            except TypeError:
+            except RuntimeError:
                 warnings.warn(
                     "Failed to enable GPU, defaulting back to CPU render device"
                 )

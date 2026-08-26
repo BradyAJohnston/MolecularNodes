@@ -1,7 +1,7 @@
 import os
 import shutil
 import tempfile
-from contextlib import ExitStack
+from contextlib import ExitStack, contextmanager
 from enum import StrEnum
 from pathlib import Path
 from typing import Literal, Tuple
@@ -20,14 +20,10 @@ from .engines import EEVEE, Cycles
 from .world import WorldTree
 
 try:
-    from IPython.display import Image, Video, display
+    from IPython.display import Image, Video
 except ImportError:
     Image = None
     Video = None
-    display = None
-
-IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
-IS_SELF_HOSTED = os.getenv("RUNNER_ENVIRONMENT") == "self-hosted"
 
 
 class ViewTransform(StrEnum):
@@ -68,6 +64,58 @@ RENDER_PASSES = {
     "ambient_occlusion": "use_pass_ambient_occlusion",
 }
 
+# still-image formats that IPython can embed inline, mapped to the format
+# name expected by IPython.display.Image
+_IPYTHON_IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg"}
+
+
+@contextmanager
+def _restore_frame(scene: bpy.types.Scene):
+    """Restore the scene's current frame (via ``frame_set``, so animation data
+    is re-evaluated) on exit."""
+    original = scene.frame_current
+    try:
+        yield
+    finally:
+        scene.frame_set(original)
+
+
+@contextmanager
+def _render_progress(total: int, desc: str):
+    """Show a tqdm progress bar driven by the ``render_write`` handler, which
+    fires once per frame written during an animation render."""
+    bar = tqdm(total=total, desc=desc)
+
+    def _on_frame_write(*args) -> None:
+        bar.update(1)
+
+    bpy.app.handlers.render_write.append(_on_frame_write)
+    try:
+        yield
+    finally:
+        bpy.app.handlers.render_write.remove(_on_frame_write)
+        bar.close()
+
+
+def _write_gif(frames: list[Path], path: Path, fps: float) -> None:
+    """Assemble rendered frames into an animated GIF using Pillow."""
+    try:
+        from PIL import Image as PILImage
+    except ImportError as e:
+        raise ImportError(
+            "GIF output requires the optional dependency 'pillow'. "
+            "Install it with `pip install pillow`."
+        ) from e
+    images = [PILImage.open(frame) for frame in frames]
+    images[0].save(
+        path,
+        save_all=True,
+        append_images=images[1:],
+        duration=round(1000 / fps),
+        loop=0,
+        disposal=2,
+    )
+
 
 class Canvas:
     """
@@ -75,8 +123,8 @@ class Canvas:
 
     Canvas configures the active Blender scene for Molecular Nodes renders
     (engine, resolution, transparency, color management), exposes convenient
-    properties for common render settings, and provides helpers to frame
-    objects/views and render stills or animations.
+    properties for common render settings, and provides helpers to point the
+    camera at objects/views and render stills or animations.
 
     Parameters
     ----------
@@ -176,14 +224,27 @@ class Canvas:
         """
         addon.register()
         assets.install()
+        self._compositor: CompositorTree | None = None
+        self._world: WorldTree | None = None
         if template:
             self.scene_reset(template=template)
+        else:
+            self._scene_changed()
         self.engine = engine
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
-        self._compositor: CompositorTree | None = None
-        self._world: WorldTree | None = None
+
+    def _scene_changed(self) -> None:
+        """
+        Rebind scene-backed state after the scene has been replaced.
+
+        The world and compositor builders hold references to the old scene's
+        node trees, so they are discarded and the compositor (with the
+        annotation overlay) is prepared on the new scene.
+        """
+        self._compositor = None
+        self._world = None
         setup_compositor(self.scene)
 
     @property
@@ -230,13 +291,20 @@ class Canvas:
     @property
     def engine(self) -> Cycles | EEVEE:
         """
-        Get the configured render engine.
+        Get the active render engine.
 
         Returns
         -------
         EEVEE | Cycles
-            The active engine configuration object.
+            The active engine configuration object. Kept in sync with the
+            scene, so an engine switch made outside of this class (e.g. in the
+            Blender UI or by loading a .blend file) is reflected here.
         """
+        engine_id = self.scene.render.engine
+        if self._engine.name != engine_id:
+            # the engine was changed outside of this class - rebind without
+            # applying the constructor defaults over the scene's settings
+            self._engine = Cycles() if engine_id == "CYCLES" else EEVEE()
         return self._engine
 
     @engine.setter
@@ -276,6 +344,8 @@ class Canvas:
             )
 
         self._engine._enable_engine()
+        # settings given to the engine's constructor are applied on activation
+        self._engine._apply_settings()
 
     @property
     def fps(self) -> float:
@@ -673,59 +743,35 @@ class Canvas:
         """
         self._view_settings.view_transform = ViewTransform(value)  # ty: ignore[invalid-assignment]
 
-    def frame_object(
+    def look_at(
         self,
-        obj: bpy.types.Object | MolecularEntity,
+        target: MolecularEntity | bpy.types.Object | list[tuple],
         viewpoint: Viewpoint | str | None = None,
     ) -> None:
         """
-        Frame an object or MolecularEntity in the active camera view.
+        Position the camera to look at and contain a target.
 
         Parameters
         ----------
-        obj : bpy.types.Object | MolecularEntity
-            Blender object or Molecular Nodes entity to frame.
+        target : MolecularEntity | bpy.types.Object | list[tuple]
+            What to look at: a Molecular Nodes entity (via its current view),
+            a Blender object, or a bounding box of 8 three-dimensional
+            vertices ``[(x, y, z), ...]`` as returned by ``get_view()``.
+            Multiple views can be combined with ``+`` before passing.
         viewpoint : Viewpoint | str, optional
             Viewing direction along a principal axis. One of
             {"default", "front", "back", "top", "bottom", "left", "right"}.
 
         """
-        if isinstance(obj, MolecularEntity):
-            obj = obj.object
         # set the camera viewpoint if specified
         if viewpoint is not None:
             self.camera.set_viewpoint(viewpoint)
-        # set the camera to look at the object
-        blender_utils.look_at_object(obj)
-
-    def frame_view(
-        self,
-        view: list[tuple] | MolecularEntity,
-        viewpoint: Viewpoint | str | None = None,
-    ) -> None:
-        """
-        Frame one or more views of Molecular entities.
-        Multiple views can be combined using ``+`` before passing the result.
-
-        Parameters
-        ----------
-        view : list[tuple] | MolecularEntity
-            A bounding box represented by 8 three-dimensional vertices
-            ``[(x, y, z), ...]`` or an entity from which a view is derived.
-        viewpoint : Viewpoint | str, optional
-            Viewing direction along a principal axis. One of
-            {"default", "front", "back", "top", "bottom", "left", "right"}.
-
-        """
-        if isinstance(view, MolecularEntity):
-            view_tuple = view.get_view()
+        if isinstance(target, MolecularEntity):
+            target = target.get_view()
+        if isinstance(target, bpy.types.Object):
+            blender_utils.look_at_object(target)
         else:
-            view_tuple = view
-        # set the camera viewpoint if specified
-        if viewpoint is not None:
-            self.camera.set_viewpoint(viewpoint)
-        # set the camera to look at the bounding box of the view
-        blender_utils.look_at_bbox(view_tuple)
+            blender_utils.look_at_bbox(target)
 
     def clear(self) -> None:
         """
@@ -764,6 +810,7 @@ class Canvas:
         """
         if template is None:
             bpy.ops.wm.read_homefile(app_template="")
+            self._scene_changed()
         else:
             file = Path(template) if isinstance(template, str) else template
             if file.is_file() and file.suffix == ".blend":
@@ -771,6 +818,7 @@ class Canvas:
             elif isinstance(template, str):
                 if template in list_templates():
                     bpy.ops.wm.read_homefile(app_template=template)
+                    self._scene_changed()
                 else:
                     raise ValueError(
                         f"Template '{template}' is not a valid .blend file or app template name."
@@ -797,20 +845,23 @@ class Canvas:
         if not file_path.is_file() or file_path.suffix != ".blend":
             raise ValueError(f"File '{path}' is not a valid .blend file.")
         bpy.ops.wm.open_mainfile(filepath=str(file_path.resolve()))
+        self._scene_changed()
 
     def snapshot(
         self,
         path: str | Path | None = None,
         frame: int | None = None,
         file_format: str = "PNG",
-    ) -> None:
+        render_scale: int = 100,
+    ) -> "Image | None":
         """
         Render an image of the current scene.
 
         Parameters
         ----------
         path : str | Path | None, optional
-            File path to write the rendered image to.
+            File path to write the rendered image to. The image is returned
+            for display regardless of whether a path is given.
 
         frame : int, optional
             Frame number of scene to render. When not specified,
@@ -819,47 +870,50 @@ class Canvas:
         file_format : str, optional
             File format of the rendered image.
 
+        render_scale : int, optional
+            Scale of the rendered image with respect to the resolution.
+
+        Returns
+        -------
+        IPython.display.Image | None
+            The rendered image, which displays automatically as the result of
+            a notebook cell. ``None`` if IPython is not installed or the
+            format cannot be displayed in a notebook (e.g. ``"OPEN_EXR"``).
         """
         scene = self.scene
         render_settings = scene.render
         image_settings = render_settings.image_settings
-        render_frame = scene.frame_current if frame is None else frame
         # temporary properties to override
         override_props = [
-            (render_settings, "use_file_extension", True),
-            (scene, "frame_current", render_frame),
+            (image_settings, "media_type", "IMAGE"),
+            (image_settings, "file_format", file_format),
+            (render_settings, "resolution_percentage", render_scale),
         ]
-        override_props.append((image_settings, "media_type", "IMAGE"))
-        override_props.append((image_settings, "file_format", file_format))
         with ExitStack() as stack:
-            # set the use_file_extension to auto generate file extension
-            # set the file_format to the specified one
             temp_override_properties(stack, override_props)
-            # create temporary file with the file_format extension
-            tmp_file = stack.enter_context(
-                tempfile.NamedTemporaryFile(suffix=render_settings.file_extension)
-            )
-            # set the filepath to the temporary file
+            # restore the current frame (and animation state) afterwards
+            stack.enter_context(_restore_frame(scene))
+            if frame is not None:
+                # only frame_set will update animation data,
+                # scene.frame_current will only update the timeline
+                scene.frame_set(frame)
+            # render into a temporary directory, with the extension matching
+            # the requested file format
+            tmp_dir = stack.enter_context(tempfile.TemporaryDirectory())
+            render_file = Path(tmp_dir) / f"snapshot{render_settings.file_extension}"
             temp_override_properties(
-                stack,
-                [
-                    (render_settings, "filepath", tmp_file.name),
-                ],
+                stack, [(render_settings, "filepath", str(render_file))]
             )
-            # set the frame number - only frame_set will update animation data
-            # scene.current_frame will only update the timeline
-            scene.frame_set(render_frame)
             # suppress stdout output generated by render process
             with suppress_stdout():
-                # render the image
                 bpy.ops.render.render(write_still=True, animation=False)
+            data = render_file.read_bytes()
             if path:
-                # save to file if path specified
-                shutil.copy(tmp_file.name, path)
-            elif display and Image:
-                # only display in notebook if path not specified
-                # and in notebook context
-                display(Image(tmp_file.name))
+                shutil.copy(render_file, path)
+        ipython_format = _IPYTHON_IMAGE_FORMATS.get(file_format.upper())
+        if Image is None or ipython_format is None:
+            return None
+        return Image(data=data, format=ipython_format)
 
     def animation(
         self,
@@ -867,14 +921,17 @@ class Canvas:
         frame_start: int | None = None,
         frame_end: int | None = None,
         render_scale: int = 100,
-    ) -> None:
+        fps: float | None = None,
+        format: str | None = None,
+    ) -> "Video | Image | None":
         """
         Render an animation of the current scene.
 
         Parameters
         ----------
         path : str | Path | None, optional
-            File path to write the rendered animation to.
+            File path to write the rendered animation to. The animation is
+            returned for display regardless of whether a path is given.
 
         frame_start : int, optional
             Start frame of the animation. When not specified, current scene's
@@ -887,14 +944,34 @@ class Canvas:
         render_scale : int, optional
             Scale of the rendered animation frames with respect to the resolution.
 
+        fps : float, optional
+            Frame rate of the animation. When not specified, the scene's
+            fps is used.
+
+        format : str, optional
+            Output format, either ``"MP4"`` or ``"GIF"`` (case-insensitive).
+            When not specified, inferred from the suffix of ``path``,
+            defaulting to MP4. GIF output requires the ``pillow`` package.
+
+        Returns
+        -------
+        IPython.display.Video | IPython.display.Image | None
+            The rendered animation (a ``Video`` for MP4, an ``Image`` for
+            GIF), which displays automatically as the result of a notebook
+            cell. ``None`` if IPython is not installed.
         """
         # determine frame range
         start = self.frame_start if frame_start is None else frame_start
         end = self.frame_end if frame_end is None else frame_end
         if end < start:
             raise ValueError(f"End frame {end} cannot be less than start frame {start}")
-        n = len(str(end))
-        frame_range = range(start, end + 1)
+
+        if format is None:
+            is_gif = path is not None and Path(path).suffix.lower() == ".gif"
+            format = "GIF" if is_gif else "MP4"
+        format = format.upper()
+        if format not in ("MP4", "GIF"):
+            raise ValueError(f"Format '{format}' must be either 'MP4' or 'GIF'")
 
         scene = self.scene
         render_settings = scene.render
@@ -902,72 +979,56 @@ class Canvas:
         # temporary properties to override
         override_props = [
             (render_settings, "use_lock_interface", True),
+            (render_settings, "use_file_extension", True),
             (render_settings, "resolution_percentage", render_scale),
-            (render_settings, "filepath", ""),
-            (scene, "frame_current", start),
+            (scene, "frame_start", start),
+            (scene, "frame_end", end),
         ]
-        override_props.append((image_settings, "media_type", "IMAGE"))
-        override_props.append((image_settings, "file_format", "PNG"))
-        # create a temporary directory
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            # render individual frames
-            with ExitStack() as stack:
-                temp_override_properties(stack, override_props)
-                it = tqdm(frame_range, desc="Rendering frames")
-                # render individual frames
-                for frame in it:
-                    render_image = os.path.join(tmp_dir, str(frame).zfill(n)) + ".png"
-                    # set the output file
-                    scene.render.filepath = render_image
-                    # set the frame - only frame_set updates animation data
-                    scene.frame_set(frame)
-                    with suppress_stdout():
-                        # render each frame image
-                        bpy.ops.render.render(write_still=True)
-                it.close()
-
-            # add to video sequence editor
-            sequence_editor = scene.sequence_editor_create()
-            strips = sequence_editor.strips  # .sequences is deprecated
-            image_strip = None
-            for frame in frame_range:
-                render_image = os.path.join(tmp_dir, str(frame).zfill(n)) + ".png"
-                if image_strip is None:
-                    image_strip = strips.new_image("name", render_image, 1, start)
-                else:
-                    image_strip.elements.append(os.path.basename(render_image))
-
-            # render animation
-            video_file = os.path.join(tmp_dir, "animation.mp4")
-            # temporary properties to override
-            override_props = [
-                (render_settings, "use_lock_interface", True),
-                (render_settings, "resolution_percentage", render_scale),
-                (render_settings, "filepath", ""),
-                (scene, "frame_current", start),
-                (scene, "frame_start", start),
-                (scene, "frame_end", end),
+        if fps is not None:
+            override_props.append((render_settings, "fps", fps))
+        if format == "MP4":
+            override_props += [
+                (image_settings, "media_type", "VIDEO"),
+                (image_settings, "file_format", "FFMPEG"),
+                (render_settings.ffmpeg, "format", "MPEG4"),
+                (render_settings.ffmpeg, "codec", "H264"),
             ]
-            override_props.append((image_settings, "media_type", "VIDEO"))
-            override_props.append((image_settings, "file_format", "FFMPEG"))
-            override_props.append((render_settings.ffmpeg, "format", "MPEG4"))
-            with ExitStack() as stack:
-                temp_override_properties(stack, override_props)
-                scene.render.filepath = video_file
-                it = tqdm(range(0, 1), desc="Generating video")
-                for i in it:
-                    with suppress_stdout():
-                        # render the animation of sequence editor images
-                        bpy.ops.render.render(animation=True)
-                it.close()
+        else:
+            # GIF frames are rendered as PNGs and assembled with pillow
+            override_props += [
+                (image_settings, "media_type", "IMAGE"),
+                (image_settings, "file_format", "PNG"),
+            ]
 
-            # clear the video sequence editor
-            strips.remove(image_strip)
+        with tempfile.TemporaryDirectory() as tmp_dir, ExitStack() as stack:
+            temp_override_properties(stack, override_props)
+            # restore the current frame (and animation state) afterwards
+            stack.enter_context(_restore_frame(scene))
+            # Blender appends the frame range (MP4) or frame number (PNG) and
+            # the extension to the output path
+            temp_override_properties(
+                stack, [(render_settings, "filepath", os.path.join(tmp_dir, ""))]
+            )
+            with _render_progress(end - start + 1, "Rendering frames"):
+                with suppress_stdout():
+                    bpy.ops.render.render(animation=True)
 
+            if format == "MP4":
+                output_file = next(Path(tmp_dir).glob("*.mp4"))
+            else:
+                # frame numbers make up the filenames, so sort numerically
+                frames = sorted(Path(tmp_dir).glob("*.png"), key=lambda p: int(p.stem))
+                output_file = Path(tmp_dir) / "animation.gif"
+                _write_gif(frames, output_file, fps if fps is not None else self.fps)
+
+            data = output_file.read_bytes()
             if path:
-                # save to file if path specified
-                shutil.copy(video_file, path)
-            elif display and Video:
-                # only display in notebook if path not specified
-                # and in notebook context
-                display(Video(video_file, embed=True))
+                shutil.copy(output_file, path)
+
+        if format == "MP4":
+            if Video is None:
+                return None
+            return Video(data=data, embed=True, mimetype="video/mp4")
+        if Image is None:
+            return None
+        return Image(data=data, format="gif")

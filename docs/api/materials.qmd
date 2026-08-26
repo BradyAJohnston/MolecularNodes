@@ -33,8 +33,8 @@ the nodes inside the material, so changing them updates the render immediately.
 mat = mn.material.AmbientOcclusion(distance=2.0)
 mol = mn.Molecule.fetch("8H1B").add_style("surface", material=mat)
 
-cv.frame_object(mol)
-cv.snapshot()
+cv.look_at(mol)
+display(cv.snapshot())
 
 mat.distance = 0.15
 cv.snapshot()
@@ -119,7 +119,7 @@ with mol.tree.reset() as (atoms, join):
     color = g.ColorElement(c=g.RandomColor(g.ChainID()))
     atoms >> g.SetColor(color=color) >> style >> join
 
-cv.frame_view(mol)
+cv.look_at(mol)
 engines = [mn.scene.Cycles(samples=32), mn.scene.EEVEE()]
 materials = [
     mn.material.Default(),

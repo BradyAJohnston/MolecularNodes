@@ -80,7 +80,7 @@ with t.tree.reset() as (atoms, join):
     )
     atoms >> mn.nodes.geometry.StyleRibbon(quality=5, peptide_radius=2) >> join
 
-canvas.frame_view(t, (np.pi / 2, 0, np.pi / 3))
+canvas.look_at(t, (np.pi / 2, 0, np.pi / 3))
 canvas.snapshot()
 ```
 
@@ -128,7 +128,7 @@ da.show_origin = da.show_delta = da.show_shape = False
 
 ```{python}
 # frame the density component and render
-canvas.frame_view(d, viewpoint="front")
+canvas.look_at(d, viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -147,7 +147,7 @@ canvas.snapshot()
 
 ```{python}
 # frame the density component and render
-canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.look_at(d.get_view(), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -160,8 +160,8 @@ ga = d.annotations.add_grid_axes_3d()
 
 ```{python}
 # set viewpoint to top
-canvas.frame_view(d.get_view(), viewpoint="top")
-canvas.snapshot()
+canvas.look_at(d.get_view(), viewpoint="top")
+display(canvas.snapshot())
 # hide grid axes
 ga.visible = False
 ```
@@ -175,7 +175,7 @@ ga.visible = False
 
 ```{python}
 # set viewpoint to left
-canvas.frame_view(d.get_view(), viewpoint="left")
+canvas.look_at(d.get_view(), viewpoint="left")
 canvas.snapshot()
 ```
 
@@ -190,6 +190,6 @@ canvas.snapshot()
 
 ```{python}
 # set viewpoint to front
-canvas.frame_view(d.get_view(), viewpoint="front")
+canvas.look_at(d.get_view(), viewpoint="front")
 canvas.snapshot()
 ```

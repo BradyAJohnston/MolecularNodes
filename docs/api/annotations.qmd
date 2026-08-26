@@ -95,7 +95,7 @@ a1.text_size = 12
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view("resid 73:78"), viewpoint="front")
+canvas.look_at(t.get_view("resid 73:78"), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -122,7 +122,7 @@ a3 = t.annotations.add_com(selection="resid 150:170", text="resid 150:170|COM")
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view(), viewpoint="front")
+canvas.look_at(t.get_view(), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -160,7 +160,7 @@ a4.mesh_color = (0, 1, 0, 1)  # (r, g, b, a)
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view("resid 1 129"), viewpoint="bottom")
+canvas.look_at(t.get_view("resid 1 129"), viewpoint="bottom")
 canvas.snapshot()
 ```
 
@@ -186,7 +186,7 @@ a5 = t.annotations.add_canonical_dihedrals(resid=200)
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view("resid 200"), viewpoint="back")
+canvas.look_at(t.get_view("resid 200"), viewpoint="back")
 canvas.snapshot()
 ```
 
@@ -216,7 +216,7 @@ a6 = t.annotations.add_universe_info()
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view(), viewpoint="top")
+canvas.look_at(t.get_view(), viewpoint="top")
 canvas.snapshot(frame=50)
 ```
 
@@ -256,7 +256,7 @@ a7 = t.annotations.add_label_2d(text="Any|2D Label", location=(0.1, 0.8))
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view(), viewpoint="left")
+canvas.look_at(t.get_view(), viewpoint="left")
 canvas.snapshot()
 ```
 
@@ -289,7 +289,7 @@ a8.line_width = 2
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view("resid 1"), viewpoint="front")
+canvas.look_at(t.get_view("resid 1"), viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -482,7 +482,7 @@ ca
 
 ```{python}
 # frame the view and render
-canvas.frame_view(t.get_view("resid 75"), viewpoint="front")
+canvas.look_at(t.get_view("resid 75"), viewpoint="front")
 canvas.snapshot()
 ```
 

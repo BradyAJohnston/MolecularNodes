@@ -31,7 +31,7 @@ string, with any style-specific options passed as keyword arguments to
 
 ```{python}
 mol = mn.Molecule(u).add_style("ribbon", quality=4, peptide_radius=0.5)
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
@@ -70,13 +70,13 @@ inside of the node tree for rendering.
 
 ```{python}
 mol.add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
 ```{python}
 mol.add_style("surface", selection="resid 100:150", material="MN Transparent Outline")
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
@@ -84,7 +84,7 @@ A selection can also be an `mda.AtomGroup`.
 
 ```{python}
 mol.add_style("ball_and_stick", quality=4, selection=u.select_atoms("resid 180:200"))
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
@@ -110,7 +110,7 @@ with mol.tree.reset() as (atoms, join):
   atoms >> g.StyleSticks(selection = sel.node(), scale=0.3, material=mat.material) >> join
   atoms >> g.SetColor(color=g.ColorRainbow()) >> g.StyleCartoon(material=mat.material) >> join
 
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
@@ -127,8 +127,8 @@ styles = ["cartoon", "ribbon", "surface"]
 for code, style in zip(codes, styles):
     mol = mn.Molecule.fetch(code)
     mol.add_style(style, material="MN Flat")
-    canvas.frame_object(mol, viewpoint="right")
-    canvas.snapshot()
+    canvas.look_at(mol, viewpoint="right")
+    display(canvas.snapshot())
     canvas.clear()
 ```
 
@@ -145,7 +145,7 @@ mol = (
         material="MN Transparent Outline",
     )
 )
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
@@ -157,6 +157,6 @@ mol = (
     .add_style("cartoon", selection="is_peptide", material="MN Ambient Occlusion")
     .add_style("ball_and_stick", selection="not protein", material="MN Default", bond_find=True)
 )
-canvas.frame_view(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```

@@ -50,7 +50,7 @@ class Camera:
         self.clip_end = 1000
 
     @property
-    def camera(self) -> bpy.types.Camera:
+    def camera(self) -> bpy.types.Object:
         """Get Camera object"""
         return bpy.context.scene.camera
 

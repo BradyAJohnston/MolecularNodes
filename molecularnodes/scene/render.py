@@ -26,12 +26,14 @@ def enable_gpus(device_type, use_cpus=False):
 
 
 def enable_optimal_gpu():
-    options = ["OPTIX", "CUDA", "METAL", "HIP", "METAL", "ONEAPI"]
+    options = ["OPTIX", "CUDA", "METAL", "HIP", "ONEAPI"]
     for backend in options:
         try:
             enable_gpus(backend)
             return
-        except TypeError:
+        # TypeError for a backend unsupported by this build, RuntimeError for
+        # a supported backend with no devices
+        except (TypeError, RuntimeError):
             continue
 
-    raise TypeError("Failed to enable GPU backend")
+    raise RuntimeError("Failed to enable GPU backend")

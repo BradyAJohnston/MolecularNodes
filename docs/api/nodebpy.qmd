@@ -16,14 +16,13 @@ import molecularnodes as mn
 from molecularnodes.nodes import geometry as mg
 from nodebpy import geometry as g
 
-cv = mn.Canvas()
-cv.engine = mn.scene.Cycles()
-
-mol = mn.Molecule.fetch("1bna")
+cv = mn.Canvas(mn.scene.Cycles(32))
 ```
 
 Editing of a node tree looks like below.
 ```{python}
+mol = mn.Molecule.fetch("1bna")
+
 with mol.tree.reset() as (atoms, join):
     mat = mn.material.Default().material
     (
@@ -37,7 +36,7 @@ mol.tree
 ```
 
 ```{python}
-cv.frame_object(mol)
+cv.look_at(mol)
 cv.snapshot()
 ```
 
@@ -71,7 +70,7 @@ mol.tree
 ```
 
 ```{python}
-cv.frame_object(mol)
+cv.look_at(mol)
 cv.snapshot()
 ```
 
@@ -124,14 +123,14 @@ mol.tree
 
 
 ```{python}
-cv.frame_object(mol)
+cv.look_at(mol)
 cv.snapshot()
 ```
 
 
 ```{python}
 cv.resolution = (1080, 1080)
-cv.frame_object(mol)
+cv.look_at(mol)
 
 with mol.tree.reset() as (atoms, join):
     (
@@ -154,7 +153,7 @@ with mol.tree.reset() as (atoms, join):
         >> join
     )
 
-cv.snapshot()
+display(cv.snapshot())
 
 mol.tree
 ```
@@ -169,22 +168,24 @@ The node tree creation code below is evaluated once, but the selection changes o
 
 
 ```{python}
-cv.clear()
+cv.scene_reset()
 animation_length = 100
 cv.resolution = (1280, 720)
 cv.samples = 8
 cv.frame_range = (1, animation_length)
 
 mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
-cv.frame_object(mol,  viewpoint = "left")
+cv.look_at(mol,  viewpoint = "left")
+mat = mn.material.Flat(threshold=0.2).material
 
 with mol.tree.reset() as (atoms, join):
     fac = mg.ChainParameter().o.factor
+    frame = g.SceneTime().o.frame
 
     # the `.frame` value changes to reflect current scene.frame_current
     # we map that value to a range of 0 to 1 over the animation length, 
     # and use that to select fraction of the chain that is selected and drawn
-    sel = fac < g.SceneTime().o.frame.map_range(1, animation_length, 0, 1)
+    sel = fac < g.MapRange.float(frame, 1, animation_length, 0, 1)
 
     (
         atoms
