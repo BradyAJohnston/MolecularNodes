@@ -100,7 +100,7 @@ canvas.snapshot()
 ```
 
 ```{python}
-canvas.look_at(mol, (-3.14, 0, 0))
+canvas.look_at(mol, (-180, 0, 0))
 canvas.snapshot()
 ```
 

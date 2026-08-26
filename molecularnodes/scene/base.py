@@ -4,7 +4,7 @@ import tempfile
 from contextlib import ExitStack, contextmanager
 from enum import StrEnum
 from pathlib import Path
-from typing import Literal, Tuple
+from typing import Literal, Sequence, Tuple
 import bpy
 from tqdm.auto import tqdm
 from .. import assets
@@ -746,7 +746,7 @@ class Canvas:
     def look_at(
         self,
         target: MolecularEntity | bpy.types.Object | list[tuple],
-        viewpoint: Viewpoint | str | None = None,
+        viewpoint: Viewpoint | str | Sequence[float] | None = None,
     ) -> None:
         """
         Position the camera to look at and contain a target.
@@ -758,9 +758,10 @@ class Canvas:
             a Blender object, or a bounding box of 8 three-dimensional
             vertices ``[(x, y, z), ...]`` as returned by ``get_view()``.
             Multiple views can be combined with ``+`` before passing.
-        viewpoint : Viewpoint | str, optional
-            Viewing direction along a principal axis. One of
-            {"default", "front", "back", "top", "bottom", "left", "right"}.
+        viewpoint : Viewpoint | str | Sequence[float], optional
+            Viewing direction along a principal axis — one of
+            {"default", "front", "back", "top", "bottom", "left", "right"} —
+            or a custom XYZ Euler rotation as three angles in degrees.
 
         """
         # set the camera viewpoint if specified

@@ -10,7 +10,6 @@ This example follows the [Calculating the solvent density around a protein](http
 ```{python}
 import MDAnalysis as mda
 import molecularnodes as mn
-import numpy as np
 from MDAnalysis import transformations as trans
 from MDAnalysis.analysis import density
 from MDAnalysis.tests.datafiles import TPR, XTC
@@ -80,7 +79,7 @@ with t.tree.reset() as (atoms, join):
     )
     atoms >> mn.nodes.geometry.StyleRibbon(quality=5, peptide_radius=2) >> join
 
-canvas.look_at(t, (np.pi / 2, 0, np.pi / 3))
+canvas.look_at(t, (90, 0, 60))
 canvas.snapshot()
 ```
 

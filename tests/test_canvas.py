@@ -135,6 +135,10 @@ def test_look_at_views(canvas, universe):
     r1b = camera.rotation_euler.copy()
     assert r1f != r1b
 
+    # a custom viewpoint is an XYZ Euler rotation in degrees
+    canvas.look_at(v1, viewpoint=(90, 0, -45))
+    assert canvas.camera.rotation == pytest.approx((90, 0, -45), abs=1e-3)
+
     # test framing multiple views
     # frame v1 and v2 (resid 1 and resid 2 of trajectory)
     canvas.look_at(v1 + v2)
