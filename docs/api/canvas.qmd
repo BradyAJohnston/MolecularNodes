@@ -256,6 +256,25 @@ canvas.compositor.reset()
 canvas.compositor.add_annotations()
 ```
 
+### Execution Settings
+
+How the compositor executes at render time is controlled through properties on the same
+[](`~molecularnodes.scene.compositor.CompositorTree`):
+[](`~molecularnodes.scene.compositor.CompositorTree.device`) (`"CPU"` or `"GPU"`),
+[](`~molecularnodes.scene.compositor.CompositorTree.precision`) (`"AUTO"` or `"FULL"`),
+and for Denoise nodes
+[](`~molecularnodes.scene.compositor.CompositorTree.denoise_device`),
+[](`~molecularnodes.scene.compositor.CompositorTree.denoise_preview_quality`) and
+[](`~molecularnodes.scene.compositor.CompositorTree.denoise_final_quality`).
+
+Blender defaults the compositor to the GPU. On a headless machine without one (a render
+farm, CI, some cloud notebooks) GPU compositing aborts the render, so switch it to the
+CPU:
+
+```{python}
+canvas.compositor.device = "CPU"
+```
+
 ## Animations
 
 The [](`~molecularnodes.Canvas.animation`) method can be used to render animations. An optional `frame_start` and `frame_end` can be specified to limit animations to a custom range. The `render_scale` parameter can be used to scale the renders as a percentage of the render resolution.
