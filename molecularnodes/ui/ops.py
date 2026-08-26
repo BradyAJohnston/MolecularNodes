@@ -143,6 +143,22 @@ class MN_OT_Import_Fetch(Import_Molecule):
     )
     bl_options = {"REGISTER", "UNDO"}
 
+    method: EnumProperty(  # type: ignore
+        name="Database",
+        default="fetch",
+        items=(
+            (
+                "fetch",
+                "Fetch",
+                "Download a structure from a database",
+            ),
+            (
+                "local",
+                "Local File",
+                "Open a structure file or MD topology + trajectory already on disk",
+            ),
+        ),
+    )
     database: EnumProperty(  # type: ignore
         name="Database",
         default="wwpdb",
@@ -151,11 +167,6 @@ class MN_OT_Import_Fetch(Import_Molecule):
                 "wwpdb",
                 "wwPDB",
                 "The world-wide Protein Data Bank (wwPDB)",
-            ),
-            (
-                "local",
-                "Local File",
-                "Open a structure file or MD topology + trajectory already on disk",
             ),
             (
                 "alphafold",
@@ -182,11 +193,6 @@ class MN_OT_Import_Fetch(Import_Molecule):
         ),
         subtype="FILE_PATH",
     )
-    name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name of the molecule on import (defaults to the file name)",
-        default="",
-    )
     additional_arguments: StringProperty(  # type: ignore
         name="Arguments",
         description="Additional arguments to pass to the `mda.Universe(topology, trajectory, **kwargs)` constructor",
@@ -209,17 +215,18 @@ class MN_OT_Import_Fetch(Import_Molecule):
     def draw(self, context):
         layout = self.layout
         assert layout
-        layout.prop_tabs_enum(self, "database")
-        if self.database == "local":
-            layout.prop(self, "name")
+        layout.prop_tabs_enum(self, "method")
+        if self.method == "local":
             layout.prop(self, "filepath")
             layout.prop(self, "trajectory")
             layout.prop(self, "additional_arguments")
         else:
+
+            layout.prop_tabs_enum(self, "database")
             row = layout.row().split(factor=0.7)
             row.prop(self, "code")
             # file format only applies to wwPDB downloads; others pick their own
-            if self.database == "wwpdb":
+            if self.method == "fetch":
                 row.prop(self, "file_format", text="")
         super().draw(context)
 
@@ -248,14 +255,14 @@ class MN_OT_Import_Fetch(Import_Molecule):
 
     def execute(self, context):
         try:
-            if self.database == "local":
-                name = self.name.strip() or None
+            if self.method == "local":
                 topology = path_resolve(self.filepath)
+                name = topology.stem
                 if self.trajectory.startswith("imd://"):
                     mol = StreamingTrajectory.load(
                         topology=topology,
                         coordinates=self.trajectory,
-                        name=name or "StreamingTrajectory",
+                        name=name,
                         style=None,
                     )
                     message = (
@@ -303,7 +310,7 @@ class MN_OT_Import_Fetch(Import_Molecule):
                 context.scene.frame_end = n_frames
 
         try:
-            context.view_layer.objects.active = mol.object  # type: ignore
+            context.view_layer.objects.active = mol.object
         except RuntimeError:
             message += " - Molecular Nodes collection is disabled"
 

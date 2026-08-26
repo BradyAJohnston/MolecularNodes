@@ -768,7 +768,10 @@ class Molecule(MolecularEntity):
         if not assemblies_info:
             return None
         if as_array:
-            return utils.array_transforms_from_dict(assemblies_info)
+            try:
+                return utils.array_transforms_from_dict(assemblies_info)
+            except (ValueError, TypeError):
+                return None
         return assemblies_info
 
     def create_data_object(self) -> bpy.types.Object:
@@ -779,9 +782,7 @@ class Molecule(MolecularEntity):
         data_obj_name = f".data_{self.name}_assemblies"
         data_obj = bpy.data.objects.get(data_obj_name)
         if not data_obj:
-            transforms = utils.array_transforms_from_dict(
-                self.props.biological_assemblies
-            )
+            transforms = self.assemblies(as_array=True)
             data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
 
         return data_obj
