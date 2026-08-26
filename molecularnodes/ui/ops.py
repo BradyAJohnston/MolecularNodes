@@ -34,85 +34,6 @@ from .pref import addon_preferences
 from .style import STYLE_ITEMS
 
 
-class Import_Molecule(bpy.types.Operator):
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        default="spheres",
-        description="Starting style for the structure on import",
-        items=STYLE_ITEMS,
-    )
-
-    node_setup: BoolProperty(  # type: ignore
-        name="Node Setup",
-        default=True,
-        description="Whether to setup the starting default node tree on import",
-    )
-    assembly: BoolProperty(  # type: ignore
-        default=False,
-        name="Build Biological Assembly",
-        description="Build the biological assembly for the structure on import",
-    )
-
-    def apply_import_options(self, mol: Molecule) -> None:
-        """Set up the default node tree on a freshly imported molecule."""
-        if not self.node_setup:
-            return
-        mol.create_asset_nodes()
-        mol.add_style(style=self.style, color="common", assembly=self.assembly)
-
-    def draw(self, context):
-        layout = self.layout
-        assert layout
-        row = layout.row()
-        row.prop(self, "node_setup", text="")
-        col = row.column()
-        col.prop(self, "style")
-        col.enabled = self.node_setup
-        layout.prop(self, "assembly")
-
-        return layout
-
-
-class MN_OT_Import_Molecule(Import_Molecule):
-    bl_idname = "mn.import_molecule"
-    bl_label = "Import a Molecule"
-    bl_options = {"REGISTER", "UNDO"}
-
-    directory: StringProperty(  # type: ignore
-        subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
-    )
-    files: CollectionProperty(  # type: ignore
-        type=bpy.types.OperatorFileListElement, options={"SKIP_SAVE", "HIDDEN"}
-    )
-
-    def draw(self, context):
-        layout = self.layout
-        assert layout
-        layout.label(text=f"Importing {len(self.files)} molecules")
-        layout = super().draw(context)
-
-    def execute(self, context):
-        if not self.directory:
-            return {"CANCELLED"}
-
-        for file in self.files:
-            try:
-                mol = Molecule.load(Path(self.directory, file.name), name=file.name)
-                self.apply_import_options(mol)
-            except Exception as e:
-                print(f"Failed importing {file}: {e}")
-
-        _increase_view_distance()
-        return {"FINISHED"}
-
-    def invoke(self, context, event):
-        if context.area and context.area.type == "VIEW_3D":
-            context.window_manager.invoke_props_dialog(self)
-        else:
-            context.window_manager.fileselect_add(self)
-        return {"RUNNING_MODAL"}
-
-
 class MN_FH_Import_Molecule(bpy.types.FileHandler):
     bl_idname = "MN_FH_import_molecule"
     bl_label = "File handler for import molecular data files."
@@ -134,14 +55,39 @@ DOWNLOAD_FORMATS = (
 # operator that is called by the 'button' press which calls the fetch function
 
 
-class MN_OT_Import_Fetch(Import_Molecule):
-    bl_idname = "mn.import_fetch"
+class MN_OT_Import_Molecule(bpy.types.Operator):
+    bl_idname = "mn.import_molecule"
     bl_label = "Import Molecule"
     bl_description = (
         "Open a local structure file or MD trajectory, or download a structure "
         "from a database"
     )
     bl_options = {"REGISTER", "UNDO"}
+
+    style: EnumProperty(  # type: ignore
+        name="Style",
+        default="spheres",
+        description="Starting style for the structure on import",
+        items=STYLE_ITEMS,
+    )
+    node_setup: BoolProperty(  # type: ignore
+        name="Node Setup",
+        default=True,
+        description="Whether to setup the starting default node tree on import",
+    )
+    assembly: BoolProperty(  # type: ignore
+        default=False,
+        name="Build Biological Assembly",
+        description="Build the biological assembly for the structure on import",
+    )
+    # filled in by the file handler when structure files are dropped into the 3D
+    # viewport, in place of the dialog's own filepath field
+    directory: StringProperty(  # type: ignore
+        subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
+    )
+    files: CollectionProperty(  # type: ignore
+        type=bpy.types.OperatorFileListElement, options={"SKIP_SAVE", "HIDDEN"}
+    )
 
     method: EnumProperty(  # type: ignore
         name="Database",
@@ -212,22 +158,37 @@ class MN_OT_Import_Fetch(Import_Molecule):
         subtype="DIR_PATH",
     )
 
+    def apply_import_options(self, mol: Molecule) -> None:
+        """Set up the default node tree on a freshly imported molecule."""
+        if not self.node_setup:
+            return
+        mol.create_asset_nodes()
+        mol.add_style(style=self.style, color="common", assembly=self.assembly)
+
     def draw(self, context):
         layout = self.layout
         assert layout
-        layout.prop_tabs_enum(self, "method")
-        if self.method == "local":
-            layout.prop(self, "filepath")
-            layout.prop(self, "trajectory")
-            layout.prop(self, "additional_arguments")
+        if self.files:
+            layout.label(text=f"Importing {len(self.files)} molecules")
         else:
-            layout.prop_tabs_enum(self, "database")
-            row = layout.row().split(factor=0.7)
-            row.prop(self, "code")
-            # file format only applies to wwPDB downloads; others pick their own
-            if self.method == "fetch":
-                row.prop(self, "file_format", text="")
-        super().draw(context)
+            layout.prop_tabs_enum(self, "method")
+            if self.method == "local":
+                layout.prop(self, "filepath")
+                layout.prop(self, "trajectory")
+                layout.prop(self, "additional_arguments")
+            else:
+                layout.prop_tabs_enum(self, "database")
+                row = layout.row().split(factor=0.7)
+                row.prop(self, "code")
+                # file format only applies to wwPDB downloads; others pick their own
+                if self.method == "fetch":
+                    row.prop(self, "file_format", text="")
+        row = layout.row()
+        row.prop(self, "node_setup", text="")
+        col = row.column()
+        col.prop(self, "style")
+        col.enabled = self.node_setup
+        layout.prop(self, "assembly")
 
     def invoke(self, context, event):
         prefs = addon_preferences()
@@ -253,15 +214,17 @@ class MN_OT_Import_Fetch(Import_Molecule):
             return {}
 
     def execute(self, context):
+        if self.files:
+            return self._execute_dropped_files(context)
+
         try:
             if self.method == "local":
                 topology = path_resolve(self.filepath)
-                name = topology.stem
                 if self.trajectory.startswith("imd://"):
                     mol = StreamingTrajectory.load(
                         topology=topology,
                         coordinates=self.trajectory,
-                        name=name,
+                        name=topology.name,
                         style=None,
                     )
                     message = (
@@ -271,7 +234,6 @@ class MN_OT_Import_Fetch(Import_Molecule):
                     mol = Molecule.load(
                         topology,
                         path_resolve(self.trajectory),
-                        name=name,
                         **self._universe_kwargs(),
                     )
                     message = (
@@ -279,7 +241,7 @@ class MN_OT_Import_Fetch(Import_Molecule):
                         f"{int(mol.props.n_frames)} frames from '{self.trajectory}'."
                     )
                 else:
-                    mol = Molecule.load(topology, name=name)
+                    mol = Molecule.load(topology)
                     message = f"Imported '{self.filepath}' as {mol.name}"
             else:
                 mol = Molecule.fetch(
@@ -315,6 +277,24 @@ class MN_OT_Import_Fetch(Import_Molecule):
 
         self.report({"INFO"}, message=message)
 
+        _increase_view_distance()
+        return {"FINISHED"}
+
+    def _execute_dropped_files(self, context):
+        """Import each structure file dropped into the viewport."""
+        imported = 0
+        for file in self.files:
+            try:
+                mol = Molecule.load(Path(self.directory, file.name))
+                self.apply_import_options(mol)
+                imported += 1
+            except Exception as e:
+                self.report({"WARNING"}, message=f"Failed importing {file.name}: {e}")
+
+        if imported == 0:
+            return {"CANCELLED"}
+
+        self.report({"INFO"}, message=f"Imported {imported} molecules")
         _increase_view_distance()
         return {"FINISHED"}
 
@@ -1027,13 +1007,12 @@ class MN_OT_DSSP_cancel(Operator):
 
 CLASSES = [
     MN_OT_add_selection_to_style,
-    MN_OT_Import_Fetch,
+    MN_OT_Import_Molecule,
     MN_OT_Import_OxDNA,
     MN_OT_Reload_Trajectory,
     MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,
     MN_OT_Import_Ensemble,
-    MN_OT_Import_Molecule,
     MN_FH_Import_Molecule,
     MN_OT_Add_Style,
     MN_OT_Remove_Style,

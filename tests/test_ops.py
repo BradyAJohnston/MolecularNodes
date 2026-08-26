@@ -15,11 +15,11 @@ def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
     format = "cif"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_fetch(code=code, file_format=format, style=style)
+        bpy.ops.mn.import_molecule(code=code, file_format=format, style=style)
         mol1 = scene.MNSession.match(o.latest())
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_fetch(
+        bpy.ops.mn.import_molecule(
             code=f"pdb_{code.rjust(8, '0')}", file_format=format, style=style
         )
         mol2 = scene.MNSession.match(o.latest())
@@ -40,11 +40,45 @@ def test_op_local(snapshot_custom, code, file_format):
     )
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_fetch(database="local", filepath=str(path), node_setup=False)
+        bpy.ops.mn.import_molecule(method="local", filepath=str(path), node_setup=False)
         mol = session.match(o.latest())
         assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
 
     assert snapshot_custom == mol.position
+
+
+def test_op_dropped_files():
+    """The file handler invokes mn.import_molecule with directory + files set."""
+    session = bpy.context.scene.MNSession
+    paths = [
+        mn.download.StructureDownloader(cache=data_dir).download(
+            code=code, format="cif"
+        )
+        for code in codes[:2]
+    ]
+
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(
+            directory=str(paths[0].parent),
+            files=[{"name": path.name} for path in paths],
+            style="ribbon",
+        )
+        assert res == {"FINISHED"}
+        objects = o.new_objects()
+
+    mols = [session.match(obj) for obj in objects]
+    assert len(mols) == len(paths)
+    for mol, path in zip(mols, paths):
+        assert mol is not None
+        assert mol.name == path.name
+        # dropped files get the same node setup as dialog imports
+        style_trees = [
+            node.node_tree.name
+            for node in mol.modifier_node_tree.nodes
+            if isinstance(node, bpy.types.GeometryNodeGroup)
+        ]
+        assert "Style Ribbon" in style_trees
+        assert "Set Color" in style_trees
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
@@ -55,16 +89,17 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     name = "AnotherNewTrajectory"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_fetch(
-            database="local",
+        bpy.ops.mn.import_molecule(
+            method="local",
             filepath=topo,
             trajectory=traj,
-            name=name,
             style="ribbon",
         )
         obj_1 = o.latest()
 
     traj_op = bpy.context.scene.MNSession.match(obj_1)
+    assert traj_op.name == "box.gro"
+    traj_op.name = name
     assert traj_op.name == name
     assert traj_op._mn_entity_type == mn.entities.base.EntityType.MD.value
 

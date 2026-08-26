@@ -610,10 +610,10 @@ class Molecule(MolecularEntity):
         cls,
         topology: Path | str,
         coordinates: Path | str | None = None,
-        name: str | None = None,
         style: STYLE_LITERALS | None = None,
         selection: str | None = None,
         create_object: bool = True,
+        name: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
@@ -632,7 +632,8 @@ class Molecule(MolecularEntity):
             MD trajectory/coordinates file. If omitted, ``topology`` is loaded as a
             single structure file.
         name : str | None, optional
-            Name for the Blender object.
+            Name for the Blender object. Defaults to the topology file name
+            (extension included).
         style : str | None, optional
             If given, the visual style to apply to the loaded entity. If None (the
             default) no style is added, leaving the node tree empty for manual setup.
@@ -653,7 +654,7 @@ class Molecule(MolecularEntity):
         else:
             entity = cls(
                 universe=mda.Universe(topology, coordinates, **kwargs),
-                name=name or "NewMolecule",
+                name=name or Path(topology).name,
                 create_object=create_object,
             )
 
@@ -681,7 +682,7 @@ class Molecule(MolecularEntity):
         file_path : str | Path | io.BytesIO
             Path to the structure file (or an in-memory ``bcif`` buffer).
         name : str | None, optional
-            Name for the Blender object. Defaults to the file stem.
+            Name for the Blender object. Defaults to the file name (extension included).
 
         Returns
         -------
@@ -693,7 +694,7 @@ class Molecule(MolecularEntity):
         reader = read_structure(file_path)
         universe = universe_from_atoms(reader.array)
         if name is None:
-            name = Path(file_path).stem if not isinstance(file_path, io.BytesIO) else ""
+            name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
         entity = cls(universe, name=name)
         entity._store_structure_metadata(reader, file_path)
         return entity

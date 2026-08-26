@@ -13,13 +13,15 @@ from .utils import check_online_access_for_ui
 def import_options(layout: UILayout) -> None:
     # fetching requires online access, so gate only those entries
     online = check_online_access_for_ui(layout.column())
-    op = online.operator("mn.import_fetch", text="Fetch from PDB", icon="IMPORT")
+    op = online.operator("mn.import_molecule", text="Fetch from PDB", icon="IMPORT")
     op.method = "fetch"
     op.database = "wwpdb"
-    op = online.operator("mn.import_fetch", text="Fetch from AlphaFold", icon="IMPORT")
+    op = online.operator(
+        "mn.import_molecule", text="Fetch from AlphaFold", icon="IMPORT"
+    )
     op.database = "alphafold"
 
-    op = layout.operator("mn.import_fetch", text="Import Local File", icon="IMPORT")
+    op = layout.operator("mn.import_molecule", text="Import Local File", icon="IMPORT")
     op.method = "local"
 
     layout.separator()
@@ -30,7 +32,7 @@ def import_options(layout: UILayout) -> None:
 
     layout.separator()
     # MD trajectories are loaded through the same unified import dialog
-    op = layout.operator("mn.import_fetch", text="MD Trajectory", icon="IMPORT")
+    op = layout.operator("mn.import_molecule", text="MD Trajectory", icon="IMPORT")
     op.method = "local"
     op = layout.operator("mn.import_oxdna", text="oxDNA", icon="IMPORT")
 
