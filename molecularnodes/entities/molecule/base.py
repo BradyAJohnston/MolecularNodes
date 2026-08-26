@@ -10,7 +10,7 @@ import io
 import logging
 import warnings
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, Sequence
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -94,7 +94,7 @@ class Molecule(MolecularEntity):
     u = mda.Universe(PSF, DCD)
     traj = mn.Molecule(u)
     traj.add_style("spheres", sphere_geometry="Mesh", selection="resname LYS")
-    canvas.frame_view(traj)
+    canvas.look_at(traj)
     canvas.snapshot()
     ```
     """
@@ -129,14 +129,14 @@ class Molecule(MolecularEntity):
             MDAnalysis Universe with topology and trajectory
         name : str, default="NewUniverseObject"
             Name for the Blender object
-        world_scale : float, default=0.01
-            Scale factor from Angstroms to Blender units
+        world_scale : float, default=0.1
+            Scale factor from nanometers to Blender units
         create_object : bool, default=True
             Whether to immediately create the Blender object
 
         Notes
         -----
-        Default world_scale of 0.01 converts Angstroms to Blender units.
+        Default world_scale of 0.1 converts nanometers to Blender units.
         """
         super().__init__()
         self.universe: mda.Universe = universe
@@ -602,7 +602,6 @@ class Molecule(MolecularEntity):
         self._store_extra_attributes()
         self._setup_modifiers()
         self._save_filepaths_on_object()
-        self._register_asset_nodes()
         set_obj_active(self.object)
         return self.object
 
@@ -611,10 +610,10 @@ class Molecule(MolecularEntity):
         cls,
         topology: Path | str,
         coordinates: Path | str | None = None,
-        name: str | None = None,
         style: STYLE_LITERALS | None = None,
         selection: str | None = None,
         create_object: bool = True,
+        name: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
@@ -633,7 +632,8 @@ class Molecule(MolecularEntity):
             MD trajectory/coordinates file. If omitted, ``topology`` is loaded as a
             single structure file.
         name : str | None, optional
-            Name for the Blender object.
+            Name for the Blender object. Defaults to the topology file name
+            (extension included).
         style : str | None, optional
             If given, the visual style to apply to the loaded entity. If None (the
             default) no style is added, leaving the node tree empty for manual setup.
@@ -652,8 +652,11 @@ class Molecule(MolecularEntity):
         if coordinates is None:
             entity = cls.from_file(topology, name=name)
         else:
-            u = mda.Universe(topology, coordinates, **kwargs)
-            entity = cls(u, name=name or "NewMolecule", create_object=create_object)
+            entity = cls(
+                universe=mda.Universe(topology, coordinates, **kwargs),
+                name=name or Path(topology).name,
+                create_object=create_object,
+            )
 
         if style is not None and create_object:
             entity.add_style(style=style, selection=selection)
@@ -679,7 +682,7 @@ class Molecule(MolecularEntity):
         file_path : str | Path | io.BytesIO
             Path to the structure file (or an in-memory ``bcif`` buffer).
         name : str | None, optional
-            Name for the Blender object. Defaults to the file stem.
+            Name for the Blender object. Defaults to the file name (extension included).
 
         Returns
         -------
@@ -691,7 +694,7 @@ class Molecule(MolecularEntity):
         reader = read_structure(file_path)
         universe = universe_from_atoms(reader.array)
         if name is None:
-            name = Path(file_path).stem if not isinstance(file_path, io.BytesIO) else ""
+            name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
         entity = cls(universe, name=name)
         entity._store_structure_metadata(reader, file_path)
         return entity
@@ -766,20 +769,20 @@ class Molecule(MolecularEntity):
         if not assemblies_info:
             return None
         if as_array:
-            return utils.array_transforms_from_dict(assemblies_info)
+            try:
+                return utils.array_transforms_from_dict(assemblies_info)
+            except (ValueError, TypeError):
+                return None
         return assemblies_info
 
     def create_data_object(self) -> bpy.types.Object:
         """Create the data object holding the biological assembly transforms."""
-        from ... import utils
         from ...blender import mesh
 
         data_obj_name = f".data_{self.name}_assemblies"
         data_obj = bpy.data.objects.get(data_obj_name)
         if not data_obj:
-            transforms = utils.array_transforms_from_dict(
-                self.props.biological_assemblies
-            )
+            transforms = self.assemblies(as_array=True)
             data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
 
         return data_obj
@@ -982,6 +985,20 @@ class Molecule(MolecularEntity):
             return self.selections.from_string(selection).name
         return None
 
+    def _style_color_input(self, color: str | Sequence[float]):
+        """Resolve `add_style`'s color argument into the `Set Color` node input."""
+        from ...nodes import geometry as g
+
+        if not isinstance(color, str):
+            return tuple(color)
+        if color.lower() in ("common", "default"):
+            # standard element colors, with carbons colored randomly per chain
+            return g.ColorElement(c=g.RandomColor(g.ChainID(), 3))
+        if color.lower() == "plddt":
+            return g.ColorPLDDT()
+        # otherwise treat it as the name of a color attribute on the geometry
+        return NamedAttribute.color(color)
+
     def add_style(
         self,
         style: STYLE_LITERALS = "spheres",
@@ -991,6 +1008,9 @@ class Molecule(MolecularEntity):
         | MaterialBuilder
         | str
         | None = "MN Default",
+        color: str | Sequence[float] | None = None,
+        assembly: bool = False,
+        name: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """
@@ -1024,6 +1044,24 @@ class Molecule(MolecularEntity):
             material name to append from the asset file, or None for no material.
             Default is "MN Default".
 
+        color : str | Sequence[float] | None, optional
+            Coloring to apply upstream of the style via a ``Set Color`` node. Can be:
+            - ``"common"`` / ``"default"`` for standard element colors with carbons
+              colored randomly per chain
+            - ``"plddt"`` to color by pLDDT (B-factor) confidence
+            - any other string, treated as the name of a color attribute on the geometry
+            - an RGBA sequence of floats for a single uniform color
+            - None (default) to add no color node, leaving the baked ``Color``
+              attribute in use.
+
+        assembly : bool, optional
+            Instance the style over the biological assembly transforms parsed from
+            the source file, via an ``Assembly Instance`` node. Default is False.
+
+        name : str | None, optional
+            Optional label for the added style node, shown in the node editor and
+            style lists. Default is None.
+
         **kwargs : optional
             Additional keyword arguments to pass to the added style node.
 
@@ -1043,7 +1081,7 @@ class Molecule(MolecularEntity):
         named attribute on the trajectory with an automatically generated name (sel_N).
         """
 
-        from ...nodes.geometry import OxDNAStyleRibbon
+        from ...nodes import geometry as g
         from . import OXDNA
 
         if isinstance(style, str) and style not in styles_mapping:
@@ -1053,7 +1091,7 @@ class Molecule(MolecularEntity):
         attribute_name = self._resolve_style_selection(selection)
 
         if isinstance(self, OXDNA):
-            STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+            STYLE_NODE_MAPPING["ribbon"] = g.OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
 
         if isinstance(material, (PresetMaterial, MaterialBuilder)):
             material = material.material
@@ -1061,14 +1099,27 @@ class Molecule(MolecularEntity):
         material = append_material(material) if isinstance(material, str) else material
 
         with self.tree as tree:
+            style_node = STYLE_NODE_MAPPING[style](
+                selection=NamedAttribute.boolean(attribute_name)
+                if attribute_name
+                else None,
+                material=material,
+                **kwargs,
+            )
+            if name:
+                style_node.node.label = name
             (
                 tree.atoms
-                >> STYLE_NODE_MAPPING[style](
-                    selection=NamedAttribute.boolean(attribute_name)
-                    if attribute_name
-                    else None,
-                    material=material,
-                    **kwargs,
+                >> (
+                    g.SetColor(color=self._style_color_input(color))
+                    if color is not None
+                    else None
+                )
+                >> style_node
+                >> (
+                    g.AssemblyInstance(data_object=self.create_data_object())
+                    if assembly
+                    else None
                 )
                 >> tree.join
             )

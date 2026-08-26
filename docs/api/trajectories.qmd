@@ -2,8 +2,6 @@
 title: Trajectories
 description: "Working with multi-frame molecules and molecular dynamics data"
 jupyter: python3
-execute:
-  daemon: false
 ---
 
 A trajectory is not a special class — it is simply a [](`~mn.Molecule`) whose underlying
@@ -38,8 +36,9 @@ image — no different from a static structure.
 u = mda.Universe(PSF, DCD)
 traj = mn.Molecule(u)
 traj.add_style("spheres")
-canvas.frame_view(traj)
-canvas.snapshot()
+canvas.look_at(traj)
+display(canvas.snapshot())
+canvas.clear()
 ```
 
 ## Playback
@@ -56,6 +55,7 @@ sampled and interpolated:
 - [](`~mn.Molecule.correct_periodic`) — apply periodic boundary corrections.
 
 ```{python}
+traj = mn.Molecule(u)
 traj.subframes = 2
 traj.interpolate = True
 ```
@@ -68,20 +68,52 @@ of a `Named Attribute` is checked and if it exists that is used as a boolean to 
 selection. If the attribute doesn't exist, the string is used as an MDAnalysis selection
 string — equivalent to doing `u.select_atoms()` and passing that atom group as a selection.
 
+::: { .callout-note }
+
+# Materials on Point Clouds
+
+The default geometry for `StyleSpheres()` is `"Point"` which uses point cloud rendering 
+inside of Blender. It's a limitation of Blender that we can't have multiple materials
+on the same point cloud, so we get issues if we try to assign different materials and join
+them back together. To get around this we have to use the `"Instance"` geometry (which can 
+be combined with a point cloud that has a different material).
+
+:::
+
 ```{python}
 #| label: fig-selections
 #| fig-cap: Selectively apply the style using an MDAnalysis selection string.
+from molecularnodes.nodes import geometry as mg
+from nodebpy.nodes import geometry as g
+
 median = np.median(traj.atoms.positions, axis=0)
-# reset the tree to clear the previously added style
+sel = traj.selections.from_string(f"prop x > {median[0]}")
+
 with traj.tree.reset() as (atoms, join):
-    pass
-(
-    traj
-    .add_style("spheres", selection=f"prop x > {median[0]}")
-    .add_style("spheres", selection=f"prop x <= {median[0]}", material="MN Flat Outline")
-)
-canvas.frame_view(traj)
+    selection = sel.node()
+    (
+        atoms
+        >> mg.StyleSpheres(
+            ...,
+            selection,
+            "Instance",
+            quality=5,
+            material=mn.material.Flat().material
+            )
+        >> mg.StyleSpheres(
+            ...,
+            ~selection,
+            material=mn.material.Default().material
+            ) >> join
+    )
+
+canvas.look_at(traj)
 canvas.snapshot()
+```
+
+
+```{python}
+traj.tree
 ```
 
 Transformations applied to the `Universe` (such as rotations or unwrapping) carry through to
@@ -91,11 +123,13 @@ the rendered molecule.
 #| warning: false
 canvas.clear()
 
-rot = [transformations.rotate.rotateby(90, direction=[0, 1, 0], point=np.zeros(3))]
+rot = [
+    transformations.rotate.rotateby(90, direction=[0, 1, 0], point=np.zeros(3))
+    ]
 u = mda.Universe(PSF, DCD, transformations=rot)
 
 g2 = mn.Molecule(u).add_style("spheres")
-canvas.frame_view(g2)
+canvas.look_at(g2)
 canvas.snapshot()
 ```
 
@@ -134,13 +168,10 @@ col_array
 
 Create the `Molecule` object that will be visualised inside of Blender. After initialising
 it, we store the computed colors as a `Named Attribute` on the mesh with the
-`store_named_attribute()` function. These values can now be accessed in the rendering
-pipeline.
-
-To colour by our `Named Attribute` we build the node tree ourselves, reading the attribute
-with a `SetColor` node before the style. In this example we render both as spheres and also
-as a ribbon backbone — both of which use the colors we computed. The ribbon backbone takes
-whatever color value is stored on the alpha carbon.
+`store_named_attribute()` function, or directly by doing `Molecule["Color"] = col_array`. 
+We have direct access to the named attributes on the mesh of the Molecule object, to get 
+and set the values. By defualt the Nodes will use the `Color` named attribute for assigning
+the final color that is used in the render.
 
 ```{python}
 # | label: fig-compute-color
@@ -149,35 +180,22 @@ whatever color value is stored on the alpha carbon.
 # | fig-subcap:
 # |   - "Spheres each use the atom's color."
 # |   - "Ribbon and cartoon use the color from the alpha carbon."
-from nodebpy.nodes.geometry import NamedAttribute
-
 canvas.clear()
 traj = mn.Molecule(u)
-traj.store_named_attribute(col_array, "custom_color")
+traj["Color"] = col_array
+traj.add_style("spheres")
 
-# NamedAttribute nodes must be created inside the tree-builder context
-with traj.tree.reset() as (atoms, join):
-    (
-        atoms
-        >> mn.nodes.geometry.SetColor(
-            color=NamedAttribute("custom_color", data_type="FLOAT_COLOR")
-        )
-        >> mn.nodes.geometry.StyleSpheres(scale=0.8)
-        >> join
-    )
-canvas.frame_view(traj)
-canvas.snapshot()
+canvas.look_at(traj)
+display(canvas.snapshot())
 
 with traj.tree.reset() as (atoms, join):
-    (
-        atoms
-        >> mn.nodes.geometry.SetColor(
-            color=NamedAttribute("custom_color", data_type="FLOAT_COLOR")
-        )
-        >> mn.nodes.geometry.StyleRibbon(quality=6, peptide_radius=1.5)
-        >> join
-    )
-canvas.frame_view(traj)
+    atoms >> mg.StyleRibbon(
+        quality=6,
+        peptide_radius=1.5,
+        material=mn.material.Default().material
+        ) >> join
+
+canvas.look_at(traj)
 canvas.snapshot()
 ```
 
@@ -189,12 +207,10 @@ selection is only applied to those atoms from the group.
 
 ```{python}
 # | warning: false
-canvas.clear()
-adk = datasets.fetch_adk_equilibrium()
-u = mda.Universe(adk.topology, adk.trajectory)
-traj = mn.Molecule(u)
-traj.add_style("spheres", selection=u.atoms[u.atoms.names == "CA"])
-canvas.frame_view(traj.get_view())
+traj.tree.clear()
+traj.add_style("spheres", selection=u.atoms[u.atoms.names == "CA"], scale=1.75)
+
+canvas.look_at(traj.get_view())
 canvas.snapshot()
 ```
 

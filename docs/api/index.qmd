@@ -86,7 +86,7 @@ After loading the molecule, to be able to see anything we must first add a style
 ```{python}
 mol = mn.Molecule.fetch("4ozs")
 mol.add_style("cartoon")
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 ```{python}
@@ -95,12 +95,12 @@ canvas.background = (0, 0.5, 0.5, 1.0)
 canvas.camera.lens = 130
 mol = mn.Molecule.fetch("9MD2")
 mol.add_style("cartoon", loop_radius=0.4, material="MN Ambient Occlusion")
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
 ```{python}
-canvas.frame_view(mol, (-3.14, 0, 0))
+canvas.look_at(mol, (-180, 0, 0))
 canvas.snapshot()
 ```
 
@@ -121,7 +121,7 @@ with mol.tree.reset() as (atoms, join):
         )
         >> join
     )
-canvas.frame_view(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 

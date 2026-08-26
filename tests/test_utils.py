@@ -27,7 +27,7 @@ def test_view_distance_increases():
     assert camera.clip_end == pytest.approx(100.0)
     for space in _viewport_spaces():
         assert space.clip_end == pytest.approx(1000.0)
-    bpy.ops.mn.import_fetch(code=codes[0])
+    bpy.ops.mn.import_molecule(code=codes[0])
     assert camera.clip_end == pytest.approx(mn.utils._INCREASED_CLIP_END)
     for space in _viewport_spaces():
         assert space.clip_end == pytest.approx(mn.utils._INCREASED_CLIP_END)
