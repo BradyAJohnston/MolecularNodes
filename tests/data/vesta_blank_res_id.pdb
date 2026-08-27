@@ -1,0 +1,23 @@
+COMPND    Tristrontium diruthenate(IV)
+COMPND   1Created by VESTA
+HETATM    1 Ru1                  1.374   1.375   8.345  1.00  0.18          Ru
+HETATM    2 Ru1                  4.123   4.126  12.388  1.00  0.18          Ru
+HETATM    3 Ru1                  4.123   1.375   2.021  1.00  0.18          Ru
+HETATM    4 Ru1                  1.374   4.126  18.711  1.00  0.18          Ru
+HETATM    5 Ru1                  1.374   1.375  12.388  1.00  0.18          Ru
+HETATM    6 Ru1                  4.123   4.126   8.345  1.00  0.18          Ru
+HETATM    7 Ru1                  4.123   1.375  18.711  1.00  0.18          Ru
+HETATM    8 Ru1                  1.374   4.126   2.021  1.00  0.18          Ru
+HETATM    9 Sr1                  1.374   1.375   0.000  1.00  0.03          Sr
+HETATM   10 Sr1                  1.374   1.375  20.733  1.00  0.03          Sr
+HETATM   11 Sr1                  4.123   4.126   0.000  1.00  0.03          Sr
+HETATM   12 Sr1                  4.123   4.126  20.733  1.00  0.03          Sr
+HETATM   13 Sr1                  4.123   1.375  10.366  1.00  0.03          Sr
+HETATM   14 Sr1                  1.374   4.126  10.366  1.00  0.03          Sr
+HETATM   15 Sr2                  1.374   1.375   3.860  1.00  0.24          Sr
+HETATM   16 Sr2                  4.123   4.126  16.872  1.00  0.24          Sr
+HETATM   17 Sr2                  4.123   1.375   6.506  1.00  0.24          Sr
+HETATM   18 Sr2                  1.374   4.126  14.227  1.00  0.24          Sr
+HETATM   19 Sr2                  1.374   1.375  16.872  1.00  0.24          Sr
+HETATM   20 Sr2                  4.123   4.126   3.860  1.00  0.24          Sr
+END

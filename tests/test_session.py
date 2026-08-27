@@ -176,6 +176,57 @@ def universe():
     return mda.Universe(topo, traj)
 
 
+def test_multi_file_trajectory_paths_relativized():
+    from contextlib import chdir
+    from pathlib import Path
+    from molecularnodes.session import (
+        _make_trajectory_paths_absolute,
+        _make_trajectory_paths_relative,
+    )
+
+    topo = data_dir / "md_ppr/box.gro"
+    coords = data_dir / "md_ppr/first_5_frames.xtc"
+    traj = mn.Molecule(mda.Universe(topo, [coords, coords]), name="multi")
+    n_frames = traj.universe.trajectory.n_frames
+    trajectories = {traj.uuid: traj}
+
+    with chdir(data_dir):
+        _make_trajectory_paths_relative(trajectories)
+        filenames = [Path(f) for f in traj.universe.trajectory.filenames]
+        assert len(filenames) == 2
+        assert all(not f.is_absolute() for f in filenames)
+        assert traj.universe.trajectory.n_frames == n_frames
+
+        _make_trajectory_paths_absolute(trajectories)
+        filenames = [Path(f) for f in traj.universe.trajectory.filenames]
+        assert len(filenames) == 2
+        assert all(f.is_absolute() for f in filenames)
+        assert traj.universe.trajectory.n_frames == n_frames
+
+
+def test_session_pickle_roundtrip_multi_file_trajectory(tmp_path):
+    from contextlib import chdir
+    from pathlib import Path
+
+    topo = data_dir / "md_ppr/box.gro"
+    coords = data_dir / "md_ppr/first_5_frames.xtc"
+    traj = mn.Molecule(mda.Universe(topo, [coords, coords]), name="multi")
+    n_frames = traj.universe.trajectory.n_frames
+    blend_path = tmp_path / "test.blend"
+
+    session = mn.session.get_session()
+    with chdir(tmp_path):
+        session.pickle(blend_path)
+        session.clear()
+        session.load(blend_path)
+
+    restored = session.get(traj.uuid)
+    filenames = [Path(f) for f in restored.universe.trajectory.filenames]
+    assert len(filenames) == 2
+    assert all(f.is_absolute() for f in filenames)
+    assert restored.universe.trajectory.n_frames == n_frames
+
+
 def test_entity_blender_properties(session: MNSession, universe):
     assert len(session.entities) == 0
     t1 = mn.Molecule(universe, name="u1")
