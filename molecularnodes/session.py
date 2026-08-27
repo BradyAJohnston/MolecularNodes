@@ -87,7 +87,6 @@ class MNSession:
 
     @property
     def ensembles(self) -> Dict[str, Ensemble]:
-        # return a filtered dictionary of only the ensembles using isinstance(item, Ensemble)
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
     def register_entity(self, item: MolecularEntity) -> None:

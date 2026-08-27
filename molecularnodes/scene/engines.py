@@ -39,8 +39,8 @@ class EEVEE(RenderEngine):
         self.raytracing = self._init_raytracing
 
     @property
-    def engine(self):
-        return bpy.context.scene.eevee
+    def engine(self) -> bpy.types.SceneEEVEE:
+        return bpy.context.scene.eevee  # ty: ignore[invalid-return-type, unresolved-attribute]
 
     @property
     def samples(self) -> int:
@@ -82,7 +82,7 @@ class Cycles(RenderEngine):
 
     @property
     def engine(self):
-        return bpy.context.scene.cycles
+        return bpy.context.scene.cycles  # type: ignore
 
     @property
     def samples(self) -> int:

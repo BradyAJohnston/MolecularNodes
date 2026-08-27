@@ -348,28 +348,28 @@ class Canvas:
         self._engine._apply_settings()
 
     @property
-    def fps(self) -> float:
+    def fps(self) -> int:
         """
-        Get the frames per second setting.
+        Get and set the frame rate expressed in frames per second.
 
         Returns
         -------
-        float
+        int
             The current FPS value.
         """
         return self.scene.render.fps
 
     @fps.setter
-    def fps(self, value: float) -> None:
+    def fps(self, value: int) -> None:
         """
-        Set the frames per second.
+        Get and set the frame rate expressed in frames per second.
 
         Parameters
         ----------
-        value : float
+        value : int
             The FPS value to set.
         """
-        self.scene.render.fps = value  # ty: ignore[invalid-assignment]
+        self.scene.render.fps = value
 
     @property
     def frame_start(self) -> int:
