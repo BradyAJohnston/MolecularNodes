@@ -10,6 +10,7 @@ website:
     - api/rendering.qmd
     - api/materials.qmd
     - api/annotations.qmd
+    - api/solvent.qmd
     - api/canvas.qmd
     - api/blender.qmd
     - text: '---'
@@ -26,13 +27,9 @@ website:
         - api/reference/entities.OXDNA.qmd
         section: Other Entities
       - contents:
-        - api/reference/nodes.geometry.StyleSpheres.qmd
-        - api/reference/nodes.geometry.StyleRibbon.qmd
-        - api/reference/nodes.geometry.StyleCartoon.qmd
-        - api/reference/nodes.geometry.StyleSurface.qmd
-        - api/reference/nodes.geometry.StyleSticks.qmd
-        - api/reference/nodes.geometry.StyleBallAndStick.qmd
-        section: Styles
+        - api/reference/nodes.geometry.qmd
+        - api/reference/nodes.shader.qmd
+        section: Nodes
       - contents:
         - api/reference/material.Default.qmd
         - api/reference/material.AmbientOcclusion.qmd
@@ -60,6 +57,16 @@ website:
         - api/reference/scene.world.WorldTree.qmd
         section: Scene
       section: Reference
+    - contents:
+      - contents:
+        - auto: api/reference/molecularnodes.nodes.geometry.*.qmd
+        href: api/reference/nodes.geometry.qmd
+        section: Geometry
+      - contents:
+        - auto: api/reference/molecularnodes.nodes.shader.*.qmd
+        href: api/reference/nodes.shader.qmd
+        section: Shader
+      section: Node Classes
     id: api/reference
     search: true
   - id: dummy-sidebar

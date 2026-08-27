@@ -131,7 +131,6 @@ jobs:
 
       - name: Pre-render Scripts
         timeout-minutes: 3
-        continue-on-error: true
         run: |
           uv run docs/generate.py
       - name: Build quartodoc

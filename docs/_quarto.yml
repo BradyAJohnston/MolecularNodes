@@ -103,6 +103,8 @@ quartodoc:
   package: molecularnodes
   dir: api/reference
   render_interlinks: true
+  renderer:
+    style: _renderer.py
 
   sidebar:
     file: api/_sidebar.yml
@@ -125,6 +127,16 @@ quartodoc:
     - section: "Reference"
       contents:
       - "{{ contents }}"
+    - section: "Node Classes"
+      contents:
+      - section: "Geometry"
+        href: api/reference/nodes.geometry.qmd
+        contents:
+        - auto: api/reference/molecularnodes.nodes.geometry.*.qmd
+      - section: "Shader"
+        href: api/reference/nodes.shader.qmd
+        contents:
+        - auto: api/reference/molecularnodes.nodes.shader.*.qmd
   # css: api/_styles-quartodoc.css
 
   options:
@@ -146,15 +158,15 @@ quartodoc:
     - entities.Ensemble
     - entities.OXDNA
 
-  - title: Styles
-    desc: Setting and controlling the different styles
+  - title: Nodes
+    desc: >
+      The typed node classes generated from the node groups included in Molecular Nodes,
+      including the styles. Every node group in the asset file is available as a class.
     contents:
-    - nodes.geometry.StyleSpheres
-    - nodes.geometry.StyleRibbon
-    - nodes.geometry.StyleCartoon
-    - nodes.geometry.StyleSurface
-    - nodes.geometry.StyleSticks
-    - nodes.geometry.StyleBallAndStick
+    - name: nodes.geometry
+      children: separate
+    - name: nodes.shader
+      children: separate
 
   - title: Materials
     desc: The pre-built materials and their tweakable parameters
