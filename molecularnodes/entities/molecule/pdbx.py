@@ -32,6 +32,7 @@ class PDBXReader(ReaderBase):
         self, model: int | None = None, include_bonds: bool = True
     ) -> struc.AtomArray | struc.AtomArrayStack:
         try:
+            self._ensure_group_pdb()
             array = pdbx.get_structure(
                 self.file, model=model, extra_fields=self._extra_fields
             )
@@ -42,6 +43,17 @@ class PDBXReader(ReaderBase):
             array.bonds = struc.connect_via_residue_names(array, inter_residue=True)
 
         return array
+
+    def _ensure_group_pdb(self) -> None:
+        """Default a missing ``group_PDB`` column to ``ATOM``.
+
+        The column is optional in the mmCIF spec and some writers (e.g. gemmi)
+        omit it, but ``pdbx.get_structure`` requires it to set the ``hetero``
+        annotation.
+        """
+        atom_site = self.file.block.get("atom_site")
+        if atom_site is not None and "group_PDB" not in atom_site:
+            atom_site["group_PDB"] = np.full(atom_site.row_count, "ATOM")
 
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()

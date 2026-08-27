@@ -1,4 +1,14 @@
 # serializer version: 1
+# name: test_cif_no_group_pdb
+  AttributeArray(name='position', object='1BNA_gemmi.cif', mesh='1BNA_gemmi.cif', domain=POINT, type=FLOAT_VECTOR, shape=(566, 3), dtype=float32)
+  array([[1.8935    , 3.4195    , 2.5617    ],
+         [1.913     , 3.3921    , 2.4219    ],
+         [1.9961001 , 3.2668    , 2.41      ],
+         ...,
+         [0.9396    , 2.7092    , 1.6993    ],
+         [1.9987    , 2.1691    , 0.68020004],
+         [1.8692    , 3.1584    , 0.45960003]], dtype=float32)
+# ---
 # name: test_load_small_mol
   dict({
     'mesh': dict({
