@@ -109,24 +109,28 @@ quartodoc:
   sidebar:
     file: api/_sidebar.yml
     search: true
-    collapse-level: 4
+    collapse-level: 2
     contents:
     - text: Introduction
       href: api/index.qmd
-    - api/styles.qmd
-    - api/trajectories.qmd
-    - api/nodebpy.qmd
-    - api/rendering.qmd
-    - api/materials.qmd
-    # - api/density.qmd
-    - api/annotations.qmd
-    - api/solvent.qmd
-    - api/canvas.qmd
-    - api/blender.qmd
+    - text: "---"
+    - section: "Guides"
+      contents:
+      - api/styles.qmd
+      - api/trajectories.qmd
+      - api/nodebpy.qmd
+      - api/rendering.qmd
+      - api/materials.qmd
+      # - api/density.qmd
+      - api/annotations.qmd
+      - api/solvent.qmd
+      - api/canvas.qmd
+      - api/blender.qmd
     - text: "---"
     - section: "Reference"
       contents:
       - "{{ contents }}"
+    - text: "---"
     - section: "Node Classes"
       contents:
       - section: "Geometry"
@@ -157,16 +161,6 @@ quartodoc:
     contents:
     - entities.Ensemble
     - entities.OXDNA
-
-  - title: Nodes
-    desc: >
-      The typed node classes generated from the node groups included in Molecular Nodes,
-      including the styles. Every node group in the asset file is available as a class.
-    contents:
-    - name: nodes.geometry
-      children: separate
-    - name: nodes.shader
-      children: separate
 
   - title: Materials
     desc: The pre-built materials and their tweakable parameters
@@ -201,3 +195,13 @@ quartodoc:
     - scene.camera
     - scene.compositor.CompositorTree
     - scene.world.WorldTree
+
+  - title: Nodes
+    desc: >
+      The typed node classes generated from the node groups included in Molecular Nodes,
+      including the styles. Every node group in the asset file is available as a class.
+    contents:
+    - name: nodes.geometry
+      children: separate
+    - name: nodes.shader
+      children: separate
