@@ -96,6 +96,14 @@ def test_pdb_blank_res_id(snapshot):
     assert snapshot == mol.position
 
 
+def test_cif_no_group_pdb(snapshot):
+    # gemmi omits the optional group_PDB column from atom_site, which biotite
+    # requires for the hetero annotation (#19)
+    mol = mn.Molecule.load(data_dir / "1BNA_gemmi.cif")
+    assert mol.universe.atoms.n_atoms == 566
+    assert snapshot == mol.position
+
+
 @pytest.mark.filterwarnings("ignore:.*elements were guessed.*:UserWarning")
 def test_pdb_no_bonds(snapshot):
     mol = mn.Molecule.load(data_dir / "no_bonds.pdb")
