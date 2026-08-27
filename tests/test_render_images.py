@@ -45,15 +45,19 @@ def _render(canvas, tmp_path) -> bytes:
     return file.read_bytes()
 
 
+def _fetch_molecule():
+    return mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+
+
 def test_render_spheres(golden_canvas, tmp_path, image_snapshot):
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+    mol = _fetch_molecule()
     mol.add_style("spheres")
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
 def test_render_cartoon(golden_canvas, tmp_path, image_snapshot):
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+    mol = _fetch_molecule()
     mol.add_style("cartoon")
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
@@ -61,8 +65,46 @@ def test_render_cartoon(golden_canvas, tmp_path, image_snapshot):
 
 def test_render_annotations(golden_canvas, tmp_path, image_snapshot):
     # exercises the annotation overlay through the compositor
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+    mol = _fetch_molecule()
     mol.add_style("cartoon")
     mol.annotations.add_atom_info(selection="name CA and resid 20", show_resid=True)
+    golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+# spheres and cartoon are covered by the dedicated tests above
+@pytest.mark.parametrize("style", ["ball_and_stick", "ribbon", "sticks", "surface"])
+def test_render_style(style, golden_canvas, tmp_path, image_snapshot):
+    mol = _fetch_molecule()
+    mol.add_style(style)
+    golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "material",
+    ["Default", "AmbientOcclusion", "Flat", "Squishy", "TransparentOutline"],
+)
+def test_render_material(material, golden_canvas, tmp_path, image_snapshot):
+    mol = _fetch_molecule()
+    mol.add_style("surface", material=getattr(mn.material, material)())
+    golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+def test_render_selection_string(golden_canvas, tmp_path, image_snapshot):
+    # a selection phrase masks the second style to part of the molecule
+    mol = _fetch_molecule()
+    mol.add_style("cartoon")
+    mol.add_style("spheres", selection="resid 1:40")
+    golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
+    # an MDAnalysis AtomGroup can be used as a selection directly
+    mol = _fetch_molecule()
+    mol.add_style("cartoon")
+    mol.add_style("sticks", selection=mol.universe.select_atoms("resid 100:150"))
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
