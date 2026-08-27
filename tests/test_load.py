@@ -87,6 +87,15 @@ def test_local_pdb(snapshot_custom):
         assert snapshot_custom == mol.named_attribute("position")
 
 
+def test_pdb_blank_res_id(snapshot):
+    # VESTA writes PDB files with blank res_id columns, which biotite refuses
+    # to parse without help (#1091)
+    mol = mn.Molecule.load(data_dir / "vesta_blank_res_id.pdb")
+    assert mol.universe.atoms.n_atoms == 20
+    assert (mol.universe.atoms.resids == 1).all()
+    assert snapshot == mol.position
+
+
 @pytest.mark.filterwarnings("ignore:.*elements were guessed.*:UserWarning")
 def test_pdb_no_bonds(snapshot):
     mol = mn.Molecule.load(data_dir / "no_bonds.pdb")

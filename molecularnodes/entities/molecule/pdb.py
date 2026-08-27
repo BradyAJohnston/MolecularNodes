@@ -1,3 +1,4 @@
+from io import StringIO
 import biotite.structure as struc
 import numpy as np
 from biotite import InvalidFileError
@@ -24,6 +25,31 @@ class PDBReader(ReaderBase):
         return pdb.PDBFile.read(file_path)
 
     def get_structure(self, model: int | None = None):
+        try:
+            array = self._parse_structure(model)
+        except ValueError as e:
+            if "Cannot parse empty string" not in str(e):
+                raise
+            # some tools (e.g. VESTA) write PDB files with blank res_id
+            # columns, which biotite refuses to parse (#1091). Fill the blank
+            # fields with a default res_id of 1 and retry.
+            print("Blank res_id fields in PDB file, assigning res_id of 1")
+            self._fill_blank_res_ids()
+            array = self._parse_structure(model)
+
+        try:
+            sec_struct = _get_sec_struct(self.file, array)
+        except BadStructureError:
+            sec_struct = _comp_secondary_structure(array[0])
+
+        array.set_annotation("sec_struct", sec_struct)
+
+        if array is None:
+            raise InvalidFileError("Unable to read PDB file.")
+
+        return array
+
+    def _parse_structure(self, model: int | None = None):
         # a bit dirty, but we first try and get the bond information from the file
         # if that fails, then we extract without the bonds and try to create bonds based
         # on residue / atom names.
@@ -49,17 +75,17 @@ class PDBReader(ReaderBase):
             except AttributeError as e:
                 print("Not able to find bonds via residue: {e}")
 
-        try:
-            sec_struct = _get_sec_struct(self.file, array)
-        except BadStructureError:
-            sec_struct = _comp_secondary_structure(array[0])
-
-        array.set_annotation("sec_struct", sec_struct)
-
-        if array is None:
-            raise InvalidFileError("Unable to read PDB file.")
-
         return array
+
+    def _fill_blank_res_ids(self) -> None:
+        """Fill blank res_id columns (23-26) of ATOM / HETATM records with 1"""
+        lines = [
+            line[:22] + "   1" + line[26:]
+            if line.startswith(("ATOM", "HETATM")) and line[22:26].strip() == ""
+            else line
+            for line in self.file.lines
+        ]
+        self.file = pdb.PDBFile.read(StringIO("\n".join(lines)))
 
     def _assemblies(self):
         return PDBAssemblyParser(self.file).get_assemblies()
