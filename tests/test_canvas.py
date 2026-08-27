@@ -199,7 +199,7 @@ def render_canvas():
     # which defaults to GPU in Blender 5.x - as the CI runners have no GPU
     canvas = mn.Canvas(resolution=(32, 32))
     canvas.engine = mn.scene.Cycles(samples=1, device="CPU")
-    canvas.scene.render.compositor_device = "CPU"
+    canvas.compositor.device = "CPU"
     return canvas
 
 
@@ -261,6 +261,25 @@ def test_animation_validation(canvas):
         canvas.animation(frame_start=10, frame_end=5)
     with pytest.raises(ValueError, match="must be either"):
         canvas.animation(frame_start=1, frame_end=2, format="AVI")
+
+
+def test_compositor_settings(canvas):
+    comp = canvas.compositor
+    # values are case-insensitive and write through to the scene
+    comp.device = "cpu"
+    assert comp.device == "CPU"
+    assert canvas.scene.render.compositor_device == "CPU"
+    comp.precision = "full"
+    assert comp.precision == "FULL"
+    comp.denoise_device = "cpu"
+    assert comp.denoise_device == "CPU"
+    comp.denoise_preview_quality = "fast"
+    assert comp.denoise_preview_quality == "FAST"
+    comp.denoise_final_quality = "balanced"
+    assert comp.denoise_final_quality == "BALANCED"
+    # invalid values are rejected by Blender's enum validation
+    with pytest.raises(TypeError):
+        comp.device = "TPU"
 
 
 def test_compositor_setup(canvas):
