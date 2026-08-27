@@ -5,6 +5,7 @@
 
 *.blend1
 tests/blend_files/*.blend
+tests/image_failures/
 __pycache__/*
 .vscode/*
 molecularnodes*.zip
