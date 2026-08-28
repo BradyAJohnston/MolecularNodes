@@ -17,7 +17,6 @@ Uses nodebpy's internal codegen because the public
 
 import pathlib
 import subprocess
-
 from nodebpy.assets import _codegen
 from nodebpy.builder import PackageLibrary
 
