@@ -198,10 +198,9 @@ quartodoc:
 
   - title: Nodes
     desc: >
-      The typed node classes generated from the node groups included in Molecular Nodes,
-      including the styles. Every node group in the asset file is available as a class.
+      The typed node classes generated from the node groups included in Molecular Nodes, including the styles. Every node group in the asset file is available as a class.
     contents:
     - name: nodes.geometry
-      children: separate
+      children: embedded
     - name: nodes.shader
-      children: separate
+      children: embedded

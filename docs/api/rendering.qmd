@@ -23,18 +23,13 @@ canvas = mn.Canvas()
 #| warning: false
 u = mda.Universe(PSF, DCD)
 mol = mn.Molecule(u).add_style("cartoon")
-
-# add resid 1 and 129 with spheres style, using mesh geometry
 mol.add_style("spheres", selection="resid 1 129", sphere_geometry="Mesh")
 ```
 
 ## Add annotations
 
 ```{python}
-# add universe info annotation
 mol.annotations.add_universe_info()
-
-# add COM distance between resid 1 and 129 annotation
 mol.annotations.add_com_distance(
     selection1="resid 1", selection2="resid 129", text1="r1", text2="r129"
 )
@@ -48,10 +43,7 @@ cell. Pass `path=` to also save the image to disk, `render_scale=` for a quick l
 preview, and `frame=` to render a specific frame of the scene.
 
 ```{python}
-# frame the molecule
 canvas.look_at(mol)
-
-# render image of scene at frame 75
 canvas.snapshot(frame=75)
 ```
 
@@ -73,7 +65,6 @@ suffix on the path selects GIF output automatically. The frame rate can be overr
 per-call with `fps=`.
 
 ```{python}
-# render animation of scene from frame 10 to 50 at 50% scale
 canvas.animation(frame_start=10, frame_end=50, render_scale=50)
 ```
 
