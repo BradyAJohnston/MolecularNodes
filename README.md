@@ -1,6 +1,8 @@
 # Molecular Nodes 🧬🍝💻
 
-<img src="docs/images/logo.png" align="right" style = "height:250px;"/>
+<div align="center">
+<img src="docs/assets/logo.png" style="height:250px;"/>
+</div>
 
 [![CI](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/ci.yml)
 
@@ -32,13 +34,13 @@ See examples, tutorials and video projects that use Molecular Nodes in the [docu
 
 ## Installation
 
-Molecular Nodes can be installed from within Blender in versions >=4.2, by using the _Get Extensions_ menu. More details can be found on the [installation page](https://bradyajohnston.github.io/MolecularNodes/tutorials/installation.html) of the documentation.
+Molecular Nodes can be installed from within Blender in versions >=4.2, by using the _Get Extensions_ menu. More details can be found on the [installation page](https://bradyajohnston.github.io/MolecularNodes/user-guide/installation.html) of the documentation.
 
 ## Getting Started
 
-There are video and written tutorials in the [documentation](https://bradyajohnston.github.io/MolecularNodes/tutorials/) that will walk you through the basics of using the addon.
+There are video and written tutorials in the [documentation](https://bradyajohnston.github.io/MolecularNodes/user-guide/) that will walk you through the basics of using the addon.
 
-Documentation for all of the individual nodes are also available in the [node documentation](https://bradyajohnston.github.io/MolecularNodes/nodes/style.html) page.
+Documentation for all of the individual nodes are also available in the [node documentation](https://bradyajohnston.github.io/MolecularNodes/docs/nodes/style.html) page.
 
 [![image](https://user-images.githubusercontent.com/36021261/205629018-a6722f88-505e-4cb6-a641-8d423aa26963.png)](https://youtu.be/CvmFaRVmZRU)
 

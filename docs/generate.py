@@ -1,4 +1,5 @@
-"""Generate the per-category node documentation pages in docs/nodes/.
+"""Generate the per-category node documentation pages in docs/nodes/ and the
+lookup-table page in docs/user_guide/.
 
 The .blend asset file is the source of truth: every node group marked as an
 asset in `molecularnodes/assets/node_data_file.blend` is documented, grouped
@@ -19,14 +20,13 @@ from nodebpy.assets import _codegen
 import molecularnodes as mn
 
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
+NODES_FOLDER = DOCS_FOLDER / "nodes"
+DATA_TABLE_FILE = DOCS_FOLDER / "user_guide" / "21-data-table.qmd"
 CATS_FILE = pathlib.Path(mn.assets.MN_DATA_FILE).parent / "blender_assets.cats.txt"
 
-header = """---
-toc: true
-toc-depth: 3
-fig-align: center
----
-"""
+def header(title: str, **extra: str) -> str:
+    lines = [f"title: {title}"] + [f"{k}: {v}" for k, v in extra.items()]
+    return "---\n" + "\n".join(lines) + "\ntoc: true\ntoc-depth: 3\nfig-align: center\n---\n"
 
 
 def catalog_paths() -> dict[str, str]:
@@ -134,9 +134,8 @@ def generate_node_pages() -> None:
 
     for category, items in pages.items():
         items.sort(key=lambda item: (item[0], getattr(item[1], "name", item[1])))
-        with open(DOCS_FOLDER / f"nodes/{category.lower()}.qmd", "w") as file:
-            file.write(header)
-            file.write(f"# {category}\n")
+        with open(NODES_FOLDER / f"{category.lower()}.qmd", "w") as file:
+            file.write(header(category))
             current_sub = ""
             for sub, item in items:
                 if sub != current_sub:
@@ -151,9 +150,9 @@ def generate_node_pages() -> None:
 
 
 def generate_data_table() -> None:
-    with open(DOCS_FOLDER / "data_table.qmd", "w") as file:
-        file.write(header)
-        file.write("# Data Tables\n\n")
+    with open(DATA_TABLE_FILE, "w") as file:
+        file.write(header("Data Tables", **{"guide-section": "Reference"}))
+        file.write("\n")
         file.write(
             "The different lookup tables that are used to conver strings to integers in Molecular Nodes.\n\n"
             "Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnston/MolecularNodes/blob/main/molecularnodes/assets/data.py)\n\n"

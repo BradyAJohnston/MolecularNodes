@@ -5,7 +5,7 @@ Introspects the asset-marked node groups in
 type (`geometry.py`, `shader.py`, ...) with full numpy-style docstrings pulled
 from the node group and socket descriptions in the .blend file. Those
 docstrings are the single source of truth for the node documentation — they
-feed editor tooltips and the quartodoc API reference.
+feed editor tooltips and the Great Docs API reference.
 
 Run after any change to the .blend file:
 

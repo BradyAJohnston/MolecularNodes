@@ -33,10 +33,13 @@ docs/nodes/*.qmd
 
 /.luarc.json
 tests/data/starfile/montage.tiff
-docs/api/reference
 tests/data/cellpack/petworld/*.cif
 *.quarto_ipynb
-/docs/site_libs
 *.lock
 /docs/_inv
 /tests/blend_files/**.blend
+
+# Great Docs build directory (regenerated on every build)
+great-docs/
+# data files generated while executing docs/api/solvent.qmd
+docs/api/*.dx

@@ -48,15 +48,15 @@ pip install molecularnodes[bpy]
 
 ## Getting Started
 
-The main class you will interact with is the [](`~mn.Molecule`). A single `Molecule`
+The main class you will interact with is the [](`~molecularnodes.Molecule`). A single `Molecule`
 represents any structure — a static structure downloaded from the PDB, a local file, or
-a molecular dynamics trajectory — using an [](`MDAnalysis.Universe`) as its underlying
+a molecular dynamics trajectory — using an [`MDAnalysis.Universe`](https://docs.mdanalysis.org/stable/documentation_pages/core/universe.html) as its underlying
 data model.
 
-- [](`~mn.Molecule`)
-    - Load static structures with [](`mn.Molecule.fetch`) / [](`mn.Molecule.load`), or
-      wrap an existing [](`MDAnalysis.Universe`) directly
-    - Structure files are parsed with [](`biotite`) and converted to a `mda.Universe`
+- [](`~molecularnodes.Molecule`)
+    - Load static structures with [](`molecularnodes.Molecule.fetch`) / [](`molecularnodes.Molecule.load`), or
+      wrap an existing [`MDAnalysis.Universe`](https://docs.mdanalysis.org/stable/documentation_pages/core/universe.html) directly
+    - Structure files are parsed with [`biotite`](https://www.biotite-python.org/) and converted to a `mda.Universe`
     - Supports MDAnalysis selection strings on every structure
     - A multi-model structure or trajectory simply has more than one frame, updated from
       the `Universe` as the scene frame changes
@@ -70,7 +70,7 @@ into the single `Molecule` from `v520+`.
 
 ## Molecules
 
-To get started, with import the module start a new scene be creating out [](`~mn.Canvas`) object. This class lets us more easily control the 3D scene that we create our models and do rendering with. Changing render engine, camera resolution and controlling the camera is all done through this class.
+To get started, with import the module start a new scene be creating out [](`~molecularnodes.Canvas`) object. This class lets us more easily control the 3D scene that we create our models and do rendering with. Changing render engine, camera resolution and controlling the camera is all done through this class.
 
 ::: {.callout-important}
 
@@ -86,7 +86,7 @@ canvas = mn.Canvas(mn.scene.Cycles(samples=32), resolution=(720, 480))
 
 ### Add a `Molecule`
 
-The [](`mn.Molecule`) can take a `AtomArray` from the `biotite` package directly, or it has the [](`mn.Molecule.fetch`) and [](`mn.Molecule.load`) class methods to download directly from the PDB or load a local file.
+The [](`molecularnodes.Molecule`) can take a `AtomArray` from the `biotite` package directly, or it has the [](`molecularnodes.Molecule.fetch`) and [](`molecularnodes.Molecule.load`) class methods to download directly from the PDB or load a local file.
 
 After loading the molecule, to be able to see anything we must first add a style. Then we can frame the camera on the object and take a snapshot.
 

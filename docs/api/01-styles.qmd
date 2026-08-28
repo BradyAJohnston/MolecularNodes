@@ -1,0 +1,162 @@
+---
+title: Styles
+description: "Adding styles and representations to molecules"
+jupyter: python3
+execute:
+  daemon: false
+---
+
+Styles (or *representations*) are how we turn the raw atomic data of a [](`~molecularnodes.Molecule`)
+into something we can actually see. Every `Molecule` is styled the same way, whether it is
+a single static structure or a multi-frame trajectory.
+
+## Setup
+
+```{python}
+#| warning: false
+import molecularnodes as mn
+from molecularnodes.nodes import geometry as g
+import MDAnalysis as mda
+from MDAnalysis.tests.datafiles import PSF, DCD
+
+u = mda.Universe(PSF, DCD)
+canvas = mn.Canvas()
+```
+
+## Add a Style
+
+A style can be specified when adding the molecule to Blender. Styles are given as a
+string, with any style-specific options passed as keyword arguments to
+[](`~molecularnodes.Molecule.add_style`).
+
+```{python}
+mol = mn.Molecule(u).add_style("ribbon", quality=4, peptide_radius=0.5)
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+The [](`~molecularnodes.Molecule.add_style`) API takes the following arguments:
+
+```py
+Molecule.add_style(
+    style="spheres",
+    selection=None,
+    material=None,
+    **kwargs,
+)
+```
+
+- `style` param
+  - A string, one of `ball_and_stick`, `cartoon`, `ribbon`, `spheres`, `sticks` or `surface`.
+- `selection` param
+  - An MDAnalysis selection phrase, an `AtomGroup`, or the name of an existing boolean
+    attribute. A selection phrase is stored as a named attribute and used to mask the style.
+- `material` param
+  - One of the pre-built materials from `mn.material`, e.g.
+    `mn.material.AmbientOcclusion(distance=0.5)`, a Blender material, or a material
+    name to append from the asset file, e.g. `MN Default` or `MN Squishy`.
+- `**kwargs`
+  - Any remaining keyword arguments are passed to the style node, e.g. `geometry`,
+    `quality`, `scale`, `peptide_radius`.
+
+## Selections
+
+Each call to [](`~molecularnodes.Molecule.add_style`) appends another style branch to the node tree, so
+different selections of the molecule can be shown with different styles.
+
+Add `StyleSpheres` to just residues 1 and 129. The string is used as a selection string to
+create an `mda.AtomGroup` which is used to create a boolean attribute, and that is used
+inside of the node tree for rendering.
+
+```{python}
+mol.add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+```{python}
+mol.add_style("surface", selection="resid 100:150", material="MN Transparent Outline")
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+A selection can also be an `mda.AtomGroup`.
+
+```{python}
+mol.add_style("ball_and_stick", quality=4, selection=u.select_atoms("resid 180:200"))
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+## Building a Style Tree
+
+To take full control — or to start from a clean slate — build the node tree yourself with
+the [](`~molecularnodes.Molecule.tree`) context manager. `tree.reset()` clears the existing tree and
+yields the input `atoms` and output `join` sockets, so you can compose exactly the styles
+you want with their specific parameters. This is the recommended way to create styling
+that is more complex than simple styles and their selections.
+
+Attempting to expose the branching tree structure of Geometry Nodes via a Python API is
+a truly difficult task, and so instead we build the node tree using [`nodebpy`](https://bradyajohnston.github.io/nodebpy/) as a
+specialised scripting interface for node trees.
+
+```{python}
+mat = mn.material.AmbientOcclusion()
+
+mol.dssp.init()
+sel = mol.selections.from_string("resname LYS")
+
+with mol.tree.reset() as (atoms, join):
+  atoms >> g.StyleSticks(selection = sel.node(), scale=0.3, material=mat.material) >> join
+  atoms >> g.SetColor(color=g.ColorRainbow()) >> g.StyleCartoon(material=mat.material) >> join
+
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+## Style Gallery
+
+Because styling is identical across all molecules, we can loop over structures fetched from
+the PDB and apply a different style to each.
+
+```{python}
+canvas.clear()
+codes = ["4ozs", "8H1B", "6N2Y"]
+styles = ["cartoon", "ribbon", "surface"]
+
+for code, style in zip(codes, styles):
+    mol = mn.Molecule.fetch(code)
+    mol.add_style(style, material="MN Flat")
+    canvas.look_at(mol, viewpoint="right")
+    display(canvas.snapshot())
+    canvas.clear()
+```
+
+Styles compose, so a single molecule can combine several representations with different
+selections and materials.
+
+```{python}
+mol = (
+    mn.Molecule.fetch("8H1B")
+    .add_style("cartoon", material="MN Ambient Occlusion")
+    .add_style(
+        style="surface",
+        selection="protein",
+        material="MN Transparent Outline",
+    )
+)
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+```{python}
+canvas.clear()
+canvas.engine = mn.scene.Cycles(samples=32)
+mol = (
+    mn.Molecule.fetch("9EYM")
+    .add_style("cartoon", selection="is_peptide", material="MN Ambient Occlusion")
+    .add_style("ball_and_stick", selection="not protein", material="MN Default", bond_find=True)
+)
+canvas.look_at(mol)
+canvas.snapshot()
+```
