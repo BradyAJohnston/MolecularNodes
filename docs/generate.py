@@ -24,9 +24,14 @@ NODES_FOLDER = DOCS_FOLDER / "nodes"
 DATA_TABLE_FILE = DOCS_FOLDER / "user_guide" / "21-data-table.qmd"
 CATS_FILE = pathlib.Path(mn.assets.MN_DATA_FILE).parent / "blender_assets.cats.txt"
 
+
 def header(title: str, **extra: str) -> str:
     lines = [f"title: {title}"] + [f"{k}: {v}" for k, v in extra.items()]
-    return "---\n" + "\n".join(lines) + "\ntoc: true\ntoc-depth: 3\nfig-align: center\n---\n"
+    return (
+        "---\n"
+        + "\n".join(lines)
+        + "\ntoc: true\ntoc-depth: 3\nfig-align: center\n---\n"
+    )
 
 
 def catalog_paths() -> dict[str, str]:

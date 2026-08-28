@@ -262,6 +262,7 @@ def internal_helper():
     %nodoc
     """
 
+
 def public_function():
     """
     Transform the dataset.

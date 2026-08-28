@@ -11,7 +11,9 @@ import shutil
 from pathlib import Path
 
 build_dir = Path(os.environ.get("QUARTO_PROJECT_DIR", os.getcwd()))
-repo_root = next(p for p in (build_dir, *build_dir.parents) if (p / "pyproject.toml").exists())
+repo_root = next(
+    p for p in (build_dir, *build_dir.parents) if (p / "pyproject.toml").exists()
+)
 
 for src in (repo_root / "docs" / "assets").iterdir():
     if src.is_file() and src.suffix != ".py":
