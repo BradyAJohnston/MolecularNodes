@@ -26,24 +26,23 @@ Documentation = "https://bradyajohnston.github.io/MolecularNodes"
 bpy = ["bpy==5.2.*"]
 jupyter = ["jupyter", "ipython>=9.7.0", "pillow"]
 docs = [
-    "griffe<2.0",
     "ipython>=9.11.0",
+    "pyyaml",
     "jupyter>=1.1.1",
     "jupyter-cache>=1.0.1",
-    "quartodoc>=0.11.1",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
     "quarto-cli>=1.9.0",
     "setuptools<81",
     "tomlkit>=0.14.0",
-    "tree-clipper"
+    "tree-clipper",
+    "great-docs>=0.17",
 ]
 dev = [
     "numpy>2.2",
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
     "fake-bpy-module>=20260816",
-    "nodepad>=0.3.0",
     "pillow",
     "pooch>=1.8",
     "pre-commit",

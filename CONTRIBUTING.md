@@ -310,18 +310,24 @@ The first time it previews the documentation all code will be executed, which in
 With [your dev environment](#building-a-dev-environment):
 
 ```bash
+uv run docs/generate.py
 cd docs
-python generate.py
-quartodoc build
-quartodoc interlinks
-quarto preview
+uv run quartodoc build
+uv run quartodoc interlinks
+cd ..
+uv run quarto preview docs
 ```
 
 The long-form written documentation is all inside of `docs/`. Documentation is written in markdown (`.md`) or quarto-flavored markdown (`.qmd`) which allows to execute code when building the docs.
 
-The documentation for individual nodes which are shown [here](https://bradyajohnston.github.io/MolecularNodes/nodes/) are built by running the `docs/generate.py`, which extracts information from the relevent `.blend` data files inside of `molecularnodes/assets/`. Combining the information for the input / output types & tooltips with the summaries described in `molecularnodes/ui/node_info.py` we can then generate nice HTML documentation for each of the nodes.
+### Node Documentation
 
-This isn't currently the best implementation for this. I would prefer to just pull from those nodes which are defined in the `.blend` file, but we aren't able to include descriptions for the node groups currently inside of the `.blend`. `node_info.py` is also used for building the add menus as well as the documentation. To update the descriptions of inputs, outputs and data types the nodes themselves need to be updated inside of the `.blend` files. Relevant example videos should be updated when nodes are changed.
+The `.blend` asset file (`molecularnodes/assets/node_data_file.blend`) is the source of truth for the nodes: their descriptions, socket names, tooltips, defaults and asset catalogs. To update the descriptions of inputs, outputs and data types, the nodes themselves need to be updated inside the `.blend` file. Two things are generated from it:
+
+- The typed node classes in `molecularnodes/nodes/` (`geometry.py`, `shader.py`), including full docstrings. Regenerate them after changing the `.blend` file with `uv run generate_node_classes.py`, and commit the result.
+- The per-category node documentation pages shown [here](https://bradyajohnston.github.io/MolecularNodes/nodes/), built in CI by `docs/generate.py`, which groups the node assets by their asset catalogs.
+
+Extra information that can't live on the nodes themselves — long-form prose and demo videos of the nodes in use — lives in `docs/nodes.yml`, keyed by node group name. `docs/generate.py` merges it into the node pages, and the custom quartodoc renderer (`docs/_renderer.py`) injects it into the API reference pages for the node classes, between the description and the Parameters section. Relevant example videos should be updated in `docs/nodes.yml` when nodes are changed.
 
 ## Getting Help
 Please open an issue on the repo to ask questions relating to development or testing.

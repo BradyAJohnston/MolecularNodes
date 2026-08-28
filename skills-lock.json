@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "skills": {
+    "author-skills": {
+      "source": "posit-dev.github.io",
+      "sourceUrl": "https://posit-dev.github.io/great-docs/",
+      "sourceType": "well-known",
+      "computedHash": "4ece22a284f8f4c4a5dc4cc2536892fdfcc65498d192a067c0a9c59c71d44c09",
+      "wellKnownDigest": "sha256:67d9b29fb45ec1f759632792027265496bb90d3d85503da88ea096ce6696d7b6"
+    },
+    "configure-site": {
+      "source": "posit-dev.github.io",
+      "sourceUrl": "https://posit-dev.github.io/great-docs/",
+      "sourceType": "well-known",
+      "computedHash": "0af9ca6931197d0b51fcce90ae59aaf2911a84f686ccb23e90267ef5e1dc1115",
+      "wellKnownDigest": "sha256:2d0f0e76e3be12ad31862286315d1ef4b1f9933925f0e9b7132767677adfe8e3"
+    },
+    "great-docs": {
+      "source": "posit-dev.github.io",
+      "sourceUrl": "https://posit-dev.github.io/great-docs/",
+      "sourceType": "well-known",
+      "computedHash": "e579b1b2e208660bb1276ef2bf99ea0768d6e6e298429333f0117170386a77d0",
+      "wellKnownDigest": "sha256:a4889dcb1d5cf5254a7c2af2e3ba35671003ecfa0dc1a45d6fb74e89e4c2bc02"
+    },
+    "revise-docstrings": {
+      "source": "posit-dev.github.io",
+      "sourceUrl": "https://posit-dev.github.io/great-docs/",
+      "sourceType": "well-known",
+      "computedHash": "74f88889950abbc8ae1b186ca2bc9651583a646a42681a951fd2994afbebe18c",
+      "wellKnownDigest": "sha256:aa258a9194a567c4ce7de3205a650c0e344194238a646985b119aa89afbf41fb"
+    },
+    "write-user-guide": {
+      "source": "posit-dev.github.io",
+      "sourceUrl": "https://posit-dev.github.io/great-docs/",
+      "sourceType": "well-known",
+      "computedHash": "1e69653123a94b783cb15acdcce82352ba73e6632d1706797d6c89118b476788",
+      "wellKnownDigest": "sha256:ec47d10c1c93f71623eea7f1381ce2dfcaa57b7198600afa0b87376d2800fa5f"
+    }
+  }
+}

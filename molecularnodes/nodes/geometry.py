@@ -40,7 +40,46 @@ from nodebpy.types import (
 
 
 class AccumulateAxisRotation(AssetGeometryGroup):
-    """Accumulate Axis Rotation"""
+    """
+    Accumulate Axis Rotation
+
+    Parameters
+    ----------
+    position : InputVector
+        Position vector to transform
+    selection : InputBoolean
+        Selection
+    pivot : InputBoolean
+        The points at which points where `Accumulate` is true will look to for their axis of transformation.
+    angle : InputFloat
+        Amount to rotate around the axis
+    group_id : InputInteger
+        Transform field is accumulated individually for each `Group ID`
+    transform_index : InputInteger
+        Index at which to evaluate the final transform for the positon. For most cases this will be `Index`, but it might be that some points need to use the accumulated transform from another point instead
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        Position vector to transform
+    i.selection : BooleanSocket
+        Selection
+    i.pivot : BooleanSocket
+        The points at which points where `Accumulate` is true will look to for their axis of transformation.
+    i.angle : FloatSocket
+        Amount to rotate around the axis
+    i.group_id : IntegerSocket
+        Transform field is accumulated individually for each `Group ID`
+    i.transform_index : IntegerSocket
+        Index at which to evaluate the final transform for the positon. For most cases this will be `Index`, but it might be that some points need to use the accumulated transform from another point instead
+
+    Outputs
+    -------
+    o.position : VectorSocket
+        Transformed vector
+    o.trasnform : MatrixSocket
+        The accumlated transform, not yet applied to the `Position` vector
+    """
 
     _name = "Accumulate Axis Rotation"
     _asset_name = "Accumulate Axis Rotation"
@@ -48,23 +87,23 @@ class AccumulateAxisRotation(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """Position vector to transform"""
         selection: BooleanSocket
         """Selection"""
         pivot: BooleanSocket
-        """Pivot"""
+        """The points at which points where `Accumulate` is true will look to for their axis of transformation."""
         angle: FloatSocket
-        """Angle"""
+        """Amount to rotate around the axis"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Transform field is accumulated individually for each `Group ID`"""
         transform_index: IntegerSocket
-        """Transform Index"""
+        """Index at which to evaluate the final transform for the positon. For most cases this will be `Index`, but it might be that some points need to use the accumulated transform from another point instead"""
 
     class _Outputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """Transformed vector"""
         trasnform: MatrixSocket
-        """Trasnform"""
+        """The accumlated transform, not yet applied to the `Position` vector"""
 
     if TYPE_CHECKING:
 
@@ -95,7 +134,24 @@ class AccumulateAxisRotation(AssetGeometryGroup):
 
 
 class AngstromToWorld(AssetGeometryGroup):
-    """Angstrom to World"""
+    """
+    Angstrom to World
+
+    Parameters
+    ----------
+    angstrom : InputFloat
+        Angstrom
+
+    Inputs
+    ------
+    i.angstrom : FloatSocket
+        Angstrom
+
+    Outputs
+    -------
+    o.world : FloatSocket
+        World
+    """
 
     _name = "Angstrom to World"
     _asset_name = "Angstrom to World"
@@ -124,7 +180,32 @@ class AngstromToWorld(AssetGeometryGroup):
 
 
 class AnimateAction(AssetGeometryGroup):
-    """Animate Action"""
+    """
+    Animate Action
+
+    Parameters
+    ----------
+    start : InputInteger
+        Start
+    length : InputInteger
+        Length
+
+    Inputs
+    ------
+    i.start : IntegerSocket
+        Start
+    i.length : IntegerSocket
+        Length
+
+    Outputs
+    -------
+    o.factor : FloatSocket
+        Factor
+    o.active : BooleanSocket
+        Whether the input `Value` is between (and including) the lower and upper bounds
+    o.stop : IntegerSocket
+        Stop
+    """
 
     _name = "Animate Action"
     _asset_name = "Animate Action"
@@ -140,7 +221,7 @@ class AnimateAction(AssetGeometryGroup):
         factor: FloatSocket
         """Factor"""
         active: BooleanSocket
-        """Active"""
+        """Whether the input `Value` is between (and including) the lower and upper bounds"""
         stop: IntegerSocket
         """Stop"""
 
@@ -160,7 +241,44 @@ class AnimateAction(AssetGeometryGroup):
 
 
 class AnimateDihedrals(AssetGeometryGroup):
-    """Animate Dihedrals"""
+    """
+    Animate Dihedrals
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    frames : InputCollection
+        Collection which holds the frames of the trajectory
+    smoother_step : InputBoolean
+        Ease in and out of the individual frames if interpolating
+    interpolate : InputBoolean
+        Whether to interpolate between frames of a trajectory or snap
+    frame : InputFloat
+        Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.frames : CollectionSocket
+        Collection which holds the frames of the trajectory
+    i.smoother_step : BooleanSocket
+        Ease in and out of the individual frames if interpolating
+    i.interpolate : BooleanSocket
+        Whether to interpolate between frames of a trajectory or snap
+    i.frame : FloatSocket
+        Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        Atomic geometry with new positions based on the trajectory
+    """
 
     _name = "Animate Dihedrals"
     _asset_name = "Animate Dihedrals"
@@ -168,21 +286,21 @@ class AnimateDihedrals(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         frames: CollectionSocket
-        """Frames"""
+        """Collection which holds the frames of the trajectory"""
         smoother_step: BooleanSocket
-        """Smoother Step"""
+        """Ease in and out of the individual frames if interpolating"""
         interpolate: BooleanSocket
-        """Interpolate"""
+        """Whether to interpolate between frames of a trajectory or snap"""
         frame: FloatSocket
-        """Frame"""
+        """Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry with new positions based on the trajectory"""
 
     if TYPE_CHECKING:
 
@@ -213,7 +331,46 @@ class AnimateDihedrals(AssetGeometryGroup):
 
 
 class AnimateFrames(AssetGeometryGroup):
-    """Animate Frames"""
+    """
+    Animate Frames
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    frames : InputCollection
+        Collection which holds the frames of the trajectory
+    smoother_step : InputBoolean
+        Ease in and out of the individual frames if interpolating
+    interpolate : InputBoolean
+        Whether to interpolate between frames of a trajectory or snap
+    frame : InputFloat
+        Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.frames : CollectionSocket
+        Collection which holds the frames of the trajectory
+    i.smoother_step : BooleanSocket
+        Ease in and out of the individual frames if interpolating
+    i.interpolate : BooleanSocket
+        Whether to interpolate between frames of a trajectory or snap
+    i.frame : FloatSocket
+        Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        Atomic geometry with new positions based on the trajectory
+    o.all_frames : GeometrySocket
+        Each frame from the collection of coordinates is output in the a single mesh. They now contain an additional attribute `frame_id` to specify which structure they are from
+    """
 
     _name = "Animate Frames"
     _asset_name = "Animate Frames"
@@ -221,23 +378,23 @@ class AnimateFrames(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         frames: CollectionSocket
-        """Frames"""
+        """Collection which holds the frames of the trajectory"""
         smoother_step: BooleanSocket
-        """Smoother Step"""
+        """Ease in and out of the individual frames if interpolating"""
         interpolate: BooleanSocket
-        """Interpolate"""
+        """Whether to interpolate between frames of a trajectory or snap"""
         frame: FloatSocket
-        """Frame"""
+        """Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry with new positions based on the trajectory"""
         all_frames: GeometrySocket
-        """All Frames"""
+        """Each frame from the collection of coordinates is output in the a single mesh. They now contain an additional attribute `frame_id` to specify which structure they are from"""
 
     if TYPE_CHECKING:
 
@@ -268,7 +425,48 @@ class AnimateFrames(AssetGeometryGroup):
 
 
 class AnimatePeptideToCurve(AssetGeometryGroup):
-    """Animate Peptide to Curve"""
+    """
+    Animate Peptide to Curve
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    curve : InputGeometry
+        Curve
+    offset : InputFloat
+        Offset
+    start : InputFloat
+        Start
+    end : InputFloat
+        End
+    rotate : InputFloat
+        Rotate
+    twist : InputFloat
+        Twist
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.curve : GeometrySocket
+        Curve
+    i.offset : FloatSocket
+        Offset
+    i.start : FloatSocket
+        Start
+    i.end : FloatSocket
+        End
+    i.rotate : FloatSocket
+        Rotate
+    i.twist : FloatSocket
+        Twist
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        Atoms
+    """
 
     _name = "Animate Peptide to Curve"
     _asset_name = "Animate Peptide to Curve"
@@ -276,7 +474,7 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         curve: GeometrySocket
         """Curve"""
         offset: FloatSocket
@@ -325,7 +523,64 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
 
 
 class AnimateTrails(AssetGeometryGroup):
-    """Animate Trails"""
+    """
+    Animate Trails
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    trail_threshold : InputMenu | Literal["Unlimited", "Threshold"]
+        Trail Threshold
+    trail_curve_type : InputMenu | Literal["Poly", "Bezier"]
+        Trail Curve Type
+    trail_frames : InputInteger
+        Number of previous frames from the trajectory to display
+    trail_radius : InputFloat
+        Trail Radius
+    trail_resolution : InputInteger
+        Tail radial resolution
+    trail_subdivisions : InputInteger
+        Trail Subdivisions
+    trail_cutoff : InputFloat
+        Threshold over which the spline is broken up
+    shade_smooth : InputBoolean
+        Apply smooth shading to the created geometry
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.trail_threshold : MenuSocket
+        Trail Threshold
+    i.trail_curve_type : MenuSocket
+        Trail Curve Type
+    i.trail_frames : IntegerSocket
+        Number of previous frames from the trajectory to display
+    i.trail_radius : FloatSocket
+        Trail Radius
+    i.trail_resolution : IntegerSocket
+        Tail radial resolution
+    i.trail_subdivisions : IntegerSocket
+        Trail Subdivisions
+    i.trail_cutoff : FloatSocket
+        Threshold over which the spline is broken up
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading to the created geometry
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Animate Trails"
     _asset_name = "Animate Trails"
@@ -333,27 +588,27 @@ class AnimateTrails(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         trail_threshold: MenuSocket
         """Trail Threshold"""
         trail_curve_type: MenuSocket
         """Trail Curve Type"""
         trail_frames: IntegerSocket
-        """Trail Frames"""
+        """Number of previous frames from the trajectory to display"""
         trail_radius: FloatSocket
         """Trail Radius"""
         trail_resolution: IntegerSocket
-        """Trail Resolution"""
+        """Tail radial resolution"""
         trail_subdivisions: IntegerSocket
         """Trail Subdivisions"""
         trail_cutoff: FloatSocket
-        """Trail Cutoff"""
+        """Threshold over which the spline is broken up"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -398,7 +653,44 @@ class AnimateTrails(AssetGeometryGroup):
 
 
 class AnimateValue(AssetGeometryGroup):
-    """Animate Value"""
+    """
+    Animate Value
+
+    Parameters
+    ----------
+    smoother_step : InputBoolean
+        Ease out and in from the min and max values
+    clamped : InputBoolean
+        Whether to clamp the interpolated value to the max
+    frame_start : InputInteger
+        Frame to start the animation on
+    frame_end : InputInteger
+        Frame to finish the animation on
+    value_min : InputFloat
+        Value to start animation from
+    value_max : InputFloat
+        Value to end animation at
+
+    Inputs
+    ------
+    i.smoother_step : BooleanSocket
+        Ease out and in from the min and max values
+    i.clamped : BooleanSocket
+        Whether to clamp the interpolated value to the max
+    i.frame_start : IntegerSocket
+        Frame to start the animation on
+    i.frame_end : IntegerSocket
+        Frame to finish the animation on
+    i.value_min : FloatSocket
+        Value to start animation from
+    i.value_max : FloatSocket
+        Value to end animation at
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        Animated value that interpolates from min to max over frames
+    """
 
     _name = "Animate Value"
     _asset_name = "Animate Value"
@@ -406,21 +698,21 @@ class AnimateValue(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         smoother_step: BooleanSocket
-        """Smoother Step"""
+        """Ease out and in from the min and max values"""
         clamped: BooleanSocket
-        """Clamped"""
+        """Whether to clamp the interpolated value to the max"""
         frame_start: IntegerSocket
-        """Frame Start"""
+        """Frame to start the animation on"""
         frame_end: IntegerSocket
-        """Frame End"""
+        """Frame to finish the animation on"""
         value_min: FloatSocket
-        """Value Min"""
+        """Value to start animation from"""
         value_max: FloatSocket
-        """Value Max"""
+        """Value to end animation at"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """Animated value that interpolates from min to max over frames"""
 
     if TYPE_CHECKING:
 
@@ -451,7 +743,52 @@ class AnimateValue(AssetGeometryGroup):
 
 
 class AnimateWiggle(AssetGeometryGroup):
-    """Animate Wiggle"""
+    """
+    Animate Wiggle
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    b_factor : InputFloat
+        Amount that `b_factor` changeds the amplitude of wiggling
+    amplitude : InputFloat
+        Overall amplitude of the wiggling
+    amp_axis : InputFloat
+        Aplitude for the rotation around the bond axes
+    amp_euler : InputFloat
+        Amplitude for applying euler rotations separate to the axis
+    speed : InputFloat
+        Speed at which the wiggle is applied, 3 will repeat 3 times
+    animate : InputFloat
+        Controls the animation of the wiggle, repeating every `1.00`
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.b_factor : FloatSocket
+        Amount that `b_factor` changeds the amplitude of wiggling
+    i.amplitude : FloatSocket
+        Overall amplitude of the wiggling
+    i.amp_axis : FloatSocket
+        Aplitude for the rotation around the bond axes
+    i.amp_euler : FloatSocket
+        Amplitude for applying euler rotations separate to the axis
+    i.speed : FloatSocket
+        Speed at which the wiggle is applied, 3 will repeat 3 times
+    i.animate : FloatSocket
+        Controls the animation of the wiggle, repeating every `1.00`
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        The animated atomic geometry
+    """
 
     _name = "Animate Wiggle"
     _asset_name = "Animate Wiggle"
@@ -459,24 +796,25 @@ class AnimateWiggle(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         b_factor: FloatSocket
+        """Amount that `b_factor` changeds the amplitude of wiggling"""
         amplitude: FloatSocket
-        """Amplitude"""
+        """Overall amplitude of the wiggling"""
         amp_axis: FloatSocket
-        """Amp. Axis"""
+        """Aplitude for the rotation around the bond axes"""
         amp_euler: FloatSocket
-        """Amp. Euler"""
+        """Amplitude for applying euler rotations separate to the axis"""
         speed: FloatSocket
-        """Speed"""
+        """Speed at which the wiggle is applied, 3 will repeat 3 times"""
         animate: FloatSocket
-        """Animate"""
+        """Controls the animation of the wiggle, repeating every `1.00`"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """The animated atomic geometry"""
 
     if TYPE_CHECKING:
 
@@ -510,8 +848,97 @@ class AnimateWiggle(AssetGeometryGroup):
         )
 
 
+class AssemblyID(AssetGeometryGroup):
+    """
+    Read the `frame_id` attribute, created when multiple frames from a trajectory are merged into a single structure
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.assembly_id : IntegerSocket
+        Read the `frame_id` attribute from the geometry
+    """
+
+    _name = "Assembly ID"
+    _asset_name = "Assembly ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        assembly_id: IntegerSocket
+        """Read the `frame_id` attribute from the geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_4": index})
+
+
 class AssemblyInstance(AssetGeometryGroup):
-    """Assembly Instance"""
+    """
+    Assembly Instance
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry that is instanced on the points
+    selection : InputBoolean
+        Selection
+    data_object : InputObject
+        Data Object
+    assembly_id : InputInteger
+        Assembly ID
+    realize_all : InputBoolean
+        Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input
+    position : InputFloat
+        Amount of mixing between the A and B inputs
+    rotation : InputFloat
+        Amount of mixing between the A and B inputs
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry that is instanced on the points
+    i.selection : BooleanSocket
+        Selection
+    i.data_object : ObjectSocket
+        Data Object
+    i.assembly_id : IntegerSocket
+        Assembly ID
+    i.realize_all : BooleanSocket
+        Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input
+    i.position : FloatSocket
+        Amount of mixing between the A and B inputs
+    i.rotation : FloatSocket
+        Amount of mixing between the A and B inputs
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    o.chain_id : IntegerSocket
+        chain_id
+    """
 
     _name = "Assembly Instance"
     _asset_name = "Assembly Instance"
@@ -519,7 +946,7 @@ class AssemblyInstance(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry that is instanced on the points"""
         selection: BooleanSocket
         """Selection"""
         data_object: ObjectSocket
@@ -527,11 +954,11 @@ class AssemblyInstance(AssetGeometryGroup):
         assembly_id: IntegerSocket
         """Assembly ID"""
         realize_all: BooleanSocket
-        """Realize All"""
-        rotation: FloatSocket
-        """Rotation"""
+        """Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input"""
         position: FloatSocket
-        """Position"""
+        """Amount of mixing between the A and B inputs"""
+        rotation: FloatSocket
+        """Amount of mixing between the A and B inputs"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
@@ -552,8 +979,8 @@ class AssemblyInstance(AssetGeometryGroup):
         data_object: InputObject = None,
         assembly_id: InputInteger = 1,
         realize_all: InputBoolean = False,
-        rotation: InputFloat = 1.0,
         position: InputFloat = 1.0,
+        rotation: InputFloat = 1.0,
     ):
         super().__init__(
             **{
@@ -562,14 +989,31 @@ class AssemblyInstance(AssetGeometryGroup):
                 "Socket_2": data_object,
                 "Socket_8": assembly_id,
                 "Socket_10": realize_all,
-                "Socket_4": rotation,
                 "Socket_5": position,
+                "Socket_4": rotation,
             }
         )
 
 
 class AtomID(AssetGeometryGroup):
-    """Atom ID"""
+    """
+    Atom ID
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.atom_id : IntegerSocket
+        The `atom_id` attribute, read from geometry. Corresponds to the order of the atoms when they were read from the file
+    """
 
     _name = "Atom ID"
     _asset_name = "Atom ID"
@@ -581,6 +1025,7 @@ class AtomID(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         atom_id: IntegerSocket
+        """The `atom_id` attribute, read from geometry. Corresponds to the order of the atoms when they were read from the file"""
 
     if TYPE_CHECKING:
 
@@ -597,7 +1042,24 @@ class AtomID(AssetGeometryGroup):
 
 
 class AtomName(AssetGeometryGroup):
-    """Geometry Nodes doesn't currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page"""
+    """
+    Geometry Nodes doesn't currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.atom_name : IntegerSocket
+        The `atom_name` attribute read from the points, an integer representation of the atom names. Corresponds to `CA` and `O` in the file etc.
+    """
 
     _name = "Atom Name"
     _asset_name = "Atom Name"
@@ -609,6 +1071,7 @@ class AtomName(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         atom_name: IntegerSocket
+        """The `atom_name` attribute read from the points, an integer representation of the atom names. Corresponds to `CA` and `O` in the file etc."""
 
     if TYPE_CHECKING:
 
@@ -625,7 +1088,24 @@ class AtomName(AssetGeometryGroup):
 
 
 class AtomicNumber(AssetGeometryGroup):
-    """Atomic Number"""
+    """
+    Atomic Number
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.atomic_number : IntegerSocket
+        Read the `atomic_number` attribute from the geometry corresponding to elements
+    """
 
     _name = "Atomic Number"
     _asset_name = "Atomic Number"
@@ -637,6 +1117,7 @@ class AtomicNumber(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         atomic_number: IntegerSocket
+        """Read the `atomic_number` attribute from the geometry corresponding to elements"""
 
     if TYPE_CHECKING:
 
@@ -653,7 +1134,36 @@ class AtomicNumber(AssetGeometryGroup):
 
 
 class AtomsToCACurves(AssetGeometryGroup):
-    """Atoms to CA Curves"""
+    """
+    Atoms to CA Curves
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    bs_smoothing : InputFloat
+        BS Smoothing
+    threshold : InputFloat
+        Distance (Angstroms) over which subsequent CA points are treated as a new chain
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.bs_smoothing : FloatSocket
+        BS Smoothing
+    i.threshold : FloatSocket
+        Distance (Angstroms) over which subsequent CA points are treated as a new chain
+
+    Outputs
+    -------
+    o.curves : GeometrySocket
+        Curves
+    """
 
     _name = "Atoms to CA Curves"
     _asset_name = "Atoms to CA Curves"
@@ -661,13 +1171,13 @@ class AtomsToCACurves(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         bs_smoothing: FloatSocket
         """BS Smoothing"""
         threshold: FloatSocket
-        """Threshold"""
+        """Distance (Angstroms) over which subsequent CA points are treated as a new chain"""
 
     class _Outputs(SocketAccessor):
         curves: GeometrySocket
@@ -698,7 +1208,36 @@ class AtomsToCACurves(AssetGeometryGroup):
 
 
 class AtomsToCurves(AssetGeometryGroup):
-    """Atoms to Curves"""
+    """
+    Atoms to Curves
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Points to maintain and use for splines, non-selected points are removed
+    sort_points : InputBoolean
+        Sort points first by atom_id and chain_id before splitting to curves
+    cutoff : InputFloat
+        Cutoff
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Points to maintain and use for splines, non-selected points are removed
+    i.sort_points : BooleanSocket
+        Sort points first by atom_id and chain_id before splitting to curves
+    i.cutoff : FloatSocket
+        Cutoff
+
+    Outputs
+    -------
+    o.curves : GeometrySocket
+        Curves
+    """
 
     _name = "Atoms to Curves"
     _asset_name = "Atoms to Curves"
@@ -706,11 +1245,11 @@ class AtomsToCurves(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Points to maintain and use for splines, non-selected points are removed"""
         sort_points: BooleanSocket
-        """Sort Points"""
+        """Sort points first by atom_id and chain_id before splitting to curves"""
         cutoff: FloatSocket
         """Cutoff"""
 
@@ -743,7 +1282,30 @@ class AtomsToCurves(AssetGeometryGroup):
 
 
 class AttributeRun(AssetGeometryGroup):
-    """Group mask increments whenever the attribute or the Group ID changes"""
+    """
+    Group mask increments whenever the attribute or the Group ID changes
+
+    Parameters
+    ----------
+    name : InputString
+        The `Named Attribute` to read from the geometry before applying the `Integer Run` node
+    group_id : InputInteger
+        The `Group ID` to use for the `Integer Run` node
+
+    Inputs
+    ------
+    i.name : StringSocket
+        The `Named Attribute` to read from the geometry before applying the `Integer Run` node
+    i.group_id : IntegerSocket
+        The `Group ID` to use for the `Integer Run` node
+
+    Outputs
+    -------
+    o.is_different : BooleanSocket
+        The current point's `Named Attribute` value is different from the previous
+    o.group_id : IntegerSocket
+        The new `Group ID`, increasing whenever the attribute or the `Group ID` values change
+    """
 
     _name = "Attribute Run"
     _asset_name = "Attribute Run"
@@ -751,15 +1313,15 @@ class AttributeRun(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """The `Named Attribute` to read from the geometry before applying the `Integer Run` node"""
         group_id: IntegerSocket
-        """Group ID"""
+        """The `Group ID` to use for the `Integer Run` node"""
 
     class _Outputs(SocketAccessor):
         is_different: BooleanSocket
-        """Is Different"""
+        """The current point's `Named Attribute` value is different from the previous"""
         group_id: IntegerSocket
-        """Group ID"""
+        """The new `Group ID`, increasing whenever the attribute or the `Group ID` values change"""
 
     if TYPE_CHECKING:
 
@@ -777,7 +1339,24 @@ class AttributeRun(AssetGeometryGroup):
 
 
 class BFactor(AssetGeometryGroup):
-    """B Factor"""
+    """
+    B Factor
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.b_factor : FloatSocket
+        b_factor
+    """
 
     _name = "B Factor"
     _asset_name = "B Factor"
@@ -805,7 +1384,24 @@ class BFactor(AssetGeometryGroup):
 
 
 class BackboneC(AssetGeometryGroup):
-    """Backbone C"""
+    """
+    Backbone C
+
+    Parameters
+    ----------
+    method : InputMenu | Literal["Read", "Compute"]
+        Method
+
+    Inputs
+    ------
+    i.method : MenuSocket
+        Method
+
+    Outputs
+    -------
+    o.c : VectorSocket
+        C
+    """
 
     _name = "Backbone C"
     _asset_name = "Backbone C"
@@ -834,7 +1430,24 @@ class BackboneC(AssetGeometryGroup):
 
 
 class BackboneCA(AssetGeometryGroup):
-    """Backbone CA"""
+    """
+    Backbone CA
+
+    Parameters
+    ----------
+    method : InputMenu | Literal["Read", "Compute"]
+        Method
+
+    Inputs
+    ------
+    i.method : MenuSocket
+        Method
+
+    Outputs
+    -------
+    o.ca : VectorSocket
+        CA
+    """
 
     _name = "Backbone CA"
     _asset_name = "Backbone CA"
@@ -863,7 +1476,24 @@ class BackboneCA(AssetGeometryGroup):
 
 
 class BackboneN(AssetGeometryGroup):
-    """Backbone N"""
+    """
+    Backbone N
+
+    Parameters
+    ----------
+    method : InputMenu | Literal["Read", "Compute"]
+        Method
+
+    Inputs
+    ------
+    i.method : MenuSocket
+        Method
+
+    Outputs
+    -------
+    o.n : VectorSocket
+        N
+    """
 
     _name = "Backbone N"
     _asset_name = "Backbone N"
@@ -892,7 +1522,24 @@ class BackboneN(AssetGeometryGroup):
 
 
 class BackboneNH(AssetGeometryGroup):
-    """Backbone NH"""
+    """
+    Backbone NH
+
+    Parameters
+    ----------
+    menu : InputMenu | Literal["Read", "Compute"]
+        Menu
+
+    Inputs
+    ------
+    i.menu : MenuSocket
+        Menu
+
+    Outputs
+    -------
+    o.nh : VectorSocket
+        NH
+    """
 
     _name = "Backbone NH"
     _asset_name = "Backbone NH"
@@ -921,7 +1568,24 @@ class BackboneNH(AssetGeometryGroup):
 
 
 class BackboneO(AssetGeometryGroup):
-    """Backbone O"""
+    """
+    Backbone O
+
+    Parameters
+    ----------
+    method : InputMenu | Literal["Read", "Compute"]
+        Method
+
+    Inputs
+    ------
+    i.method : MenuSocket
+        Method
+
+    Outputs
+    -------
+    o.o : VectorSocket
+        O
+    """
 
     _name = "Backbone O"
     _asset_name = "Backbone O"
@@ -950,7 +1614,32 @@ class BackboneO(AssetGeometryGroup):
 
 
 class BackbonePositions(AssetGeometryGroup):
-    """Backbone Positions"""
+    """
+    Backbone Positions
+
+    Parameters
+    ----------
+    method : InputMenu | Literal["Read", "Compute"]
+        Method
+
+    Inputs
+    ------
+    i.method : MenuSocket
+        Method
+
+    Outputs
+    -------
+    o.o : VectorSocket
+        The position of the backbone _O_ atom for the residue
+    o.c : VectorSocket
+        The position of the backbone _C_ atom for the residue
+    o.ca : VectorSocket
+        The position of the backbone _CA_ atom for the residue
+    o.n : VectorSocket
+        The position of the backbone _N_ atom for the residue
+    o.nh : VectorSocket
+        NH
+    """
 
     _name = "Backbone Positions"
     _asset_name = "Backbone Positions"
@@ -962,13 +1651,13 @@ class BackbonePositions(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         o: VectorSocket
-        """O"""
+        """The position of the backbone _O_ atom for the residue"""
         c: VectorSocket
-        """C"""
+        """The position of the backbone _C_ atom for the residue"""
         ca: VectorSocket
-        """CA"""
+        """The position of the backbone _CA_ atom for the residue"""
         n: VectorSocket
-        """N"""
+        """The position of the backbone _N_ atom for the residue"""
         nh: VectorSocket
         """NH"""
 
@@ -987,7 +1676,30 @@ class BackbonePositions(AssetGeometryGroup):
 
 
 class BackboneVectorList(AssetGeometryGroup):
-    """Backbone Vector List"""
+    """
+    Backbone Vector List
+
+    Parameters
+    ----------
+    ca_atoms : InputGeometry
+        CA Atoms
+    index : InputInteger
+        The `Index` at which to sample the `Position` field from
+
+    Inputs
+    ------
+    i.ca_atoms : GeometrySocket
+        CA Atoms
+    i.index : IntegerSocket
+        The `Index` at which to sample the `Position` field from
+
+    Outputs
+    -------
+    o.value : VectorSocket
+        Output list with evaluated field values
+    o.ca_atoms : GeometrySocket
+        CA Atoms
+    """
 
     _name = "Backbone Vector List"
     _asset_name = "Backbone Vector List"
@@ -997,11 +1709,11 @@ class BackboneVectorList(AssetGeometryGroup):
         ca_atoms: GeometrySocket
         """CA Atoms"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to sample the `Position` field from"""
 
     class _Outputs(SocketAccessor):
         value: VectorSocket
-        """Value"""
+        """Output list with evaluated field values"""
         ca_atoms: GeometrySocket
         """CA Atoms"""
 
@@ -1021,7 +1733,28 @@ class BackboneVectorList(AssetGeometryGroup):
 
 
 class BackboneVectors(AssetGeometryGroup):
-    """The `Vectors` that are useful for a curve when reading from a peptide backbone"""
+    """
+    The `Vectors` that are useful for a curve when reading from a peptide backbone
+
+    Parameters
+    ----------
+    method : InputMenu | Literal["Read", "Compute"]
+        Method
+
+    Inputs
+    ------
+    i.method : MenuSocket
+        Method
+
+    Outputs
+    -------
+    o.normal : VectorSocket
+        The vector used for the `Normal` of a curve when reading positions from a peptide backbone
+    o.tangent : VectorSocket
+        The vector used as the `Tangent` for a curve when reading values from a peptide backbone
+    o.bitangent : VectorSocket
+        Cross product of the Normal and Tangent
+    """
 
     _name = "Backbone Vectors"
     _asset_name = "Backbone Vectors"
@@ -1033,11 +1766,11 @@ class BackboneVectors(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         normal: VectorSocket
-        """Normal"""
+        """The vector used for the `Normal` of a curve when reading positions from a peptide backbone"""
         tangent: VectorSocket
-        """Tangent"""
+        """The vector used as the `Tangent` for a curve when reading values from a peptide backbone"""
         bitangent: VectorSocket
-        """Bitangent"""
+        """Cross product of the Normal and Tangent"""
 
     if TYPE_CHECKING:
 
@@ -1054,7 +1787,32 @@ class BackboneVectors(AssetGeometryGroup):
 
 
 class BetweenFloat(AssetGeometryGroup):
-    """Between Float"""
+    """
+    Between Float
+
+    Parameters
+    ----------
+    value : InputFloat
+        The value to test if it is between the lower and upper bounds
+    lower : InputFloat
+        Test if the `Value` is greater than or equal to this
+    upper : InputFloat
+        Test if the `Value` is less than or equal to this
+
+    Inputs
+    ------
+    i.value : FloatSocket
+        The value to test if it is between the lower and upper bounds
+    i.lower : FloatSocket
+        Test if the `Value` is greater than or equal to this
+    i.upper : FloatSocket
+        Test if the `Value` is less than or equal to this
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        Whether the input `Value` is between (and including) the lower and upper bounds
+    """
 
     _name = "Between Float"
     _asset_name = "Between Float"
@@ -1062,15 +1820,15 @@ class BetweenFloat(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The value to test if it is between the lower and upper bounds"""
         lower: FloatSocket
-        """Lower"""
+        """Test if the `Value` is greater than or equal to this"""
         upper: FloatSocket
-        """Upper"""
+        """Test if the `Value` is less than or equal to this"""
 
     class _Outputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """Whether the input `Value` is between (and including) the lower and upper bounds"""
 
     if TYPE_CHECKING:
 
@@ -1089,7 +1847,32 @@ class BetweenFloat(AssetGeometryGroup):
 
 
 class BetweenInteger(AssetGeometryGroup):
-    """Between Integer"""
+    """
+    Between Integer
+
+    Parameters
+    ----------
+    value : InputInteger
+        The value to test if it exists within the bounds
+    lower : InputInteger
+        The lower bounds for the test
+    upper : InputInteger
+        The upper bounds for the test
+
+    Inputs
+    ------
+    i.value : IntegerSocket
+        The value to test if it exists within the bounds
+    i.lower : IntegerSocket
+        The lower bounds for the test
+    i.upper : IntegerSocket
+        The upper bounds for the test
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        Whether the input `Value` is between (and including) the lower and upper bounds
+    """
 
     _name = "Between Integer"
     _asset_name = "Between Integer"
@@ -1097,15 +1880,15 @@ class BetweenInteger(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: IntegerSocket
-        """Value"""
+        """The value to test if it exists within the bounds"""
         lower: IntegerSocket
-        """Lower"""
+        """The lower bounds for the test"""
         upper: IntegerSocket
-        """Upper"""
+        """The upper bounds for the test"""
 
     class _Outputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """Whether the input `Value` is between (and including) the lower and upper bounds"""
 
     if TYPE_CHECKING:
 
@@ -1124,7 +1907,32 @@ class BetweenInteger(AssetGeometryGroup):
 
 
 class BetweenVector(AssetGeometryGroup):
-    """Between Vector"""
+    """
+    Between Vector
+
+    Parameters
+    ----------
+    value : InputVector
+        The value to test element-wise
+    lower : InputVector
+        The lower bounds (including) for the comparison
+    upper : InputVector
+        The upper bounds (including) for the comparison
+
+    Inputs
+    ------
+    i.value : VectorSocket
+        The value to test element-wise
+    i.lower : VectorSocket
+        The lower bounds (including) for the comparison
+    i.upper : VectorSocket
+        The upper bounds (including) for the comparison
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        If the value is between (and including) the lower the upper bounds
+    """
 
     _name = "Between Vector"
     _asset_name = "Between Vector"
@@ -1132,15 +1940,15 @@ class BetweenVector(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: VectorSocket
-        """Value"""
+        """The value to test element-wise"""
         lower: VectorSocket
-        """Lower"""
+        """The lower bounds (including) for the comparison"""
         upper: VectorSocket
-        """Upper"""
+        """The upper bounds (including) for the comparison"""
 
     class _Outputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """If the value is between (and including) the lower the upper bounds"""
 
     if TYPE_CHECKING:
 
@@ -1159,7 +1967,26 @@ class BetweenVector(AssetGeometryGroup):
 
 
 class BondCount(AssetGeometryGroup):
-    """Bond Count"""
+    """
+    Bond Count
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.is_bonded : BooleanSocket
+        If the point has an edge / bond to another point
+    o.bonds : IntegerSocket
+        The number of bonds or edges that a point has
+    """
 
     _name = "Bond Count"
     _asset_name = "Bond Count"
@@ -1171,9 +1998,9 @@ class BondCount(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         is_bonded: BooleanSocket
-        """Is Bonded"""
+        """If the point has an edge / bond to another point"""
         bonds: IntegerSocket
-        """Bonds"""
+        """The number of bonds or edges that a point has"""
 
     if TYPE_CHECKING:
 
@@ -1190,7 +2017,34 @@ class BondCount(AssetGeometryGroup):
 
 
 class BooleanAndOr(AssetGeometryGroup):
-    """Boolean AndOr"""
+    """
+    Boolean AndOr
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    boolean : InputBoolean
+        Boolean
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.boolean : BooleanSocket
+        Boolean
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        Boolean
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Boolean AndOr"
     _asset_name = "Boolean AndOr"
@@ -1198,9 +2052,9 @@ class BooleanAndOr(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         boolean: BooleanSocket
         """Boolean"""
 
@@ -1208,7 +2062,7 @@ class BooleanAndOr(AssetGeometryGroup):
         boolean: BooleanSocket
         """Boolean"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -1227,7 +2081,28 @@ class BooleanAndOr(AssetGeometryGroup):
 
 
 class BooleanAny(AssetGeometryGroup):
-    """Boolean Any"""
+    """
+    Boolean Any
+
+    Parameters
+    ----------
+    boolean : InputBoolean
+        Boolean
+    group_id : InputInteger
+        Group ID
+
+    Inputs
+    ------
+    i.boolean : BooleanSocket
+        Boolean
+    i.group_id : IntegerSocket
+        Group ID
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        Boolean
+    """
 
     _name = "Boolean Any"
     _asset_name = "Boolean Any"
@@ -1259,7 +2134,28 @@ class BooleanAny(AssetGeometryGroup):
 
 
 class BooleanFirst(AssetGeometryGroup):
-    """Only the first `True` in each `Group ID` remains `True`, all others become `False`"""
+    """
+    Only the first `True` in each `Group ID` remains `True`, all others become `False`
+
+    Parameters
+    ----------
+    boolean : InputBoolean
+        The `Boolean` field to test
+    group_id : InputInteger
+        Each `Group ID` to find the first `True` element for
+
+    Inputs
+    ------
+    i.boolean : BooleanSocket
+        The `Boolean` field to test
+    i.group_id : IntegerSocket
+        Each `Group ID` to find the first `True` element for
+
+    Outputs
+    -------
+    o.is_first : BooleanSocket
+        `True` for the first true element in each `Group ID`
+    """
 
     _name = "Boolean First"
     _asset_name = "Boolean First"
@@ -1267,13 +2163,13 @@ class BooleanFirst(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The `Boolean` field to test"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Each `Group ID` to find the first `True` element for"""
 
     class _Outputs(SocketAccessor):
         is_first: BooleanSocket
-        """Is First"""
+        """`True` for the first true element in each `Group ID`"""
 
     if TYPE_CHECKING:
 
@@ -1291,7 +2187,24 @@ class BooleanFirst(AssetGeometryGroup):
 
 
 class BooleanLast(AssetGeometryGroup):
-    """Index of last time the `Boolean` is true for each `Group ID` (not including the current point)."""
+    """
+    Index of last time the `Boolean` is true for each `Group ID` (not including the current point).
+
+    Parameters
+    ----------
+    boolean : InputBoolean
+        Value to test for True when tracking `Index` locations
+
+    Inputs
+    ------
+    i.boolean : BooleanSocket
+        Value to test for True when tracking `Index` locations
+
+    Outputs
+    -------
+    o.index_of_last : IntegerSocket
+        Accumulating in the point domain, this is the index where the `Boolean` was last `True`. For a point where the `Boolean` is `True`, the index will be of the _previous_ time this was true, but the next point will then reference this point
+    """
 
     _name = "Boolean Last"
     _asset_name = "Boolean Last"
@@ -1299,11 +2212,11 @@ class BooleanLast(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """Value to test for True when tracking `Index` locations"""
 
     class _Outputs(SocketAccessor):
         index_of_last: IntegerSocket
-        """Index of Last"""
+        """Accumulating in the point domain, this is the index where the `Boolean` was last `True`. For a point where the `Boolean` is `True`, the index will be of the _previous_ time this was true, but the next point will then reference this point"""
 
     if TYPE_CHECKING:
 
@@ -1320,7 +2233,28 @@ class BooleanLast(AssetGeometryGroup):
 
 
 class BooleanRunFill(AssetGeometryGroup):
-    """Moving down the points, fill in `False` values that are equal to or less than the `Fill Size`"""
+    """
+    Moving down the points, fill in `False` values that are equal to or less than the `Fill Size`
+
+    Parameters
+    ----------
+    boolean : InputBoolean
+        The `Boolean` field to potentially fill gaps of `False` with
+    fill_size : InputInteger
+        A run of `False` values equal to or less than this size will become `True`
+
+    Inputs
+    ------
+    i.boolean : BooleanSocket
+        The `Boolean` field to potentially fill gaps of `False` with
+    i.fill_size : IntegerSocket
+        A run of `False` values equal to or less than this size will become `True`
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        The `Boolean` array with gaps potentially filled
+    """
 
     _name = "Boolean Run Fill"
     _asset_name = "Boolean Run Fill"
@@ -1328,13 +2262,13 @@ class BooleanRunFill(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The `Boolean` field to potentially fill gaps of `False` with"""
         fill_size: IntegerSocket
-        """Fill Size"""
+        """A run of `False` values equal to or less than this size will become `True`"""
 
     class _Outputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The `Boolean` array with gaps potentially filled"""
 
     if TYPE_CHECKING:
 
@@ -1352,7 +2286,36 @@ class BooleanRunFill(AssetGeometryGroup):
 
 
 class BooleanRunTrim(AssetGeometryGroup):
-    """Boolean Run Trim"""
+    """
+    Boolean Run Trim
+
+    Parameters
+    ----------
+    boolean : InputBoolean
+        The `Boolean` field to check for continuous runs of `True` values
+    start : InputInteger
+        The first `n` values of a run of `True` values are made to be `False`
+    end : InputInteger
+        Ther last `n` values of a run of `True` values become `False`
+    size : InputInteger
+        A run of `True` values becomes `False` if shorter than this minimum length
+
+    Inputs
+    ------
+    i.boolean : BooleanSocket
+        The `Boolean` field to check for continuous runs of `True` values
+    i.start : IntegerSocket
+        The first `n` values of a run of `True` values are made to be `False`
+    i.end : IntegerSocket
+        Ther last `n` values of a run of `True` values become `False`
+    i.size : IntegerSocket
+        A run of `True` values becomes `False` if shorter than this minimum length
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        The `Boolean` field that has been trimmed
+    """
 
     _name = "Boolean Run Trim"
     _asset_name = "Boolean Run Trim"
@@ -1360,17 +2323,17 @@ class BooleanRunTrim(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The `Boolean` field to check for continuous runs of `True` values"""
         start: IntegerSocket
-        """Start"""
+        """The first `n` values of a run of `True` values are made to be `False`"""
         end: IntegerSocket
-        """End"""
+        """Ther last `n` values of a run of `True` values become `False`"""
         size: IntegerSocket
-        """Size"""
+        """A run of `True` values becomes `False` if shorter than this minimum length"""
 
     class _Outputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The `Boolean` field that has been trimmed"""
 
     if TYPE_CHECKING:
 
@@ -1397,7 +2360,32 @@ class BooleanRunTrim(AssetGeometryGroup):
 
 
 class BreakBonds(AssetGeometryGroup):
-    """Break Bonds"""
+    """
+    Break Bonds
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    cutoff : InputFloat
+        Cutoff distance over which to remove bonds (Angstrom)
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.cutoff : FloatSocket
+        Cutoff distance over which to remove bonds (Angstrom)
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    """
 
     _name = "Break Bonds"
     _asset_name = "Break Bonds"
@@ -1405,15 +2393,15 @@ class BreakBonds(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         cutoff: FloatSocket
-        """Cutoff"""
+        """Cutoff distance over which to remove bonds (Angstrom)"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
 
     if TYPE_CHECKING:
 
@@ -1432,7 +2420,30 @@ class BreakBonds(AssetGeometryGroup):
 
 
 class BreakCurves(AssetGeometryGroup):
-    """Break Curves"""
+    """
+    Break Curves
+
+    Parameters
+    ----------
+    curves : InputGeometry
+        Geometry to delete elements from
+    threshold : InputFloat
+        Threshold
+
+    Inputs
+    ------
+    i.curves : GeometrySocket
+        Geometry to delete elements from
+    i.threshold : FloatSocket
+        Threshold
+
+    Outputs
+    -------
+    o.curves : GeometrySocket
+        Curves
+    o.original_index : IntegerSocket
+        Index of Spline before segments removed
+    """
 
     _name = "Break Curves"
     _asset_name = "Break Curves"
@@ -1440,7 +2451,7 @@ class BreakCurves(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         curves: GeometrySocket
-        """Curves"""
+        """Geometry to delete elements from"""
         threshold: FloatSocket
         """Threshold"""
 
@@ -1448,7 +2459,7 @@ class BreakCurves(AssetGeometryGroup):
         curves: GeometrySocket
         """Curves"""
         original_index: IntegerSocket
-        """Original Index"""
+        """Index of Spline before segments removed"""
 
     if TYPE_CHECKING:
 
@@ -1466,7 +2477,34 @@ class BreakCurves(AssetGeometryGroup):
 
 
 class CentreOnSelection(AssetGeometryGroup):
-    """Centre on Selection"""
+    """
+    Centre on Selection
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection within the groups to calculate the centroid for, which then affects all other points in the group
+    group_id : InputInteger
+        Optionally centre the points separately for each group based on the `Group ID` input
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection within the groups to calculate the centroid for, which then affects all other points in the group
+    i.group_id : IntegerSocket
+        Optionally centre the points separately for each group based on the `Group ID` input
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        Atoms that have been moved to object origin based on their group's calculated centroid
+    o.offset : VectorSocket
+        The calculated vector offset that was applied to the points
+    """
 
     _name = "Centre on Selection"
     _asset_name = "Centre on Selection"
@@ -1474,17 +2512,17 @@ class CentreOnSelection(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection within the groups to calculate the centroid for, which then affects all other points in the group"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Optionally centre the points separately for each group based on the `Group ID` input"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atoms that have been moved to object origin based on their group's calculated centroid"""
         offset: VectorSocket
-        """Offset"""
+        """The calculated vector offset that was applied to the points"""
 
     if TYPE_CHECKING:
 
@@ -1505,7 +2543,32 @@ class CentreOnSelection(AssetGeometryGroup):
 
 
 class Centroid(AssetGeometryGroup):
-    """Centroid"""
+    """
+    Centroid
+
+    Parameters
+    ----------
+    position : InputVector
+        The `Position` vector to use for the centroid calculation
+    selection : InputBoolean
+        Selected points contribute to the computation of the centroid, unselected points do not contribute but still return the centroid for their `Group ID`
+    group_id : InputInteger
+        Compute the centroid on for each unique `Group ID`
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        The `Position` vector to use for the centroid calculation
+    i.selection : BooleanSocket
+        Selected points contribute to the computation of the centroid, unselected points do not contribute but still return the centroid for their `Group ID`
+    i.group_id : IntegerSocket
+        Compute the centroid on for each unique `Group ID`
+
+    Outputs
+    -------
+    o.centroid : VectorSocket
+        The computed average vector for each `Group ID`
+    """
 
     _name = "Centroid"
     _asset_name = "Centroid"
@@ -1513,15 +2576,15 @@ class Centroid(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """The `Position` vector to use for the centroid calculation"""
         selection: BooleanSocket
-        """Selection"""
+        """Selected points contribute to the computation of the centroid, unselected points do not contribute but still return the centroid for their `Group ID`"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Compute the centroid on for each unique `Group ID`"""
 
     class _Outputs(SocketAccessor):
         centroid: VectorSocket
-        """Centroid"""
+        """The computed average vector for each `Group ID`"""
 
     if TYPE_CHECKING:
 
@@ -1542,7 +2605,24 @@ class Centroid(AssetGeometryGroup):
 
 
 class ChainID(AssetGeometryGroup):
-    """Integer representation of the Chain IDs that were present in the structure"""
+    """
+    Integer representation of the Chain IDs that were present in the structure
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.chain_id : IntegerSocket
+        The `chain_id` attribute read from the points, corresponding to the different chains that were read from the structure
+    """
 
     _name = "Chain ID"
     _asset_name = "Chain ID"
@@ -1554,6 +2634,7 @@ class ChainID(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         chain_id: IntegerSocket
+        """The `chain_id` attribute read from the points, corresponding to the different chains that were read from the structure"""
 
     if TYPE_CHECKING:
 
@@ -1570,7 +2651,26 @@ class ChainID(AssetGeometryGroup):
 
 
 class ChainParameter(AssetGeometryGroup):
-    """Information for each residue within the context of the chain"""
+    """
+    Information for each residue within the context of the chain
+
+    Outputs
+    -------
+    o.factor : FloatSocket
+        A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last
+    o.residue_count : IntegerSocket
+        Number of residues in the chain
+    o.residue_index : IntegerSocket
+        Res ID along the chain if counting from 1
+    o.first_res_id : IntegerSocket
+        The first Res ID in a chain (truncated chains start above 1)
+    o.last_res_id : IntegerSocket
+        The Res ID of the last residue in chain (not equal to Length if chain is truncated)
+    o.index_of_first : IntegerSocket
+        Index in whole structure of the first atom in the chain
+    o.index_of_last : IntegerSocket
+        Index in the whole structure the last atom in the chain
+    """
 
     _name = "Chain Parameter"
     _asset_name = "Chain Parameter"
@@ -1581,19 +2681,19 @@ class ChainParameter(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         factor: FloatSocket
-        """Factor"""
+        """A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last"""
         residue_count: IntegerSocket
-        """Residue Count"""
+        """Number of residues in the chain"""
         residue_index: IntegerSocket
-        """Residue Index"""
+        """Res ID along the chain if counting from 1"""
         first_res_id: IntegerSocket
-        """First res_id"""
+        """The first Res ID in a chain (truncated chains start above 1)"""
         last_res_id: IntegerSocket
-        """Last res_id"""
+        """The Res ID of the last residue in chain (not equal to Length if chain is truncated)"""
         index_of_first: IntegerSocket
-        """Index of First"""
+        """Index in whole structure of the first atom in the chain"""
         index_of_last: IntegerSocket
-        """Index of Last"""
+        """Index in the whole structure the last atom in the chain"""
 
     if TYPE_CHECKING:
 
@@ -1607,7 +2707,28 @@ class ChainParameter(AssetGeometryGroup):
 
 
 class CheckGeometry(AssetGeometryGroup):
-    """Check Geometry"""
+    """
+    Check Geometry
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    message : InputString
+        Message
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.message : StringSocket
+        Message
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Check Geometry"
     _asset_name = "Check Geometry"
@@ -1639,7 +2760,32 @@ class CheckGeometry(AssetGeometryGroup):
 
 
 class ClearInstanceTransforms(AssetGeometryGroup):
-    """Clear Instance Transforms"""
+    """
+    Clear Instance Transforms
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    selection : InputBoolean
+        Selection
+    realize_all : InputBoolean
+        Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.selection : BooleanSocket
+        Selection
+    i.realize_all : BooleanSocket
+        Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Clear Instance Transforms"
     _asset_name = "Clear Instance Transforms"
@@ -1651,7 +2797,7 @@ class ClearInstanceTransforms(AssetGeometryGroup):
         selection: BooleanSocket
         """Selection"""
         realize_all: BooleanSocket
-        """Realize All"""
+        """Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -1676,7 +2822,24 @@ class ClearInstanceTransforms(AssetGeometryGroup):
 
 
 class Color(AssetGeometryGroup):
-    """Color"""
+    """
+    Color
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Read the `Color` attribute from the geometry
+    """
 
     _name = "Color"
     _asset_name = "Color"
@@ -1688,7 +2851,7 @@ class Color(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """Read the `Color` attribute from the geometry"""
 
     if TYPE_CHECKING:
 
@@ -1705,7 +2868,28 @@ class Color(AssetGeometryGroup):
 
 
 class ColorAtomicNumber(AssetGeometryGroup):
-    """Color Atomic Number"""
+    """
+    Color Atomic Number
+
+    Parameters
+    ----------
+    atomic_number : InputInteger
+        The `atomic_number` of to use the selected color for
+    color : InputColor
+        The color to use for the specified `atomic_number`
+
+    Inputs
+    ------
+    i.atomic_number : IntegerSocket
+        The `atomic_number` of to use the selected color for
+    i.color : ColorSocket
+        The color to use for the specified `atomic_number`
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The generated color based on the node inputs
+    """
 
     _name = "Color Atomic Number"
     _asset_name = "Color Atomic Number"
@@ -1713,12 +2897,13 @@ class ColorAtomicNumber(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atomic_number: IntegerSocket
+        """The `atomic_number` of to use the selected color for"""
         color: ColorSocket
-        """Color"""
+        """The color to use for the specified `atomic_number`"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The generated color based on the node inputs"""
 
     if TYPE_CHECKING:
 
@@ -1736,7 +2921,52 @@ class ColorAtomicNumber(AssetGeometryGroup):
 
 
 class ColorAttributeMap(AssetGeometryGroup):
-    """Color Attribute Map"""
+    """
+    Color Attribute Map
+
+    Parameters
+    ----------
+    color_space : InputMenu | Literal["Linear", "OKLab"]
+        Color Space
+    name : InputString
+        Name of the attribute to map colors to
+    min : InputFloat
+        Value for the attribute to be the minimum color
+    max : InputFloat
+        Value for the attribute to be the maxium color
+    input_7 : InputBoolean
+        Wheter to interpolate through the 'Mid' color.
+    a : InputColor
+        Color mapped to the minimum value of the attribute
+    input_1 : InputColor
+        Color mapped to the middle value of the attribute
+    b : InputColor
+        Color mapped to the maximum value of the attribute
+
+    Inputs
+    ------
+    i.color_space : MenuSocket
+        Color Space
+    i.name : StringSocket
+        Name of the attribute to map colors to
+    i.min : FloatSocket
+        Value for the attribute to be the minimum color
+    i.max : FloatSocket
+        Value for the attribute to be the maxium color
+    i.input_7 : BooleanSocket
+        Wheter to interpolate through the 'Mid' color.
+    i.a : ColorSocket
+        Color mapped to the minimum value of the attribute
+    i.input_1 : ColorSocket
+        Color mapped to the middle value of the attribute
+    i.b : ColorSocket
+        Color mapped to the maximum value of the attribute
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The mapped color value based on the attribute.
+    """
 
     _name = "Color Attribute Map"
     _asset_name = "Color Attribute Map"
@@ -1746,23 +2976,23 @@ class ColorAttributeMap(AssetGeometryGroup):
         color_space: MenuSocket
         """Color Space"""
         name: StringSocket
-        """Name"""
+        """Name of the attribute to map colors to"""
         min: FloatSocket
-        """Min"""
+        """Value for the attribute to be the minimum color"""
         max: FloatSocket
-        """Max"""
+        """Value for the attribute to be the maxium color"""
         input_7: BooleanSocket
-        """Intermediate"""
+        """Wheter to interpolate through the 'Mid' color."""
         a: ColorSocket
-        """A"""
+        """Color mapped to the minimum value of the attribute"""
         input_1: ColorSocket
-        """Intermediate"""
+        """Color mapped to the middle value of the attribute"""
         b: ColorSocket
-        """B"""
+        """Color mapped to the maximum value of the attribute"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The mapped color value based on the attribute."""
 
     if TYPE_CHECKING:
 
@@ -1797,7 +3027,48 @@ class ColorAttributeMap(AssetGeometryGroup):
 
 
 class ColorAttributeRandom(AssetGeometryGroup):
-    """Color Attribute Random"""
+    """
+    Color Attribute Random
+
+    Parameters
+    ----------
+    name : InputString
+        Attribute to base the random color generation on
+    colorspace : InputMenu | Literal["HSL", "OKLab"]
+        Colorspace
+    color_seed : InputInteger
+        Seed value for the random generation of the colors
+    hsl_saturation : InputFloat
+        Saturlation level for the random color
+    hsl_lightness : InputFloat
+        Lightness value for the generated random color
+    oklab_luminance : InputFloat
+        OKLab Luminance
+    oklab_chroma : InputFloat
+        OKLab Chroma
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Attribute to base the random color generation on
+    i.colorspace : MenuSocket
+        Colorspace
+    i.color_seed : IntegerSocket
+        Seed value for the random generation of the colors
+    i.hsl_saturation : FloatSocket
+        Saturlation level for the random color
+    i.hsl_lightness : FloatSocket
+        Lightness value for the generated random color
+    i.oklab_luminance : FloatSocket
+        OKLab Luminance
+    i.oklab_chroma : FloatSocket
+        OKLab Chroma
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The randomly generated color based on the input attribute
+    """
 
     _name = "Color Attribute Random"
     _asset_name = "Color Attribute Random"
@@ -1805,15 +3076,15 @@ class ColorAttributeRandom(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Attribute to base the random color generation on"""
         colorspace: MenuSocket
         """Colorspace"""
         color_seed: IntegerSocket
-        """Color Seed"""
+        """Seed value for the random generation of the colors"""
         hsl_saturation: FloatSocket
-        """HSL Saturation"""
+        """Saturlation level for the random color"""
         hsl_lightness: FloatSocket
-        """HSL Lightness"""
+        """Lightness value for the generated random color"""
         oklab_luminance: FloatSocket
         """OKLab Luminance"""
         oklab_chroma: FloatSocket
@@ -1821,7 +3092,7 @@ class ColorAttributeRandom(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The randomly generated color based on the input attribute"""
 
     if TYPE_CHECKING:
 
@@ -1854,7 +3125,28 @@ class ColorAttributeRandom(AssetGeometryGroup):
 
 
 class ColorBackbone(AssetGeometryGroup):
-    """Color Backbone"""
+    """
+    Color Backbone
+
+    Parameters
+    ----------
+    backbone : InputColor
+        Backbone
+    side_chain : InputColor
+        Side Chain
+
+    Inputs
+    ------
+    i.backbone : ColorSocket
+        Backbone
+    i.side_chain : ColorSocket
+        Side Chain
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    """
 
     _name = "Color Backbone"
     _asset_name = "Color Backbone"
@@ -1886,7 +3178,44 @@ class ColorBackbone(AssetGeometryGroup):
 
 
 class ColorCommon(AssetGeometryGroup):
-    """Color Common"""
+    """
+    Color Common
+
+    Parameters
+    ----------
+    hydrogen : InputColor
+        Color to set for the element Hydrogen
+    carbon : InputColor
+        Color to set for the element Carbon
+    nitrogen : InputColor
+        Color to set for the element Nitrogen
+    oxygen : InputColor
+        Color to set for the element Oxygen
+    phosphorous : InputColor
+        Color to set for the element Phosphorous
+    sulfur : InputColor
+        Color to set for the element Sulfur
+
+    Inputs
+    ------
+    i.hydrogen : ColorSocket
+        Color to set for the element Hydrogen
+    i.carbon : ColorSocket
+        Color to set for the element Carbon
+    i.nitrogen : ColorSocket
+        Color to set for the element Nitrogen
+    i.oxygen : ColorSocket
+        Color to set for the element Oxygen
+    i.phosphorous : ColorSocket
+        Color to set for the element Phosphorous
+    i.sulfur : ColorSocket
+        Color to set for the element Sulfur
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The output colors for the common elements
+    """
 
     _name = "Color Common"
     _asset_name = "Color Common"
@@ -1894,21 +3223,21 @@ class ColorCommon(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         hydrogen: ColorSocket
-        """Hydrogen"""
+        """Color to set for the element Hydrogen"""
         carbon: ColorSocket
-        """Carbon"""
+        """Color to set for the element Carbon"""
         nitrogen: ColorSocket
-        """Nitrogen"""
+        """Color to set for the element Nitrogen"""
         oxygen: ColorSocket
-        """Oxygen"""
+        """Color to set for the element Oxygen"""
         phosphorous: ColorSocket
-        """Phosphorous"""
+        """Color to set for the element Phosphorous"""
         sulfur: ColorSocket
-        """Sulfur"""
+        """Color to set for the element Sulfur"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The output colors for the common elements"""
 
     if TYPE_CHECKING:
 
@@ -1939,7 +3268,340 @@ class ColorCommon(AssetGeometryGroup):
 
 
 class ColorElement(AssetGeometryGroup):
-    """Color Element"""
+    """
+    Color Element
+
+    Parameters
+    ----------
+    h : InputColor
+        Set the color for the element H
+    he : InputColor
+        Set the color for the element He
+    li : InputColor
+        Set the color for the element Li
+    be : InputColor
+        Set the color for the element Be
+    b : InputColor
+        Set the color for the element B
+    c : InputColor
+        Set the color for the element C
+    n : InputColor
+        Set the color for the element N
+    o : InputColor
+        Set the color for the element O
+    f : InputColor
+        Set the color for the element F
+    ne : InputColor
+        Set the color for the element Ne
+    na : InputColor
+        Set the color for the element Na
+    mg : InputColor
+        Set the color for the element Mg
+    al : InputColor
+        Set the color for the element Al
+    si : InputColor
+        Set the color for the element Si
+    p : InputColor
+        Set the color for the element P
+    s : InputColor
+        Set the color for the element S
+    cl : InputColor
+        Set the color for the element Cl
+    ar : InputColor
+        Set the color for the element Ar
+    k : InputColor
+        Set the color for the element K
+    ca : InputColor
+        Set the color for the element Ca
+    sc : InputColor
+        Set the color for the element Sc
+    ti : InputColor
+        Set the color for the element Ti
+    v : InputColor
+        Set the color for the element V
+    cr : InputColor
+        Set the color for the element Cr
+    mn : InputColor
+        Set the color for the element Mn
+    fe : InputColor
+        Set the color for the element Fe
+    co : InputColor
+        Set the color for the element Co
+    ni : InputColor
+        Set the color for the element Ni
+    cu : InputColor
+        Set the color for the element Cu
+    zn : InputColor
+        Set the color for the element Zn
+    ga : InputColor
+        Set the color for the element Ga
+    ge : InputColor
+        Set the color for the element Ge
+    as_ : InputColor
+        Set the color for the element As
+    se : InputColor
+        Set the color for the element Se
+    br : InputColor
+        Set the color for the element Br
+    kr : InputColor
+        Set the color for the element Kr
+    rb : InputColor
+        Set the color for the element Rb
+    sr : InputColor
+        Set the color for the element Sr
+    y : InputColor
+        Set the color for the element Y
+    zr : InputColor
+        Set the color for the element Zr
+    nb : InputColor
+        Set the color for the element Nb
+    mo : InputColor
+        Set the color for the element Mo
+    tc : InputColor
+        Set the color for the element Tc
+    ru : InputColor
+        Set the color for the element Ru
+    rh : InputColor
+        Set the color for the element Rh
+    pd : InputColor
+        Set the color for the element Pd
+    ag : InputColor
+        Set the color for the element Ag
+    cd : InputColor
+        Set the color for the element Cd
+    in_ : InputColor
+        Set the color for the element In
+    sn : InputColor
+        Set the color for the element Sn
+    sb : InputColor
+        Set the color for the element Sb
+    te : InputColor
+        Set the color for the element Te
+    i : InputColor
+        Set the color for the element I
+    xe : InputColor
+        Set the color for the element Xe
+    cs : InputColor
+        Set the color for the element Cs
+    ba : InputColor
+        Set the color for the element Ba
+    la : InputColor
+        Set the color for the element La
+    ce : InputColor
+        Set the color for the element Ce
+    pr : InputColor
+        Set the color for the element Pr
+    nd : InputColor
+        Set the color for the element Nd
+    pm : InputColor
+        Set the color for the element Pm
+    sm : InputColor
+        Set the color for the element Sm
+    eu : InputColor
+        Set the color for the element Eu
+    gd : InputColor
+        Set the color for the element Gd
+    tb : InputColor
+        Set the color for the element Tb
+    dy : InputColor
+        Set the color for the element Dy
+    ho : InputColor
+        Set the color for the element Ho
+    er : InputColor
+        Set the color for the element Er
+    tm : InputColor
+        Set the color for the element Tm
+    yb : InputColor
+        Set the color for the element Yb
+    lu : InputColor
+        Set the color for the element Lu
+    hf : InputColor
+        Set the color for the element Hf
+    ta : InputColor
+        Set the color for the element Ta
+    w : InputColor
+        Set the color for the element W
+    re : InputColor
+        Set the color for the element Re
+    os : InputColor
+        Set the color for the element Os
+    ir : InputColor
+        Set the color for the element Ir
+    pt : InputColor
+        Set the color for the element Pt
+    au : InputColor
+        Set the color for the element Au
+    hg : InputColor
+        Set the color for the element Hg
+
+    Inputs
+    ------
+    i.h : ColorSocket
+        Set the color for the element H
+    i.he : ColorSocket
+        Set the color for the element He
+    i.li : ColorSocket
+        Set the color for the element Li
+    i.be : ColorSocket
+        Set the color for the element Be
+    i.b : ColorSocket
+        Set the color for the element B
+    i.c : ColorSocket
+        Set the color for the element C
+    i.n : ColorSocket
+        Set the color for the element N
+    i.o : ColorSocket
+        Set the color for the element O
+    i.f : ColorSocket
+        Set the color for the element F
+    i.ne : ColorSocket
+        Set the color for the element Ne
+    i.na : ColorSocket
+        Set the color for the element Na
+    i.mg : ColorSocket
+        Set the color for the element Mg
+    i.al : ColorSocket
+        Set the color for the element Al
+    i.si : ColorSocket
+        Set the color for the element Si
+    i.p : ColorSocket
+        Set the color for the element P
+    i.s : ColorSocket
+        Set the color for the element S
+    i.cl : ColorSocket
+        Set the color for the element Cl
+    i.ar : ColorSocket
+        Set the color for the element Ar
+    i.k : ColorSocket
+        Set the color for the element K
+    i.ca : ColorSocket
+        Set the color for the element Ca
+    i.sc : ColorSocket
+        Set the color for the element Sc
+    i.ti : ColorSocket
+        Set the color for the element Ti
+    i.v : ColorSocket
+        Set the color for the element V
+    i.cr : ColorSocket
+        Set the color for the element Cr
+    i.mn : ColorSocket
+        Set the color for the element Mn
+    i.fe : ColorSocket
+        Set the color for the element Fe
+    i.co : ColorSocket
+        Set the color for the element Co
+    i.ni : ColorSocket
+        Set the color for the element Ni
+    i.cu : ColorSocket
+        Set the color for the element Cu
+    i.zn : ColorSocket
+        Set the color for the element Zn
+    i.ga : ColorSocket
+        Set the color for the element Ga
+    i.ge : ColorSocket
+        Set the color for the element Ge
+    i.as_ : ColorSocket
+        Set the color for the element As
+    i.se : ColorSocket
+        Set the color for the element Se
+    i.br : ColorSocket
+        Set the color for the element Br
+    i.kr : ColorSocket
+        Set the color for the element Kr
+    i.rb : ColorSocket
+        Set the color for the element Rb
+    i.sr : ColorSocket
+        Set the color for the element Sr
+    i.y : ColorSocket
+        Set the color for the element Y
+    i.zr : ColorSocket
+        Set the color for the element Zr
+    i.nb : ColorSocket
+        Set the color for the element Nb
+    i.mo : ColorSocket
+        Set the color for the element Mo
+    i.tc : ColorSocket
+        Set the color for the element Tc
+    i.ru : ColorSocket
+        Set the color for the element Ru
+    i.rh : ColorSocket
+        Set the color for the element Rh
+    i.pd : ColorSocket
+        Set the color for the element Pd
+    i.ag : ColorSocket
+        Set the color for the element Ag
+    i.cd : ColorSocket
+        Set the color for the element Cd
+    i.in_ : ColorSocket
+        Set the color for the element In
+    i.sn : ColorSocket
+        Set the color for the element Sn
+    i.sb : ColorSocket
+        Set the color for the element Sb
+    i.te : ColorSocket
+        Set the color for the element Te
+    i.i : ColorSocket
+        Set the color for the element I
+    i.xe : ColorSocket
+        Set the color for the element Xe
+    i.cs : ColorSocket
+        Set the color for the element Cs
+    i.ba : ColorSocket
+        Set the color for the element Ba
+    i.la : ColorSocket
+        Set the color for the element La
+    i.ce : ColorSocket
+        Set the color for the element Ce
+    i.pr : ColorSocket
+        Set the color for the element Pr
+    i.nd : ColorSocket
+        Set the color for the element Nd
+    i.pm : ColorSocket
+        Set the color for the element Pm
+    i.sm : ColorSocket
+        Set the color for the element Sm
+    i.eu : ColorSocket
+        Set the color for the element Eu
+    i.gd : ColorSocket
+        Set the color for the element Gd
+    i.tb : ColorSocket
+        Set the color for the element Tb
+    i.dy : ColorSocket
+        Set the color for the element Dy
+    i.ho : ColorSocket
+        Set the color for the element Ho
+    i.er : ColorSocket
+        Set the color for the element Er
+    i.tm : ColorSocket
+        Set the color for the element Tm
+    i.yb : ColorSocket
+        Set the color for the element Yb
+    i.lu : ColorSocket
+        Set the color for the element Lu
+    i.hf : ColorSocket
+        Set the color for the element Hf
+    i.ta : ColorSocket
+        Set the color for the element Ta
+    i.w : ColorSocket
+        Set the color for the element W
+    i.re : ColorSocket
+        Set the color for the element Re
+    i.os : ColorSocket
+        Set the color for the element Os
+    i.ir : ColorSocket
+        Set the color for the element Ir
+    i.pt : ColorSocket
+        Set the color for the element Pt
+    i.au : ColorSocket
+        Set the color for the element Au
+    i.hg : ColorSocket
+        Set the color for the element Hg
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The selected colors based on the `atomic_number`
+    """
 
     _name = "Color Element"
     _asset_name = "Color Element"
@@ -1947,169 +3609,169 @@ class ColorElement(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         h: ColorSocket
-        """H"""
+        """Set the color for the element H"""
         he: ColorSocket
-        """He"""
+        """Set the color for the element He"""
         li: ColorSocket
-        """Li"""
+        """Set the color for the element Li"""
         be: ColorSocket
-        """Be"""
+        """Set the color for the element Be"""
         b: ColorSocket
-        """B"""
+        """Set the color for the element B"""
         c: ColorSocket
-        """C"""
+        """Set the color for the element C"""
         n: ColorSocket
-        """N"""
+        """Set the color for the element N"""
         o: ColorSocket
-        """O"""
+        """Set the color for the element O"""
         f: ColorSocket
-        """F"""
+        """Set the color for the element F"""
         ne: ColorSocket
-        """Ne"""
+        """Set the color for the element Ne"""
         na: ColorSocket
-        """Na"""
+        """Set the color for the element Na"""
         mg: ColorSocket
-        """Mg"""
+        """Set the color for the element Mg"""
         al: ColorSocket
-        """Al"""
+        """Set the color for the element Al"""
         si: ColorSocket
-        """Si"""
+        """Set the color for the element Si"""
         p: ColorSocket
-        """P"""
+        """Set the color for the element P"""
         s: ColorSocket
-        """S"""
+        """Set the color for the element S"""
         cl: ColorSocket
-        """Cl"""
+        """Set the color for the element Cl"""
         ar: ColorSocket
-        """Ar"""
+        """Set the color for the element Ar"""
         k: ColorSocket
-        """K"""
+        """Set the color for the element K"""
         ca: ColorSocket
-        """Ca"""
+        """Set the color for the element Ca"""
         sc: ColorSocket
-        """Sc"""
+        """Set the color for the element Sc"""
         ti: ColorSocket
-        """Ti"""
+        """Set the color for the element Ti"""
         v: ColorSocket
-        """V"""
+        """Set the color for the element V"""
         cr: ColorSocket
-        """Cr"""
+        """Set the color for the element Cr"""
         mn: ColorSocket
-        """Mn"""
+        """Set the color for the element Mn"""
         fe: ColorSocket
-        """Fe"""
+        """Set the color for the element Fe"""
         co: ColorSocket
-        """Co"""
+        """Set the color for the element Co"""
         ni: ColorSocket
-        """Ni"""
+        """Set the color for the element Ni"""
         cu: ColorSocket
-        """Cu"""
+        """Set the color for the element Cu"""
         zn: ColorSocket
-        """Zn"""
+        """Set the color for the element Zn"""
         ga: ColorSocket
-        """Ga"""
+        """Set the color for the element Ga"""
         ge: ColorSocket
-        """Ge"""
+        """Set the color for the element Ge"""
         as_: ColorSocket
-        """As"""
+        """Set the color for the element As"""
         se: ColorSocket
-        """Se"""
+        """Set the color for the element Se"""
         br: ColorSocket
-        """Br"""
+        """Set the color for the element Br"""
         kr: ColorSocket
-        """Kr"""
+        """Set the color for the element Kr"""
         rb: ColorSocket
-        """Rb"""
+        """Set the color for the element Rb"""
         sr: ColorSocket
-        """Sr"""
+        """Set the color for the element Sr"""
         y: ColorSocket
-        """Y"""
+        """Set the color for the element Y"""
         zr: ColorSocket
-        """Zr"""
+        """Set the color for the element Zr"""
         nb: ColorSocket
-        """Nb"""
+        """Set the color for the element Nb"""
         mo: ColorSocket
-        """Mo"""
+        """Set the color for the element Mo"""
         tc: ColorSocket
-        """Tc"""
+        """Set the color for the element Tc"""
         ru: ColorSocket
-        """Ru"""
+        """Set the color for the element Ru"""
         rh: ColorSocket
-        """Rh"""
+        """Set the color for the element Rh"""
         pd: ColorSocket
-        """Pd"""
+        """Set the color for the element Pd"""
         ag: ColorSocket
-        """Ag"""
+        """Set the color for the element Ag"""
         cd: ColorSocket
-        """Cd"""
+        """Set the color for the element Cd"""
         in_: ColorSocket
-        """In"""
+        """Set the color for the element In"""
         sn: ColorSocket
-        """Sn"""
+        """Set the color for the element Sn"""
         sb: ColorSocket
-        """Sb"""
+        """Set the color for the element Sb"""
         te: ColorSocket
-        """Te"""
+        """Set the color for the element Te"""
         i: ColorSocket
-        """I"""
+        """Set the color for the element I"""
         xe: ColorSocket
-        """Xe"""
+        """Set the color for the element Xe"""
         cs: ColorSocket
-        """Cs"""
+        """Set the color for the element Cs"""
         ba: ColorSocket
-        """Ba"""
+        """Set the color for the element Ba"""
         la: ColorSocket
-        """La"""
+        """Set the color for the element La"""
         ce: ColorSocket
-        """Ce"""
+        """Set the color for the element Ce"""
         pr: ColorSocket
-        """Pr"""
+        """Set the color for the element Pr"""
         nd: ColorSocket
-        """Nd"""
+        """Set the color for the element Nd"""
         pm: ColorSocket
-        """Pm"""
+        """Set the color for the element Pm"""
         sm: ColorSocket
-        """Sm"""
+        """Set the color for the element Sm"""
         eu: ColorSocket
-        """Eu"""
+        """Set the color for the element Eu"""
         gd: ColorSocket
-        """Gd"""
+        """Set the color for the element Gd"""
         tb: ColorSocket
-        """Tb"""
+        """Set the color for the element Tb"""
         dy: ColorSocket
-        """Dy"""
+        """Set the color for the element Dy"""
         ho: ColorSocket
-        """Ho"""
+        """Set the color for the element Ho"""
         er: ColorSocket
-        """Er"""
+        """Set the color for the element Er"""
         tm: ColorSocket
-        """Tm"""
+        """Set the color for the element Tm"""
         yb: ColorSocket
-        """Yb"""
+        """Set the color for the element Yb"""
         lu: ColorSocket
-        """Lu"""
+        """Set the color for the element Lu"""
         hf: ColorSocket
-        """Hf"""
+        """Set the color for the element Hf"""
         ta: ColorSocket
-        """Ta"""
+        """Set the color for the element Ta"""
         w: ColorSocket
-        """W"""
+        """Set the color for the element W"""
         re: ColorSocket
-        """Re"""
+        """Set the color for the element Re"""
         os: ColorSocket
-        """Os"""
+        """Set the color for the element Os"""
         ir: ColorSocket
-        """Ir"""
+        """Set the color for the element Ir"""
         pt: ColorSocket
-        """Pt"""
+        """Set the color for the element Pt"""
         au: ColorSocket
-        """Au"""
+        """Set the color for the element Au"""
         hg: ColorSocket
-        """Hg"""
+        """Set the color for the element Hg"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The selected colors based on the `atomic_number`"""
 
     if TYPE_CHECKING:
 
@@ -2288,7 +3950,32 @@ class ColorElement(AssetGeometryGroup):
 
 
 class ColorGoodsell(AssetGeometryGroup):
-    """Color Goodsell"""
+    """
+    Color Goodsell
+
+    Parameters
+    ----------
+    color : InputColor
+        Color to apply 'Goodsell' style colors to
+    factor : InputFloat
+        Amount to apply the 'Goodsell Style' coloring to
+    invert : InputBoolean
+        Whether to invert the darkening of the colors
+
+    Inputs
+    ------
+    i.color : ColorSocket
+        Color to apply 'Goodsell' style colors to
+    i.factor : FloatSocket
+        Amount to apply the 'Goodsell Style' coloring to
+    i.invert : BooleanSocket
+        Whether to invert the darkening of the colors
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The generated color based on the node inputs
+    """
 
     _name = "Color Goodsell"
     _asset_name = "Color Goodsell"
@@ -2296,15 +3983,15 @@ class ColorGoodsell(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """Color to apply 'Goodsell' style colors to"""
         factor: FloatSocket
-        """Factor"""
+        """Amount to apply the 'Goodsell Style' coloring to"""
         invert: BooleanSocket
-        """Invert"""
+        """Whether to invert the darkening of the colors"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The generated color based on the node inputs"""
 
     if TYPE_CHECKING:
 
@@ -2323,7 +4010,44 @@ class ColorGoodsell(AssetGeometryGroup):
 
 
 class ColorMixIntermediate(AssetGeometryGroup):
-    """Color Mix Intermediate"""
+    """
+    Color Mix Intermediate
+
+    Parameters
+    ----------
+    factor : InputFloat
+        Factor
+    menu : InputMenu | Literal["Linear", "OKLab"]
+        Menu
+    socket_1 : InputBoolean
+        Intermediate
+    a : InputColor
+        A
+    socket_2 : InputColor
+        Intermediate
+    b : InputColor
+        B
+
+    Inputs
+    ------
+    i.factor : FloatSocket
+        Factor
+    i.menu : MenuSocket
+        Menu
+    i.socket_1 : BooleanSocket
+        Intermediate
+    i.a : ColorSocket
+        A
+    i.socket_2 : ColorSocket
+        Intermediate
+    i.b : ColorSocket
+        B
+
+    Outputs
+    -------
+    o.output : ColorSocket
+        Output
+    """
 
     _name = "Color Mix Intermediate"
     _asset_name = "Color Mix Intermediate"
@@ -2376,7 +4100,32 @@ class ColorMixIntermediate(AssetGeometryGroup):
 
 
 class ColorOKLabMix(AssetGeometryGroup):
-    """Color OKLab Mix"""
+    """
+    Color OKLab Mix
+
+    Parameters
+    ----------
+    factor : InputFloat
+        Factor
+    a : InputColor
+        A
+    b : InputColor
+        B
+
+    Inputs
+    ------
+    i.factor : FloatSocket
+        Factor
+    i.a : ColorSocket
+        A
+    i.b : ColorSocket
+        B
+
+    Outputs
+    -------
+    o.result : ColorSocket
+        Result
+    """
 
     _name = "Color OKLab Mix"
     _asset_name = "Color OKLab Mix"
@@ -2411,7 +4160,44 @@ class ColorOKLabMix(AssetGeometryGroup):
 
 
 class ColorOKLabOffset(AssetGeometryGroup):
-    """Color OKLab Offset"""
+    """
+    Color OKLab Offset
+
+    Parameters
+    ----------
+    color : InputColor
+        Color
+    colorspace : InputMenu | Literal["OKLab", "HSL"]
+        Colorspace
+    luminance : InputFloat
+        Luminance
+    saturation : InputFloat
+        Saturation
+    lightness : InputFloat
+        Lightness
+    hue : InputFloat
+        Hue
+
+    Inputs
+    ------
+    i.color : ColorSocket
+        Color
+    i.colorspace : MenuSocket
+        Colorspace
+    i.luminance : FloatSocket
+        Luminance
+    i.saturation : FloatSocket
+        Saturation
+    i.lightness : FloatSocket
+        Lightness
+    i.hue : FloatSocket
+        Hue
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    """
 
     _name = "Color OKLab Offset"
     _asset_name = "Color OKLab Offset"
@@ -2464,7 +4250,36 @@ class ColorOKLabOffset(AssetGeometryGroup):
 
 
 class ColorPLDDT(AssetGeometryGroup):
-    """Color pLDDT"""
+    """
+    Color pLDDT
+
+    Parameters
+    ----------
+    _50 : InputColor
+        Color for pLDTT < 50
+    _70 : InputColor
+        Color for 50 < pLDTT < 70
+    socket_3 : InputColor
+        Color for 70 < pLDTT < 90
+    socket_4 : InputColor
+        Color for 90 < pLDTT
+
+    Inputs
+    ------
+    i._50 : ColorSocket
+        Color for pLDTT < 50
+    i._70 : ColorSocket
+        Color for 50 < pLDTT < 70
+    i.socket_3 : ColorSocket
+        Color for 70 < pLDTT < 90
+    i.socket_4 : ColorSocket
+        Color for 90 < pLDTT
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Assigned color based on the pLDTT score
+    """
 
     _name = "Color pLDDT"
     _asset_name = "Color pLDDT"
@@ -2472,17 +4287,17 @@ class ColorPLDDT(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         _50: ColorSocket
-        """<50"""
+        """Color for pLDTT < 50"""
         _70: ColorSocket
-        """<70"""
+        """Color for 50 < pLDTT < 70"""
         socket_3: ColorSocket
-        """<90"""
+        """Color for 70 < pLDTT < 90"""
         socket_4: ColorSocket
-        """>90"""
+        """Color for 90 < pLDTT"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """Assigned color based on the pLDTT score"""
 
     if TYPE_CHECKING:
 
@@ -2509,7 +4324,48 @@ class ColorPLDDT(AssetGeometryGroup):
 
 
 class ColorRainbow(AssetGeometryGroup):
-    """Color Rainbow"""
+    """
+    Color Rainbow
+
+    Parameters
+    ----------
+    factor : InputMenu | Literal["Residue", "Chain", "Structure"]
+        Factor
+    color_space : InputMenu | Literal["HSV", "OKLab"]
+        Color Space
+    offset : InputFloat
+        Offset the starting hue of the rainbow colors. HSV is 0-1 for the entire rainbow, OKLab is -Pi to Pi for the rainbow.
+    hsl_saturation : InputFloat
+        The `Saturation` value of the rainbow colors
+    hsl_value : InputFloat
+        The `Value` value of the resulting rainbow colors
+    oklab_luminance : InputFloat
+        OKLab Luminance
+    oklab_chroma : InputFloat
+        OKLab Chroma
+
+    Inputs
+    ------
+    i.factor : MenuSocket
+        Factor
+    i.color_space : MenuSocket
+        Color Space
+    i.offset : FloatSocket
+        Offset the starting hue of the rainbow colors. HSV is 0-1 for the entire rainbow, OKLab is -Pi to Pi for the rainbow.
+    i.hsl_saturation : FloatSocket
+        The `Saturation` value of the rainbow colors
+    i.hsl_value : FloatSocket
+        The `Value` value of the resulting rainbow colors
+    i.oklab_luminance : FloatSocket
+        OKLab Luminance
+    i.oklab_chroma : FloatSocket
+        OKLab Chroma
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The generated color
+    """
 
     _name = "Color Rainbow"
     _asset_name = "Color Rainbow"
@@ -2521,11 +4377,11 @@ class ColorRainbow(AssetGeometryGroup):
         color_space: MenuSocket
         """Color Space"""
         offset: FloatSocket
-        """Offset"""
+        """Offset the starting hue of the rainbow colors. HSV is 0-1 for the entire rainbow, OKLab is -Pi to Pi for the rainbow."""
         hsl_saturation: FloatSocket
-        """HSL Saturation"""
+        """The `Saturation` value of the rainbow colors"""
         hsl_value: FloatSocket
-        """HSL Value"""
+        """The `Value` value of the resulting rainbow colors"""
         oklab_luminance: FloatSocket
         """OKLab Luminance"""
         oklab_chroma: FloatSocket
@@ -2533,7 +4389,7 @@ class ColorRainbow(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The generated color"""
 
     if TYPE_CHECKING:
 
@@ -2566,7 +4422,132 @@ class ColorRainbow(AssetGeometryGroup):
 
 
 class ColorResName(AssetGeometryGroup):
-    """Color Res Name"""
+    """
+    Color Res Name
+
+    Parameters
+    ----------
+    ala : InputColor
+        Set the color for the residue ALA
+    arg : InputColor
+        Set the color for the residue ARG
+    asn : InputColor
+        Set the color for the residue ASN
+    asp : InputColor
+        Set the color for the residue ASP
+    cys : InputColor
+        Set the color for the residue CYS
+    glu : InputColor
+        Set the color for the residue GLU
+    gln : InputColor
+        Set the color for the residue GLN
+    gly : InputColor
+        Set the color for the residue GLY
+    his : InputColor
+        Set the color for the residue HIS
+    ile : InputColor
+        Set the color for the residue ILE
+    leu : InputColor
+        Set the color for the residue LEU
+    lys : InputColor
+        Set the color for the residue LYS
+    met : InputColor
+        Set the color for the residue MET
+    phe : InputColor
+        Set the color for the residue PHE
+    pro : InputColor
+        Set the color for the residue PRO
+    ser : InputColor
+        Set the color for the residue SER
+    thr : InputColor
+        Set the color for the residue THR
+    trp : InputColor
+        Set the color for the residue TRP
+    tyr : InputColor
+        Set the color for the residue TYR
+    val : InputColor
+        Set the color for the residue VAL
+    a : InputColor
+        Set the color for the residue A
+    c : InputColor
+        Set the color for the residue C
+    g : InputColor
+        Set the color for the residue G
+    t : InputColor
+        Set the color for the residue T
+    ra : InputColor
+        Set the color for the residue rA
+    rc : InputColor
+        Set the color for the residue rC
+    rg : InputColor
+        Set the color for the residue rG
+    ru : InputColor
+        Set the color for the residue rU
+
+    Inputs
+    ------
+    i.ala : ColorSocket
+        Set the color for the residue ALA
+    i.arg : ColorSocket
+        Set the color for the residue ARG
+    i.asn : ColorSocket
+        Set the color for the residue ASN
+    i.asp : ColorSocket
+        Set the color for the residue ASP
+    i.cys : ColorSocket
+        Set the color for the residue CYS
+    i.glu : ColorSocket
+        Set the color for the residue GLU
+    i.gln : ColorSocket
+        Set the color for the residue GLN
+    i.gly : ColorSocket
+        Set the color for the residue GLY
+    i.his : ColorSocket
+        Set the color for the residue HIS
+    i.ile : ColorSocket
+        Set the color for the residue ILE
+    i.leu : ColorSocket
+        Set the color for the residue LEU
+    i.lys : ColorSocket
+        Set the color for the residue LYS
+    i.met : ColorSocket
+        Set the color for the residue MET
+    i.phe : ColorSocket
+        Set the color for the residue PHE
+    i.pro : ColorSocket
+        Set the color for the residue PRO
+    i.ser : ColorSocket
+        Set the color for the residue SER
+    i.thr : ColorSocket
+        Set the color for the residue THR
+    i.trp : ColorSocket
+        Set the color for the residue TRP
+    i.tyr : ColorSocket
+        Set the color for the residue TYR
+    i.val : ColorSocket
+        Set the color for the residue VAL
+    i.a : ColorSocket
+        Set the color for the residue A
+    i.c : ColorSocket
+        Set the color for the residue C
+    i.g : ColorSocket
+        Set the color for the residue G
+    i.t : ColorSocket
+        Set the color for the residue T
+    i.ra : ColorSocket
+        Set the color for the residue rA
+    i.rc : ColorSocket
+        Set the color for the residue rC
+    i.rg : ColorSocket
+        Set the color for the residue rG
+    i.ru : ColorSocket
+        Set the color for the residue rU
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    """
 
     _name = "Color Res Name"
     _asset_name = "Color Res Name"
@@ -2574,61 +4555,61 @@ class ColorResName(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         ala: ColorSocket
-        """ALA"""
+        """Set the color for the residue ALA"""
         arg: ColorSocket
-        """ARG"""
+        """Set the color for the residue ARG"""
         asn: ColorSocket
-        """ASN"""
+        """Set the color for the residue ASN"""
         asp: ColorSocket
-        """ASP"""
+        """Set the color for the residue ASP"""
         cys: ColorSocket
-        """CYS"""
+        """Set the color for the residue CYS"""
         glu: ColorSocket
-        """GLU"""
+        """Set the color for the residue GLU"""
         gln: ColorSocket
-        """GLN"""
+        """Set the color for the residue GLN"""
         gly: ColorSocket
-        """GLY"""
+        """Set the color for the residue GLY"""
         his: ColorSocket
-        """HIS"""
+        """Set the color for the residue HIS"""
         ile: ColorSocket
-        """ILE"""
+        """Set the color for the residue ILE"""
         leu: ColorSocket
-        """LEU"""
+        """Set the color for the residue LEU"""
         lys: ColorSocket
-        """LYS"""
+        """Set the color for the residue LYS"""
         met: ColorSocket
-        """MET"""
+        """Set the color for the residue MET"""
         phe: ColorSocket
-        """PHE"""
+        """Set the color for the residue PHE"""
         pro: ColorSocket
-        """PRO"""
+        """Set the color for the residue PRO"""
         ser: ColorSocket
-        """SER"""
+        """Set the color for the residue SER"""
         thr: ColorSocket
-        """THR"""
+        """Set the color for the residue THR"""
         trp: ColorSocket
-        """TRP"""
+        """Set the color for the residue TRP"""
         tyr: ColorSocket
-        """TYR"""
+        """Set the color for the residue TYR"""
         val: ColorSocket
-        """VAL"""
+        """Set the color for the residue VAL"""
         a: ColorSocket
-        """A"""
+        """Set the color for the residue A"""
         c: ColorSocket
-        """C"""
+        """Set the color for the residue C"""
         g: ColorSocket
-        """G"""
+        """Set the color for the residue G"""
         t: ColorSocket
-        """T"""
+        """Set the color for the residue T"""
         ra: ColorSocket
-        """rA"""
+        """Set the color for the residue rA"""
         rc: ColorSocket
-        """rC"""
+        """Set the color for the residue rC"""
         rg: ColorSocket
-        """rG"""
+        """Set the color for the residue rG"""
         ru: ColorSocket
-        """rU"""
+        """Set the color for the residue rU"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
@@ -2707,7 +4688,36 @@ class ColorResName(AssetGeometryGroup):
 
 
 class ColorSecondaryStructure(AssetGeometryGroup):
-    """Color Secondary Structure"""
+    """
+    Color Secondary Structure
+
+    Parameters
+    ----------
+    helix : InputColor
+        Color to set for alpha helices
+    sheet : InputColor
+        Color to set for beta-sheets
+    loop : InputColor
+        Color to set for loops in the structure
+    other : InputColor
+        Other
+
+    Inputs
+    ------
+    i.helix : ColorSocket
+        Color to set for alpha helices
+    i.sheet : ColorSocket
+        Color to set for beta-sheets
+    i.loop : ColorSocket
+        Color to set for loops in the structure
+    i.other : ColorSocket
+        Other
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The colors based on secondary structure
+    """
 
     _name = "Color Secondary Structure"
     _asset_name = "Color Secondary Structure"
@@ -2715,17 +4725,17 @@ class ColorSecondaryStructure(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         helix: ColorSocket
-        """Helix"""
+        """Color to set for alpha helices"""
         sheet: ColorSocket
-        """Sheet"""
+        """Color to set for beta-sheets"""
         loop: ColorSocket
-        """Loop"""
+        """Color to set for loops in the structure"""
         other: ColorSocket
         """Other"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The colors based on secondary structure"""
 
     if TYPE_CHECKING:
 
@@ -2747,7 +4757,28 @@ class ColorSecondaryStructure(AssetGeometryGroup):
 
 
 class ColorToLCh(AssetGeometryGroup):
-    """Color to LCh"""
+    """
+    Color to LCh
+
+    Parameters
+    ----------
+    color : InputColor
+        Color
+
+    Inputs
+    ------
+    i.color : ColorSocket
+        Color
+
+    Outputs
+    -------
+    o.l : FloatSocket
+        L
+    o.c : FloatSocket
+        C
+    o.h : FloatSocket
+        h
+    """
 
     _name = "Color to LCh"
     _asset_name = "Color to LCh"
@@ -2779,7 +4810,24 @@ class ColorToLCh(AssetGeometryGroup):
 
 
 class ColorToOKLab(AssetGeometryGroup):
-    """Color to OKLab"""
+    """
+    Color to OKLab
+
+    Parameters
+    ----------
+    color : InputColor
+        Color
+
+    Inputs
+    ------
+    i.color : ColorSocket
+        Color
+
+    Outputs
+    -------
+    o.oklab : VectorSocket
+        OKLab
+    """
 
     _name = "Color to OKLab"
     _asset_name = "Color to OKLab"
@@ -2808,7 +4856,26 @@ class ColorToOKLab(AssetGeometryGroup):
 
 
 class ContainsGeometry(AssetGeometryGroup):
-    """Contains Geometry"""
+    """
+    Contains Geometry
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+
+    Outputs
+    -------
+    o.not_empty : BooleanSocket
+        True when the input contains some geometry
+    o.empty : BooleanSocket
+        True when the input contains no geometry
+    """
 
     _name = "Contains Geometry"
     _asset_name = "Contains Geometry"
@@ -2820,9 +4887,9 @@ class ContainsGeometry(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         not_empty: BooleanSocket
-        """Not Empty"""
+        """True when the input contains some geometry"""
         empty: BooleanSocket
-        """Empty"""
+        """True when the input contains no geometry"""
 
     if TYPE_CHECKING:
 
@@ -2839,7 +4906,14 @@ class ContainsGeometry(AssetGeometryGroup):
 
 
 class CumulativeLength(AssetGeometryGroup):
-    """Cumulative Length"""
+    """
+    Cumulative Length
+
+    Outputs
+    -------
+    o.length : FloatSocket
+        The length along the current spline added to all previous spline lengths
+    """
 
     _name = "Cumulative Length"
     _asset_name = "Cumulative Length"
@@ -2850,7 +4924,7 @@ class CumulativeLength(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         length: FloatSocket
-        """Length"""
+        """The length along the current spline added to all previous spline lengths"""
 
     if TYPE_CHECKING:
 
@@ -2864,7 +4938,64 @@ class CumulativeLength(AssetGeometryGroup):
 
 
 class CurveCustomProfile(AssetGeometryGroup):
-    """Curve Custom Profile"""
+    """
+    Curve Custom Profile
+
+    Parameters
+    ----------
+    curve : InputGeometry
+        Curve
+    subdivisions : InputInteger
+        Subdivisions
+    profile_type : InputMenu | Literal["Default Profile", "Custom Profile"]
+        Profile Type
+    uv_map : InputBoolean
+        Compute and store the `uv_map` attribute on the `Face Corner` domain of the final mesh
+    u_component : InputMenu | Literal["Factor", "Length"]
+        U Component
+    socket_6 : InputRotation
+        Profile Rotation
+    profile_scale : InputVector
+        Profile Scale
+    profile_curve : InputGeometry
+        Profile Curve
+    profile_resolution : InputInteger
+        Profile Resolution
+    profile_radius : InputFloat
+        Profile Radius
+    input_14 : InputFloat
+        Profile Rotation
+
+    Inputs
+    ------
+    i.curve : GeometrySocket
+        Curve
+    i.subdivisions : IntegerSocket
+        Subdivisions
+    i.profile_type : MenuSocket
+        Profile Type
+    i.uv_map : BooleanSocket
+        Compute and store the `uv_map` attribute on the `Face Corner` domain of the final mesh
+    i.u_component : MenuSocket
+        U Component
+    i.socket_6 : RotationSocket
+        Profile Rotation
+    i.profile_scale : VectorSocket
+        Profile Scale
+    i.profile_curve : GeometrySocket
+        Profile Curve
+    i.profile_resolution : IntegerSocket
+        Profile Resolution
+    i.profile_radius : FloatSocket
+        Profile Radius
+    i.input_14 : FloatSocket
+        Profile Rotation
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Curve Custom Profile"
     _asset_name = "Curve Custom Profile"
@@ -2878,7 +5009,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         profile_type: MenuSocket
         """Profile Type"""
         uv_map: BooleanSocket
-        """UV Map"""
+        """Compute and store the `uv_map` attribute on the `Face Corner` domain of the final mesh"""
         u_component: MenuSocket
         """U Component"""
         socket_6: RotationSocket
@@ -2938,7 +5069,44 @@ class CurveCustomProfile(AssetGeometryGroup):
 
 
 class CurveEndpointValues(AssetGeometryGroup):
-    """Output a different integer value for the endpoints of a curve and the middle of a curve"""
+    """
+    Output a different integer value for the endpoints of a curve and the middle of a curve
+
+    Parameters
+    ----------
+    start_size : InputInteger
+        The size of the starting points of the curve
+    start_value : InputInteger
+        The value to output for the starting points of the curve
+    other_value : InputInteger
+        The value for the points which aren't part of the start or end points
+    end_size : InputInteger
+        The size of the end points
+    end_value : InputInteger
+        The value that is returned for the end points of the curve
+
+    Inputs
+    ------
+    i.start_size : IntegerSocket
+        The size of the starting points of the curve
+    i.start_value : IntegerSocket
+        The value to output for the starting points of the curve
+    i.other_value : IntegerSocket
+        The value for the points which aren't part of the start or end points
+    i.end_size : IntegerSocket
+        The size of the end points
+    i.end_value : IntegerSocket
+        The value that is returned for the end points of the curve
+
+    Outputs
+    -------
+    o.value : IntegerSocket
+        The value for the point, determined by the inputs if it is in the start, end or 'other' region
+    o.start_selection : BooleanSocket
+        The `n` points at the start of a spline determined by `Start Size`
+    o.end_selection : BooleanSocket
+        The `n` points at the end of a spline determined by `End Size`
+    """
 
     _name = "Curve Endpoint Values"
     _asset_name = "Curve Endpoint Values"
@@ -2946,23 +5114,23 @@ class CurveEndpointValues(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         start_size: IntegerSocket
-        """Start Size"""
+        """The size of the starting points of the curve"""
         start_value: IntegerSocket
-        """Start Value"""
+        """The value to output for the starting points of the curve"""
         other_value: IntegerSocket
-        """Other Value"""
+        """The value for the points which aren't part of the start or end points"""
         end_size: IntegerSocket
-        """End Size"""
+        """The size of the end points"""
         end_value: IntegerSocket
-        """End Value"""
+        """The value that is returned for the end points of the curve"""
 
     class _Outputs(SocketAccessor):
         value: IntegerSocket
-        """Value"""
+        """The value for the point, determined by the inputs if it is in the start, end or 'other' region"""
         start_selection: BooleanSocket
-        """Start Selection"""
+        """The `n` points at the start of a spline determined by `Start Size`"""
         end_selection: BooleanSocket
-        """End Selection"""
+        """The `n` points at the end of a spline determined by `End Size`"""
 
     if TYPE_CHECKING:
 
@@ -2991,7 +5159,36 @@ class CurveEndpointValues(AssetGeometryGroup):
 
 
 class CurveOffsetDihedral(AssetGeometryGroup):
-    """Offset from the current point a number of points, then use their `Position` and `Normal` to calculat a dihdral angle between them"""
+    """
+    Offset from the current point a number of points, then use their `Position` and `Normal` to calculat a dihdral angle between them
+
+    Parameters
+    ----------
+    position : InputVector
+        The vector to use as the B & C components for `Dihedral Angle` calculation
+    normal : InputVector
+        The normal that will be added the `Position` to create the A & D components of the dihedral calcaulation
+    index : InputInteger
+        The index of the current point to calculate from
+    offset : InputInteger
+        The number of points to offset before calculating the angle
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        The vector to use as the B & C components for `Dihedral Angle` calculation
+    i.normal : VectorSocket
+        The normal that will be added the `Position` to create the A & D components of the dihedral calcaulation
+    i.index : IntegerSocket
+        The index of the current point to calculate from
+    i.offset : IntegerSocket
+        The number of points to offset before calculating the angle
+
+    Outputs
+    -------
+    o.angle : FloatSocket
+        The calculated angle in radians
+    """
 
     _name = "Curve Offset Dihedral"
     _asset_name = "Curve Offset Dihedral"
@@ -2999,17 +5196,17 @@ class CurveOffsetDihedral(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """The vector to use as the B & C components for `Dihedral Angle` calculation"""
         normal: VectorSocket
-        """Normal"""
+        """The normal that will be added the `Position` to create the A & D components of the dihedral calcaulation"""
         index: IntegerSocket
-        """Index"""
+        """The index of the current point to calculate from"""
         offset: IntegerSocket
-        """Offset"""
+        """The number of points to offset before calculating the angle"""
 
     class _Outputs(SocketAccessor):
         angle: FloatSocket
-        """Angle"""
+        """The calculated angle in radians"""
 
     if TYPE_CHECKING:
 
@@ -3036,7 +5233,48 @@ class CurveOffsetDihedral(AssetGeometryGroup):
 
 
 class CurveOffsetDot(AssetGeometryGroup):
-    """Curve Offset Dot"""
+    """
+    Curve Offset Dot
+
+    Parameters
+    ----------
+    normal : InputVector
+        Normal
+    offset : InputInteger
+        Offset
+    threshold_direction : InputMenu | Literal["Less Than", "Greater Than"]
+        Threshold Direction
+    threshold_cutoff : InputFloat
+        Threshold Cutoff
+    rotation_axis : InputVector
+        Rotation Axis
+    rotation_amount : InputFloat
+        Rotation Amount
+
+    Inputs
+    ------
+    i.normal : VectorSocket
+        Normal
+    i.offset : IntegerSocket
+        Offset
+    i.threshold_direction : MenuSocket
+        Threshold Direction
+    i.threshold_cutoff : FloatSocket
+        Threshold Cutoff
+    i.rotation_axis : VectorSocket
+        Rotation Axis
+    i.rotation_amount : FloatSocket
+        Rotation Amount
+
+    Outputs
+    -------
+    o.thresholded : BooleanSocket
+        Thresholded
+    o.leading : IntegerSocket
+        Leading
+    o.rotation : RotationSocket
+        Rotation
+    """
 
     _name = "Curve Offset Dot"
     _asset_name = "Curve Offset Dot"
@@ -3094,7 +5332,24 @@ class CurveOffsetDot(AssetGeometryGroup):
 
 
 class CurveRotation(AssetGeometryGroup):
-    """Computes the rotation of the point on the curve, by default using the `Normal` attribute and the `Tangent` axis"""
+    """
+    Computes the rotation of the point on the curve, by default using the `Normal` attribute and the `Tangent` axis
+
+    Parameters
+    ----------
+    normal : InputVector
+        The default direction to use as the Secondary Axis / X axis when computing the rotation
+
+    Inputs
+    ------
+    i.normal : VectorSocket
+        The default direction to use as the Secondary Axis / X axis when computing the rotation
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        The computed rotation for the point on the curve
+    """
 
     _name = "Curve Rotation"
     _asset_name = "Curve Rotation"
@@ -3102,11 +5357,11 @@ class CurveRotation(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         normal: VectorSocket
-        """Normal"""
+        """The default direction to use as the Secondary Axis / X axis when computing the rotation"""
 
     class _Outputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The computed rotation for the point on the curve"""
 
     if TYPE_CHECKING:
 
@@ -3123,7 +5378,14 @@ class CurveRotation(AssetGeometryGroup):
 
 
 class CurveTransform(AssetGeometryGroup):
-    """Calculates the transformation matrix for the point on the curve. Position is taken from the `Position`, `Rotation` is calculated from the `Normal` and `Tangent` values, and the `Radius` drives the scale"""
+    """
+    Calculates the transformation matrix for the point on the curve. Position is taken from the `Position`, `Rotation` is calculated from the `Normal` and `Tangent` values, and the `Radius` drives the scale
+
+    Outputs
+    -------
+    o.transform : MatrixSocket
+        The combine 4X4 transformation matrix for the point of the curve
+    """
 
     _name = "Curve Transform"
     _asset_name = "Curve Transform"
@@ -3134,7 +5396,7 @@ class CurveTransform(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         transform: MatrixSocket
-        """Transform"""
+        """The combine 4X4 transformation matrix for the point of the curve"""
 
     if TYPE_CHECKING:
 
@@ -3148,7 +5410,18 @@ class CurveTransform(AssetGeometryGroup):
 
 
 class CurveVectors(AssetGeometryGroup):
-    """Curve Vectors"""
+    """
+    Curve Vectors
+
+    Outputs
+    -------
+    o.normal : VectorSocket
+        The normal of the control point. Used for calculating the rotation for the point and when calculating `Curve to Mesh`
+    o.tangent : VectorSocket
+        The tangent of the point, which is calculated as the direction from the previous point to the next point
+    o.bitangent : VectorSocket
+        The cross product of the Normal and the Tangent
+    """
 
     _name = "Curve Vectors"
     _asset_name = "Curve Vectors"
@@ -3159,11 +5432,11 @@ class CurveVectors(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         normal: VectorSocket
-        """Normal"""
+        """The normal of the control point. Used for calculating the rotation for the point and when calculating `Curve to Mesh`"""
         tangent: VectorSocket
-        """Tangent"""
+        """The tangent of the point, which is calculated as the direction from the previous point to the next point"""
         bitangent: VectorSocket
-        """Bitangent"""
+        """The cross product of the Normal and the Tangent"""
 
     if TYPE_CHECKING:
 
@@ -3177,7 +5450,48 @@ class CurveVectors(AssetGeometryGroup):
 
 
 class CurveVisualize(AssetGeometryGroup):
-    """Curve Visualize"""
+    """
+    Curve Visualize
+
+    Parameters
+    ----------
+    curve : InputGeometry
+        Curve
+    selection : InputBoolean
+        Selection
+    position : InputVector
+        Position
+    normal : InputVector
+        Normal
+    handles : InputBoolean
+        Handles
+    value : InputFloat
+        Value
+    arrow_size : InputFloat
+        Arrow Size
+
+    Inputs
+    ------
+    i.curve : GeometrySocket
+        Curve
+    i.selection : BooleanSocket
+        Selection
+    i.position : VectorSocket
+        Position
+    i.normal : VectorSocket
+        Normal
+    i.handles : BooleanSocket
+        Handles
+    i.value : FloatSocket
+        Value
+    i.arrow_size : FloatSocket
+        Arrow Size
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    """
 
     _name = "Curve Visualize"
     _asset_name = "Curve Visualize"
@@ -3234,7 +5548,40 @@ class CurveVisualize(AssetGeometryGroup):
 
 
 class DNAFromCurve(AssetGeometryGroup):
-    """DNA From Curve"""
+    """
+    DNA From Curve
+
+    Parameters
+    ----------
+    curves : InputGeometry
+        Curves
+    base_resolution : InputInteger
+        Base Resolution
+    socket_3 : InputMenu | Literal["Static", "Simulate"]
+        Menu
+    wind : InputFloat
+        Wind
+    socket_5 : InputMenu | Literal["Instance", "Realize"]
+        Menu
+
+    Inputs
+    ------
+    i.curves : GeometrySocket
+        Curves
+    i.base_resolution : IntegerSocket
+        Base Resolution
+    i.socket_3 : MenuSocket
+        Menu
+    i.wind : FloatSocket
+        Wind
+    i.socket_5 : MenuSocket
+        Menu
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "DNA From Curve"
     _asset_name = "DNA From Curve"
@@ -3283,7 +5630,72 @@ class DNAFromCurve(AssetGeometryGroup):
 
 
 class DensityStyleISOSurface(AssetGeometryGroup):
-    """Density Style ISO Surface"""
+    """
+    Density Style ISO Surface
+
+    Parameters
+    ----------
+    volume : InputGeometry
+        Input geometry
+    visible : InputBoolean
+        Visibility of style
+    threshold : InputFloat
+        ISO value
+    show_contours : InputBoolean
+        Whether to show surface contours
+    only_contours : InputBoolean
+        Only show contour edges
+    contour_thickness : InputFloat
+        Thickness of the contour edges
+    contour_color : InputColor
+        Color of contour edges
+    slice_width : InputVector
+        1
+    slice_center : InputVector
+        Slice Center
+    negative_color : InputColor
+        Color for negative ISO values
+    positive_color : InputColor
+        Color for positive ISO values
+    shade_smooth : InputBoolean
+        Use smooth shading for surface
+    material : InputMaterial
+        Material to use for this surface
+
+    Inputs
+    ------
+    i.volume : GeometrySocket
+        Input geometry
+    i.visible : BooleanSocket
+        Visibility of style
+    i.threshold : FloatSocket
+        ISO value
+    i.show_contours : BooleanSocket
+        Whether to show surface contours
+    i.only_contours : BooleanSocket
+        Only show contour edges
+    i.contour_thickness : FloatSocket
+        Thickness of the contour edges
+    i.contour_color : ColorSocket
+        Color of contour edges
+    i.slice_width : VectorSocket
+        1
+    i.slice_center : VectorSocket
+        Slice Center
+    i.negative_color : ColorSocket
+        Color for negative ISO values
+    i.positive_color : ColorSocket
+        Color for positive ISO values
+    i.shade_smooth : BooleanSocket
+        Use smooth shading for surface
+    i.material : MaterialSocket
+        Material to use for this surface
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        ISO surface geometry output
+    """
 
     _name = "Density Style ISO Surface"
     _asset_name = "Density Style ISO Surface"
@@ -3291,35 +5703,35 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         volume: GeometrySocket
-        """Volume"""
+        """Input geometry"""
         visible: BooleanSocket
-        """Visible"""
+        """Visibility of style"""
         threshold: FloatSocket
-        """Threshold"""
+        """ISO value"""
         show_contours: BooleanSocket
-        """Show Contours"""
+        """Whether to show surface contours"""
         only_contours: BooleanSocket
-        """Only Contours"""
+        """Only show contour edges"""
         contour_thickness: FloatSocket
-        """Contour Thickness"""
+        """Thickness of the contour edges"""
         contour_color: ColorSocket
-        """Contour Color"""
+        """Color of contour edges"""
         slice_width: VectorSocket
-        """Slice Width"""
+        """1"""
         slice_center: VectorSocket
         """Slice Center"""
         negative_color: ColorSocket
-        """Negative Color"""
+        """Color for negative ISO values"""
         positive_color: ColorSocket
-        """Positive Color"""
+        """Color for positive ISO values"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Use smooth shading for surface"""
         material: MaterialSocket
-        """Material"""
+        """Material to use for this surface"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """ISO surface geometry output"""
 
     if TYPE_CHECKING:
 
@@ -3364,7 +5776,44 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
 
 class DensityStyleSurface(AssetGeometryGroup):
-    """Density Style Surface"""
+    """
+    Density Style Surface
+
+    Parameters
+    ----------
+    volume : InputGeometry
+        Volume
+    threshold : InputFloat
+        Threshold
+    shade_smooth : InputBoolean
+        Apply smooth shading to the created geometry
+    hide_dust : InputFloat
+        Hide Dust
+    color : InputColor
+        Color
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.volume : GeometrySocket
+        Volume
+    i.threshold : FloatSocket
+        Threshold
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading to the created geometry
+    i.hide_dust : FloatSocket
+        Hide Dust
+    i.color : ColorSocket
+        Color
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Density Style Surface"
     _asset_name = "Density Style Surface"
@@ -3376,17 +5825,17 @@ class DensityStyleSurface(AssetGeometryGroup):
         threshold: FloatSocket
         """Threshold"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         hide_dust: FloatSocket
         """Hide Dust"""
         color: ColorSocket
         """Color"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -3417,7 +5866,48 @@ class DensityStyleSurface(AssetGeometryGroup):
 
 
 class DensityStyleWire(AssetGeometryGroup):
-    """Density Style Wire"""
+    """
+    Density Style Wire
+
+    Parameters
+    ----------
+    volume : InputGeometry
+        Volume
+    threshold : InputFloat
+        Threshold
+    hide_dust : InputFloat
+        Hide Dust
+    wire_radius : InputFloat
+        Radius of the created wire (in relative nm)
+    wire_resolution : InputInteger
+        Wire Resolution
+    color : InputColor
+        Color
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.volume : GeometrySocket
+        Volume
+    i.threshold : FloatSocket
+        Threshold
+    i.hide_dust : FloatSocket
+        Hide Dust
+    i.wire_radius : FloatSocket
+        Radius of the created wire (in relative nm)
+    i.wire_resolution : IntegerSocket
+        Wire Resolution
+    i.color : ColorSocket
+        Color
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Density Style Wire"
     _asset_name = "Density Style Wire"
@@ -3431,17 +5921,17 @@ class DensityStyleWire(AssetGeometryGroup):
         hide_dust: FloatSocket
         """Hide Dust"""
         wire_radius: FloatSocket
-        """Wire Radius"""
+        """Radius of the created wire (in relative nm)"""
         wire_resolution: IntegerSocket
         """Wire Resolution"""
         color: ColorSocket
         """Color"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -3474,7 +5964,42 @@ class DensityStyleWire(AssetGeometryGroup):
 
 
 class DihedralAngle(AssetGeometryGroup):
-    """Dihedral Angle"""
+    """
+    Dihedral Angle
+
+    Parameters
+    ----------
+    a : InputVector
+        First vector for the calculation, which draws a line to B
+    b : InputVector
+        Second vector for the calculation, which receives a line from A and draws a line to C
+    c : InputVector
+        Third vector for the calculation, which receives a line from B and draws a line to D
+    d : InputVector
+        Last vector for the calculation, which is the end point of the line from D
+
+    Inputs
+    ------
+    i.a : VectorSocket
+        First vector for the calculation, which draws a line to B
+    i.b : VectorSocket
+        Second vector for the calculation, which receives a line from A and draws a line to C
+    i.c : VectorSocket
+        Third vector for the calculation, which receives a line from B and draws a line to D
+    i.d : VectorSocket
+        Last vector for the calculation, which is the end point of the line from D
+
+    Outputs
+    -------
+    o.angle : FloatSocket
+        The angle between the vectors AB and CD, when made perpendicular to BC.
+    o.ba_bc : VectorSocket
+        The vector BA when made perpendicular to the axis BC
+    o.cd_bc : VectorSocket
+        The Vector CD when makde perpendicular to the axis BC
+    o.bc : VectorSocket
+        The axis vector BC
+    """
 
     _name = "Dihedral Angle"
     _asset_name = "Dihedral Angle"
@@ -3482,23 +6007,23 @@ class DihedralAngle(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
-        """A"""
+        """First vector for the calculation, which draws a line to B"""
         b: VectorSocket
-        """B"""
+        """Second vector for the calculation, which receives a line from A and draws a line to C"""
         c: VectorSocket
-        """C"""
+        """Third vector for the calculation, which receives a line from B and draws a line to D"""
         d: VectorSocket
-        """D"""
+        """Last vector for the calculation, which is the end point of the line from D"""
 
     class _Outputs(SocketAccessor):
         angle: FloatSocket
-        """Angle"""
+        """The angle between the vectors AB and CD, when made perpendicular to BC."""
         ba_bc: VectorSocket
-        """BA⟂(BC)"""
+        """The vector BA when made perpendicular to the axis BC"""
         cd_bc: VectorSocket
-        """CD⟂(BC)"""
+        """The Vector CD when makde perpendicular to the axis BC"""
         bc: VectorSocket
-        """BC"""
+        """The axis vector BC"""
 
     if TYPE_CHECKING:
 
@@ -3518,7 +6043,18 @@ class DihedralAngle(AssetGeometryGroup):
 
 
 class DihedralChiAngle(AssetGeometryGroup):
-    """Dihedral Chi Angle"""
+    """
+    Dihedral Chi Angle
+
+    Outputs
+    -------
+    o.angle : FloatSocket
+        Angle
+    o.up : VectorSocket
+        Up
+    o.axis : VectorSocket
+        Axis
+    """
 
     _name = "Dihedral Chi Angle"
     _asset_name = "Dihedral Chi Angle"
@@ -3547,7 +6083,18 @@ class DihedralChiAngle(AssetGeometryGroup):
 
 
 class DihedralNucleicAngle(AssetGeometryGroup):
-    """Dihedral Nucleic Angle"""
+    """
+    Dihedral Nucleic Angle
+
+    Outputs
+    -------
+    o.angle : FloatSocket
+        The angle between the vectors AB and CD, when made perpendicular to BC.
+    o.up : VectorSocket
+        The vector BA when made perpendicular to the axis BC
+    o.axis : VectorSocket
+        The axis vector BC
+    """
 
     _name = "Dihedral Nucleic Angle"
     _asset_name = "Dihedral Nucleic Angle"
@@ -3558,11 +6105,11 @@ class DihedralNucleicAngle(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         angle: FloatSocket
-        """Angle"""
+        """The angle between the vectors AB and CD, when made perpendicular to BC."""
         up: VectorSocket
-        """Up"""
+        """The vector BA when made perpendicular to the axis BC"""
         axis: VectorSocket
-        """Axis"""
+        """The axis vector BC"""
 
     if TYPE_CHECKING:
 
@@ -3576,7 +6123,28 @@ class DihedralNucleicAngle(AssetGeometryGroup):
 
 
 class DihedralPhi(AssetGeometryGroup):
-    """Dihedral Phi"""
+    """
+    Dihedral Phi
+
+    Parameters
+    ----------
+    menu : InputMenu | Literal["Read", "Compute"]
+        Menu
+
+    Inputs
+    ------
+    i.menu : MenuSocket
+        Menu
+
+    Outputs
+    -------
+    o.phi : FloatSocket
+        The calculated `Phi` angle for the residue, in the range of `(-pi, pi)`
+    o.up : VectorSocket
+        The perpendicular vector from the line of BC to the point A
+    o.axis : VectorSocket
+        The vector BC corresponding to the backbone vector around which the angle is calculated
+    """
 
     _name = "Dihedral Phi"
     _asset_name = "Dihedral Phi"
@@ -3588,11 +6156,11 @@ class DihedralPhi(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         phi: FloatSocket
-        """Phi"""
+        """The calculated `Phi` angle for the residue, in the range of `(-pi, pi)`"""
         up: VectorSocket
-        """Up"""
+        """The perpendicular vector from the line of BC to the point A"""
         axis: VectorSocket
-        """Axis"""
+        """The vector BC corresponding to the backbone vector around which the angle is calculated"""
 
     if TYPE_CHECKING:
 
@@ -3609,7 +6177,28 @@ class DihedralPhi(AssetGeometryGroup):
 
 
 class DihedralPsi(AssetGeometryGroup):
-    """Dihedral Psi"""
+    """
+    Dihedral Psi
+
+    Parameters
+    ----------
+    method : InputMenu | Literal["Read", "Compute"]
+        Method
+
+    Inputs
+    ------
+    i.method : MenuSocket
+        Method
+
+    Outputs
+    -------
+    o.psi : FloatSocket
+        The calculated `Psi` angle for the residue, in the range of `(-pi, pi)`
+    o.up : VectorSocket
+        The perpendicular vector from the line of BC to the point A
+    o.axis : VectorSocket
+        The vector BC corresponding to the backbone vector around which the angle is calculated
+    """
 
     _name = "Dihedral Psi"
     _asset_name = "Dihedral Psi"
@@ -3621,11 +6210,11 @@ class DihedralPsi(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         psi: FloatSocket
-        """Psi"""
+        """The calculated `Psi` angle for the residue, in the range of `(-pi, pi)`"""
         up: VectorSocket
-        """Up"""
+        """The perpendicular vector from the line of BC to the point A"""
         axis: VectorSocket
-        """Axis"""
+        """The vector BC corresponding to the backbone vector around which the angle is calculated"""
 
     if TYPE_CHECKING:
 
@@ -3642,7 +6231,26 @@ class DihedralPsi(AssetGeometryGroup):
 
 
 class EdgeGroupID(AssetGeometryGroup):
-    """Edge Group ID"""
+    """
+    Edge Group ID
+
+    Parameters
+    ----------
+    group_id : InputInteger
+        Group ID
+
+    Inputs
+    ------
+    i.group_id : IntegerSocket
+        Group ID
+
+    Outputs
+    -------
+    o.difference : IntegerSocket
+        Difference
+    o.is_equal : BooleanSocket
+        Is Equal
+    """
 
     _name = "Edge Group ID"
     _asset_name = "Edge Group ID"
@@ -3673,7 +6281,38 @@ class EdgeGroupID(AssetGeometryGroup):
 
 
 class EdgeInfo(AssetGeometryGroup):
-    """Edge Info"""
+    """
+    Edge Info
+
+    Parameters
+    ----------
+    vertex_index : InputInteger
+        Vertex Index
+    edge_index : InputInteger
+        Index within the gorup of edges that are connected to this point
+
+    Inputs
+    ------
+    i.vertex_index : IntegerSocket
+        Vertex Index
+    i.edge_index : IntegerSocket
+        Index within the gorup of edges that are connected to this point
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Whether there is a valid edge corresponding to the given index
+    o.point_index : IntegerSocket
+        The index for the other point involved in this edge, -1 if not connected
+    o.point_position : VectorSocket
+        The position for the other point involved in this edge, (0, 0, 0) if not connected
+    o.edge_index : IntegerSocket
+        The index on the edge domain for the selected edge. -1 if not connected
+    o.edge_vector : VectorSocket
+        The vector along the selected edge. (0, 0, 0) if not connected
+    o.edge_length : FloatSocket
+        Length of the selected edge, -1 if not connected
+    """
 
     _name = "Edge Info"
     _asset_name = "Edge Info"
@@ -3683,21 +6322,21 @@ class EdgeInfo(AssetGeometryGroup):
         vertex_index: IntegerSocket
         """Vertex Index"""
         edge_index: IntegerSocket
-        """Edge Index"""
+        """Index within the gorup of edges that are connected to this point"""
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """Whether there is a valid edge corresponding to the given index"""
         point_index: IntegerSocket
-        """Point Index"""
+        """The index for the other point involved in this edge, -1 if not connected"""
         point_position: VectorSocket
-        """Point Position"""
+        """The position for the other point involved in this edge, (0, 0, 0) if not connected"""
         edge_index: IntegerSocket
-        """Edge Index"""
+        """The index on the edge domain for the selected edge. -1 if not connected"""
         edge_vector: VectorSocket
-        """Edge Vector"""
+        """The vector along the selected edge. (0, 0, 0) if not connected"""
         edge_length: FloatSocket
-        """Edge Length"""
+        """Length of the selected edge, -1 if not connected"""
 
     if TYPE_CHECKING:
 
@@ -3715,7 +6354,14 @@ class EdgeInfo(AssetGeometryGroup):
 
 
 class EdgeLength(AssetGeometryGroup):
-    """Edge Length"""
+    """
+    Edge Length
+
+    Outputs
+    -------
+    o.length : FloatSocket
+        Length
+    """
 
     _name = "Edge Length"
     _asset_name = "Edge Length"
@@ -3740,7 +6386,52 @@ class EdgeLength(AssetGeometryGroup):
 
 
 class EnsembleInstance(AssetGeometryGroup):
-    """Ensemble Instance"""
+    """
+    Ensemble Instance
+
+    Parameters
+    ----------
+    points : InputGeometry
+        Points
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    selection_type : InputMenu | Literal["Simple", "Precise"]
+        Selection Type
+    instances : InputCollection
+        Instances
+    fraction : InputFloat
+        Fraction
+    as_points : InputBoolean
+        As Points
+    point_radius : InputFloat
+        Point Radius
+    point_material : InputMaterial
+        Point Material
+
+    Inputs
+    ------
+    i.points : GeometrySocket
+        Points
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.selection_type : MenuSocket
+        Selection Type
+    i.instances : CollectionSocket
+        Instances
+    i.fraction : FloatSocket
+        Fraction
+    i.as_points : BooleanSocket
+        As Points
+    i.point_radius : FloatSocket
+        Point Radius
+    i.point_material : MaterialSocket
+        Point Material
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    """
 
     _name = "Ensemble Instance"
     _asset_name = "Ensemble Instance"
@@ -3750,7 +6441,7 @@ class EnsembleInstance(AssetGeometryGroup):
         points: GeometrySocket
         """Points"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         selection_type: MenuSocket
         """Selection Type"""
         instances: CollectionSocket
@@ -3801,7 +6492,24 @@ class EnsembleInstance(AssetGeometryGroup):
 
 
 class EntityID(AssetGeometryGroup):
-    """The `entity_id` attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)"""
+    """
+    The `entity_id` attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.entity_id : IntegerSocket
+        The `entity_id` attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)
+    """
 
     _name = "Entity ID"
     _asset_name = "Entity ID"
@@ -3813,6 +6521,7 @@ class EntityID(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         entity_id: IntegerSocket
+        """The `entity_id` attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)"""
 
     if TYPE_CHECKING:
 
@@ -3829,7 +6538,36 @@ class EntityID(AssetGeometryGroup):
 
 
 class EvaluateOnAtoms(AssetGeometryGroup):
-    """Evaluate on Atoms"""
+    """
+    Evaluate on Atoms
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry to get the bundle of
+    selection : InputBoolean
+        The parts of the geometry that go into the first output
+    closure : InputClosure
+        Closure
+    result : InputMenu | Literal["Geometry", "Bundle"]
+        Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output.
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry to get the bundle of
+    i.selection : BooleanSocket
+        The parts of the geometry that go into the first output
+    i.closure : ClosureSocket
+        Closure
+    i.result : MenuSocket
+        Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output.
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Evaluate on Atoms"
     _asset_name = "Evaluate on Atoms"
@@ -3837,13 +6575,13 @@ class EvaluateOnAtoms(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to get the bundle of"""
         selection: BooleanSocket
-        """Selection"""
+        """The parts of the geometry that go into the first output"""
         closure: ClosureSocket
         """Closure"""
         result: MenuSocket
-        """Result"""
+        """Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output."""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -3874,7 +6612,28 @@ class EvaluateOnAtoms(AssetGeometryGroup):
 
 
 class EvaluateOnInstances(AssetGeometryGroup):
-    """Evaluate on Instances"""
+    """
+    Evaluate on Instances
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry to split into two parts
+    closure : InputClosure
+        Closure
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry to split into two parts
+    i.closure : ClosureSocket
+        Closure
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Evaluate on Instances"
     _asset_name = "Evaluate on Instances"
@@ -3882,7 +6641,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to split into two parts"""
         closure: ClosureSocket
         """Closure"""
 
@@ -3906,7 +6665,32 @@ class EvaluateOnInstances(AssetGeometryGroup):
 
 
 class EvaluateOrderedBundles(AssetGeometryGroup):
-    """Evaluate Ordered Bundles"""
+    """
+    Evaluate Ordered Bundles
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    bundles : InputBundle
+        Bundles
+    prefix : InputString
+        Prefix
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.bundles : BundleSocket
+        Bundles
+    i.prefix : StringSocket
+        Prefix
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Evaluate Ordered Bundles"
     _asset_name = "Evaluate Ordered Bundles"
@@ -3943,7 +6727,38 @@ class EvaluateOrderedBundles(AssetGeometryGroup):
 
 
 class EvaluatePerGroup(AssetGeometryGroup):
-    """Evaluate Per Group"""
+    """
+    Evaluate Per Group
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry to split into two parts
+    closure : InputClosure
+        Closure
+    group : InputMenu | Literal["chain_id", "Group ID"]
+        Group
+    group_id : InputInteger
+        Group ID
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry to split into two parts
+    i.closure : ClosureSocket
+        Closure
+    i.group : MenuSocket
+        Group
+    i.group_id : IntegerSocket
+        Group ID
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    o.instances : GeometrySocket
+        Instances
+    """
 
     _name = "Evaluate Per Group"
     _asset_name = "Evaluate Per Group"
@@ -3951,7 +6766,7 @@ class EvaluatePerGroup(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to split into two parts"""
         closure: ClosureSocket
         """Closure"""
         group: MenuSocket
@@ -3990,7 +6805,32 @@ class EvaluatePerGroup(AssetGeometryGroup):
 
 
 class EvluateWhilePlanar(AssetGeometryGroup):
-    """Evluate While Planar"""
+    """
+    Evluate While Planar
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry to transform
+    selection : InputBoolean
+        The parts of the geometry that contibute to the planar calculation
+    closure : InputClosure
+        Closure
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry to transform
+    i.selection : BooleanSocket
+        The parts of the geometry that contibute to the planar calculation
+    i.closure : ClosureSocket
+        Closure
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Evluate While Planar"
     _asset_name = "Evluate While Planar"
@@ -3998,9 +6838,9 @@ class EvluateWhilePlanar(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to transform"""
         selection: BooleanSocket
-        """Selection"""
+        """The parts of the geometry that contibute to the planar calculation"""
         closure: ClosureSocket
         """Closure"""
 
@@ -4027,7 +6867,28 @@ class EvluateWhilePlanar(AssetGeometryGroup):
 
 
 class ExpandBoolean(AssetGeometryGroup):
-    """Expand Boolean"""
+    """
+    Expand Boolean
+
+    Parameters
+    ----------
+    boolean : InputBoolean
+        Boolean
+    expand : InputInteger
+        Expand
+
+    Inputs
+    ------
+    i.boolean : BooleanSocket
+        Boolean
+    i.expand : IntegerSocket
+        Expand
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        Boolean
+    """
 
     _name = "Expand Boolean"
     _asset_name = "Expand Boolean"
@@ -4059,7 +6920,28 @@ class ExpandBoolean(AssetGeometryGroup):
 
 
 class FallbackBoolean(AssetGeometryGroup):
-    """Computes the boolean field if the given attribute doesn't exist. If it doesn't exist it just uses the attribute instead"""
+    """
+    Computes the boolean field if the given attribute doesn't exist. If it doesn't exist it just uses the attribute instead
+
+    Parameters
+    ----------
+    name : InputString
+        Name of the attribute to attempt to read from the geometry
+    fallback : InputBoolean
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Name of the attribute to attempt to read from the geometry
+    i.fallback : BooleanSocket
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        The named attribute read from the geometry if it exists, or the fallback value if it doesn't
+    """
 
     _name = "Fallback Boolean"
     _asset_name = "Fallback Boolean"
@@ -4067,13 +6949,13 @@ class FallbackBoolean(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Name of the attribute to attempt to read from the geometry"""
         fallback: BooleanSocket
-        """Fallback"""
+        """Value to use instead if the named attribute doesn't exist on the geometry"""
 
     class _Outputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The named attribute read from the geometry if it exists, or the fallback value if it doesn't"""
 
     if TYPE_CHECKING:
 
@@ -4091,7 +6973,28 @@ class FallbackBoolean(AssetGeometryGroup):
 
 
 class FallbackColor(AssetGeometryGroup):
-    """Fallback Color"""
+    """
+    Fallback Color
+
+    Parameters
+    ----------
+    name : InputString
+        Name of the attribute to attempt to read from the geometry
+    fallback : InputColor
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Name of the attribute to attempt to read from the geometry
+    i.fallback : ColorSocket
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The named attribute read from the geometry if it exists, or the fallback value if it doesn't
+    """
 
     _name = "Fallback Color"
     _asset_name = "Fallback Color"
@@ -4099,13 +7002,13 @@ class FallbackColor(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Name of the attribute to attempt to read from the geometry"""
         fallback: ColorSocket
-        """Fallback"""
+        """Value to use instead if the named attribute doesn't exist on the geometry"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The named attribute read from the geometry if it exists, or the fallback value if it doesn't"""
 
     if TYPE_CHECKING:
 
@@ -4123,7 +7026,28 @@ class FallbackColor(AssetGeometryGroup):
 
 
 class FallbackFloat(AssetGeometryGroup):
-    """Fallback Float"""
+    """
+    Fallback Float
+
+    Parameters
+    ----------
+    name : InputString
+        Name of the attribute to attempt to read from the geometry
+    fallback : InputFloat
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Name of the attribute to attempt to read from the geometry
+    i.fallback : FloatSocket
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        The named attribute read from the geometry if it exists, or the fallback value if it doesn't
+    """
 
     _name = "Fallback Float"
     _asset_name = "Fallback Float"
@@ -4131,13 +7055,13 @@ class FallbackFloat(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Name of the attribute to attempt to read from the geometry"""
         fallback: FloatSocket
-        """Fallback"""
+        """Value to use instead if the named attribute doesn't exist on the geometry"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The named attribute read from the geometry if it exists, or the fallback value if it doesn't"""
 
     if TYPE_CHECKING:
 
@@ -4155,7 +7079,28 @@ class FallbackFloat(AssetGeometryGroup):
 
 
 class FallbackGeometry(AssetGeometryGroup):
-    """Fallback Geometry"""
+    """
+    Fallback Geometry
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    fallback : InputGeometry
+        Fallback
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.fallback : GeometrySocket
+        Fallback
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Fallback Geometry"
     _asset_name = "Fallback Geometry"
@@ -4187,7 +7132,28 @@ class FallbackGeometry(AssetGeometryGroup):
 
 
 class FallbackInteger(AssetGeometryGroup):
-    """Fallback Integer"""
+    """
+    Fallback Integer
+
+    Parameters
+    ----------
+    name : InputString
+        Name of the attribute to attempt to read from the geometry
+    fallback : InputInteger
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Name of the attribute to attempt to read from the geometry
+    i.fallback : IntegerSocket
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Outputs
+    -------
+    o.integer : IntegerSocket
+        The named attribute read from the geometry if it exists, or the fallback value if it doesn't
+    """
 
     _name = "Fallback Integer"
     _asset_name = "Fallback Integer"
@@ -4195,13 +7161,13 @@ class FallbackInteger(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Name of the attribute to attempt to read from the geometry"""
         fallback: IntegerSocket
-        """Fallback"""
+        """Value to use instead if the named attribute doesn't exist on the geometry"""
 
     class _Outputs(SocketAccessor):
         integer: IntegerSocket
-        """Integer"""
+        """The named attribute read from the geometry if it exists, or the fallback value if it doesn't"""
 
     if TYPE_CHECKING:
 
@@ -4219,7 +7185,28 @@ class FallbackInteger(AssetGeometryGroup):
 
 
 class FallbackMatrix(AssetGeometryGroup):
-    """Fallback Matrix"""
+    """
+    Fallback Matrix
+
+    Parameters
+    ----------
+    name : InputString
+        Name of the attribute to attempt to read from the geometry
+    fallback : InputMatrix
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Name of the attribute to attempt to read from the geometry
+    i.fallback : MatrixSocket
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Outputs
+    -------
+    o.matrix : MatrixSocket
+        The named attribute read from the geometry if it exists, or the fallback value if it doesn't
+    """
 
     _name = "Fallback Matrix"
     _asset_name = "Fallback Matrix"
@@ -4227,13 +7214,13 @@ class FallbackMatrix(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Name of the attribute to attempt to read from the geometry"""
         fallback: MatrixSocket
-        """Fallback"""
+        """Value to use instead if the named attribute doesn't exist on the geometry"""
 
     class _Outputs(SocketAccessor):
         matrix: MatrixSocket
-        """Matrix"""
+        """The named attribute read from the geometry if it exists, or the fallback value if it doesn't"""
 
     if TYPE_CHECKING:
 
@@ -4251,7 +7238,28 @@ class FallbackMatrix(AssetGeometryGroup):
 
 
 class FallbackRotation(AssetGeometryGroup):
-    """Fallback Rotation"""
+    """
+    Fallback Rotation
+
+    Parameters
+    ----------
+    name : InputString
+        Name of the attribute to attempt to read from the geometry
+    fallback : InputRotation
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Name of the attribute to attempt to read from the geometry
+    i.fallback : RotationSocket
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        The named attribute read from the geometry if it exists, or the fallback value if it doesn't
+    """
 
     _name = "Fallback Rotation"
     _asset_name = "Fallback Rotation"
@@ -4259,13 +7267,13 @@ class FallbackRotation(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Name of the attribute to attempt to read from the geometry"""
         fallback: RotationSocket
-        """Fallback"""
+        """Value to use instead if the named attribute doesn't exist on the geometry"""
 
     class _Outputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The named attribute read from the geometry if it exists, or the fallback value if it doesn't"""
 
     if TYPE_CHECKING:
 
@@ -4283,7 +7291,28 @@ class FallbackRotation(AssetGeometryGroup):
 
 
 class FallbackVector(AssetGeometryGroup):
-    """Fallback Vector"""
+    """
+    Fallback Vector
+
+    Parameters
+    ----------
+    name : InputString
+        Name of the attribute to attempt to read from the geometry
+    fallback : InputVector
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Inputs
+    ------
+    i.name : StringSocket
+        Name of the attribute to attempt to read from the geometry
+    i.fallback : VectorSocket
+        Value to use instead if the named attribute doesn't exist on the geometry
+
+    Outputs
+    -------
+    o.output : VectorSocket
+        The named attribute read from the geometry if it exists, or the fallback value if it doesn't
+    """
 
     _name = "Fallback Vector"
     _asset_name = "Fallback Vector"
@@ -4291,13 +7320,13 @@ class FallbackVector(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         name: StringSocket
-        """Name"""
+        """Name of the attribute to attempt to read from the geometry"""
         fallback: VectorSocket
-        """Fallback"""
+        """Value to use instead if the named attribute doesn't exist on the geometry"""
 
     class _Outputs(SocketAccessor):
         output: VectorSocket
-        """Output"""
+        """The named attribute read from the geometry if it exists, or the fallback value if it doesn't"""
 
     if TYPE_CHECKING:
 
@@ -4315,7 +7344,36 @@ class FallbackVector(AssetGeometryGroup):
 
 
 class FieldRemap(AssetGeometryGroup):
-    """Maps the range of values of the attribute on from the target atoms, to the range from min to max"""
+    """
+    Maps the range of values of the attribute on from the target atoms, to the range from min to max
+
+    Parameters
+    ----------
+    field : InputFloat
+        The field to summarise and remap
+    value_min : InputFloat
+        The new minimum value of the field
+    value_max : InputFloat
+        The new maximum value of the field
+    group_id : InputInteger
+        An index used to group values together for multiple separate operations
+
+    Inputs
+    ------
+    i.field : FloatSocket
+        The field to summarise and remap
+    i.value_min : FloatSocket
+        The new minimum value of the field
+    i.value_max : FloatSocket
+        The new maximum value of the field
+    i.group_id : IntegerSocket
+        An index used to group values together for multiple separate operations
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        The remapped values between the new min and max
+    """
 
     _name = "Field Remap"
     _asset_name = "Field Remap"
@@ -4323,17 +7381,17 @@ class FieldRemap(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         field: FloatSocket
-        """Field"""
+        """The field to summarise and remap"""
         value_min: FloatSocket
-        """Value Min"""
+        """The new minimum value of the field"""
         value_max: FloatSocket
-        """Value Max"""
+        """The new maximum value of the field"""
         group_id: IntegerSocket
-        """Group ID"""
+        """An index used to group values together for multiple separate operations"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The remapped values between the new min and max"""
 
     if TYPE_CHECKING:
 
@@ -4360,7 +7418,40 @@ class FieldRemap(AssetGeometryGroup):
 
 
 class FindBondedAtom(AssetGeometryGroup):
-    """Find Bonded Atom"""
+    """
+    Find Bonded Atom
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+    method : InputMenu | Literal["Any", "Exact"]
+        Method
+    atom_name : InputMenu | Literal["N", "CA", "C", "O", "CB", "CG", "CG1", "CG2", "OG", "OG1", "SG", "CD", "CD1", "CD2", "ND1", "ND2", "OD1", "OD2", "SD", "CE", "CE1", "CE2", "CE3", "NE", "NE1", "NE2", "OE1", "OE2", "CH2", "NH1", "NH2", "OH", "CZ", "CZ2", "CZ3", "NZ", "OXT", "P", "O1P", "OP1", "OP2", "O2P", "O5", "C5", "C4", "O4", "C3", "O3", "C2", "O2", "C1", "N1", "N9", "N3", "C8", "N7", "C5", "C6", "N6", "C2", "C4", "O6", "N2", "N4", "O2", "O4", "C7"]
+        Atom Name
+    distance : InputInteger
+        Distance
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+    i.method : MenuSocket
+        Method
+    i.atom_name : MenuSocket
+        Atom Name
+    i.distance : IntegerSocket
+        Distance
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Is Valid
+    o.index : IntegerSocket
+        Index
+    o.position : VectorSocket
+        Position
+    """
 
     _name = "Find Bonded Atom"
     _asset_name = "Find Bonded Atom"
@@ -4478,7 +7569,32 @@ class FindBondedAtom(AssetGeometryGroup):
 
 
 class FindBonds(AssetGeometryGroup):
-    """Find Bonds"""
+    """
+    Find Bonds
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    scale : InputFloat
+        Scale the VDW radii of the atoms when searching for bonds
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.scale : FloatSocket
+        Scale the VDW radii of the atoms when searching for bonds
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        Atoms
+    """
 
     _name = "Find Bonds"
     _asset_name = "Find Bonds"
@@ -4486,11 +7602,11 @@ class FindBonds(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         scale: FloatSocket
-        """Scale"""
+        """Scale the VDW radii of the atoms when searching for bonds"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
@@ -4513,7 +7629,32 @@ class FindBonds(AssetGeometryGroup):
 
 
 class FractionateFloat(AssetGeometryGroup):
-    """Fractionate Float"""
+    """
+    Fractionate Float
+
+    Parameters
+    ----------
+    menu : InputMenu | Literal["Linear", "Smoother"]
+        Menu
+    value : InputFloat
+        The value to fractionate
+
+    Inputs
+    ------
+    i.menu : MenuSocket
+        Menu
+    i.value : FloatSocket
+        The value to fractionate
+
+    Outputs
+    -------
+    o.fraction : FloatSocket
+        Fractional component of the value, between 0 and 1
+    o.floor : IntegerSocket
+        The floor of the value; the integer rounded down
+    o.ceiling : IntegerSocket
+        The ceiling of the value, the integer rounded up
+    """
 
     _name = "Fractionate Float"
     _asset_name = "Fractionate Float"
@@ -4523,15 +7664,15 @@ class FractionateFloat(AssetGeometryGroup):
         menu: MenuSocket
         """Menu"""
         value: FloatSocket
-        """Value"""
+        """The value to fractionate"""
 
     class _Outputs(SocketAccessor):
         fraction: FloatSocket
-        """Fraction"""
+        """Fractional component of the value, between 0 and 1"""
         floor: IntegerSocket
-        """Floor"""
+        """The floor of the value; the integer rounded down"""
         ceiling: IntegerSocket
-        """Ceiling"""
+        """The ceiling of the value, the integer rounded up"""
 
     if TYPE_CHECKING:
 
@@ -4549,7 +7690,24 @@ class FractionateFloat(AssetGeometryGroup):
 
 
 class FrameID(AssetGeometryGroup):
-    """Read the `frame_id` attribute, created when multiple frames from a trajectory are merged into a single structure"""
+    """
+    Read the `frame_id` attribute, created when multiple frames from a trajectory are merged into a single structure
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.frame_id : IntegerSocket
+        Read the `frame_id` attribute from the geometry
+    """
 
     _name = "Frame ID"
     _asset_name = "Frame ID"
@@ -4561,6 +7719,7 @@ class FrameID(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         frame_id: IntegerSocket
+        """Read the `frame_id` attribute from the geometry"""
 
     if TYPE_CHECKING:
 
@@ -4577,7 +7736,30 @@ class FrameID(AssetGeometryGroup):
 
 
 class GeoemtryToPlanar(AssetGeometryGroup):
-    """Geoemtry to Planar"""
+    """
+    Geoemtry to Planar
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry to transform
+    selection : InputBoolean
+        The parts of the geometry that contibute to the planar calculation
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry to transform
+    i.selection : BooleanSocket
+        The parts of the geometry that contibute to the planar calculation
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    o.transform : MatrixSocket
+        Transform
+    """
 
     _name = "Geoemtry to Planar"
     _asset_name = "Geoemtry to Planar"
@@ -4585,9 +7767,9 @@ class GeoemtryToPlanar(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to transform"""
         selection: BooleanSocket
-        """Selection"""
+        """The parts of the geometry that contibute to the planar calculation"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -4611,7 +7793,36 @@ class GeoemtryToPlanar(AssetGeometryGroup):
 
 
 class GeometryFieldRemap(AssetGeometryGroup):
-    """Maps the range of values of the attribute on from the target atoms, to the range from min to max"""
+    """
+    Maps the range of values of the attribute on from the target atoms, to the range from min to max
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry to get the statistics from
+    field : InputFloat
+        The field to summarise and remap
+    value_min : InputFloat
+        The new minimum value of the field
+    value_max : InputFloat
+        The new maximum value of the field
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry to get the statistics from
+    i.field : FloatSocket
+        The field to summarise and remap
+    i.value_min : FloatSocket
+        The new minimum value of the field
+    i.value_max : FloatSocket
+        The new maximum value of the field
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        The remapped values between the new min and max
+    """
 
     _name = "Geometry Field Remap"
     _asset_name = "Geometry Field Remap"
@@ -4619,17 +7830,17 @@ class GeometryFieldRemap(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to get the statistics from"""
         field: FloatSocket
-        """Field"""
+        """The field to summarise and remap"""
         value_min: FloatSocket
-        """Value Min"""
+        """The new minimum value of the field"""
         value_max: FloatSocket
-        """Value Max"""
+        """The new maximum value of the field"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The remapped values between the new min and max"""
 
     if TYPE_CHECKING:
 
@@ -4656,7 +7867,28 @@ class GeometryFieldRemap(AssetGeometryGroup):
 
 
 class GetGeometryAtoms(AssetGeometryGroup):
-    """Get Geometry Atoms"""
+    """
+    Get Geometry Atoms
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry to get the bundle of
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry to get the bundle of
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    o.bundle : BundleSocket
+        Bundle
+    o.atoms : GeometrySocket
+        Atoms
+    """
 
     _name = "Get Geometry Atoms"
     _asset_name = "Get Geometry Atoms"
@@ -4664,7 +7896,7 @@ class GetGeometryAtoms(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to get the bundle of"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -4689,7 +7921,30 @@ class GetGeometryAtoms(AssetGeometryGroup):
 
 
 class GroupInfo(AssetGeometryGroup):
-    """Group Info"""
+    """
+    Group Info
+
+    Parameters
+    ----------
+    group_id : InputInteger
+        Group ID
+
+    Inputs
+    ------
+    i.group_id : IntegerSocket
+        Group ID
+
+    Outputs
+    -------
+    o.size : IntegerSocket
+        Size
+    o.index_in_group : IntegerSocket
+        Index in Group
+    o.index_of_first : IntegerSocket
+        Index of First
+    o.index_of_last : IntegerSocket
+        Index of Last
+    """
 
     _name = "Group Info"
     _asset_name = "Group Info"
@@ -4724,7 +7979,30 @@ class GroupInfo(AssetGeometryGroup):
 
 
 class GroupParameter(AssetGeometryGroup):
-    """Group Parameter"""
+    """
+    Group Parameter
+
+    Parameters
+    ----------
+    group_id : InputInteger
+        The identifier specifying groupings of the points
+
+    Inputs
+    ------
+    i.group_id : IntegerSocket
+        The identifier specifying groupings of the points
+
+    Outputs
+    -------
+    o.is_first : BooleanSocket
+        If the point is the first point in the `Group ID`
+    o.is_last : BooleanSocket
+        If the point is the last item in the `Group ID`
+    o.group_size : IntegerSocket
+        Group Size
+    o.relative_index : IntegerSocket
+        The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`
+    """
 
     _name = "Group Parameter"
     _asset_name = "Group Parameter"
@@ -4732,17 +8010,17 @@ class GroupParameter(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         group_id: IntegerSocket
-        """Group ID"""
+        """The identifier specifying groupings of the points"""
 
     class _Outputs(SocketAccessor):
         is_first: BooleanSocket
-        """Is First"""
+        """If the point is the first point in the `Group ID`"""
         is_last: BooleanSocket
-        """Is Last"""
+        """If the point is the last item in the `Group ID`"""
         group_size: IntegerSocket
         """Group Size"""
         relative_index: IntegerSocket
-        """Relative Index"""
+        """The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`"""
 
     if TYPE_CHECKING:
 
@@ -4759,7 +8037,30 @@ class GroupParameter(AssetGeometryGroup):
 
 
 class GroupPick(AssetGeometryGroup):
-    """Get the item of the `True` in each `Group ID`, but only if there is a single `True` in each group"""
+    """
+    Get the item of the `True` in each `Group ID`, but only if there is a single `True` in each group
+
+    Parameters
+    ----------
+    pick : InputBoolean
+        Selection for the point to pick for the `Group ID`. Will only be valid for a single `Pick` for each `Group ID`
+    group_id : InputInteger
+        Field definining the `Group ID` to pick from for the points
+
+    Inputs
+    ------
+    i.pick : BooleanSocket
+        Selection for the point to pick for the `Group ID`. Will only be valid for a single `Pick` for each `Group ID`
+    i.group_id : IntegerSocket
+        Field definining the `Group ID` to pick from for the points
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Valid for the point only if there is 1 single `True` for the `Pick` field in the point's group in the `Group ID`
+    o.index : IntegerSocket
+        Index of picked item. Returns -1 if not a valid pick
+    """
 
     _name = "Group Pick"
     _asset_name = "Group Pick"
@@ -4767,15 +8068,15 @@ class GroupPick(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         pick: BooleanSocket
-        """Pick"""
+        """Selection for the point to pick for the `Group ID`. Will only be valid for a single `Pick` for each `Group ID`"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Field definining the `Group ID` to pick from for the points"""
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """Valid for the point only if there is 1 single `True` for the `Pick` field in the point's group in the `Group ID`"""
         index: IntegerSocket
-        """Index"""
+        """Index of picked item. Returns -1 if not a valid pick"""
 
     if TYPE_CHECKING:
 
@@ -4793,7 +8094,30 @@ class GroupPick(AssetGeometryGroup):
 
 
 class GroupPickFirst(AssetGeometryGroup):
-    """Get the `Index` of the first `True` item for each `Group ID`"""
+    """
+    Get the `Index` of the first `True` item for each `Group ID`
+
+    Parameters
+    ----------
+    pick : InputBoolean
+        Index of the first `True` item in this field will be returned
+    group_id : InputInteger
+        The first `True` item for each `Group ID` will be returned
+
+    Inputs
+    ------
+    i.pick : BooleanSocket
+        Index of the first `True` item in this field will be returned
+    i.group_id : IntegerSocket
+        The first `True` item for each `Group ID` will be returned
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Valid if as least 1 `True` for the `Group ID`
+    o.index : IntegerSocket
+        Index of first picked item, returns `-1` if nothing picked
+    """
 
     _name = "Group Pick First"
     _asset_name = "Group Pick First"
@@ -4801,15 +8125,15 @@ class GroupPickFirst(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         pick: BooleanSocket
-        """Pick"""
+        """Index of the first `True` item in this field will be returned"""
         group_id: IntegerSocket
-        """Group ID"""
+        """The first `True` item for each `Group ID` will be returned"""
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """Valid if as least 1 `True` for the `Group ID`"""
         index: IntegerSocket
-        """Index"""
+        """Index of first picked item, returns `-1` if nothing picked"""
 
     if TYPE_CHECKING:
 
@@ -4827,7 +8151,30 @@ class GroupPickFirst(AssetGeometryGroup):
 
 
 class GroupPickIndex(AssetGeometryGroup):
-    """Group Pick Index"""
+    """
+    Group Pick Index
+
+    Parameters
+    ----------
+    relative_index : InputInteger
+        Relative Index
+    group_id : InputInteger
+        Group ID
+
+    Inputs
+    ------
+    i.relative_index : IntegerSocket
+        Relative Index
+    i.group_id : IntegerSocket
+        Group ID
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        If the requested `Index in Group` is valid for this `Group ID`
+    o.index : IntegerSocket
+        The `Index` of the requested point, within the overall geometry
+    """
 
     _name = "Group Pick Index"
     _asset_name = "Group Pick Index"
@@ -4841,9 +8188,9 @@ class GroupPickIndex(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """If the requested `Index in Group` is valid for this `Group ID`"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` of the requested point, within the overall geometry"""
 
     if TYPE_CHECKING:
 
@@ -4861,7 +8208,36 @@ class GroupPickIndex(AssetGeometryGroup):
 
 
 class GroupPickVector(AssetGeometryGroup):
-    """Group Pick Vector"""
+    """
+    Group Pick Vector
+
+    Parameters
+    ----------
+    pick : InputBoolean
+        Selection for the point to pick for the `Group ID`. Will only be valid for a single `Pick` for each `Group ID`
+    group_id : InputInteger
+        Field definining the `Group ID` to pick from for the points
+    position : InputVector
+        Vector field to pick vlaue for, defaults to `Position`
+
+    Inputs
+    ------
+    i.pick : BooleanSocket
+        Selection for the point to pick for the `Group ID`. Will only be valid for a single `Pick` for each `Group ID`
+    i.group_id : IntegerSocket
+        Field definining the `Group ID` to pick from for the points
+    i.position : VectorSocket
+        Vector field to pick vlaue for, defaults to `Position`
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Whether the pick for the point's `Group ID` is valid
+    o.index : IntegerSocket
+        Picked Index for the Group, -1 if not valid
+    o.vector : VectorSocket
+        Picked vector for the group, `(0, 0, 0)` if not valid
+    """
 
     _name = "Group Pick Vector"
     _asset_name = "Group Pick Vector"
@@ -4869,19 +8245,19 @@ class GroupPickVector(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         pick: BooleanSocket
-        """Pick"""
+        """Selection for the point to pick for the `Group ID`. Will only be valid for a single `Pick` for each `Group ID`"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Field definining the `Group ID` to pick from for the points"""
         position: VectorSocket
-        """Position"""
+        """Vector field to pick vlaue for, defaults to `Position`"""
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """Whether the pick for the point's `Group ID` is valid"""
         index: IntegerSocket
-        """Index"""
+        """Picked Index for the Group, -1 if not valid"""
         vector: VectorSocket
-        """Vector"""
+        """Picked vector for the group, `(0, 0, 0)` if not valid"""
 
     if TYPE_CHECKING:
 
@@ -4902,7 +8278,38 @@ class GroupPickVector(AssetGeometryGroup):
 
 
 class IndexDistance(AssetGeometryGroup):
-    """Index Distance"""
+    """
+    Index Distance
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+    target_index : InputInteger
+        Index for the selected point to measure to
+    position : InputVector
+        Position
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+    i.target_index : IntegerSocket
+        Index for the selected point to measure to
+    i.position : VectorSocket
+        Position
+
+    Outputs
+    -------
+    o.vector : VectorSocket
+        Vector from the current point to the indexed point
+    o.direction : VectorSocket
+        Normalized vector from the current point to the indexed point
+    o.distance : FloatSocket
+        Distance from the current point to the indexed point
+    o.rotation : RotationSocket
+        Rotation
+    """
 
     _name = "Index Distance"
     _asset_name = "Index Distance"
@@ -4912,17 +8319,17 @@ class IndexDistance(AssetGeometryGroup):
         index: IntegerSocket
         """Index"""
         target_index: IntegerSocket
-        """Target Index"""
+        """Index for the selected point to measure to"""
         position: VectorSocket
         """Position"""
 
     class _Outputs(SocketAccessor):
         vector: VectorSocket
-        """Vector"""
+        """Vector from the current point to the indexed point"""
         direction: VectorSocket
-        """Direction"""
+        """Normalized vector from the current point to the indexed point"""
         distance: FloatSocket
-        """Distance"""
+        """Distance from the current point to the indexed point"""
         rotation: RotationSocket
         """Rotation"""
 
@@ -4945,7 +8352,32 @@ class IndexDistance(AssetGeometryGroup):
 
 
 class IndexMixColor(AssetGeometryGroup):
-    """Index Mix Color"""
+    """
+    Index Mix Color
+
+    Parameters
+    ----------
+    color : InputColor
+        The field to interpolate based on the input `Index`
+    index : InputFloat
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Inputs
+    ------
+    i.color : ColorSocket
+        The field to interpolate based on the input `Index`
+    i.index : FloatSocket
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.from_ : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.to : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    """
 
     _name = "Index Mix Color"
     _asset_name = "Index Mix Color"
@@ -4953,17 +8385,17 @@ class IndexMixColor(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The field to interpolate based on the input `Index`"""
         index: FloatSocket
-        """Index"""
+        """The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         from_: IntegerSocket
-        """From"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         to: IntegerSocket
-        """To"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
 
     if TYPE_CHECKING:
 
@@ -4981,7 +8413,32 @@ class IndexMixColor(AssetGeometryGroup):
 
 
 class IndexMixFloat(AssetGeometryGroup):
-    """Index Mix Float"""
+    """
+    Index Mix Float
+
+    Parameters
+    ----------
+    value : InputFloat
+        The field to interpolate based on the input `Index`
+    index : InputFloat
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Inputs
+    ------
+    i.value : FloatSocket
+        The field to interpolate based on the input `Index`
+    i.index : FloatSocket
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.from_ : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.to : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    """
 
     _name = "Index Mix Float"
     _asset_name = "Index Mix Float"
@@ -4989,17 +8446,17 @@ class IndexMixFloat(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The field to interpolate based on the input `Index`"""
         index: FloatSocket
-        """Index"""
+        """The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         from_: IntegerSocket
-        """From"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         to: IntegerSocket
-        """To"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
 
     if TYPE_CHECKING:
 
@@ -5017,7 +8474,32 @@ class IndexMixFloat(AssetGeometryGroup):
 
 
 class IndexMixRotation(AssetGeometryGroup):
-    """Index Mix Rotation"""
+    """
+    Index Mix Rotation
+
+    Parameters
+    ----------
+    rotation : InputRotation
+        The field to interpolate based on the input `Index`
+    index : InputFloat
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Inputs
+    ------
+    i.rotation : RotationSocket
+        The field to interpolate based on the input `Index`
+    i.index : FloatSocket
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.from_ : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.to : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    """
 
     _name = "Index Mix Rotation"
     _asset_name = "Index Mix Rotation"
@@ -5025,17 +8507,17 @@ class IndexMixRotation(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The field to interpolate based on the input `Index`"""
         index: FloatSocket
-        """Index"""
+        """The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values"""
 
     class _Outputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         from_: IntegerSocket
-        """From"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         to: IntegerSocket
-        """To"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
 
     if TYPE_CHECKING:
 
@@ -5053,7 +8535,32 @@ class IndexMixRotation(AssetGeometryGroup):
 
 
 class IndexMixVector(AssetGeometryGroup):
-    """Index Mix Vector"""
+    """
+    Index Mix Vector
+
+    Parameters
+    ----------
+    value : InputVector
+        The field to interpolate based on the input `Index`
+    index : InputFloat
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Inputs
+    ------
+    i.value : VectorSocket
+        The field to interpolate based on the input `Index`
+    i.index : FloatSocket
+        The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values
+
+    Outputs
+    -------
+    o.value : VectorSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.from_ : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    o.to : IntegerSocket
+        The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`
+    """
 
     _name = "Index Mix Vector"
     _asset_name = "Index Mix Vector"
@@ -5061,17 +8568,17 @@ class IndexMixVector(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: VectorSocket
-        """Value"""
+        """The field to interpolate based on the input `Index`"""
         index: FloatSocket
-        """Index"""
+        """The floor and ceiling of this Index value is taken and used for sampling, the fraction of this value is then used to mix between the sampled values"""
 
     class _Outputs(SocketAccessor):
         value: VectorSocket
-        """Value"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         from_: IntegerSocket
-        """From"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
         to: IntegerSocket
-        """To"""
+        """The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`"""
 
     if TYPE_CHECKING:
 
@@ -5089,7 +8596,34 @@ class IndexMixVector(AssetGeometryGroup):
 
 
 class IntegerDistance(AssetGeometryGroup):
-    """Integer Distance"""
+    """
+    Integer Distance
+
+    Parameters
+    ----------
+    a : InputInteger
+        A
+    b : InputInteger
+        B
+    distance : InputInteger
+        Distance
+
+    Inputs
+    ------
+    i.a : IntegerSocket
+        A
+    i.b : IntegerSocket
+        B
+    i.distance : IntegerSocket
+        Distance
+
+    Outputs
+    -------
+    o.cutoff : BooleanSocket
+        Cutoff
+    o.distance : IntegerSocket
+        Distance
+    """
 
     _name = "Integer Distance"
     _asset_name = "Integer Distance"
@@ -5126,7 +8660,30 @@ class IntegerDistance(AssetGeometryGroup):
 
 
 class IntegerRun(AssetGeometryGroup):
-    """A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes"""
+    """
+    A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes
+
+    Parameters
+    ----------
+    value : InputInteger
+        The field to check for changes in value
+    group_id : InputInteger
+        Does not restart counting for each Group ID, but does increment by 1 when the Group ID changes
+
+    Inputs
+    ------
+    i.value : IntegerSocket
+        The field to check for changes in value
+    i.group_id : IntegerSocket
+        Does not restart counting for each Group ID, but does increment by 1 when the Group ID changes
+
+    Outputs
+    -------
+    o.is_different : BooleanSocket
+        The current value is different from the previous
+    o.group_id : IntegerSocket
+        The new `Group ID`, which increases by 1 whenever the `Value` or `Group ID` values change
+    """
 
     _name = "Integer Run"
     _asset_name = "Integer Run"
@@ -5134,15 +8691,15 @@ class IntegerRun(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: IntegerSocket
-        """Value"""
+        """The field to check for changes in value"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Does not restart counting for each Group ID, but does increment by 1 when the Group ID changes"""
 
     class _Outputs(SocketAccessor):
         is_different: BooleanSocket
-        """Is Different"""
+        """The current value is different from the previous"""
         group_id: IntegerSocket
-        """Group ID"""
+        """The new `Group ID`, which increases by 1 whenever the `Value` or `Group ID` values change"""
 
     if TYPE_CHECKING:
 
@@ -5160,7 +8717,30 @@ class IntegerRun(AssetGeometryGroup):
 
 
 class IsAlphaCarbon(AssetGeometryGroup):
-    """Is Alpha Carbon"""
+    """
+    Is Alpha Carbon
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Alpha Carbon"
     _asset_name = "Is Alpha Carbon"
@@ -5168,15 +8748,15 @@ class IsAlphaCarbon(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5194,7 +8774,30 @@ class IsAlphaCarbon(AssetGeometryGroup):
 
 
 class IsBackbone(AssetGeometryGroup):
-    """Is Backbone"""
+    """
+    Is Backbone
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Backbone"
     _asset_name = "Is Backbone"
@@ -5202,15 +8805,15 @@ class IsBackbone(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5228,7 +8831,14 @@ class IsBackbone(AssetGeometryGroup):
 
 
 class IsBackboneEdge(AssetGeometryGroup):
-    """Is Backbone Edge"""
+    """
+    Is Backbone Edge
+
+    Outputs
+    -------
+    o.is_backbone_edge : BooleanSocket
+        Is Backbone Edge
+    """
 
     _name = "Is Backbone Edge"
     _asset_name = "Is Backbone Edge"
@@ -5253,7 +8863,24 @@ class IsBackboneEdge(AssetGeometryGroup):
 
 
 class IsBoundaryEdge(AssetGeometryGroup):
-    """Is Boundary Edge"""
+    """
+    Is Boundary Edge
+
+    Parameters
+    ----------
+    mask : InputBoolean
+        Mask
+
+    Inputs
+    ------
+    i.mask : BooleanSocket
+        Mask
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    """
 
     _name = "Is Boundary Edge"
     _asset_name = "Is Boundary Edge"
@@ -5265,7 +8892,7 @@ class IsBoundaryEdge(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5282,7 +8909,26 @@ class IsBoundaryEdge(AssetGeometryGroup):
 
 
 class IsEven(AssetGeometryGroup):
-    """Is Even"""
+    """
+    Is Even
+
+    Parameters
+    ----------
+    value : InputInteger
+        Value
+
+    Inputs
+    ------
+    i.value : IntegerSocket
+        Value
+
+    Outputs
+    -------
+    o.even : BooleanSocket
+        Even
+    o.odd : BooleanSocket
+        Odd
+    """
 
     _name = "Is Even"
     _asset_name = "Is Even"
@@ -5313,7 +8959,30 @@ class IsEven(AssetGeometryGroup):
 
 
 class IsHelix(AssetGeometryGroup):
-    """Is Helix"""
+    """
+    Is Helix
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Helix"
     _asset_name = "Is Helix"
@@ -5321,15 +8990,15 @@ class IsHelix(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5347,7 +9016,30 @@ class IsHelix(AssetGeometryGroup):
 
 
 class IsHydrogen(AssetGeometryGroup):
-    """Is Hydrogen"""
+    """
+    Is Hydrogen
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        Computed selection that includes Hydrogen atoms
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Hydrogen"
     _asset_name = "Is Hydrogen"
@@ -5355,15 +9047,15 @@ class IsHydrogen(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """Computed selection that includes Hydrogen atoms"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5381,7 +9073,30 @@ class IsHydrogen(AssetGeometryGroup):
 
 
 class IsLipid(AssetGeometryGroup):
-    """Is Lipid"""
+    """
+    Is Lipid
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Lipid"
     _asset_name = "Is Lipid"
@@ -5389,15 +9104,15 @@ class IsLipid(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5415,7 +9130,30 @@ class IsLipid(AssetGeometryGroup):
 
 
 class IsLoop(AssetGeometryGroup):
-    """Is Loop"""
+    """
+    Is Loop
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Loop"
     _asset_name = "Is Loop"
@@ -5423,15 +9161,15 @@ class IsLoop(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5449,7 +9187,30 @@ class IsLoop(AssetGeometryGroup):
 
 
 class IsNucleic(AssetGeometryGroup):
-    """Is Nucleic"""
+    """
+    Is Nucleic
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Nucleic"
     _asset_name = "Is Nucleic"
@@ -5457,15 +9218,15 @@ class IsNucleic(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5483,7 +9244,30 @@ class IsNucleic(AssetGeometryGroup):
 
 
 class IsPeptide(AssetGeometryGroup):
-    """Is Peptide"""
+    """
+    Is Peptide
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Peptide"
     _asset_name = "Is Peptide"
@@ -5491,15 +9275,15 @@ class IsPeptide(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5517,7 +9301,30 @@ class IsPeptide(AssetGeometryGroup):
 
 
 class IsSheet(AssetGeometryGroup):
-    """Is Sheet"""
+    """
+    Is Sheet
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Sheet"
     _asset_name = "Is Sheet"
@@ -5525,15 +9332,15 @@ class IsSheet(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5551,7 +9358,34 @@ class IsSheet(AssetGeometryGroup):
 
 
 class IsSideChain(AssetGeometryGroup):
-    """Is Side Chain"""
+    """
+    Is Side Chain
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    include_ca : InputBoolean
+        Include the alpha carbon as part of the side chain
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.include_ca : BooleanSocket
+        Include the alpha carbon as part of the side chain
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Side Chain"
     _asset_name = "Is Side Chain"
@@ -5559,17 +9393,17 @@ class IsSideChain(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         include_ca: BooleanSocket
-        """Include CA"""
+        """Include the alpha carbon as part of the side chain"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5588,7 +9422,30 @@ class IsSideChain(AssetGeometryGroup):
 
 
 class IsSolvent(AssetGeometryGroup):
-    """Is Solvent"""
+    """
+    Is Solvent
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Is Solvent"
     _asset_name = "Is Solvent"
@@ -5596,15 +9453,15 @@ class IsSolvent(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -5622,7 +9479,32 @@ class IsSolvent(AssetGeometryGroup):
 
 
 class LChToColor(AssetGeometryGroup):
-    """LCh to Color"""
+    """
+    LCh to Color
+
+    Parameters
+    ----------
+    l : InputFloat
+        L
+    c : InputFloat
+        C
+    h : InputFloat
+        h
+
+    Inputs
+    ------
+    i.l : FloatSocket
+        L
+    i.c : FloatSocket
+        C
+    i.h : FloatSocket
+        h
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    """
 
     _name = "LCh to Color"
     _asset_name = "LCh to Color"
@@ -5656,7 +9538,32 @@ class LChToColor(AssetGeometryGroup):
 
 
 class LChToOKLab(AssetGeometryGroup):
-    """LCh to OKLab"""
+    """
+    LCh to OKLab
+
+    Parameters
+    ----------
+    l : InputFloat
+        L
+    c : InputFloat
+        C
+    h : InputFloat
+        h
+
+    Inputs
+    ------
+    i.l : FloatSocket
+        L
+    i.c : FloatSocket
+        C
+    i.h : FloatSocket
+        h
+
+    Outputs
+    -------
+    o.oklab : VectorSocket
+        OKLab
+    """
 
     _name = "LCh to OKLab"
     _asset_name = "LCh to OKLab"
@@ -5690,7 +9597,40 @@ class LChToOKLab(AssetGeometryGroup):
 
 
 class LagGeometry(AssetGeometryGroup):
-    """Lag Geometry"""
+    """
+    Lag Geometry
+
+    Parameters
+    ----------
+    input : InputGeometry
+        Input
+    selection : InputBoolean
+        The parts of the geometry that go into the first output
+    count : InputInteger
+        Number of frames to lag.
+    realize_all : InputBoolean
+        Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input
+
+    Inputs
+    ------
+    i.input : GeometrySocket
+        Input
+    i.selection : BooleanSocket
+        The parts of the geometry that go into the first output
+    i.count : IntegerSocket
+        Number of frames to lag.
+    i.realize_all : BooleanSocket
+        Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    o.lag_index : IntegerSocket
+        Lag Index
+    o.index : IntegerSocket
+        Index
+    """
 
     _name = "Lag Geometry"
     _asset_name = "Lag Geometry"
@@ -5700,11 +9640,11 @@ class LagGeometry(AssetGeometryGroup):
         input: GeometrySocket
         """Input"""
         selection: BooleanSocket
-        """Selection"""
+        """The parts of the geometry that go into the first output"""
         count: IntegerSocket
-        """Count"""
+        """Number of frames to lag."""
         realize_all: BooleanSocket
-        """Realize All"""
+        """Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -5739,7 +9679,44 @@ class LagGeometry(AssetGeometryGroup):
 
 
 class LatticeGrid(AssetGeometryGroup):
-    """Lattice Grid"""
+    """
+    Lattice Grid
+
+    Parameters
+    ----------
+    a : InputVector
+        A
+    b : InputVector
+        B
+    c : InputVector
+        C
+    x : InputInteger
+        Number of images along the a vector
+    y : InputInteger
+        Number of images along the b vector
+    z : InputInteger
+        Number of images along the c vector
+
+    Inputs
+    ------
+    i.a : VectorSocket
+        A
+    i.b : VectorSocket
+        B
+    i.c : VectorSocket
+        C
+    i.x : IntegerSocket
+        Number of images along the a vector
+    i.y : IntegerSocket
+        Number of images along the b vector
+    i.z : IntegerSocket
+        Number of images along the c vector
+
+    Outputs
+    -------
+    o.grid : GeometrySocket
+        Grid
+    """
 
     _name = "Lattice Grid"
     _asset_name = "Lattice Grid"
@@ -5753,11 +9730,11 @@ class LatticeGrid(AssetGeometryGroup):
         c: VectorSocket
         """C"""
         x: IntegerSocket
-        """X"""
+        """Number of images along the a vector"""
         y: IntegerSocket
-        """Y"""
+        """Number of images along the b vector"""
         z: IntegerSocket
-        """Z"""
+        """Number of images along the c vector"""
 
     class _Outputs(SocketAccessor):
         grid: GeometrySocket
@@ -5792,7 +9769,36 @@ class LatticeGrid(AssetGeometryGroup):
 
 
 class MNTypedBundles(AssetGeometryGroup):
-    """MN Typed Bundles"""
+    """
+    MN Typed Bundles
+
+    Parameters
+    ----------
+    type : InputMenu | Literal["MN.MeshProcess"]
+        Type
+    closure : InputClosure
+        Closure
+    step : InputInteger
+        step
+    path : InputString
+        Path
+
+    Inputs
+    ------
+    i.type : MenuSocket
+        Type
+    i.closure : ClosureSocket
+        Closure
+    i.step : IntegerSocket
+        step
+    i.path : StringSocket
+        Path
+
+    Outputs
+    -------
+    o.bundle : BundleSocket
+        Bundle
+    """
 
     _name = "MN Typed Bundles"
     _asset_name = "MN Typed Bundles"
@@ -5836,7 +9842,24 @@ class MNTypedBundles(AssetGeometryGroup):
 
 
 class Mass(AssetGeometryGroup):
-    """Mass"""
+    """
+    Mass
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.mass : FloatSocket
+        Read the `mass` attribute from the geometry
+    """
 
     _name = "Mass"
     _asset_name = "Mass"
@@ -5848,6 +9871,7 @@ class Mass(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         mass: FloatSocket
+        """Read the `mass` attribute from the geometry"""
 
     if TYPE_CHECKING:
 
@@ -5864,7 +9888,28 @@ class Mass(AssetGeometryGroup):
 
 
 class MenuAtomName(AssetGeometryGroup):
-    """Menu Atom Name"""
+    """
+    Menu Atom Name
+
+    Parameters
+    ----------
+    atom_name : InputMenu | Literal["N", "CA", "C", "O", "CB", "CG", "CG1", "CG2", "OG", "OG1", "SG", "CD", "CD1", "CD2", "ND1", "ND2", "OD1", "OD2", "SD", "CE", "CE1", "CE2", "CE3", "NE", "NE1", "NE2", "OE1", "OE2", "CH2", "NH1", "NH2", "OH", "CZ", "CZ2", "CZ3", "NZ", "OXT", "P", "O1P", "OP1", "OP2", "O2P", "O5", "C5", "C4", "O4", "C3", "O3", "C2", "O2", "C1", "N1", "N9", "N3", "C8", "N7", "C5", "C6", "N6", "C2", "C4", "O6", "N2", "N4", "O2", "O4", "C7"]
+        Atom Name
+
+    Inputs
+    ------
+    i.atom_name : MenuSocket
+        Atom Name
+
+    Outputs
+    -------
+    o.socket_1 : IntegerSocket
+        atom_name
+    o.selection : BooleanSocket
+        Selection
+    o.socket_3 : StringSocket
+        atom_name
+    """
 
     _name = "Menu Atom Name"
     _asset_name = "Menu Atom Name"
@@ -5966,7 +10011,28 @@ class MenuAtomName(AssetGeometryGroup):
 
 
 class MenuResidueMask(AssetGeometryGroup):
-    """Menu Residue Mask"""
+    """
+    Menu Residue Mask
+
+    Parameters
+    ----------
+    atom_name : InputMenu | Literal["N", "CA", "C", "O", "CB", "CG", "CG1", "CG2", "OG", "OG1", "SG", "CD", "CD1", "CD2", "ND1", "ND2", "OD1", "OD2", "SD", "CE", "CE1", "CE2", "CE3", "NE", "NE1", "NE2", "OE1", "OE2", "CH2", "NH1", "NH2", "OH", "CZ", "CZ2", "CZ3", "NZ", "OXT", "P", "O1P", "OP1", "OP2", "O2P", "O5", "C5", "C4", "O4", "C3", "O3", "C2", "O2", "C1", "N1", "N9", "N3", "C8", "N7", "C5", "C6", "N6", "C2", "C4", "O6", "N2", "N4", "O2", "O4", "C7"]
+        Atom Name
+
+    Inputs
+    ------
+    i.atom_name : MenuSocket
+        Atom Name
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Group contains only one occurrance of the selected atom. None or more than one returns False
+    o.index : IntegerSocket
+        Index for the group's atom with specified name, returns -1 if not valid
+    o.position : VectorSocket
+        Position of the picked point in the group, returns (0, 0, 0) if not valid
+    """
 
     _name = "Menu Residue Mask"
     _asset_name = "Menu Residue Mask"
@@ -5978,11 +10044,11 @@ class MenuResidueMask(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """Group contains only one occurrance of the selected atom. None or more than one returns False"""
         index: IntegerSocket
-        """Index"""
+        """Index for the group's atom with specified name, returns -1 if not valid"""
         position: VectorSocket
-        """Position"""
+        """Position of the picked point in the group, returns (0, 0, 0) if not valid"""
 
     if TYPE_CHECKING:
 
@@ -6068,7 +10134,26 @@ class MenuResidueMask(AssetGeometryGroup):
 
 
 class MenuResidueName(AssetGeometryGroup):
-    """Menu Residue Name"""
+    """
+    Menu Residue Name
+
+    Parameters
+    ----------
+    residue_name : InputMenu | Literal["UNK", "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL", "SNC", "MSE", "ASH", "CYM", "CYX", "GLH", "HID", "HIE", "HIP", "HYP", "LYN", "DA", "DC", "DG", "DT", "PST", "rA", "rC", "rG", "rU"]
+        Residue Name
+
+    Inputs
+    ------
+    i.residue_name : MenuSocket
+        Residue Name
+
+    Outputs
+    -------
+    o.res_name : IntegerSocket
+        res_name
+    o.selection : BooleanSocket
+        Selection
+    """
 
     _name = "Menu Residue Name"
     _asset_name = "Menu Residue Name"
@@ -6141,7 +10226,28 @@ class MenuResidueName(AssetGeometryGroup):
 
 
 class NormalizeField(AssetGeometryGroup):
-    """Normalize Field"""
+    """
+    Normalize Field
+
+    Parameters
+    ----------
+    field : InputFloat
+        Field
+    group_id : InputInteger
+        An index used to group values together for multiple separate operations
+
+    Inputs
+    ------
+    i.field : FloatSocket
+        Field
+    i.group_id : IntegerSocket
+        An index used to group values together for multiple separate operations
+
+    Outputs
+    -------
+    o.result : FloatSocket
+        Result
+    """
 
     _name = "Normalize Field"
     _asset_name = "Normalize Field"
@@ -6151,7 +10257,7 @@ class NormalizeField(AssetGeometryGroup):
         field: FloatSocket
         """Field"""
         group_id: IntegerSocket
-        """Group ID"""
+        """An index used to group values together for multiple separate operations"""
 
     class _Outputs(SocketAccessor):
         result: FloatSocket
@@ -6173,7 +10279,32 @@ class NormalizeField(AssetGeometryGroup):
 
 
 class NucleicChi(AssetGeometryGroup):
-    """Nucleic Chi"""
+    """
+    Nucleic Chi
+
+    Parameters
+    ----------
+    position : InputVector
+        Position
+    selection : InputBoolean
+        The resulting selection must overlap with this input selection
+    x1 : InputFloat
+        Amount to rotate around the axis
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        Position
+    i.selection : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.x1 : FloatSocket
+        Amount to rotate around the axis
+
+    Outputs
+    -------
+    o.position : VectorSocket
+        Transformed vector
+    """
 
     _name = "Nucleic Chi"
     _asset_name = "Nucleic Chi"
@@ -6183,13 +10314,13 @@ class NucleicChi(AssetGeometryGroup):
         position: VectorSocket
         """Position"""
         selection: BooleanSocket
-        """Selection"""
+        """The resulting selection must overlap with this input selection"""
         x1: FloatSocket
-        """X1"""
+        """Amount to rotate around the axis"""
 
     class _Outputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """Transformed vector"""
 
     if TYPE_CHECKING:
 
@@ -6210,7 +10341,48 @@ class NucleicChi(AssetGeometryGroup):
 
 
 class NucleicDihedral(AssetGeometryGroup):
-    """Nucleic Dihedral"""
+    """
+    Nucleic Dihedral
+
+    Parameters
+    ----------
+    position : InputVector
+        Position
+    selection : InputBoolean
+        The resulting selection must overlap with this input selection
+    alpha : InputFloat
+        Alpha
+    beta : InputFloat
+        Beta
+    gamma : InputFloat
+        Gamma
+    epsilon : InputFloat
+        Epsilon
+    zeta : InputFloat
+        Amount to rotate around the axis
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        Position
+    i.selection : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.alpha : FloatSocket
+        Alpha
+    i.beta : FloatSocket
+        Beta
+    i.gamma : FloatSocket
+        Gamma
+    i.epsilon : FloatSocket
+        Epsilon
+    i.zeta : FloatSocket
+        Amount to rotate around the axis
+
+    Outputs
+    -------
+    o.position : VectorSocket
+        Transformed vector
+    """
 
     _name = "Nucleic Dihedral"
     _asset_name = "Nucleic Dihedral"
@@ -6220,7 +10392,7 @@ class NucleicDihedral(AssetGeometryGroup):
         position: VectorSocket
         """Position"""
         selection: BooleanSocket
-        """Selection"""
+        """The resulting selection must overlap with this input selection"""
         alpha: FloatSocket
         """Alpha"""
         beta: FloatSocket
@@ -6230,11 +10402,11 @@ class NucleicDihedral(AssetGeometryGroup):
         epsilon: FloatSocket
         """Epsilon"""
         zeta: FloatSocket
-        """Zeta"""
+        """Amount to rotate around the axis"""
 
     class _Outputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """Transformed vector"""
 
     if TYPE_CHECKING:
 
@@ -6267,7 +10439,32 @@ class NucleicDihedral(AssetGeometryGroup):
 
 
 class OKLabOffsetLCh(AssetGeometryGroup):
-    """OKLab Offset LCh"""
+    """
+    OKLab Offset LCh
+
+    Parameters
+    ----------
+    oklab : InputVector
+        OKLab
+    l : InputFloat
+        L
+    h : InputFloat
+        h
+
+    Inputs
+    ------
+    i.oklab : VectorSocket
+        OKLab
+    i.l : FloatSocket
+        L
+    i.h : FloatSocket
+        h
+
+    Outputs
+    -------
+    o.oklab : VectorSocket
+        OKLab
+    """
 
     _name = "OKLab Offset LCh"
     _asset_name = "OKLab Offset LCh"
@@ -6301,7 +10498,24 @@ class OKLabOffsetLCh(AssetGeometryGroup):
 
 
 class OKLabToColor(AssetGeometryGroup):
-    """OKLab to Color"""
+    """
+    OKLab to Color
+
+    Parameters
+    ----------
+    oklab : InputVector
+        OKLab
+
+    Inputs
+    ------
+    i.oklab : VectorSocket
+        OKLab
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    """
 
     _name = "OKLab to Color"
     _asset_name = "OKLab to Color"
@@ -6330,7 +10544,28 @@ class OKLabToColor(AssetGeometryGroup):
 
 
 class OKLabToLCh(AssetGeometryGroup):
-    """OKLab to LCh"""
+    """
+    OKLab to LCh
+
+    Parameters
+    ----------
+    oklab : InputVector
+        OKLab
+
+    Inputs
+    ------
+    i.oklab : VectorSocket
+        OKLab
+
+    Outputs
+    -------
+    o.l : FloatSocket
+        L
+    o.c : FloatSocket
+        C
+    o.h : FloatSocket
+        h
+    """
 
     _name = "OKLab to LCh"
     _asset_name = "OKLab to LCh"
@@ -6362,7 +10597,32 @@ class OKLabToLCh(AssetGeometryGroup):
 
 
 class OffsetBoolean(AssetGeometryGroup):
-    """Offset Boolean"""
+    """
+    Offset Boolean
+
+    Parameters
+    ----------
+    boolean : InputBoolean
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.boolean : BooleanSocket
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.boolean : BooleanSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Boolean"
     _asset_name = "Offset Boolean"
@@ -6370,15 +10630,15 @@ class OffsetBoolean(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The field to evaluate at the given `Index` + `Offset` on the point domain"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         boolean: BooleanSocket
-        """Boolean"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6397,7 +10657,32 @@ class OffsetBoolean(AssetGeometryGroup):
 
 
 class OffsetColor(AssetGeometryGroup):
-    """Offset Color"""
+    """
+    Offset Color
+
+    Parameters
+    ----------
+    color : InputColor
+        Color
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.color : ColorSocket
+        Color
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Color"
     _asset_name = "Offset Color"
@@ -6407,13 +10692,13 @@ class OffsetColor(AssetGeometryGroup):
         color: ColorSocket
         """Color"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6432,7 +10717,28 @@ class OffsetColor(AssetGeometryGroup):
 
 
 class OffsetColorAttribute(AssetGeometryGroup):
-    """Offset Color Attribute"""
+    """
+    Offset Color Attribute
+
+    Parameters
+    ----------
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Color Attribute"
     _asset_name = "Offset Color Attribute"
@@ -6440,13 +10746,13 @@ class OffsetColorAttribute(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6464,7 +10770,30 @@ class OffsetColorAttribute(AssetGeometryGroup):
 
 
 class OffsetCurve(AssetGeometryGroup):
-    """Offset Curve"""
+    """
+    Offset Curve
+
+    Parameters
+    ----------
+    curve : InputGeometry
+        Curve
+    points : InputFloat
+        Number of points to offset and sample position and normal by. Fractions sample between the points along the curve.
+
+    Inputs
+    ------
+    i.curve : GeometrySocket
+        Curve
+    i.points : FloatSocket
+        Number of points to offset and sample position and normal by. Fractions sample between the points along the curve.
+
+    Outputs
+    -------
+    o.curve : GeometrySocket
+        Curve
+    o.factor : FloatSocket
+        The pre-offset factor for the curve's point
+    """
 
     _name = "Offset Curve"
     _asset_name = "Offset Curve"
@@ -6474,13 +10803,13 @@ class OffsetCurve(AssetGeometryGroup):
         curve: GeometrySocket
         """Curve"""
         points: FloatSocket
-        """Points"""
+        """Number of points to offset and sample position and normal by. Fractions sample between the points along the curve."""
 
     class _Outputs(SocketAccessor):
         curve: GeometrySocket
         """Curve"""
         factor: FloatSocket
-        """Factor"""
+        """The pre-offset factor for the curve's point"""
 
     if TYPE_CHECKING:
 
@@ -6498,7 +10827,32 @@ class OffsetCurve(AssetGeometryGroup):
 
 
 class OffsetFloat(AssetGeometryGroup):
-    """Offset Float"""
+    """
+    Offset Float
+
+    Parameters
+    ----------
+    value : InputFloat
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.value : FloatSocket
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Float"
     _asset_name = "Offset Float"
@@ -6506,15 +10860,15 @@ class OffsetFloat(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The field to evaluate at the given `Index` + `Offset` on the point domain"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6533,7 +10887,28 @@ class OffsetFloat(AssetGeometryGroup):
 
 
 class OffsetIndex(AssetGeometryGroup):
-    """Offset Index"""
+    """
+    Offset Index
+
+    Parameters
+    ----------
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The `Offset` to apply to the `Index` of the point
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The `Offset` to apply to the `Index` of the point
+
+    Outputs
+    -------
+    o.index : IntegerSocket
+        The `Index` + `Offset`
+    """
 
     _name = "Offset Index"
     _asset_name = "Offset Index"
@@ -6541,13 +10916,13 @@ class OffsetIndex(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The `Offset` to apply to the `Index` of the point"""
 
     class _Outputs(SocketAccessor):
         index: IntegerSocket
-        """Index"""
+        """The `Index` + `Offset`"""
 
     if TYPE_CHECKING:
 
@@ -6565,7 +10940,32 @@ class OffsetIndex(AssetGeometryGroup):
 
 
 class OffsetInteger(AssetGeometryGroup):
-    """Offset Integer"""
+    """
+    Offset Integer
+
+    Parameters
+    ----------
+    integer : InputInteger
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.integer : IntegerSocket
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.integer : IntegerSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Integer"
     _asset_name = "Offset Integer"
@@ -6573,15 +10973,15 @@ class OffsetInteger(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         integer: IntegerSocket
-        """Integer"""
+        """The field to evaluate at the given `Index` + `Offset` on the point domain"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         integer: IntegerSocket
-        """Integer"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6600,7 +11000,32 @@ class OffsetInteger(AssetGeometryGroup):
 
 
 class OffsetMatrix(AssetGeometryGroup):
-    """Offset Matrix"""
+    """
+    Offset Matrix
+
+    Parameters
+    ----------
+    matrix : InputMatrix
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.matrix : MatrixSocket
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.matrix : MatrixSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Matrix"
     _asset_name = "Offset Matrix"
@@ -6608,15 +11033,15 @@ class OffsetMatrix(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         matrix: MatrixSocket
-        """Matrix"""
+        """The field to evaluate at the given `Index` + `Offset` on the point domain"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         matrix: MatrixSocket
-        """Matrix"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6635,7 +11060,36 @@ class OffsetMatrix(AssetGeometryGroup):
 
 
 class OffsetPointAlongCurve(AssetGeometryGroup):
-    """Offset along the current point's curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between `Point Index` + 1 and `Point Index` + 2, returning the `Length` and the `Factor` for this point on the curve"""
+    """
+    Offset along the current point's curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between `Point Index` + 1 and `Point Index` + 2, returning the `Length` and the `Factor` for this point on the curve
+
+    Parameters
+    ----------
+    point_index : InputInteger
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    offset : InputFloat
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.point_index : IntegerSocket
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    i.offset : FloatSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.is_off_spline : BooleanSocket
+        The field evaluated at the offset `Index` value
+    o.factor : FloatSocket
+        The field evaluated at the offset `Index` value
+    o.length : FloatSocket
+        The field evaluated at the offset `Index` value
+    o.index_a : IntegerSocket
+        The field evaluated at the offset `Index` value
+    o.index_b : IntegerSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Point Along Curve"
     _asset_name = "Offset Point Along Curve"
@@ -6643,21 +11097,21 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         point_index: IntegerSocket
-        """Point Index"""
+        """The field to evaluate at the given `Index` + `Offset` on the point domain"""
         offset: FloatSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         is_off_spline: BooleanSocket
-        """Is Off Spline"""
+        """The field evaluated at the offset `Index` value"""
         factor: FloatSocket
-        """Factor"""
+        """The field evaluated at the offset `Index` value"""
         length: FloatSocket
-        """Length"""
+        """The field evaluated at the offset `Index` value"""
         index_a: IntegerSocket
-        """Index A"""
+        """The field evaluated at the offset `Index` value"""
         index_b: IntegerSocket
-        """Index B"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6675,7 +11129,32 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
 
 
 class OffsetRotation(AssetGeometryGroup):
-    """Offset Rotation"""
+    """
+    Offset Rotation
+
+    Parameters
+    ----------
+    rotation : InputRotation
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.rotation : RotationSocket
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Rotation"
     _asset_name = "Offset Rotation"
@@ -6683,15 +11162,15 @@ class OffsetRotation(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The field to evaluate at the given `Index` + `Offset` on the point domain"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6712,7 +11191,32 @@ class OffsetRotation(AssetGeometryGroup):
 
 
 class OffsetVector(AssetGeometryGroup):
-    """Offset Vector"""
+    """
+    Offset Vector
+
+    Parameters
+    ----------
+    vector : InputVector
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    index : InputInteger
+        The `Index` at which to evaluate this offset from
+    offset : InputInteger
+        The offset to apply to the `Index` before evaluating the input field
+
+    Inputs
+    ------
+    i.vector : VectorSocket
+        The field to evaluate at the given `Index` + `Offset` on the point domain
+    i.index : IntegerSocket
+        The `Index` at which to evaluate this offset from
+    i.offset : IntegerSocket
+        The offset to apply to the `Index` before evaluating the input field
+
+    Outputs
+    -------
+    o.value : VectorSocket
+        The field evaluated at the offset `Index` value
+    """
 
     _name = "Offset Vector"
     _asset_name = "Offset Vector"
@@ -6720,15 +11224,15 @@ class OffsetVector(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         vector: VectorSocket
-        """Vector"""
+        """The field to evaluate at the given `Index` + `Offset` on the point domain"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to evaluate this offset from"""
         offset: IntegerSocket
-        """Offset"""
+        """The offset to apply to the `Index` before evaluating the input field"""
 
     class _Outputs(SocketAccessor):
         value: VectorSocket
-        """Value"""
+        """The field evaluated at the offset `Index` value"""
 
     if TYPE_CHECKING:
 
@@ -6747,7 +11251,24 @@ class OffsetVector(AssetGeometryGroup):
 
 
 class OxDNANormal(AssetGeometryGroup):
-    """oxDNA Normal"""
+    """
+    oxDNA Normal
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.base_normal : VectorSocket
+        base_normal
+    """
 
     _name = "oxDNA Normal"
     _asset_name = "oxDNA Normal"
@@ -6775,7 +11296,24 @@ class OxDNANormal(AssetGeometryGroup):
 
 
 class OxDNAOffset(AssetGeometryGroup):
-    """oxDNA Offset"""
+    """
+    oxDNA Offset
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.offset : VectorSocket
+        Offset
+    """
 
     _name = "oxDNA Offset"
     _asset_name = "oxDNA Offset"
@@ -6804,7 +11342,24 @@ class OxDNAOffset(AssetGeometryGroup):
 
 
 class OxDNARotation(AssetGeometryGroup):
-    """oxDNA Rotation"""
+    """
+    oxDNA Rotation
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        Rotation
+    """
 
     _name = "oxDNA Rotation"
     _asset_name = "oxDNA Rotation"
@@ -6833,7 +11388,68 @@ class OxDNARotation(AssetGeometryGroup):
 
 
 class OxDNAStyleRibbon(AssetGeometryGroup):
-    """oxDNA Style Ribbon"""
+    """
+    oxDNA Style Ribbon
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    backbone_resolution : InputInteger
+        Backbone Resolution
+    backbone_subdivisions : InputInteger
+        Backbone Subdivisions
+    backbone_radius : InputFloat
+        Backbone Radius
+    a : InputColor
+        A
+    c : InputColor
+        C
+    g : InputColor
+        G
+    t_u : InputColor
+        T / U
+    base_scale : InputVector
+        Base Scale
+    shade_smooth : InputBoolean
+        Shade Smooth
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.backbone_resolution : IntegerSocket
+        Backbone Resolution
+    i.backbone_subdivisions : IntegerSocket
+        Backbone Subdivisions
+    i.backbone_radius : FloatSocket
+        Backbone Radius
+    i.a : ColorSocket
+        A
+    i.c : ColorSocket
+        C
+    i.g : ColorSocket
+        G
+    i.t_u : ColorSocket
+        T / U
+    i.base_scale : VectorSocket
+        Base Scale
+    i.shade_smooth : BooleanSocket
+        Shade Smooth
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "oxDNA Style Ribbon"
     _asset_name = "oxDNA Style Ribbon"
@@ -6843,7 +11459,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         geometry: GeometrySocket
         """Geometry"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         backbone_resolution: IntegerSocket
         """Backbone Resolution"""
         backbone_subdivisions: IntegerSocket
@@ -6863,7 +11479,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -6910,7 +11526,24 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
 
 
 class OxDNAVector(AssetGeometryGroup):
-    """oxDNA Vector"""
+    """
+    oxDNA Vector
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.base_vector : VectorSocket
+        base_vector
+    """
 
     _name = "oxDNA Vector"
     _asset_name = "oxDNA Vector"
@@ -6938,7 +11571,48 @@ class OxDNAVector(AssetGeometryGroup):
 
 
 class PeptideChi(AssetGeometryGroup):
-    """Peptide Chi"""
+    """
+    Peptide Chi
+
+    Parameters
+    ----------
+    position : InputVector
+        Position
+    selection : InputBoolean
+        Selection
+    x1 : InputFloat
+        X1
+    x2 : InputFloat
+        X2
+    x3 : InputFloat
+        X3
+    x4 : InputFloat
+        X4
+    x5 : InputFloat
+        X5
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        Position
+    i.selection : BooleanSocket
+        Selection
+    i.x1 : FloatSocket
+        X1
+    i.x2 : FloatSocket
+        X2
+    i.x3 : FloatSocket
+        X3
+    i.x4 : FloatSocket
+        X4
+    i.x5 : FloatSocket
+        X5
+
+    Outputs
+    -------
+    o.position : VectorSocket
+        Position
+    """
 
     _name = "Peptide Chi"
     _asset_name = "Peptide Chi"
@@ -6995,7 +11669,36 @@ class PeptideChi(AssetGeometryGroup):
 
 
 class PeptideDihedral(AssetGeometryGroup):
-    """Peptide Dihedral"""
+    """
+    Peptide Dihedral
+
+    Parameters
+    ----------
+    position : InputVector
+        Position
+    selection : InputBoolean
+        The resulting selection must overlap with this input selection
+    phi : InputFloat
+        Phi
+    psi : InputFloat
+        Psi
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        Position
+    i.selection : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.phi : FloatSocket
+        Phi
+    i.psi : FloatSocket
+        Psi
+
+    Outputs
+    -------
+    o.position : VectorSocket
+        Transformed vector
+    """
 
     _name = "Peptide Dihedral"
     _asset_name = "Peptide Dihedral"
@@ -7005,7 +11708,7 @@ class PeptideDihedral(AssetGeometryGroup):
         position: VectorSocket
         """Position"""
         selection: BooleanSocket
-        """Selection"""
+        """The resulting selection must overlap with this input selection"""
         phi: FloatSocket
         """Phi"""
         psi: FloatSocket
@@ -7013,7 +11716,7 @@ class PeptideDihedral(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """Transformed vector"""
 
     if TYPE_CHECKING:
 
@@ -7040,7 +11743,64 @@ class PeptideDihedral(AssetGeometryGroup):
 
 
 class PeriodicArray(AssetGeometryGroup):
-    """Periodic Array"""
+    """
+    Periodic Array
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    update : InputBoolean
+        Update the box lengths and angles with the simulation
+    a : InputFloat
+        a
+    b : InputFloat
+        b
+    c : InputFloat
+        c
+    alpha : InputFloat
+        alpha
+    beta : InputFloat
+        beta
+    gamma : InputFloat
+        gamma
+    x : InputInteger
+        Number of images along the a vector
+    y : InputInteger
+        Number of images along the b vector
+    z : InputInteger
+        Number of images along the c vector
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.update : BooleanSocket
+        Update the box lengths and angles with the simulation
+    i.a : FloatSocket
+        a
+    i.b : FloatSocket
+        b
+    i.c : FloatSocket
+        c
+    i.alpha : FloatSocket
+        alpha
+    i.beta : FloatSocket
+        beta
+    i.gamma : FloatSocket
+        gamma
+    i.x : IntegerSocket
+        Number of images along the a vector
+    i.y : IntegerSocket
+        Number of images along the b vector
+    i.z : IntegerSocket
+        Number of images along the c vector
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    """
 
     _name = "Periodic Array"
     _asset_name = "Periodic Array"
@@ -7050,7 +11810,7 @@ class PeriodicArray(AssetGeometryGroup):
         geometry: GeometrySocket
         """Geometry"""
         update: BooleanSocket
-        """Update"""
+        """Update the box lengths and angles with the simulation"""
         a: FloatSocket
         b: FloatSocket
         c: FloatSocket
@@ -7058,11 +11818,11 @@ class PeriodicArray(AssetGeometryGroup):
         beta: FloatSocket
         gamma: FloatSocket
         x: IntegerSocket
-        """X"""
+        """Number of images along the a vector"""
         y: IntegerSocket
-        """Y"""
+        """Number of images along the b vector"""
         z: IntegerSocket
-        """Z"""
+        """Number of images along the c vector"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
@@ -7107,7 +11867,52 @@ class PeriodicArray(AssetGeometryGroup):
 
 
 class PeriodicBox(AssetGeometryGroup):
-    """Periodic Box"""
+    """
+    Periodic Box
+
+    Parameters
+    ----------
+    update : InputBoolean
+        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
+    a : InputFloat
+        a
+    b : InputFloat
+        b
+    c : InputFloat
+        c
+    alpha : InputFloat
+        alpha
+    beta : InputFloat
+        beta
+    gamma : InputFloat
+        gamma
+
+    Inputs
+    ------
+    i.update : BooleanSocket
+        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
+    i.a : FloatSocket
+        a
+    i.b : FloatSocket
+        b
+    i.c : FloatSocket
+        c
+    i.alpha : FloatSocket
+        alpha
+    i.beta : FloatSocket
+        beta
+    i.gamma : FloatSocket
+        gamma
+
+    Outputs
+    -------
+    o.a : VectorSocket
+        A
+    o.b : VectorSocket
+        B
+    o.c : VectorSocket
+        C
+    """
 
     _name = "Periodic Box"
     _asset_name = "Periodic Box"
@@ -7115,7 +11920,7 @@ class PeriodicBox(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         update: BooleanSocket
-        """Update"""
+        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node."""
         a: FloatSocket
         b: FloatSocket
         c: FloatSocket
@@ -7162,7 +11967,44 @@ class PeriodicBox(AssetGeometryGroup):
 
 
 class PeriodicImage(AssetGeometryGroup):
-    """Periodic Image"""
+    """
+    Periodic Image
+
+    Parameters
+    ----------
+    a : InputVector
+        A
+    b : InputVector
+        B
+    c : InputVector
+        C
+    image_a : InputInteger
+        Image A
+    image_b : InputInteger
+        Image B
+    image_c : InputInteger
+        Image C
+
+    Inputs
+    ------
+    i.a : VectorSocket
+        A
+    i.b : VectorSocket
+        B
+    i.c : VectorSocket
+        C
+    i.image_a : IntegerSocket
+        Image A
+    i.image_b : IntegerSocket
+        Image B
+    i.image_c : IntegerSocket
+        Image C
+
+    Outputs
+    -------
+    o.points : GeometrySocket
+        Points
+    """
 
     _name = "Periodic Image"
     _asset_name = "Periodic Image"
@@ -7215,7 +12057,36 @@ class PeriodicImage(AssetGeometryGroup):
 
 
 class Plexus(AssetGeometryGroup):
-    """Plexus"""
+    """
+    Plexus
+
+    Parameters
+    ----------
+    points : InputGeometry
+        Points
+    sort : InputBoolean
+        Sort the resulting points so their `Index` matches the input geometry
+    distance : InputFloat
+        Distance
+    radius : InputFloat
+        Radius
+
+    Inputs
+    ------
+    i.points : GeometrySocket
+        Points
+    i.sort : BooleanSocket
+        Sort the resulting points so their `Index` matches the input geometry
+    i.distance : FloatSocket
+        Distance
+    i.radius : FloatSocket
+        Radius
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Plexus"
     _asset_name = "Plexus"
@@ -7225,7 +12096,7 @@ class Plexus(AssetGeometryGroup):
         points: GeometrySocket
         """Points"""
         sort: BooleanSocket
-        """Sort"""
+        """Sort the resulting points so their `Index` matches the input geometry"""
         distance: FloatSocket
         """Distance"""
         radius: FloatSocket
@@ -7260,7 +12131,42 @@ class Plexus(AssetGeometryGroup):
 
 
 class PointEdgeAngle(AssetGeometryGroup):
-    """Point Edge Angle"""
+    """
+    Point Edge Angle
+
+    Parameters
+    ----------
+    vertex_index : InputInteger
+        The index of the point at which to evaluate this node
+    edge_a : InputInteger
+        The index of the edges of this point to select
+    edge_b : InputInteger
+        The index of the edges of this point to select
+
+    Inputs
+    ------
+    i.vertex_index : IntegerSocket
+        The index of the point at which to evaluate this node
+    i.edge_a : IntegerSocket
+        The index of the edges of this point to select
+    i.edge_b : IntegerSocket
+        The index of the edges of this point to select
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Both of the selected edges are valid
+    o.angle : FloatSocket
+        Angle between the two selected edges in radians. Returns 0 if not valid
+    o.edge_index_a : IntegerSocket
+        Index for "Edge A" in the Edge domain of the geometry. Returns -1 if not valid
+    o.edge_index_b : IntegerSocket
+        Index for "Edge B" in the Edge domain of the geometry. Returns -1 if not valid
+    o.edge_vector_a : VectorSocket
+        Vector from the current point to the other point in Edge A. Returns (0, 0, 0) if not valid.
+    o.edge_vector_b : VectorSocket
+        Vector from the current point to the other point in Edge B. Returns (0, 0, 0) if not valid.
+    """
 
     _name = "Point Edge Angle"
     _asset_name = "Point Edge Angle"
@@ -7268,25 +12174,25 @@ class PointEdgeAngle(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         vertex_index: IntegerSocket
-        """Vertex Index"""
+        """The index of the point at which to evaluate this node"""
         edge_a: IntegerSocket
-        """Edge A"""
+        """The index of the edges of this point to select"""
         edge_b: IntegerSocket
-        """Edge B"""
+        """The index of the edges of this point to select"""
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """Both of the selected edges are valid"""
         angle: FloatSocket
-        """Angle"""
+        """Angle between the two selected edges in radians. Returns 0 if not valid"""
         edge_index_a: IntegerSocket
-        """Edge Index A"""
+        """Index for "Edge A" in the Edge domain of the geometry. Returns -1 if not valid"""
         edge_index_b: IntegerSocket
-        """Edge Index B"""
+        """Index for "Edge B" in the Edge domain of the geometry. Returns -1 if not valid"""
         edge_vector_a: VectorSocket
-        """Edge Vector A"""
+        """Vector from the current point to the other point in Edge A. Returns (0, 0, 0) if not valid."""
         edge_vector_b: VectorSocket
-        """Edge Vector B"""
+        """Vector from the current point to the other point in Edge B. Returns (0, 0, 0) if not valid."""
 
     if TYPE_CHECKING:
 
@@ -7307,7 +12213,36 @@ class PointEdgeAngle(AssetGeometryGroup):
 
 
 class PointsOfEdge(AssetGeometryGroup):
-    """Points of Edge"""
+    """
+    Points of Edge
+
+    Parameters
+    ----------
+    vertex_index : InputInteger
+        Vertex Index
+    edge_index : InputInteger
+        Index within the gorup of edges that are connected to this point
+
+    Inputs
+    ------
+    i.vertex_index : IntegerSocket
+        Vertex Index
+    i.edge_index : IntegerSocket
+        Index within the gorup of edges that are connected to this point
+
+    Outputs
+    -------
+    o._0 : IntegerSocket
+        Index for the 0th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self
+    o._1 : IntegerSocket
+        Index for the 1th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self
+    o._2 : IntegerSocket
+        Index for the 2th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self
+    o._3 : IntegerSocket
+        Index for the 3th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self
+    o.total : IntegerSocket
+        Number of edges conncted to the connected point, including this edge
+    """
 
     _name = "Points of Edge"
     _asset_name = "Points of Edge"
@@ -7317,19 +12252,19 @@ class PointsOfEdge(AssetGeometryGroup):
         vertex_index: IntegerSocket
         """Vertex Index"""
         edge_index: IntegerSocket
-        """Edge Index"""
+        """Index within the gorup of edges that are connected to this point"""
 
     class _Outputs(SocketAccessor):
         _0: IntegerSocket
-        """0"""
+        """Index for the 0th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self"""
         _1: IntegerSocket
-        """1"""
+        """Index for the 1th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self"""
         _2: IntegerSocket
-        """2"""
+        """Index for the 2th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self"""
         _3: IntegerSocket
-        """3"""
+        """Index for the 3th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self"""
         total: IntegerSocket
-        """Total"""
+        """Number of edges conncted to the connected point, including this edge"""
 
     if TYPE_CHECKING:
 
@@ -7347,7 +12282,40 @@ class PointsOfEdge(AssetGeometryGroup):
 
 
 class PrimitiveArrow(AssetGeometryGroup):
-    """Primitive Arrow"""
+    """
+    Primitive Arrow
+
+    Parameters
+    ----------
+    vertices : InputInteger
+        Vertices
+    height : InputFloat
+        Height
+    ratio : InputFloat
+        Ratio
+    value : InputColor
+        Value
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.vertices : IntegerSocket
+        Vertices
+    i.height : FloatSocket
+        Height
+    i.ratio : FloatSocket
+        Ratio
+    i.value : ColorSocket
+        Value
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Primitive Arrow"
     _asset_name = "Primitive Arrow"
@@ -7363,7 +12331,7 @@ class PrimitiveArrow(AssetGeometryGroup):
         value: ColorSocket
         """Value"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -7396,7 +12364,44 @@ class PrimitiveArrow(AssetGeometryGroup):
 
 
 class PrimitiveGimbal(AssetGeometryGroup):
-    """Primitive Gimbal"""
+    """
+    Primitive Gimbal
+
+    Parameters
+    ----------
+    vertices : InputInteger
+        Vertices
+    x : InputColor
+        X
+    y : InputColor
+        Y
+    z : InputColor
+        Z
+    material : InputMaterial
+        Material to apply to the resulting geometry
+    height : InputFloat
+        Height
+
+    Inputs
+    ------
+    i.vertices : IntegerSocket
+        Vertices
+    i.x : ColorSocket
+        X
+    i.y : ColorSocket
+        Y
+    i.z : ColorSocket
+        Z
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+    i.height : FloatSocket
+        Height
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Primitive Gimbal"
     _asset_name = "Primitive Gimbal"
@@ -7412,7 +12417,7 @@ class PrimitiveGimbal(AssetGeometryGroup):
         z: ColorSocket
         """Z"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
         height: FloatSocket
         """Height"""
 
@@ -7449,7 +12454,48 @@ class PrimitiveGimbal(AssetGeometryGroup):
 
 
 class RandomColor(AssetGeometryGroup):
-    """Random Color"""
+    """
+    Random Color
+
+    Parameters
+    ----------
+    id : InputInteger
+        ID
+    color_seed : InputInteger
+        Seed value for the random generation of the colors
+    colorspace : InputMenu | Literal["HSL", "OKLab"]
+        Colorspace
+    hsl_saturation : InputFloat
+        Saturlation level for the random color
+    hsl_lightness : InputFloat
+        Lightness value for the generated random color
+    oklab_luminance : InputFloat
+        OKLab Luminance
+    oklab_chroma : InputFloat
+        OKLab Chroma
+
+    Inputs
+    ------
+    i.id : IntegerSocket
+        ID
+    i.color_seed : IntegerSocket
+        Seed value for the random generation of the colors
+    i.colorspace : MenuSocket
+        Colorspace
+    i.hsl_saturation : FloatSocket
+        Saturlation level for the random color
+    i.hsl_lightness : FloatSocket
+        Lightness value for the generated random color
+    i.oklab_luminance : FloatSocket
+        OKLab Luminance
+    i.oklab_chroma : FloatSocket
+        OKLab Chroma
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    """
 
     _name = "Random Color"
     _asset_name = "Random Color"
@@ -7459,13 +12505,13 @@ class RandomColor(AssetGeometryGroup):
         id: IntegerSocket
         """ID"""
         color_seed: IntegerSocket
-        """Color Seed"""
+        """Seed value for the random generation of the colors"""
         colorspace: MenuSocket
         """Colorspace"""
         hsl_saturation: FloatSocket
-        """HSL Saturation"""
+        """Saturlation level for the random color"""
         hsl_lightness: FloatSocket
-        """HSL Lightness"""
+        """Lightness value for the generated random color"""
         oklab_luminance: FloatSocket
         """OKLab Luminance"""
         oklab_chroma: FloatSocket
@@ -7506,7 +12552,30 @@ class RandomColor(AssetGeometryGroup):
 
 
 class RelativeIndex(AssetGeometryGroup):
-    """Get information about the points in a `Group ID` such as size and the start and end Indices"""
+    """
+    Get information about the points in a `Group ID` such as size and the start and end Indices
+
+    Parameters
+    ----------
+    group_id : InputInteger
+        Define the groups to get information about
+
+    Inputs
+    ------
+    i.group_id : IntegerSocket
+        Define the groups to get information about
+
+    Outputs
+    -------
+    o.group_size : IntegerSocket
+        The number of points in each `Group ID`
+    o.relative_index : IntegerSocket
+        The relative index of each point within each `Group ID`, starting from 0
+    o.first_index : IntegerSocket
+        The `Index` of the first point in each `Group ID`
+    o.last_index : IntegerSocket
+        The `Index` of the last point in each `Group ID`
+    """
 
     _name = "Relative Index"
     _asset_name = "Relative Index"
@@ -7514,17 +12583,17 @@ class RelativeIndex(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         group_id: IntegerSocket
-        """Group ID"""
+        """Define the groups to get information about"""
 
     class _Outputs(SocketAccessor):
         group_size: IntegerSocket
-        """Group Size"""
+        """The number of points in each `Group ID`"""
         relative_index: IntegerSocket
-        """Relative Index"""
+        """The relative index of each point within each `Group ID`, starting from 0"""
         first_index: IntegerSocket
-        """First Index"""
+        """The `Index` of the first point in each `Group ID`"""
         last_index: IntegerSocket
-        """Last Index"""
+        """The `Index` of the last point in each `Group ID`"""
 
     if TYPE_CHECKING:
 
@@ -7541,7 +12610,38 @@ class RelativeIndex(AssetGeometryGroup):
 
 
 class ResidueDihedralAngle(AssetGeometryGroup):
-    """Residue Dihedral Angle"""
+    """
+    Residue Dihedral Angle
+
+    Parameters
+    ----------
+    a : InputInteger
+        Atom to pick from the group
+    c : InputInteger
+        Atom to pick from the group
+    d : InputInteger
+        Atom to pick from the group
+
+    Inputs
+    ------
+    i.a : IntegerSocket
+        Atom to pick from the group
+    i.c : IntegerSocket
+        Atom to pick from the group
+    i.d : IntegerSocket
+        Atom to pick from the group
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        Value
+    o.ba_bc : VectorSocket
+        The vector BA when made perpendicular to the axis BC
+    o.cd_bc : VectorSocket
+        The Vector CD when makde perpendicular to the axis BC
+    o.bc : VectorSocket
+        The axis vector BC
+    """
 
     _name = "Residue Dihedral Angle"
     _asset_name = "Residue Dihedral Angle"
@@ -7549,21 +12649,21 @@ class ResidueDihedralAngle(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: IntegerSocket
-        """A"""
+        """Atom to pick from the group"""
         c: IntegerSocket
-        """C"""
+        """Atom to pick from the group"""
         d: IntegerSocket
-        """D"""
+        """Atom to pick from the group"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
         """Value"""
         ba_bc: VectorSocket
-        """BA⟂(BC)"""
+        """The vector BA when made perpendicular to the axis BC"""
         cd_bc: VectorSocket
-        """CD⟂(BC)"""
+        """The Vector CD when makde perpendicular to the axis BC"""
         bc: VectorSocket
-        """BC"""
+        """The axis vector BC"""
 
     if TYPE_CHECKING:
 
@@ -7582,7 +12682,24 @@ class ResidueDihedralAngle(AssetGeometryGroup):
 
 
 class ResidueID(AssetGeometryGroup):
-    """Residue ID"""
+    """
+    Residue ID
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.res_id : IntegerSocket
+        Read the `res_id` attribute from the geometry
+    """
 
     _name = "Residue ID"
     _asset_name = "Residue ID"
@@ -7594,6 +12711,7 @@ class ResidueID(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         res_id: IntegerSocket
+        """Read the `res_id` attribute from the geometry"""
 
     if TYPE_CHECKING:
 
@@ -7610,7 +12728,28 @@ class ResidueID(AssetGeometryGroup):
 
 
 class ResidueMask(AssetGeometryGroup):
-    """Residue Mask"""
+    """
+    Residue Mask
+
+    Parameters
+    ----------
+    atom_name : InputInteger
+        Atom to pick from the group
+
+    Inputs
+    ------
+    i.atom_name : IntegerSocket
+        Atom to pick from the group
+
+    Outputs
+    -------
+    o.is_valid : BooleanSocket
+        Group contains only one occurrance of the selected atom. None or more than one returns False
+    o.index : IntegerSocket
+        Index for the group's atom with specified name, returns -1 if not valid
+    o.position : VectorSocket
+        Position of the picked point in the group, returns (0, 0, 0) if not valid
+    """
 
     _name = "Residue Mask"
     _asset_name = "Residue Mask"
@@ -7618,14 +12757,15 @@ class ResidueMask(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atom_name: IntegerSocket
+        """Atom to pick from the group"""
 
     class _Outputs(SocketAccessor):
         is_valid: BooleanSocket
-        """Is Valid"""
+        """Group contains only one occurrance of the selected atom. None or more than one returns False"""
         index: IntegerSocket
-        """Index"""
+        """Index for the group's atom with specified name, returns -1 if not valid"""
         position: VectorSocket
-        """Position"""
+        """Position of the picked point in the group, returns (0, 0, 0) if not valid"""
 
     if TYPE_CHECKING:
 
@@ -7642,7 +12782,24 @@ class ResidueMask(AssetGeometryGroup):
 
 
 class ResidueName(AssetGeometryGroup):
-    """Residue Name"""
+    """
+    Residue Name
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.res_name : IntegerSocket
+        Read the `res_name` attribute from the geometry
+    """
 
     _name = "Residue Name"
     _asset_name = "Residue Name"
@@ -7654,6 +12811,7 @@ class ResidueName(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         res_name: IntegerSocket
+        """Read the `res_name` attribute from the geometry"""
 
     if TYPE_CHECKING:
 
@@ -7670,7 +12828,26 @@ class ResidueName(AssetGeometryGroup):
 
 
 class ResidueParameter(AssetGeometryGroup):
-    """Residue Parameter"""
+    """
+    Residue Parameter
+
+    Outputs
+    -------
+    o.factor : FloatSocket
+        An atom's relative position in a residue, with the first atom being 0 and the last atom being 1
+    o.atom_count : IntegerSocket
+        Number of atoms in a residue
+    o.atom_index : IntegerSocket
+        Index of an atom in a residue when counting from 0
+    o.first_atom_name : IntegerSocket
+        the atom_name for the first atom in a residue
+    o.last_atom_name : IntegerSocket
+        The atom_name for the last atom in a residue
+    o.index_of_first : IntegerSocket
+        Index (in the whole structure) for the first atom in a residue
+    o.index_of_last : IntegerSocket
+        Index (in the whole structure) for the last atom in a residue
+    """
 
     _name = "Residue Parameter"
     _asset_name = "Residue Parameter"
@@ -7681,19 +12858,19 @@ class ResidueParameter(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         factor: FloatSocket
-        """Factor"""
+        """An atom's relative position in a residue, with the first atom being 0 and the last atom being 1"""
         atom_count: IntegerSocket
-        """Atom Count"""
+        """Number of atoms in a residue"""
         atom_index: IntegerSocket
-        """Atom Index"""
+        """Index of an atom in a residue when counting from 0"""
         first_atom_name: IntegerSocket
-        """First atom_name"""
+        """the atom_name for the first atom in a residue"""
         last_atom_name: IntegerSocket
-        """Last atom_name"""
+        """The atom_name for the last atom in a residue"""
         index_of_first: IntegerSocket
-        """Index of First"""
+        """Index (in the whole structure) for the first atom in a residue"""
         index_of_last: IntegerSocket
-        """Index of Last"""
+        """Index (in the whole structure) for the last atom in a residue"""
 
     if TYPE_CHECKING:
 
@@ -7707,7 +12884,16 @@ class ResidueParameter(AssetGeometryGroup):
 
 
 class RotationCisTEM(AssetGeometryGroup):
-    """Rotation cisTEM"""
+    """
+    Rotation cisTEM
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        Rotation
+    o.is_valid : BooleanSocket
+        Is Valid
+    """
 
     _name = "Rotation cisTEM"
     _asset_name = "Rotation cisTEM"
@@ -7734,7 +12920,32 @@ class RotationCisTEM(AssetGeometryGroup):
 
 
 class RotationFromZYZ(AssetGeometryGroup):
-    """Combine a rotation defined as ZYZ common in electron tomography"""
+    """
+    Combine a rotation defined as ZYZ common in electron tomography
+
+    Parameters
+    ----------
+    phi : InputFloat
+        First rotation around the Z axis
+    theta : InputFloat
+        Second rotation around the Y axis
+    psi : InputFloat
+        Third rotation around the Z axis
+
+    Inputs
+    ------
+    i.phi : FloatSocket
+        First rotation around the Z axis
+    i.theta : FloatSocket
+        Second rotation around the Y axis
+    i.psi : FloatSocket
+        Third rotation around the Z axis
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        The combined Rotation
+    """
 
     _name = "Rotation from ZYZ"
     _asset_name = "Rotation from ZYZ"
@@ -7742,15 +12953,15 @@ class RotationFromZYZ(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         phi: FloatSocket
-        """Phi"""
+        """First rotation around the Z axis"""
         theta: FloatSocket
-        """Theta"""
+        """Second rotation around the Y axis"""
         psi: FloatSocket
-        """Psi"""
+        """Third rotation around the Z axis"""
 
     class _Outputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The combined Rotation"""
 
     if TYPE_CHECKING:
 
@@ -7769,7 +12980,16 @@ class RotationFromZYZ(AssetGeometryGroup):
 
 
 class RotationRELION(AssetGeometryGroup):
-    """Rotation RELION"""
+    """
+    Rotation RELION
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        Rotation
+    o.is_valid : BooleanSocket
+        Is Valid
+    """
 
     _name = "Rotation RELION"
     _asset_name = "Rotation RELION"
@@ -7796,7 +13016,40 @@ class RotationRELION(AssetGeometryGroup):
 
 
 class SampleMixFloat(AssetGeometryGroup):
-    """Sample a float value from two different geometries and mix from A to B"""
+    """
+    Sample a float value from two different geometries and mix from A to B
+
+    Parameters
+    ----------
+    a : InputGeometry
+        Geometry A to sample and mix from
+    b : InputGeometry
+        Geometry B to sample and mix to
+    value : InputFloat
+        Float field to sample and mix
+    factor : InputFloat
+        Amount to mix from A to B
+    index : InputInteger
+        `Index` on the geometries to sample from
+
+    Inputs
+    ------
+    i.a : GeometrySocket
+        Geometry A to sample and mix from
+    i.b : GeometrySocket
+        Geometry B to sample and mix to
+    i.value : FloatSocket
+        Float field to sample and mix
+    i.factor : FloatSocket
+        Amount to mix from A to B
+    i.index : IntegerSocket
+        `Index` on the geometries to sample from
+
+    Outputs
+    -------
+    o.value : FloatSocket
+        The final mixed float
+    """
 
     _name = "Sample Mix Float"
     _asset_name = "Sample Mix Float"
@@ -7804,19 +13057,19 @@ class SampleMixFloat(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: GeometrySocket
-        """A"""
+        """Geometry A to sample and mix from"""
         b: GeometrySocket
-        """B"""
+        """Geometry B to sample and mix to"""
         value: FloatSocket
-        """Value"""
+        """Float field to sample and mix"""
         factor: FloatSocket
-        """Factor"""
+        """Amount to mix from A to B"""
         index: IntegerSocket
-        """Index"""
+        """`Index` on the geometries to sample from"""
 
     class _Outputs(SocketAccessor):
         value: FloatSocket
-        """Value"""
+        """The final mixed float"""
 
     if TYPE_CHECKING:
 
@@ -7845,7 +13098,40 @@ class SampleMixFloat(AssetGeometryGroup):
 
 
 class SampleMixVector(AssetGeometryGroup):
-    """Sample Mix Vector"""
+    """
+    Sample Mix Vector
+
+    Parameters
+    ----------
+    a : InputGeometry
+        Geometry A to sample and mix from
+    b : InputGeometry
+        Geometry B to sample and mix to
+    position : InputVector
+        The field to sample from each geometry, defaulting to `Position`
+    factor : InputFloat
+        The amount to mix from A to B
+    index : InputInteger
+        `Index` on the geometries to sample from
+
+    Inputs
+    ------
+    i.a : GeometrySocket
+        Geometry A to sample and mix from
+    i.b : GeometrySocket
+        Geometry B to sample and mix to
+    i.position : VectorSocket
+        The field to sample from each geometry, defaulting to `Position`
+    i.factor : FloatSocket
+        The amount to mix from A to B
+    i.index : IntegerSocket
+        `Index` on the geometries to sample from
+
+    Outputs
+    -------
+    o.vector : VectorSocket
+        The final mixed vector
+    """
 
     _name = "Sample Mix Vector"
     _asset_name = "Sample Mix Vector"
@@ -7853,19 +13139,19 @@ class SampleMixVector(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: GeometrySocket
-        """A"""
+        """Geometry A to sample and mix from"""
         b: GeometrySocket
-        """B"""
+        """Geometry B to sample and mix to"""
         position: VectorSocket
-        """Position"""
+        """The field to sample from each geometry, defaulting to `Position`"""
         factor: FloatSocket
-        """Factor"""
+        """The amount to mix from A to B"""
         index: IntegerSocket
-        """Index"""
+        """`Index` on the geometries to sample from"""
 
     class _Outputs(SocketAccessor):
         vector: VectorSocket
-        """Vector"""
+        """The final mixed vector"""
 
     if TYPE_CHECKING:
 
@@ -7894,7 +13180,32 @@ class SampleMixVector(AssetGeometryGroup):
 
 
 class SampleMixedColor(AssetGeometryGroup):
-    """Sample Mixed Color"""
+    """
+    Sample Mixed Color
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        The geometry to sample the values from
+    color : InputColor
+        The field to mix and evaluate on the sample geometry
+    index : InputFloat
+        The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        The geometry to sample the values from
+    i.color : ColorSocket
+        The field to mix and evaluate on the sample geometry
+    i.index : FloatSocket
+        The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        The evaluated and mixed field, sampled from the sample geometry at the given `Index`
+    """
 
     _name = "Sample Mixed Color"
     _asset_name = "Sample Mixed Color"
@@ -7902,15 +13213,15 @@ class SampleMixedColor(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The geometry to sample the values from"""
         color: ColorSocket
-        """Color"""
+        """The field to mix and evaluate on the sample geometry"""
         index: FloatSocket
-        """Index"""
+        """The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
-        """Color"""
+        """The evaluated and mixed field, sampled from the sample geometry at the given `Index`"""
 
     if TYPE_CHECKING:
 
@@ -7929,7 +13240,32 @@ class SampleMixedColor(AssetGeometryGroup):
 
 
 class SampleMixedRotation(AssetGeometryGroup):
-    """Sample Mixed Rotation"""
+    """
+    Sample Mixed Rotation
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        The geometry to sample the values from
+    rotation : InputRotation
+        The field to mix and evaluate on the sample geometry
+    index : InputFloat
+        The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        The geometry to sample the values from
+    i.rotation : RotationSocket
+        The field to mix and evaluate on the sample geometry
+    i.index : FloatSocket
+        The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        The evaluated and mixed field, sampled from the sample geometry at the given `Index`
+    """
 
     _name = "Sample Mixed Rotation"
     _asset_name = "Sample Mixed Rotation"
@@ -7937,15 +13273,15 @@ class SampleMixedRotation(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The geometry to sample the values from"""
         rotation: RotationSocket
-        """Rotation"""
+        """The field to mix and evaluate on the sample geometry"""
         index: FloatSocket
-        """Index"""
+        """The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes"""
 
     class _Outputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The evaluated and mixed field, sampled from the sample geometry at the given `Index`"""
 
     if TYPE_CHECKING:
 
@@ -7966,7 +13302,32 @@ class SampleMixedRotation(AssetGeometryGroup):
 
 
 class SampleMixedVector(AssetGeometryGroup):
-    """Sample Mixed Vector"""
+    """
+    Sample Mixed Vector
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        The geometry to sample the values from
+    vector : InputVector
+        The field to mix and evaluate on the sample geometry
+    index : InputFloat
+        The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        The geometry to sample the values from
+    i.vector : VectorSocket
+        The field to mix and evaluate on the sample geometry
+    i.index : FloatSocket
+        The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes
+
+    Outputs
+    -------
+    o.vector : VectorSocket
+        The evaluated and mixed field, sampled from the sample geometry at the given `Index`
+    """
 
     _name = "Sample Mixed Vector"
     _asset_name = "Sample Mixed Vector"
@@ -7974,15 +13335,15 @@ class SampleMixedVector(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The geometry to sample the values from"""
         vector: VectorSocket
-        """Vector"""
+        """The field to mix and evaluate on the sample geometry"""
         index: FloatSocket
-        """Index"""
+        """The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes"""
 
     class _Outputs(SocketAccessor):
         vector: VectorSocket
-        """Vector"""
+        """The evaluated and mixed field, sampled from the sample geometry at the given `Index`"""
 
     if TYPE_CHECKING:
 
@@ -8003,7 +13364,34 @@ class SampleMixedVector(AssetGeometryGroup):
 
 
 class SampleNearestAtoms(AssetGeometryGroup):
-    """Sample Nearest Atoms"""
+    """
+    Sample Nearest Atoms
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    o.b_factor : FloatSocket
+        b_factor
+    o.atomic_number : IntegerSocket
+        atomic_number
+    o.chain_id : IntegerSocket
+        chain_id
+    o.res_id : IntegerSocket
+        res_id
+    o.res_name : IntegerSocket
+        res_name
+    """
 
     _name = "Sample Nearest Atoms"
     _asset_name = "Sample Nearest Atoms"
@@ -8011,7 +13399,7 @@ class SampleNearestAtoms(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
@@ -8037,7 +13425,32 @@ class SampleNearestAtoms(AssetGeometryGroup):
 
 
 class SamplePosition(AssetGeometryGroup):
-    """A convenience wrapper around the `Sample Index` and `Position` nodes"""
+    """
+    A convenience wrapper around the `Sample Index` and `Position` nodes
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        The geometry to sample the `Position` from
+    position : InputVector
+        The `Position` field to sample the values from
+    index : InputInteger
+        The `Index` at which to sample the `Position` field from
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        The geometry to sample the `Position` from
+    i.position : VectorSocket
+        The `Position` field to sample the values from
+    i.index : IntegerSocket
+        The `Index` at which to sample the `Position` field from
+
+    Outputs
+    -------
+    o.position : VectorSocket
+        The sampled `Position` field
+    """
 
     _name = "Sample Position"
     _asset_name = "Sample Position"
@@ -8045,15 +13458,15 @@ class SamplePosition(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The geometry to sample the `Position` from"""
         position: VectorSocket
-        """Position"""
+        """The `Position` field to sample the values from"""
         index: IntegerSocket
-        """Index"""
+        """The `Index` at which to sample the `Position` field from"""
 
     class _Outputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """The sampled `Position` field"""
 
     if TYPE_CHECKING:
 
@@ -8074,7 +13487,24 @@ class SamplePosition(AssetGeometryGroup):
 
 
 class SecondaryStructure(AssetGeometryGroup):
-    """Secondary Structure"""
+    """
+    Secondary Structure
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.sec_struct : IntegerSocket
+        sec_struct
+    """
 
     _name = "Secondary Structure"
     _asset_name = "Secondary Structure"
@@ -8102,7 +13532,34 @@ class SecondaryStructure(AssetGeometryGroup):
 
 
 class SelectAtomicNumber(AssetGeometryGroup):
-    """Select Atomic Number"""
+    """
+    Select Atomic Number
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    atomic_number : InputInteger
+        Create a selection based on the inputted atomic number.
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.atomic_number : IntegerSocket
+        Create a selection based on the inputted atomic number.
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Atomic Number"
     _asset_name = "Select Atomic Number"
@@ -8110,16 +13567,17 @@ class SelectAtomicNumber(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         atomic_number: IntegerSocket
+        """Create a selection based on the inputted atomic number."""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8140,7 +13598,34 @@ class SelectAtomicNumber(AssetGeometryGroup):
 
 
 class SelectAttribute(AssetGeometryGroup):
-    """Select Attribute"""
+    """
+    Select Attribute
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    name : InputString
+        Name
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.name : StringSocket
+        Name
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Attribute"
     _asset_name = "Select Attribute"
@@ -8148,17 +13633,17 @@ class SelectAttribute(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         name: StringSocket
         """Name"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8177,7 +13662,30 @@ class SelectAttribute(AssetGeometryGroup):
 
 
 class SelectBonded(AssetGeometryGroup):
-    """Select Bonded"""
+    """
+    Select Bonded
+
+    Parameters
+    ----------
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    depth : InputInteger
+        Number of bonds to expand the selection by
+
+    Inputs
+    ------
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.depth : IntegerSocket
+        Number of bonds to expand the selection by
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.bonded : BooleanSocket
+        Expanded Selection that excludes the original selection
+    """
 
     _name = "Select Bonded"
     _asset_name = "Select Bonded"
@@ -8185,15 +13693,15 @@ class SelectBonded(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         depth: IntegerSocket
-        """Depth"""
+        """Number of bonds to expand the selection by"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         bonded: BooleanSocket
-        """Bonded"""
+        """Expanded Selection that excludes the original selection"""
 
     if TYPE_CHECKING:
 
@@ -8211,7 +13719,34 @@ class SelectBonded(AssetGeometryGroup):
 
 
 class SelectCube(AssetGeometryGroup):
-    """Select Cube"""
+    """
+    Select Cube
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    object : InputObject
+        The position, rotation and scale from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.object : ObjectSocket
+        The position, rotation and scale from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Cube"
     _asset_name = "Select Cube"
@@ -8219,17 +13754,17 @@ class SelectCube(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         object: ObjectSocket
-        """Object"""
+        """The position, rotation and scale from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8248,7 +13783,350 @@ class SelectCube(AssetGeometryGroup):
 
 
 class SelectElement(AssetGeometryGroup):
-    """Select Element"""
+    """
+    Select Element
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    h : InputBoolean
+        Select the element H
+    he : InputBoolean
+        Select the element He
+    li : InputBoolean
+        Select the element Li
+    be : InputBoolean
+        Select the element Be
+    b : InputBoolean
+        Select the element B
+    c : InputBoolean
+        Select the element C
+    n : InputBoolean
+        Select the element N
+    o : InputBoolean
+        Select the element O
+    f : InputBoolean
+        Select the element F
+    ne : InputBoolean
+        Select the element Ne
+    na : InputBoolean
+        Select the element Na
+    mg : InputBoolean
+        Select the element Mg
+    al : InputBoolean
+        Select the element Al
+    si : InputBoolean
+        Select the element Si
+    p : InputBoolean
+        Select the element P
+    s : InputBoolean
+        Select the element S
+    cl : InputBoolean
+        Select the element Cl
+    ar : InputBoolean
+        Select the element Ar
+    k : InputBoolean
+        Select the element K
+    ca : InputBoolean
+        Select the element Ca
+    sc : InputBoolean
+        Select the element Sc
+    ti : InputBoolean
+        Select the element Ti
+    v : InputBoolean
+        Select the element V
+    cr : InputBoolean
+        Select the element Cr
+    mn : InputBoolean
+        Select the element Mn
+    fe : InputBoolean
+        Select the element Fe
+    co : InputBoolean
+        Select the element Co
+    ni : InputBoolean
+        Select the element Ni
+    cu : InputBoolean
+        Select the element Cu
+    zn : InputBoolean
+        Select the element Zn
+    ga : InputBoolean
+        Select the element Ga
+    ge : InputBoolean
+        Select the element Ge
+    as_ : InputBoolean
+        Select the element As
+    se : InputBoolean
+        Select the element Se
+    br : InputBoolean
+        Select the element Br
+    kr : InputBoolean
+        Select the element Kr
+    rb : InputBoolean
+        Select the element Rb
+    sr : InputBoolean
+        Select the element Sr
+    y : InputBoolean
+        Select the element Y
+    zr : InputBoolean
+        Select the element Zr
+    nb : InputBoolean
+        Select the element Nb
+    mo : InputBoolean
+        Select the element Mo
+    tc : InputBoolean
+        Select the element Tc
+    ru : InputBoolean
+        Select the element Ru
+    rh : InputBoolean
+        Select the element Rh
+    pd : InputBoolean
+        Select the element Pd
+    ag : InputBoolean
+        Select the element Ag
+    cd : InputBoolean
+        Select the element Cd
+    in_ : InputBoolean
+        Select the element In
+    sn : InputBoolean
+        Select the element Sn
+    sb : InputBoolean
+        Select the element Sb
+    te : InputBoolean
+        Select the element Te
+    i : InputBoolean
+        Select the element I
+    xe : InputBoolean
+        Select the element Xe
+    cs : InputBoolean
+        Select the element Cs
+    ba : InputBoolean
+        Select the element Ba
+    la : InputBoolean
+        Select the element La
+    ce : InputBoolean
+        Select the element Ce
+    pr : InputBoolean
+        Select the element Pr
+    nd : InputBoolean
+        Select the element Nd
+    pm : InputBoolean
+        Select the element Pm
+    sm : InputBoolean
+        Select the element Sm
+    eu : InputBoolean
+        Select the element Eu
+    gd : InputBoolean
+        Select the element Gd
+    tb : InputBoolean
+        Select the element Tb
+    dy : InputBoolean
+        Select the element Dy
+    ho : InputBoolean
+        Select the element Ho
+    er : InputBoolean
+        Select the element Er
+    tm : InputBoolean
+        Select the element Tm
+    yb : InputBoolean
+        Select the element Yb
+    lu : InputBoolean
+        Select the element Lu
+    hf : InputBoolean
+        Select the element Hf
+    ta : InputBoolean
+        Select the element Ta
+    w : InputBoolean
+        Select the element W
+    re : InputBoolean
+        Select the element Re
+    os : InputBoolean
+        Select the element Os
+    ir : InputBoolean
+        Select the element Ir
+    pt : InputBoolean
+        Select the element Pt
+    au : InputBoolean
+        Select the element Au
+    hg : InputBoolean
+        Select the element Hg
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.h : BooleanSocket
+        Select the element H
+    i.he : BooleanSocket
+        Select the element He
+    i.li : BooleanSocket
+        Select the element Li
+    i.be : BooleanSocket
+        Select the element Be
+    i.b : BooleanSocket
+        Select the element B
+    i.c : BooleanSocket
+        Select the element C
+    i.n : BooleanSocket
+        Select the element N
+    i.o : BooleanSocket
+        Select the element O
+    i.f : BooleanSocket
+        Select the element F
+    i.ne : BooleanSocket
+        Select the element Ne
+    i.na : BooleanSocket
+        Select the element Na
+    i.mg : BooleanSocket
+        Select the element Mg
+    i.al : BooleanSocket
+        Select the element Al
+    i.si : BooleanSocket
+        Select the element Si
+    i.p : BooleanSocket
+        Select the element P
+    i.s : BooleanSocket
+        Select the element S
+    i.cl : BooleanSocket
+        Select the element Cl
+    i.ar : BooleanSocket
+        Select the element Ar
+    i.k : BooleanSocket
+        Select the element K
+    i.ca : BooleanSocket
+        Select the element Ca
+    i.sc : BooleanSocket
+        Select the element Sc
+    i.ti : BooleanSocket
+        Select the element Ti
+    i.v : BooleanSocket
+        Select the element V
+    i.cr : BooleanSocket
+        Select the element Cr
+    i.mn : BooleanSocket
+        Select the element Mn
+    i.fe : BooleanSocket
+        Select the element Fe
+    i.co : BooleanSocket
+        Select the element Co
+    i.ni : BooleanSocket
+        Select the element Ni
+    i.cu : BooleanSocket
+        Select the element Cu
+    i.zn : BooleanSocket
+        Select the element Zn
+    i.ga : BooleanSocket
+        Select the element Ga
+    i.ge : BooleanSocket
+        Select the element Ge
+    i.as_ : BooleanSocket
+        Select the element As
+    i.se : BooleanSocket
+        Select the element Se
+    i.br : BooleanSocket
+        Select the element Br
+    i.kr : BooleanSocket
+        Select the element Kr
+    i.rb : BooleanSocket
+        Select the element Rb
+    i.sr : BooleanSocket
+        Select the element Sr
+    i.y : BooleanSocket
+        Select the element Y
+    i.zr : BooleanSocket
+        Select the element Zr
+    i.nb : BooleanSocket
+        Select the element Nb
+    i.mo : BooleanSocket
+        Select the element Mo
+    i.tc : BooleanSocket
+        Select the element Tc
+    i.ru : BooleanSocket
+        Select the element Ru
+    i.rh : BooleanSocket
+        Select the element Rh
+    i.pd : BooleanSocket
+        Select the element Pd
+    i.ag : BooleanSocket
+        Select the element Ag
+    i.cd : BooleanSocket
+        Select the element Cd
+    i.in_ : BooleanSocket
+        Select the element In
+    i.sn : BooleanSocket
+        Select the element Sn
+    i.sb : BooleanSocket
+        Select the element Sb
+    i.te : BooleanSocket
+        Select the element Te
+    i.i : BooleanSocket
+        Select the element I
+    i.xe : BooleanSocket
+        Select the element Xe
+    i.cs : BooleanSocket
+        Select the element Cs
+    i.ba : BooleanSocket
+        Select the element Ba
+    i.la : BooleanSocket
+        Select the element La
+    i.ce : BooleanSocket
+        Select the element Ce
+    i.pr : BooleanSocket
+        Select the element Pr
+    i.nd : BooleanSocket
+        Select the element Nd
+    i.pm : BooleanSocket
+        Select the element Pm
+    i.sm : BooleanSocket
+        Select the element Sm
+    i.eu : BooleanSocket
+        Select the element Eu
+    i.gd : BooleanSocket
+        Select the element Gd
+    i.tb : BooleanSocket
+        Select the element Tb
+    i.dy : BooleanSocket
+        Select the element Dy
+    i.ho : BooleanSocket
+        Select the element Ho
+    i.er : BooleanSocket
+        Select the element Er
+    i.tm : BooleanSocket
+        Select the element Tm
+    i.yb : BooleanSocket
+        Select the element Yb
+    i.lu : BooleanSocket
+        Select the element Lu
+    i.hf : BooleanSocket
+        Select the element Hf
+    i.ta : BooleanSocket
+        Select the element Ta
+    i.w : BooleanSocket
+        Select the element W
+    i.re : BooleanSocket
+        Select the element Re
+    i.os : BooleanSocket
+        Select the element Os
+    i.ir : BooleanSocket
+        Select the element Ir
+    i.pt : BooleanSocket
+        Select the element Pt
+    i.au : BooleanSocket
+        Select the element Au
+    i.hg : BooleanSocket
+        Select the element Hg
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Element"
     _asset_name = "Select Element"
@@ -8256,175 +14134,175 @@ class SelectElement(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         h: BooleanSocket
-        """H"""
+        """Select the element H"""
         he: BooleanSocket
-        """He"""
+        """Select the element He"""
         li: BooleanSocket
-        """Li"""
+        """Select the element Li"""
         be: BooleanSocket
-        """Be"""
+        """Select the element Be"""
         b: BooleanSocket
-        """B"""
+        """Select the element B"""
         c: BooleanSocket
-        """C"""
+        """Select the element C"""
         n: BooleanSocket
-        """N"""
+        """Select the element N"""
         o: BooleanSocket
-        """O"""
+        """Select the element O"""
         f: BooleanSocket
-        """F"""
+        """Select the element F"""
         ne: BooleanSocket
-        """Ne"""
+        """Select the element Ne"""
         na: BooleanSocket
-        """Na"""
+        """Select the element Na"""
         mg: BooleanSocket
-        """Mg"""
+        """Select the element Mg"""
         al: BooleanSocket
-        """Al"""
+        """Select the element Al"""
         si: BooleanSocket
-        """Si"""
+        """Select the element Si"""
         p: BooleanSocket
-        """P"""
+        """Select the element P"""
         s: BooleanSocket
-        """S"""
+        """Select the element S"""
         cl: BooleanSocket
-        """Cl"""
+        """Select the element Cl"""
         ar: BooleanSocket
-        """Ar"""
+        """Select the element Ar"""
         k: BooleanSocket
-        """K"""
+        """Select the element K"""
         ca: BooleanSocket
-        """Ca"""
+        """Select the element Ca"""
         sc: BooleanSocket
-        """Sc"""
+        """Select the element Sc"""
         ti: BooleanSocket
-        """Ti"""
+        """Select the element Ti"""
         v: BooleanSocket
-        """V"""
+        """Select the element V"""
         cr: BooleanSocket
-        """Cr"""
+        """Select the element Cr"""
         mn: BooleanSocket
-        """Mn"""
+        """Select the element Mn"""
         fe: BooleanSocket
-        """Fe"""
+        """Select the element Fe"""
         co: BooleanSocket
-        """Co"""
+        """Select the element Co"""
         ni: BooleanSocket
-        """Ni"""
+        """Select the element Ni"""
         cu: BooleanSocket
-        """Cu"""
+        """Select the element Cu"""
         zn: BooleanSocket
-        """Zn"""
+        """Select the element Zn"""
         ga: BooleanSocket
-        """Ga"""
+        """Select the element Ga"""
         ge: BooleanSocket
-        """Ge"""
+        """Select the element Ge"""
         as_: BooleanSocket
-        """As"""
+        """Select the element As"""
         se: BooleanSocket
-        """Se"""
+        """Select the element Se"""
         br: BooleanSocket
-        """Br"""
+        """Select the element Br"""
         kr: BooleanSocket
-        """Kr"""
+        """Select the element Kr"""
         rb: BooleanSocket
-        """Rb"""
+        """Select the element Rb"""
         sr: BooleanSocket
-        """Sr"""
+        """Select the element Sr"""
         y: BooleanSocket
-        """Y"""
+        """Select the element Y"""
         zr: BooleanSocket
-        """Zr"""
+        """Select the element Zr"""
         nb: BooleanSocket
-        """Nb"""
+        """Select the element Nb"""
         mo: BooleanSocket
-        """Mo"""
+        """Select the element Mo"""
         tc: BooleanSocket
-        """Tc"""
+        """Select the element Tc"""
         ru: BooleanSocket
-        """Ru"""
+        """Select the element Ru"""
         rh: BooleanSocket
-        """Rh"""
+        """Select the element Rh"""
         pd: BooleanSocket
-        """Pd"""
+        """Select the element Pd"""
         ag: BooleanSocket
-        """Ag"""
+        """Select the element Ag"""
         cd: BooleanSocket
-        """Cd"""
+        """Select the element Cd"""
         in_: BooleanSocket
-        """In"""
+        """Select the element In"""
         sn: BooleanSocket
-        """Sn"""
+        """Select the element Sn"""
         sb: BooleanSocket
-        """Sb"""
+        """Select the element Sb"""
         te: BooleanSocket
-        """Te"""
+        """Select the element Te"""
         i: BooleanSocket
-        """I"""
+        """Select the element I"""
         xe: BooleanSocket
-        """Xe"""
+        """Select the element Xe"""
         cs: BooleanSocket
-        """Cs"""
+        """Select the element Cs"""
         ba: BooleanSocket
-        """Ba"""
+        """Select the element Ba"""
         la: BooleanSocket
-        """La"""
+        """Select the element La"""
         ce: BooleanSocket
-        """Ce"""
+        """Select the element Ce"""
         pr: BooleanSocket
-        """Pr"""
+        """Select the element Pr"""
         nd: BooleanSocket
-        """Nd"""
+        """Select the element Nd"""
         pm: BooleanSocket
-        """Pm"""
+        """Select the element Pm"""
         sm: BooleanSocket
-        """Sm"""
+        """Select the element Sm"""
         eu: BooleanSocket
-        """Eu"""
+        """Select the element Eu"""
         gd: BooleanSocket
-        """Gd"""
+        """Select the element Gd"""
         tb: BooleanSocket
-        """Tb"""
+        """Select the element Tb"""
         dy: BooleanSocket
-        """Dy"""
+        """Select the element Dy"""
         ho: BooleanSocket
-        """Ho"""
+        """Select the element Ho"""
         er: BooleanSocket
-        """Er"""
+        """Select the element Er"""
         tm: BooleanSocket
-        """Tm"""
+        """Select the element Tm"""
         yb: BooleanSocket
-        """Yb"""
+        """Select the element Yb"""
         lu: BooleanSocket
-        """Lu"""
+        """Select the element Lu"""
         hf: BooleanSocket
-        """Hf"""
+        """Select the element Hf"""
         ta: BooleanSocket
-        """Ta"""
+        """Select the element Ta"""
         w: BooleanSocket
-        """W"""
+        """Select the element W"""
         re: BooleanSocket
-        """Re"""
+        """Select the element Re"""
         os: BooleanSocket
-        """Os"""
+        """Select the element Os"""
         ir: BooleanSocket
-        """Ir"""
+        """Select the element Ir"""
         pt: BooleanSocket
-        """Pt"""
+        """Select the element Pt"""
         au: BooleanSocket
-        """Au"""
+        """Select the element Au"""
         hg: BooleanSocket
-        """Hg"""
+        """Select the element Hg"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8607,7 +14485,30 @@ class SelectElement(AssetGeometryGroup):
 
 
 class SelectNucleicType(AssetGeometryGroup):
-    """Select Nucleic Type"""
+    """
+    Select Nucleic Type
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+
+    Outputs
+    -------
+    o.is_purine : BooleanSocket
+        is_purine
+    o.is_pyrimidine : BooleanSocket
+        is_pyrimidine
+    """
 
     _name = "Select Nucleic Type"
     _asset_name = "Select Nucleic Type"
@@ -8615,9 +14516,9 @@ class SelectNucleicType(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
 
     class _Outputs(SocketAccessor):
         is_purine: BooleanSocket
@@ -8639,7 +14540,38 @@ class SelectNucleicType(AssetGeometryGroup):
 
 
 class SelectProximity(AssetGeometryGroup):
-    """Select Proximity"""
+    """
+    Select Proximity
+
+    Parameters
+    ----------
+    target_atoms : InputGeometry
+        The atoms to measure the distance from.
+    subset : InputBoolean
+        Subset of input atoms to use for proximity calculation
+    expand : InputBoolean
+        Include an entire residue if even a single atom is within the threshold
+    distance_a : InputFloat
+        Cutoff distance for the selection in Angstroms
+
+    Inputs
+    ------
+    i.target_atoms : GeometrySocket
+        The atoms to measure the distance from.
+    i.subset : BooleanSocket
+        Subset of input atoms to use for proximity calculation
+    i.expand : BooleanSocket
+        Include an entire residue if even a single atom is within the threshold
+    i.distance_a : FloatSocket
+        Cutoff distance for the selection in Angstroms
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Proximity"
     _asset_name = "Select Proximity"
@@ -8647,19 +14579,19 @@ class SelectProximity(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         target_atoms: GeometrySocket
-        """Target Atoms"""
+        """The atoms to measure the distance from."""
         subset: BooleanSocket
-        """Subset"""
+        """Subset of input atoms to use for proximity calculation"""
         expand: BooleanSocket
-        """Expand"""
+        """Include an entire residue if even a single atom is within the threshold"""
         distance_a: FloatSocket
-        """Distance (A)"""
+        """Cutoff distance for the selection in Angstroms"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8686,7 +14618,34 @@ class SelectProximity(AssetGeometryGroup):
 
 
 class SelectResID(AssetGeometryGroup):
-    """Select Res ID"""
+    """
+    Select Res ID
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    res_id : InputInteger
+        A single `res_id` selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.res_id : IntegerSocket
+        A single `res_id` selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Res ID"
     _asset_name = "Select Res ID"
@@ -8694,17 +14653,17 @@ class SelectResID(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         res_id: IntegerSocket
-        """Res ID"""
+        """A single `res_id` selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8723,7 +14682,38 @@ class SelectResID(AssetGeometryGroup):
 
 
 class SelectResIDRange(AssetGeometryGroup):
-    """Select Res ID Range"""
+    """
+    Select Res ID Range
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    min : InputInteger
+        Minimum of a `res_id` range selection
+    max : InputInteger
+        Maximum of a `res_id` range selection
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.min : IntegerSocket
+        Minimum of a `res_id` range selection
+    i.max : IntegerSocket
+        Maximum of a `res_id` range selection
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Res ID Range"
     _asset_name = "Select Res ID Range"
@@ -8731,19 +14721,19 @@ class SelectResIDRange(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         min: IntegerSocket
-        """Min"""
+        """Minimum of a `res_id` range selection"""
         max: IntegerSocket
-        """Max"""
+        """Maximum of a `res_id` range selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8765,7 +14755,24 @@ class SelectResIDRange(AssetGeometryGroup):
 
 
 class SelectResIDString(AssetGeometryGroup):
-    """Select Res ID String"""
+    """
+    Select Res ID String
+
+    Parameters
+    ----------
+    string : InputString
+        String
+
+    Inputs
+    ------
+    i.string : StringSocket
+        String
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        Selection
+    """
 
     _name = "Select Res ID String"
     _asset_name = "Select Res ID String"
@@ -8794,7 +14801,142 @@ class SelectResIDString(AssetGeometryGroup):
 
 
 class SelectResName(AssetGeometryGroup):
-    """Select Res Name"""
+    """
+    Select Res Name
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    ala : InputBoolean
+        Select the residue ALA
+    arg : InputBoolean
+        Select the residue ARG
+    asn : InputBoolean
+        Select the residue ASN
+    asp : InputBoolean
+        Select the residue ASP
+    cys : InputBoolean
+        Select the residue CYS
+    glu : InputBoolean
+        Select the residue GLU
+    gln : InputBoolean
+        Select the residue GLN
+    gly : InputBoolean
+        Select the residue GLY
+    his : InputBoolean
+        Select the residue HIS
+    ile : InputBoolean
+        Select the residue ILE
+    leu : InputBoolean
+        Select the residue LEU
+    lys : InputBoolean
+        Select the residue LYS
+    met : InputBoolean
+        Select the residue MET
+    phe : InputBoolean
+        Select the residue PHE
+    pro : InputBoolean
+        Select the residue PRO
+    ser : InputBoolean
+        Select the residue SER
+    thr : InputBoolean
+        Select the residue THR
+    trp : InputBoolean
+        Select the residue TRP
+    tyr : InputBoolean
+        Select the residue TYR
+    val : InputBoolean
+        Select the residue VAL
+    a : InputBoolean
+        Select the residue A
+    c : InputBoolean
+        Select the residue C
+    g : InputBoolean
+        Select the residue G
+    t : InputBoolean
+        Select the residue T
+    ra : InputBoolean
+        Select the residue rA
+    rc : InputBoolean
+        Select the residue rC
+    rg : InputBoolean
+        Select the residue rG
+    ru : InputBoolean
+        Select the residue rU
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.ala : BooleanSocket
+        Select the residue ALA
+    i.arg : BooleanSocket
+        Select the residue ARG
+    i.asn : BooleanSocket
+        Select the residue ASN
+    i.asp : BooleanSocket
+        Select the residue ASP
+    i.cys : BooleanSocket
+        Select the residue CYS
+    i.glu : BooleanSocket
+        Select the residue GLU
+    i.gln : BooleanSocket
+        Select the residue GLN
+    i.gly : BooleanSocket
+        Select the residue GLY
+    i.his : BooleanSocket
+        Select the residue HIS
+    i.ile : BooleanSocket
+        Select the residue ILE
+    i.leu : BooleanSocket
+        Select the residue LEU
+    i.lys : BooleanSocket
+        Select the residue LYS
+    i.met : BooleanSocket
+        Select the residue MET
+    i.phe : BooleanSocket
+        Select the residue PHE
+    i.pro : BooleanSocket
+        Select the residue PRO
+    i.ser : BooleanSocket
+        Select the residue SER
+    i.thr : BooleanSocket
+        Select the residue THR
+    i.trp : BooleanSocket
+        Select the residue TRP
+    i.tyr : BooleanSocket
+        Select the residue TYR
+    i.val : BooleanSocket
+        Select the residue VAL
+    i.a : BooleanSocket
+        Select the residue A
+    i.c : BooleanSocket
+        Select the residue C
+    i.g : BooleanSocket
+        Select the residue G
+    i.t : BooleanSocket
+        Select the residue T
+    i.ra : BooleanSocket
+        Select the residue rA
+    i.rc : BooleanSocket
+        Select the residue rC
+    i.rg : BooleanSocket
+        Select the residue rG
+    i.ru : BooleanSocket
+        Select the residue rU
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Res Name"
     _asset_name = "Select Res Name"
@@ -8802,71 +14944,71 @@ class SelectResName(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         ala: BooleanSocket
-        """ALA"""
+        """Select the residue ALA"""
         arg: BooleanSocket
-        """ARG"""
+        """Select the residue ARG"""
         asn: BooleanSocket
-        """ASN"""
+        """Select the residue ASN"""
         asp: BooleanSocket
-        """ASP"""
+        """Select the residue ASP"""
         cys: BooleanSocket
-        """CYS"""
+        """Select the residue CYS"""
         glu: BooleanSocket
-        """GLU"""
+        """Select the residue GLU"""
         gln: BooleanSocket
-        """GLN"""
+        """Select the residue GLN"""
         gly: BooleanSocket
-        """GLY"""
+        """Select the residue GLY"""
         his: BooleanSocket
-        """HIS"""
+        """Select the residue HIS"""
         ile: BooleanSocket
-        """ILE"""
+        """Select the residue ILE"""
         leu: BooleanSocket
-        """LEU"""
+        """Select the residue LEU"""
         lys: BooleanSocket
-        """LYS"""
+        """Select the residue LYS"""
         met: BooleanSocket
-        """MET"""
+        """Select the residue MET"""
         phe: BooleanSocket
-        """PHE"""
+        """Select the residue PHE"""
         pro: BooleanSocket
-        """PRO"""
+        """Select the residue PRO"""
         ser: BooleanSocket
-        """SER"""
+        """Select the residue SER"""
         thr: BooleanSocket
-        """THR"""
+        """Select the residue THR"""
         trp: BooleanSocket
-        """TRP"""
+        """Select the residue TRP"""
         tyr: BooleanSocket
-        """TYR"""
+        """Select the residue TYR"""
         val: BooleanSocket
-        """VAL"""
+        """Select the residue VAL"""
         a: BooleanSocket
-        """A"""
+        """Select the residue A"""
         c: BooleanSocket
-        """C"""
+        """Select the residue C"""
         g: BooleanSocket
-        """G"""
+        """Select the residue G"""
         t: BooleanSocket
-        """T"""
+        """Select the residue T"""
         ra: BooleanSocket
-        """rA"""
+        """Select the residue rA"""
         rc: BooleanSocket
-        """rC"""
+        """Select the residue rC"""
         rg: BooleanSocket
-        """rG"""
+        """Select the residue rG"""
         ru: BooleanSocket
-        """rU"""
+        """Select the residue rU"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8945,7 +15087,28 @@ class SelectResName(AssetGeometryGroup):
 
 
 class SelectResWhole(AssetGeometryGroup):
-    """Select Res Whole"""
+    """
+    Select Res Whole
+
+    Parameters
+    ----------
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    expand : InputBoolean
+        Whether to expand the selection to the whole residue if at least one atom is selected
+
+    Inputs
+    ------
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.expand : BooleanSocket
+        Whether to expand the selection to the whole residue if at least one atom is selected
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    """
 
     _name = "Select Res Whole"
     _asset_name = "Select Res Whole"
@@ -8953,13 +15116,13 @@ class SelectResWhole(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         expand: BooleanSocket
-        """Expand"""
+        """Whether to expand the selection to the whole residue if at least one atom is selected"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -8977,7 +15140,34 @@ class SelectResWhole(AssetGeometryGroup):
 
 
 class SelectSphere(AssetGeometryGroup):
-    """Select Sphere"""
+    """
+    Select Sphere
+
+    Parameters
+    ----------
+    and_ : InputBoolean
+        The resulting selection must overlap with this input selection
+    or_ : InputBoolean
+        The resulting selection can be calculated from this node or be from this input selection
+    object : InputObject
+        The position from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle
+
+    Inputs
+    ------
+    i.and_ : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.or_ : BooleanSocket
+        The resulting selection can be calculated from this node or be from this input selection
+    i.object : ObjectSocket
+        The position from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle
+
+    Outputs
+    -------
+    o.selection : BooleanSocket
+        The calculated selection
+    o.inverted : BooleanSocket
+        The inverse of the calculated selection
+    """
 
     _name = "Select Sphere"
     _asset_name = "Select Sphere"
@@ -8985,17 +15175,17 @@ class SelectSphere(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         and_: BooleanSocket
-        """And"""
+        """The resulting selection must overlap with this input selection"""
         or_: BooleanSocket
-        """Or"""
+        """The resulting selection can be calculated from this node or be from this input selection"""
         object: ObjectSocket
-        """Object"""
+        """The position from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
-        """Selection"""
+        """The calculated selection"""
         inverted: BooleanSocket
-        """Inverted"""
+        """The inverse of the calculated selection"""
 
     if TYPE_CHECKING:
 
@@ -9014,7 +15204,32 @@ class SelectSphere(AssetGeometryGroup):
 
 
 class SelectedInstances(AssetGeometryGroup):
-    """Selected Instances"""
+    """
+    Selected Instances
+
+    Parameters
+    ----------
+    instances : InputGeometry
+        Geometry containing instances to check if they are selected or not
+    selection : InputBoolean
+        The selection to apply to the bounding boxes of the Instances
+
+    Inputs
+    ------
+    i.instances : GeometrySocket
+        Geometry containing instances to check if they are selected or not
+    i.selection : BooleanSocket
+        The selection to apply to the bounding boxes of the Instances
+
+    Outputs
+    -------
+    o.entirely_selected : BooleanSocket
+        All points of the instances bounding box are selected
+    o.partially_selected : BooleanSocket
+        Some points of the Instance's bounding box are selected
+    o.not_selected : BooleanSocket
+        No points of the Instance's bounding box are selected
+    """
 
     _name = "Selected Instances"
     _asset_name = "Selected Instances"
@@ -9022,17 +15237,17 @@ class SelectedInstances(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         instances: GeometrySocket
-        """Instances"""
+        """Geometry containing instances to check if they are selected or not"""
         selection: BooleanSocket
-        """Selection"""
+        """The selection to apply to the bounding boxes of the Instances"""
 
     class _Outputs(SocketAccessor):
         entirely_selected: BooleanSocket
-        """Entirely Selected"""
+        """All points of the instances bounding box are selected"""
         partially_selected: BooleanSocket
-        """Partially Selected"""
+        """Some points of the Instance's bounding box are selected"""
         not_selected: BooleanSocket
-        """Not Selected"""
+        """No points of the Instance's bounding box are selected"""
 
     if TYPE_CHECKING:
 
@@ -9050,7 +15265,32 @@ class SelectedInstances(AssetGeometryGroup):
 
 
 class SeparateAtoms(AssetGeometryGroup):
-    """Separate Atoms"""
+    """
+    Separate Atoms
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection field for which atoms to separate
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection field for which atoms to separate
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        The selected atoms
+    o.inverted : GeometrySocket
+        The parts of the geometry not in the selection
+    o.index : IntegerSocket
+        Index of the point before being separated.
+    """
 
     _name = "Separate Atoms"
     _asset_name = "Separate Atoms"
@@ -9058,17 +15298,17 @@ class SeparateAtoms(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection field for which atoms to separate"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """The selected atoms"""
         inverted: GeometrySocket
-        """Inverted"""
+        """The parts of the geometry not in the selection"""
         index: IntegerSocket
-        """Index"""
+        """Index of the point before being separated."""
 
     if TYPE_CHECKING:
 
@@ -9086,7 +15326,32 @@ class SeparateAtoms(AssetGeometryGroup):
 
 
 class SeparateFirstPoint(AssetGeometryGroup):
-    """Separate the first point for each `Group ID` and return only those points. Optionally sort by the `Group ID` as well"""
+    """
+    Separate the first point for each `Group ID` and return only those points. Optionally sort by the `Group ID` as well
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    sort : InputBoolean
+        Sort by `Group ID` after separating
+    group_id : InputInteger
+        Group ID
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.sort : BooleanSocket
+        Sort by `Group ID` after separating
+    i.group_id : IntegerSocket
+        Group ID
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Separate First Point"
     _asset_name = "Separate First Point"
@@ -9096,7 +15361,7 @@ class SeparateFirstPoint(AssetGeometryGroup):
         geometry: GeometrySocket
         """Geometry"""
         sort: BooleanSocket
-        """Sort"""
+        """Sort by `Group ID` after separating"""
         group_id: IntegerSocket
         """Group ID"""
 
@@ -9123,7 +15388,28 @@ class SeparateFirstPoint(AssetGeometryGroup):
 
 
 class SeparatePolymers(AssetGeometryGroup):
-    """Separate Polymers"""
+    """
+    Separate Polymers
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+
+    Outputs
+    -------
+    o.peptide : GeometrySocket
+        Peptide
+    o.nucleic : GeometrySocket
+        Nucleic
+    o.other : GeometrySocket
+        Other
+    """
 
     _name = "Separate Polymers"
     _asset_name = "Separate Polymers"
@@ -9131,7 +15417,7 @@ class SeparatePolymers(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
 
     class _Outputs(SocketAccessor):
         peptide: GeometrySocket
@@ -9156,7 +15442,48 @@ class SeparatePolymers(AssetGeometryGroup):
 
 
 class SetChiAngle(AssetGeometryGroup):
-    """Set Chi Angle"""
+    """
+    Set Chi Angle
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    selection : InputBoolean
+        Selection
+    x1 : InputFloat
+        X1
+    x2 : InputFloat
+        X2
+    x3 : InputFloat
+        X3
+    x4 : InputFloat
+        X4
+    x5 : InputFloat
+        X5
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.selection : BooleanSocket
+        Selection
+    i.x1 : FloatSocket
+        X1
+    i.x2 : FloatSocket
+        X2
+    i.x3 : FloatSocket
+        X3
+    i.x4 : FloatSocket
+        X4
+    i.x5 : FloatSocket
+        X5
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Set Chi Angle"
     _asset_name = "Set Chi Angle"
@@ -9213,7 +15540,32 @@ class SetChiAngle(AssetGeometryGroup):
 
 
 class SetColor(AssetGeometryGroup):
-    """Set Color"""
+    """
+    Set Color
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this node to
+    color : InputColor
+        Color to apply to the selected atoms
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this node to
+    i.color : ColorSocket
+        Color to apply to the selected atoms
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        Atomic geometry with an updated `Color` attribute
+    """
 
     _name = "Set Color"
     _asset_name = "Set Color"
@@ -9221,15 +15573,15 @@ class SetColor(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this node to"""
         color: ColorSocket
-        """Color"""
+        """Color to apply to the selected atoms"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry with an updated `Color` attribute"""
 
     if TYPE_CHECKING:
 
@@ -9250,7 +15602,48 @@ class SetColor(AssetGeometryGroup):
 
 
 class SetNucleicDihedral(AssetGeometryGroup):
-    """Set Nucleic Dihedral"""
+    """
+    Set Nucleic Dihedral
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    selection : InputBoolean
+        The resulting selection must overlap with this input selection
+    alpha : InputFloat
+        Alpha
+    beta : InputFloat
+        Beta
+    gamma : InputFloat
+        Gamma
+    epsilon : InputFloat
+        Epsilon
+    zeta : InputFloat
+        Amount to rotate around the axis
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.selection : BooleanSocket
+        The resulting selection must overlap with this input selection
+    i.alpha : FloatSocket
+        Alpha
+    i.beta : FloatSocket
+        Beta
+    i.gamma : FloatSocket
+        Gamma
+    i.epsilon : FloatSocket
+        Epsilon
+    i.zeta : FloatSocket
+        Amount to rotate around the axis
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Set Nucleic Dihedral"
     _asset_name = "Set Nucleic Dihedral"
@@ -9260,7 +15653,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
         geometry: GeometrySocket
         """Geometry"""
         selection: BooleanSocket
-        """Selection"""
+        """The resulting selection must overlap with this input selection"""
         alpha: FloatSocket
         """Alpha"""
         beta: FloatSocket
@@ -9270,7 +15663,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
         epsilon: FloatSocket
         """Epsilon"""
         zeta: FloatSocket
-        """Zeta"""
+        """Amount to rotate around the axis"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -9307,7 +15700,36 @@ class SetNucleicDihedral(AssetGeometryGroup):
 
 
 class SetPhiPsiAngle(AssetGeometryGroup):
-    """Set Phi Psi Angle"""
+    """
+    Set Phi Psi Angle
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    selection : InputBoolean
+        Selection
+    phi : InputFloat
+        Phi
+    psi : InputFloat
+        Psi
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.selection : BooleanSocket
+        Selection
+    i.phi : FloatSocket
+        Phi
+    i.psi : FloatSocket
+        Psi
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Set Phi Psi Angle"
     _asset_name = "Set Phi Psi Angle"
@@ -9352,7 +15774,24 @@ class SetPhiPsiAngle(AssetGeometryGroup):
 
 
 class SetUResID(AssetGeometryGroup):
-    """Set URes ID"""
+    """
+    Set URes ID
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        Geometry
+    """
 
     _name = "Set URes ID"
     _asset_name = "Set URes ID"
@@ -9381,7 +15820,30 @@ class SetUResID(AssetGeometryGroup):
 
 
 class SliceEdgeInstances(AssetGeometryGroup):
-    """Slice Edge Instances"""
+    """
+    Slice Edge Instances
+
+    Parameters
+    ----------
+    instances : InputGeometry
+        Instances
+    selection : InputBoolean
+        Selection
+
+    Inputs
+    ------
+    i.instances : GeometrySocket
+        Instances
+    i.selection : BooleanSocket
+        Selection
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    o.realized_points : GeometrySocket
+        Realized Points
+    """
 
     _name = "Slice Edge Instances"
     _asset_name = "Slice Edge Instances"
@@ -9415,7 +15877,32 @@ class SliceEdgeInstances(AssetGeometryGroup):
 
 
 class SplitToCentredInstances(AssetGeometryGroup):
-    """Split to Centred Instances"""
+    """
+    Split to Centred Instances
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        The input geometry containing points
+    selection : InputBoolean
+        Selected points will be used to calculate centre point for Instance
+    group_id : InputInteger
+        The `Group ID` which will determine how the points are split into their different instances
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        The input geometry containing points
+    i.selection : BooleanSocket
+        Selected points will be used to calculate centre point for Instance
+    i.group_id : IntegerSocket
+        The `Group ID` which will determine how the points are split into their different instances
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        The points that have been split into their instances
+    """
 
     _name = "Split to Centred Instances"
     _asset_name = "Split to Centred Instances"
@@ -9423,15 +15910,15 @@ class SplitToCentredInstances(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The input geometry containing points"""
         selection: BooleanSocket
-        """Selection"""
+        """Selected points will be used to calculate centre point for Instance"""
         group_id: IntegerSocket
-        """Group ID"""
+        """The `Group ID` which will determine how the points are split into their different instances"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
-        """Instances"""
+        """The points that have been split into their instances"""
 
     if TYPE_CHECKING:
 
@@ -9452,7 +15939,48 @@ class SplitToCentredInstances(AssetGeometryGroup):
 
 
 class StarfileInstances(AssetGeometryGroup):
-    """Starfile Instances"""
+    """
+    Starfile Instances
+
+    Parameters
+    ----------
+    points : InputGeometry
+        Points
+    point_selection : InputMenu | Literal["Image", "Selection"]
+        Select points to be instanced base don their `image_id` or a boolean selection field.
+    selection : InputBoolean
+        Becomes the output value if it is chosen by the menu input
+    image : InputInteger
+        The ID of the image that should be shown
+    menu : InputMenu | Literal["Instance", "Simple"]
+        Menu
+    instance : InputObject
+        The object that should be placed at each instance
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.points : GeometrySocket
+        Points
+    i.point_selection : MenuSocket
+        Select points to be instanced base don their `image_id` or a boolean selection field.
+    i.selection : BooleanSocket
+        Becomes the output value if it is chosen by the menu input
+    i.image : IntegerSocket
+        The ID of the image that should be shown
+    i.menu : MenuSocket
+        Menu
+    i.instance : ObjectSocket
+        The object that should be placed at each instance
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    """
 
     _name = "Starfile Instances"
     _asset_name = "Starfile Instances"
@@ -9462,17 +15990,17 @@ class StarfileInstances(AssetGeometryGroup):
         points: GeometrySocket
         """Points"""
         point_selection: MenuSocket
-        """Point Selection"""
+        """Select points to be instanced base don their `image_id` or a boolean selection field."""
         selection: BooleanSocket
-        """Selection"""
+        """Becomes the output value if it is chosen by the menu input"""
         image: IntegerSocket
-        """Image"""
+        """The ID of the image that should be shown"""
         menu: MenuSocket
         """Menu"""
         instance: ObjectSocket
-        """Instance"""
+        """The object that should be placed at each instance"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
@@ -9509,7 +16037,28 @@ class StarfileInstances(AssetGeometryGroup):
 
 
 class StructureParameter(AssetGeometryGroup):
-    """Structure Parameter"""
+    """
+    Structure Parameter
+
+    Outputs
+    -------
+    o.atom_factor : FloatSocket
+        Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1
+    o.index : IntegerSocket
+        `Index` of the point within the structure. Equal to the `Index` input node
+    o.atom_count : IntegerSocket
+        Number of atoms in the structure, equal to the size of the Point Domain
+    o.index_of_first : IntegerSocket
+        `Index` of first atom in the entire structure, which will always be 0
+    o.index_of_last : IntegerSocket
+        Index of last atom in the entire structure. Equal to `Atom Count` - 1
+    o.residue_factor : FloatSocket
+        Residue Factor
+    o.residue_index : IntegerSocket
+        A unique `Group ID` that increases whenever `Sub Group ID` or `Group ID` change
+    o.residue_count : IntegerSocket
+        Residue Count
+    """
 
     _name = "Structure Parameter"
     _asset_name = "Structure Parameter"
@@ -9520,19 +16069,19 @@ class StructureParameter(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         atom_factor: FloatSocket
-        """Atom Factor"""
+        """Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1"""
         index: IntegerSocket
-        """Index"""
+        """`Index` of the point within the structure. Equal to the `Index` input node"""
         atom_count: IntegerSocket
-        """Atom Count"""
+        """Number of atoms in the structure, equal to the size of the Point Domain"""
         index_of_first: IntegerSocket
-        """Index of First"""
+        """`Index` of first atom in the entire structure, which will always be 0"""
         index_of_last: IntegerSocket
-        """Index of Last"""
+        """Index of last atom in the entire structure. Equal to `Atom Count` - 1"""
         residue_factor: FloatSocket
         """Residue Factor"""
         residue_index: IntegerSocket
-        """Residue Index"""
+        """A unique `Group ID` that increases whenever `Sub Group ID` or `Group ID` change"""
         residue_count: IntegerSocket
         """Residue Count"""
 
@@ -9548,7 +16097,64 @@ class StructureParameter(AssetGeometryGroup):
 
 
 class StyleBallAndStick(AssetGeometryGroup):
-    """Style Ball and Stick"""
+    """
+    Style Ball and Stick
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this style to, discarding unselected points
+    quality : InputInteger
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    sphere_geometry : InputMenu | Literal["Point", "Instance", "Mesh"]
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+    sphere_scale : InputFloat
+        Scale the `vdw_radii` attribute before setting the radius for the spheres
+    bond_split : InputMenu | Literal["Single", "Double"]
+        Bond Split
+    bond_scale : InputFloat
+        Set the radius for the generated bonds in Angstroms
+    bond_find : InputBoolean
+        Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
+    bond_find_scale : InputFloat
+        Scale the VDW radii of the atoms when searching for bonds
+    shade_smooth : InputBoolean
+        Apply smooth shading to the created geometry
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this style to, discarding unselected points
+    i.quality : IntegerSocket
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    i.sphere_geometry : MenuSocket
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+    i.sphere_scale : FloatSocket
+        Scale the `vdw_radii` attribute before setting the radius for the spheres
+    i.bond_split : MenuSocket
+        Bond Split
+    i.bond_scale : FloatSocket
+        Set the radius for the generated bonds in Angstroms
+    i.bond_find : BooleanSocket
+        Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds
+    i.bond_find_scale : FloatSocket
+        Scale the VDW radii of the atoms when searching for bonds
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading to the created geometry
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Style Ball and Stick"
     _asset_name = "Style Ball and Stick"
@@ -9556,31 +16162,31 @@ class StyleBallAndStick(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this style to, discarding unselected points"""
         quality: IntegerSocket
-        """Quality"""
+        """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         sphere_geometry: MenuSocket
-        """Sphere Geometry"""
+        """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
         sphere_scale: FloatSocket
-        """Sphere Scale"""
+        """Scale the `vdw_radii` attribute before setting the radius for the spheres"""
         bond_split: MenuSocket
         """Bond Split"""
         bond_scale: FloatSocket
-        """Bond Scale"""
+        """Set the radius for the generated bonds in Angstroms"""
         bond_find: BooleanSocket
-        """Bond Find"""
+        """Find possible bonds for the selected atoms based on a distance search. Unselected atoms maintain any bonds they already have. Bonds that are found are all treated as single bonds"""
         bond_find_scale: FloatSocket
-        """Bond Find Scale"""
+        """Scale the VDW radii of the atoms when searching for bonds"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -9621,7 +16227,108 @@ class StyleBallAndStick(AssetGeometryGroup):
 
 
 class StyleCartoon(AssetGeometryGroup):
-    """Style Cartoon"""
+    """
+    Style Cartoon
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this style to, discarding unselected points
+    quality : InputInteger
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    peptide_shape : InputMenu | Literal["Sharp", "Round"]
+        Create rounded sheets and helices
+    helix_shape : InputMenu | Literal["Spiral", "Cylinder"]
+        Use cylinders for helices instead of ribbons
+    helix_thickness : InputFloat
+        Thickness for the sheets and helices
+    helix_width : InputFloat
+        Width for the sheets and helices
+    sheet_arrows : InputMenu | Literal["Arrow", "Flat"]
+        User arrows for sheets
+    sheet_thickness : InputFloat
+        Sheet Thickness
+    sheet_width : InputFloat
+        Sheet Width
+    sheet_smoothing : InputFloat
+        Smoothing to apply to sheets
+    loop_radius : InputFloat
+        Radius of the loops for unstructure regions
+    backbone_shape : InputMenu | Literal["Cylinder", "Rectangle"]
+        Backbone Shape
+    nucleic_width : InputFloat
+        Nucleic Width
+    nucleic_thickness : InputFloat
+        Nucleic Thickness
+    nucleic_radius : InputFloat
+        Nucleic Radius
+    base_shape : InputMenu | Literal["Cylinder", "Rectangle"]
+        Base Shape
+    base_scale_cylinder : InputVector
+        Base Scale Cylinder
+    base_scale_rectangle : InputVector
+        Base Scale Rectangle
+    color_blur : InputBoolean
+        Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
+    shade_smooth : InputBoolean
+        Apply smooth shading to the created geometry
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this style to, discarding unselected points
+    i.quality : IntegerSocket
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    i.peptide_shape : MenuSocket
+        Create rounded sheets and helices
+    i.helix_shape : MenuSocket
+        Use cylinders for helices instead of ribbons
+    i.helix_thickness : FloatSocket
+        Thickness for the sheets and helices
+    i.helix_width : FloatSocket
+        Width for the sheets and helices
+    i.sheet_arrows : MenuSocket
+        User arrows for sheets
+    i.sheet_thickness : FloatSocket
+        Sheet Thickness
+    i.sheet_width : FloatSocket
+        Sheet Width
+    i.sheet_smoothing : FloatSocket
+        Smoothing to apply to sheets
+    i.loop_radius : FloatSocket
+        Radius of the loops for unstructure regions
+    i.backbone_shape : MenuSocket
+        Backbone Shape
+    i.nucleic_width : FloatSocket
+        Nucleic Width
+    i.nucleic_thickness : FloatSocket
+        Nucleic Thickness
+    i.nucleic_radius : FloatSocket
+        Nucleic Radius
+    i.base_shape : MenuSocket
+        Base Shape
+    i.base_scale_cylinder : VectorSocket
+        Base Scale Cylinder
+    i.base_scale_rectangle : VectorSocket
+        Base Scale Rectangle
+    i.color_blur : BooleanSocket
+        Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading to the created geometry
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Style Cartoon"
     _asset_name = "Style Cartoon"
@@ -9629,29 +16336,29 @@ class StyleCartoon(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this style to, discarding unselected points"""
         quality: IntegerSocket
-        """Quality"""
+        """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         peptide_shape: MenuSocket
-        """Peptide Shape"""
+        """Create rounded sheets and helices"""
         helix_shape: MenuSocket
-        """Helix Shape"""
+        """Use cylinders for helices instead of ribbons"""
         helix_thickness: FloatSocket
-        """Helix Thickness"""
+        """Thickness for the sheets and helices"""
         helix_width: FloatSocket
-        """Helix Width"""
+        """Width for the sheets and helices"""
         sheet_arrows: MenuSocket
-        """Sheet Arrows"""
+        """User arrows for sheets"""
         sheet_thickness: FloatSocket
         """Sheet Thickness"""
         sheet_width: FloatSocket
         """Sheet Width"""
         sheet_smoothing: FloatSocket
-        """Sheet Smoothing"""
+        """Smoothing to apply to sheets"""
         loop_radius: FloatSocket
-        """Loop Radius"""
+        """Radius of the loops for unstructure regions"""
         backbone_shape: MenuSocket
         """Backbone Shape"""
         nucleic_width: FloatSocket
@@ -9667,15 +16374,15 @@ class StyleCartoon(AssetGeometryGroup):
         base_scale_rectangle: VectorSocket
         """Base Scale Rectangle"""
         color_blur: BooleanSocket
-        """Color Blur"""
+        """Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -9738,7 +16445,92 @@ class StyleCartoon(AssetGeometryGroup):
 
 
 class StyleRibbon(AssetGeometryGroup):
-    """Style Ribbon"""
+    """
+    Style Ribbon
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this style to, discarding unselected points
+    quality : InputInteger
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    peptide_radius : InputFloat
+        Peptide Radius
+    backbone_smoothing : InputFloat
+        Smoothen the sheet ribbons such as beta-sheets
+    backbone_threshold : InputFloat
+        Distance (Angstroms) over which subsequent CA points are treated as a new chain
+    uv_map : InputBoolean
+        Compute and store the `uv_map` for the final protein ribbon geometry
+    u_component : InputMenu | Literal["Factor", "Length"]
+        Store either the 'Length' or the 'Factor' of the curve as the U component.
+    nucleic_backbone_shape : InputMenu | Literal["Cicular", "Rectangular"]
+        Nucleic Backbone Shape
+    nucleic_backbone_radius : InputFloat
+        Nucleic Backbone Radius
+    nucleic_backbone_width : InputFloat
+        Nucleic Backbone Width
+    nucleic_backbone_thickness : InputFloat
+        Nucleic Backbone Thickness
+    base_geometry : InputGeometry
+        Base Geometry
+    base_scale : InputVector
+        Base Scale
+    base_resolution : InputInteger
+        Base Resolution
+    base_realize : InputBoolean
+        Base Realize
+    shade_smooth : InputBoolean
+        Apply smooth shading to the created geometry
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this style to, discarding unselected points
+    i.quality : IntegerSocket
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    i.peptide_radius : FloatSocket
+        Peptide Radius
+    i.backbone_smoothing : FloatSocket
+        Smoothen the sheet ribbons such as beta-sheets
+    i.backbone_threshold : FloatSocket
+        Distance (Angstroms) over which subsequent CA points are treated as a new chain
+    i.uv_map : BooleanSocket
+        Compute and store the `uv_map` for the final protein ribbon geometry
+    i.u_component : MenuSocket
+        Store either the 'Length' or the 'Factor' of the curve as the U component.
+    i.nucleic_backbone_shape : MenuSocket
+        Nucleic Backbone Shape
+    i.nucleic_backbone_radius : FloatSocket
+        Nucleic Backbone Radius
+    i.nucleic_backbone_width : FloatSocket
+        Nucleic Backbone Width
+    i.nucleic_backbone_thickness : FloatSocket
+        Nucleic Backbone Thickness
+    i.base_geometry : GeometrySocket
+        Base Geometry
+    i.base_scale : VectorSocket
+        Base Scale
+    i.base_resolution : IntegerSocket
+        Base Resolution
+    i.base_realize : BooleanSocket
+        Base Realize
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading to the created geometry
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Style Ribbon"
     _asset_name = "Style Ribbon"
@@ -9746,21 +16538,21 @@ class StyleRibbon(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this style to, discarding unselected points"""
         quality: IntegerSocket
-        """Quality"""
+        """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         peptide_radius: FloatSocket
         """Peptide Radius"""
         backbone_smoothing: FloatSocket
-        """Backbone Smoothing"""
+        """Smoothen the sheet ribbons such as beta-sheets"""
         backbone_threshold: FloatSocket
-        """Backbone Threshold"""
+        """Distance (Angstroms) over which subsequent CA points are treated as a new chain"""
         uv_map: BooleanSocket
-        """UV Map"""
+        """Compute and store the `uv_map` for the final protein ribbon geometry"""
         u_component: MenuSocket
-        """U Component"""
+        """Store either the 'Length' or the 'Factor' of the curve as the U component."""
         nucleic_backbone_shape: MenuSocket
         """Nucleic Backbone Shape"""
         nucleic_backbone_radius: FloatSocket
@@ -9778,13 +16570,13 @@ class StyleRibbon(AssetGeometryGroup):
         base_realize: BooleanSocket
         """Base Realize"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -9840,7 +16632,48 @@ class StyleRibbon(AssetGeometryGroup):
 
 
 class StyleSpheres(AssetGeometryGroup):
-    """Style Spheres"""
+    """
+    Style Spheres
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this style to, discarding unselected points
+    sphere_geometry : InputMenu | Literal["Point", "Instance", "Mesh"]
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+    quality : InputInteger
+        Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms
+    scale : InputFloat
+        Scale the `vdw_radii` of the atom when setting the radius of the spheres
+    shade_smooth : InputBoolean
+        Apply smooth shading when using _Instances_ or _Mesh_
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this style to, discarding unselected points
+    i.sphere_geometry : MenuSocket
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+    i.quality : IntegerSocket
+        Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms
+    i.scale : FloatSocket
+        Scale the `vdw_radii` of the atom when setting the radius of the spheres
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading when using _Instances_ or _Mesh_
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Style Spheres"
     _asset_name = "Style Spheres"
@@ -9848,23 +16681,23 @@ class StyleSpheres(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this style to, discarding unselected points"""
         sphere_geometry: MenuSocket
-        """Sphere Geometry"""
+        """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
         quality: IntegerSocket
-        """Quality"""
+        """Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms"""
         scale: FloatSocket
-        """Scale"""
+        """Scale the `vdw_radii` of the atom when setting the radius of the spheres"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading when using _Instances_ or _Mesh_"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -9897,7 +16730,48 @@ class StyleSpheres(AssetGeometryGroup):
 
 
 class StyleSticks(AssetGeometryGroup):
-    """Style Sticks"""
+    """
+    Style Sticks
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this style to, discarding unselected points
+    sphere_geometry : InputMenu | Literal["Point", "Instance", "Mesh"]
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+    quality : InputInteger
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    scale : InputFloat
+        Radius of the sticks in Angstroms
+    shade_smooth : InputBoolean
+        Apply smooth shading to the created geometry
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this style to, discarding unselected points
+    i.sphere_geometry : MenuSocket
+        Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
+    i.quality : IntegerSocket
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    i.scale : FloatSocket
+        Radius of the sticks in Angstroms
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading to the created geometry
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Style Sticks"
     _asset_name = "Style Sticks"
@@ -9905,23 +16779,23 @@ class StyleSticks(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this style to, discarding unselected points"""
         sphere_geometry: MenuSocket
-        """Sphere Geometry"""
+        """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
         quality: IntegerSocket
-        """Quality"""
+        """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         scale: FloatSocket
-        """Scale"""
+        """Radius of the sticks in Angstroms"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -9954,7 +16828,80 @@ class StyleSticks(AssetGeometryGroup):
 
 
 class StyleSurface(AssetGeometryGroup):
-    """Style Surface"""
+    """
+    Style Surface
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+    selection : InputBoolean
+        Selection of atoms to apply this style to, discarding unselected points
+    quality : InputInteger
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    surface_scale : InputFloat
+        Scale the VDW radii of the atoms when creating the surface
+    surface_relax : InputInteger
+        Surface Relax
+    offset : InputFloat
+        Object-space distance to offset the SDF surface
+    fillet : InputInteger
+        Number of iterations to apply the filter
+    mean_width : InputInteger
+        Filter kernel radius in voxels
+    mean_iterations : InputInteger
+        Number of iterations to apply the filter
+    separate_by : InputMenu | Literal["chain_id", "Group ID"]
+        Separate By
+    group_id : InputInteger
+        Group ID
+    color_source : InputMenu | Literal["Alpha Carbon", "Nearest"]
+        Color Source
+    color_blur : InputInteger
+        Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
+    shade_smooth : InputBoolean
+        Apply smooth shading to the created geometry
+    material : InputMaterial
+        Material to apply to the resulting geometry
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+    i.selection : BooleanSocket
+        Selection of atoms to apply this style to, discarding unselected points
+    i.quality : IntegerSocket
+        A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
+    i.surface_scale : FloatSocket
+        Scale the VDW radii of the atoms when creating the surface
+    i.surface_relax : IntegerSocket
+        Surface Relax
+    i.offset : FloatSocket
+        Object-space distance to offset the SDF surface
+    i.fillet : IntegerSocket
+        Number of iterations to apply the filter
+    i.mean_width : IntegerSocket
+        Filter kernel radius in voxels
+    i.mean_iterations : IntegerSocket
+        Number of iterations to apply the filter
+    i.separate_by : MenuSocket
+        Separate By
+    i.group_id : IntegerSocket
+        Group ID
+    i.color_source : MenuSocket
+        Color Source
+    i.color_blur : IntegerSocket
+        Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating
+    i.shade_smooth : BooleanSocket
+        Apply smooth shading to the created geometry
+    i.material : MaterialSocket
+        Material to apply to the resulting geometry
+
+    Outputs
+    -------
+    o.geometry : GeometrySocket
+        The generated geometry for the style node group
+    """
 
     _name = "Style Surface"
     _asset_name = "Style Surface"
@@ -9962,23 +16909,23 @@ class StyleSurface(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
-        """Selection"""
+        """Selection of atoms to apply this style to, discarding unselected points"""
         quality: IntegerSocket
-        """Quality"""
+        """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         surface_scale: FloatSocket
-        """Surface Scale"""
+        """Scale the VDW radii of the atoms when creating the surface"""
         surface_relax: IntegerSocket
         """Surface Relax"""
         offset: FloatSocket
-        """Offset"""
+        """Object-space distance to offset the SDF surface"""
         fillet: IntegerSocket
-        """Fillet"""
+        """Number of iterations to apply the filter"""
         mean_width: IntegerSocket
-        """Mean Width"""
+        """Filter kernel radius in voxels"""
         mean_iterations: IntegerSocket
-        """Mean Iterations"""
+        """Number of iterations to apply the filter"""
         separate_by: MenuSocket
         """Separate By"""
         group_id: IntegerSocket
@@ -9986,15 +16933,15 @@ class StyleSurface(AssetGeometryGroup):
         color_source: MenuSocket
         """Color Source"""
         color_blur: IntegerSocket
-        """Color Blur"""
+        """Interpolate between colors when enabled. When disabled the faces will take their color from their corresponding atom without interpolating"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         material: MaterialSocket
-        """Material"""
+        """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -10043,7 +16990,40 @@ class StyleSurface(AssetGeometryGroup):
 
 
 class SubGroupInfo(AssetGeometryGroup):
-    """Sub Group Info"""
+    """
+    Sub Group Info
+
+    Parameters
+    ----------
+    sub_group_id : InputInteger
+        Sub Group ID
+    group_id : InputInteger
+        Group ID
+
+    Inputs
+    ------
+    i.sub_group_id : IntegerSocket
+        Sub Group ID
+    i.group_id : IntegerSocket
+        Group ID
+
+    Outputs
+    -------
+    o.size : IntegerSocket
+        Size of each comptued `Group ID`
+    o.group_id : IntegerSocket
+        A unique `Group ID` that increases whenever `Sub Group ID` or `Group ID` change
+    o.index_of_first : IntegerSocket
+        The absolute `Index` of the _first_ point in each computed `Group ID`
+    o.index_of_last : IntegerSocket
+        The absolute `Index` of the _last_ point in each computed `Group ID`
+    o.index_in_group_id : IntegerSocket
+        Index within each computed `Group ID`, starting at 0
+    o.sub_group_id : IntegerSocket
+        Sub Group ID
+    o.sub_group_total : IntegerSocket
+        Sub Group Total
+    """
 
     _name = "Sub Group Info"
     _asset_name = "Sub Group Info"
@@ -10057,15 +17037,15 @@ class SubGroupInfo(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         size: IntegerSocket
-        """Size"""
+        """Size of each comptued `Group ID`"""
         group_id: IntegerSocket
-        """Group ID"""
+        """A unique `Group ID` that increases whenever `Sub Group ID` or `Group ID` change"""
         index_of_first: IntegerSocket
-        """Index of First"""
+        """The absolute `Index` of the _first_ point in each computed `Group ID`"""
         index_of_last: IntegerSocket
-        """Index of Last"""
+        """The absolute `Index` of the _last_ point in each computed `Group ID`"""
         index_in_group_id: IntegerSocket
-        """Index in Group ID"""
+        """Index within each computed `Group ID`, starting at 0"""
         sub_group_id: IntegerSocket
         """Sub Group ID"""
         sub_group_total: IntegerSocket
@@ -10087,7 +17067,100 @@ class SubGroupInfo(AssetGeometryGroup):
 
 
 class SwitchResidueName(AssetGeometryGroup):
-    """Switch Residue Name"""
+    """
+    Switch Residue Name
+
+    Parameters
+    ----------
+    ala : InputInteger
+        ALA
+    arg : InputInteger
+        ARG
+    asn : InputInteger
+        ASN
+    asp : InputInteger
+        ASP
+    cys : InputInteger
+        CYS
+    glu : InputInteger
+        GLU
+    gln : InputInteger
+        GLN
+    gly : InputInteger
+        GLY
+    his : InputInteger
+        HIS
+    ile : InputInteger
+        ILE
+    leu : InputInteger
+        LEU
+    lys : InputInteger
+        LYS
+    met : InputInteger
+        MET
+    phe : InputInteger
+        PHE
+    pro : InputInteger
+        PRO
+    ser : InputInteger
+        SER
+    thr : InputInteger
+        THR
+    trp : InputInteger
+        TRP
+    tyr : InputInteger
+        TYR
+    val : InputInteger
+        VAL
+
+    Inputs
+    ------
+    i.ala : IntegerSocket
+        ALA
+    i.arg : IntegerSocket
+        ARG
+    i.asn : IntegerSocket
+        ASN
+    i.asp : IntegerSocket
+        ASP
+    i.cys : IntegerSocket
+        CYS
+    i.glu : IntegerSocket
+        GLU
+    i.gln : IntegerSocket
+        GLN
+    i.gly : IntegerSocket
+        GLY
+    i.his : IntegerSocket
+        HIS
+    i.ile : IntegerSocket
+        ILE
+    i.leu : IntegerSocket
+        LEU
+    i.lys : IntegerSocket
+        LYS
+    i.met : IntegerSocket
+        MET
+    i.phe : IntegerSocket
+        PHE
+    i.pro : IntegerSocket
+        PRO
+    i.ser : IntegerSocket
+        SER
+    i.thr : IntegerSocket
+        THR
+    i.trp : IntegerSocket
+        TRP
+    i.tyr : IntegerSocket
+        TYR
+    i.val : IntegerSocket
+        VAL
+
+    Outputs
+    -------
+    o.output : IntegerSocket
+        Output
+    """
 
     _name = "Switch Residue Name"
     _asset_name = "Switch Residue Name"
@@ -10195,8 +17268,81 @@ class SwitchResidueName(AssetGeometryGroup):
         )
 
 
+class SymmetryID(AssetGeometryGroup):
+    """
+    Read the `frame_id` attribute, created when multiple frames from a trajectory are merged into a single structure
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.sym_id : IntegerSocket
+        Read the `frame_id` attribute from the geometry
+    """
+
+    _name = "Symmetry ID"
+    _asset_name = "Symmetry ID"
+    _library = PackageLibrary(__file__, "../assets/node_data_file.blend")
+
+    class _Inputs(SocketAccessor):
+        index: IntegerSocket
+        """Index"""
+
+    class _Outputs(SocketAccessor):
+        sym_id: IntegerSocket
+        """Read the `frame_id` attribute from the geometry"""
+
+    if TYPE_CHECKING:
+
+        @property
+        def i(self) -> _Inputs: ...
+        @property
+        def o(self) -> _Outputs: ...
+
+    def __init__(
+        self,
+        index: InputInteger = 0,
+    ):
+        super().__init__(**{"Socket_4": index})
+
+
 class TEMRotation(AssetGeometryGroup):
-    """TEM Rotation"""
+    """
+    TEM Rotation
+
+    Parameters
+    ----------
+    phi : InputString
+        Phi
+    theta : InputString
+        Theta
+    psi : InputString
+        Psi
+
+    Inputs
+    ------
+    i.phi : StringSocket
+        Phi
+    i.theta : StringSocket
+        Theta
+    i.psi : StringSocket
+        Psi
+
+    Outputs
+    -------
+    o.rotation : RotationSocket
+        The combined Rotation
+    o.boolean : BooleanSocket
+        Boolean
+    """
 
     _name = "TEM Rotation"
     _asset_name = "TEM Rotation"
@@ -10212,7 +17358,7 @@ class TEMRotation(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         rotation: RotationSocket
-        """Rotation"""
+        """The combined Rotation"""
         boolean: BooleanSocket
         """Boolean"""
 
@@ -10233,7 +17379,24 @@ class TEMRotation(AssetGeometryGroup):
 
 
 class TopologyDSSP(AssetGeometryGroup):
-    """Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm"""
+    """
+    Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atomic geometry that contains vertices and edges
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atomic geometry that contains vertices and edges
+
+    Outputs
+    -------
+    o.atoms : GeometrySocket
+        The input `Atoms` with updated `sec_struct` attributes based on the DSSP algorithm
+    """
 
     _name = "Topology DSSP"
     _asset_name = "Topology DSSP"
@@ -10241,11 +17404,11 @@ class TopologyDSSP(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Atomic geometry that contains vertices and edges"""
 
     class _Outputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """The input `Atoms` with updated `sec_struct` attributes based on the DSSP algorithm"""
 
     if TYPE_CHECKING:
 
@@ -10262,7 +17425,36 @@ class TopologyDSSP(AssetGeometryGroup):
 
 
 class TransformAccumulate(AssetGeometryGroup):
-    """Transform Accumulate"""
+    """
+    Transform Accumulate
+
+    Parameters
+    ----------
+    domain : InputMenu | Literal["Point", "Edge", "Face", "Face Corner", "Spline", "Instance"]
+        Domain on which to accumulate transforms
+    accumulate : InputBoolean
+        Selected transforms are included in the accumulation, non-selected transforms become identity matrices
+    transform : InputMatrix
+        Transform field to accumulate
+    group_id : InputInteger
+        Transform field is accumulated individually for each `Group ID`
+
+    Inputs
+    ------
+    i.domain : MenuSocket
+        Domain on which to accumulate transforms
+    i.accumulate : BooleanSocket
+        Selected transforms are included in the accumulation, non-selected transforms become identity matrices
+    i.transform : MatrixSocket
+        Transform field to accumulate
+    i.group_id : IntegerSocket
+        Transform field is accumulated individually for each `Group ID`
+
+    Outputs
+    -------
+    o.transform : MatrixSocket
+        The accumulating Transform field
+    """
 
     _name = "Transform Accumulate"
     _asset_name = "Transform Accumulate"
@@ -10270,17 +17462,17 @@ class TransformAccumulate(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         domain: MenuSocket
-        """Domain"""
+        """Domain on which to accumulate transforms"""
         accumulate: BooleanSocket
-        """Accumulate"""
+        """Selected transforms are included in the accumulation, non-selected transforms become identity matrices"""
         transform: MatrixSocket
-        """Transform"""
+        """Transform field to accumulate"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Transform field is accumulated individually for each `Group ID`"""
 
     class _Outputs(SocketAccessor):
         transform: MatrixSocket
-        """Transform"""
+        """The accumulating Transform field"""
 
     if TYPE_CHECKING:
 
@@ -10310,7 +17502,40 @@ class TransformAccumulate(AssetGeometryGroup):
 
 
 class TransformAccumulatePoint(AssetGeometryGroup):
-    """Accumulate transforms on the point domain"""
+    """
+    Accumulate transforms on the point domain
+
+    Parameters
+    ----------
+    domain : InputMenu | Literal["Point", "Edge", "Face", "Face Corner", "Spline", "Instance"]
+        Domain on which to accumulate the transforms
+    accumulate : InputBoolean
+        Include the transform in the final accumlation
+    position : InputVector
+        Point to transform, defaults to `Position`
+    transform : InputMatrix
+        Transform field to accumulate
+    group_id : InputInteger
+        Transform field is accumulated individually for each `Group ID`
+
+    Inputs
+    ------
+    i.domain : MenuSocket
+        Domain on which to accumulate the transforms
+    i.accumulate : BooleanSocket
+        Include the transform in the final accumlation
+    i.position : VectorSocket
+        Point to transform, defaults to `Position`
+    i.transform : MatrixSocket
+        Transform field to accumulate
+    i.group_id : IntegerSocket
+        Transform field is accumulated individually for each `Group ID`
+
+    Outputs
+    -------
+    o.vector : VectorSocket
+        Transformed vector
+    """
 
     _name = "Transform Accumulate Point"
     _asset_name = "Transform Accumulate Point"
@@ -10318,19 +17543,19 @@ class TransformAccumulatePoint(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         domain: MenuSocket
-        """Domain"""
+        """Domain on which to accumulate the transforms"""
         accumulate: BooleanSocket
-        """Accumulate"""
+        """Include the transform in the final accumlation"""
         position: VectorSocket
-        """Position"""
+        """Point to transform, defaults to `Position`"""
         transform: MatrixSocket
-        """Transform"""
+        """Transform field to accumulate"""
         group_id: IntegerSocket
-        """Group ID"""
+        """Transform field is accumulated individually for each `Group ID`"""
 
     class _Outputs(SocketAccessor):
         vector: VectorSocket
-        """Vector"""
+        """Transformed vector"""
 
     if TYPE_CHECKING:
 
@@ -10362,7 +17587,28 @@ class TransformAccumulatePoint(AssetGeometryGroup):
 
 
 class TransformLocal(AssetGeometryGroup):
-    """Apply the transform after first moving to world origin, then returning to original position"""
+    """
+    Apply the transform after first moving to world origin, then returning to original position
+
+    Parameters
+    ----------
+    origin : InputVector
+        Vector that defines the local space origin, defaults to `Position`
+    transform : InputMatrix
+        Transform to apply in local space
+
+    Inputs
+    ------
+    i.origin : VectorSocket
+        Vector that defines the local space origin, defaults to `Position`
+    i.transform : MatrixSocket
+        Transform to apply in local space
+
+    Outputs
+    -------
+    o.transform : MatrixSocket
+        The final transform
+    """
 
     _name = "Transform Local"
     _asset_name = "Transform Local"
@@ -10370,13 +17616,13 @@ class TransformLocal(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         origin: VectorSocket
-        """Origin"""
+        """Vector that defines the local space origin, defaults to `Position`"""
         transform: MatrixSocket
-        """Transform"""
+        """Transform to apply in local space"""
 
     class _Outputs(SocketAccessor):
         transform: MatrixSocket
-        """Transform"""
+        """The final transform"""
 
     if TYPE_CHECKING:
 
@@ -10394,7 +17640,32 @@ class TransformLocal(AssetGeometryGroup):
 
 
 class TransformLocalAxis(AssetGeometryGroup):
-    """Create a transform around an axis in local space defined by the `Origin` point"""
+    """
+    Create a transform around an axis in local space defined by the `Origin` point
+
+    Parameters
+    ----------
+    origin : InputVector
+        The vector defining the local space. Defaults to `Position`
+    axis : InputVector
+        The axis to rotate around
+    angle : InputFloat
+        Amount to rotate around the axis
+
+    Inputs
+    ------
+    i.origin : VectorSocket
+        The vector defining the local space. Defaults to `Position`
+    i.axis : VectorSocket
+        The axis to rotate around
+    i.angle : FloatSocket
+        Amount to rotate around the axis
+
+    Outputs
+    -------
+    o.transform : MatrixSocket
+        The Transform around the axis
+    """
 
     _name = "Transform Local Axis"
     _asset_name = "Transform Local Axis"
@@ -10402,15 +17673,15 @@ class TransformLocalAxis(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         origin: VectorSocket
-        """Origin"""
+        """The vector defining the local space. Defaults to `Position`"""
         axis: VectorSocket
-        """Axis"""
+        """The axis to rotate around"""
         angle: FloatSocket
-        """Angle"""
+        """Amount to rotate around the axis"""
 
     class _Outputs(SocketAccessor):
         transform: MatrixSocket
-        """Transform"""
+        """The Transform around the axis"""
 
     if TYPE_CHECKING:
 
@@ -10429,7 +17700,48 @@ class TransformLocalAxis(AssetGeometryGroup):
 
 
 class TransformMix(AssetGeometryGroup):
-    """Mix between two transformations"""
+    """
+    Mix between two transformations
+
+    Parameters
+    ----------
+    a : InputMatrix
+        Transform A to mix from at 0.0
+    b : InputMatrix
+        Transform B which will be mixed to at 1.0
+    menu : InputMenu | Literal["Single", "Split"]
+        Menu
+    translation : InputFloat
+        Amount to mix the Translation between A and B
+    rotation : InputFloat
+        Amount to mix the Rotation between A and B
+    scale : InputFloat
+        Amount to mix the Scale between A and B
+    factor : InputFloat
+        Factor
+
+    Inputs
+    ------
+    i.a : MatrixSocket
+        Transform A to mix from at 0.0
+    i.b : MatrixSocket
+        Transform B which will be mixed to at 1.0
+    i.menu : MenuSocket
+        Menu
+    i.translation : FloatSocket
+        Amount to mix the Translation between A and B
+    i.rotation : FloatSocket
+        Amount to mix the Rotation between A and B
+    i.scale : FloatSocket
+        Amount to mix the Scale between A and B
+    i.factor : FloatSocket
+        Factor
+
+    Outputs
+    -------
+    o.transform : MatrixSocket
+        The final mixed Transform
+    """
 
     _name = "Transform Mix"
     _asset_name = "Transform Mix"
@@ -10437,23 +17749,23 @@ class TransformMix(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: MatrixSocket
-        """A"""
+        """Transform A to mix from at 0.0"""
         b: MatrixSocket
-        """B"""
+        """Transform B which will be mixed to at 1.0"""
         menu: MenuSocket
         """Menu"""
         translation: FloatSocket
-        """Translation"""
+        """Amount to mix the Translation between A and B"""
         rotation: FloatSocket
-        """Rotation"""
+        """Amount to mix the Rotation between A and B"""
         scale: FloatSocket
-        """Scale"""
+        """Amount to mix the Scale between A and B"""
         factor: FloatSocket
         """Factor"""
 
     class _Outputs(SocketAccessor):
         transform: MatrixSocket
-        """Transform"""
+        """The final mixed Transform"""
 
     if TYPE_CHECKING:
 
@@ -10486,7 +17798,32 @@ class TransformMix(AssetGeometryGroup):
 
 
 class TransformRelative(AssetGeometryGroup):
-    """Transform Relative"""
+    """
+    Transform Relative
+
+    Parameters
+    ----------
+    a : InputVector
+        The final position
+    b : InputVector
+        The position moving from
+    c : InputVector
+        The position defining the axis of CB
+
+    Inputs
+    ------
+    i.a : VectorSocket
+        The final position
+    i.b : VectorSocket
+        The position moving from
+    i.c : VectorSocket
+        The position defining the axis of CB
+
+    Outputs
+    -------
+    o.transform : MatrixSocket
+        The `Transform` to move from B to A, relative to the axis of C to B
+    """
 
     _name = "Transform Relative"
     _asset_name = "Transform Relative"
@@ -10494,15 +17831,15 @@ class TransformRelative(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
-        """A"""
+        """The final position"""
         b: VectorSocket
-        """B"""
+        """The position moving from"""
         c: VectorSocket
-        """C"""
+        """The position defining the axis of CB"""
 
     class _Outputs(SocketAccessor):
         transform: MatrixSocket
-        """Transform"""
+        """The `Transform` to move from B to A, relative to the axis of C to B"""
 
     if TYPE_CHECKING:
 
@@ -10521,7 +17858,26 @@ class TransformRelative(AssetGeometryGroup):
 
 
 class UResID(AssetGeometryGroup):
-    """URes ID"""
+    """
+    URes ID
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.ures_id : IntegerSocket
+        ures_id
+    o.size : IntegerSocket
+        The total of all of the values in the corresponding group
+    """
 
     _name = "URes ID"
     _asset_name = "URes ID"
@@ -10534,7 +17890,7 @@ class UResID(AssetGeometryGroup):
     class _Outputs(SocketAccessor):
         ures_id: IntegerSocket
         size: IntegerSocket
-        """Size"""
+        """The total of all of the values in the corresponding group"""
 
     if TYPE_CHECKING:
 
@@ -10551,7 +17907,24 @@ class UResID(AssetGeometryGroup):
 
 
 class UniqueChainID(AssetGeometryGroup):
-    """Compute a unique Group ID based on the `chain_id` attribute, but also incrememnting if subsequent points are over a cutoff distance from each other"""
+    """
+    Compute a unique Group ID based on the `chain_id` attribute, but also incrememnting if subsequent points are over a cutoff distance from each other
+
+    Parameters
+    ----------
+    cutoff : InputFloat
+        Threshold distance over which the next points are considered to be part of a new chain
+
+    Inputs
+    ------
+    i.cutoff : FloatSocket
+        Threshold distance over which the next points are considered to be part of a new chain
+
+    Outputs
+    -------
+    o.group_id : IntegerSocket
+        Calculated `Group ID` attribute
+    """
 
     _name = "Unique Chain ID"
     _asset_name = "Unique Chain ID"
@@ -10559,11 +17932,11 @@ class UniqueChainID(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         cutoff: FloatSocket
-        """Cutoff"""
+        """Threshold distance over which the next points are considered to be part of a new chain"""
 
     class _Outputs(SocketAccessor):
         group_id: IntegerSocket
-        """Group ID"""
+        """Calculated `Group ID` attribute"""
 
     if TYPE_CHECKING:
 
@@ -10580,7 +17953,14 @@ class UniqueChainID(AssetGeometryGroup):
 
 
 class UniqueResidueID(AssetGeometryGroup):
-    """Unique Residue ID"""
+    """
+    Unique Residue ID
+
+    Outputs
+    -------
+    o.group_id : IntegerSocket
+        A unique Group ID for eash residue
+    """
 
     _name = "Unique Residue ID"
     _asset_name = "Unique Residue ID"
@@ -10591,7 +17971,7 @@ class UniqueResidueID(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         group_id: IntegerSocket
-        """Group ID"""
+        """A unique Group ID for eash residue"""
 
     if TYPE_CHECKING:
 
@@ -10605,7 +17985,24 @@ class UniqueResidueID(AssetGeometryGroup):
 
 
 class VDWRadii(AssetGeometryGroup):
-    """VDW Radii"""
+    """
+    VDW Radii
+
+    Parameters
+    ----------
+    index : InputInteger
+        Index
+
+    Inputs
+    ------
+    i.index : IntegerSocket
+        Index
+
+    Outputs
+    -------
+    o.vdw_radii : FloatSocket
+        Read the `vdw_radii` attribute from the geometry
+    """
 
     _name = "VDW Radii"
     _asset_name = "VDW Radii"
@@ -10617,6 +18014,7 @@ class VDWRadii(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         vdw_radii: FloatSocket
+        """Read the `vdw_radii` attribute from the geometry"""
 
     if TYPE_CHECKING:
 
@@ -10633,7 +18031,30 @@ class VDWRadii(AssetGeometryGroup):
 
 
 class VectorAngle(AssetGeometryGroup):
-    """The angle between two vectors, in radians"""
+    """
+    The angle between two vectors, in radians
+
+    Parameters
+    ----------
+    a : InputVector
+        The first vector for angle calculation
+    b : InputVector
+        The second vector for the angle calculation
+
+    Inputs
+    ------
+    i.a : VectorSocket
+        The first vector for angle calculation
+    i.b : VectorSocket
+        The second vector for the angle calculation
+
+    Outputs
+    -------
+    o.angle : FloatSocket
+        The angle between the two vectors in radians
+    o.a_b : VectorSocket
+        Axis around which the angle rotates (cross product of A and B)
+    """
 
     _name = "Vector Angle"
     _asset_name = "Vector Angle"
@@ -10641,15 +18062,15 @@ class VectorAngle(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
-        """A"""
+        """The first vector for angle calculation"""
         b: VectorSocket
-        """B"""
+        """The second vector for the angle calculation"""
 
     class _Outputs(SocketAccessor):
         angle: FloatSocket
-        """Angle"""
+        """The angle between the two vectors in radians"""
         a_b: VectorSocket
-        """A×B"""
+        """Axis around which the angle rotates (cross product of A and B)"""
 
     if TYPE_CHECKING:
 
@@ -10667,7 +18088,34 @@ class VectorAngle(AssetGeometryGroup):
 
 
 class VectorDirection(AssetGeometryGroup):
-    """Vector Direction"""
+    """
+    Vector Direction
+
+    Parameters
+    ----------
+    normalize : InputBoolean
+        Normalize
+    to : InputVector
+        To
+    from_ : InputVector
+        From
+
+    Inputs
+    ------
+    i.normalize : BooleanSocket
+        Normalize
+    i.to : VectorSocket
+        To
+    i.from_ : VectorSocket
+        From
+
+    Outputs
+    -------
+    o.direction : VectorSocket
+        Vector between the points, potentially normalized
+    o.distance : FloatSocket
+        Distance between the points before normalization
+    """
 
     _name = "Vector Direction"
     _asset_name = "Vector Direction"
@@ -10683,9 +18131,9 @@ class VectorDirection(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         direction: VectorSocket
-        """Direction"""
+        """Vector between the points, potentially normalized"""
         distance: FloatSocket
-        """Distance"""
+        """Distance between the points before normalization"""
 
     if TYPE_CHECKING:
 
@@ -10704,7 +18152,34 @@ class VectorDirection(AssetGeometryGroup):
 
 
 class VectorFromPoint(AssetGeometryGroup):
-    """Vector from Point"""
+    """
+    Vector from Point
+
+    Parameters
+    ----------
+    target : InputVector
+        Vector that is the target
+    position : InputVector
+        Position of the current point
+
+    Inputs
+    ------
+    i.target : VectorSocket
+        Vector that is the target
+    i.position : VectorSocket
+        Position of the current point
+
+    Outputs
+    -------
+    o.vector : VectorSocket
+        Vector from the current point's position to the given vector
+    o.direction : VectorSocket
+        Normalized output vector
+    o.length : FloatSocket
+        Length of the output vector
+    o.rotation : RotationSocket
+        Rotation
+    """
 
     _name = "Vector from Point"
     _asset_name = "Vector from Point"
@@ -10712,17 +18187,17 @@ class VectorFromPoint(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         target: VectorSocket
-        """Target"""
+        """Vector that is the target"""
         position: VectorSocket
-        """Position"""
+        """Position of the current point"""
 
     class _Outputs(SocketAccessor):
         vector: VectorSocket
-        """Vector"""
+        """Vector from the current point's position to the given vector"""
         direction: VectorSocket
-        """Direction"""
+        """Normalized output vector"""
         length: FloatSocket
-        """Length"""
+        """Length of the output vector"""
         rotation: RotationSocket
         """Rotation"""
 
@@ -10742,7 +18217,14 @@ class VectorFromPoint(AssetGeometryGroup):
 
 
 class Velocity(AssetGeometryGroup):
-    """Velocity"""
+    """
+    Velocity
+
+    Outputs
+    -------
+    o.velocity : VectorSocket
+        velocity
+    """
 
     _name = "Velocity"
     _asset_name = "Velocity"
@@ -10766,7 +18248,54 @@ class Velocity(AssetGeometryGroup):
 
 
 class VisualizeAngle(AssetGeometryGroup):
-    """Visualize Angle"""
+    """
+    Visualize Angle
+
+    Parameters
+    ----------
+    points : InputGeometry
+        Points
+    selection : InputBoolean
+        Selection
+    position : InputVector
+        Position
+    angle : InputFloat
+        Angle
+    length : InputFloat
+        Length
+    up : InputVector
+        Up
+    axis : InputVector
+        Axis
+    radius : InputFloat
+        Radius
+
+    Inputs
+    ------
+    i.points : GeometrySocket
+        Points
+    i.selection : BooleanSocket
+        Selection
+    i.position : VectorSocket
+        Position
+    i.angle : FloatSocket
+        Angle
+    i.length : FloatSocket
+        Length
+    i.up : VectorSocket
+        Up
+    i.axis : VectorSocket
+        Axis
+    i.radius : FloatSocket
+        Radius
+
+    Outputs
+    -------
+    o.mesh : GeometrySocket
+        Mesh
+    o.curve : GeometrySocket
+        Curve
+    """
 
     _name = "Visualize Angle"
     _asset_name = "Visualize Angle"
@@ -10829,7 +18358,42 @@ class VisualizeAngle(AssetGeometryGroup):
 
 
 class VisualizeChiAngle(AssetGeometryGroup):
-    """Visualize Chi Angle"""
+    """
+    Visualize Chi Angle
+
+    Parameters
+    ----------
+    geometry : InputGeometry
+        Geometry
+    selection : InputBoolean
+        Selection
+    factor : InputFloat
+        Factor
+    value : InputFloat
+        A value which will be scaled appropriately for the world
+    radius : InputFloat
+        Radius
+
+    Inputs
+    ------
+    i.geometry : GeometrySocket
+        Geometry
+    i.selection : BooleanSocket
+        Selection
+    i.factor : FloatSocket
+        Factor
+    i.value : FloatSocket
+        A value which will be scaled appropriately for the world
+    i.radius : FloatSocket
+        Radius
+
+    Outputs
+    -------
+    o.mesh : GeometrySocket
+        Mesh
+    o.curve : GeometrySocket
+        Curve
+    """
 
     _name = "Visualize Chi Angle"
     _asset_name = "Visualize Chi Angle"
@@ -10843,7 +18407,7 @@ class VisualizeChiAngle(AssetGeometryGroup):
         factor: FloatSocket
         """Factor"""
         value: FloatSocket
-        """Value"""
+        """A value which will be scaled appropriately for the world"""
         radius: FloatSocket
         """Radius"""
 
@@ -10880,7 +18444,36 @@ class VisualizeChiAngle(AssetGeometryGroup):
 
 
 class VisualizePoints(AssetGeometryGroup):
-    """Visualize Points"""
+    """
+    Visualize Points
+
+    Parameters
+    ----------
+    points : InputGeometry
+        Points
+    selection : InputBoolean
+        Selection
+    target : InputVector
+        Vector that is the target
+    position : InputVector
+        Position of the current point
+
+    Inputs
+    ------
+    i.points : GeometrySocket
+        Points
+    i.selection : BooleanSocket
+        Selection
+    i.target : VectorSocket
+        Vector that is the target
+    i.position : VectorSocket
+        Position of the current point
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    """
 
     _name = "Visualize Points"
     _asset_name = "Visualize Points"
@@ -10892,9 +18485,9 @@ class VisualizePoints(AssetGeometryGroup):
         selection: BooleanSocket
         """Selection"""
         target: VectorSocket
-        """Target"""
+        """Vector that is the target"""
         position: VectorSocket
-        """Position"""
+        """Position of the current point"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
@@ -10925,7 +18518,44 @@ class VisualizePoints(AssetGeometryGroup):
 
 
 class VisualizeRelativeAtoms(AssetGeometryGroup):
-    """Visualize Relative Atoms"""
+    """
+    Visualize Relative Atoms
+
+    Parameters
+    ----------
+    atoms : InputGeometry
+        Atoms
+    selection : InputBoolean
+        Selection
+    scale : InputFloat
+        Scale
+    position : InputVector
+        Position
+    target_index : InputInteger
+        Index for the selected point to measure to
+    target_position : InputVector
+        Target Position
+
+    Inputs
+    ------
+    i.atoms : GeometrySocket
+        Atoms
+    i.selection : BooleanSocket
+        Selection
+    i.scale : FloatSocket
+        Scale
+    i.position : VectorSocket
+        Position
+    i.target_index : IntegerSocket
+        Index for the selected point to measure to
+    i.target_position : VectorSocket
+        Target Position
+
+    Outputs
+    -------
+    o.instances : GeometrySocket
+        Instances
+    """
 
     _name = "Visualize Relative Atoms"
     _asset_name = "Visualize Relative Atoms"
@@ -10941,7 +18571,7 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
         position: VectorSocket
         """Position"""
         target_index: IntegerSocket
-        """Target Index"""
+        """Index for the selected point to measure to"""
         target_position: VectorSocket
         """Target Position"""
 
@@ -10978,7 +18608,24 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
 
 
 class WorldToAngstrom(AssetGeometryGroup):
-    """World to Angstrom"""
+    """
+    World to Angstrom
+
+    Parameters
+    ----------
+    world : InputFloat
+        World
+
+    Inputs
+    ------
+    i.world : FloatSocket
+        World
+
+    Outputs
+    -------
+    o.angstrom : FloatSocket
+        Angstrom
+    """
 
     _name = "World to Angstrom"
     _asset_name = "World to Angstrom"
@@ -11007,7 +18654,36 @@ class WorldToAngstrom(AssetGeometryGroup):
 
 
 class _2IndexAngle(AssetGeometryGroup):
-    """2 Index Angle"""
+    """
+    2 Index Angle
+
+    Parameters
+    ----------
+    position : InputVector
+        The `Position` vectors to use for the angle calculation
+    index_a : InputInteger
+        First end point for the angle calculation around the current point
+    index_b : InputInteger
+        The `Index` for the middle point in the angle calculation, defaulting to the current point
+    index_c : InputInteger
+        Last end point for the angle calculation around the current point
+
+    Inputs
+    ------
+    i.position : VectorSocket
+        The `Position` vectors to use for the angle calculation
+    i.index_a : IntegerSocket
+        First end point for the angle calculation around the current point
+    i.index_b : IntegerSocket
+        The `Index` for the middle point in the angle calculation, defaulting to the current point
+    i.index_c : IntegerSocket
+        Last end point for the angle calculation around the current point
+
+    Outputs
+    -------
+    o.angle : FloatSocket
+        Angle of the line A -> Self -> C in radians
+    """
 
     _name = "2 Index Angle"
     _asset_name = "2 Index Angle"
@@ -11015,17 +18691,17 @@ class _2IndexAngle(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
-        """Position"""
+        """The `Position` vectors to use for the angle calculation"""
         index_a: IntegerSocket
-        """Index A"""
+        """First end point for the angle calculation around the current point"""
         index_b: IntegerSocket
-        """Index B"""
+        """The `Index` for the middle point in the angle calculation, defaulting to the current point"""
         index_c: IntegerSocket
-        """Index C"""
+        """Last end point for the angle calculation around the current point"""
 
     class _Outputs(SocketAccessor):
         angle: FloatSocket
-        """Angle"""
+        """Angle of the line A -> Self -> C in radians"""
 
     if TYPE_CHECKING:
 
@@ -11052,7 +18728,32 @@ class _2IndexAngle(AssetGeometryGroup):
 
 
 class _3IndexAngle(AssetGeometryGroup):
-    """3 Index Angle"""
+    """
+    3 Index Angle
+
+    Parameters
+    ----------
+    index_a : InputInteger
+        First of the points for the angle calculation
+    index_b : InputInteger
+        The middle point for the angle calculation
+    index_c : InputInteger
+        Last of the points for the angle calculation
+
+    Inputs
+    ------
+    i.index_a : IntegerSocket
+        First of the points for the angle calculation
+    i.index_b : IntegerSocket
+        The middle point for the angle calculation
+    i.index_c : IntegerSocket
+        Last of the points for the angle calculation
+
+    Outputs
+    -------
+    o.angle : FloatSocket
+        Angle between the points around Index B in radians
+    """
 
     _name = "3 Index Angle"
     _asset_name = "3 Index Angle"
@@ -11060,15 +18761,15 @@ class _3IndexAngle(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         index_a: IntegerSocket
-        """Index A"""
+        """First of the points for the angle calculation"""
         index_b: IntegerSocket
-        """Index B"""
+        """The middle point for the angle calculation"""
         index_c: IntegerSocket
-        """Index C"""
+        """Last of the points for the angle calculation"""
 
     class _Outputs(SocketAccessor):
         angle: FloatSocket
-        """Angle"""
+        """Angle between the points around Index B in radians"""
 
     if TYPE_CHECKING:
 
@@ -11098,6 +18799,7 @@ __all__ = (
     "AnimateTrails",
     "AnimateValue",
     "AnimateWiggle",
+    "AssemblyID",
     "AssemblyInstance",
     "AtomID",
     "AtomName",
@@ -11315,6 +19017,7 @@ __all__ = (
     "StyleSurface",
     "SubGroupInfo",
     "SwitchResidueName",
+    "SymmetryID",
     "TEMRotation",
     "TopologyDSSP",
     "TransformAccumulate",

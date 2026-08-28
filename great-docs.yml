@@ -1,0 +1,152 @@
+# Great Docs configuration — https://posit-dev.github.io/great-docs/
+#
+# Build the site with `uv run docs/build.py build` (the wrapper registers the
+# docstring hook that injects docs/nodes.yml extras into the node class pages)
+# and preview it with `uv run great-docs preview`.
+#
+# All documentation sources live under docs/. Great Docs 0.17 still expects
+# this file at the repo root and derives section URLs from the `dir` path, so
+# section pages are served under /docs/... until posit-dev/great-docs#329 lands
+# (then: move this file into docs/, drop the `docs/` prefixes below, remove
+# `pre_render`, and point CI at docs/_site).
+
+module: molecularnodes
+display_name: Molecular Nodes
+parser: numpy
+dynamic: true
+jupyter: python3
+
+site_url: https://bradyajohnston.github.io/MolecularNodes
+
+logo: docs/assets/logo.png
+hero:
+  enabled: true
+  tagline: "Toolbox for molecular animations with Blender and Geometry Nodes"
+
+navbar_order:
+  - User Guide
+  - Python API
+  - Reference
+  - Nodes
+  - Examples
+  - Citations
+  - Changelog
+
+# Hand-written changelog lives in changelog/index.qmd rather than GitHub Releases
+changelog:
+  enabled: false
+
+# Keep every method documented inline on its class page (quartodoc behaviour)
+inline_methods: true
+
+user_guide: docs/user_guide
+bibliography: docs/user_guide/references.bib
+
+sections:
+  - title: Python API
+    dir: docs/api
+  - title: Nodes
+    dir: docs/nodes
+  - title: Examples
+    dir: docs/examples
+    type: blog
+  - title: Citations
+    dir: docs/citations
+    type: blog
+  - title: Changelog
+    dir: docs/changelog
+
+site:
+  toc: true
+  toc-depth: 3
+  css: docs/assets/mn.css
+  # colour-codes `Int::Int` / `Geometry::Geometry` style inline code (see docs/assets/mn.css);
+  # the .lua file is copied next to _quarto.yml by the pre_render script below
+  filters:
+    - filters.lua
+
+# copies docs/assets/* into the build dir (Great Docs only auto-copies a root-level assets/)
+pre_render: docs/assets/copy-assets.py
+
+include_in_header:
+  - |
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true });
+    </script>
+
+reference:
+  - title: Molecule
+    desc: >
+      The unified `Molecule` entity and its facets. A `Molecule` represents any structure — static or trajectory — backed by an `MDAnalysis.Universe`.
+    contents:
+      - name: Molecule
+        include_inherited: true
+      - name: entities.molecule.SelectionManager
+        include_inherited: true
+      - name: entities.molecule.DSSPManager
+        include_inherited: true
+      - name: entities.StreamingTrajectory
+        include_inherited: true
+
+  - title: Other Entities
+    desc: Additional molecular entities for ensembles and coarse-grained models
+    contents:
+      - name: entities.Ensemble
+        include_inherited: true
+      - name: entities.OXDNA
+        include_inherited: true
+
+  - title: Materials
+    desc: The pre-built materials and their tweakable parameters
+    contents:
+      - name: material.Default
+        include_inherited: true
+      - name: material.AmbientOcclusion
+        include_inherited: true
+      - name: material.Flat
+        include_inherited: true
+      - name: material.Squishy
+        include_inherited: true
+      - name: material.TransparentOutline
+        include_inherited: true
+      - name: material.PresetMaterial
+        include_inherited: true
+      - material.append_material
+      - material.add_all_materials
+
+  - title: Session
+    desc: Session object to control molecular entities
+    contents:
+      - name: session.MNSession
+        include_inherited: true
+
+  - title: Annotations
+    desc: Annotations for molecular entities
+    contents:
+      - annotations.base
+      - annotations.interface
+      - annotations.manager
+      - entities.molecule.annotations
+      - entities.density.annotations
+
+  - title: Scene
+    desc: Control settings for the Blender scene through the `Canvas` object.
+    contents:
+      - name: Canvas
+        include_inherited: true
+      - scene.camera
+      - name: scene.compositor.CompositorTree
+        include_inherited: true
+      - name: scene.world.WorldTree
+        include_inherited: true
+
+  - title: Nodes
+    desc: >
+      The typed node classes generated from the node groups included in Molecular Nodes, including the styles. Every node group in the asset file is available as a class.
+    contents:
+      - nodes.geometry
+      - nodes.shader

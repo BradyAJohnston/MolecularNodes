@@ -129,25 +129,18 @@ jobs:
         run: |
           uv sync --all-extras
 
-      - name: Pre-render Scripts
+      - name: Generate node & data-table pages
         timeout-minutes: 3
-        continue-on-error: true
         run: |
           uv run docs/generate.py
-      - name: Build quartodoc
-        run: |
-          cd docs
-          uv run quartodoc build
-          uv run quartodoc interlinks
-          cd ..
 
       - name: Biotite Setup CCD
         run: |
           uv run python -m biotite.setup_ccd
 
-      - name: Quarto Render Docs
+      - name: Build docs with Great Docs
         run: |
-          uv run quarto render docs
+          uv run docs/build.py build
 
       - name: Configure pull release name
         if: ${{github.event_name == 'pull_request'}}
@@ -179,9 +172,9 @@ jobs:
           npm install -g netlify-cli
           # push main branch to production, others to preview --
           if [ "${ALIAS}" == "main" ]; then
-            netlify deploy --dir=docs/_build --alias="main"
+            netlify deploy --dir=great-docs/_site --alias="main"
           else
-            netlify deploy --dir=docs/_build --alias="${ALIAS}"
+            netlify deploy --dir=great-docs/_site --alias="${ALIAS}"
           fi
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -204,4 +197,4 @@ jobs:
         if: github.event_name == 'release'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build
+          publish_dir: great-docs/_site

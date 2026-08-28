@@ -1,0 +1,29 @@
+/* Colour-coded inline code for Geometry Nodes socket types and attributes.
+ *
+ * assets/filters.lua turns `Int::Int`, `Geometry::Geometry`, `'text'` and the
+ * known attribute names (`chain_id`, `res_id`, ...) into <code> elements with
+ * a `custom-<type>` class; the colours below mirror Blender's socket colours.
+ */
+code:not(.sourceCode)[class*="custom-"] {
+  font-weight: bold;
+  white-space: nowrap;
+  padding: 0.1em 0.4em;
+  border-radius: 0.25em;
+  color: #1b1b1b;
+}
+code:not(.sourceCode).custom-float      { background-color: rgba(161, 161, 161, 0.7); }
+code:not(.sourceCode).custom-int        { background-color: rgba(89, 140, 92, 0.7);   color: #f4f4f4; }
+code:not(.sourceCode).custom-vector     { background-color: rgba(99, 99, 199, 0.7);   color: #f4f4f4; }
+code:not(.sourceCode).custom-geometry   { background-color: rgba(5, 209, 159, 0.7); }
+code:not(.sourceCode).custom-matrix     { background-color: rgba(184, 51, 133, 0.7);  color: #f4f4f4; }
+code:not(.sourceCode).custom-bool       { background-color: rgba(204, 166, 214, 0.7); }
+code:not(.sourceCode).custom-rotation   { background-color: rgba(166, 99, 199, 0.7);  color: #f4f4f4; }
+code:not(.sourceCode).custom-material   { background-color: rgba(235, 117, 130, 0.7); }
+code:not(.sourceCode).custom-color      { background-color: rgba(198, 198, 41, 0.7); }
+code:not(.sourceCode).custom-collection { background-color: rgba(244, 244, 244, 0.7); }
+code:not(.sourceCode).custom-string     { background-color: rgba(112, 178, 255, 0.7); }
+code:not(.sourceCode).custom-object     { background-color: rgba(237, 158, 92, 0.7); }
+code:not(.sourceCode).custom-name       { background-color: rgba(48, 48, 48, 0.7);    color: #f4f4f4; }
+code:not(.sourceCode).custom-menu       { background-color: rgba(78, 78, 78, 0.7);    color: #f4f4f4; }
+code:not(.sourceCode).custom-input,
+code:not(.sourceCode).custom-attribute  { background-color: rgba(131, 49, 74, 0.7);   color: #f4f4f4; }
