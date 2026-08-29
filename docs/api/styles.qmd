@@ -84,7 +84,7 @@ canvas.snapshot()
 ```
 
 ```{python}
-mol.add_style("surface", selection="resid 100:150", material="MN Transparent Outline")
+mol.add_style("surface", selection="resid 100:150", material="MN Flat")
 canvas.look_at(mol)
 canvas.snapshot()
 ```
@@ -122,10 +122,17 @@ canvas.look_at(mol)
 canvas.snapshot()
 ```
 
-A callable `style` sets any input on the style node itself:
+A callable `style` sets allows easier setting of the values of the node itself.
 
 ```{python}
-mol.add_style(lambda: g.StyleSpheres(sphere_geometry="Mesh", quality=4, scale=0.4))
+mol.add_style(
+  lambda: g.StyleSpheres(
+    sphere_geometry="Instance",
+    quality=4,
+    scale=0.4,
+    material=mn.material.Default().material
+    )
+  )
 canvas.look_at(mol)
 canvas.snapshot()
 ```
@@ -142,7 +149,7 @@ mol.add_style("cartoon", color=lambda: g.ColorRainbow())
 mol.add_style(
     lambda: g.StyleSpheres(
         selection=mol.selections.node("not protein"),
-        sphere_geometry="Mesh",
+        sphere_geometry="Instance",
     )
 )
 canvas.look_at(mol)
@@ -181,7 +188,7 @@ mol.dssp.init()
 sel = mol.selections.from_string("resname LYS")
 
 with mol.tree.reset() as (atoms, join):
-  atoms >> g.StyleSticks(selection = sel.node(), scale=0.3, material=mat.material) >> join
+  atoms >> g.StyleSticks(selection = sel.node(), scale=0.6, material=mat.material) >> join
   atoms >> g.SetColor(color=g.ColorRainbow()) >> g.StyleCartoon(material=mat.material) >> join
 
 canvas.look_at(mol)

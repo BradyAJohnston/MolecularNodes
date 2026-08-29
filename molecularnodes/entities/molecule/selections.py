@@ -608,7 +608,7 @@ class SelectionManager:
         mol.add_style(
             lambda: g.StyleSpheres(
                 selection=mol.selections.node("not protein"),
-                sphere_geometry="Mesh",
+                sphere_geometry="Instance",
             )
         )
         canvas.look_at(mol)

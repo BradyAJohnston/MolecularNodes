@@ -10,6 +10,7 @@ website:
     - api/rendering.qmd
     - api/materials.qmd
     - api/annotations.qmd
+    - api/solvent.qmd
     - api/canvas.qmd
     - api/blender.qmd
     - text: '---'

@@ -11,7 +11,7 @@ title: "Changelog"
   ```python
   mol.add_style("cartoon", color=lambda: g.ColorSecondaryStructure())
   mol.add_style("sticks", selection=lambda: g.IsPeptide() & g.IsSideChain())
-  mol.add_style(lambda: g.StyleSpheres(sphere_geometry="Mesh", quality=4))
+  mol.add_style(lambda: g.StyleSpheres(sphere_geometry="Instance", quality=4))
   ```
 
   A callable `style` defines the style node itself, so `selection`, `material` and style keyword arguments cannot be passed alongside it - passing them raises a `TypeError` rather than silently dropping them.
