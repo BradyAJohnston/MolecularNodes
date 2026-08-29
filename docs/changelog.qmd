@@ -6,3 +6,27 @@ title: "Changelog"
 
 ## Added
 - On using the import operators, the camera and viewport end clipping distance is increased to 10000 from 100 so users aren't confused when importing larger structures and systems #1150
+- `Molecule.add_style()` accepts a callable for `style`, `selection` and `color`. The callable is evaluated inside the node tree context, so it can build any nodes from `molecularnodes.nodes.geometry` without having to write out a whole node tree:
+
+  ```python
+  mol.add_style("cartoon", color=lambda: g.ColorSecondaryStructure())
+  mol.add_style("sticks", selection=lambda: g.IsPeptide() & g.IsSideChain())
+  mol.add_style(lambda: g.StyleSpheres(sphere_geometry="Instance", quality=4))
+  ```
+
+  A callable `style` defines the style node itself, so `selection`, `material` and style keyword arguments cannot be passed alongside it - passing them raises a `TypeError` rather than silently dropping them.
+- `SelectionManager.node()` returns a `Named Attribute` node for a selection, creating the selection if it does not already exist. This is the bridge between selections and the node tree API, and is how an MDAnalysis selection phrase is used inside a callable style:
+
+  ```python
+  mol.add_style(lambda: g.StyleSpheres(selection=mol.selections.node("not protein")))
+  ```
+
+  Existing selections are reused - matched on the selection string together with the `updating` and `periodic` flags, or on `name` - so repeated calls do not pile up duplicate selections and mesh attributes.
+- `SelectionManager.find()` looks up an existing selection by the selection string that created it, where `get()` looks a selection up by its name.
+
+## Changed
+- `add_style(color=...)` now validates its argument. A string must be a known keyword (`"common"`, `"default"`, `"plddt"`) or the name of an existing *colour* attribute on the molecule. Anything else raises a `UserWarning` and adds no colour, rather than silently rendering the geometry black. This includes names of attributes that exist but are not colours, such as `"b_factor"` or `"lipophobicity"`.
+- `add_style(style=...)` is validated against the styles that can actually be dispatched, and the error lists them.
+
+## Fixed
+- `add_style()` raised a bare `KeyError` for style names that were accepted by validation but had no corresponding style node - `"vdw"`, `"atoms"`, `"sphere"` and `"ball+stick"` among them. These now raise a `ValueError` naming the supported styles.

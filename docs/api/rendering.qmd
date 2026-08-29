@@ -25,7 +25,7 @@ u = mda.Universe(PSF, DCD)
 mol = mn.Molecule(u).add_style("cartoon")
 
 # add resid 1 and 129 with spheres style, using mesh geometry
-mol.add_style("spheres", selection="resid 1 129", sphere_geometry="Mesh")
+mol.add_style("spheres", selection="resid 1 129", sphere_geometry="Instance")
 ```
 
 ## Add annotations

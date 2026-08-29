@@ -41,6 +41,39 @@ cv.snapshot()
 ```
 
 
+To use an MDAnalysis selection phrase inside a node tree, turn it into a node with
+[](`~molecularnodes.entities.molecule.selections.SelectionManager.node`). It stores the
+selection as a boolean attribute and returns a `Named Attribute` node reading it, reusing
+an existing selection where possible rather than creating a duplicate.
+
+```{python}
+with mol.tree.reset() as (atoms, join):
+    # 1bna is B-DNA, so split the two base-pair types across different styles
+    (
+        atoms
+        >> mg.StyleSpheres(
+            selection=mol.selections.node("resname DC DG"),
+            material=mat,
+        )
+        >> join
+    )
+    (
+        atoms
+        >> mg.StyleSticks(
+            selection=mol.selections.node("resname DA DT"),
+            material=mat,
+        )
+        >> join
+    )
+
+mol.tree
+```
+
+```{python}
+cv.look_at(mol)
+cv.snapshot()
+```
+
 ## Non-Linear Node Trees
 
 The of Geometry Nodes comes from the non-linear nature of working with node trees. We can express complex systems with relatively simple node setups.
@@ -51,7 +84,7 @@ with mol.tree.reset() as (atoms, join):
         atoms
         >> mg.SeparateAtoms(selection=~mg.IsSolvent())
         >> mg.CentreOnSelection()
-        >> mg.GeoemtryToPlanar() 
+        >> mg.GeoemtryToPlanar()
         >> g.TransformGeometry(rotation=(0, math.pi/2, 0))
     )
 
@@ -144,8 +177,8 @@ with mol.tree.reset() as (atoms, join):
                 subset=mg.IsNucleic(),
                 expand=True,
                 distance_a=4.0
-            ) 
-            & mg.IsPeptide() 
+            )
+            & mg.IsPeptide()
             & mg.IsSideChain(),
             scale=0.6,
             material=mat
@@ -170,7 +203,7 @@ The node tree creation code below is evaluated once, but the selection changes o
 ```{python}
 cv.scene_reset()
 animation_length = 100
-cv.resolution = (1280, 720)
+cv.resolution = (600, 480)
 cv.samples = 8
 cv.frame_range = (1, animation_length)
 
@@ -183,7 +216,7 @@ with mol.tree.reset() as (atoms, join):
     frame = g.SceneTime().o.frame
 
     # the `.frame` value changes to reflect current scene.frame_current
-    # we map that value to a range of 0 to 1 over the animation length, 
+    # we map that value to a range of 0 to 1 over the animation length,
     # and use that to select fraction of the chain that is selected and drawn
     sel = fac < g.MapRange.float(frame, 1, animation_length, 0, 1)
 

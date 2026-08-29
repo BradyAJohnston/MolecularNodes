@@ -186,3 +186,89 @@ def test_add_selection_to_style_operator_missing_targets():
 
     # the style node is untouched by the failed attempts
     assert not style.inputs["Selection"].links
+
+
+def test_add_style_invalid_style_raises():
+    "A style string that isn't dispatchable should raise, not KeyError deeper down."
+    mol = mn.Molecule.fetch("4ozs")
+    # 'vdw' used to pass validation against `styles_mapping` and then KeyError
+    for style in ("vdw", "atoms", "sphere", "bogus"):
+        with pytest.raises(ValueError, match="Invalid style"):
+            mol.add_style(style)
+
+
+@pytest.mark.parametrize("color", ["chain", "lipophobicity", "b_factor", "nonsense"])
+def test_add_style_unknown_color_warns(color):
+    """Unknown colors, and non-color attributes, must warn rather than render black.
+
+    `lipophobicity` and `b_factor` exist but are FLOAT attributes - reading them as a
+    color silently produced black geometry.
+    """
+    mol = mn.Molecule.fetch("4ozs")
+    with pytest.warns(UserWarning, match="is neither a known color keyword"):
+        mol.add_style("cartoon", color=color)
+    # no Set Color node should have been added
+    assert not _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+
+
+@pytest.mark.parametrize("color", ["common", "default", "plddt", "Color"])
+def test_add_style_valid_color_adds_node(color):
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style("cartoon", color=color)
+    assert _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+
+
+def test_add_style_callable_color():
+    "A callable is evaluated inside the tree context, reaching any Color* node."
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style("cartoon", color=lambda: mg.ColorRainbow())
+    assert _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+    assert _nodes_using_tree(mol.modifier_node_tree, "Color Rainbow")
+
+
+def test_add_style_callable_selection():
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style("sticks", selection=lambda: mg.IsPeptide() & mg.IsSideChain())
+    style = _nodes_using_tree(mol.modifier_node_tree, "Style Sticks")[0]
+    # the selection input is driven by a link, not a named attribute lookup
+    assert style.inputs["Selection"].links
+
+
+def test_add_style_callable_style():
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style(lambda: mg.StyleCartoon(quality=5))
+    style = _nodes_using_tree(mol.modifier_node_tree, "Style Cartoon")[0]
+    assert style.inputs["Quality"].default_value == 5
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"selection": "protein"},
+        {"material": "MN Default"},
+        {"quality": 5},
+    ],
+)
+def test_add_style_callable_style_rejects_owned_args(kwargs):
+    "Args belonging to the style node must not be silently dropped."
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    with pytest.raises(TypeError, match="cannot also be passed"):
+        mol.add_style(lambda: mg.StyleCartoon(), **kwargs)
+
+
+def test_add_style_callable_style_allows_color_and_name():
+    "color/assembly/name are separate nodes, so they compose with a callable style."
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style(lambda: mg.StyleCartoon(), color=lambda: mg.ColorRainbow(), name="x")
+    assert _nodes_using_tree(mol.modifier_node_tree, "Color Rainbow")
+    assert _nodes_using_tree(mol.modifier_node_tree, "Style Cartoon")[0].label == "x"

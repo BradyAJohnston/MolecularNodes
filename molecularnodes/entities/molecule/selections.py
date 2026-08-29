@@ -39,6 +39,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from nodebpy.nodes.geometry import NamedAttribute
     from ...ui.props import TrajectorySelectionItem
     from .base import Molecule
 import bpy
@@ -479,6 +480,200 @@ class SelectionManager:
             The matching UI item, or ``None`` if no match was found.
         """
         return self.ui_items.get(name)
+
+    def find(
+        self,
+        selection: str,
+        *,
+        updating: bool = True,
+        periodic: bool = True,
+    ) -> TrajectorySelectionItem | None:
+        """Find an existing selection created from a given selection string.
+
+        Unlike :meth:`get`, which looks up a selection by its *name* (the attribute
+        name, e.g. ``"selection_0"``), this searches by the MDAnalysis selection
+        *string* that created it.
+
+        The ``updating`` and ``periodic`` flags form part of the match, because a
+        static selection and a per-frame updating one built from the same string are
+        not interchangeable.
+
+        Parameters
+        ----------
+        selection : str
+            MDAnalysis selection string to search for, e.g. ``"protein"``.
+        updating : bool, default=True
+            Only match selections with this ``updating`` flag.
+        periodic : bool, default=True
+            Only match selections with this ``periodic`` flag.
+
+        Returns
+        -------
+        TrajectorySelectionItem | None
+            The first matching selection, or ``None`` if there is no match.
+
+        Examples
+        --------
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas()
+        mol = mn.Molecule.fetch("4ozs")
+
+        print(mol.selections.find("protein"))
+        item = mol.selections.from_string("protein")
+        print(mol.selections.find("protein").name)
+        ```
+
+        Selections made in the Blender UI are found too, and the flags are part of
+        the match:
+
+        ```{python}
+        print(mol.selections.find("protein", updating=False))
+        ```
+
+        See Also
+        --------
+        get : Look a selection up by its name rather than its selection string.
+        node : Find or create a selection and return a node for it.
+        """
+        for item in self.ui_items:
+            if (
+                item.string == selection
+                and item.updating == updating
+                and item.periodic == periodic
+            ):
+                return item
+        return None
+
+    def node(
+        self,
+        selection: str | AtomGroup,
+        *,
+        updating: bool = True,
+        periodic: bool = True,
+        name: str | None = None,
+    ) -> NamedAttribute:
+        """Get a ``Named Attribute`` node for a selection, creating it if needed.
+
+        This is the bridge between the selection API and the node tree API. It
+        resolves ``selection`` to a managed selection - reusing an existing one where
+        possible - and returns a node whose boolean output can be plugged straight
+        into a style node's ``Selection`` input.
+
+        Existing selections are reused so that repeated calls (a style rebuilt in a
+        loop, say) do not pile up duplicate selections and mesh attributes. Reuse is
+        matched on the selection string together with the ``updating`` and
+        ``periodic`` flags, or on ``name`` when one is given. An ``AtomGroup`` is
+        always stored as a new selection, since two groups cannot be compared cheaply.
+
+        Parameters
+        ----------
+        selection : str | AtomGroup
+            An MDAnalysis selection string, or an ``AtomGroup``.
+        updating : bool, default=True
+            If ``True``, the selection is re-evaluated each frame where required, for
+            example for distance-based selections. Ignored when ``selection`` is an
+            ``AtomGroup``, where updating is a property of the group itself.
+        periodic : bool, default=True
+            Consider periodic boundary conditions for geometric selections. Ignored
+            when ``selection`` is an ``AtomGroup``.
+        name : str, optional
+            Name for the selection, used as the mesh attribute name. When given, an
+            existing selection with this name is reused. Auto-generated otherwise.
+
+        Returns
+        -------
+        NamedAttribute
+            A ``Named Attribute`` node reading the selection's boolean attribute.
+
+        Notes
+        -----
+        Like every node, this must be created inside an active node tree context -
+        either a ``with mol.tree:`` block, or the callable passed to
+        [](`~mn.Molecule.add_style`). Calling it outside one raises a ``RuntimeError``.
+
+        Examples
+        --------
+        The main use is inside a callable passed to
+        [](`~mn.Molecule.add_style`), which is evaluated inside the tree context:
+
+        ```{python}
+        import molecularnodes as mn
+        from molecularnodes.nodes import geometry as g
+
+        canvas = mn.Canvas()
+        mol = mn.Molecule.fetch("8H1B")
+        mol.add_style("cartoon")
+        mol.add_style(
+            lambda: g.StyleSpheres(
+                selection=mol.selections.node("not protein"),
+                sphere_geometry="Instance",
+            )
+        )
+        canvas.look_at(mol)
+        canvas.snapshot()
+        ```
+
+        It works the same inside an explicit tree context:
+
+        ```{python}
+        with mol.tree.reset() as (atoms, join):
+            atoms >> g.StyleCartoon(selection=mol.selections.node("protein")) >> join
+            atoms >> g.StyleSticks(selection=mol.selections.node("not protein")) >> join
+
+        canvas.look_at(mol)
+        canvas.snapshot()
+        ```
+
+        Selections are reused rather than duplicated, so calling it in a loop is safe:
+
+        ```{python}
+        before = len(mol.selections)
+        with mol.tree:
+            for _ in range(5):
+                mol.selections.node("protein")
+        print(f"{before} selections before, {len(mol.selections)} after")
+        ```
+
+        A static selection is a different selection to an updating one, and gets its
+        own attribute:
+
+        ```{python}
+        with mol.tree:
+            mol.selections.node("around 5 resname LYS")
+            mol.selections.node("around 5 resname LYS", updating=False)
+        print([item.name for item in mol.selections.ui_items])
+        ```
+
+        An ``AtomGroup`` can be used instead of a selection string:
+
+        ```{python}
+        with mol.tree:
+            node = mol.selections.node(mol.universe.select_atoms("resid 1:20"))
+        print(node.node.inputs["Name"].default_value)
+        ```
+
+        See Also
+        --------
+        find : Look up an existing selection by its selection string.
+        from_string : Always create a new selection from a selection string.
+        from_atomgroup : Always create a new selection from an ``AtomGroup``.
+        molecularnodes.ui.props.TrajectorySelectionItem.node : The per-item equivalent.
+        """
+        if name is not None and (existing := self.get(name)) is not None:
+            return existing.node()
+        if isinstance(selection, AtomGroup):
+            # `updating`/`periodic` are properties of the AtomGroup itself (an
+            # `UpdatingAtomGroup` re-evaluates), so `from_atomgroup` takes neither
+            item = self.from_atomgroup(selection, name=name)
+        else:
+            item = self.find(selection, updating=updating, periodic=periodic)
+            if item is None:
+                item = self.from_string(
+                    selection, updating=updating, periodic=periodic, name=name
+                )
+        return item.node()
 
     def __len__(self) -> int:
         """Return the number of selections.
