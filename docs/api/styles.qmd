@@ -41,23 +41,32 @@ The [](`~mn.Molecule.add_style`) API takes the following arguments:
 Molecule.add_style(
     style="spheres",
     selection=None,
-    material=None,
+    material="MN Default",
+    color=None,
     **kwargs,
 )
 ```
 
 - `style` param
-  - A string, one of `ball_and_stick`, `cartoon`, `ribbon`, `spheres`, `sticks` or `surface`.
+  - A string, one of `ball_and_stick`, `cartoon`, `ribbon`, `spheres`, `sticks` or
+    `surface`; or a callable returning a style node (see
+    [Callables](#callables-for-full-control) below).
 - `selection` param
-  - An MDAnalysis selection phrase, an `AtomGroup`, or the name of an existing boolean
-    attribute. A selection phrase is stored as a named attribute and used to mask the style.
+  - An MDAnalysis selection phrase, an `AtomGroup`, the name of an existing boolean
+    attribute, or a callable returning a boolean socket. A selection phrase is stored
+    as a named attribute and used to mask the style.
 - `material` param
   - One of the pre-built materials from `mn.material`, e.g.
     `mn.material.AmbientOcclusion(distance=0.5)`, a Blender material, or a material
     name to append from the asset file, e.g. `MN Default` or `MN Squishy`.
+- `color` param
+  - `"common"` / `"default"`, `"plddt"`, an RGBA tuple, the name of an existing colour
+    attribute, or a callable returning a colour socket. Anything else warns rather than
+    silently rendering black.
 - `**kwargs`
   - Any remaining keyword arguments are passed to the style node, e.g. `geometry`,
-    `quality`, `scale`, `peptide_radius`.
+    `quality`, `scale`, `peptide_radius`. Names that are not inputs on that node raise
+    a `TypeError`.
 
 ## Selections
 
@@ -88,6 +97,69 @@ canvas.look_at(mol)
 canvas.snapshot()
 ```
 
+## Callables for Full Control {#callables-for-full-control}
+
+`style`, `selection` and `color` all accept a **callable**, which is evaluated inside the
+node tree context. This reaches the full node API without having to write out a whole
+tree, and is the recommended middle ground between `add_style` and
+[building the tree yourself](#building-a-style-tree).
+
+A callable `color` reaches any of the `Color*` nodes:
+
+```{python}
+canvas.clear()
+mol = mn.Molecule.fetch("8H1B")
+mol.add_style("cartoon", color=lambda: g.ColorSecondaryStructure())
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+A callable `selection` composes the selection nodes with `&`, `|` and `~`:
+
+```{python}
+mol.add_style("sticks", selection=lambda: g.IsPeptide() & g.IsSideChain())
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+A callable `style` sets any input on the style node itself:
+
+```{python}
+mol.add_style(lambda: g.StyleSpheres(sphere_geometry="Mesh", quality=4, scale=0.4))
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+A callable `style` defines the style node completely, so `selection`, `material` and
+style keyword arguments cannot be passed alongside it - set them inside the callable
+instead. To use an MDAnalysis selection phrase there, turn it into a node with
+[](`~molecularnodes.entities.molecule.selections.SelectionManager.node`):
+
+```{python}
+canvas.clear()
+mol = mn.Molecule.fetch("9EYM")
+mol.add_style("cartoon", color=lambda: g.ColorRainbow())
+mol.add_style(
+    lambda: g.StyleSpheres(
+        selection=mol.selections.node("not protein"),
+        sphere_geometry="Mesh",
+    )
+)
+canvas.look_at(mol)
+canvas.snapshot()
+```
+
+`selections.node()` reuses an existing selection where it can, so calling it repeatedly
+(inside a loop, or on every rebuild of a tree) does not pile up duplicate selections:
+
+```{python}
+before = len(mol.selections)
+with mol.tree:
+    for _ in range(5):
+        mol.selections.node("not protein")
+print(f"{before} selection(s) before, {len(mol.selections)} after")
+```
+
 ## Building a Style Tree
 
 To take full control — or to start from a clean slate — build the node tree yourself with
@@ -104,6 +176,8 @@ specialised scripting interface for node trees.
 mat = mn.material.AmbientOcclusion()
 
 mol.dssp.init()
+# `from_string` creates a managed selection; `.node()` gives a node reading its
+# boolean attribute, ready to plug into a style node's `Selection` input
 sel = mol.selections.from_string("resname LYS")
 
 with mol.tree.reset() as (atoms, join):
@@ -142,7 +216,7 @@ mol = (
     .add_style(
         style="surface",
         selection="protein",
-        material="MN Transparent Outline",
+        material="MN Default",
     )
 )
 canvas.look_at(mol)

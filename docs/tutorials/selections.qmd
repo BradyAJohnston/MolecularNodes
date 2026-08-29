@@ -65,6 +65,61 @@ Selecting based on the `entity_id`, to reveal the rotary axel of the protein com
 
 ![](https://imgur.com/aUpiFYe.mp4)
 
+## Selections from Python
+
+The same selections are available from Python. `mol.selections` manages them, storing
+each one as a boolean attribute on the mesh that the node tree reads. Selections created
+this way appear in the UI list, and stay editable there.
+
+The simplest route is the `selection` argument of `add_style`, which takes an MDAnalysis
+selection phrase, an `AtomGroup`, or the name of an existing boolean attribute:
+
+```python
+mol.add_style("cartoon", selection="protein")
+mol.add_style("ball_and_stick", selection="not protein")
+```
+
+To use a selection inside the node API, turn it into a node with `selections.node()`. It
+returns a `Named Attribute` node reading that selection, ready to plug into any
+`Selection` input:
+
+```python
+from molecularnodes.nodes import geometry as g
+
+mol.add_style(
+    lambda: g.StyleSpheres(
+        selection=mol.selections.node("not protein"),
+        sphere_geometry="Mesh",
+    )
+)
+```
+
+It works the same inside an explicit tree context:
+
+```python
+with mol.tree.reset() as (atoms, join):
+    atoms >> g.StyleCartoon(selection=mol.selections.node("protein")) >> join
+    atoms >> g.StyleSticks(selection=mol.selections.node("not protein")) >> join
+```
+
+`selections.node()` reuses an existing selection with the same phrase rather than
+creating a duplicate, so it is safe to call on every rebuild of a tree. The `updating`
+and `periodic` flags are part of a selection's identity, so a static selection and a
+per-frame one built from the same phrase remain separate:
+
+```python
+mol.selections.node("around 5 resname LYS")                  # re-evaluated each frame
+mol.selections.node("around 5 resname LYS", updating=False)  # a separate, static one
+```
+
+Like every node, this has to be created inside an active node tree — either a
+`with mol.tree:` block or a callable passed to `add_style`.
+
+To always create a new selection instead of reusing one, use `selections.from_string()`
+or `selections.from_atomgroup()` directly, then call `.node()` on the result. To find an
+existing selection by its phrase, use `selections.find()`; note that `selections.get()`
+looks selections up by their *name* (`"selection_0"`), not their phrase.
+
 ## Open a Local File
 
 To open a `.pdb`, `.mmCIF`, `.pdbx` or other similar files, use the <kbd>Local File</kbd> tab.
