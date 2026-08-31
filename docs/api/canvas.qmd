@@ -20,6 +20,21 @@ from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 canvas = mn.Canvas()
 ```
 
+There is only ever one Blender scene, so a `Canvas` is a handle on that scene rather than
+something it owns. Creating one binds to the scene and, if there are no molecules in it
+yet, loads the "Molecular Nodes" preset - a backdrop, a camera and a two-light studio - so
+that renders look right without any setup. Running `mn.Canvas()` again binds to the same
+scene and leaves what is in it alone, which means re-running the cell above costs nothing.
+
+To change what is in the scene, ask for it:
+
+| | |
+|---|---|
+| [](`~mn.Canvas.clear`) | empties the scene of molecules, keeping the camera, lights, render settings, world shader and compositor |
+| [](`~mn.Canvas.load_preset`) | replaces the whole scene with a preset, lighting and render settings included |
+
+`mn.Canvas(template="...")` loads that template outright, the same as `load_preset()`.
+
 ## Add Trajectories
 
 ```{python}

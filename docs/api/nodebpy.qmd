@@ -201,7 +201,7 @@ The node tree creation code below is evaluated once, but the selection changes o
 
 
 ```{python}
-cv.scene_reset()
+cv.load_preset()
 animation_length = 100
 cv.resolution = (600, 480)
 cv.samples = 8
