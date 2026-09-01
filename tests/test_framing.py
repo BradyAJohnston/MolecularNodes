@@ -135,8 +135,12 @@ def test_framing_points_beats_framing_their_bounding_box():
     )
 
     centre = points.mean(axis=0)
-    on_points = np.linalg.norm(framing.fit_camera_to_points(points, basis, frame) - centre)
-    on_box = np.linalg.norm(framing.fit_camera_to_points(corners, basis, frame) - centre)
+    on_points = np.linalg.norm(
+        framing.fit_camera_to_points(points, basis, frame) - centre
+    )
+    on_box = np.linalg.norm(
+        framing.fit_camera_to_points(corners, basis, frame) - centre
+    )
     assert on_points < on_box
 
 

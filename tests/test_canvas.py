@@ -481,7 +481,9 @@ def test_canvas_ignores_dangling_entities_when_deciding(canvas):
 
 
 def _camera_distance(canvas, points):
-    return float(np.linalg.norm(np.asarray(points).mean(axis=0) - canvas.camera.camera.location))
+    return float(
+        np.linalg.norm(np.asarray(points).mean(axis=0) - canvas.camera.camera.location)
+    )
 
 
 def test_look_at_accepts_any_number_of_points(canvas):
@@ -578,7 +580,9 @@ def test_look_at_extends_the_far_clip_to_reach_the_subject(canvas):
 
     canvas.look_at(mol)
     points = np.asarray(mol.get_view())
-    depth = (points - np.asarray(canvas.camera.camera.location)) @ canvas.camera.basis[2]
+    depth = (points - np.asarray(canvas.camera.camera.location)) @ canvas.camera.basis[
+        2
+    ]
     assert canvas.camera.clip_end >= depth.max()
 
 
