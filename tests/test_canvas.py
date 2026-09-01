@@ -58,7 +58,7 @@ def test_load_blend():
     assert not bpy.data.objects.get("Suzanne")
     canvas = mn.Canvas(template=file)
     assert bpy.data.objects.get("Suzanne")
-    canvas.scene_reset(None)
+    canvas.load_preset(None)
     assert not bpy.data.objects.get("Suzanne")
     assert bpy.data.objects.get("Cube")
     canvas.load(file)
@@ -155,12 +155,12 @@ def test_look_at_views(canvas, universe):
     assert l4 == l3 and l4 == l12
 
 
-def test_scene_reset_rebinds(canvas):
+def test_load_preset_rebinds(canvas):
     # the world and compositor builders are bound to the scene's node trees,
     # so they must be rebound after the scene is replaced
     canvas.world.background = (1.0, 0.0, 0.0, 1.0)
     _ = canvas.compositor.tree
-    canvas.scene_reset()
+    canvas.load_preset()
     # builders work again and the annotation compositor is re-created
     canvas.world.background = (0.0, 1.0, 0.0, 1.0)
     assert tuple(canvas.background) == pytest.approx((0.0, 1.0, 0.0, 1.0))
@@ -319,3 +319,161 @@ def test_compositor_reset_and_annotations(canvas):
     canvas.compositor.add_annotations()
     bl_idnames = [n.bl_idname for n in canvas.compositor.tree.nodes]
     assert "CompositorNodeAlphaOver" in bl_idnames
+
+
+def test_clear_removes_content_but_keeps_lighting(canvas):
+    "clear() removes content objects, not just the Molecular Nodes entities."
+    cube = bpy.data.objects.new("UserCube", bpy.data.meshes.new("UserCubeMesh"))
+    bpy.context.collection.objects.link(cube)
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+
+    canvas.clear()
+    remaining = {obj.name: obj.type for obj in bpy.data.objects}
+    # the molecule, the user's cube and the backdrop are content and go
+    assert "4ozs" not in remaining
+    assert "UserCube" not in remaining
+    assert "Backdrop" not in remaining
+    # the camera and lights are how the scene is rendered, and stay
+    assert set(remaining.values()) == {"CAMERA", "LIGHT"}
+    assert canvas.scene.camera is not None
+    assert len(mn.session.get_session().entities) == 0
+
+
+def test_clear_preserves_lighting_in_the_render(canvas):
+    "Removing the lights would silently flatten every subsequent render."
+    lights_before = [o.name for o in bpy.data.objects if o.type == "LIGHT"]
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    canvas.clear()
+    assert [o.name for o in bpy.data.objects if o.type == "LIGHT"] == lights_before
+
+
+def test_clear_keeps_render_settings_and_world(canvas):
+    canvas.engine = "CYCLES"
+    canvas.resolution = (400, 300)
+    canvas.samples = 8
+    world = canvas.scene.world
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+
+    canvas.clear()
+    assert canvas.resolution == (400, 300)
+    assert canvas.samples == 8
+    assert canvas.scene.render.engine == "CYCLES"
+    assert canvas.scene.world == world
+    assert canvas.scene.compositing_node_group is not None
+
+
+def test_clear_does_not_leak_datablocks(canvas):
+    """A style leaves >100 node groups behind, which used to accumulate.
+
+    Only a recursive purge collects them, as they hang off the object's
+    modifier tree rather than being directly orphaned.
+    """
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    canvas.clear()
+    baseline = (len(bpy.data.node_groups), len(bpy.data.meshes))
+
+    for _ in range(3):
+        mn.Molecule.fetch("4ozs").add_style("cartoon")
+        canvas.clear()
+        assert (len(bpy.data.node_groups), len(bpy.data.meshes)) == baseline
+
+
+def test_load_preset_restores_the_preset_scene(canvas):
+    canvas.clear()
+    assert "Backdrop" not in {obj.name for obj in bpy.data.objects}
+
+    canvas.load_preset()
+    names = {obj.name for obj in bpy.data.objects}
+    assert {"Backdrop", "Camera", "Key Light", "Rim Light"} <= names
+
+
+def test_load_preset_prunes_dangling_entities(canvas):
+    "Objects do not survive the scene swap, so their entities must not either."
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    assert len(mn.session.get_session().entities) == 1
+
+    canvas.load_preset()
+    assert len(mn.session.get_session().entities) == 0
+
+
+def test_clear_survives_an_externally_deleted_object(canvas):
+    "Deleting a molecule from the outliner used to make clear() raise."
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    bpy.data.objects.remove(mol.object, do_unlink=True)
+    assert len(mn.session.get_session().entities) == 1
+
+    canvas.clear()
+    assert len(mn.session.get_session().entities) == 0
+
+
+def test_clear_leaves_other_scenes_alone(canvas):
+    "clear() empties this canvas's scene, not every scene in the file."
+    other = bpy.data.scenes.new("OtherScene")
+    cube = bpy.data.objects.new("OtherCube", bpy.data.meshes.new("OtherCubeMesh"))
+    other.collection.objects.link(cube)
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+
+    canvas.clear()
+    assert "4ozs" not in canvas.scene.objects
+    assert "OtherCube" in other.objects
+    bpy.data.scenes.remove(other)
+
+
+def test_canvas_loads_the_preset_into_an_empty_scene():
+    "The out-of-the-box lighting still arrives on a first Canvas()."
+    canvas = mn.Canvas()
+    names = {obj.name for obj in canvas.scene.objects}
+    assert {"Backdrop", "Camera", "Key Light", "Rim Light"} <= names
+
+
+def test_canvas_rerun_does_not_wipe_the_scene(canvas):
+    """Re-running `mn.Canvas()` used to destroy every molecule silently.
+
+    A notebook cell doing exactly this re-runs on its own in marimo.
+    """
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    session = mn.session.get_session()
+    assert session.n_items == 1
+
+    again = mn.Canvas()
+    assert session.n_items == 1
+    assert mol.name == "4ozs"  # the handle is still live, not LinkedObjectError
+    assert again.scene == canvas.scene
+
+
+def test_canvas_rerun_keeps_a_custom_compositor(canvas):
+    "Binding must not rebuild the compositor over the top of one already set up."
+    from nodebpy import compositor as c
+
+    with canvas.compositor.reset() as (image, output):
+        image >> c.Glare() >> output
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+
+    again = mn.Canvas()
+    assert "CompositorNodeGlare" in [n.bl_idname for n in again.compositor.tree.nodes]
+
+
+def test_canvas_with_explicit_template_always_loads(canvas):
+    "Asking for a template is asking for the scene it describes."
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    assert mn.session.get_session().n_items == 1
+
+    mn.Canvas(template="Molecular Nodes")
+    assert mn.session.get_session().n_items == 0
+
+
+def test_canvas_template_none_binds_to_the_current_scene(canvas):
+    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    again = mn.Canvas(template=None)
+    assert mn.session.get_session().n_items == 1
+    assert again.scene == canvas.scene
+
+
+def test_canvas_ignores_dangling_entities_when_deciding(canvas):
+    "A molecule deleted from the outliner is not work worth preserving."
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    bpy.data.objects.remove(mol.object, do_unlink=True)
+
+    again = mn.Canvas()
+    assert "Backdrop" in again.scene.objects
+    assert mn.session.get_session().n_items == 0

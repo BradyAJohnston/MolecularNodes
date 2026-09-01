@@ -245,3 +245,64 @@ def test_entity_blender_properties(session: MNSession, universe):
     # removal drops the entity from the session
     session.remove_entity(t1.uuid)
     assert len(session.entities) == 0
+
+
+def test_remove_tolerates_an_already_deleted_object():
+    """Deleting the object from the outliner leaves the entity behind.
+
+    Removing it must still drop the entity rather than raising
+    ``LinkedObjectError`` on the missing object.
+    """
+    session = mn.session.get_session()
+    session.clear()
+    mol = mn.Molecule.fetch("4ozs")
+    bpy.data.objects.remove(mol.object, do_unlink=True)
+
+    session.remove(mol.uuid)
+    assert mol.uuid not in session.entities
+
+
+def test_remove_unknown_uuid_raises():
+    with pytest.raises(ValueError, match="No entity with UUID"):
+        mn.session.get_session().remove("not-a-uuid")
+
+
+def test_session_saves_when_an_object_was_deleted(tmp_path):
+    """A molecule deleted from the outliner used to abort the session save.
+
+    The .blend still wrote, so the failure was silent - every other entity in
+    the file lost its session state on reload.
+    """
+    session = mn.session.get_session()
+    session.clear()
+    deleted = mn.Molecule.fetch("4ozs")
+    kept = mn.Molecule.fetch("1cbs")
+    bpy.data.objects.remove(deleted.object, do_unlink=True)
+
+    filepath = tmp_path / "deleted.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
+    assert session.stashpath(filepath).exists()
+
+    session.clear()
+    session.load(filepath)
+    assert kept.uuid in session.entities
+    assert deleted.uuid not in session.entities
+
+
+def test_opening_another_file_drops_the_previous_entities(tmp_path):
+    "Entities from a closed file used to linger and raise LinkedObjectError."
+    session = mn.session.get_session()
+    session.clear()
+    mn.Molecule.fetch("4ozs")
+    with_molecule = tmp_path / "with_molecule.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(with_molecule))
+
+    empty = tmp_path / "empty.blend"
+    bpy.ops.wm.read_homefile(app_template="")
+    bpy.ops.wm.save_as_mainfile(filepath=str(empty))
+
+    bpy.ops.wm.open_mainfile(filepath=str(with_molecule))
+    assert session.n_items == 1
+
+    bpy.ops.wm.open_mainfile(filepath=str(empty))
+    assert session.n_items == 0
