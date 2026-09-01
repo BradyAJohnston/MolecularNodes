@@ -492,7 +492,7 @@ def test_look_at_accepts_any_number_of_points(canvas):
     `look_at` was annotated `list[tuple]` with no arity check, and anything but
     a bounding box put the subject a few pixels wide in the middle of nothing.
     """
-    mol = mn.Molecule.fetch("4ozs").add_style("spheres", shere="Mesh")
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres", sphere="Mesh")
     points = np.asarray(mol.get_view())
     assert len(points) > 8
 
