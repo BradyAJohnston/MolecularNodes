@@ -56,7 +56,7 @@ class MN_MT_Add(bpy.types.Menu):
 def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
     layout = self.layout
     assert layout
-    layout.menu("MN_MT_Add")
+    layout.menu("MN_MT_Add", icon="PARTICLES")
 
 
 class MN_MT_Import(bpy.types.Menu):
@@ -73,6 +73,8 @@ class MN_MT_Import(bpy.types.Menu):
 
 
 def pt_object_context(self, context):
+    # currently does and returns nothing but I've left it in so we can
+    # know where to add stuff in later for context-dependent menus
     return None
 
 
