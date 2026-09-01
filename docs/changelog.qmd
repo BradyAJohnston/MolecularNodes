@@ -11,7 +11,7 @@ title: "Changelog"
   ```python
   mol.add_style("cartoon", color=lambda: g.ColorSecondaryStructure())
   mol.add_style("sticks", selection=lambda: g.IsPeptide() & g.IsSideChain())
-  mol.add_style(lambda: g.StyleSpheres(sphere_geometry="Instance", quality=4))
+  mol.add_style(lambda: g.StyleSpheres(sphere="Instance", quality=4))
   ```
 
   A callable `style` defines the style node itself, so `selection`, `material` and style keyword arguments cannot be passed alongside it - passing them raises a `TypeError` rather than silently dropping them.
@@ -29,6 +29,7 @@ title: "Changelog"
 ## Changed
 - `add_style(color=...)` now validates its argument. A string must be a known keyword (`"common"`, `"default"`, `"plddt"`) or the name of an existing *colour* attribute on the molecule. Anything else raises a `UserWarning` and adds no colour, rather than silently rendering the geometry black. This includes names of attributes that exist but are not colours, such as `"b_factor"` or `"lipophobicity"`.
 - `add_style(style=...)` is validated against the styles that can actually be dispatched, and the error lists them.
+- `add_style("spheres")` picks its `sphere` to suit the render engine. Point clouds are only ray-traced by Cycles, so under EEVEE the spheres came out as octahedra - invisible at whole-protein zoom and glaring on a close-up. EEVEE now gets `"Instance"`, Cycles keeps `"Point"`, and passing `sphere` yourself always wins. The engine is read when the style is added, so switching engines afterwards does not revisit it. #1172
 - **Breaking**: `Canvas.scene_reset()` is renamed `Canvas.load_preset()`, which is what it does - it loads a whole preset scene, its lighting, camera, world shader and render settings included. The `keep_settings` argument is gone, and `engine` now defaults to the engine the preset defines rather than forcing EEVEE. #1169
 - Creating a `Canvas` no longer wipes the scene. A `template` given explicitly is always loaded, but left out the "Molecular Nodes" preset is only loaded into a scene with no molecules in it. A first `mn.Canvas()` still gets the studio lighting, while re-running the same cell - which marimo does on its own - binds to the scene and leaves the work in it alone. Previously it destroyed every molecule in the scene with no warning. Pass `template=None` to bind without loading anything. #1169
 - **Breaking**: `Canvas.look_at()` accepts any number of positions, where it previously expected the 8 vertices of a bounding box. `get_view()` returns the positions making up a view rather than 8 bounding-box corners - still a `list[tuple]`, so views combine with `+` as before. `blender.utils.get_bounding_box()`, `look_at_object()` and `look_at_bbox()` are gone. #1170

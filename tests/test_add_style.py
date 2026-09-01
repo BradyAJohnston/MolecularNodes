@@ -4,6 +4,15 @@ import molecularnodes as mn
 from .constants import data_dir
 
 
+def _sphere(mol) -> str | None:
+    "The `Sphere Geometry` value on whichever style node has one."
+    for node in mol.tree.nodes:
+        for socket in node.inputs:
+            if socket.name == "Sphere":
+                return socket.default_value
+    return None
+
+
 def test_add_style_with_selection():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     mol.store_named_attribute(mol.named_attribute("is_side_chain"), "show_side_chains")
@@ -272,3 +281,44 @@ def test_add_style_callable_style_allows_color_and_name():
     mol.add_style(lambda: mg.StyleCartoon(), color=lambda: mg.ColorRainbow(), name="x")
     assert _nodes_using_tree(mol.modifier_node_tree, "Color Rainbow")
     assert _nodes_using_tree(mol.modifier_node_tree, "Style Cartoon")[0].label == "x"
+
+
+@pytest.mark.parametrize(
+    "engine,expected",
+    [("EEVEE", "Instance"), ("CYCLES", "Point")],
+)
+def test_spheres_geometry_follows_the_engine(engine, expected):
+    """Point clouds are only ray-traced by Cycles.
+
+    Left on the `"Point"` default under EEVEE, spheres render as octahedra -
+    invisible at whole-protein zoom, glaring on a close-up.
+    """
+    canvas = mn.Canvas(engine=engine)
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    assert _sphere(mol) == expected
+    assert canvas.scene.render.engine == (
+        "BLENDER_EEVEE" if engine == "EEVEE" else "CYCLES"
+    )
+
+
+def test_explicit_sphere_is_not_overridden():
+    mn.Canvas(engine="EEVEE")
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres", sphere="Point")
+    assert _sphere(mol) == "Point"
+
+
+def test_ball_and_stick_already_instances_and_is_left_alone():
+    "It defaults to `Instance` already, so nothing should change under either engine."
+    for engine in ("EEVEE", "CYCLES"):
+        mn.Canvas(engine=engine)
+        mol = mn.Molecule.fetch("4ozs").add_style("ball_and_stick")
+        assert _sphere(mol) == "Instance"
+
+
+def test_callable_style_keeps_its_own_geometry():
+    "A callable builds the node itself, so nothing is imposed on it."
+    from molecularnodes.nodes.geometry import StyleSpheres
+
+    mn.Canvas(engine="EEVEE")
+    mol = mn.Molecule.fetch("4ozs").add_style(lambda: StyleSpheres())
+    assert _sphere(mol) == "Point"

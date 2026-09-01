@@ -39,9 +39,9 @@ def test_style_1(snapshot, code, assembly, style):
     with mol.tree.reset() as (atoms, join):
         match style:
             case "ball_and_stick":
-                style_node = StyleBallAndStick(sphere_geometry="Mesh")
+                style_node = StyleBallAndStick(sphere="Mesh")
             case "spheres":
-                style_node = StyleSpheres(sphere_geometry="Mesh")
+                style_node = StyleSpheres(sphere="Mesh")
             case "cartoon":
                 style_node = StyleCartoon()
             case "ribbon":
