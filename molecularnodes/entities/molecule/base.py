@@ -25,7 +25,7 @@ from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...nodes.material import PresetMaterial, append_material
 from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING
-from ...utils import _Unset, count_value_changes, temp_override_property
+from ...utils import _UNSET, count_value_changes, temp_override_property
 from ..base import EntityType, MolecularEntity
 from ..utilities import (
     BoolObjectMNProperty,
@@ -1037,7 +1037,7 @@ class Molecule(MolecularEntity):
         | PresetMaterial
         | MaterialBuilder
         | str
-        | None = _Unset,
+        | None = _UNSET,
         color: str | Sequence[float] | Callable | None = None,
         assembly: bool = False,
         name: str | None = None,
@@ -1151,7 +1151,7 @@ class Molecule(MolecularEntity):
                 argname
                 for argname, was_given in (
                     ("selection", selection is not None),
-                    ("material", material is not _Unset),
+                    ("material", material is not _UNSET),
                     *((key, True) for key in kwargs),
                 )
                 if was_given
@@ -1164,7 +1164,7 @@ class Molecule(MolecularEntity):
                     "    mol.add_style(lambda: mg.StyleCartoon(quality=5))"
                 )
 
-        material = "MN Default" if material is _Unset else material
+        material = "MN Default" if material is _UNSET else material
         # a callable selection is evaluated inside the tree context, below
         selection_is_callable = callable(selection)
         attribute_name = self._resolve_style_selection(selection)

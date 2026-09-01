@@ -13,7 +13,7 @@ from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
 from ..ui import addon
-from ..utils import _Unset, suppress_stdout, temp_override_properties
+from ..utils import _UNSET, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
 from .compositor import CompositorTree, setup_compositor
 from .engines import EEVEE, Cycles
@@ -213,7 +213,7 @@ class Canvas:
         engine: EEVEE | Cycles | _RENDER_ENGINES = "EEVEE",
         resolution=(1280, 720),
         transparent: bool = False,
-        template: Path | str | None = _Unset,  # type: ignore[assignment]
+        template: Path | str | None = _UNSET,  # type: ignore[assignment]
     ) -> None:
         """
         Initialize a Canvas and prepare the Blender scene.
@@ -237,7 +237,7 @@ class Canvas:
         self._compositor: CompositorTree | None = None
         self._world: WorldTree | None = None
 
-        requested = not isinstance(template, _Unset)
+        requested = template is not _UNSET
         if not requested:
             template = _DEFAULT_TEMPLATE
 

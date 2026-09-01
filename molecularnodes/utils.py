@@ -12,14 +12,14 @@ _DEFAULT_CAMERA_CLIP_END = 1e2
 _DEFAULT_VIEWPORT_CLIP_END = 1e3
 
 
-class _Unset:
+class Unset:
     """Sentinel for an argument that was not passed (``None`` is a meaningful value)."""
 
     def __repr__(self) -> str:
         return "<unset>"
 
 
-_Unset = _Unset()
+_UNSET = Unset()
 
 
 def _increase_view_distance():
@@ -224,13 +224,11 @@ class temp_override_property:
 
     """
 
-    _UNSET = object()
-
     def __init__(self, obj, prop_name, value):
         self.obj = obj
         self.prop_name = prop_name
         self.value = value
-        self.orig_value = self._UNSET
+        self.orig_value = _UNSET
 
     def __enter__(self):
         if not hasattr(self.obj, self.prop_name):
@@ -240,7 +238,7 @@ class temp_override_property:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.orig_value is not self._UNSET:
+        if self.orig_value is not _UNSET:
             setattr(self.obj, self.prop_name, self.orig_value)
 
 
