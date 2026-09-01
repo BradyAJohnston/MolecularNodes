@@ -4,6 +4,15 @@ import molecularnodes as mn
 from .constants import data_dir
 
 
+def _sphere(mol) -> str | None:
+    "The `Sphere Geometry` value on whichever style node has one."
+    for node in mol.tree.nodes:
+        for socket in node.inputs:
+            if socket.name == "Sphere":
+                return socket.default_value
+    return None
+
+
 def test_add_style_with_selection():
     mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
     mol.store_named_attribute(mol.named_attribute("is_side_chain"), "show_side_chains")
@@ -186,3 +195,130 @@ def test_add_selection_to_style_operator_missing_targets():
 
     # the style node is untouched by the failed attempts
     assert not style.inputs["Selection"].links
+
+
+def test_add_style_invalid_style_raises():
+    "A style string that isn't dispatchable should raise, not KeyError deeper down."
+    mol = mn.Molecule.fetch("4ozs")
+    # 'vdw' used to pass validation against `styles_mapping` and then KeyError
+    for style in ("vdw", "atoms", "sphere", "bogus"):
+        with pytest.raises(ValueError, match="Invalid style"):
+            mol.add_style(style)
+
+
+@pytest.mark.parametrize("color", ["chain", "lipophobicity", "b_factor", "nonsense"])
+def test_add_style_unknown_color_warns(color):
+    """Unknown colors, and non-color attributes, must warn rather than render black.
+
+    `lipophobicity` and `b_factor` exist but are FLOAT attributes - reading them as a
+    color silently produced black geometry.
+    """
+    mol = mn.Molecule.fetch("4ozs")
+    with pytest.warns(UserWarning, match="is neither a known color keyword"):
+        mol.add_style("cartoon", color=color)
+    # no Set Color node should have been added
+    assert not _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+
+
+@pytest.mark.parametrize("color", ["common", "default", "plddt", "Color"])
+def test_add_style_valid_color_adds_node(color):
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style("cartoon", color=color)
+    assert _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+
+
+def test_add_style_callable_color():
+    "A callable is evaluated inside the tree context, reaching any Color* node."
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style("cartoon", color=lambda: mg.ColorRainbow())
+    assert _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+    assert _nodes_using_tree(mol.modifier_node_tree, "Color Rainbow")
+
+
+def test_add_style_callable_selection():
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style("sticks", selection=lambda: mg.IsPeptide() & mg.IsSideChain())
+    style = _nodes_using_tree(mol.modifier_node_tree, "Style Sticks")[0]
+    # the selection input is driven by a link, not a named attribute lookup
+    assert style.inputs["Selection"].links
+
+
+def test_add_style_callable_style():
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style(lambda: mg.StyleCartoon(quality=5))
+    style = _nodes_using_tree(mol.modifier_node_tree, "Style Cartoon")[0]
+    assert style.inputs["Quality"].default_value == 5
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"selection": "protein"},
+        {"material": "MN Default"},
+        {"quality": 5},
+    ],
+)
+def test_add_style_callable_style_rejects_owned_args(kwargs):
+    "Args belonging to the style node must not be silently dropped."
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    with pytest.raises(TypeError, match="cannot also be passed"):
+        mol.add_style(lambda: mg.StyleCartoon(), **kwargs)
+
+
+def test_add_style_callable_style_allows_color_and_name():
+    "color/assembly/name are separate nodes, so they compose with a callable style."
+    from molecularnodes.nodes import geometry as mg
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style(lambda: mg.StyleCartoon(), color=lambda: mg.ColorRainbow(), name="x")
+    assert _nodes_using_tree(mol.modifier_node_tree, "Color Rainbow")
+    assert _nodes_using_tree(mol.modifier_node_tree, "Style Cartoon")[0].label == "x"
+
+
+@pytest.mark.parametrize(
+    "engine,expected",
+    [("EEVEE", "Instance"), ("CYCLES", "Point")],
+)
+def test_spheres_geometry_follows_the_engine(engine, expected):
+    """Point clouds are only ray-traced by Cycles.
+
+    Left on the `"Point"` default under EEVEE, spheres render as octahedra -
+    invisible at whole-protein zoom, glaring on a close-up.
+    """
+    canvas = mn.Canvas(engine=engine)
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    assert _sphere(mol) == expected
+    assert canvas.scene.render.engine == (
+        "BLENDER_EEVEE" if engine == "EEVEE" else "CYCLES"
+    )
+
+
+def test_explicit_sphere_is_not_overridden():
+    mn.Canvas(engine="EEVEE")
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres", sphere="Point")
+    assert _sphere(mol) == "Point"
+
+
+def test_ball_and_stick_already_instances_and_is_left_alone():
+    "It defaults to `Instance` already, so nothing should change under either engine."
+    for engine in ("EEVEE", "CYCLES"):
+        mn.Canvas(engine=engine)
+        mol = mn.Molecule.fetch("4ozs").add_style("ball_and_stick")
+        assert _sphere(mol) == "Instance"
+
+
+def test_callable_style_keeps_its_own_geometry():
+    "A callable builds the node itself, so nothing is imposed on it."
+    from molecularnodes.nodes.geometry import StyleSpheres
+
+    mn.Canvas(engine="EEVEE")
+    mol = mn.Molecule.fetch("4ozs").add_style(lambda: StyleSpheres())
+    assert _sphere(mol) == "Point"

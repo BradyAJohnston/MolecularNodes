@@ -21,7 +21,7 @@ When scripting with Molecular Nodes, it's important to remember that everything 
 
 Blender itself has a very extensive python API, accessible through the `bpy` module. Molecular Nodes is designed so that for most general usage you shouldn't have to ever directly use `bpy`, but all of the complex settings and controls are still always accessible through that module.
 
-Blender does release the [`bpy`](https://pypi.org/p/bpy) module on pypi, which let's us
+Blender does release the [`bpy`](https://pypi.org/p/bpy) module on PyPI, which lets us use Blender as a regular python package — no Blender install required.
 
 ## Installation
 

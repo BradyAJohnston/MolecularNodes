@@ -6,6 +6,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal, Sequence, Tuple
 import bpy
+import numpy.typing as npt
 from tqdm.auto import tqdm
 from .. import assets
 from ..assets.template import list_templates
@@ -13,7 +14,7 @@ from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
 from ..ui import addon
-from ..utils import suppress_stdout, temp_override_properties
+from ..utils import _UNSET, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
 from .compositor import CompositorTree, setup_compositor
 from .engines import EEVEE, Cycles
@@ -48,6 +49,10 @@ class ViewTransform(StrEnum):
 
 
 _RENDER_ENGINES = Literal["EEVEE", "CYCLES"]
+
+# the template loaded when nothing else is asked for and there is nothing to lose
+_DEFAULT_TEMPLATE = "Molecular Nodes"
+
 
 # render passes commonly needed for compositor effects, mapped to the
 # `bpy.types.ViewLayer` toggle that enables each one
@@ -136,11 +141,15 @@ class Canvas:
         Output resolution in pixels as ``(width, height)``.
     transparent : bool, default False
         When ``True``, renders use a transparent film (alpha background).
-    template : pathlib.Path | str | None, default "Molecular Nodes"
-        Scene template to initialize. If a string is provided it can be either
-        the name of an installed Blender app template (e.g. ``"Molecular Nodes"``),
-        or a path to a ``.blend`` file. If ``None``, the Blender default startup
-        file is used.
+    template : pathlib.Path | str | None, optional
+        Scene template to load. If a string is provided it can be either the
+        name of an installed Blender app template (e.g. ``"Molecular Nodes"``),
+        or a path to a ``.blend`` file. A template given here is always loaded,
+        replacing whatever is in the scene. Left out, the "Molecular Nodes"
+        preset is loaded only when the scene holds no molecules, so that
+        re-running ``mn.Canvas()`` - as a notebook cell does - binds to the
+        scene instead of wiping the work in it. ``None`` binds without loading
+        anything. Use [](`~mn.Canvas.load_preset`) to reload a preset deliberately.
 
     Attributes
     ----------
@@ -205,7 +214,7 @@ class Canvas:
         engine: EEVEE | Cycles | _RENDER_ENGINES = "EEVEE",
         resolution=(1280, 720),
         transparent: bool = False,
-        template: Path | str | None = "Molecular Nodes",
+        template: Path | str | None = _UNSET,  # type: ignore[assignment]
     ) -> None:
         """
         Initialize a Canvas and prepare the Blender scene.
@@ -218,22 +227,48 @@ class Canvas:
             Output resolution in pixels as ``(width, height)``.
         transparent : bool, default False
             Enable a transparent film (alpha background) when ``True``.
-        template : pathlib.Path | str | None, default "Molecular Nodes"
-            Scene template name or path to a ``.blend`` file. Use ``None`` for
-            Blender's default startup scene.
+        template : pathlib.Path | str | None, optional
+            Scene template name or path to a ``.blend`` file, always loaded when
+            given. Left out, the "Molecular Nodes" preset is loaded only into a
+            scene with no molecules in it. ``None`` binds to the current scene
+            without loading anything.
         """
         addon.register()
         assets.install()
         self._compositor: CompositorTree | None = None
         self._world: WorldTree | None = None
-        if template:
-            self.scene_reset(template=template)
+
+        requested = template is not _UNSET
+        if not requested:
+            template = _DEFAULT_TEMPLATE
+
+        session = get_session()
+        # a molecule deleted from the outliner shouldn't count as something to lose
+        session.prune()
+        if template and (requested or session.n_items == 0):
+            # the preset's settings are applied first, then the arguments below
+            self.load_preset(template=template)
         else:
-            self._scene_changed()
+            self._bind()
+
         self.engine = engine
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
+
+    def _bind(self) -> None:
+        """
+        Attach to the scene as it stands, without resetting anything on it.
+
+        Unlike :meth:`_scene_changed`, the scene has not been replaced, so its
+        compositor is only built if it doesn't have one - rebuilding would
+        discard a compositor that has been set up.
+        """
+        self._compositor = None
+        self._world = None
+        get_session().prune()
+        if self.scene.compositing_node_group is None:
+            setup_compositor(self.scene)
 
     def _scene_changed(self) -> None:
         """
@@ -241,10 +276,13 @@ class Canvas:
 
         The world and compositor builders hold references to the old scene's
         node trees, so they are discarded and the compositor (with the
-        annotation overlay) is prepared on the new scene.
+        annotation overlay) is prepared on the new scene. Entities whose objects
+        did not survive the swap are dropped from the session, which would
+        otherwise keep raising ``LinkedObjectError`` when accessed.
         """
         self._compositor = None
         self._world = None
+        get_session().prune()
         setup_compositor(self.scene)
 
     @property
@@ -745,69 +783,178 @@ class Canvas:
 
     def look_at(
         self,
-        target: MolecularEntity | bpy.types.Object | list[tuple],
+        target: MolecularEntity | bpy.types.Object | npt.ArrayLike,
         viewpoint: Viewpoint | str | Sequence[float] | None = None,
+        margin: float = 0.05,
     ) -> None:
         """
         Position the camera to look at and contain a target.
 
+        The camera is moved as close to the target as keeping all of it in frame
+        allows, without changing where it points, leaving a small margin so that
+        the subject does not sit right against the edge of the frame.
+
         Parameters
         ----------
-        target : MolecularEntity | bpy.types.Object | list[tuple]
-            What to look at: a Molecular Nodes entity (via its current view),
-            a Blender object, or a bounding box of 8 three-dimensional
-            vertices ``[(x, y, z), ...]`` as returned by ``get_view()``.
-            Multiple views can be combined with ``+`` before passing.
+        target : MolecularEntity | bpy.types.Object | array_like
+            What to look at: a Molecular Nodes entity, a Blender object, or any
+            ``(N, 3)`` set of positions - a bounding box from ``get_view()``, or
+            the positions themselves. Views can be combined with ``+`` before
+            passing.
+
+            An entity or object is framed on the geometry it *renders*, so
+            styling one chain of four frames that chain rather than the whole
+            molecule.
         viewpoint : Viewpoint | str | Sequence[float], optional
             Viewing direction along a principal axis — one of
             {"default", "front", "back", "top", "bottom", "left", "right"} —
             or a custom XYZ Euler rotation as three angles in degrees.
+        margin : float, default 0.05
+            Fraction of the frame to leave empty around the target. ``0`` fits
+            the target exactly to the frame, ``0.1`` leaves a ten percent
+            border, and a negative value crops in past its edges.
 
+        Examples
+        --------
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
+        canvas.samples = 8
+        mol = mn.Molecule.fetch("8H1B").add_style("cartoon", selection="chainID A")
+
+        # frames the styled chain, not the whole molecule
+        canvas.look_at(mol, viewpoint="front")
+        display(canvas.snapshot())
+
+        # room to breathe, and framing on a selection rather than the whole entity
+        canvas.look_at(mol.get_view("chainID A and resid 1-40"), margin=0.15)
+        display(canvas.snapshot())
+        ```
+
+        See Also
+        --------
+        molecularnodes.scene.camera.Camera.frame_points : The underlying solve.
         """
         # set the camera viewpoint if specified
         if viewpoint is not None:
             self.camera.set_viewpoint(viewpoint)
         if isinstance(target, MolecularEntity):
-            target = target.get_view()
+            target = target.object
         if isinstance(target, bpy.types.Object):
-            blender_utils.look_at_object(target)
+            points = blender_utils.evaluated_points(target)
         else:
-            blender_utils.look_at_bbox(target)
+            points = target
+        self.camera.frame_points(points, margin=margin, scene=self.scene)
 
     def clear(self) -> None:
         """
-        Clear all Molecular Nodes entities from the scene.
+        Empty the scene, keeping the setup that renders it.
+
+        Removes the molecules and any other content objects, and purges the data
+        they leave behind. The camera and lights are kept, as are the render
+        settings, world shader and compositor - all of which are how the scene
+        is lit and rendered rather than what is in it. The canvas is left
+        configured and ready to render whatever is added next.
 
         Notes
         -----
-        This does not modify lighting, world, or render settings.
+        Data-blocks orphaned by the removed objects are purged recursively. A
+        single molecule leaves over a hundred behind - its mesh, material and
+        the node groups backing its styles - which would otherwise accumulate in
+        the file on every load-and-clear cycle. This also collects unused
+        data-blocks that were already in the file.
+
+        Objects that are not cameras or lights are removed, so set dressing such
+        as the preset's backdrop does not survive. Use
+        [](`~mn.Canvas.load_preset`) to bring a whole preset scene back.
+
+        Only this canvas's scene is emptied - objects living in other scenes of
+        the same file are left alone.
+
+        Examples
+        --------
+        Clearing between renders keeps the lighting and the render settings:
+
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
+        canvas.samples = 8
+
+        for code in ["4ozs", "8H1B"]:
+            mol = mn.Molecule.fetch(code).add_style("cartoon")
+            canvas.look_at(mol)
+            display(canvas.snapshot())
+            canvas.clear()
+
+        print(canvas.resolution, canvas.samples, type(canvas.engine).__name__)
+        ```
         """
         session = get_session()
-        # Iterate over a list copy to avoid modifying the dict during iteration
-        for entity in list(session.entities.values()):
-            session.remove(entity.uuid)
+        # drop entities whose object has already gone before touching any of
+        # them, so that one stale entry can't abort the whole clear
+        session.prune()
 
-    def scene_reset(
+        # entities are removed through the session so that their annotation
+        # objects are cleaned up along with them, but only the ones that are
+        # actually in this canvas's scene
+        for entity in list(session.entities.values()):
+            if entity.name in self.scene.objects:
+                session.remove(entity.uuid)
+
+        for obj in list(self.scene.objects):
+            if obj.type in {"CAMERA", "LIGHT"}:
+                continue
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+        # the node groups behind a style hang off the object's modifier tree, so
+        # only a recursive purge collects them once the object itself is gone
+        bpy.ops.outliner.orphans_purge(
+            do_local_ids=True, do_linked_ids=False, do_recursive=True
+        )
+
+    def load_preset(
         self,
         template: Path | str | None = "Molecular Nodes",
-        engine: Cycles | EEVEE | _RENDER_ENGINES = "EEVEE",
+        engine: Cycles | EEVEE | _RENDER_ENGINES | None = None,
     ) -> None:
         """
-        Reset the scene from a template or startup file.
+        Load a preset scene, replacing everything in the current one.
+
+        A preset is a whole scene - its lighting setup, camera, world shader and
+        render settings - so loading one replaces all of them. The shipped
+        "Molecular Nodes" preset is a small studio: a backdrop, a camera, a key
+        light and a rim light.
+
+        To empty the scene while keeping how it is rendered, use
+        [](`~mn.Canvas.clear`) instead.
 
         Parameters
         ----------
         template : pathlib.Path | str | None, default "Molecular Nodes"
             Name of an installed Blender app template, a path to a ``.blend``
             file, or ``None`` to use Blender's default startup file.
-        engine : EEVEE | Cycles | str, default "EEVEE"
-            Render engine to configure after loading the template.
+        engine : EEVEE | Cycles | str, optional
+            Render engine to configure after loading. When not given, the
+            engine defined by the preset is used.
 
         Raises
         ------
         ValueError
             If ``template`` is not ``None``, not a valid ``.blend`` file path,
             and not a known app template name.
+
+        Examples
+        --------
+        ```{python}
+        import bpy
+        import molecularnodes as mn
+
+        canvas = mn.Canvas()
+        canvas.load_preset()
+        print(sorted(obj.name for obj in bpy.data.objects))
+        ```
         """
         if template is None:
             bpy.ops.wm.read_homefile(app_template="")
@@ -830,7 +977,7 @@ class Canvas:
                     f"Template '{template}' is not a valid .blend file or app template name."
                 )
 
-        if engine:
+        if engine is not None:
             self.engine = engine
 
     def load(self, path: str | Path) -> None:

@@ -1,4 +1,6 @@
+import bpy
 import numpy as np
+import pytest
 import molecularnodes as mn
 
 
@@ -67,3 +69,69 @@ def test_selection_bad_string_sets_message_and_recovers():
     sel.string = "resid 1:5"
     assert sel.message == ""
     assert mol.named_attribute(sel.name).sum() < mask_before.sum()
+
+
+def test_selections_find_by_string():
+    "`find` searches by selection string; `get` searches by selection name."
+    mol = mn.Molecule.fetch("4ozs")
+    assert mol.selections.find("protein") is None
+    item = mol.selections.from_string("protein")
+    assert mol.selections.find("protein").name == item.name
+    # `get` keys on the name, not the string
+    assert mol.selections.get("protein") is None
+    assert mol.selections.get(item.name) is not None
+    # the flags are part of the identity
+    assert mol.selections.find("protein", updating=False) is None
+
+
+def test_selections_node_reuses_existing():
+    "Repeated calls must not pile up duplicate selections and mesh attributes."
+    mol = mn.Molecule.fetch("4ozs")
+    with mol.tree:
+        for _ in range(5):
+            mol.selections.node("protein")
+    assert len(mol.selections) == 1
+
+
+def test_selections_node_flags_are_distinct():
+    mol = mn.Molecule.fetch("4ozs")
+    with mol.tree:
+        mol.selections.node("protein")
+        mol.selections.node("protein", updating=False)
+    assert len(mol.selections) == 2
+
+
+def test_selections_node_reuses_by_name():
+    mol = mn.Molecule.fetch("4ozs")
+    with mol.tree:
+        mol.selections.node("protein", name="my_sel")
+        mol.selections.node("a different phrase", name="my_sel")
+    assert len([i for i in mol.selections.ui_items if i.name == "my_sel"]) == 1
+
+
+def test_selections_node_from_atomgroup():
+    mol = mn.Molecule.fetch("4ozs")
+    with mol.tree:
+        node = mol.selections.node(mol.universe.select_atoms("resid 1:20"))
+    assert node.node.inputs["Name"].default_value == mol.selections.ui_items[0].name
+
+
+def test_selections_node_requires_tree_context():
+    mol = mn.Molecule.fetch("4ozs")
+    with pytest.raises(RuntimeError, match="TreeBuilder context"):
+        mol.selections.node("protein")
+
+
+def test_selections_node_in_add_style_callable():
+    "The motivating case: an MDA selection inside a callable style."
+    from molecularnodes.nodes import geometry as g
+
+    mol = mn.Molecule.fetch("4ozs")
+    mol.add_style(lambda: g.StyleSpheres(selection=mol.selections.node("resid 1:20")))
+    style = [
+        n
+        for n in mol.modifier_node_tree.nodes
+        if isinstance(n, bpy.types.GeometryNodeGroup)
+        and n.node_tree.name == "Style Spheres"
+    ][0]
+    assert style.inputs["Selection"].links

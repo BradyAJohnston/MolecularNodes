@@ -2,6 +2,10 @@ from enum import StrEnum
 from math import degrees, radians
 from typing import Sequence
 import bpy
+import numpy as np
+import numpy.typing as npt
+from mathutils import Vector
+from .. import framing
 
 
 class Viewpoint(StrEnum):
@@ -98,6 +102,96 @@ class Camera:
     def rotation(self, angles: tuple[float, float, float]) -> None:
         """Set Camera rotation in degrees (XYZ)"""
         self.camera.rotation_euler = tuple(radians(angle) for angle in angles)
+
+    @property
+    def basis(self) -> np.ndarray:
+        """
+        The camera's orthonormal basis as rows ``(right, up, forward)``.
+
+        A Blender camera looks down its own ``-Z``, so ``forward`` is the
+        negated third axis rather than the third axis itself.
+        """
+        matrix = self.camera.matrix_world.to_3x3().normalized()
+        return np.array(
+            [
+                matrix @ Vector((1.0, 0.0, 0.0)),
+                matrix @ Vector((0.0, 1.0, 0.0)),
+                matrix @ Vector((0.0, 0.0, -1.0)),
+            ],
+            dtype=np.float64,
+        )
+
+    def frame_bounds(
+        self, scene: bpy.types.Scene | None = None
+    ) -> tuple[float, float, float, float]:
+        """
+        The edges of what the camera sees, as ``(left, right, bottom, top)``.
+
+        For a perspective camera these are ratios of offset to depth, so a point
+        at depth ``d`` is in frame when ``left * d <= x <= right * d``. For an
+        orthographic camera they are world-space offsets at its current scale.
+
+        Taken from Blender's own view frame, so the sensor fit, render aspect
+        ratio, pixel aspect and any lens shift are all accounted for - a shifted
+        camera gives asymmetric bounds, which the framing solve handles.
+        """
+        if scene is None:
+            scene = bpy.context.scene
+        corners = self.camera_data.view_frame(scene=scene)
+        xs = [corner.x for corner in corners]
+        ys = [corner.y for corner in corners]
+        if self.camera_data.type == "ORTHO":
+            return (min(xs), max(xs), min(ys), max(ys))
+        # every corner sits at the same depth, so one of them sets the scale
+        depth = -corners[0].z
+        return (min(xs) / depth, max(xs) / depth, min(ys) / depth, max(ys) / depth)
+
+    def frame_points(
+        self,
+        points: npt.ArrayLike,
+        margin: float = 0.05,
+        scene: bpy.types.Scene | None = None,
+    ) -> None:
+        """
+        Move the camera so that every one of these points is in frame.
+
+        Solves for the closest position that still contains the points, without
+        changing where the camera is pointing. See
+        [](`molecularnodes.framing.fit_camera_to_points`) for the solve.
+
+        Parameters
+        ----------
+        points : array_like
+            ``(N, 3)`` world-space positions to fit into the frame. Any number
+            of points is fine.
+        margin : float, default 0.05
+            Fraction of the frame to leave empty around the subject. The small
+            default keeps the subject off the edge of the frame; ``0`` fits it
+            exactly, and a negative value crops in tighter.
+        scene : bpy.types.Scene, optional
+            Scene to read the render aspect ratio from. Defaults to the active
+            scene.
+        """
+        if scene is None:
+            scene = bpy.context.scene
+        points = framing.as_points(points)
+        bounds = self.frame_bounds(scene)
+        basis = self.basis
+
+        if self.camera_data.type == "ORTHO":
+            location, scale_factor = framing.fit_orthographic_to_points(
+                points, basis, bounds, margin
+            )
+            self.camera_data.ortho_scale *= scale_factor
+        else:
+            location = framing.fit_camera_to_points(points, basis, bounds, margin)
+
+        self.camera.location = location
+        # a subject sitting beyond the far clip renders as nothing at all, so
+        # make room for it rather than silently dropping it
+        furthest = float(np.max((points - location) @ basis[2]))
+        if furthest > self.clip_end:
+            self.clip_end = furthest * 1.05
 
     def set_viewpoint(self, viewpoint: Viewpoint | str | Sequence[float]) -> None:
         """

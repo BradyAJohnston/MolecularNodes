@@ -114,7 +114,7 @@ cv = mn.Canvas(resolution=(800, 800), transparent=True)
 
 mol = mn.Molecule.load(PSF, DCD)
 with mol.tree.reset() as (atoms, join):
-    style = g.StyleSpheres(sphere_geometry="Instance")
+    style = g.StyleSpheres(sphere="Instance")
     style.i["Quality"].default_value = 4
     color = g.ColorElement(c=g.RandomColor(g.ChainID()))
     atoms >> g.SetColor(color=color) >> style >> join

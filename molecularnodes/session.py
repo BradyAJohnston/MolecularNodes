@@ -15,9 +15,19 @@ from .entities.reload import can_reload, reload_entity
 
 
 def trim(dictionary: dict):
+    """Drop entities whose Blender object no longer exists.
+
+    ``.object`` raises ``LinkedObjectError`` rather than returning ``None`` once
+    the object is gone, so this has to catch as well as test - otherwise a single
+    entity deleted from the outliner takes the whole session save down with it,
+    and every other entity in the file silently loses its state.
+    """
     dic = dictionary.copy()
     for key in list(dic.keys()):
-        if dic[key].object is None:
+        try:
+            if dic[key].object is None:
+                dic.pop(key)
+        except LinkedObjectError:
             dic.pop(key)
     return dic
 
@@ -218,14 +228,23 @@ class MNSession:
         self.entities = {}
 
     def remove(self, uuid: str) -> None:
-        """Remove an entity by uuid"""
+        """
+        Remove an entity by uuid, along with the objects backing it.
+
+        An entity whose object has already been deleted - from the outliner, or
+        with `bpy.data.objects.remove()` - is still dropped from the session
+        rather than raising, so that removing is always safe to call.
+        """
         if uuid not in self.entities:
             raise ValueError(f"No entity with UUID '{uuid}'")
         entity = self.entities[uuid]
-        bpy.data.objects.remove(entity.object, do_unlink=True)
+        obj = self.get_object(uuid)
+        if obj is not None:
+            bpy.data.objects.remove(obj, do_unlink=True)
         if hasattr(entity, "annotations"):
-            if entity.annotations.bob:
-                bpy.data.objects.remove(entity.annotations.bob.object, do_unlink=True)
+            bob = entity.annotations.bob
+            if bob is not None and self.get_object(bob.uuid) is not None:
+                bpy.data.objects.remove(bob.object, do_unlink=True)
         self.remove_entity(uuid)
 
 
@@ -271,13 +290,19 @@ def _load(filepath: str, printing: str = "quiet") -> None:
         FileNotFoundError: If the file specified by `filepath` does not exist and
             `printing` is set to "verbose", a message will be printed.
     """
+    # the objects belonging to the file we just closed are gone, so drop the
+    # entities that pointed at them before registering this file's own -
+    # otherwise they linger in the session and raise LinkedObjectError
+    session = get_session()
+    session.prune()
+
     # the file hasn't been saved or we are opening a fresh file, so don't
     # attempt to load anything
     if filepath == "":
         return None
     try:
         with chdir(Path(filepath).parent):
-            get_session().load(filepath)
+            session.load(filepath)
     except FileNotFoundError:
         if printing == "verbose":
             print("No MNSession found to load for this .blend file.")

@@ -16108,9 +16108,9 @@ class StyleBallAndStick(AssetGeometryGroup):
         Selection of atoms to apply this style to, discarding unselected points
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-    sphere_geometry : InputMenu | Literal["Point", "Instance", "Mesh"]
+    sphere : InputMenu | Literal["Point", "Instance", "Mesh"]
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
-    sphere_scale : InputFloat
+    scale : InputFloat
         Scale the `vdw_radii` attribute before setting the radius for the spheres
     bond_split : InputMenu | Literal["Single", "Double"]
         Bond Split
@@ -16133,9 +16133,9 @@ class StyleBallAndStick(AssetGeometryGroup):
         Selection of atoms to apply this style to, discarding unselected points
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-    i.sphere_geometry : MenuSocket
+    i.sphere : MenuSocket
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
-    i.sphere_scale : FloatSocket
+    i.scale : FloatSocket
         Scale the `vdw_radii` attribute before setting the radius for the spheres
     i.bond_split : MenuSocket
         Bond Split
@@ -16167,9 +16167,9 @@ class StyleBallAndStick(AssetGeometryGroup):
         """Selection of atoms to apply this style to, discarding unselected points"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
-        sphere_geometry: MenuSocket
+        sphere: MenuSocket
         """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
-        sphere_scale: FloatSocket
+        scale: FloatSocket
         """Scale the `vdw_radii` attribute before setting the radius for the spheres"""
         bond_split: MenuSocket
         """Bond Split"""
@@ -16200,8 +16200,8 @@ class StyleBallAndStick(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 2,
-        sphere_geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Instance",
-        sphere_scale: InputFloat = 0.3,
+        sphere: InputMenu | Literal["Point", "Instance", "Mesh"] = "Instance",
+        scale: InputFloat = 0.3,
         bond_split: InputMenu | Literal["Single", "Double"] = "Double",
         bond_scale: InputFloat = 0.3,
         bond_find: InputBoolean = False,
@@ -16214,8 +16214,8 @@ class StyleBallAndStick(AssetGeometryGroup):
                 "Input_0": atoms,
                 "Input_1": selection,
                 "Socket_5": quality,
-                "Socket_8": sphere_geometry,
-                "Input_3": sphere_scale,
+                "Socket_8": sphere,
+                "Input_3": scale,
                 "Socket_22": bond_split,
                 "Input_7": bond_scale,
                 "Socket_3": bond_find,
@@ -16641,7 +16641,7 @@ class StyleSpheres(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
-    sphere_geometry : InputMenu | Literal["Point", "Instance", "Mesh"]
+    sphere : InputMenu | Literal["Point", "Instance", "Mesh"]
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     quality : InputInteger
         Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms
@@ -16658,7 +16658,7 @@ class StyleSpheres(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
-    i.sphere_geometry : MenuSocket
+    i.sphere : MenuSocket
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     i.quality : IntegerSocket
         Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms
@@ -16684,7 +16684,7 @@ class StyleSpheres(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
-        sphere_geometry: MenuSocket
+        sphere: MenuSocket
         """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
         quality: IntegerSocket
         """Number of subdicisions when using _Instances_ or _Mesh_ to represent atoms"""
@@ -16710,7 +16710,7 @@ class StyleSpheres(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        sphere_geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Point",
+        sphere: InputMenu | Literal["Point", "Instance", "Mesh"] = "Point",
         quality: InputInteger = 2,
         scale: InputFloat = 0.8,
         shade_smooth: InputBoolean = True,
@@ -16720,7 +16720,7 @@ class StyleSpheres(AssetGeometryGroup):
             **{
                 "Input_0": atoms,
                 "Input_1": selection,
-                "Input_2": sphere_geometry,
+                "Input_2": sphere,
                 "Input_4": quality,
                 "Input_3": scale,
                 "Input_5": shade_smooth,
@@ -16739,7 +16739,7 @@ class StyleSticks(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
-    sphere_geometry : InputMenu | Literal["Point", "Instance", "Mesh"]
+    sphere : InputMenu | Literal["Point", "Instance", "Mesh"]
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
@@ -16756,7 +16756,7 @@ class StyleSticks(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
-    i.sphere_geometry : MenuSocket
+    i.sphere : MenuSocket
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
@@ -16782,7 +16782,7 @@ class StyleSticks(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
-        sphere_geometry: MenuSocket
+        sphere: MenuSocket
         """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
@@ -16808,7 +16808,7 @@ class StyleSticks(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        sphere_geometry: InputMenu | Literal["Point", "Instance", "Mesh"] = "Instance",
+        sphere: InputMenu | Literal["Point", "Instance", "Mesh"] = "Instance",
         quality: InputInteger = 3,
         scale: InputFloat = 0.2,
         shade_smooth: InputBoolean = True,
@@ -16818,7 +16818,7 @@ class StyleSticks(AssetGeometryGroup):
             **{
                 "Socket_0": atoms,
                 "Socket_1": selection,
-                "Socket_9": sphere_geometry,
+                "Socket_9": sphere,
                 "Socket_4": quality,
                 "Socket_3": scale,
                 "Socket_5": shade_smooth,

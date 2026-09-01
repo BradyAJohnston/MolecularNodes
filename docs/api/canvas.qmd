@@ -20,6 +20,21 @@ from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 canvas = mn.Canvas()
 ```
 
+There is only ever one Blender scene, so a `Canvas` is a handle on that scene rather than
+something it owns. Creating one binds to the scene and, if there are no molecules in it
+yet, loads the "Molecular Nodes" preset - a default camer and lighting setup - so
+that renders look OK with minimal setup. Running `mn.Canvas()` again binds to the same
+scene and leaves what is in it alone, which means re-running the cell above costs nothing.
+
+To change what is in the scene, ask for it:
+
+| | |
+|---|---|
+| [](`~mn.Canvas.clear`) | empties the scene of molecules, keeping the camera, lights, render settings, world shader and compositor |
+| [](`~mn.Canvas.load_preset`) | replaces the whole scene with a preset, lighting and render settings included |
+
+`mn.Canvas(template="...")` loads that template outright, the same as `load_preset()`.
+
 ## Add Trajectories
 
 ```{python}
@@ -35,7 +50,7 @@ t2 = mn.Molecule.load(TPR, XTC)
     t1
     .add_style("ribbon", peptide_radius=0.5)
     .add_style("ball_and_stick", quality=4, selection="resid 184")
-    .add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
+    .add_style("spheres", sphere="Instance", selection="resid 1 129")
 )
 
 t2.add_style("ribbon", material="MN Ambient Occlusion")
@@ -98,9 +113,32 @@ canvas.look_at(t2.get_view() + t1.get_view(), viewpoint="left")
 canvas.snapshot()
 ```
 
+## Framing Margin
+
+[](`~mn.Canvas.look_at`) puts the camera as close to the subject as keeping all
+of it in frame allows, plus a small default `margin` of `0.05` so that the
+subject is not right up against the edge of the frame. Raise it for more room,
+set it to `0` to fit the subject exactly, or go negative to crop in past its
+edges.
+
+```{python}
+canvas.look_at(t1.get_view("resid 184"), viewpoint="front", margin=0.3)
+canvas.snapshot()
+```
+
+The framing is solved on the positions themselves rather than on a box drawn
+around them, so it is as tight from an oblique angle as from straight on. Any
+number of positions can be passed — a view from [](`~mn.Molecule.get_view`), or
+your own array of coordinates.
+
 ## Camera Zoom in or out
 
 Camera can be zoomed in our out using the camera [](`~molecularnodes.scene.camera.Camera.lens`) settings of the [](`~mn.Canvas`) camera object once framed.
+
+This is a different thing from `margin`: the lens changes the perspective, how
+compressed the subject looks front-to-back, while `margin` only changes how much
+of the frame it fills. Changing the lens after framing also changes the framing,
+so call [](`~mn.Canvas.look_at`) again afterwards to fit the new lens.
 
 ### Zoom in
 

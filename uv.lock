@@ -1419,7 +1419,8 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodebpy", specifier = ">=520.14" },
+    { name = "nodebpy", specifier = ">=520.15" },
+    { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.3.0" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
     { name = "pandas", specifier = "<3.0.0" },
     { name = "pillow", marker = "extra == 'dev'" },
@@ -1557,11 +1558,11 @@ wheels = [
 
 [[package]]
 name = "nodebpy"
-version = "520.14.0"
+version = "520.16.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/55/f7/c5b2335595d27a9bc11bdd039a22e787fe30242a8193038cfbb41ce1eb32/nodebpy-520.14.0.tar.gz", hash = "sha256:cc1a53b0a479d59ff0ba9b88d18c346fe7f236390ff71958fdad58813a58f2d3", size = 330924, upload-time = "2026-08-24T08:20:19.89Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/b5/e026e76c2f946950c61b2d08e79a92438d19d5991321d100279feaded9cd/nodebpy-520.16.0.tar.gz", hash = "sha256:7f55f265d8d1086ac4ae66cf3efcf0bcd1cc3891bf8bd141a19534782af63420", size = 332527, upload-time = "2026-08-28T14:48:34.398Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ae/a3/223251e85123c01aaeadc18d3a6f983f230fc81081d4909a06ba463f28df/nodebpy-520.14.0-py3-none-any.whl", hash = "sha256:0203f7b9e0629505e5f0dce9ec88b8e45b3fff675c71bae0bf04db9b3243c461", size = 371356, upload-time = "2026-08-24T08:20:18.542Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/77/9e95762b5eeac5078b115f4f56bfa6d48af8ff89b5e840e4269da0796e27/nodebpy-520.16.0-py3-none-any.whl", hash = "sha256:b164d4733d08d4abd2781bba076a843687a1a96f22bfdf8440dbb1c1f96780fe", size = 372960, upload-time = "2026-08-28T14:48:29.802Z" },
 ]
 
 [[package]]
