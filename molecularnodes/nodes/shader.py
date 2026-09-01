@@ -17,7 +17,36 @@ from nodebpy.types import (
 
 
 class ColorAO(AssetShaderGroup):
-    """Color AO"""
+    """
+    Color AO
+
+    Parameters
+    ----------
+    color : InputColor
+        Color
+    menu : InputMenu | Literal["AO", "None"]
+        Menu
+    distance : InputFloat
+        Distance
+    exponent : InputFloat
+        Exponent
+
+    Inputs
+    ------
+    i.color : ColorSocket
+        Color
+    i.menu : MenuSocket
+        Menu
+    i.distance : FloatSocket
+        Distance
+    i.exponent : FloatSocket
+        Exponent
+
+    Outputs
+    -------
+    o.result : ColorSocket
+        Result
+    """
 
     _name = "Color AO"
     _asset_name = "Color AO"
@@ -62,7 +91,32 @@ class ColorAO(AssetShaderGroup):
 
 
 class Flat(AssetShaderGroup):
-    """Flat"""
+    """
+    Flat
+
+    Parameters
+    ----------
+    outline : InputMenu | Literal["Outline", "None"]
+        Outline
+    threshold : InputFloat
+        Threshold
+    thickness : InputFloat
+        Thickness
+
+    Inputs
+    ------
+    i.outline : MenuSocket
+        Outline
+    i.threshold : FloatSocket
+        Threshold
+    i.thickness : FloatSocket
+        Thickness
+
+    Outputs
+    -------
+    o.emission : ShaderSocket
+        Emission
+    """
 
     _name = "Flat"
     _asset_name = "Flat"
@@ -99,7 +153,16 @@ class Flat(AssetShaderGroup):
 
 
 class MNColor(AssetShaderGroup):
-    """MN Color"""
+    """
+    MN Color
+
+    Outputs
+    -------
+    o.color : ColorSocket
+        Color
+    o.alpha : FloatSocket
+        Alpha
+    """
 
     _name = "MN Color"
     _asset_name = "MN Color"
@@ -126,7 +189,28 @@ class MNColor(AssetShaderGroup):
 
 
 class OutlineMask(AssetShaderGroup):
-    """Outline Mask"""
+    """
+    Outline Mask
+
+    Parameters
+    ----------
+    threshold : InputFloat
+        Threshold
+    thickness : InputFloat
+        Thickness
+
+    Inputs
+    ------
+    i.threshold : FloatSocket
+        Threshold
+    i.thickness : FloatSocket
+        Thickness
+
+    Outputs
+    -------
+    o.outline : FloatSocket
+        Outline
+    """
 
     _name = "Outline Mask"
     _asset_name = "Outline Mask"
@@ -158,7 +242,40 @@ class OutlineMask(AssetShaderGroup):
 
 
 class TransparentOutline(AssetShaderGroup):
-    """Transparent Outline"""
+    """
+    Transparent Outline
+
+    Parameters
+    ----------
+    alpha : InputFloat
+        Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader
+    menu : InputMenu | Literal["Transparent", "Outline"]
+        Menu
+    outline_color : InputColor
+        Outline Color
+    threshold : InputFloat
+        Threshold
+    thickness : InputFloat
+        Thickness
+
+    Inputs
+    ------
+    i.alpha : FloatSocket
+        Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader
+    i.menu : MenuSocket
+        Menu
+    i.outline_color : ColorSocket
+        Outline Color
+    i.threshold : FloatSocket
+        Threshold
+    i.thickness : FloatSocket
+        Thickness
+
+    Outputs
+    -------
+    o.shader : ShaderSocket
+        Shader
+    """
 
     _name = "Transparent Outline"
     _asset_name = "Transparent Outline"
@@ -166,7 +283,7 @@ class TransparentOutline(AssetShaderGroup):
 
     class _Inputs(SocketAccessor):
         alpha: FloatSocket
-        """Alpha"""
+        """Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader"""
         menu: MenuSocket
         """Menu"""
         outline_color: ColorSocket

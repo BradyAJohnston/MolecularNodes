@@ -36,6 +36,6 @@ def test_uv_map(snapshot_custom):
 def test_bond_attributes(snapshot):
     mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
     with mol.tree.reset() as (atoms, join):
-        atoms >> StyleSpheres(sphere_geometry="Mesh") >> join
+        atoms >> StyleSpheres(sphere="Mesh") >> join
 
     assert snapshot == GeometrySet(mol.object).summary()

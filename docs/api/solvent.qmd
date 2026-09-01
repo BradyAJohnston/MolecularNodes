@@ -72,7 +72,7 @@ with t.tree.reset() as (atoms, join):
         >> mg.StyleRibbon(quality=5, peptide_radius=2)
         >> mg.StyleSpheres(
             selection=g.Position().o.position.y < mg.Centroid(),
-            sphere_geometry="Instance"
+            sphere="Instance"
             )
         >> g.SetMaterial(material=mn.material.Default().material)
         >> join

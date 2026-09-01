@@ -6,6 +6,7 @@ underlying data model.
 """
 
 import functools
+import inspect
 import io
 import logging
 import warnings
@@ -43,6 +44,28 @@ logger = logging.getLogger(__name__)
 #: Colour keywords understood by ``Molecule.add_style(color=...)``. Anything else must
 #: name an existing attribute, be an RGBA sequence, or be a callable building the nodes.
 COLOR_KEYWORDS = ("common", "default", "plddt")
+
+
+# only Cycles ray-traces point clouds; every other engine draws them as a crude
+# polyhedron, so a sphere style left on its "Point" default silently renders wrong
+_POINT_CLOUD_ENGINES = {"CYCLES"}
+
+
+def _sphere_for_engine(style_node: type, engine: str) -> str | None:
+    """
+    The ``sphere`` to use for a style, when the default won't render.
+
+    Returns ``None`` when the default is fine - either the engine can draw point
+    clouds, or this style doesn't default to them in the first place.
+    ``StyleBallAndStick`` already defaults to ``"Instance"``, so only
+    ``StyleSpheres`` is affected.
+    """
+    if engine in _POINT_CLOUD_ENGINES:
+        return None
+    parameter = inspect.signature(style_node).parameters.get("sphere")
+    if parameter is None or parameter.default != "Point":
+        return None
+    return "Instance"
 
 
 class Molecule(MolecularEntity):
@@ -94,7 +117,7 @@ class Molecule(MolecularEntity):
     canvas = mn.Canvas()
     u = mda.Universe(PSF, DCD)
     traj = mn.Molecule(u)
-    traj.add_style("spheres", sphere_geometry="Instance", selection="resname LYS")
+    traj.add_style("spheres", sphere="Instance", selection="resname LYS")
     canvas.look_at(traj)
     canvas.snapshot()
     ```
@@ -1111,7 +1134,7 @@ class Molecule(MolecularEntity):
 
         **kwargs : optional
             Additional keyword arguments passed to the style node, matching that
-            node's inputs (e.g. ``quality``, ``scale``, ``sphere_geometry`` for
+            node's inputs (e.g. ``quality``, ``scale``, ``sphere`` for
             ``spheres``). Unknown names raise a ``TypeError``. Cannot be combined
             with a callable ``style``.
 
@@ -1171,6 +1194,14 @@ class Molecule(MolecularEntity):
 
         if isinstance(self, OXDNA):
             STYLE_NODE_MAPPING["ribbon"] = g.OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+
+        if not style_is_callable and "sphere" not in kwargs:
+            # spheres default to point clouds, which only Cycles can draw
+            geometry = _sphere_for_engine(
+                STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
+            )
+            if geometry is not None:
+                kwargs["sphere"] = geometry
 
         if isinstance(material, (PresetMaterial, MaterialBuilder)):
             material = material.material

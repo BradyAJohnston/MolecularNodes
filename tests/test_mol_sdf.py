@@ -26,9 +26,9 @@ def test_load(snapshot, format, style):
     with mol.tree.reset() as tree:
         match style:
             case "ball_and_stick":
-                node = StyleBallAndStick(sphere_geometry="Mesh")
+                node = StyleBallAndStick(sphere="Mesh")
             case "spheres":
-                node = StyleSpheres(sphere_geometry="Mesh")
+                node = StyleSpheres(sphere="Mesh")
             case "surface":
                 node = StyleSurface()
         (tree.atoms >> node >> tree.join)

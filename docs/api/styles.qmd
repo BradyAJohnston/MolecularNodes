@@ -78,7 +78,7 @@ create an `mda.AtomGroup` which is used to create a boolean attribute, and that 
 inside of the node tree for rendering.
 
 ```{python}
-mol.add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
+mol.add_style("spheres", sphere="Instance", selection="resid 1 129")
 canvas.look_at(mol)
 canvas.snapshot()
 ```
@@ -127,7 +127,7 @@ A callable `style` sets allows easier setting of the values of the node itself.
 ```{python}
 mol.add_style(
   lambda: g.StyleSpheres(
-    sphere_geometry="Instance",
+    sphere="Instance",
     quality=4,
     scale=0.4,
     material=mn.material.Default().material
@@ -149,7 +149,7 @@ mol.add_style("cartoon", color=lambda: g.ColorRainbow())
 mol.add_style(
     lambda: g.StyleSpheres(
         selection=mol.selections.node("not protein"),
-        sphere_geometry="Instance",
+        sphere="Instance",
     )
 )
 canvas.look_at(mol)

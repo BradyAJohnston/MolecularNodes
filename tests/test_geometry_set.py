@@ -13,7 +13,9 @@ def test_get_set(snapshot):
 
 def test_spheres_style(snapshot):
     code = "1BNA"
-    mol = mn.Molecule.fetch(code).add_style("spheres")
+    # the point cloud component is the thing under test here, so ask for it
+    # rather than take whatever `sphere` the render engine implies
+    mol = mn.Molecule.fetch(code).add_style("spheres", sphere="Point")
     geom = GeometrySet(mol.object)
     assert snapshot == geom.summary()
 
@@ -46,7 +48,7 @@ def test_attribute_comparison():
     mol_ribbon = mn.Molecule.fetch(code).add_style("ribbon")
     geom_ribbon = GeometrySet(mol_ribbon.object)
 
-    mol_spheres = mn.Molecule.fetch(code).add_style("spheres")
+    mol_spheres = mn.Molecule.fetch(code).add_style("spheres", sphere="Point")
     geom_spheres = GeometrySet(mol_spheres.object)
 
     pc = geom_spheres.pointcloud
