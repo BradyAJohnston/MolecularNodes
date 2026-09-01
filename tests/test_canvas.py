@@ -1,5 +1,6 @@
 import bpy
 import MDAnalysis as mda
+import numpy as np
 import pytest
 import molecularnodes as mn
 from .constants import data_dir
@@ -477,3 +478,166 @@ def test_canvas_ignores_dangling_entities_when_deciding(canvas):
     again = mn.Canvas()
     assert "Backdrop" in again.scene.objects
     assert mn.session.get_session().n_items == 0
+
+
+def _camera_distance(canvas, points):
+    return float(
+        np.linalg.norm(np.asarray(points).mean(axis=0) - canvas.camera.camera.location)
+    )
+
+
+def test_look_at_accepts_any_number_of_points(canvas):
+    """A target with more than 8 points used to silently empty the frame.
+
+    `look_at` was annotated `list[tuple]` with no arity check, and anything but
+    a bounding box put the subject a few pixels wide in the middle of nothing.
+    """
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres", sphere_geometry="Mesh")
+    points = np.asarray(mol.get_view())
+    assert len(points) > 8
+
+    canvas.look_at(points)
+    offsets = points - np.asarray(canvas.camera.camera.location)
+    depth = offsets @ canvas.camera.basis[2]
+    assert (depth > 0).all(), "the subject ended up behind the camera"
+
+
+def test_look_at_frames_what_is_drawn_not_the_whole_entity(canvas):
+    "Styling one chain of four should frame that chain, not all four."
+    mol = mn.Molecule.fetch("8H1B").add_style("cartoon", selection="chainID A")
+    canvas.look_at(mol, viewpoint="front")
+    on_chain = _camera_distance(canvas, mol.get_view("chainID A"))
+
+    mol.add_style("cartoon")  # now the whole thing is drawn
+    canvas.look_at(mol, viewpoint="front")
+    on_everything = _camera_distance(canvas, mol.get_view("chainID A"))
+
+    assert on_chain < on_everything
+
+
+def test_get_view_is_not_stale_after_adding_a_style(canvas):
+    """`bound_box` is evaluated geometry, and used to be read before the
+    depsgraph had caught up - so the view depended on whether anything happened
+    to have triggered an update."""
+    mol = mn.Molecule.fetch("8H1B")
+    mol.add_style("cartoon", selection="chainID A")
+
+    before = np.asarray(mol.get_view())
+    bpy.context.view_layer.update()
+    after = np.asarray(mol.get_view())
+    assert np.allclose(before.min(axis=0), after.min(axis=0))
+    assert np.allclose(before.max(axis=0), after.max(axis=0))
+
+
+def test_look_at_margin_moves_the_camera_back(canvas):
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    points = mol.get_view()
+
+    distances = []
+    for margin in (-0.1, 0.0, 0.2, 0.5):
+        canvas.look_at(mol, viewpoint="front", margin=margin)
+        distances.append(_camera_distance(canvas, points))
+    assert distances == sorted(distances)
+
+
+def test_look_at_frames_consistently_across_viewpoints(canvas):
+    """Framing an axis-aligned box projected differently from each direction.
+
+    Solving on the points themselves keeps the subject filling the frame from
+    any angle - it can't be tight from one direction and loose from another.
+    """
+    mol = mn.Molecule.fetch("8H1B").add_style("cartoon")
+    points = np.asarray(mol.get_view())
+
+    filled = []
+    for viewpoint in ("default", "front", "top", "left"):
+        canvas.look_at(mol, viewpoint=viewpoint, margin=0.0)
+        offsets = points - np.asarray(canvas.camera.camera.location)
+        basis = canvas.camera.basis
+        depth = offsets @ basis[2]
+        left, right, bottom, top = canvas.camera.frame_bounds(canvas.scene)
+        # the fraction of the frame the subject reaches on its widest axis
+        filled.append(
+            max(
+                np.max(np.abs(offsets @ basis[0]) / depth) / max(right, -left),
+                np.max(np.abs(offsets @ basis[1]) / depth) / max(top, -bottom),
+            )
+        )
+    assert all(fill == pytest.approx(1.0, abs=1e-6) for fill in filled)
+
+
+def test_look_at_rejects_targets_it_cannot_frame(canvas):
+    with pytest.raises(ValueError, match=r"shape \(N, 3\)"):
+        canvas.look_at([(1, 2), (3, 4)])
+    with pytest.raises(ValueError, match=r"shape \(N, 3\)"):
+        canvas.look_at([])
+
+
+def test_look_at_extends_the_far_clip_to_reach_the_subject(canvas):
+    "A subject beyond the far clip renders as nothing at all."
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    canvas.camera.clip_end = 0.1
+
+    canvas.look_at(mol)
+    points = np.asarray(mol.get_view())
+    depth = (points - np.asarray(canvas.camera.camera.location)) @ canvas.camera.basis[
+        2
+    ]
+    assert canvas.camera.clip_end >= depth.max()
+
+
+@pytest.mark.parametrize(
+    "style,kwargs",
+    [
+        ("cartoon", {}),
+        ("spheres", {}),
+        ("spheres", {"sphere_geometry": "Mesh"}),
+        ("spheres", {"sphere_geometry": "Instance"}),
+        ("ball_and_stick", {}),
+        ("surface", {}),
+    ],
+)
+def test_framing_covers_every_geometry_component(canvas, style, kwargs):
+    """A style can render components an object never exposes through `data`.
+
+    Spheres evaluate to an empty mesh with the real point cloud alongside it,
+    and instanced styles put the geometry in an instances component - reading
+    `obj.data` alone framed an empty scene.
+    """
+    mol = mn.Molecule.fetch("4ozs").add_style(style, **kwargs)
+    points = np.asarray(mol.get_view())
+    assert len(points) > 8
+
+    # bounds Blender reports for the object cover every component it draws
+    bounds = np.array([corner[:] for corner in mol.object.bound_box])
+    extent = points.max(axis=0) - points.min(axis=0)
+    # framing is allowed to be a little generous, never short
+    assert (extent >= (bounds.max(axis=0) - bounds.min(axis=0)) - 1e-4).all()
+
+
+def test_spheres_are_framed_by_their_surface_not_their_centres(canvas):
+    "Framing the centres cuts the outermost spheres in half at the frame edge."
+    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    points = np.asarray(mol.get_view())
+    centres = mol._world_positions(mol.atoms)
+
+    extent = points.max(axis=0) - points.min(axis=0)
+    centre_extent = centres.max(axis=0) - centres.min(axis=0)
+    assert (extent > centre_extent).all()
+
+
+def test_look_at_leaves_breathing_room_by_default(canvas):
+    "The default margin keeps the subject off the edge of the frame."
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    points = np.asarray(mol.get_view())
+
+    canvas.look_at(mol, viewpoint="front")
+    offsets = points - np.asarray(canvas.camera.camera.location)
+    basis = canvas.camera.basis
+    depth = offsets @ basis[2]
+    left, right, bottom, top = canvas.camera.frame_bounds(canvas.scene)
+    filled = max(
+        np.max(np.abs(offsets @ basis[0]) / depth) / max(right, -left),
+        np.max(np.abs(offsets @ basis[1]) / depth) / max(top, -bottom),
+    )
+    assert filled == pytest.approx(0.95, abs=1e-6)
