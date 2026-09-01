@@ -9,7 +9,7 @@ jupyter: python3
 
 Molecular Nodes was first built as an add-on for Blender, intended to be used through the GUI.
 
-A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The version is pinned to the versions of Blender it is intended for, so while MN is currently version `4.5`, it should not be considered that stable.
+A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The major and minor version numbers track the release of Blender that MN is built for — MN `5.2` targets Blender `5.2` — so a version bump says nothing about how stable the API is.
 
 The quirks of progamming within Blender are numerous and will likely remain regardless of version.
 :::
@@ -21,7 +21,7 @@ When scripting with Molecular Nodes, it's important to remember that everything 
 
 Blender itself has a very extensive python API, accessible through the `bpy` module. Molecular Nodes is designed so that for most general usage you shouldn't have to ever directly use `bpy`, but all of the complex settings and controls are still always accessible through that module.
 
-Blender does release the [`bpy`](https://pypi.org/p/bpy) module on pypi, which let's us
+Blender does release the [`bpy`](https://pypi.org/p/bpy) module on PyPI, which lets us use Blender as a regular python package — no Blender install required.
 
 ## Installation
 
@@ -32,11 +32,11 @@ You can also install and use inside of your own python projects.
 ::: { .callout-warning}
 # Python Versions
 
-`molecularnodes` is only compatible with `python==3.11`
+`molecularnodes` requires `python~=3.13`
 
 Blender is very particular about python versions (and especially `numpy` versions). Blender adheres to the [VFX Reference platform](https://vfxplatform.com/) which determines python and common package versions to be used across multiple VFX software for consistency.
 
-Because of this, the `bpy` package upon which `molecularnodes` is build is locked to `python==3.11` and in particular `numpy==1.26`. Going outside of these very particular versions is recipe for distaster. The first Blender release of 2026 will increase to `3.13` and `2.3` repsectively.
+Because of this, the `bpy` package upon which `molecularnodes` is built is locked to a single python version — `3.13` for Blender `5.2`. There are no `bpy` wheels for any other version, so installing outside of it will simply fail to resolve. Let `pip` pick the `numpy` version rather than pinning one yourself. Each Blender release that moves to a new python version takes Molecular Nodes with it, so check `requires-python` in [`pyproject.toml`](https://github.com/BradyAJohnston/MolecularNodes/blob/main/pyproject.toml) if in doubt.
 
 :::
 
