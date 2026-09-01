@@ -113,9 +113,31 @@ canvas.look_at(t2.get_view() + t1.get_view(), viewpoint="left")
 canvas.snapshot()
 ```
 
+## Framing Margin
+
+[](`~mn.Canvas.look_at`) puts the camera as close to the subject as keeping all
+of it in frame allows, so by default the subject touches the edge of the frame.
+`margin` leaves a border around it, as a fraction of the frame — and a negative
+value crops in past the subject's edges.
+
+```{python}
+canvas.look_at(t1.get_view("resid 184"), viewpoint="front", margin=0.3)
+canvas.snapshot()
+```
+
+The framing is solved on the positions themselves rather than on a box drawn
+around them, so it is as tight from an oblique angle as from straight on. Any
+number of positions can be passed — a view from [](`~mn.Molecule.get_view`), or
+your own array of coordinates.
+
 ## Camera Zoom in or out
 
 Camera can be zoomed in our out using the camera [](`~molecularnodes.scene.camera.Camera.lens`) settings of the [](`~mn.Canvas`) camera object once framed.
+
+This is a different thing from `margin`: the lens changes the perspective, how
+compressed the subject looks front-to-back, while `margin` only changes how much
+of the frame it fills. Changing the lens after framing also changes the framing,
+so call [](`~mn.Canvas.look_at`) again afterwards to fit the new lens.
 
 ### Zoom in
 

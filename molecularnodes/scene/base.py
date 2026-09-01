@@ -6,6 +6,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal, Sequence, Tuple
 import bpy
+import numpy.typing as npt
 from tqdm.auto import tqdm
 from .. import assets
 from ..assets.template import list_templates
@@ -782,34 +783,67 @@ class Canvas:
 
     def look_at(
         self,
-        target: MolecularEntity | bpy.types.Object | list[tuple],
+        target: MolecularEntity | bpy.types.Object | npt.ArrayLike,
         viewpoint: Viewpoint | str | Sequence[float] | None = None,
+        margin: float = 0.0,
     ) -> None:
         """
         Position the camera to look at and contain a target.
 
+        The camera is moved as close to the target as keeping all of it in frame
+        allows, without changing where it points.
+
         Parameters
         ----------
-        target : MolecularEntity | bpy.types.Object | list[tuple]
-            What to look at: a Molecular Nodes entity (via its current view),
-            a Blender object, or a bounding box of 8 three-dimensional
-            vertices ``[(x, y, z), ...]`` as returned by ``get_view()``.
-            Multiple views can be combined with ``+`` before passing.
+        target : MolecularEntity | bpy.types.Object | array_like
+            What to look at: a Molecular Nodes entity, a Blender object, or any
+            ``(N, 3)`` set of positions - a bounding box from ``get_view()``, or
+            the positions themselves. Views can be combined with ``+`` before
+            passing.
+
+            An entity or object is framed on the geometry it *renders*, so
+            styling one chain of four frames that chain rather than the whole
+            molecule.
         viewpoint : Viewpoint | str | Sequence[float], optional
             Viewing direction along a principal axis — one of
             {"default", "front", "back", "top", "bottom", "left", "right"} —
             or a custom XYZ Euler rotation as three angles in degrees.
+        margin : float, default 0.0
+            Fraction of the frame to leave empty around the target. ``0.1``
+            leaves a ten percent border; a negative value crops in tighter.
 
+        Examples
+        --------
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
+        canvas.samples = 8
+        mol = mn.Molecule.fetch("8H1B").add_style("cartoon", selection="chainID A")
+
+        # frames the styled chain, not the whole molecule
+        canvas.look_at(mol, viewpoint="front")
+        display(canvas.snapshot())
+
+        # room to breathe, and framing on a selection rather than the whole entity
+        canvas.look_at(mol.get_view("chainID A and resid 1-40"), margin=0.15)
+        display(canvas.snapshot())
+        ```
+
+        See Also
+        --------
+        molecularnodes.scene.camera.Camera.frame_points : The underlying solve.
         """
         # set the camera viewpoint if specified
         if viewpoint is not None:
             self.camera.set_viewpoint(viewpoint)
         if isinstance(target, MolecularEntity):
-            target = target.get_view()
+            target = target.object
         if isinstance(target, bpy.types.Object):
-            blender_utils.look_at_object(target)
+            points = blender_utils.evaluated_points(target)
         else:
-            blender_utils.look_at_bbox(target)
+            points = target
+        self.camera.frame_points(points, margin=margin, scene=self.scene)
 
     def clear(self) -> None:
         """

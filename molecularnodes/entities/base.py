@@ -257,10 +257,16 @@ class MolecularEntity(
 
     def get_view(self) -> List[tuple]:
         """
-        Get the 3D bounding box of the entity object
+        The world-space positions of the geometry this entity renders.
 
+        Read from the evaluated geometry, so these are the points actually
+        drawn rather than the data they were built from, and they do not go
+        stale between depsgraph updates.
+
+        Pass to [](`~mn.Canvas.look_at`) to frame them. Views from several
+        entities can be combined with ``+`` to frame all of them at once.
         """
-        return blender_utils.get_bounding_box(self.object)
+        return [tuple(point) for point in blender_utils.evaluated_points(self.object)]
 
     def _get_annotation_entity_type(self) -> str:
         """

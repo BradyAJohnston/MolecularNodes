@@ -1344,28 +1344,43 @@ class Molecule(MolecularEntity):
         if not hasattr(self, "calculations"):
             self.calculations = state.pop("_preserved_calculations", {})
 
-    def _get_3d_bbox(self, selection: mda.AtomGroup | None) -> list[tuple]:
-        """Get the 3D bounding box vertices of atoms in an AtomGroup"""
+    def _world_positions(self, selection: mda.AtomGroup) -> np.ndarray:
+        """
+        Atom positions in Blender world space.
+
+        The universe holds positions in angstroms while the object is built at
+        ``world_scale``, so a selection's positions have to be scaled and put
+        through the object's transform to end up in the same space as the
+        geometry drawn from them.
+        """
+        positions = np.asarray(selection.positions, dtype=np.float64)
+        positions = positions * self.world_scale
+        matrix = np.array(self.object.matrix_world)
+        return positions @ matrix[:3, :3].T + matrix[:3, 3]
+
+    def _view_points(self, selection: mda.AtomGroup | None) -> list[tuple]:
+        """
+        The world-space positions that make up a view.
+
+        With no selection this is the geometry the molecule actually renders;
+        with one it is the positions of the selected atoms.
+        """
         if selection is None:
-            return blender_utils.get_bounding_box(self.object)
-        v0, v1 = selection.bbox() * self.world_scale
-        bb_verts_3d = [
-            (v0[0], v0[1], v0[2]),
-            (v0[0], v0[1], v1[2]),
-            (v0[0], v1[1], v0[2]),
-            (v0[0], v1[1], v1[2]),
-            (v1[0], v0[1], v0[2]),
-            (v1[0], v0[1], v1[2]),
-            (v1[0], v1[1], v0[2]),
-            (v1[0], v1[1], v1[2]),
-        ]
-        return bb_verts_3d
+            points = blender_utils.evaluated_points(self.object)
+        else:
+            points = self._world_positions(selection)
+        return [tuple(point) for point in points]
 
     def get_view(
         self, selection: str | AtomGroup | None = None, frame: int | None = None
     ) -> list[tuple]:
         """
-        Get the 3D bounding box of a selection within the trajectory
+        The world-space positions of a view onto this molecule.
+
+        Without a selection these are the positions of the geometry the molecule
+        renders; with one they are the positions of the selected atoms. Pass the
+        result to [](`~mn.Canvas.look_at`) to frame it, or combine views from
+        several selections with ``+`` to frame all of them together.
 
         Parameters
         ----------
@@ -1390,7 +1405,7 @@ class Molecule(MolecularEntity):
         with temp_override_property(self, "uframe", frame):
             if selection is None:
                 # return bbox of object when no selection specified
-                return self._get_3d_bbox(None)
+                return self._view_points(None)
             if isinstance(selection, AtomGroup):
                 atom_group = selection
             elif isinstance(selection, str):
@@ -1405,7 +1420,7 @@ class Molecule(MolecularEntity):
 
             if atom_group.n_atoms == 0:
                 # return bbox of object when selection is empty
-                return self._get_3d_bbox(None)
+                return self._view_points(None)
 
             # return the 3D bounding box vertices of the selected AtomGroup
-            return self._get_3d_bbox(atom_group)
+            return self._view_points(atom_group)
