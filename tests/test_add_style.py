@@ -8,7 +8,7 @@ def _sphere(mol) -> str | None:
     "The `Sphere Geometry` value on whichever style node has one."
     for node in mol.tree.nodes:
         for socket in node.inputs:
-            if socket.name == "Sphere Geometry":
+            if socket.name == "Sphere":
                 return socket.default_value
     return None
 
