@@ -19,7 +19,7 @@ class _Unset:
         return "<unset>"
 
 
-_UNSET = _Unset()
+_Unset = _Unset()
 
 
 def _increase_view_distance():
