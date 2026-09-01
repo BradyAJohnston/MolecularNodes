@@ -149,7 +149,7 @@ class Camera:
     def frame_points(
         self,
         points: npt.ArrayLike,
-        margin: float = 0.0,
+        margin: float = 0.05,
         scene: bpy.types.Scene | None = None,
     ) -> None:
         """
@@ -164,9 +164,10 @@ class Camera:
         points : array_like
             ``(N, 3)`` world-space positions to fit into the frame. Any number
             of points is fine.
-        margin : float, default 0.0
-            Fraction of the frame to leave empty around the subject. ``0.1``
-            leaves a ten percent border; a negative value crops in tighter.
+        margin : float, default 0.05
+            Fraction of the frame to leave empty around the subject. The small
+            default keeps the subject off the edge of the frame; ``0`` fits it
+            exactly, and a negative value crops in tighter.
         scene : bpy.types.Scene, optional
             Scene to read the render aspect ratio from. Defaults to the active
             scene.

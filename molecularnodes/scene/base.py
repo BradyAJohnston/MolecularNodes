@@ -785,13 +785,14 @@ class Canvas:
         self,
         target: MolecularEntity | bpy.types.Object | npt.ArrayLike,
         viewpoint: Viewpoint | str | Sequence[float] | None = None,
-        margin: float = 0.0,
+        margin: float = 0.05,
     ) -> None:
         """
         Position the camera to look at and contain a target.
 
         The camera is moved as close to the target as keeping all of it in frame
-        allows, without changing where it points.
+        allows, without changing where it points, leaving a small margin so that
+        the subject does not sit right against the edge of the frame.
 
         Parameters
         ----------
@@ -808,9 +809,10 @@ class Canvas:
             Viewing direction along a principal axis — one of
             {"default", "front", "back", "top", "bottom", "left", "right"} —
             or a custom XYZ Euler rotation as three angles in degrees.
-        margin : float, default 0.0
-            Fraction of the frame to leave empty around the target. ``0.1``
-            leaves a ten percent border; a negative value crops in tighter.
+        margin : float, default 0.05
+            Fraction of the frame to leave empty around the target. ``0`` fits
+            the target exactly to the frame, ``0.1`` leaves a ten percent
+            border, and a negative value crops in past its edges.
 
         Examples
         --------

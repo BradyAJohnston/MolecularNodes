@@ -23,7 +23,7 @@ title: "Changelog"
 
   Existing selections are reused - matched on the selection string together with the `updating` and `periodic` flags, or on `name` - so repeated calls do not pile up duplicate selections and mesh attributes.
 - `SelectionManager.find()` looks up an existing selection by the selection string that created it, where `get()` looks a selection up by its name.
-- `Canvas.look_at()` takes a `margin`, the fraction of the frame to leave empty around the subject. A negative value crops in tighter. #1170
+- `Canvas.look_at()` takes a `margin`, the fraction of the frame to leave empty around the subject. It defaults to `0.05`, so renders get a little breathing room rather than the subject sitting against the edge of the frame. Set it to `0` to fit the subject exactly, or go negative to crop in past its edges. #1170
 - `molecularnodes.framing` solves camera framing on a set of positions. `fit_camera_to_points()` is the exact solve used by `look_at()`, with `fit_orthographic_to_points()` for orthographic cameras and `enclosing_sphere()` for framing that does not change with viewing angle. It is plain numpy, with no dependency on Blender. #1170
 
 ## Changed

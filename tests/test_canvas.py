@@ -551,7 +551,7 @@ def test_look_at_frames_consistently_across_viewpoints(canvas):
 
     filled = []
     for viewpoint in ("default", "front", "top", "left"):
-        canvas.look_at(mol, viewpoint=viewpoint)
+        canvas.look_at(mol, viewpoint=viewpoint, margin=0.0)
         offsets = points - np.asarray(canvas.camera.camera.location)
         basis = canvas.camera.basis
         depth = offsets @ basis[2]
@@ -624,3 +624,20 @@ def test_spheres_are_framed_by_their_surface_not_their_centres(canvas):
     extent = points.max(axis=0) - points.min(axis=0)
     centre_extent = centres.max(axis=0) - centres.min(axis=0)
     assert (extent > centre_extent).all()
+
+
+def test_look_at_leaves_breathing_room_by_default(canvas):
+    "The default margin keeps the subject off the edge of the frame."
+    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    points = np.asarray(mol.get_view())
+
+    canvas.look_at(mol, viewpoint="front")
+    offsets = points - np.asarray(canvas.camera.camera.location)
+    basis = canvas.camera.basis
+    depth = offsets @ basis[2]
+    left, right, bottom, top = canvas.camera.frame_bounds(canvas.scene)
+    filled = max(
+        np.max(np.abs(offsets @ basis[0]) / depth) / max(right, -left),
+        np.max(np.abs(offsets @ basis[1]) / depth) / max(top, -bottom),
+    )
+    assert filled == pytest.approx(0.95, abs=1e-6)
