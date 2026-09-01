@@ -25,10 +25,7 @@ from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...nodes.material import PresetMaterial, append_material
 from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING
-from ...utils import (
-    count_value_changes,
-    temp_override_property,
-)
+from ...utils import _UNSET, count_value_changes, temp_override_property
 from ..base import EntityType, MolecularEntity
 from ..utilities import (
     BoolObjectMNProperty,
@@ -46,16 +43,6 @@ logger = logging.getLogger(__name__)
 #: Colour keywords understood by ``Molecule.add_style(color=...)``. Anything else must
 #: name an existing attribute, be an RGBA sequence, or be a callable building the nodes.
 COLOR_KEYWORDS = ("common", "default", "plddt")
-
-
-class _Unset:
-    """Sentinel for an argument that was not passed (``None`` is a meaningful value)."""
-
-    def __repr__(self) -> str:
-        return "<unset>"
-
-
-_UNSET = _Unset()
 
 
 class Molecule(MolecularEntity):

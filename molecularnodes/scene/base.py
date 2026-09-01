@@ -13,7 +13,7 @@ from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
 from ..ui import addon
-from ..utils import suppress_stdout, temp_override_properties
+from ..utils import _UNSET, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
 from .compositor import CompositorTree, setup_compositor
 from .engines import EEVEE, Cycles
@@ -52,15 +52,6 @@ _RENDER_ENGINES = Literal["EEVEE", "CYCLES"]
 # the template loaded when nothing else is asked for and there is nothing to lose
 _DEFAULT_TEMPLATE = "Molecular Nodes"
 
-
-class _Unset:
-    """Sentinel telling an argument that was left out from one passed explicitly."""
-
-    def __repr__(self) -> str:
-        return "<default>"
-
-
-_UNSET = _Unset()
 
 # render passes commonly needed for compositor effects, mapped to the
 # `bpy.types.ViewLayer` toggle that enables each one
