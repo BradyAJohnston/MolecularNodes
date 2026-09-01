@@ -237,7 +237,7 @@ class Canvas:
         self._compositor: CompositorTree | None = None
         self._world: WorldTree | None = None
 
-        requested = not isinstance(template, _Unset)
+        requested = not isinstance(template, _UNSET)
         if not requested:
             template = _DEFAULT_TEMPLATE
 

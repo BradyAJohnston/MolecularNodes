@@ -11,6 +11,7 @@ _INCREASED_CLIP_END = 1e4
 _DEFAULT_CAMERA_CLIP_END = 1e2
 _DEFAULT_VIEWPORT_CLIP_END = 1e3
 
+
 class _Unset:
     """Sentinel for an argument that was not passed (``None`` is a meaningful value)."""
 
@@ -19,6 +20,7 @@ class _Unset:
 
 
 _UNSET = _Unset()
+
 
 def _increase_view_distance():
     scene = bpy.context.scene
