@@ -761,6 +761,39 @@ class Molecule(MolecularEntity):
         return entity
 
     @classmethod
+    def from_smiles(cls, smiles: str, name: str | None = None, **kwargs) -> "Molecule":
+        """Create a molecule from a SMILES string.
+
+        The string is parsed by RDKit via :meth:`MDAnalysis.Universe.from_smiles`,
+        which adds hydrogens and generates a 3D conformer by default. Requires the
+        ``rdkit`` package to be installed.
+
+        Parameters
+        ----------
+        smiles : str
+            The SMILES string, e.g. ``"CCO"`` for ethanol.
+        name : str | None, optional
+            Name for the Blender object. Defaults to the SMILES string.
+        kwargs : dict, optional
+            Additional keyword arguments passed to
+            :meth:`MDAnalysis.Universe.from_smiles`, e.g. ``numConfs`` to generate
+            multiple conformers as trajectory frames.
+
+        Returns
+        -------
+        Molecule
+            The Universe-backed entity representing the molecule.
+        """
+        try:
+            universe = mda.Universe.from_smiles(smiles, **kwargs)
+        except ImportError as e:
+            raise ImportError(
+                "Importing from a SMILES string requires the `rdkit` package,"
+                " which is not installed."
+            ) from e
+        return cls(universe, name=name or smiles)
+
+    @classmethod
     def fetch(
         cls,
         code: str,

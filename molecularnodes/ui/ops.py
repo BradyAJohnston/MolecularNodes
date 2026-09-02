@@ -104,7 +104,17 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 "Local File",
                 "Open a structure file or MD topology + trajectory already on disk",
             ),
+            (
+                "smiles",
+                "SMILES",
+                "Create a molecule from a SMILES string (requires RDKit)",
+            ),
         ),
+    )
+    smiles: StringProperty(  # type: ignore
+        name="SMILES",
+        description="SMILES string to create the molecule from, e.g. 'CCO' for ethanol",
+        options={"TEXTEDIT_UPDATE"},
     )
     database: EnumProperty(  # type: ignore
         name="Database",
@@ -177,6 +187,8 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 layout.prop(self, "filepath")
                 layout.prop(self, "trajectory")
                 layout.prop(self, "additional_arguments")
+            elif self.method == "smiles":
+                layout.prop(self, "smiles")
             else:
                 layout.prop_tabs_enum(self, "database")
                 row = layout.row().split(factor=0.7)
@@ -244,6 +256,9 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 else:
                     mol = Molecule.load(topology)
                     message = f"Imported '{self.filepath}' as {mol.name}"
+            elif self.method == "smiles":
+                mol = Molecule.from_smiles(self.smiles)
+                message = f"Created {mol.name} from SMILES string"
             else:
                 mol = Molecule.fetch(
                     code=self.code,
@@ -260,9 +275,10 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                     "There may not be a `.pdb` formatted file available - try a different download format.",
                 )
             return {"CANCELLED"}
-        except (InvalidFileError, ValueError) as e:
+        except (InvalidFileError, ValueError, ImportError, SyntaxError) as e:
             # unreadable file contents (e.g. a structure factor file with no
-            # coordinates); show the message instead of a console traceback
+            # coordinates), an invalid SMILES string, or missing rdkit; show
+            # the message instead of a console traceback
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
 
