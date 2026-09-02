@@ -9,6 +9,7 @@ import functools
 import inspect
 import io
 import logging
+import re
 import warnings
 from pathlib import Path
 from typing import Callable, Dict, Sequence
@@ -701,6 +702,12 @@ class Molecule(MolecularEntity):
         multi-frame universes. Biological assembly and entity/chain metadata parsed from
         the file are stored on the Blender object.
 
+        Small-molecule crystallographic ``.cif`` files (e.g. from the ICSD or COD)
+        are instead read by :mod:`~molecularnodes.entities.molecule.corecif`, which
+        expands the asymmetric unit by the file's symmetry operators to fill one
+        unit cell. ``.xyz`` files are read natively by MDAnalysis, with elements
+        taken from the atom names.
+
         Parameters
         ----------
         file_path : str | Path | io.BytesIO
@@ -714,6 +721,36 @@ class Molecule(MolecularEntity):
             The Universe-backed entity representing the structure.
         """
         from ..molecule.reader import read_structure
+        from . import corecif
+
+        # small-molecule crystallographic CIFs (ICSD, COD) are a different
+        # dialect that biotite cannot parse; route them through the dedicated
+        # MDAnalysis parser, which expands the asymmetric unit to a unit cell
+        if (
+            not isinstance(file_path, io.BytesIO)
+            and Path(file_path).suffix == ".cif"
+            and corecif.is_core_cif(file_path)
+        ):
+            universe = mda.Universe(
+                str(file_path),
+                topology_format=corecif.CoreCIFParser,
+                format=corecif.CoreCIFReader,
+            )
+            return cls(universe, name=name or Path(file_path).name)
+
+        # .xyz files are read natively by MDAnalysis; the atom names are the
+        # element symbols, which the element-derived attributes need
+        if not isinstance(file_path, io.BytesIO) and Path(file_path).suffix == ".xyz":
+            universe = mda.Universe(str(file_path))
+            if not hasattr(universe.atoms, "elements"):
+                universe.add_TopologyAttr(
+                    "elements",
+                    [
+                        re.sub(r"[^A-Za-z]", "", atom_name)[:2].capitalize()
+                        for atom_name in universe.atoms.names
+                    ],
+                )
+            return cls(universe, name=name or Path(file_path).name)
 
         reader = read_structure(file_path)
         universe = universe_from_atoms(reader.array)

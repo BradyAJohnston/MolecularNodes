@@ -3,6 +3,7 @@ from typing import cast
 import bpy
 import MDAnalysis as mda
 import nodebpy
+from biotite import InvalidFileError
 from bpy.props import (
     BoolProperty,
     CollectionProperty,
@@ -38,7 +39,7 @@ class MN_FH_Import_Molecule(bpy.types.FileHandler):
     bl_idname = "MN_FH_import_molecule"
     bl_label = "File handler for import molecular data files."
     bl_import_operator = "mn.import_molecule"
-    bl_file_extensions = ".pdb;.cif;.mmcif;.bcif;.pdbx"
+    bl_file_extensions = ".pdb;.cif;.mmcif;.bcif;.pdbx;.xyz"
 
     @classmethod
     def poll_drop(cls, context):
@@ -258,6 +259,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                     {"ERROR"},
                     "There may not be a `.pdb` formatted file available - try a different download format.",
                 )
+            return {"CANCELLED"}
+        except (InvalidFileError, ValueError) as e:
+            # unreadable file contents (e.g. a structure factor file with no
+            # coordinates); show the message instead of a console traceback
+            self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
 
         self.apply_import_options(mol)
