@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "molecularnodes"
-version = "5.2.0"
+version = "520.0.0"
 name = "Molecular Nodes"
 tagline = "A toolbox for molecular import and animation in Blender"
 maintainer = "Brady Johnston<brady.johnston@me.com>"
