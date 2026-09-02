@@ -6,8 +6,6 @@ readme = "README.md"
 dependencies = [
     "databpy>=0.8.0",
     "mdanalysis[extra_formats]>=2.10",
-    "rdkit",
-    "imdclient",
     "biotite>=1.7.1",
     "mrcfile",
     "starfile",

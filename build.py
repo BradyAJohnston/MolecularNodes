@@ -283,31 +283,39 @@ def get_all_dependencies_from_lock(package_name: str = "molecularnodes") -> set:
     with open(UVLOCK_PATH, "rb") as f:
         lock_data = tomllib.load(f)
 
-    # Build a dependency graph
-    dep_graph = {}
-    for package in lock_data.get("package", []):
-        name = package.get("name", "")
-        deps = package.get("dependencies", [])
-        dep_names = [d.get("name", "") for d in deps if isinstance(d, dict)]
-        dep_graph[name] = dep_names
+    packages = {p.get("name", ""): p for p in lock_data.get("package", [])}
 
-    # BFS to get all transitive dependencies
+    # BFS over (package, extra) pairs so a dependency declared with extras
+    # (e.g. mdanalysis[extra-formats]) also pulls in the packages from that
+    # extra's list in [package.optional-dependencies]
     all_deps = set()
-    to_visit = [package_name]
+    to_visit = [(package_name, None)]
     visited = set()
 
     while to_visit:
-        current = to_visit.pop(0)
-        if current in visited:
+        name, extra = to_visit.pop(0)
+        if (name, extra) in visited:
             continue
-        visited.add(current)
+        visited.add((name, extra))
 
-        if current in dep_graph:
-            for dep in dep_graph[current]:
-                if dep not in visited:
-                    all_deps.add(dep)
-                    to_visit.append(dep)
+        package = packages.get(name)
+        if package is None:
+            continue
+        if extra is None:
+            deps = package.get("dependencies", [])
+        else:
+            deps = package.get("optional-dependencies", {}).get(extra, [])
 
+        for dep in deps:
+            if not isinstance(dep, dict):
+                continue
+            dep_name = dep.get("name", "")
+            all_deps.add(dep_name)
+            to_visit.append((dep_name, None))
+            for dep_extra in dep.get("extra", []):
+                to_visit.append((dep_name, dep_extra))
+
+    all_deps.discard(package_name)
     return all_deps
 
 
@@ -389,6 +397,15 @@ def download_wheels_from_lock(
 
     # Parse uv.lock for these packages
     package_info = parse_uv_lock_for_packages(all_deps)
+
+    # packages without wheels (sdist-only, e.g. parmed) cannot be bundled in a
+    # Blender extension; say so rather than dropping them silently
+    unbundleable = sorted(dep for dep in all_deps if dep not in package_info)
+    if unbundleable:
+        print(
+            "Warning: no wheels available in uv.lock for: "
+            f"{', '.join(unbundleable)} - these will NOT be bundled"
+        )
 
     # Collect wheels per package per platform, selecting only the best match
     # Key: (package_name, platform_metadata), Value: (filename, url, priority)
