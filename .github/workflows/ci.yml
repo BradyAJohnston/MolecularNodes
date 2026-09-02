@@ -122,8 +122,6 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           version: "latest"
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
 
       - name: Install Packages
         run: |
