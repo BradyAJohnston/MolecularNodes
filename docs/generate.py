@@ -1,17 +1,22 @@
-"""Generate the per-category node documentation pages in docs/nodes/.
+"""Generate the node reference structure for the quartodoc API docs.
 
 The .blend asset file is the source of truth: every node group marked as an
 asset in `molecularnodes/assets/node_data_file.blend` is documented, grouped
-by its asset catalog (the same grouping the GUI shows). Socket names,
-defaults, tooltips and descriptions all come from the .blend interface —
-the same data that generates the typed classes in `molecularnodes/nodes/`
-(see generate_node_classes.py).
+by its asset catalog (the same grouping the GUI shows). Each top-level catalog
+becomes one quartodoc page listing the generated node classes for that
+category (see generate_node_classes.py), written into the marked block of
+`docs/_quarto.yml` before `quartodoc build` runs.
 
 Extra information that cannot live on the nodes themselves (long-form prose,
-demo videos) is merged in from `docs/nodes.yml`, keyed by node group name.
+demo videos) lives in `docs/nodes.yml`, keyed by node group name, and is
+injected into the rendered class pages by the custom renderer in
+`docs/_renderer.py`. Entries marked `custom: true` describe the node groups
+generated per imported structure; they have no class in the asset file, so
+they are documented on `docs/api/generated_nodes.qmd` instead.
 """
 
 import pathlib
+import textwrap
 from collections import defaultdict
 import bpy
 import yaml
@@ -19,7 +24,34 @@ from nodebpy.assets import _codegen
 import molecularnodes as mn
 
 DOCS_FOLDER = pathlib.Path(__file__).resolve().parent
+QUARTO_YML = DOCS_FOLDER / "_quarto.yml"
 CATS_FILE = pathlib.Path(mn.assets.MN_DATA_FILE).parent / "blender_assets.cats.txt"
+
+BEGIN_MARKER = "  # -- begin generated node sections (docs/generate.py) --\n"
+END_MARKER = "  # -- end generated node sections --\n"
+
+NODES_DESC = (
+    "The node groups included with Molecular Nodes, grouped by the same"
+    " categories as the add menu inside of Geometry Nodes. Each node group is"
+    " also available as a typed Python class for scripting."
+)
+
+CATEGORY_DESCRIPTIONS = {
+    "Style": "Generate geometry for the different molecular styles",
+    "Select": "Create boolean selections based on the atomic attributes",
+    "Color": "Set and manipulate the colors of atoms",
+    "Animate": "Animate values and geometry over frames",
+    "Topology": "Work with the bond and residue topology of structures",
+    "Attributes": "Read attributes from structures",
+    "Density": "Work with volumetric density data",
+    "DNA": "Nodes for working with oxDNA and other DNA models",
+    "Ensemble": "Instance and manipulate ensembles and assemblies",
+    "Simulation": "Nodes for simulations inside of Geometry Nodes",
+    "Curves": "Create and manipulate curves",
+    "Geometry": "General geometry processing utilities",
+    "Utilities": "Small helper node groups used throughout Molecular Nodes",
+    "Materials": "Shader node groups for the pre-built materials",
+}
 
 header = """---
 toc: true
@@ -30,7 +62,7 @@ fig-align: center
 
 
 def catalog_paths() -> dict[str, str]:
-    "Map catalog UUID -> catalog path (e.g. 'Molecular Nodes/Style')."
+    "Map catalog UUID -> catalog path (e.g. 'Molecular Nodes/Style'), in file order."
     paths = {}
     for line in CATS_FILE.read_text().splitlines():
         line = line.strip()
@@ -60,94 +92,95 @@ def video_markdown(urls: list[str]) -> str:
     return "\n\n".join(lines)
 
 
-def format_default(socket: _codegen._Socket) -> str:
-    if socket.default in ("None", ""):
-        return ""
-    return f"`{socket.default}`"
+def class_path(group) -> str | None:
+    "Qualified path of the generated class for a node group, or None if absent."
+    module = _codegen._TREE_MODULES.get(group.bl_idname)
+    if module is None or not hasattr(mn.nodes, module):
+        return None
+    cls_name = _codegen._class_name(group.name)
+    if not hasattr(getattr(mn.nodes, module), cls_name):
+        return None
+    return f"nodes.{module}.{cls_name}"
 
 
-def socket_tables(cls: _codegen._AssetClass) -> str:
-    text = ""
-    if cls.inputs:
-        text += "\n\n| Input | Type | Default | Description |\n|---|---|---|---|\n"
-        for s in cls.inputs:
-            doc = s.description
-            if s.menu_items:
-                options = ", ".join(f"`{item}`" for item in s.menu_items)
-                doc = f"{doc} Options: {options}".strip()
-            text += f"| {s.name} | `{s.socket_class.removesuffix('Socket')}` | {format_default(s)} | {doc} |\n"
-    if cls.outputs:
-        text += "\n\n| Output | Type | Description |\n|---|---|---|\n"
-        for s in cls.outputs:
-            text += f"| {s.name} | `{s.socket_class.removesuffix('Socket')}` | {s.description} |\n"
-    return text
-
-
-def node_markdown(group, extra: dict) -> str:
-    cls = _codegen._introspect_group(group, group.name, "")
-    text = f"## {group.name}\n"
-    description = group.description.strip()
-    prose = (extra.get("description") or "").strip()
-    if description:
-        text += f"\n{description}\n"
-    if prose and prose != description:
-        text += f"\n{prose}\n"
-    if extra.get("videos"):
-        text += f"\n{video_markdown(extra['videos'])}\n"
-    text += socket_tables(cls)
-    return text
-
-
-def custom_markdown(name: str, extra: dict) -> str:
-    text = f"## {extra.get('label', name)}\n"
-    text += (
-        f"\n*Node groups with the prefix `{name}` are generated for each"
-        " imported structure, rather than being included in the asset file.*\n"
-    )
-    if extra.get("description"):
-        text += f"\n{extra['description']}\n"
-    if extra.get("videos"):
-        text += f"\n{video_markdown(extra['videos'])}\n"
-    return text
-
-
-def generate_node_pages() -> None:
+def generate_node_sections() -> None:
     extras: dict[str, dict] = yaml.safe_load((DOCS_FOLDER / "nodes.yml").read_text())
     bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
     paths = catalog_paths()
 
-    pages: dict[str, list] = defaultdict(list)
+    # (category, subcategory) -> list of class paths; subcategories get their
+    # own page (e.g. 'Utilities / Color'). Page order follows cats.txt.
+    pages: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for path in paths.values():
+        pages.setdefault(categorise(path), [])
+
     documented = set()
     for group in bpy.data.node_groups:
         # skip non-assets and groups linked in from Blender's bundled libraries
         if group.asset_data is None or group.library is not None:
             continue
-        category, sub = categorise(paths.get(group.asset_data.catalog_id, ""))
-        pages[category].append((sub, group))
+        path = class_path(group)
+        if path is None:
+            print(f"no generated class for asset node group: {group.name}")
+            continue
+        pages[categorise(paths.get(group.asset_data.catalog_id, ""))].append(path)
         documented.add(group.name)
 
     for name, extra in extras.items():
-        if extra.get("custom"):
-            pages[extra["category"]].append(("Generated Node Groups", name))
-        elif name not in documented:
+        if not extra.get("custom") and name not in documented:
             print(f"nodes.yml entry matches no asset in the .blend file: {name}")
 
-    for category, items in pages.items():
-        items.sort(key=lambda item: (item[0], getattr(item[1], "name", item[1])))
-        with open(DOCS_FOLDER / f"nodes/{category.lower()}.qmd", "w") as file:
-            file.write(header)
-            file.write(f"# {category}\n")
-            current_sub = ""
-            for sub, item in items:
-                if sub != current_sub:
-                    current_sub = sub
-                    file.write(f"\n# {sub}\n")
-                if isinstance(item, str):
-                    file.write("\n" + custom_markdown(item, extras[item]) + "\n")
-                else:
-                    file.write(
-                        "\n" + node_markdown(item, extras.get(item.name, {})) + "\n"
-                    )
+    contents = []
+    for (category, sub), items in pages.items():
+        if not items:
+            continue
+        items.sort()
+        name = f"{category} / {sub}" if sub else category
+        slug = f"{category}_{sub}" if sub else category
+        contents.append(
+            {
+                "kind": "page",
+                "path": "nodes." + slug.lower().replace(" ", "_").replace("/", "_"),
+                "summary": {
+                    "name": name,
+                    "desc": "" if sub else CATEGORY_DESCRIPTIONS.get(category, ""),
+                },
+                "contents": [{"name": path, "children": "embedded"} for path in items],
+            }
+        )
+    section = {"title": "Nodes", "desc": NODES_DESC, "contents": contents}
+
+    text = QUARTO_YML.read_text()
+    head, found, rest = text.partition(BEGIN_MARKER)
+    _, found_end, tail = rest.partition(END_MARKER)
+    if not (found and found_end):
+        raise RuntimeError(f"generated node section markers not found in {QUARTO_YML}")
+    block = yaml.safe_dump([section], sort_keys=False, width=88)
+    QUARTO_YML.write_text(
+        head + BEGIN_MARKER + textwrap.indent(block, "  ") + END_MARKER + tail
+    )
+
+
+def generate_custom_nodes_page() -> None:
+    extras: dict[str, dict] = yaml.safe_load((DOCS_FOLDER / "nodes.yml").read_text())
+    with open(DOCS_FOLDER / "api/generated_nodes.qmd", "w") as file:
+        file.write(header)
+        file.write("# Generated Node Groups\n\n")
+        file.write(
+            "These node groups are generated for each imported structure, rather"
+            " than being included in the asset file, so they have no corresponding"
+            " Python class. The name of each generated node group starts with the"
+            " prefix shown and ends with the name of the structure it was"
+            " generated for.\n"
+        )
+        for name, extra in extras.items():
+            if not extra.get("custom"):
+                continue
+            file.write(f"\n## {extra.get('label', name)} (`{name}`)\n")
+            if extra.get("description"):
+                file.write(f"\n{extra['description']}\n")
+            if extra.get("videos"):
+                file.write(f"\n{video_markdown(extra['videos'])}\n")
 
 
 def generate_data_table() -> None:
@@ -175,5 +208,6 @@ def generate_data_table() -> None:
 
 
 if __name__ == "__main__":
-    generate_node_pages()
+    generate_node_sections()
+    generate_custom_nodes_page()
     generate_data_table()

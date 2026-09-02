@@ -58,8 +58,6 @@ website:
       contents:
       - attributes.qmd
       - data_table.qmd
-    - section: "Nodes"
-      contents: nodes/*
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -130,17 +128,8 @@ quartodoc:
     - section: "Reference"
       contents:
       - "{{ contents }}"
-    - text: "---"
-    - section: "Node Classes"
-      contents:
-      - section: "Geometry"
-        href: api/reference/nodes.geometry.qmd
-        contents:
-        - auto: api/reference/molecularnodes.nodes.geometry.*.qmd
-      - section: "Shader"
-        href: api/reference/nodes.shader.qmd
-        contents:
-        - auto: api/reference/molecularnodes.nodes.shader.*.qmd
+      - text: "Generated Node Groups"
+        href: api/generated_nodes.qmd
   # css: api/_styles-quartodoc.css
 
   options:
@@ -197,11 +186,630 @@ quartodoc:
     - scene.recorder.FrameRecorder
     - scene.world.WorldTree
 
+  # -- begin generated node sections (docs/generate.py) --
   - title: Nodes
-    desc: >
-      The typed node classes generated from the node groups included in Molecular Nodes, including the styles. Every node group in the asset file is available as a class.
+    desc: The node groups included with Molecular Nodes, grouped by the same categories as the
+      add menu inside of Geometry Nodes. Each node group is also available as a typed Python
+      class for scripting.
     contents:
-    - name: nodes.geometry
-      children: embedded
-    - name: nodes.shader
-      children: embedded
+    - kind: page
+      path: nodes.materials
+      summary:
+        name: Materials
+        desc: Shader node groups for the pre-built materials
+      contents:
+      - name: nodes.shader.OutlineMask
+        children: embedded
+      - name: nodes.shader.TransparentOutline
+        children: embedded
+    - kind: page
+      path: nodes.general
+      summary:
+        name: General
+        desc: ''
+      contents:
+      - name: nodes.geometry.AssemblyID
+        children: embedded
+      - name: nodes.geometry.SymmetryID
+        children: embedded
+      - name: nodes.shader.ColorAO
+        children: embedded
+      - name: nodes.shader.Flat
+        children: embedded
+    - kind: page
+      path: nodes.animate
+      summary:
+        name: Animate
+        desc: Animate values and geometry over frames
+      contents:
+      - name: nodes.geometry.AnimateAction
+        children: embedded
+      - name: nodes.geometry.AnimateFrames
+        children: embedded
+      - name: nodes.geometry.AnimatePeptideToCurve
+        children: embedded
+      - name: nodes.geometry.AnimateTrails
+        children: embedded
+      - name: nodes.geometry.AnimateValue
+        children: embedded
+      - name: nodes.geometry.AnimateWiggle
+        children: embedded
+    - kind: page
+      path: nodes.attributes
+      summary:
+        name: Attributes
+        desc: Read attributes from structures
+      contents:
+      - name: nodes.geometry.AtomID
+        children: embedded
+      - name: nodes.geometry.AtomName
+        children: embedded
+      - name: nodes.geometry.AtomicNumber
+        children: embedded
+      - name: nodes.geometry.BFactor
+        children: embedded
+      - name: nodes.geometry.ChainID
+        children: embedded
+      - name: nodes.geometry.Color
+        children: embedded
+      - name: nodes.geometry.EntityID
+        children: embedded
+      - name: nodes.geometry.FrameID
+        children: embedded
+      - name: nodes.geometry.Mass
+        children: embedded
+      - name: nodes.geometry.ResidueID
+        children: embedded
+      - name: nodes.geometry.ResidueName
+        children: embedded
+      - name: nodes.geometry.SecondaryStructure
+        children: embedded
+      - name: nodes.geometry.UResID
+        children: embedded
+      - name: nodes.geometry.VDWRadii
+        children: embedded
+    - kind: page
+      path: nodes.color
+      summary:
+        name: Color
+        desc: Set and manipulate the colors of atoms
+      contents:
+      - name: nodes.geometry.ColorAtomicNumber
+        children: embedded
+      - name: nodes.geometry.ColorAttributeMap
+        children: embedded
+      - name: nodes.geometry.ColorAttributeRandom
+        children: embedded
+      - name: nodes.geometry.ColorCommon
+        children: embedded
+      - name: nodes.geometry.ColorElement
+        children: embedded
+      - name: nodes.geometry.ColorGoodsell
+        children: embedded
+      - name: nodes.geometry.ColorMixIntermediate
+        children: embedded
+      - name: nodes.geometry.ColorOKLabMix
+        children: embedded
+      - name: nodes.geometry.ColorOKLabOffset
+        children: embedded
+      - name: nodes.geometry.ColorPLDDT
+        children: embedded
+      - name: nodes.geometry.ColorRainbow
+        children: embedded
+      - name: nodes.geometry.ColorResName
+        children: embedded
+      - name: nodes.geometry.ColorSecondaryStructure
+        children: embedded
+      - name: nodes.geometry.ColorToLCh
+        children: embedded
+      - name: nodes.geometry.LChToColor
+        children: embedded
+      - name: nodes.geometry.RandomColor
+        children: embedded
+      - name: nodes.geometry.SetColor
+        children: embedded
+      - name: nodes.shader.MNColor
+        children: embedded
+    - kind: page
+      path: nodes.curves
+      summary:
+        name: Curves
+        desc: Create and manipulate curves
+      contents:
+      - name: nodes.geometry.BreakCurves
+        children: embedded
+      - name: nodes.geometry.CumulativeLength
+        children: embedded
+      - name: nodes.geometry.CurveCustomProfile
+        children: embedded
+      - name: nodes.geometry.CurveEndpointValues
+        children: embedded
+      - name: nodes.geometry.CurveOffsetDot
+        children: embedded
+      - name: nodes.geometry.CurveRotation
+        children: embedded
+      - name: nodes.geometry.CurveTransform
+        children: embedded
+      - name: nodes.geometry.CurveVectors
+        children: embedded
+      - name: nodes.geometry.OffsetPointAlongCurve
+        children: embedded
+    - kind: page
+      path: nodes.dna
+      summary:
+        name: DNA
+        desc: Nodes for working with oxDNA and other DNA models
+      contents:
+      - name: nodes.geometry.DNAFromCurve
+        children: embedded
+      - name: nodes.geometry.OxDNANormal
+        children: embedded
+      - name: nodes.geometry.OxDNAOffset
+        children: embedded
+      - name: nodes.geometry.OxDNARotation
+        children: embedded
+      - name: nodes.geometry.OxDNAStyleRibbon
+        children: embedded
+      - name: nodes.geometry.OxDNAVector
+        children: embedded
+    - kind: page
+      path: nodes.density
+      summary:
+        name: Density
+        desc: Work with volumetric density data
+      contents:
+      - name: nodes.geometry.DensityStyleISOSurface
+        children: embedded
+      - name: nodes.geometry.DensityStyleSurface
+        children: embedded
+      - name: nodes.geometry.DensityStyleWire
+        children: embedded
+    - kind: page
+      path: nodes.ensemble
+      summary:
+        name: Ensemble
+        desc: Instance and manipulate ensembles and assemblies
+      contents:
+      - name: nodes.geometry.AssemblyInstance
+        children: embedded
+      - name: nodes.geometry.EnsembleInstance
+        children: embedded
+      - name: nodes.geometry.LatticeGrid
+        children: embedded
+      - name: nodes.geometry.PeriodicArray
+        children: embedded
+      - name: nodes.geometry.PeriodicBox
+        children: embedded
+      - name: nodes.geometry.PeriodicImage
+        children: embedded
+      - name: nodes.geometry.RotationCisTEM
+        children: embedded
+      - name: nodes.geometry.RotationRELION
+        children: embedded
+      - name: nodes.geometry.TEMRotation
+        children: embedded
+    - kind: page
+      path: nodes.geometry
+      summary:
+        name: Geometry
+        desc: General geometry processing utilities
+      contents:
+      - name: nodes.geometry.CentreOnSelection
+        children: embedded
+      - name: nodes.geometry.CheckGeometry
+        children: embedded
+      - name: nodes.geometry.ClearInstanceTransforms
+        children: embedded
+      - name: nodes.geometry.ContainsGeometry
+        children: embedded
+      - name: nodes.geometry.CurveVisualize
+        children: embedded
+      - name: nodes.geometry.EvaluateOnInstances
+        children: embedded
+      - name: nodes.geometry.EvaluateOrderedBundles
+        children: embedded
+      - name: nodes.geometry.EvluateWhilePlanar
+        children: embedded
+      - name: nodes.geometry.FallbackGeometry
+        children: embedded
+      - name: nodes.geometry.GeoemtryToPlanar
+        children: embedded
+      - name: nodes.geometry.LagGeometry
+        children: embedded
+      - name: nodes.geometry.OffsetCurve
+        children: embedded
+      - name: nodes.geometry.Plexus
+        children: embedded
+      - name: nodes.geometry.PrimitiveArrow
+        children: embedded
+      - name: nodes.geometry.PrimitiveGimbal
+        children: embedded
+      - name: nodes.geometry.SeparateFirstPoint
+        children: embedded
+      - name: nodes.geometry.SliceEdgeInstances
+        children: embedded
+      - name: nodes.geometry.SplitToCentredInstances
+        children: embedded
+      - name: nodes.geometry.VisualizeAngle
+        children: embedded
+      - name: nodes.geometry.VisualizePoints
+        children: embedded
+    - kind: page
+      path: nodes.select
+      summary:
+        name: Select
+        desc: Create boolean selections based on the atomic attributes
+      contents:
+      - name: nodes.geometry.IsAlphaCarbon
+        children: embedded
+      - name: nodes.geometry.IsBackbone
+        children: embedded
+      - name: nodes.geometry.IsBackboneEdge
+        children: embedded
+      - name: nodes.geometry.IsBoundaryEdge
+        children: embedded
+      - name: nodes.geometry.IsHelix
+        children: embedded
+      - name: nodes.geometry.IsHydrogen
+        children: embedded
+      - name: nodes.geometry.IsLipid
+        children: embedded
+      - name: nodes.geometry.IsLoop
+        children: embedded
+      - name: nodes.geometry.IsNucleic
+        children: embedded
+      - name: nodes.geometry.IsPeptide
+        children: embedded
+      - name: nodes.geometry.IsSheet
+        children: embedded
+      - name: nodes.geometry.IsSideChain
+        children: embedded
+      - name: nodes.geometry.IsSolvent
+        children: embedded
+      - name: nodes.geometry.MenuAtomName
+        children: embedded
+      - name: nodes.geometry.SelectAtomicNumber
+        children: embedded
+      - name: nodes.geometry.SelectAttribute
+        children: embedded
+      - name: nodes.geometry.SelectBonded
+        children: embedded
+      - name: nodes.geometry.SelectCube
+        children: embedded
+      - name: nodes.geometry.SelectElement
+        children: embedded
+      - name: nodes.geometry.SelectNucleicType
+        children: embedded
+      - name: nodes.geometry.SelectProximity
+        children: embedded
+      - name: nodes.geometry.SelectResID
+        children: embedded
+      - name: nodes.geometry.SelectResIDRange
+        children: embedded
+      - name: nodes.geometry.SelectResIDString
+        children: embedded
+      - name: nodes.geometry.SelectResName
+        children: embedded
+      - name: nodes.geometry.SelectResWhole
+        children: embedded
+      - name: nodes.geometry.SelectSphere
+        children: embedded
+      - name: nodes.geometry.SelectedInstances
+        children: embedded
+      - name: nodes.geometry.SeparateAtoms
+        children: embedded
+      - name: nodes.geometry.SeparatePolymers
+        children: embedded
+    - kind: page
+      path: nodes.style
+      summary:
+        name: Style
+        desc: Generate geometry for the different molecular styles
+      contents:
+      - name: nodes.geometry.StyleBallAndStick
+        children: embedded
+      - name: nodes.geometry.StyleCartoon
+        children: embedded
+      - name: nodes.geometry.StyleRibbon
+        children: embedded
+      - name: nodes.geometry.StyleSpheres
+        children: embedded
+      - name: nodes.geometry.StyleSticks
+        children: embedded
+      - name: nodes.geometry.StyleSurface
+        children: embedded
+    - kind: page
+      path: nodes.topology
+      summary:
+        name: Topology
+        desc: Work with the bond and residue topology of structures
+      contents:
+      - name: nodes.geometry.AnimateDihedrals
+        children: embedded
+      - name: nodes.geometry.AtomsToCACurves
+        children: embedded
+      - name: nodes.geometry.AtomsToCurves
+        children: embedded
+      - name: nodes.geometry.BackboneC
+        children: embedded
+      - name: nodes.geometry.BackboneCA
+        children: embedded
+      - name: nodes.geometry.BackboneN
+        children: embedded
+      - name: nodes.geometry.BackboneNH
+        children: embedded
+      - name: nodes.geometry.BackboneO
+        children: embedded
+      - name: nodes.geometry.BackbonePositions
+        children: embedded
+      - name: nodes.geometry.BackboneVectorList
+        children: embedded
+      - name: nodes.geometry.BackboneVectors
+        children: embedded
+      - name: nodes.geometry.BondCount
+        children: embedded
+      - name: nodes.geometry.BreakBonds
+        children: embedded
+      - name: nodes.geometry.ChainParameter
+        children: embedded
+      - name: nodes.geometry.ColorBackbone
+        children: embedded
+      - name: nodes.geometry.CurveOffsetDihedral
+        children: embedded
+      - name: nodes.geometry.DihedralChiAngle
+        children: embedded
+      - name: nodes.geometry.DihedralNucleicAngle
+        children: embedded
+      - name: nodes.geometry.DihedralPhi
+        children: embedded
+      - name: nodes.geometry.DihedralPsi
+        children: embedded
+      - name: nodes.geometry.EdgeGroupID
+        children: embedded
+      - name: nodes.geometry.EdgeInfo
+        children: embedded
+      - name: nodes.geometry.EdgeLength
+        children: embedded
+      - name: nodes.geometry.FindBondedAtom
+        children: embedded
+      - name: nodes.geometry.FindBonds
+        children: embedded
+      - name: nodes.geometry.MenuResidueMask
+        children: embedded
+      - name: nodes.geometry.MenuResidueName
+        children: embedded
+      - name: nodes.geometry.NucleicChi
+        children: embedded
+      - name: nodes.geometry.NucleicDihedral
+        children: embedded
+      - name: nodes.geometry.PeptideChi
+        children: embedded
+      - name: nodes.geometry.PeptideDihedral
+        children: embedded
+      - name: nodes.geometry.PointEdgeAngle
+        children: embedded
+      - name: nodes.geometry.PointsOfEdge
+        children: embedded
+      - name: nodes.geometry.ResidueDihedralAngle
+        children: embedded
+      - name: nodes.geometry.ResidueMask
+        children: embedded
+      - name: nodes.geometry.ResidueParameter
+        children: embedded
+      - name: nodes.geometry.SampleNearestAtoms
+        children: embedded
+      - name: nodes.geometry.SetChiAngle
+        children: embedded
+      - name: nodes.geometry.SetNucleicDihedral
+        children: embedded
+      - name: nodes.geometry.SetPhiPsiAngle
+        children: embedded
+      - name: nodes.geometry.SetUResID
+        children: embedded
+      - name: nodes.geometry.StructureParameter
+        children: embedded
+      - name: nodes.geometry.SwitchResidueName
+        children: embedded
+      - name: nodes.geometry.TopologyDSSP
+        children: embedded
+      - name: nodes.geometry.UniqueChainID
+        children: embedded
+      - name: nodes.geometry.UniqueResidueID
+        children: embedded
+      - name: nodes.geometry.VisualizeChiAngle
+        children: embedded
+      - name: nodes.geometry.VisualizeRelativeAtoms
+        children: embedded
+    - kind: page
+      path: nodes.utilities
+      summary:
+        name: Utilities
+        desc: Small helper node groups used throughout Molecular Nodes
+      contents:
+      - name: nodes.geometry.AccumulateAxisRotation
+        children: embedded
+      - name: nodes.geometry.AngstromToWorld
+        children: embedded
+      - name: nodes.geometry.BetweenFloat
+        children: embedded
+      - name: nodes.geometry.BetweenInteger
+        children: embedded
+      - name: nodes.geometry.BetweenVector
+        children: embedded
+      - name: nodes.geometry.Centroid
+        children: embedded
+      - name: nodes.geometry.DihedralAngle
+        children: embedded
+      - name: nodes.geometry.EvaluateOnAtoms
+        children: embedded
+      - name: nodes.geometry.EvaluatePerGroup
+        children: embedded
+      - name: nodes.geometry.FallbackBoolean
+        children: embedded
+      - name: nodes.geometry.FallbackFloat
+        children: embedded
+      - name: nodes.geometry.FallbackInteger
+        children: embedded
+      - name: nodes.geometry.FallbackMatrix
+        children: embedded
+      - name: nodes.geometry.FallbackRotation
+        children: embedded
+      - name: nodes.geometry.FallbackVector
+        children: embedded
+      - name: nodes.geometry.FractionateFloat
+        children: embedded
+      - name: nodes.geometry.GetGeometryAtoms
+        children: embedded
+      - name: nodes.geometry.IndexDistance
+        children: embedded
+      - name: nodes.geometry.IndexMixFloat
+        children: embedded
+      - name: nodes.geometry.IndexMixRotation
+        children: embedded
+      - name: nodes.geometry.IndexMixVector
+        children: embedded
+      - name: nodes.geometry.IntegerDistance
+        children: embedded
+      - name: nodes.geometry.IsEven
+        children: embedded
+      - name: nodes.geometry.MNTypedBundles
+        children: embedded
+      - name: nodes.geometry.RotationFromZYZ
+        children: embedded
+      - name: nodes.geometry.TransformAccumulate
+        children: embedded
+      - name: nodes.geometry.TransformAccumulatePoint
+        children: embedded
+      - name: nodes.geometry.TransformLocal
+        children: embedded
+      - name: nodes.geometry.TransformLocalAxis
+        children: embedded
+      - name: nodes.geometry.TransformMix
+        children: embedded
+      - name: nodes.geometry.TransformRelative
+        children: embedded
+      - name: nodes.geometry.VectorAngle
+        children: embedded
+      - name: nodes.geometry.VectorDirection
+        children: embedded
+      - name: nodes.geometry.VectorFromPoint
+        children: embedded
+      - name: nodes.geometry.Velocity
+        children: embedded
+      - name: nodes.geometry.WorldToAngstrom
+        children: embedded
+      - name: nodes.geometry._2IndexAngle
+        children: embedded
+      - name: nodes.geometry._3IndexAngle
+        children: embedded
+    - kind: page
+      path: nodes.utilities_attribute
+      summary:
+        name: Utilities / Attribute
+        desc: ''
+      contents:
+      - name: nodes.geometry.SampleMixFloat
+        children: embedded
+      - name: nodes.geometry.SampleMixVector
+        children: embedded
+      - name: nodes.geometry.SampleMixedRotation
+        children: embedded
+      - name: nodes.geometry.SampleMixedVector
+        children: embedded
+      - name: nodes.geometry.SamplePosition
+        children: embedded
+    - kind: page
+      path: nodes.utilities_boolean
+      summary:
+        name: Utilities / Boolean
+        desc: ''
+      contents:
+      - name: nodes.geometry.BooleanAndOr
+        children: embedded
+      - name: nodes.geometry.ExpandBoolean
+        children: embedded
+    - kind: page
+      path: nodes.utilities_color
+      summary:
+        name: Utilities / Color
+        desc: ''
+      contents:
+      - name: nodes.geometry.ColorToOKLab
+        children: embedded
+      - name: nodes.geometry.LChToOKLab
+        children: embedded
+      - name: nodes.geometry.OKLabOffsetLCh
+        children: embedded
+      - name: nodes.geometry.OKLabToColor
+        children: embedded
+      - name: nodes.geometry.OKLabToLCh
+        children: embedded
+    - kind: page
+      path: nodes.utilities_fields
+      summary:
+        name: Utilities / Fields
+        desc: ''
+      contents:
+      - name: nodes.geometry.AttributeRun
+        children: embedded
+      - name: nodes.geometry.BooleanAny
+        children: embedded
+      - name: nodes.geometry.BooleanFirst
+        children: embedded
+      - name: nodes.geometry.BooleanLast
+        children: embedded
+      - name: nodes.geometry.BooleanRunFill
+        children: embedded
+      - name: nodes.geometry.BooleanRunTrim
+        children: embedded
+      - name: nodes.geometry.FallbackColor
+        children: embedded
+      - name: nodes.geometry.FieldRemap
+        children: embedded
+      - name: nodes.geometry.GeometryFieldRemap
+        children: embedded
+      - name: nodes.geometry.GroupInfo
+        children: embedded
+      - name: nodes.geometry.GroupParameter
+        children: embedded
+      - name: nodes.geometry.GroupPick
+        children: embedded
+      - name: nodes.geometry.GroupPickFirst
+        children: embedded
+      - name: nodes.geometry.GroupPickIndex
+        children: embedded
+      - name: nodes.geometry.GroupPickVector
+        children: embedded
+      - name: nodes.geometry.IndexMixColor
+        children: embedded
+      - name: nodes.geometry.IntegerRun
+        children: embedded
+      - name: nodes.geometry.NormalizeField
+        children: embedded
+      - name: nodes.geometry.OffsetBoolean
+        children: embedded
+      - name: nodes.geometry.OffsetColor
+        children: embedded
+      - name: nodes.geometry.OffsetColorAttribute
+        children: embedded
+      - name: nodes.geometry.OffsetFloat
+        children: embedded
+      - name: nodes.geometry.OffsetIndex
+        children: embedded
+      - name: nodes.geometry.OffsetInteger
+        children: embedded
+      - name: nodes.geometry.OffsetMatrix
+        children: embedded
+      - name: nodes.geometry.OffsetRotation
+        children: embedded
+      - name: nodes.geometry.OffsetVector
+        children: embedded
+      - name: nodes.geometry.RelativeIndex
+        children: embedded
+      - name: nodes.geometry.SampleMixedColor
+        children: embedded
+      - name: nodes.geometry.StarfileInstances
+        children: embedded
+      - name: nodes.geometry.SubGroupInfo
+        children: embedded
+  # -- end generated node sections --

@@ -8,6 +8,7 @@ before the Parameters section.
 Configured in `_quarto.yml` via `quartodoc: renderer: style: _renderer.py`.
 """
 
+import ast
 import pathlib
 import re
 import yaml
@@ -54,6 +55,21 @@ def _socket_rows(text: str) -> list[ParamRow]:
     return rows
 
 
+def _node_title(el: layout.Doc) -> str | None:
+    """The node group's name (the generated class's `_name` attribute) for
+    generated node classes, used as the page heading instead of the class path."""
+    if not el.obj.path.startswith("molecularnodes.nodes."):
+        return None
+    member = el.obj.members.get("_name")
+    if member is None or member.value is None:
+        return None
+    try:
+        title = ast.literal_eval(str(member.value))
+    except (ValueError, SyntaxError):
+        return None
+    return title if isinstance(title, str) else None
+
+
 def _extra_markdown(extra: dict) -> str:
     text = f"\n{MARKER}\n"
     if extra.get("description"):
@@ -84,10 +100,21 @@ class Renderer(MdRenderer):
         return super().render(el)
 
     @dispatch
+    def render_header(self, el: layout.Doc):  # noqa: F811 (plum multiple dispatch)
+        title = _node_title(el)
+        if title is None:
+            return super().render_header(el)
+        return f"{'#' * self.crnt_header_level} {title} {{ #{el.obj.path} }}"
+
+    @dispatch
     def render(self, el: layout.DocClass):  # noqa: F811 (plum multiple dispatch)
         text = super().render(el)
         if not el.obj.path.startswith("molecularnodes.nodes."):
             return text
+        title = _node_title(el)
+        if title:
+            # the docstring summary line duplicates the heading; drop it
+            text = re.sub(rf"^{re.escape(title)}$\n?", "", text, count=1, flags=re.M)
         extra = self._extras.get(el.obj.name)
         if extra is None:
             return text

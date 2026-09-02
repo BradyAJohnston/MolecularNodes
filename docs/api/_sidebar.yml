@@ -57,21 +57,28 @@ website:
         - api/reference/scene.world.WorldTree.qmd
         section: Scene
       - contents:
+        - api/reference/nodes.materials.qmd
+        - api/reference/nodes.general.qmd
+        - api/reference/nodes.animate.qmd
+        - api/reference/nodes.attributes.qmd
+        - api/reference/nodes.color.qmd
+        - api/reference/nodes.curves.qmd
+        - api/reference/nodes.dna.qmd
+        - api/reference/nodes.density.qmd
+        - api/reference/nodes.ensemble.qmd
         - api/reference/nodes.geometry.qmd
-        - api/reference/nodes.shader.qmd
+        - api/reference/nodes.select.qmd
+        - api/reference/nodes.style.qmd
+        - api/reference/nodes.topology.qmd
+        - api/reference/nodes.utilities.qmd
+        - api/reference/nodes.utilities_attribute.qmd
+        - api/reference/nodes.utilities_boolean.qmd
+        - api/reference/nodes.utilities_color.qmd
+        - api/reference/nodes.utilities_fields.qmd
         section: Nodes
+      - href: api/generated_nodes.qmd
+        text: Generated Node Groups
       section: Reference
-    - text: '---'
-    - contents:
-      - contents:
-        - auto: api/reference/molecularnodes.nodes.geometry.*.qmd
-        href: api/reference/nodes.geometry.qmd
-        section: Geometry
-      - contents:
-        - auto: api/reference/molecularnodes.nodes.shader.*.qmd
-        href: api/reference/nodes.shader.qmd
-        section: Shader
-      section: Node Classes
     id: api/reference
     search: true
   - id: dummy-sidebar
