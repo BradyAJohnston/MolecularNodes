@@ -81,6 +81,15 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         name="Build Biological Assembly",
         description="Build the biological assembly for the structure on import",
     )
+    share_node_group: BoolProperty(  # type: ignore
+        default=False,
+        name="Share Node Group",
+        description=(
+            "When importing multiple structures, style them all with the same "
+            "node group instead of creating one per structure, so tweaks apply "
+            "to every structure at once (useful for conformations of one protein)"
+        ),
+    )
     # filled in by the file handler when structure files are dropped into the 3D
     # viewport, in place of the dialog's own filepath field
     directory: StringProperty(  # type: ignore
@@ -124,7 +133,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
     )
     code: StringProperty(  # type: ignore
         name="PDB",
-        description="The PDB code to download (4-character e.g. '1abc' or 12-character e.g. 'pdb_00001abc')",
+        description=(
+            "The code to download (4-character e.g. '1abc' or 12-character e.g."
+            " 'pdb_00001abc'). Separate multiple codes with commas to download"
+            " several structures at once"
+        ),
         options={"TEXTEDIT_UPDATE"},
     )
     filepath: StringProperty(  # type: ignore
@@ -171,6 +184,8 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         assert layout
         if self.files:
             layout.label(text=f"Importing {len(self.files)} molecules")
+            if len(self.files) > 1:
+                layout.prop(self, "share_node_group")
         else:
             layout.prop_tabs_enum(self, "method")
             if self.method == "local":
@@ -184,6 +199,8 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 # file format only applies to wwPDB downloads; others pick their own
                 if self.method == "fetch":
                     row.prop(self, "file_format", text="")
+                if "," in self.code:
+                    layout.prop(self, "share_node_group")
         row = layout.row()
         row.prop(self, "node_setup", text="")
         col = row.column()
@@ -214,10 +231,25 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             )
             return {}
 
+    def _setup_molecule(self, mol, shared_tree=None):
+        """Apply the import options to a freshly imported molecule, re-using
+        `shared_tree` for the styling instead when one is given. Returns the
+        tree to share with subsequently imported molecules."""
+        if shared_tree is not None:
+            # re-use the first structure's node group rather than creating a
+            # separate styling tree per structure
+            if self.node_setup:
+                mol.create_asset_nodes()
+            mol.tree = shared_tree
+            return shared_tree
+        self.apply_import_options(mol)
+        return mol.tree if self.share_node_group else None
+
     def execute(self, context):
         if self.files:
             return self._execute_dropped_files(context)
 
+        mols = []
         try:
             if self.method == "local":
                 topology = path_resolve(self.filepath)
@@ -244,14 +276,26 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 else:
                     mol = Molecule.load(topology)
                     message = f"Imported '{self.filepath}' as {mol.name}"
+                mols = [mol]
             else:
-                mol = Molecule.fetch(
-                    code=self.code,
-                    cache=self.cache_dir,
-                    format=self.file_format,
-                    database=self.database,
-                )
-                message = f"Downloaded {self.code} as {mol.name}"
+                codes = [code.strip() for code in self.code.split(",") if code.strip()]
+                if not codes:
+                    self.report({"ERROR"}, "No code given to fetch")
+                    return {"CANCELLED"}
+                mols = [
+                    Molecule.fetch(
+                        code=code,
+                        cache=self.cache_dir,
+                        format=self.file_format,
+                        database=self.database,
+                    )
+                    for code in codes
+                ]
+                mol = mols[-1]
+                if len(mols) == 1:
+                    message = f"Downloaded {codes[0]} as {mol.name}"
+                else:
+                    message = f"Downloaded {len(mols)} structures: {', '.join(codes)}"
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
             if self.file_format == "pdb":
@@ -266,7 +310,9 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
 
-        self.apply_import_options(mol)
+        shared_tree = None
+        for imported in mols:
+            shared_tree = self._setup_molecule(imported, shared_tree)
 
         if isinstance(mol, StreamingTrajectory):
             context.scene.frame_start = 0
@@ -289,10 +335,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
     def _execute_dropped_files(self, context):
         """Import each structure file dropped into the viewport."""
         imported = 0
+        shared_tree = None
         for file in self.files:
             try:
                 mol = Molecule.load(Path(self.directory, file.name))
-                self.apply_import_options(mol)
+                shared_tree = self._setup_molecule(mol, shared_tree)
                 imported += 1
             except Exception as e:
                 self.report({"WARNING"}, message=f"Failed importing {file.name}: {e}")
