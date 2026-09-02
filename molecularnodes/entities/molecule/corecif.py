@@ -50,7 +50,9 @@ _SYMOP_TAGS = ("_space_group_symop_operation_xyz", "_symmetry_equiv_pos_as_xyz")
 def is_core_cif(file_path: str | Path) -> bool:
     """Cheaply sniff whether a .cif file is a core (small-molecule) CIF rather
     than an mmCIF, by which style of atom_site tag appears first."""
-    with open(file_path) as file:
+    # errors="replace" so a corrupted file falls through to the mmCIF reader's
+    # error handling rather than raising UnicodeDecodeError here
+    with open(file_path, errors="replace") as file:
         for line in file:
             tag = line.strip().lower()
             if tag.startswith("_atom_site."):
@@ -126,7 +128,7 @@ def _parse_tags(text: str) -> dict[str, list[str]]:
 
 def _float(value: str) -> float:
     "A CIF number, dropping the '(su)' uncertainty suffix; '.'/'?' become nan."
-    value = re.sub(r"\(\d+\)$", "", value.strip())
+    value = re.sub(r"\(\d*\)$", "", value.strip())
     if value in (".", "?", ""):
         return np.nan
     return float(value)
@@ -154,7 +156,7 @@ def _apply_symop(op: str, fract: np.ndarray) -> np.ndarray:
 
 def parse_core_cif(file_path: str | Path) -> Crystal:
     "Parse a core CIF file and symmetry-expand its sites to one unit cell."
-    tags = _parse_tags(Path(file_path).read_text())
+    tags = _parse_tags(Path(file_path).read_text(errors="replace"))
 
     try:
         cell = np.array([_float(tags[tag][0]) for tag in _CELL_TAGS], float)

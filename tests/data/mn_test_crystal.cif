@@ -28,4 +28,4 @@ _atom_site_fract_y
 _atom_site_fract_z
 _atom_site_occupancy
 Na1 Na1+ 0 0 0 1.
-Cl1 Cl1- 0.25 0.25(1) 0.25 .
+Cl1 Cl1- 0.25 0.25(1) 0.25() .

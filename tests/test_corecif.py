@@ -19,7 +19,8 @@ def test_is_core_cif():
 def test_parse_core_cif():
     crystal = corecif.parse_core_cif(CRYSTAL_FILE)
 
-    # the standard uncertainty suffix on 4.000(2) is dropped
+    # standard uncertainty suffixes are dropped, including the empty '()'
+    # some converters write (cell 4.000(2), Cl1 fract_z 0.25())
     assert np.allclose(crystal.cell, [4.0, 5.0, 6.0, 90.0, 90.0, 90.0])
 
     # Na on the origin maps onto itself under inversion (2 unique positions);
