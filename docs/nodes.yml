@@ -81,13 +81,6 @@ Select Entity_:
   custom: true
   label: Entity
   category: Select
-Select Ligand_:
-  description: Select single or multiple of the different ligands.
-  videos:
-  - https://imgur.com/s2seWIw
-  custom: true
-  label: Ligand
-  category: Select
 Select Segment_:
   description: Output a selection based on the `segment_id` that is present in some MD trajectories
   custom: true
@@ -241,13 +234,6 @@ Color Entity_:
   - https://imgur.com/EMmQsEP
   custom: true
   label: Entity
-  category: Color
-Color Ligand_:
-  description: Choose the colors for individual ligands in the structure.
-  videos:
-  - https://imgur.com/bQh8Fd9
-  custom: true
-  label: Ligand
   category: Color
 Color Element:
   description: >-

@@ -167,20 +167,25 @@ class MolecularEntity(
         drag-to-search in the node editor.
         """
 
+        # the stored labels are ordered to match the integer values of the
+        # attribute each switch reads (see _compute_chain_id_int, _get_entity_id
+        # and _compute_segindices)
         prop_combinations = (
-            ("Chain", self.props.chain_ids),
-            ("Entity", self.props.entity_ids),
-            ("Segment", self.props.segments),
+            ("Chain", self.props.chain_ids, "chain_id"),
+            ("Entity", self.props.entity_ids, "entity_id"),
+            ("Segment", self.props.segments, "segid"),
         )
 
-        for prefix, prop in prop_combinations:
+        for prefix, prop, attribute in prop_combinations:
             if len(prop) == 0:
                 continue
             custom_boolean_iswitch(
-                name=f"Select {prefix} {self.name}", items=prop
+                name=f"Select {prefix} {self.name}",
+                items=prop,
+                attribute_name=attribute,
             ).asset_mark()
             custom_color_iswitch(
-                name=f"Color {prefix} {self.name}", items=prop
+                name=f"Color {prefix} {self.name}", items=prop, attribute_name=attribute
             ).asset_mark()
 
     @property

@@ -19,12 +19,6 @@ Select single or multiple of the different entities. Creates a selection based o
 
 ![](https://imgur.com/h5KZBXt.mp4)
 
-## Ligand (`Select Ligand_`)
-
-Select single or multiple of the different ligands.
-
-![](https://imgur.com/s2seWIw.mp4)
-
 ## Segment (`Select Segment_`)
 
 Output a selection based on the `segment_id` that is present in some MD trajectories
@@ -44,9 +38,3 @@ Choose the colors for the individual entities in the structure. If there are mul
 ![](https://imgur.com/dqa9Jro.mp4)
 
 ![](https://imgur.com/EMmQsEP.mp4)
-
-## Ligand (`Color Ligand_`)
-
-Choose the colors for individual ligands in the structure.
-
-![](https://imgur.com/bQh8Fd9.mp4)
