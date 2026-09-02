@@ -329,3 +329,43 @@ t1.annotations.add_universe_info()
 # render animation of scene from frame 10 to 50 at 50% sccale
 canvas.animation(frame_start=10, frame_end=50, render_scale=50)
 ```
+
+## Frame-by-Frame Recording
+
+Where [](`~molecularnodes.Canvas.animation`) plays back the Blender timeline, a
+recording created with [](`~molecularnodes.Canvas.record`) puts the loop in your
+hands. Change anything about the scene between frames — the timeline, the camera,
+styles, colors — and call
+[](`~molecularnodes.scene.recorder.FrameRecorder.render`) to capture the scene as
+it stands as the next frame. When you're done,
+[](`~molecularnodes.scene.recorder.FrameRecorder.finalize`) assembles the frames
+into an MP4 or GIF.
+
+```{python}
+movie = canvas.record(fps=12)
+
+for i in range(15):
+    canvas.look_at(t1, viewpoint=(90, 0, i * (360 / 15)))
+    movie.render(render_scale=50)
+movie.finalize()
+```
+
+A recorder is also a context manager: give the output path up front and a clean
+exit from the `with` block finalizes to it automatically.
+
+```python
+with canvas.record("orbit.mp4", fps=12) as movie:
+    for i in range(15):
+        canvas.look_at(t1, viewpoint=(90, 0, i * (360 / 15)))
+        movie.render()
+```
+
+By default the frames live in a temporary directory that is cleaned up with the
+recorder. Pass `frames_dir` to render them into a directory that outlives it, and
+add `overwrite=False` to make re-running the same loop resume an interrupted
+recording: frames already on disk are reused and only the missing ones are
+rendered.
+
+```python
+movie = canvas.record(fps=12, frames_dir="renders/orbit", overwrite=False)
+```

@@ -58,6 +58,7 @@ website:
         - api/reference/Canvas.qmd
         - api/reference/scene.camera.qmd
         - api/reference/scene.compositor.CompositorTree.qmd
+        - api/reference/scene.recorder.FrameRecorder.qmd
         - api/reference/scene.world.WorldTree.qmd
         section: Scene
       section: Reference
