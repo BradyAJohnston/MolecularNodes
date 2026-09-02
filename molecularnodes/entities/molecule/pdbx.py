@@ -59,15 +59,15 @@ class PDBXReader(ReaderBase):
         return CIFAssemblyParser(self.file).get_assemblies()
 
     def entity_ids(self):
-        try:
-            return (
-                self.file.block.get("entity")
-                .get("pdbx_description")
-                .as_array()
-                .tolist()
-            )
-        except AttributeError:
+        """Entity labels, in `entity` category order — the same order that
+        `_get_entity_id` numbers the per-atom `entity_id` attribute with."""
+        entity = self.file.block.get("entity")
+        if entity is None:
             return None
+        description = entity.get("pdbx_description")
+        if description is None:
+            return [f"Entity {eid}" for eid in entity["id"].as_array(str)]
+        return description.as_array(str).tolist()
 
     @staticmethod
     def _extract_matrices(category):
@@ -99,37 +99,49 @@ class PDBXReader(ReaderBase):
 
     @staticmethod
     def _get_entity_id(array, file):
-        chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array(str)
+        """Per-atom entity index into the `entity` category, so the integers
+        line up with the labels returned by `entity_ids`."""
+        block = file.block
+        entity_order = {
+            eid: i for i, eid in enumerate(block["entity"]["id"].as_array(str))
+        }
 
-        # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
-        # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
-        # entities
+        # archive-quality files annotate every atom with its entity directly
+        atom_site = block["atom_site"]
+        if "label_entity_id" in atom_site:
+            per_atom = atom_site["label_entity_id"].as_array(str)
+            return np.array([entity_order.get(eid, -1) for eid in per_atom], int)
 
-        chains = []
-        idx = []
-        for i, chain_str in enumerate(chain_ids):
-            for chain in chain_str.split(","):
-                chains.append(chain)
-                idx.append(i)
+        # otherwise map polymer entities via their chains and non-polymer
+        # entities (ligands, waters) via their residue names
+        chain_lookup = {}
+        poly = block.get("entity_poly")
+        if poly is not None:
+            for eid, chain_str in zip(
+                poly["entity_id"].as_array(str),
+                poly["pdbx_strand_id"].as_array(str),
+            ):
+                for chain in chain_str.split(","):
+                    chain_lookup[chain] = entity_order.get(eid, -1)
 
-        # this is how we map the chain_ids and res_names of our entities to their integer
-        # representations
-        entity_lookup = dict(zip(chains, idx))
+        res_lookup = {}
+        nonpoly = block.get("pdbx_entity_nonpoly")
+        if nonpoly is not None:
+            for eid, comp in zip(
+                nonpoly["entity_id"].as_array(str),
+                nonpoly["comp_id"].as_array(str),
+            ):
+                res_lookup[comp] = entity_order.get(eid, -1)
 
-        # for the hetero atoms, we need to add a new entity_id into the lookup so that
-        # they can be assigned an entity ID
-        unique_res_het = np.unique(array.res_name[array.hetero])
-        for het in unique_res_het:
-            if het not in entity_lookup:
-                entity_lookup[het] = max(entity_lookup.values()) + 1
-
-        entity_id_int = np.zeros(len(array.res_name), int)
-        for i, res_name in enumerate(array.res_name):
-            entity_id_int[i] = entity_lookup.get(
-                res_name, entity_lookup[array.chain_id[i]]
-            )
-
-        return entity_id_int
+        return np.array(
+            [
+                res_lookup.get(res, chain_lookup.get(chain, -1))
+                if het
+                else chain_lookup.get(chain, res_lookup.get(res, -1))
+                for res, chain, het in zip(array.res_name, array.chain_id, array.hetero)
+            ],
+            int,
+        )
 
     @staticmethod
     def _get_secondary_structure(array, file):
