@@ -1344,7 +1344,7 @@ wheels = [
 
 [[package]]
 name = "molecularnodes"
-version = "5.2.0"
+version = "520.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "biotite" },
