@@ -122,8 +122,6 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           version: "latest"
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
 
       - name: Install Packages
         run: |
@@ -131,7 +129,6 @@ jobs:
 
       - name: Pre-render Scripts
         timeout-minutes: 3
-        continue-on-error: true
         run: |
           uv run docs/generate.py
       - name: Build quartodoc

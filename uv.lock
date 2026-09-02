@@ -1366,7 +1366,6 @@ dev = [
     { name = "fake-bpy-module" },
     { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
-    { name = "nodepad" },
     { name = "numpy" },
     { name = "pillow" },
     { name = "pooch" },
@@ -1385,6 +1384,7 @@ docs = [
     { name = "jupyter-cache" },
     { name = "mdanalysisdata" },
     { name = "mdanalysistests" },
+    { name = "pyyaml" },
     { name = "quarto-cli" },
     { name = "quartodoc" },
     { name = "setuptools" },
@@ -1418,7 +1418,6 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
     { name = "nodebpy", specifier = ">=520.15" },
-    { name = "nodepad", marker = "extra == 'dev'", specifier = ">=0.3.0" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
     { name = "pandas", specifier = "<3.0.0" },
     { name = "pillow", marker = "extra == 'dev'" },
@@ -1428,6 +1427,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pytest-cov", marker = "extra == 'dev'" },
     { name = "pytest-xdist", marker = "extra == 'dev'" },
+    { name = "pyyaml", marker = "extra == 'docs'" },
     { name = "quarto-cli", marker = "extra == 'docs'", specifier = ">=1.9.0" },
     { name = "quartodoc", marker = "extra == 'docs'", specifier = ">=0.11.1" },
     { name = "rdkit", marker = "extra == 'dev'" },
@@ -1569,19 +1569,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/24/bf/d1bda4f6168e0b2e9e5958945e01910052158313224ada5ce1fb2e1113b8/nodeenv-1.10.0.tar.gz", hash = "sha256:996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb", size = 55611, upload-time = "2025-12-20T14:08:54.006Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/88/b2/d0896bdcdc8d28a7fc5717c305f1a861c26e18c05047949fb371034d98bd/nodeenv-1.10.0-py2.py3-none-any.whl", hash = "sha256:5bb13e3eed2923615535339b3c620e76779af4cb4c6a90deccc9e36b274d3827", size = 23438, upload-time = "2025-12-20T14:08:52.782Z" },
-]
-
-[[package]]
-name = "nodepad"
-version = "0.3.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "click" },
-    { name = "numpy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ce/41/9e47a3db9e5cd5fbd25d2b65634a72cfe1a59e031b2d09d7abeae0cb0c78/nodepad-0.3.0.tar.gz", hash = "sha256:cb3a248d5ea0903f29d3290252058ed3c99ea9606871a9d220237828a7a7d618", size = 36635, upload-time = "2026-03-22T21:13:27.766Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/63/c9545cd7e43643e5e813b42992c255a895b7c7a1003d0170cf4eace270c1/nodepad-0.3.0-py3-none-any.whl", hash = "sha256:82338657ea47b996acee5ad80514b235ba27994a40acf18cd497c9acfb715a5b", size = 29601, upload-time = "2026-03-22T21:13:26.349Z" },
 ]
 
 [[package]]

@@ -28,6 +28,7 @@ jupyter = ["jupyter", "ipython>=9.7.0", "pillow"]
 docs = [
     "griffe<2.0",
     "ipython>=9.11.0",
+    "pyyaml",
     "jupyter>=1.1.1",
     "jupyter-cache>=1.0.1",
     "quartodoc>=0.11.1",
@@ -43,7 +44,6 @@ dev = [
     "mdanalysisdata>=0.9.0",
     "mdanalysistests>=2.7.0",
     "fake-bpy-module>=20260816",
-    "nodepad>=0.3.0",
     "pillow",
     "pooch>=1.8",
     "pre-commit",
