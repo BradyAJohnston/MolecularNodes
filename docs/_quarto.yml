@@ -194,6 +194,7 @@ quartodoc:
     - Canvas
     - scene.camera
     - scene.compositor.CompositorTree
+    - scene.recorder.FrameRecorder
     - scene.world.WorldTree
 
   - title: Nodes
