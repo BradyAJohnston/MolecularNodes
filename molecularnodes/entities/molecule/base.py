@@ -701,6 +701,11 @@ class Molecule(MolecularEntity):
         multi-frame universes. Biological assembly and entity/chain metadata parsed from
         the file are stored on the Blender object.
 
+        Small-molecule crystallographic ``.cif`` files (e.g. from the ICSD or COD)
+        are instead read by :mod:`~molecularnodes.entities.molecule.corecif`, which
+        expands the asymmetric unit by the file's symmetry operators to fill one
+        unit cell.
+
         Parameters
         ----------
         file_path : str | Path | io.BytesIO
@@ -714,6 +719,22 @@ class Molecule(MolecularEntity):
             The Universe-backed entity representing the structure.
         """
         from ..molecule.reader import read_structure
+        from . import corecif
+
+        # small-molecule crystallographic CIFs (ICSD, COD) are a different
+        # dialect that biotite cannot parse; route them through the dedicated
+        # MDAnalysis parser, which expands the asymmetric unit to a unit cell
+        if (
+            not isinstance(file_path, io.BytesIO)
+            and Path(file_path).suffix == ".cif"
+            and corecif.is_core_cif(file_path)
+        ):
+            universe = mda.Universe(
+                str(file_path),
+                topology_format=corecif.CoreCIFParser,
+                format=corecif.CoreCIFReader,
+            )
+            return cls(universe, name=name or Path(file_path).name)
 
         reader = read_structure(file_path)
         universe = universe_from_atoms(reader.array)

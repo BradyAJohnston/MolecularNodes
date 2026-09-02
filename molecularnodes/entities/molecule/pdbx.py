@@ -37,12 +37,30 @@ class PDBXReader(ReaderBase):
                 self.file, model=model, extra_fields=self._extra_fields
             )
         except InvalidFileError:
-            array = pdbx.get_component(self.file)
+            array = self._get_component()
 
         if include_bonds and not array.bonds:
             array.bonds = struc.connect_via_residue_names(array, inter_residue=True)
 
         return array
+
+    def _get_component(self) -> struc.AtomArray:
+        """Fall back to reading the file as a chemical component (e.g. a CCD
+        ligand definition), raising an error that says what the file actually
+        contains when there are no atoms to read at all."""
+        block = self.file.block
+        if block.get("chem_comp_atom") is None:
+            if block.get("refln") is not None or block.get("diffrn_reflns") is not None:
+                raise InvalidFileError(
+                    "This is a crystallographic structure factor file (reflection"
+                    " data) and contains no atomic coordinates. Download the"
+                    " PDBx/mmCIF coordinate file for this entry instead."
+                )
+            raise InvalidFileError(
+                "No atomic coordinates found in the file: it has no 'atom_site'"
+                " or 'chem_comp_atom' category."
+            )
+        return pdbx.get_component(self.file)
 
     def _ensure_group_pdb(self) -> None:
         """Default a missing ``group_PDB`` column to ``ATOM``.

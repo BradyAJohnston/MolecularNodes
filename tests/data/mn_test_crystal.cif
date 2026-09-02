@@ -1,0 +1,31 @@
+#(C) hand-written test fixture for the MolecularNodes core CIF reader
+data_mn-test-crystal
+_chemical_name_common 'MN test crystal'
+_citation_title
+
+;
+A fake sodium chloride arrangement used to test symmetry expansion,
+multiline text fields and standard-uncertainty parsing
+;
+_cell_length_a 4.000(2)
+_cell_length_b 5.0
+_cell_length_c 6.0
+_cell_angle_alpha 90.
+_cell_angle_beta 90.
+_cell_angle_gamma 90.
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1 'x, y, z'
+2 '-x, -y, -z'
+3 'x+1/2, y+1/2, z'
+4 '-x+1/2, -y+1/2, -z'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+Na1 Na1+ 0 0 0 1.
+Cl1 Cl1- 0.25 0.25(1) 0.25 .
