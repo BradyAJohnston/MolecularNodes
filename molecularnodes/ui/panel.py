@@ -23,6 +23,8 @@ def import_options(layout: UILayout) -> None:
 
     op = layout.operator("mn.import_molecule", text="Import Local File", icon="IMPORT")
     op.method = "local"
+    op = layout.operator("mn.import_molecule", text="From SMILES", icon="IMPORT")
+    op.method = "smiles"
 
     layout.separator()
     op = layout.operator("mn.import_ensemble", text="Starfile", icon="IMPORT")
