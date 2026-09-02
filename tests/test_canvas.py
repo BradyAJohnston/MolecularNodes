@@ -257,6 +257,104 @@ def test_animation_gif(render_canvas, tmp_path):
         assert isinstance(image, mn.scene.base.Image)
 
 
+def test_record_mp4(render_canvas, tmp_path):
+    out = tmp_path / "recorded.mp4"
+    movie = render_canvas.record(fps=12)
+    for exposure in (-2.0, 0.0, 2.0):
+        render_canvas.exposure = exposure
+        movie.render()
+    assert len(movie) == 3
+    assert all(frame.exists() for frame in movie.frames)
+    video = movie.finalize(out)
+    # an ftyp box marks an MP4 container
+    assert out.read_bytes()[4:8] == b"ftyp"
+    if mn.scene.base.Video is not None:
+        assert isinstance(video, mn.scene.base.Video)
+    # the recorder stays usable after finalizing
+    movie.render()
+    assert len(movie) == 4
+
+
+def test_record_gif(render_canvas, tmp_path):
+    PILImage = pytest.importorskip("PIL.Image")
+    out = tmp_path / "recorded.gif"
+    movie = render_canvas.record()
+    # the frames must differ, otherwise pillow merges identical consecutive
+    # frames into one
+    for exposure in (-10.0, 10.0):
+        render_canvas.exposure = exposure
+        movie.render()
+    movie.finalize(out, fps=5)
+    assert out.read_bytes()[:6] in (b"GIF87a", b"GIF89a")
+    with PILImage.open(out) as gif:
+        assert gif.n_frames == 2
+
+
+def test_record_context_manager(render_canvas, tmp_path):
+    out = tmp_path / "recorded.mp4"
+    with render_canvas.record(out, fps=12) as movie:
+        movie.render()
+        movie.render()
+    # a clean exit finalized to the path given up front
+    assert out.read_bytes()[4:8] == b"ftyp"
+
+
+def test_record_frames_dir(render_canvas, tmp_path):
+    frames_dir = tmp_path / "frames"
+    movie = render_canvas.record(frames_dir=frames_dir)
+    movie.render()
+    movie.render()
+    assert sorted(p.name for p in frames_dir.iterdir()) == ["00000.png", "00001.png"]
+    # frames in a user-given directory outlive the recorder
+    del movie
+    assert sorted(p.name for p in frames_dir.iterdir()) == ["00000.png", "00001.png"]
+
+
+def test_record_resume(render_canvas, tmp_path):
+    frames_dir = tmp_path / "frames"
+    movie = render_canvas.record(frames_dir=frames_dir)
+    movie.render()
+    movie.render()
+    mtimes = {p.name: p.stat().st_mtime_ns for p in frames_dir.iterdir()}
+
+    # re-running the loop with overwrite=False reuses the existing frames
+    # untouched and renders only the missing third one
+    resumed = render_canvas.record(frames_dir=frames_dir, overwrite=False)
+    for _ in range(3):
+        resumed.render()
+    assert len(resumed) == 3
+    assert sorted(p.name for p in frames_dir.iterdir()) == [
+        "00000.png",
+        "00001.png",
+        "00002.png",
+    ]
+    for name, mtime in mtimes.items():
+        assert (frames_dir / name).stat().st_mtime_ns == mtime
+
+    # frames reused from disk are size-checked as they actually are, so a
+    # resolution change between runs is caught on the first fresh render
+    render_canvas.resolution = (64, 64)
+    mismatched = render_canvas.record(frames_dir=frames_dir, overwrite=False)
+    for _ in range(3):
+        mismatched.render()
+    with pytest.raises(ValueError, match="must share"):
+        mismatched.render()
+
+
+def test_record_validation(render_canvas):
+    movie = render_canvas.record()
+    with pytest.raises(RuntimeError, match="No frames"):
+        movie.finalize()
+    movie.render()
+    # frames rendered at a different size are rejected
+    render_canvas.resolution = (64, 64)
+    with pytest.raises(ValueError, match="must share"):
+        movie.render()
+    # resuming needs somewhere persistent to resume from
+    with pytest.raises(ValueError, match="requires frames_dir"):
+        render_canvas.record(overwrite=False)
+
+
 def test_animation_validation(canvas):
     with pytest.raises(ValueError, match="cannot be less than"):
         canvas.animation(frame_start=10, frame_end=5)
