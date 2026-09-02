@@ -1492,7 +1492,7 @@ requires-dist = [
     { name = "fake-bpy-module", marker = "extra == 'dev'", specifier = ">=20260816" },
     { name = "griddataformats", specifier = ">=1.2.0" },
     { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0" },
-    { name = "imdclient", specifier = ">=0.2.3" },
+    { name = "imdclient" },
     { name = "ipython", marker = "extra == 'docs'", specifier = ">=9.11.0" },
     { name = "ipython", marker = "extra == 'jupyter'", specifier = ">=9.7.0" },
     { name = "jupyter", marker = "extra == 'docs'", specifier = ">=1.1.1" },
