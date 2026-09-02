@@ -39,7 +39,7 @@ class MN_FH_Import_Molecule(bpy.types.FileHandler):
     bl_idname = "MN_FH_import_molecule"
     bl_label = "File handler for import molecular data files."
     bl_import_operator = "mn.import_molecule"
-    bl_file_extensions = ".pdb;.cif;.mmcif;.bcif;.pdbx"
+    bl_file_extensions = ".pdb;.cif;.mmcif;.bcif;.pdbx;.xyz"
 
     @classmethod
     def poll_drop(cls, context):

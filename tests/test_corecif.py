@@ -56,3 +56,10 @@ def test_load_core_cif():
 def test_structure_factor_file_errors():
     with pytest.raises(InvalidFileError, match="structure factor"):
         mn.Molecule.load(SF_FILE)
+
+
+def test_load_xyz():
+    mol = mn.Molecule.load(data_dir / "mn_test.xyz")
+    assert len(mol) == 5
+    assert list(mol.universe.atoms.elements) == ["C", "H", "H", "H", "H"]
+    assert set(mol.named_attribute("atomic_number")) == {6, 1}

@@ -9,6 +9,7 @@ import functools
 import inspect
 import io
 import logging
+import re
 import warnings
 from pathlib import Path
 from typing import Callable, Dict, Sequence
@@ -704,7 +705,8 @@ class Molecule(MolecularEntity):
         Small-molecule crystallographic ``.cif`` files (e.g. from the ICSD or COD)
         are instead read by :mod:`~molecularnodes.entities.molecule.corecif`, which
         expands the asymmetric unit by the file's symmetry operators to fill one
-        unit cell.
+        unit cell. ``.xyz`` files are read natively by MDAnalysis, with elements
+        taken from the atom names.
 
         Parameters
         ----------
@@ -734,6 +736,20 @@ class Molecule(MolecularEntity):
                 topology_format=corecif.CoreCIFParser,
                 format=corecif.CoreCIFReader,
             )
+            return cls(universe, name=name or Path(file_path).name)
+
+        # .xyz files are read natively by MDAnalysis; the atom names are the
+        # element symbols, which the element-derived attributes need
+        if not isinstance(file_path, io.BytesIO) and Path(file_path).suffix == ".xyz":
+            universe = mda.Universe(str(file_path))
+            if not hasattr(universe.atoms, "elements"):
+                universe.add_TopologyAttr(
+                    "elements",
+                    [
+                        re.sub(r"[^A-Za-z]", "", atom_name)[:2].capitalize()
+                        for atom_name in universe.atoms.names
+                    ],
+                )
             return cls(universe, name=name or Path(file_path).name)
 
         reader = read_structure(file_path)
