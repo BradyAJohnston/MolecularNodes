@@ -214,6 +214,20 @@ class MolecularEntity(
             self._tree = MolecularTree(self, self.modifier_node_tree)
         return self._tree
 
+    @tree.setter
+    def tree(self, value: "MolecularTree | TreeBuilder | GeometryNodeTree") -> None:
+        """Point this entity's Molecular Nodes modifier at an existing node
+        tree (e.g. another entity's), so multiple entities share one styling
+        tree and any style changes apply to all of them."""
+        if not isinstance(value, GeometryNodeTree):
+            value = cast(GeometryNodeTree, value.tree)
+        if "Molecular Nodes" not in self.object.modifiers:
+            self.object.modifiers.new("Molecular Nodes", "NODES")
+        mod = cast(NodesModifier, self.object.modifiers["Molecular Nodes"])
+        mod.node_group = value
+        value.is_modifier = True
+        self._tree = None
+
     @property
     def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:
         if "Molecular Nodes" not in self.object.modifiers:
