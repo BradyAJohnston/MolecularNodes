@@ -40,6 +40,23 @@ def test_correct_1d():
     )
 
 
+def test_correct_1d_is_pure():
+    # the correction must not touch its inputs — in-place mutation poisoned the
+    # frame position cache, unwrapping trajectories further out every crossing
+    value1 = np.array((0.9, 0.1))
+    value2 = np.array((0.1, 0.9))
+    mn.utils.correct_periodic_1d(value1, value2, 1.0)
+    assert np.allclose(value2, (0.1, 0.9))
+
+
+def test_correct_1d_multiple_wraps():
+    # a jump of several box lengths is folded back in a single correction
+    assert np.allclose(
+        mn.utils.correct_periodic_1d(np.array((0.0,)), np.array((2.3,)), 1.0),
+        np.array((0.3,)),
+    )
+
+
 def test_frame_mapper_basic():
     assert frame_mapper(10) == 10
     assert frame_mapper(0) == 0
