@@ -62,11 +62,12 @@ def fraction(x, y):
 def correct_periodic_1d(
     value1: np.ndarray, value2: np.ndarray, boundary: float
 ) -> np.ndarray:
+    # shift value2 by whole box lengths to the periodic image nearest value1.
+    # A pure function of its inputs: mutating value2 in place would poison the
+    # frame position cache, chaining each frame's correction onto the previous
+    # already-shifted frame so positions unwrap further out every crossing
     diff = value2 - value1
-    half = boundary / 2
-    value2[diff > half] -= boundary
-    value2[diff < -half] += boundary
-    return value2
+    return value2 - boundary * np.round(diff / boundary)
 
 
 def correct_periodic_positions(
