@@ -778,8 +778,19 @@ class MN_PT_Styles(bpy.types.Panel):
             layout.label(text="No Molecular Nodes modifier on this object")
             return
 
+        # the style node selected in the list, if any
+        index = obj.mn.styles_active_index
+        style_node = None
+        if 0 <= index < len(node_group.nodes):
+            node = node_group.nodes[index]
+            if is_style_node(node):
+                style_node = node
+
+        entity = context.scene.MNSession.get(obj.uuid)
+
         # list the style nodes in the tree and let the user select one
-        layout.template_list(
+        row = layout.row()
+        row.template_list(
             "MN_UL_StylesList",
             "styles_list",
             node_group,
@@ -788,14 +799,24 @@ class MN_PT_Styles(bpy.types.Panel):
             "styles_active_index",
             rows=3,
         )
+        col = row.column()
+        # adding uses the entity API when linked, and otherwise builds the
+        # style branch directly in the object's node tree; density styles are
+        # different nodes, so density objects only get swap/remove
+        add = col.row()
+        add.enabled = isinstance(entity, Molecule) or (
+            entity is None and obj.mn.entity_type != EntityType.DENSITY.value
+        )
+        op = add.operator("mn.add_style", icon="ADD", text="")
+        op.uuid = obj.uuid
+        op.name_object = obj.name
+        remove = col.row()
+        remove.enabled = style_node is not None
+        op = remove.operator("mn.remove_style", icon="REMOVE", text="")
+        if style_node is not None:
+            op.name_tree = node_group.name
+            op.name_node = style_node.name
 
-        # the style node selected in the list, if any
-        index = obj.mn.styles_active_index
-        style_node = None
-        if 0 <= index < len(node_group.nodes):
-            node = node_group.nodes[index]
-            if is_style_node(node):
-                style_node = node
         if style_node is None:
             layout.label(text="Select a style to edit its properties")
             return
@@ -812,8 +833,6 @@ class MN_PT_Styles(bpy.types.Panel):
         op.name_node = style_node.name
 
         # display the selection string if using a named attribute
-        entity = context.scene.MNSession.get(obj.uuid)
-
         if style_node.inputs["Selection"].links and entity is not None:
             node = style_node.inputs["Selection"].links[0].from_node
             if isinstance(node, bpy.types.GeometryNodeInputNamedAttribute):

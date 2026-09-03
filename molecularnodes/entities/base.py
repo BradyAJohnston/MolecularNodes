@@ -39,8 +39,12 @@ class ResetSockets(NamedTuple):
 
 class MolecularTree(TreeBuilder[GeometryNodeTree]):
     def __init__(
-        self, entity: "MolecularEntity", tree: TreeBuilder | GeometryNodeTree | str
+        self,
+        entity: "MolecularEntity | None",
+        tree: TreeBuilder | GeometryNodeTree | str,
     ) -> None:
+        # the entity is optional so a tree can be built for an object that is
+        # not linked to a session entity (e.g. the UI's object-level add style)
         self._entity = entity
         if isinstance(tree, TreeBuilder):
             super().__init__(cast(GeometryNodeTree, tree.tree))

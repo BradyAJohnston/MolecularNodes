@@ -28,7 +28,7 @@ from ...converters import universe_from_atoms
 from ...nodes.material import PresetMaterial, append_material
 from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...utils import _UNSET, count_value_changes, temp_override_property
-from ..base import EntityType, MolecularEntity
+from ..base import EntityType, MolecularEntity, MolecularTree
 from ..utilities import (
     BoolObjectMNProperty,
     IntObjectMNProperty,
@@ -67,6 +67,82 @@ def _sphere_for_engine(style_node: type, engine: str) -> str | None:
     if parameter is None or parameter.default != "Point":
         return None
     return "Instance"
+
+
+def add_style_to_tree(
+    node_tree: bpy.types.GeometryNodeTree,
+    style: STYLE_LITERALS = "spheres",
+    material: bpy.types.Material
+    | PresetMaterial
+    | MaterialBuilder
+    | str = "MN Default",
+    color: Sequence[float] | None = None,
+    selection_attribute: str | None = None,
+    name: str | None = None,
+) -> None:
+    """
+    Add a style branch directly to a node tree, without a session entity.
+
+    The tree-level counterpart of [](`~mn.Molecule.add_style`), used by the UI
+    when an object is not linked to a session entity. Everything that needs the
+    entity's universe is unavailable here: selections must name an existing
+    boolean attribute (MDAnalysis phrases can't be evaluated), color is limited
+    to a uniform RGBA (schemes need chain information), and assembly instancing
+    is not offered.
+
+    Parameters
+    ----------
+    node_tree : bpy.types.GeometryNodeTree
+        The tree to add the style branch to, typically the tree of an object's
+        "Molecular Nodes" modifier.
+    style : str, default "spheres"
+        Name of a predefined style (see ``STYLE_NODE_MAPPING``).
+    material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, default "MN Default"
+        Material for the styled geometry; a string is appended from the asset
+        file.
+    color : Sequence[float] | None, optional
+        Uniform RGBA color applied via a ``Set Color`` node. ``None`` (default)
+        leaves the baked ``Color`` attribute in use.
+    selection_attribute : str | None, optional
+        Name of an existing boolean attribute to restrict the style to.
+    name : str | None, optional
+        Label for the added style node.
+    """
+    from ...nodes import geometry as g
+
+    if style not in STYLE_NODE_MAPPING:
+        raise ValueError(
+            f"Invalid style '{style}'. Supported styles are "
+            f"{sorted(STYLE_NODE_MAPPING)}"
+        )
+
+    kwargs = {}
+    # spheres default to point clouds, which only Cycles can draw
+    geometry = _sphere_for_engine(
+        STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
+    )
+    if geometry is not None:
+        kwargs["sphere"] = geometry
+
+    if isinstance(material, (PresetMaterial, MaterialBuilder)):
+        material = material.material
+    material = append_material(material) if isinstance(material, str) else material
+
+    with MolecularTree(None, node_tree) as tree:
+        selection_input = (
+            NamedAttribute.boolean(selection_attribute) if selection_attribute else None
+        )
+        style_node = STYLE_NODE_MAPPING[style](
+            selection=selection_input, material=material, **kwargs
+        )
+        if name:
+            style_node.node.label = name
+        (
+            tree.atoms
+            >> (g.SetColor(color=tuple(color)) if color is not None else None)
+            >> style_node
+            >> tree.join
+        )
 
 
 class Molecule(MolecularEntity):
