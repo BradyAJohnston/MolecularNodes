@@ -55,7 +55,7 @@ class MoleculeAnnotationManager(BaseAnnotationManager):
     are backed by an MDAnalysis ``Universe``.
     """
 
-    _entity_type = EntityType.MD
+    _entity_type = EntityType.MOLECULE
     _classes = {}  # Entity class specific annotation classes
 
     def __init__(self, entity):

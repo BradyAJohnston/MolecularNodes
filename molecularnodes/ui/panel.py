@@ -250,10 +250,17 @@ def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context):
     if not object.mn.is_entity:
         layout.label(text="No MN object selected")
         return None
-    if mol_type.startswith("md") or mol_type == EntityType.MOLECULE.value:
+    if mol_type.startswith("md") or mol_type == EntityType.MOLECULE:
         # molecules and trajectories are both Universe-backed, so both expose selections
         # and (frame-count permitting) playback
         panel_md_properties(layout, context)
+    if mol_type in STYLED_ENTITY_TYPES:
+        # the same styles list as the viewport sidebar, since styles belong to
+        # this object
+        header, body = layout.panel(idname="object_styles")
+        header.label(text="Styles", icon="MATERIAL")
+        if body is not None:
+            panel_styles(body, context, object)
     if mol_type == "ensemble-star":
         layout.label(text="Ensemble")
         box = layout.box()
@@ -578,16 +585,13 @@ class MN_PT_trajectory(bpy.types.Panel):
         if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
         if obj.mn.entity_type not in (
-            EntityType.MD.value,
-            EntityType.MD_STREAMING.value,
-            EntityType.MD_OXDNA.value,
-            EntityType.MOLECULE.value,
+            EntityType.MD_STREAMING,
+            EntityType.MD_OXDNA,
+            EntityType.MOLECULE,
         ):
             return False
         # a single static structure has no playback; streaming has an unknown frame count
-        return (
-            obj.mn.entity_type == EntityType.MD_STREAMING.value or obj.mn.n_frames > 1
-        )
+        return obj.mn.entity_type == EntityType.MD_STREAMING or obj.mn.n_frames > 1
 
     def draw(self, context):
         layout = cast(UILayout, self.layout)
@@ -618,10 +622,10 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
         obj = get_active_entity_object(context)
         if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
-        return obj.mn.entity_type in (
-            EntityType.MD.value,
-            EntityType.MD_STREAMING.value,
-        )
+        # DSSP is computed over trajectory frames, so a molecule needs playback
+        if obj.mn.entity_type == EntityType.MD_STREAMING:
+            return True
+        return obj.mn.entity_type == EntityType.MOLECULE and obj.mn.n_frames > 1
 
     def draw(self, context):
         layout = self.layout
@@ -636,7 +640,7 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
             return
         props = traj.props.dssp
         # display options
-        if traj._entity_type == EntityType.MD:
+        if traj._entity_type == EntityType.MOLECULE:
             row = layout.row()
             row.prop(props, "display_option")
         elif traj._entity_type == EntityType.MD_STREAMING:
@@ -743,6 +747,103 @@ class MN_UL_StylesList(bpy.types.UIList):
         return filtered, ordered
 
 
+# entity types whose objects carry styles in a "Molecular Nodes" modifier tree
+STYLED_ENTITY_TYPES = (
+    EntityType.MD_STREAMING,
+    EntityType.MOLECULE,
+    EntityType.DENSITY,
+)
+
+
+def panel_styles(
+    layout: UILayout, context: bpy.types.Context, obj: bpy.types.Object
+) -> None:
+    """
+    The styles list and controls for an object, shared between the viewport
+    Styles panel and the Object properties panel.
+    """
+    # style nodes live in the object's node tree — read them directly from
+    # Blender data so the panel does not depend on the session being linked
+    node_group = get_entity_node_group(obj)
+    if node_group is None:
+        layout.label(text="No Molecular Nodes modifier on this object")
+        return
+
+    # the style node selected in the list, if any
+    index = obj.mn.styles_active_index
+    style_node = None
+    if 0 <= index < len(node_group.nodes):
+        node = node_group.nodes[index]
+        if is_style_node(node):
+            style_node = node
+
+    entity = context.scene.MNSession.get(obj.uuid)
+
+    # list the style nodes in the tree and let the user select one
+    row = layout.row()
+    row.template_list(
+        "MN_UL_StylesList",
+        "styles_list",
+        node_group,
+        "nodes",
+        obj.mn,
+        "styles_active_index",
+        rows=3,
+    )
+    col = row.column()
+    # adding uses the entity API when linked, and otherwise builds the
+    # style branch directly in the object's node tree; density styles are
+    # different nodes, so density objects only get swap/remove
+    add = col.row()
+    add.enabled = isinstance(entity, Molecule) or (
+        entity is None and obj.mn.entity_type != EntityType.DENSITY
+    )
+    op = add.operator("mn.add_style", icon="ADD", text="")
+    op.uuid = obj.uuid
+    op.name_object = obj.name
+    remove = col.row()
+    remove.enabled = style_node is not None
+    op = remove.operator("mn.remove_style", icon="REMOVE", text="")
+    if style_node is not None:
+        op.name_tree = node_group.name
+        op.name_node = style_node.name
+
+    if style_node is None:
+        layout.label(text="Select a style to edit its properties")
+        return
+
+    # swap the selected style node for a different style
+    row = layout.row(align=True)
+    row.label(text="Style:")
+    op = row.operator_menu_enum(
+        "mn.swap_style",
+        "style",
+        text=style_node.node_tree.name.replace("Style ", ""),
+    )
+    op.name_tree = node_group.name
+    op.name_node = style_node.name
+
+    # display the selection string if using a named attribute
+    if style_node.inputs["Selection"].links and entity is not None:
+        node = style_node.inputs["Selection"].links[0].from_node
+        if isinstance(node, bpy.types.GeometryNodeInputNamedAttribute):
+            if isinstance(entity, Molecule):
+                selection = entity.selections.get(node.inputs["Name"].default_value)
+                layout.prop(selection, "string", text="Selection")
+    else:
+        op: MN_OT_add_selection_to_style = layout.operator(
+            operator="mn.add_selection_to_style"
+        )
+        op.node_tree = node_group.name
+        op.node_name = style_node.name
+
+    # display the selected style node's name and its input properties
+    header, body = layout.panel(idname="style_properties")
+    header.label(text=style_node.label or style_node.name)
+    if body is not None:
+        body.template_node_inputs(style_node)
+
+
 class MN_PT_Styles(bpy.types.Panel):
     """
     Panel for styles
@@ -758,12 +859,7 @@ class MN_PT_Styles(bpy.types.Panel):
     def poll(cls, context):
         """Visible only if the active entity is a trajectory, molecule or density"""
         obj = get_active_entity_object(context)
-        return obj is not None and obj.mn.entity_type in (
-            EntityType.MD.value,
-            EntityType.MD_STREAMING.value,
-            EntityType.MOLECULE.value,
-            EntityType.DENSITY.value,
-        )
+        return obj is not None and obj.mn.entity_type in STYLED_ENTITY_TYPES
 
     def draw(self, context):
         layout = self.layout
@@ -771,86 +867,7 @@ class MN_PT_Styles(bpy.types.Panel):
         obj = get_active_entity_object(context)
         if obj is None:
             return
-        # style nodes live in the object's node tree — read them directly from
-        # Blender data so the panel does not depend on the session being linked
-        node_group = get_entity_node_group(obj)
-        if node_group is None:
-            layout.label(text="No Molecular Nodes modifier on this object")
-            return
-
-        # the style node selected in the list, if any
-        index = obj.mn.styles_active_index
-        style_node = None
-        if 0 <= index < len(node_group.nodes):
-            node = node_group.nodes[index]
-            if is_style_node(node):
-                style_node = node
-
-        entity = context.scene.MNSession.get(obj.uuid)
-
-        # list the style nodes in the tree and let the user select one
-        row = layout.row()
-        row.template_list(
-            "MN_UL_StylesList",
-            "styles_list",
-            node_group,
-            "nodes",
-            obj.mn,
-            "styles_active_index",
-            rows=3,
-        )
-        col = row.column()
-        # adding uses the entity API when linked, and otherwise builds the
-        # style branch directly in the object's node tree; density styles are
-        # different nodes, so density objects only get swap/remove
-        add = col.row()
-        add.enabled = isinstance(entity, Molecule) or (
-            entity is None and obj.mn.entity_type != EntityType.DENSITY.value
-        )
-        op = add.operator("mn.add_style", icon="ADD", text="")
-        op.uuid = obj.uuid
-        op.name_object = obj.name
-        remove = col.row()
-        remove.enabled = style_node is not None
-        op = remove.operator("mn.remove_style", icon="REMOVE", text="")
-        if style_node is not None:
-            op.name_tree = node_group.name
-            op.name_node = style_node.name
-
-        if style_node is None:
-            layout.label(text="Select a style to edit its properties")
-            return
-
-        # swap the selected style node for a different style
-        row = layout.row(align=True)
-        row.label(text="Style:")
-        op = row.operator_menu_enum(
-            "mn.swap_style",
-            "style",
-            text=style_node.node_tree.name.replace("Style ", ""),
-        )
-        op.name_tree = node_group.name
-        op.name_node = style_node.name
-
-        # display the selection string if using a named attribute
-        if style_node.inputs["Selection"].links and entity is not None:
-            node = style_node.inputs["Selection"].links[0].from_node
-            if isinstance(node, bpy.types.GeometryNodeInputNamedAttribute):
-                if isinstance(entity, Molecule):
-                    selection = entity.selections.get(node.inputs["Name"].default_value)
-                    layout.prop(selection, "string", text="Selection")
-        else:
-            op: MN_OT_add_selection_to_style = layout.operator(
-                operator="mn.add_selection_to_style"
-            )
-            op.node_tree = node_group.name
-            op.node_name = style_node.name
-
-        # display the selected style node's name and its input properties
-        header, body = layout.panel(idname="style_properties")
-        header.label(text=style_node.label or style_node.name)
-        if body is not None:
-            body.template_node_inputs(style_node)
+        panel_styles(layout, context, obj)
 
 
 class MN_UL_AnnotationsList(bpy.types.UIList):
@@ -927,10 +944,9 @@ class MN_PT_Annotations(bpy.types.Panel):
         if obj is None or context.scene.MNSession.get(obj.uuid) is None:
             return False
         return obj.mn.entity_type in (
-            EntityType.MD.value,
-            EntityType.MD_STREAMING.value,
-            EntityType.MOLECULE.value,
-            EntityType.DENSITY.value,
+            EntityType.MD_STREAMING,
+            EntityType.MOLECULE,
+            EntityType.DENSITY,
         )
 
     def draw(self, context):

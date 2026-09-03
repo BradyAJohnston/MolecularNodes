@@ -24,6 +24,7 @@ from ..entities import (
     ensemble,
     molecule,
 )
+from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.node_management import (
     remove_style_node,
@@ -509,7 +510,12 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
     def poll(cls, context):
         obj = context.active_object
         loaded_trajectory = context.scene.MNSession.match(obj)
-        return obj.mn.entity_type.startswith("md") and not loaded_trajectory
+        # "molecule" covers MD trajectories too — reloadable here when loaded
+        # from topology (+ trajectory) files
+        reloadable = obj.mn.entity_type.startswith("md") or (
+            obj.mn.entity_type == EntityType.MOLECULE and obj.mn.filepath_topology
+        )
+        return bool(reloadable) and not loaded_trajectory
 
     def execute(self, context):
         obj = context.active_object

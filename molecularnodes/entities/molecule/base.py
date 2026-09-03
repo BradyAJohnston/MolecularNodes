@@ -213,7 +213,7 @@ class Molecule(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
-    _entity_type: EntityType = EntityType.MD
+    _entity_type: EntityType = EntityType.MOLECULE
 
     def __init__(
         self,
@@ -875,9 +875,7 @@ class Molecule(MolecularEntity):
         self, reader, file_path: str | Path | io.BytesIO
     ) -> None:
         """Store file-parsed assembly/entity/chain metadata on the Blender object."""
-        # a structure loaded from a single file is a "molecule" rather than an MD
-        # trajectory; whether playback UI is shown is decided by the frame count.
-        self.props.entity_type = EntityType.MOLECULE.value
+        self.props.entity_type = EntityType.MOLECULE
         self.props.entity_ids = reader.entity_ids()
         self.props.chain_ids = reader.chain_ids()
         self.props.biological_assemblies = reader.assemblies(as_json_string=True)
