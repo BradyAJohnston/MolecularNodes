@@ -10,6 +10,7 @@ from databpy import (
 from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
+from ..nodes.material import add_all_materials
 from ..nodes.nodes import custom_boolean_iswitch, custom_color_iswitch
 from .utilities import BoolObjectMNProperty
 
@@ -154,6 +155,10 @@ class MolecularEntity(
         self._register_with_session()
         self._world_scale = 0.1
         self._tree = None
+        # make every preset material selectable in material dropdowns right
+        # after import, not just the ones a style has already used; materials
+        # already in the file are reused rather than appended again
+        add_all_materials()
 
     def __getstate__(self):
         """Custom serialization."""
