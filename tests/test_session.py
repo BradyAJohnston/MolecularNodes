@@ -235,7 +235,7 @@ def test_entity_blender_properties(session: MNSession, universe):
     assert t1.uuid in session.entities
     obj = bpy.data.objects["u1"]
     # entity type is stored on the object properties
-    assert obj.mn.entity_type == "md"
+    assert obj.mn.entity_type == "molecule"
     assert obj.uuid == t1.uuid
     # visibility is driven through the object properties
     assert obj.mn.visible

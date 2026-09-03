@@ -24,6 +24,7 @@ from ..entities import (
     ensemble,
     molecule,
 )
+from ..entities.base import EntityType
 from ..nodes import nodes
 from ..nodes.node_management import (
     remove_style_node,
@@ -509,7 +510,12 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
     def poll(cls, context):
         obj = context.active_object
         loaded_trajectory = context.scene.MNSession.match(obj)
-        return obj.mn.entity_type.startswith("md") and not loaded_trajectory
+        # "molecule" covers MD trajectories too — reloadable here when loaded
+        # from topology (+ trajectory) files
+        reloadable = obj.mn.entity_type.startswith("md") or (
+            obj.mn.entity_type == EntityType.MOLECULE and obj.mn.filepath_topology
+        )
+        return bool(reloadable) and not loaded_trajectory
 
     def execute(self, context):
         obj = context.active_object
@@ -695,9 +701,13 @@ class MN_OT_Add_Style(Operator):
 
     bl_idname = "mn.add_style"
     bl_label = "Add Style"
-    bl_description = "Add new style to Fpointntity"
+    bl_description = "Add a new style to the entity"
+    bl_options = {"REGISTER", "UNDO"}
 
     uuid: StringProperty()  # type: ignore
+    # fallback identifier for objects not linked to a session entity, whose
+    # style branch is built directly in the object's node tree
+    name_object: StringProperty()  # type: ignore
 
     style: EnumProperty(  # type: ignore
         name="Style",
@@ -755,15 +765,57 @@ class MN_OT_Add_Style(Operator):
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
-        if self.use_uniform_color:
-            color = self.uniform_color
-        else:
-            color = self.color_scheme
-        entity.add_style(
+        selection = self.selection.strip() or None
+        name = self.name.strip() or None
+        if entity is not None:
+            entity.add_style(
+                style=self.style,
+                color=self.uniform_color
+                if self.use_uniform_color
+                else self.color_scheme,
+                selection=selection,
+                name=name,
+            )
+            return {"FINISHED"}
+
+        # without a session entity the style branch is built directly in the
+        # object's node tree — no universe means no MDAnalysis selections and
+        # no color schemes, so those degrade with a warning
+        obj = bpy.data.objects.get(self.name_object)
+        mod = obj.modifiers.get("Molecular Nodes") if obj is not None else None
+        tree = getattr(mod, "node_group", None)
+        if tree is None:
+            self.report({"ERROR"}, "Object has no Molecular Nodes node tree")
+            return {"CANCELLED"}
+
+        attribute = None
+        if selection is not None and selection != "all":
+            if obj.data is not None and selection in obj.data.attributes:
+                attribute = selection
+            else:
+                self.report(
+                    {"WARNING"},
+                    f"'{selection}' is not an attribute on the object; selections "
+                    "need the entity reloaded (linked) to be evaluated. Style "
+                    "added to all atoms",
+                )
+        if not self.use_uniform_color and self.color_scheme not in (
+            "common",
+            "default",
+        ):
+            # baked attribute colors already reflect the common scheme; anything
+            # else needs the entity to compute
+            self.report(
+                {"WARNING"},
+                f"Color scheme '{self.color_scheme}' needs a linked entity; "
+                "keeping the existing colors",
+            )
+        molecule.base.add_style_to_tree(
+            tree,
             style=self.style,
-            color=color,
-            selection=self.selection.strip() or None,
-            name=self.name.strip() or None,
+            color=tuple(self.uniform_color) if self.use_uniform_color else None,
+            selection_attribute=attribute,
+            name=name,
         )
         return {"FINISHED"}
 
@@ -778,18 +830,33 @@ class MN_OT_Remove_Style(Operator):
 
     bl_idname = "mn.remove_style"
     bl_label = "Remove Style"
-    bl_description = "Remove style from entity"
+    bl_description = (
+        "Remove the selected style, along with its selection and color nodes"
+    )
+    bl_options = {"REGISTER", "UNDO"}
 
-    uuid: StringProperty()  # type: ignore
-    style_node_index: IntProperty()  # type: ignore
+    # the node is identified by tree + node name, as operators can't take
+    # pointers; working on Blender data directly (rather than through the
+    # session) keeps removal available for unlinked objects
+    name_tree: StringProperty()  # type: ignore
+    name_node: StringProperty()  # type: ignore
 
     def execute(self, context: Context):
-        entity = get_session().get(self.uuid)
-        node_group = entity.node_group
-        style_node = node_group.nodes[self.style_node_index]
-        remove_style_node(style_node)
-        # set the active index in UI to the last style
-
+        tree = bpy.data.node_groups.get(self.name_tree)
+        if tree is None or self.name_node not in tree.nodes:
+            self.report({"ERROR"}, "Style node to remove was not found")
+            return {"CANCELLED"}
+        remove_style_node(tree.nodes[self.name_node])
+        # keep the styles list selection valid by pointing it at the last
+        # remaining style node, on every object rendered by this tree
+        last = max(
+            (i for i, node in enumerate(tree.nodes) if "Style" in node.name),
+            default=-1,
+        )
+        for obj in bpy.data.objects:
+            mod = obj.modifiers.get("Molecular Nodes")
+            if mod is not None and getattr(mod, "node_group", None) == tree:
+                obj.mn.styles_active_index = last
         return {"FINISHED"}
 
     def invoke(self, context, event):

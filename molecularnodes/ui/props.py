@@ -25,7 +25,6 @@ ENTITY_ITEMS = (
     ("molecule", "Molecule", "A single molecule"),
     ("ensemble", "Ensemble", "A collection of molecules"),
     ("density", "Density", "A density grid"),
-    ("md", "Trajectory", "A molecular dynamics trajectory"),
     ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
     (
         "md-streaming",
