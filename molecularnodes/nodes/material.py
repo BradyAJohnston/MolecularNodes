@@ -26,7 +26,13 @@ def append_material(name: str) -> bpy.types.Material:
 
 def add_all_materials() -> dict[str, bpy.types.Material]:
     "Append all pre-defined materials from the MN_DATA_FILE."
-    return {name: append_material(name) for name in MATERIAL_NAMES}
+    materials = {name: append_material(name) for name in MATERIAL_NAMES}
+    # a preset that no style uses yet has zero users, so without a fake user it
+    # would be dropped on save/reload or swept up by an orphan purge before the
+    # user has had a chance to select it
+    for mat in materials.values():
+        mat.use_fake_user = True
+    return materials
 
 
 T = TypeVar("T")
