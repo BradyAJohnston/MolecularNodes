@@ -1,6 +1,6 @@
 from abc import ABCMeta
 from contextlib import contextmanager
-from enum import Enum
+from enum import StrEnum
 from typing import TYPE_CHECKING, Iterator, List, NamedTuple, cast
 import bpy
 from bpy.types import GeometryNodeTree, NodesModifier
@@ -18,10 +18,12 @@ if TYPE_CHECKING:
     from ..ui.props import MolecularNodesObjectProperties
 
 
-# create a EntityType enum
-# These should match the entity_type EnumProperty in props.py
-class EntityType(Enum):
-    MD = "md"
+# These should match the entity_type EnumProperty in props.py. As a StrEnum,
+# members compare equal to their string values (e.g. obj.mn.entity_type), so
+# no .value is needed at comparison sites
+class EntityType(StrEnum):
+    # "molecule" covers static structures and MD trajectories alike, both being
+    # Universe-backed; only the specialised loaders keep their own md-* types
     MD_OXDNA = "md-oxdna"
     MD_STREAMING = "md-streaming"
     MOLECULE = "molecule"
@@ -40,8 +42,12 @@ class ResetSockets(NamedTuple):
 
 class MolecularTree(TreeBuilder[GeometryNodeTree]):
     def __init__(
-        self, entity: "MolecularEntity", tree: TreeBuilder | GeometryNodeTree | str
+        self,
+        entity: "MolecularEntity | None",
+        tree: TreeBuilder | GeometryNodeTree | str,
     ) -> None:
+        # the entity is optional so a tree can be built for an object that is
+        # not linked to a session entity (e.g. the UI's object-level add style)
         self._entity = entity
         if isinstance(tree, TreeBuilder):
             super().__init__(cast(GeometryNodeTree, tree.tree))
@@ -301,7 +307,7 @@ class MolecularEntity(
         By default, this returns the string value of the Entity type.
 
         Eg: OXDNA and StreamingTrajectory that derive from the Molecule entity
-        can return EntityType.MD.value to re-use the annotations from
+        can return EntityType.MOLECULE to re-use the annotations from
         the parent Molecule entity.
 
         """

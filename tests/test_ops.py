@@ -101,7 +101,7 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     assert traj_op.name == "box.gro"
     traj_op.name = name
     assert traj_op.name == name
-    assert traj_op._mn_entity_type == mn.entities.base.EntityType.MD.value
+    assert traj_op._mn_entity_type == mn.entities.base.EntityType.MOLECULE
 
     traj_func = mn.entities.molecule.Molecule.load(
         topo, traj, name="test", style="ribbon"
