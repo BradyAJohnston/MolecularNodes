@@ -261,44 +261,123 @@ def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context):
         return None
 
 
-def panel_scene(layout, context):
+# must match molecularnodes.scene.world.mn_world_shader_node_name — not imported
+# from there because the scene package is an optional dependency of the addon UI
+MN_WORLD_SHADER_NODE = "MN_world_shader"
+
+
+def get_world_shader_node(scene: bpy.types.Scene) -> bpy.types.Node | None:
+    """The ``MN_world_shader`` node driving the world background, or None."""
+    world = scene.world
+    if world is None or world.node_tree is None:
+        return None
+    return world.node_tree.nodes.get(MN_WORLD_SHADER_NODE)
+
+
+def panel_render(layout: UILayout, context: bpy.types.Context) -> None:
+    """
+    The common render settings in one place, mirroring the convenience
+    properties that ``mn.Canvas`` exposes for scripting.
+    """
     scene = context.scene
+    layout.use_property_split = True
+    layout.use_property_decorate = False
 
-    cam = bpy.data.cameras[bpy.data.scenes["Scene"].camera.name]
-    world_shader = bpy.data.worlds["World Shader"].node_tree.nodes["MN_world_shader"]
-    grid = layout.grid_flow()
-    col = grid.column()
-    col.label(text="World Settings")
-    world = col.box()
-    world.prop(bpy.data.scenes["Scene"].render, "engine")
+    col = layout.column()
+    col.prop(scene.render, "engine")
     if scene.render.engine == "CYCLES":
-        world.prop(bpy.data.scenes["Scene"].cycles, "samples")
+        col.prop(scene.cycles, "device")
+        col.prop(scene.cycles, "samples")
+        col.prop(scene.cycles, "use_denoising", text="Denoise")
     else:
-        world.prop(bpy.data.scenes["Scene"].eevee, "taa_render_samples")
-    world.label(text="Background")
-    world.prop(world_shader.inputs[1], "default_value", text="HDRI Strength")
-    row = world.row()
-    row.prop(scene.render, "film_transparent")
-    row.prop(world_shader.inputs[2], "default_value", text="Background")
+        col.prop(scene.eevee, "taa_render_samples", text="Samples")
 
-    col = grid.column()
-    col.label(text="Camera Settings")
-    camera = col.box()
-    camera.prop(cam, "lens")
-    col = camera.column(align=True)
-    row = col.row(align=True)
-    row.prop(bpy.data.scenes["Scene"].render, "resolution_x", text="X")
-    row.prop(bpy.data.scenes["Scene"].render, "resolution_y", text="Y")
-    row = camera.grid_flow()
-    row.prop(cam.dof, "use_dof")
-    row.prop(bpy.data.scenes["Scene"].render, "use_motion_blur")
-    focus = camera.column()
-    focus.enabled = cam.dof.use_dof
-    focus.prop(cam.dof, "focus_object")
-    distance = focus.row()
-    distance.enabled = cam.dof.focus_object is None
-    distance.prop(cam.dof, "focus_distance")
-    focus.prop(cam.dof, "aperture_fstop")
+    col = layout.column(align=True)
+    col.prop(scene.render, "resolution_x", text="Resolution X")
+    col.prop(scene.render, "resolution_y", text="Y")
+    col.prop(scene.render, "resolution_percentage", text="%")
+    layout.prop(scene.render, "film_transparent", text="Transparent")
+
+    col = layout.column()
+    # the background shortcuts need the world shader node from the MN preset;
+    # sockets match molecularnodes.scene.world.WorldTree
+    world_shader = get_world_shader_node(scene)
+    if world_shader is not None:
+        col.prop(world_shader.inputs[3], "default_value", text="Background")
+        col.prop(world_shader.inputs[1], "default_value", text="HDRI Strength")
+
+    header, body = layout.panel(idname="mn_render_camera", default_closed=False)
+    header.label(text="Camera")
+    if body is not None:
+        # aimed at scenes with a single camera, so the scene's active camera
+        # is edited directly rather than offering a picker
+        camera = scene.camera
+        if camera is None:
+            body.label(text="No camera in the scene")
+        else:
+            cam_data = cast(bpy.types.Camera, camera.data)
+            dof = cam_data.dof
+            assert cam_data is not None
+            body.prop(cam_data, "lens", text="Focal Length")
+            body.prop(dof, "use_dof", text="Depth of Field")
+            focus = body.column()
+            focus.enabled = dof.use_dof
+            focus.prop(dof, "focus_object")
+            distance = focus.row()
+            distance.active = dof.focus_object is None
+            row = distance.row(align=True)
+            row.prop(dof, "focus_distance", text="Focus Distance")
+            # the depth eyedropper samples through the camera, so its poll only
+            # passes while the viewport is in camera view — grey it out
+            # deliberately (rather than letting the poll flicker it on hover)
+            # and hint at how to enable it
+            region_3d = getattr(context.space_data, "region_3d", None)
+            in_camera_view = (
+                region_3d is not None and region_3d.view_perspective == "CAMERA"
+            )
+            pick = row.row(align=True)
+            pick.enabled = in_camera_view
+            op = pick.operator("ui.eyedropper_depth", icon="EYEDROPPER", text="")
+            op.prop_data_path = "scene.camera.data.dof.focus_distance"
+            if not in_camera_view:
+                focus.label(
+                    text="Enter camera view to pick focus distance", icon="INFO"
+                )
+            focus.prop(dof, "aperture_fstop", text="F-Stop")
+
+    header, body = layout.panel(idname="mn_render_color", default_closed=True)
+    header.label(text="Color Management")
+    if body is not None:
+        view = scene.view_settings
+        body.prop(view, "view_transform")
+        body.prop(view, "look")
+        body.prop(view, "exposure")
+        body.prop(view, "gamma")
+
+    header, body = layout.panel(idname="mn_render_animation", default_closed=True)
+    header.label(text="Animation")
+    if body is not None:
+        col = body.column(align=True)
+        col.prop(scene, "frame_start", text="Frame Start")
+        col.prop(scene, "frame_end", text="End")
+        body.prop(scene.render, "fps", text="FPS")
+
+
+class MN_PT_Render(bpy.types.Panel):
+    """
+    Panel collecting the common render settings (Viewport)
+    """
+
+    bl_idname = "MN_PT_render"
+    bl_label = "Render"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    def draw(self, context):
+        layout = self.layout
+        assert layout
+        panel_render(layout, context)
 
 
 class MN_PT_Scene(bpy.types.Panel):
@@ -820,6 +899,7 @@ class MN_PT_Annotations(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Molecular Nodes"
+    bl_options = {"DEFAULT_CLOSED"}
 
     @classmethod
     def poll(cls, context):
@@ -984,5 +1064,6 @@ CLASSES = [
     MN_PT_Styles,
     MN_UL_AnnotationsList,
     MN_PT_Annotations,
+    MN_PT_Render,
     MN_PT_Compositor,
 ]
