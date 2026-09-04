@@ -13,24 +13,25 @@
 Style Spheres:
   description: >-
     Space filling atomic spheres scaled based on their `vdw_radii` attribute.  By default they are _Point Clouds_
-    which don't render well inside of EEVEE,  but are extremely fast to render and manipulate inside of Cycles.  To
-    show the atoms inside of EEVEE you can enable the `As Mesh` input  which realises them into real geometry
+    which render as simple primitives inside of EEVEE but perfect spheres inside of Cycles.  To
+    show the atoms inside of EEVEE you can choose the `Instance::Menu` or `Mesh::Menu` as the sphere type, which will
+    generate traditional polygonal geometry for rendering in EEVEE.
   videos:
-  - https://imgur.com/eRDo2As
+    - https://imgur.com/eRDo2As
 Style Cartoon:
   description: >-
     Peptide helices and sheets are emphasized with the 'traditional' cartoon style. Secondary structure becomes
     distinct and nucleic acids become a simplified representation. The node also includes an option to calculate
-    secondary structure by enabling the `DSSP` input, but this will differ to secondary structure imported from
+    secondary structure by enabling the `Topology DSSP::Node` input, but this will differ to secondary structure imported from
     structures from the PDB.
   videos:
-  - https://imgur.com/jFdzd5J
+    - https://imgur.com/jFdzd5J
 Style Ribbon:
   description: >-
     A simplified tube that through the alpha carbons of the protein. Controls for the raadius and smoothing of sheets
     are available.
   videos:
-  - https://imgur.com/LROZR8i
+    - https://imgur.com/LROZR8i
 Style Surface:
   description: >-
     The `vdw_radii` and a probe are used to calculate the surface of the molecule. This is still a close approximation
@@ -38,38 +39,38 @@ Style Surface:
     the surface is by default done by sampling the closest alpha carbon, but this can be disabled to use the closest
     atom for coloring the mesh
   videos:
-  - https://imgur.com/GM8TYZm
+    - https://imgur.com/GM8TYZm
 Style Ball and Stick:
   description: >-
     Shows the atoms and bonds. The bonds are cylinders between the atoms, which can be split apart for double and
     triple bonds if the information is within the structure on import. Spheres can be displayed as mesh of as _Point
-    Cloud_ as with the `Style Sheres` node. Bonds can also be calculated if none are present, but this is approximate
+    Cloud_ as with the `Style Spheres::Node` node. Bonds can also be calculated if none are present, but this is approximate
     and purely distance based so should not be relied upon
   videos:
-  - https://imgur.com/nXPQN7W
+    - https://imgur.com/nXPQN7W
 Style Sticks:
   description: >-
     Each bond terminates cleanly in a half sphere for a typical stick representation of the atoms and bonds
   videos:
-  - https://imgur.com/iNqE87M
+    - https://imgur.com/iNqE87M
 Separate Atoms:
   description: >-
-    Separate the input atoms intwo the `Atoms` and `Inverted` based on the input selection. For simply styling this
-    can the same as inputting the selecting directly into the Style node. The one additional output for this node
-    is the `Index` field, which is the index of the atom in the original structure before the selection happened
+    Separate the input atoms into the `Atoms::Geometry` and `Inverted::Geometry` based on the input `Selection::Bool`. For simply styling this
+    can the same as inputting the `Selection::Bool` directly into the Style node. The one additional output for this node
+    is the `Index::Int` field, which is the index of the atom in the original structure before the selection happened
     and potentially changed it's index
   videos:
-  - https://imgur.com/OAcekhf
+    - https://imgur.com/OAcekhf
 Separate Polymers:
   description: >-
     Separate the input atomic geometry into it's different polymers or `Protein`, `Nucleic Acid` and `other`.
   videos:
-  - https://imgur.com/trg0voP
+    - https://imgur.com/trg0voP
 Select Chain_:
   description: >-
     Select single or multiple of the different chains. Creates a selection based on the `chain_id` attribute.
   videos:
-  - https://imgur.com/U7HqDct
+    - https://imgur.com/U7HqDct
   custom: true
   label: Chain
   category: Select
@@ -77,7 +78,7 @@ Select Entity_:
   description: >-
     Select single or multiple of the different entities. Creates a selection based on the `entity_id` attribute.
   videos:
-  - https://imgur.com/h5KZBXt
+    - https://imgur.com/h5KZBXt
   custom: true
   label: Entity
   category: Select
@@ -91,29 +92,29 @@ Select Atomic Number:
     Select points based on their `atomic_number` attribute, corresponding to the element's atomic number. Useful
     for selecting single elements quickly
   videos:
-  - https://imgur.com/B6V9W3F
+    - https://imgur.com/B6V9W3F
 Select Element:
   description: >-
     Select points for the first 80 elemnts of the preiodic table, via a boolean input. Elements are grouped into
     panels of 20 each for orgnaisation and convenience
   videos:
-  - https://imgur.com/d6Q3T7D
+    - https://imgur.com/d6Q3T7D
 Select Res Name:
   description: >-
     Select points based on their `res_id` attribute for different peptide or nucleic acid residue names. Inputs
     are arranged alphabetically and in panels of _Protein_, _RNA_ and _DNA_ for layout
   videos:
-  - https://imgur.com/smwnKsL
+    - https://imgur.com/smwnKsL
 Select Res ID:
   description: Select a atoms based on their `res_id` number.
   videos:
-  - https://imgur.com/BL6AOP4
+    - https://imgur.com/BL6AOP4
 Select Res ID Range:
   description: >-
-    Select multiple residues by specifying a _Min_ and a _Max_, defining a range that includes or excludes based
+    Select multiple residues by specifying a `Min::Int` and a `Max::Int`, defining a range that includes or excludes based
     on the `res_id` number.
   videos:
-  - https://imgur.com/NdoQcdE
+    - https://imgur.com/NdoQcdE
 Select Nucleic Type:
   description: Select either purines or pyrimidines
 Select Attribute:
@@ -121,11 +122,11 @@ Select Attribute:
 Is Peptide:
   description: Outputs a selection for all of the points in a peptide
   videos:
-  - https://imgur.com/KGU2ElV
+    - https://imgur.com/KGU2ElV
 Is Nucleic:
   description: Outputs a selection for all of the points in a nucleic acid molecule
   videos:
-  - https://imgur.com/UBVBPnI
+    - https://imgur.com/UBVBPnI
 Is Lipid:
   description: Select the atoms involved in lipid molecules.
 Is Solvent:
@@ -135,88 +136,88 @@ Is Hydrogen:
 Is Alpha Carbon:
   description: Outputs a selection for all of the points that are alpha carbons (CA) in the structure
   videos:
-  - https://imgur.com/JxGa9Ou
+    - https://imgur.com/JxGa9Ou
 Is Backbone:
   description: >-
     Outputs a selection for the backbone atoms of a peptide or nucleic acid polymer. Peptide backbone includes the
     peptide oxygen and the alpha carbon as part of the backbone
   videos:
-  - https://imgur.com/MBpgktt
+    - https://imgur.com/MBpgktt
 Is Side Chain:
   description: >-
     Outputs a selection for the side chain atoms of a peptide or nucleic acid polymer. Peptide side chain can optionally
     include or exclude the alpha carbon CA of the side chain
   videos:
-  - https://imgur.com/Hpy5AQc
+    - https://imgur.com/Hpy5AQc
 Is Helix:
   description: >-
     Outputs a selection for points that are part of a helix. The `sec_struct` attribute must exist, either imported
-    from the file or computed with the `DSSP` node
+    from the file or computed with the `Topology DSSP::Node` node
   videos:
-  - https://imgur.com/Rp2CPvq
+    - https://imgur.com/Rp2CPvq
 Is Sheet:
   description: >-
     Outputs a selection for points that are part of a sheet. The `sec_struct` attribute must exist, either import
-    from the file or computed with the `DSSP` node
+    from the file or computed with the `Topology DSSP::Node` node
   videos:
-  - https://imgur.com/OObFAzq
+    - https://imgur.com/OObFAzq
 Is Loop:
   description: >-
     Outputs a selection for those points in a peptide which are not part of any secondary structure (loop or helix)
   videos:
-  - https://imgur.com/Buy0OEu
+    - https://imgur.com/Buy0OEu
 Select Bonded:
   description: >-
     Based on an initial selection, finds atoms which are within a certain number of bonds of this selection. Output
     can include or excluded the original selection.
   videos:
-  - https://imgur.com/g8hgXup
+    - https://imgur.com/g8hgXup
 Select Res Whole:
   description: >-
     Expand the given selection to include a whole residue, if a single atom in that residue is selected. Useful
     for when a distance or proximity selection includes some of the residue and you wish to include all of the residue.
   videos:
-  - https://imgur.com/JFzwE0i
+    - https://imgur.com/JFzwE0i
 Select Cube:
   description: >-
     Create a selection that is inside the `Empty_Cube` object. When this node is first created, an _empty_ object
     called `Empty_Cube` should be created. You can always create additional empty objects through the add menu,
     to use a different object. The rotation and scale of the object will be taken into account for the selection.
   videos:
-  - https://imgur.com/P4GZ7vq
+    - https://imgur.com/P4GZ7vq
 Select Sphere:
   description: >-
     Create a selection that is within a spherical radius of an object, based on that object's scale. By default
     an _empty_ object called `Empty_Sphere` is created. You can use other objects or create a new empty to use.
     The origin point for the object will be used, which should be taken in to account when using molecules. Use
-    [`MN_select_proximity`](#select-proximity) for selections which are within a certain distance of a selection
+    `Select Proximity::Node` node for selections which are within a certain distance of a selection
     of atoms instead of a single origin point.
   videos:
-  - https://imgur.com/xdeTZR7
+    - https://imgur.com/xdeTZR7
 Select Proximity:
   description: >-
     Create a selection based on the proximity to the Target Atoms of the input. A sub-selection of the Target atoms
     can be used if the `Subset` input is used. You can expand the selection to include an entire residue if a single
-    atom in that residue is selected, by setting `Expand` to `True`. In the example below, the `Style Atoms` is
+    atom in that residue is selected, by setting `Expand::Bool` to `True`. In the example below, the `Style Spheres::Node` is
     being applied to a selection, which is being calculated from the proximity of atoms to specific chains. As the
     cutoff for the selection is changed, it includes or excludes more atoms. The `Whole Residue` option also ensures
     that entire residues are shown.
   videos:
-  - https://imgur.com/QmvDZn2
+    - https://imgur.com/QmvDZn2
 Set Color:
   description: >-
-    Set the `Color` attribute on the point domain, based on the input `Color` field. The `Selection` field limits
-    the setting of the color to the input `Selection`, with the unselected points keeping their current `Color`
+    Set the `Color` attribute on the point domain, based on the input `Color::Color` field. The `Selection::Bool` field limits
+    the setting of the color to the input `Selection::Bool`, with the unselected points keeping their current `Color`
     attribute
   videos:
-  - https://imgur.com/1vTKUom
+    - https://imgur.com/1vTKUom
 Color Chain_:
   description: >-
     Pick colors that are used for each `chain_id` that is present in the structure. The inputs can also accept fields
     to generate colors for that chain based on upstream field evaluation. This node is generated on a per-structure
     basis, so will only be useful for the corresponding structure.
   videos:
-  - https://imgur.com/F6f8MQW
+    - https://imgur.com/F6f8MQW
   custom: true
   label: Chain
   category: Color
@@ -230,8 +231,8 @@ Color Entity_:
     or molecule in the structure but in different conformations, it can helpt to color them based on their `entity_id`
     rather than individual `chain_id` values
   videos:
-  - https://imgur.com/dqa9Jro
-  - https://imgur.com/EMmQsEP
+    - https://imgur.com/dqa9Jro
+    - https://imgur.com/EMmQsEP
   custom: true
   label: Entity
   category: Color
@@ -240,56 +241,56 @@ Color Element:
     Choose colors for the individual elements of the periodic table. The first 80 elements are listed, grouped into
     panels in chunks of 20 elements per panel for better organisation.
   videos:
-  - https://imgur.com/MHjCHJd
+    - https://imgur.com/MHjCHJd
 Color Atomic Number:
   description: >-
     Choose the color for an individual `atomic_number`. Useful for joining with fields and selecting individual
     elements for coloring
   videos:
-  - https://imgur.com/tErqBNb
+    - https://imgur.com/tErqBNb
 Color Res Name:
   description: Choose colors for the individual amino acid and nucleic acid residues
   videos:
-  - https://imgur.com/7bEmJGU
+    - https://imgur.com/7bEmJGU
 Color Common:
   description: For convenience, choose colors for the common 6 elements found protein structures
   videos:
-  - https://imgur.com/JZD0IvD
+    - https://imgur.com/JZD0IvD
 Color Goodsell:
   description: Darken the color of non-carbon atoms, a similar strategy to the style developed by David Goodsell
   videos:
-  - https://imgur.com/RDykyT3
+    - https://imgur.com/RDykyT3
 Color Rainbow:
   description: >-
     Output a rainbow color spectrum along the structure. The rainbow can be generated along each chain in the structure,
     or along the entire structure. You can offset the strat of the rainbow and chain the color & satuation of the
     generated colors
   videos:
-  - https://imgur.com/8fYEqQn
+    - https://imgur.com/8fYEqQn
 Color Attribute Map:
   description: >-
     Map a value to interpolate between two colors, optionally using an intermediate color. User can specify the
     _Attribute Name_ that is used for the inerpolation, specifying the start and end values of the interpolation
   videos:
-  - https://imgur.com/ZWCSx19
+    - https://imgur.com/ZWCSx19
 Color Attribute Random:
   description: >-
     Generate a random color, based on the given attribute. Control the lightness and saturation of the color with
     the inputs.
   videos:
-  - https://imgur.com/5sMcpAu
+    - https://imgur.com/5sMcpAu
 Color pLDDT:
   description: >-
     Uses the `b_factor` attribute to assign the typical AlphaFold `pLDDT` color palette. Node is automatically used
     when fetching directly from the AlphaFold database
   videos:
-  - https://imgur.com/3RAi1rm
+    - https://imgur.com/3RAi1rm
 Color Backbone:
   description: >-
     Select colors for atoms that are part of the backbone or the side chain of a peptide or nucleic acid polymer.
     Atoms that are neither maintain their current `Color` attribute
   videos:
-  - https://imgur.com/nadPkJd
+    - https://imgur.com/nadPkJd
 Color Mix Intermediate:
   description: >-
     Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces
@@ -341,23 +342,23 @@ Atom Name:
 Residue Name:
   description: >-
     The `res_name` attribute, an integer representation of the residue names. Amino acids are sorted alphabetically
-    and assigned a value starting at `0`. DNA starts at 40 and DNA starts at 30
+    and assigned a value starting at `0`. DNA starts at 30 and RNA starts at 40. Check the [attributes](../attributes.qmd) for a full listing.
 Secondary Structure:
   description: The `sec_struct` attribute of the point. `0` is non-peptide, 1 is helix, 2 is sheet and 3 is loop
 VDW Radii:
   description: >-
     The `vdw_radii` attribute of the point, corresponding the radius of the element as defined in the data dictionary.
-    Used for scaling sphers for `Style Spheres` and `Style Ball and Stick`
+    Used for scaling sphers for `Style Spheres::Node` and `Style Ball and Stick::Node` nodes, and for calculating the surface of the molecule in `Style Surface::Node`
 Mass:
   description: The `mass` attribute of the point, used for centre of mass calculations
 B Factor:
-  description: The `b_factor` attribute of the point, representing the 'temperature' of the point
+  description: The `b_factor` attribute of the point, how well resolved the individual atoms are
 Color:
   description: >-
     The `Color` attribute of the point, used for coloring the final generated geometry inside of the materials
 URes ID:
   description: >-
-    The `ures_id` attribute of the point, a unique identifier for each residue across the whole structure.
+    The `ures_id` attribute of the point, a unique identifier for each residue across the whole structure that is computed when the structure is loaded.
 Residue Parameter:
   description: Read information about the atoms with the context of each residue the atom is in
 Chain Parameter:
@@ -368,7 +369,7 @@ Unique Residue ID:
   description: A unique Group ID that is calculated for every residue in the structure
 Unique Chain ID:
   description: >-
-    Assumes only CA points in the geometry. Unique Group ID for each chain, incrementing if distance between CA
+    Assumes only CA points in the geometry. Unique `Group ID::Int` for each chain, incrementing if distance between CA
     points are greater than threshold
 Topology DSSP:
   description: Calculate the secondary structure of a structure, storing it on the `sec_struct` attribute.
@@ -383,7 +384,7 @@ Residue Mask:
     the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position,
     showing the group-wise selection.
   videos:
-  - https://imgur.com/sD3jRTR
+    - https://imgur.com/sD3jRTR
 Menu Residue Mask:
   description: >-
     Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for
@@ -391,7 +392,7 @@ Menu Residue Mask:
     the `atom_name` is used to select an atom within the groups. Each atom's position is then offset to that position,
     showing the group-wise selection.
   videos:
-  - https://imgur.com/sD3jRTR
+    - https://imgur.com/sD3jRTR
 Menu Residue Name: {}
 Menu Atom Name: {}
 Backbone Positions:
@@ -401,7 +402,7 @@ Backbone Positions:
     the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from
     the AA residue higher or lower with the specified offset.
   videos:
-  - https://imgur.com/6X2wnpY
+    - https://imgur.com/6X2wnpY
 Peptide Dihedral:
   description: >-
     Rotate the atoms cumulatively for each residue, adjusting the `phi` and `psi` angles for the selected residues
@@ -439,7 +440,7 @@ Edge Info:
     the cone to the other point. As the "Edge Index" is changed, the selected edge changes. When "Edge Index" ==
     3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.
   videos:
-  - https://imgur.com/Ykyis3e
+    - https://imgur.com/Ykyis3e
 Point Edge Angle:
   description: >-
     Calculate the angle between two edges, selected with the edge indices. For molecule bonds, combinations of [(0,
@@ -449,7 +450,7 @@ Point Edge Angle:
     which the rotation for the cone is rotated. This demonstrates the ability to calculate the edge angle between
     the two selected edges.
   videos:
-  - https://imgur.com/oQP6Cv8
+    - https://imgur.com/oQP6Cv8
 Points of Edge:
   description: >-
     Finds the conntected point for the selected "Edge Index", and returns each point index for all of the points
@@ -460,9 +461,9 @@ Points of Edge:
     the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This
     helps with doing calculations for planar molecules.
   videos:
-  - https://imgur.com/fZ6srIS
+    - https://imgur.com/fZ6srIS
 Curve Vectors:
-  description: 'Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent'
+  description: "Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent"
 Curve Offset Dihedral:
   description: >-
     Calculate the Dihredral angle between the current point and another point offset along the curve, using their
@@ -481,19 +482,19 @@ Curve Offset Dot:
     dot producted thresholded for a particular cutoff
 Offset Point Along Curve:
   description: >-
-    Return the `Factor` or `Length` of a point, when offset an amount of points along their curve. A value of 1.5
-    returns the `Factor` / `Length` that is half way between the two points that are +1 and +2 from the current
+    Return the `Factor::Float` or `Length::Float` of a point, when offset an amount of points along their curve. A value of 1.5
+    returns the `Factor::Float` / `Length::Float` that is half way between the two points that are +1 and +2 from the current
     `Point Index`, Useful for sampling the same curve, at a different point along the curve. Helps with interpolating
     along a bezier curve without having to evaluate to the intermediate points first
   videos:
-  - https://imgur.com/NX6dZXR
-  - https://imgur.com/05AmdjU
+    - https://imgur.com/NX6dZXR
+    - https://imgur.com/05AmdjU
 Curve Endpoint Values:
   description: Integer values for the ends of splines, specifying the start and end sizes
 Curve Visualize:
   description: Visualize curves, instancing Gimbals with the resulting curve rotation and positions
   videos:
-  - https://imgur.com/KKY7v12
+    - https://imgur.com/KKY7v12
 Curve Custom Profile:
   description: >-
     `Curve to Mesh` but with the potential for a custom profile, with fields for custom rotations and scaling along
@@ -504,14 +505,14 @@ Split to Centred Instances:
     each `Group ID`. The `Selection` determines the points which contribute to the `Centroid` calculation, but all
     points are still offset and split into their instances
   videos:
-  - https://imgur.com/NcHuxsz
+    - https://imgur.com/NcHuxsz
 Centre on Selection:
   description: >-
     Offsets the input points so that their calculated `Centroid` is on the world origin. If the `Group ID` input
     is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute
     towards the calculation of the centroid, but all points are still moved
   videos:
-  - https://imgur.com/xSOH4Tr
+    - https://imgur.com/xSOH4Tr
 Separate First Point:
   description: Separate out the first point for each group in the `Group ID`
 Selected Instances:
@@ -660,14 +661,14 @@ Animate Frames:
     is used. Smoothing in and out of each frame can be applied with the `Smoother Step`, or no interpolation at
     all.
   videos:
-  - https://imgur.com/m3BPUxh
+    - https://imgur.com/m3BPUxh
 Animate Value:
   description: >-
     Animate a float value between the specified min and max values, over specified range of frames. If clamped,
     frames above and below the start and end will result in the min and max output values, otherwise it will continue
     to linearly interpolate the value beyond the min and max values.
   videos:
-  - https://imgur.com/2oOnwRm
+    - https://imgur.com/2oOnwRm
 Animate Trails:
   description: >-
     Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms
@@ -678,13 +679,13 @@ Animate Wiggle:
     steric clashing so higher amplitudes will result in strange results. The animation should seamlessly loop every
     `1.00` of the `Animate 0..1` input.
   videos:
-  - https://imgur.com/GK1nyUz
+    - https://imgur.com/GK1nyUz
 Animate Peptide to Curve:
   description: >-
     Take the protein residues from a structure and align then along an input curve. Editing the curve will change
     how the atoms are arranged. The output atoms can be styled as normal.
   videos:
-  - https://imgur.com/FcEXSZx
+    - https://imgur.com/FcEXSZx
 Field Remap:
   description: Sample a field from the mesh and remap from the minimum to the maximum to the specified values
 Angstrom to World: {}
@@ -725,7 +726,7 @@ Centroid:
     towards the overall centroid calculation, but the result is still available on the other points in the `Group
     ID`
   videos:
-  - https://imgur.com/Cc538lr
+    - https://imgur.com/Cc538lr
 Vector Direction:
   description: Direction from one point to another, optionally normalized
 Vector Angle:
@@ -740,4 +741,4 @@ Sample Nearest Atoms:
     Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume
     mesh.
   videos:
-  - https://imgur.com/UzNwLv2
+    - https://imgur.com/UzNwLv2

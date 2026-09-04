@@ -41,3 +41,4 @@ tests/data/cellpack/petworld/*.cif
 /docs/_inv
 /tests/blend_files/**.blend
 docs/_node_links.yml
+docs/_node_links.lua

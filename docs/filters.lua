@@ -17,12 +17,31 @@ local special_mappings = {
   -- ["None"] = "None::Object",
 }
 
+-- `Name::Node` links to the node's entry in the node documentation, using the
+-- name -> href map that docs/generate.py writes to _node_links.lua
+local script_dir = pandoc.path.directory(PANDOC_SCRIPT_FILE)
+local found, node_links = pcall(dofile, pandoc.path.join({script_dir, "_node_links.lua"}))
+if not found then
+  node_links = {}
+end
+
 function Code(el)
   if special_mappings[el.text] then
     el.text = special_mappings[el.text]
   end
   if el.text:match("^'.*'$") then
     el.text = el.text ..  "::String"
+  end
+  local node_name = el.text:match("^(.+)::Node$")
+  if node_name then
+    el.text = node_name
+    table.insert(el.classes, "custom-node")
+    local href = node_links[node_name]
+    if href == nil then
+      quarto.log.warning("`" .. node_name .. "::Node` matches no documented node")
+      return el
+    end
+    return pandoc.Link(el, href)
   end
   for _, keyword in ipairs(keywords) do
     -- anchored so e.g. `x::Int` never matches inside `x::Integer`

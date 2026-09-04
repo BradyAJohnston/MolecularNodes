@@ -224,6 +224,7 @@ $custom-classes: (
   "image": $node-socket-color-image,
   "bundle": $node-socket-color-bundle,
   "closure": $node-socket-color-closure,
+  "node": $node-type-color-geometry,
   "input": $node-type-color-input,
   "attribute": $node-type-color-input
 );
@@ -233,3 +234,9 @@ $custom-classes: (
       @include code-style($color);
     }
   }
+
+// `Name::Node` chips are wrapped in a link to the node's documentation;
+// the chip styling already marks them, so drop the link underline
+a:has(> code.custom-node) {
+  text-decoration: none;
+}
