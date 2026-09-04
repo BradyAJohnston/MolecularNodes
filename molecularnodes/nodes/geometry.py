@@ -16839,10 +16839,10 @@ class StyleSurface(AssetGeometryGroup):
         Selection of atoms to apply this style to, discarding unselected points
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-    surface_scale : InputFloat
+    scale : InputFloat
         Scale the VDW radii of the atoms when creating the surface
-    surface_relax : InputInteger
-        Surface Relax
+    relax : InputInteger
+        Relax
     offset : InputFloat
         Object-space distance to offset the SDF surface
     fillet : InputInteger
@@ -16872,10 +16872,10 @@ class StyleSurface(AssetGeometryGroup):
         Selection of atoms to apply this style to, discarding unselected points
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
-    i.surface_scale : FloatSocket
+    i.scale : FloatSocket
         Scale the VDW radii of the atoms when creating the surface
-    i.surface_relax : IntegerSocket
-        Surface Relax
+    i.relax : IntegerSocket
+        Relax
     i.offset : FloatSocket
         Object-space distance to offset the SDF surface
     i.fillet : IntegerSocket
@@ -16914,10 +16914,10 @@ class StyleSurface(AssetGeometryGroup):
         """Selection of atoms to apply this style to, discarding unselected points"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
-        surface_scale: FloatSocket
+        scale: FloatSocket
         """Scale the VDW radii of the atoms when creating the surface"""
-        surface_relax: IntegerSocket
-        """Surface Relax"""
+        relax: IntegerSocket
+        """Relax"""
         offset: FloatSocket
         """Object-space distance to offset the SDF surface"""
         fillet: IntegerSocket
@@ -16955,8 +16955,8 @@ class StyleSurface(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 3,
-        surface_scale: InputFloat = 1.25,
-        surface_relax: InputInteger = 5,
+        scale: InputFloat = 1.25,
+        relax: InputInteger = 5,
         offset: InputFloat = 0.15,
         fillet: InputInteger = 0,
         mean_width: InputInteger = 1,
@@ -16973,8 +16973,8 @@ class StyleSurface(AssetGeometryGroup):
                 "Socket_0": atoms,
                 "Socket_3": selection,
                 "Socket_4": quality,
-                "Socket_5": surface_scale,
-                "Socket_39": surface_relax,
+                "Socket_5": scale,
+                "Socket_39": relax,
                 "Socket_33": offset,
                 "Socket_34": fillet,
                 "Socket_35": mean_width,

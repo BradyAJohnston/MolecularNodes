@@ -20,6 +20,8 @@ website:
     left:
     - href: tutorials/index.qmd
       text: Documentation
+    - href: nodes/index.qmd
+      text: Nodes
     - text: API
       href: api/
     - text: Changelog
@@ -37,10 +39,51 @@ website:
       href: https://youtube.com/c/bradyjohnston
 
   sidebar:
-  # - id: nodes
-  #   title: Nodes
-  #   contents: nodes/*
-
+  # -- begin generated nodes sidebar (docs/generate.py) --
+  - id: nodes
+    collapse-level: 2
+    contents:
+    - href: nodes/index.qmd
+      text: Overview
+    - href: nodes/materials.qmd
+      text: Materials
+    - href: nodes/general.qmd
+      text: General
+    - href: nodes/animate.qmd
+      text: Animate
+    - href: nodes/attributes.qmd
+      text: Attributes
+    - href: nodes/color.qmd
+      text: Color
+    - href: nodes/curves.qmd
+      text: Curves
+    - href: nodes/dna.qmd
+      text: DNA
+    - href: nodes/density.qmd
+      text: Density
+    - href: nodes/ensemble.qmd
+      text: Ensemble
+    - href: nodes/geometry.qmd
+      text: Geometry
+    - href: nodes/select.qmd
+      text: Select
+    - href: nodes/style.qmd
+      text: Style
+    - href: nodes/topology.qmd
+      text: Topology
+    - href: nodes/utilities.qmd
+      text: Utilities
+    - href: nodes/utilities_attribute.qmd
+      text: Utilities / Attribute
+    - href: nodes/utilities_boolean.qmd
+      text: Utilities / Boolean
+    - href: nodes/utilities_color.qmd
+      text: Utilities / Color
+    - href: nodes/utilities_fields.qmd
+      text: Utilities / Fields
+    - href: nodes/generated_nodes.qmd
+      text: Generated Node Groups
+  # -- end generated nodes sidebar --
   - id: attributes
     contents:
     - section: "Tutorials"
@@ -128,8 +171,6 @@ quartodoc:
     - section: "Reference"
       contents:
       - "{{ contents }}"
-      - text: "Generated Node Groups"
-        href: api/generated_nodes.qmd
   # css: api/_styles-quartodoc.css
 
   options:

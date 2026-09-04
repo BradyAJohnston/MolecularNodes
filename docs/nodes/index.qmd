@@ -1,0 +1,22 @@
+---
+title: Nodes
+description: The node groups that ship with Molecular Nodes
+toc: false
+---
+
+Molecular Nodes is built on top of Blender's Geometry Nodes. Everything you see
+in the viewport — styles, colours, selections, animations — is created by
+chaining together the node groups documented in this section.
+
+Inside the Geometry Nodes editor, add them from the *Add* menu
+({{< kbd Shift-A >}}), where they appear grouped in the same categories as the
+sidebar on the left. Each category page documents every node in it: what the
+node does, a short video of it in use, and its input and output sockets.
+
+## Scripting
+
+Every node group is also available as a typed Python class, so anything built
+in the GUI can be replicated from a script. Each node's entry links to the
+class in the [API reference](/api/reference/index.qmd), and the
+[Node Trees](/api/nodebpy.qmd) guide covers how to build node trees from
+Python.
