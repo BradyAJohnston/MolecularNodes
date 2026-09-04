@@ -157,6 +157,14 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         ),
         subtype="FILE_PATH",
     )
+    recursive: BoolProperty(  # type: ignore
+        name="Recursive",
+        default=True,
+        description=(
+            "Import structure files from all subfolders too, rather than just "
+            "the top level of the folder"
+        ),
+    )
     objects_only: BoolProperty(  # type: ignore
         name="Objects Only",
         default=False,
@@ -215,6 +223,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 layout.prop(self, "filepath")
                 folder = self._folder_path()
                 if folder is not None:
+                    layout.prop(self, "recursive")
                     files, complete = self._scan_folder(folder, max_entries=10_000)
                     if not files and complete:
                         layout.label(
@@ -269,18 +278,28 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         dialog can preview the count without walking an unexpectedly huge tree
         (e.g. a half-typed path that resolves to the home directory); a scan
         that hits the bound is returned as incomplete. Results are cached per
-        folder, as `draw` runs on every UI redraw."""
+        folder (and recursive setting), as `draw` runs on every UI redraw."""
         cached = getattr(self, "_folder_scan", None)
-        if cached is not None and cached[0] == folder:
+        if cached is not None and cached[0] == (folder, self.recursive):
             _, files, complete = cached
             # a cached complete scan answers everything; an incomplete one is
             # only enough when a bounded preview is being asked for again
             if complete or max_entries is not None:
                 return files, complete
+        if self.recursive:
+            walker = os.walk(folder)
+        else:
+            walker = [
+                (
+                    str(folder),
+                    [],
+                    [entry.name for entry in os.scandir(folder) if entry.is_file()],
+                )
+            ]
         files = []
         complete = True
         visited = 0
-        for root, _dirs, names in os.walk(folder):
+        for root, _dirs, names in walker:
             for name in names:
                 visited += 1
                 if max_entries is not None and visited > max_entries:
@@ -291,7 +310,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             if not complete:
                 break
         files.sort()
-        self._folder_scan = (folder, files, complete)
+        self._folder_scan = ((folder, self.recursive), files, complete)
         return files, complete
 
     def _universe_kwargs(self) -> dict:
@@ -440,8 +459,9 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         return {"FINISHED"}
 
     def _execute_folder(self, context, folder: Path):
-        """Recursively import every structure file under `folder`, mirroring its
-        subfolder layout as nested collections that the objects are placed in."""
+        """Import every structure file under `folder` (recursively unless turned
+        off), mirroring its subfolder layout as nested collections that the
+        objects are placed in."""
         files, _ = self._scan_folder(folder)
         if not files:
             self.report({"ERROR"}, f"No structure files found under '{folder}'")

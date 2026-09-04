@@ -131,6 +131,16 @@ def test_op_import_folder(tmp_path):
     assert "folder_import.001" not in bpy.data.collections
     assert len(group_a.objects) == 2
 
+    # non-recursive only imports the folder's top level
+    with ObjectTracker() as o:
+        bpy.ops.mn.import_molecule(
+            method="local", filepath=str(root), node_setup=False, recursive=False
+        )
+        top_level = o.new_objects()
+    assert len(top_level) == 1
+    assert top_level[0].name.startswith("top")
+    assert top_level[0].name in root_coll.objects
+
 
 def test_op_import_folder_objects_only(tmp_path):
     """With objects_only set, the folder import keeps the created objects but
