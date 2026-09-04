@@ -1,7 +1,10 @@
 import warnings
 from abc import ABC
+from typing import Literal
 import bpy
 from .render import enable_optimal_gpu
+
+_CyclesDeviceTypes = Literal["CPU", "GPU"]
 
 
 class RenderEngine(ABC):
@@ -65,7 +68,7 @@ class Cycles(RenderEngine):
     def __init__(
         self,
         samples: int = 256,
-        device: str = "GPU",
+        device: _CyclesDeviceTypes = "GPU",
         denoise: bool = True,
         denoise_gpu: bool = True,
     ):
@@ -93,11 +96,11 @@ class Cycles(RenderEngine):
         self.engine.samples = value
 
     @property
-    def device(self) -> str:
+    def device(self) -> _CyclesDeviceTypes:
         return self.engine.device
 
     @device.setter
-    def device(self, value: str):
+    def device(self, value: _CyclesDeviceTypes):
         value = value.upper()
         self.engine.device = value
         if value == "GPU":
