@@ -62,6 +62,9 @@ requires = ["setuptools>=61.0"]
 [tool.setuptools]
 include-package-data = true
 
+[tool.uv]
+config-settings = { editable_mode = "compat" }
+
 [tool.setuptools.packages.find]
 where = ["."]
 exclude = ["molecularnodes.nodes._generation*"]
