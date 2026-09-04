@@ -76,8 +76,6 @@ website:
         - api/reference/nodes.utilities_color.qmd
         - api/reference/nodes.utilities_fields.qmd
         section: Nodes
-      - href: api/generated_nodes.qmd
-        text: Generated Node Groups
       section: Reference
     id: api/reference
     search: true

@@ -60,6 +60,12 @@
   $node-socket-color-collection:   #f4f4f4 !default;
   $node-socket-color-string:       #70B2FF !default;
   $node-socket-color-object:       #ED9E5C !default;
+  // sampled from Blender via NodeSocket.draw_color()
+  $node-socket-color-shader:       #63C763 !default;
+  $node-socket-color-image:        #633863 !default;
+  $node-socket-color-menu:         #666666 !default;
+  $node-socket-color-bundle:       #4D8080 !default;
+  $node-socket-color-closure:      #7D7D3B !default;
 
   $h2-font-size:          1.6rem !default;
   $headings-font-weight:  500 !default;
@@ -213,7 +219,11 @@ $custom-classes: (
   "string": $node-socket-color-string,
   "object": $node-socket-color-object,
   "name": $node-editor-backdrop,
-  "menu": rgb(78, 78, 78),
+  "menu": $node-socket-color-menu,
+  "shader": $node-socket-color-shader,
+  "image": $node-socket-color-image,
+  "bundle": $node-socket-color-bundle,
+  "closure": $node-socket-color-closure,
   "input": $node-type-color-input,
   "attribute": $node-type-color-input
 );
