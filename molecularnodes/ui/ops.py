@@ -1,3 +1,5 @@
+import gc
+import os
 from pathlib import Path
 from typing import cast
 import bpy
@@ -14,6 +16,7 @@ from bpy.props import (
 )
 from bpy.types import Context, Operator
 from ..annotations.props import create_annotation_type_inputs
+from ..blender import coll
 from ..blender.utils import path_resolve
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import (
@@ -52,6 +55,11 @@ DOWNLOAD_FORMATS = (
     ("cif", ".cif", "The new standard of .cif / .mmcif"),
     ("pdb", ".pdb", "The classic (and depcrecated) PDB format"),
 )
+
+# structure-file extensions `Molecule.load()` can parse, used when scanning a
+# folder; MD topology + trajectory pairs are excluded, as which trajectory
+# belongs to which topology can't be matched up automatically
+FOLDER_IMPORT_EXTENSIONS = {".pdb", ".cif", ".bcif", ".xyz", ".sdf", ".mol"}
 
 
 # operator that is called by the 'button' press which calls the fetch function
@@ -143,8 +151,21 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
     )
     filepath: StringProperty(  # type: ignore
         name="File",
-        description="Path of the local structure (or MD topology) file to open",
+        description=(
+            "Path of the local structure (or MD topology) file to open, or a "
+            "folder to recursively import every structure file inside of it"
+        ),
         subtype="FILE_PATH",
+    )
+    objects_only: BoolProperty(  # type: ignore
+        name="Objects Only",
+        default=False,
+        description=(
+            "Discard the Python `Molecule` (and its `mda.Universe`) after each "
+            "import, keeping only the created Blender object - saves memory when "
+            "importing many structures. Objects can be relinked later with the "
+            "session Reload operator"
+        ),
     )
     trajectory: StringProperty(  # type: ignore
         name="Trajectory",
@@ -187,12 +208,30 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             layout.label(text=f"Importing {len(self.files)} molecules")
             if len(self.files) > 1:
                 layout.prop(self, "share_node_group")
+                layout.prop(self, "objects_only")
         else:
             layout.prop_tabs_enum(self, "method")
             if self.method == "local":
                 layout.prop(self, "filepath")
-                layout.prop(self, "trajectory")
-                layout.prop(self, "additional_arguments")
+                folder = self._folder_path()
+                if folder is not None:
+                    files, complete = self._scan_folder(folder, max_entries=10_000)
+                    if not files and complete:
+                        layout.label(
+                            text="No structure files found in the folder",
+                            icon="ERROR",
+                        )
+                    else:
+                        count = f"{len(files)}" if complete else f"{len(files)}+"
+                        layout.label(
+                            text=f"Importing {count} structure files from the folder",
+                            icon="FILE_FOLDER",
+                        )
+                        layout.prop(self, "share_node_group")
+                        layout.prop(self, "objects_only")
+                else:
+                    layout.prop(self, "trajectory")
+                    layout.prop(self, "additional_arguments")
             else:
                 layout.prop_tabs_enum(self, "database")
                 row = layout.row().split(factor=0.7)
@@ -213,6 +252,47 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         prefs = addon_preferences()
         self.cache_dir = str(prefs.cache_dir) if prefs is not None else bpy.app.tempdir
         return context.window_manager.invoke_props_dialog(self)
+
+    def _folder_path(self) -> Path | None:
+        """The dialog's filepath as a directory, when it points at one."""
+        if self.method != "local" or not self.filepath:
+            return None
+        path = path_resolve(self.filepath)
+        return path if path.is_dir() else None
+
+    def _scan_folder(
+        self, folder: Path, max_entries: int | None = None
+    ) -> tuple[list[Path], bool]:
+        """The structure files under `folder`, and whether the scan was complete.
+
+        `max_entries` bounds how many directory entries are visited, so the
+        dialog can preview the count without walking an unexpectedly huge tree
+        (e.g. a half-typed path that resolves to the home directory); a scan
+        that hits the bound is returned as incomplete. Results are cached per
+        folder, as `draw` runs on every UI redraw."""
+        cached = getattr(self, "_folder_scan", None)
+        if cached is not None and cached[0] == folder:
+            _, files, complete = cached
+            # a cached complete scan answers everything; an incomplete one is
+            # only enough when a bounded preview is being asked for again
+            if complete or max_entries is not None:
+                return files, complete
+        files = []
+        complete = True
+        visited = 0
+        for root, _dirs, names in os.walk(folder):
+            for name in names:
+                visited += 1
+                if max_entries is not None and visited > max_entries:
+                    complete = False
+                    break
+                if Path(name).suffix.lower() in FOLDER_IMPORT_EXTENSIONS:
+                    files.append(Path(root, name))
+            if not complete:
+                break
+        files.sort()
+        self._folder_scan = (folder, files, complete)
+        return files, complete
 
     def _universe_kwargs(self) -> dict:
         """Parse the additional arguments string into `mda.Universe` kwargs."""
@@ -249,6 +329,10 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
     def execute(self, context):
         if self.files:
             return self._execute_dropped_files(context)
+
+        folder = self._folder_path()
+        if folder is not None:
+            return self._execute_folder(context, folder)
 
         mols = []
         try:
@@ -337,10 +421,13 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         """Import each structure file dropped into the viewport."""
         imported = 0
         shared_tree = None
+        session = get_session(context)
         for file in self.files:
             try:
                 mol = Molecule.load(Path(self.directory, file.name))
                 shared_tree = self._setup_molecule(mol, shared_tree)
+                if self.objects_only:
+                    session.remove_entity(mol.uuid)
                 imported += 1
             except Exception as e:
                 self.report({"WARNING"}, message=f"Failed importing {file.name}: {e}")
@@ -349,6 +436,79 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             return {"CANCELLED"}
 
         self.report({"INFO"}, message=f"Imported {imported} molecules")
+        _increase_view_distance()
+        return {"FINISHED"}
+
+    def _execute_folder(self, context, folder: Path):
+        """Recursively import every structure file under `folder`, mirroring its
+        subfolder layout as nested collections that the objects are placed in."""
+        files, _ = self._scan_folder(folder)
+        if not files:
+            self.report({"ERROR"}, f"No structure files found under '{folder}'")
+            return {"CANCELLED"}
+
+        collections: dict[Path, bpy.types.Collection] = {}
+
+        def collection_for(directory: Path) -> bpy.types.Collection:
+            if directory in collections:
+                return collections[directory]
+            parent = (
+                coll.mn() if directory == folder else collection_for(directory.parent)
+            )
+            # reuse a matching collection already under this parent (a repeated
+            # import), but never one from elsewhere in the scene - collection
+            # names are global in Blender, so same-named subfolders in different
+            # branches get a .001-suffixed collection rather than being merged
+            child = next((c for c in parent.children if c.name == directory.name), None)
+            if child is None:
+                child = bpy.data.collections.new(directory.name)
+                parent.children.link(child)
+            collections[directory] = child
+            return child
+
+        session = get_session(context)
+        window_manager = context.window_manager
+        window_manager.progress_begin(0, len(files))
+        imported = 0
+        failed = 0
+        shared_tree = None
+        try:
+            for i, path in enumerate(files):
+                window_manager.progress_update(i)
+                try:
+                    mol = Molecule.load(path)
+                    shared_tree = self._setup_molecule(mol, shared_tree)
+                except Exception as e:
+                    failed += 1
+                    self.report(
+                        {"WARNING"},
+                        f"Failed importing {path.relative_to(folder)}: {e}",
+                    )
+                    continue
+                obj = mol.object
+                for c in obj.users_collection:
+                    c.objects.unlink(obj)
+                collection_for(path.parent).objects.link(obj)
+                imported += 1
+                if self.objects_only:
+                    session.remove_entity(mol.uuid)
+                    del mol
+                    # the entity and its managers reference each other, so the
+                    # universes only free on a cycle collection - don't let
+                    # hundreds of them pile up while the import runs
+                    if imported % 50 == 0:
+                        gc.collect()
+        finally:
+            window_manager.progress_end()
+            if self.objects_only:
+                gc.collect()
+
+        if imported == 0:
+            return {"CANCELLED"}
+        message = f"Imported {imported} structures from '{folder.name}'"
+        if failed:
+            message += f", {failed} failed"
+        self.report({"INFO"}, message)
         _increase_view_distance()
         return {"FINISHED"}
 
