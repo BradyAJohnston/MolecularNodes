@@ -1,4 +1,5 @@
 import itertools
+import os
 import shutil
 from pathlib import Path
 import bpy
@@ -34,11 +35,30 @@ def install():
         )
     )
 
-    base_path.mkdir(parents=True, exist_ok=True)
     path_app_templates = base_path / SUBFOLDER
-    path_app_templates.mkdir(parents=True, exist_ok=True)
     startup_file = Path(__file__).parent / "template/startup.blend"
-    shutil.copy(startup_file, path_app_templates)
+    destination = path_app_templates / startup_file.name
+
+    # copy to a process-unique name and atomically replace, so concurrent
+    # installs (e.g. parallel test workers) never collide writing the same
+    # file, which fails on Windows; losing the race is fine as long as one
+    # of the installs got the template in place. Retry once in case a
+    # concurrent uninstall removed the folder mid-copy.
+    temporary = path_app_templates / f"startup-{os.getpid()}.blend.tmp"
+    last_error: OSError | None = None
+    for _ in range(2):
+        path_app_templates.mkdir(parents=True, exist_ok=True)
+        try:
+            shutil.copy(startup_file, temporary)
+            os.replace(temporary, destination)
+            last_error = None
+            break
+        except OSError as e:
+            last_error = e
+        finally:
+            temporary.unlink(missing_ok=True)
+    if last_error is not None and not destination.exists():
+        raise last_error
     bpy.utils.refresh_script_paths()
 
 
@@ -49,5 +69,10 @@ def uninstall():
             continue
 
         if path.exists():
-            shutil.rmtree(path)
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                # a concurrent install may be re-populating the folder
+                # (e.g. parallel test workers); retry, then give up quietly
+                shutil.rmtree(path, ignore_errors=True)
     bpy.utils.refresh_script_paths()

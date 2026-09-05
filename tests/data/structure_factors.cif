@@ -1,0 +1,31 @@
+# hand-written test fixture mimicking a PDB structure factor (-sf) file:
+# reflection data only, no atomic coordinates
+data_rtestsf
+_audit.revision_id     1_0
+_cell.entry_id      test
+_cell.length_a      54.0250
+_cell.length_b      75.0230
+_cell.length_c      85.1170
+_cell.angle_alpha   90.0000
+_cell.angle_beta    90.0000
+_cell.angle_gamma   90.0000
+_diffrn.id                  1
+_diffrn.crystal_id          1
+_diffrn_reflns.diffrn_id         1
+_diffrn_reflns.number            4
+_symmetry.entry_id               test
+_symmetry.space_group_name_H-M   "P 21 21 21"
+loop_
+_refln.crystal_id
+_refln.wavelength_id
+_refln.scale_group_code
+_refln.index_h
+_refln.index_k
+_refln.index_l
+_refln.status
+_refln.F_meas_au
+_refln.F_meas_sigma_au
+1 1 1 0 0 4 o 447.6 11.6
+1 1 1 0 0 6 o 216.9 8.7
+1 1 1 0 0 8 o 1600.6 41.7
+1 1 1 0 0 10 o 1848.9 49.4

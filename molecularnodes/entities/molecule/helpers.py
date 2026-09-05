@@ -314,13 +314,26 @@ class FrameManager:
         if self.trajectory.average == 0:
             return self.cache[frame]
 
-        array = self.cache.get_ordered_array()
+        # park the universe on this frame so the box dimensions used by the
+        # corrections below are a deterministic function of `frame` — after
+        # cache updates the universe sits on whichever frame happened to be a
+        # cache miss, and in an NPT box a borderline (half-box) correction
+        # would flip between evaluations of the same frame
+        self.trajectory.uframe = frame
+
+        # average exactly the window for this frame — the cache can hold other
+        # frames (interpolation look-ahead, a previous window), which must not
+        # leak into the mean
+        array = np.array([self.cache[f] for f in self._frame_range(frame)])
         if self.trajectory.correct_periodic and self.trajectory._is_orthorhombic:
-            # Correct periodic boundary crossing relative to the first frame
-            for i, pos in enumerate(array):
-                if i == 0:
-                    continue
-                array[i] = self.adjust_periodic_positions(array[0], pos)
+            # correct each frame against its (corrected) predecessor:
+            # consecutive frames are where the nearest-image assumption holds.
+            # Correcting everything against the window's first frame mistakes
+            # real motion greater than half a box — legitimate in unwrapped or
+            # per-molecule-imaged trajectories — for a boundary crossing, and
+            # the windows of neighbouring frames then disagree by a whole box
+            for i in range(1, len(array)):
+                array[i] = self.adjust_periodic_positions(array[i - 1], array[i])
 
         return np.mean(array, axis=0)
 
@@ -373,18 +386,11 @@ class FrameManager:
             pos_current = self.position_cache_mean(uframe_current)
             pos_next = self.position_cache_mean(uframe_next)
 
-            # Apply periodic correction if needed (and not already applied via averaging)
-            if (
-                self.trajectory.correct_periodic
-                and self.trajectory._is_orthorhombic
-                and self.trajectory.average == 0
-            ):
-                pos_next = correct_periodic_positions(
-                    pos_current,
-                    pos_next,
-                    dimensions=self.trajectory.universe.dimensions[:3]
-                    * self.trajectory.world_scale,
-                )
+            # interpolate towards the nearest periodic image. Averaging only
+            # corrects within each window, so two averaged endpoints can still
+            # sit on opposite sides of the box — the correction applies to them
+            # just the same
+            pos_next = self.adjust_periodic_positions(pos_current, pos_next)
 
             # Interpolate between the two sets of positions
             return db.lerp(

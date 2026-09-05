@@ -20,6 +20,21 @@ from MDAnalysis.tests.datafiles import DCD, PSF, TPR, XTC
 canvas = mn.Canvas()
 ```
 
+There is only ever one Blender scene, so a `Canvas` is a handle on that scene rather than
+something it owns. Creating one binds to the scene and, if there are no molecules in it
+yet, loads the "Molecular Nodes" preset - a default camer and lighting setup - so
+that renders look OK with minimal setup. Running `mn.Canvas()` again binds to the same
+scene and leaves what is in it alone, which means re-running the cell above costs nothing.
+
+To change what is in the scene, ask for it:
+
+| | |
+|---|---|
+| [](`~mn.Canvas.clear`) | empties the scene of molecules, keeping the camera, lights, render settings, world shader and compositor |
+| [](`~mn.Canvas.load_preset`) | replaces the whole scene with a preset, lighting and render settings included |
+
+`mn.Canvas(template="...")` loads that template outright, the same as `load_preset()`.
+
 ## Add Trajectories
 
 ```{python}
@@ -35,7 +50,7 @@ t2 = mn.Molecule.load(TPR, XTC)
     t1
     .add_style("ribbon", peptide_radius=0.5)
     .add_style("ball_and_stick", quality=4, selection="resid 184")
-    .add_style("spheres", sphere_geometry="Instance", selection="resid 1 129")
+    .add_style("spheres", sphere="Instance", selection="resid 1 129")
 )
 
 t2.add_style("ribbon", material="MN Ambient Occlusion")
@@ -48,45 +63,45 @@ t1.annotations.add_atom_info(selection="name CA and resid 184", show_resid=True)
 t2.annotations.add_atom_info(selection="name CA and resid 141", show_resid=True)
 ```
 
-## Frame Objects
+## Look at Entities
 
-The [](`~molecularnodes.Canvas.frame_object`) method can be used to frame entity objects. By default, the current camera viewpoint is used to frame objects. An optional `viewpoint` param can be used to set the viewpoint to one of [`default`, `front`, `back`, `left`, `right`, `top`, `bottom`].
+The [](`~molecularnodes.Canvas.look_at`) method positions the camera to look at and contain a target — a Molecular Nodes entity, a Blender object, or a view. By default, the current camera viewpoint is used. An optional `viewpoint` param can be used to set the viewpoint to one of [`default`, `front`, `back`, `left`, `right`, `top`, `bottom`].
 
 ```{python}
 # frame trajectory 1 from front and render
-canvas.frame_object(t1, viewpoint="front")
+canvas.look_at(t1, viewpoint="front")
 canvas.snapshot()
 ```
 
 ```{python}
 # frame trajectory 2 from front and render
-canvas.frame_object(t2, viewpoint="front")
+canvas.look_at(t2, viewpoint="front")
 canvas.snapshot()
 ```
 
 
-## Frame Views
+## Look at Views
 
-The [](`~molecularnodes.Canvas.frame_view`) method can be used to frame one or more views. Views can be specific selections within entities or across entities. Multiple views can be combined with a `+` sign before passing to the [](`~molecularnodes.Canvas.frame_view`) method. An optional `viewpoint` param can be passed to specify the viewpoint like before.
+[](`~molecularnodes.Canvas.look_at`) also accepts views. Views can be specific selections within entities or across entities. Multiple views can be combined with a `+` sign before passing them to [](`~molecularnodes.Canvas.look_at`). An optional `viewpoint` param can be passed to specify the viewpoint like before.
 
 All entities have a `get_view` method that returns the entity object by default. The [](`~molecularnodes.entities.Molecule.get_view`) method of trajectories can return views based on one or more selection strings or `AtomGroups` and also take the specific trajectory frame into consideration.
 
 ```{python}
 # frame resid 184 in trajectory 1 from the front
 v184 = t1.get_view(selection="resid 184")
-canvas.frame_view(v184, viewpoint="front")
+canvas.look_at(v184, viewpoint="front")
 canvas.snapshot()
 ```
 
 ```{python}
 # frame resid 1 and 129 in trajectory 1 at frame 97 from the front
-canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint="front")
+canvas.look_at(t1.get_view("resid 1 129", frame=97), viewpoint="front")
 canvas.snapshot()
 ```
 
 ```{python}
 # frame resid 184 from trajectory 1 and resid 141 from trajectory 2
-canvas.frame_view(
+canvas.look_at(
     t1.get_view("resid 184") + t2.get_view("resid 141"), viewpoint="front"
 )
 canvas.snapshot()
@@ -94,13 +109,36 @@ canvas.snapshot()
 
 ```{python}
 # frame trajectory 2 and density component from left
-canvas.frame_view(t2.get_view() + t1.get_view(), viewpoint="left")
+canvas.look_at(t2.get_view() + t1.get_view(), viewpoint="left")
 canvas.snapshot()
 ```
+
+## Framing Margin
+
+[](`~mn.Canvas.look_at`) puts the camera as close to the subject as keeping all
+of it in frame allows, plus a small default `margin` of `0.05` so that the
+subject is not right up against the edge of the frame. Raise it for more room,
+set it to `0` to fit the subject exactly, or go negative to crop in past its
+edges.
+
+```{python}
+canvas.look_at(t1.get_view("resid 184"), viewpoint="front", margin=0.3)
+canvas.snapshot()
+```
+
+The framing is solved on the positions themselves rather than on a box drawn
+around them, so it is as tight from an oblique angle as from straight on. Any
+number of positions can be passed — a view from [](`~mn.Molecule.get_view`), or
+your own array of coordinates.
 
 ## Camera Zoom in or out
 
 Camera can be zoomed in our out using the camera [](`~molecularnodes.scene.camera.Camera.lens`) settings of the [](`~mn.Canvas`) camera object once framed.
+
+This is a different thing from `margin`: the lens changes the perspective, how
+compressed the subject looks front-to-back, while `margin` only changes how much
+of the frame it fills. Changing the lens after framing also changes the framing,
+so call [](`~mn.Canvas.look_at`) again afterwards to fit the new lens.
 
 ### Zoom in
 
@@ -132,13 +170,13 @@ canvas.camera.rotation
 ```{python}
 # rotate 45 degrees to left from the front view
 # frame density object - note that viewpoint is not specified
-canvas.frame_view(t2, (90, 0, -45))
+canvas.look_at(t2, (90, 0, -45))
 canvas.snapshot()
 ```
 
 ```{python}
 # frame density object and render
-canvas.frame_view(t2, (90, 0, 45))
+canvas.look_at(t2, (90, 0, 45))
 canvas.snapshot()
 ```
 
@@ -154,7 +192,7 @@ canvas.view_transform = mn.scene.ViewTransform.KHRONOS
 canvas.exposure = 0.5
 canvas.gamma = 1.0
 
-canvas.frame_object(t1, viewpoint="front")
+canvas.look_at(t1, viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -187,7 +225,7 @@ controls have convenience properties.
 canvas.render_scale = 100
 canvas.transparent = False
 canvas.world.background = (0.02, 0.02, 0.04, 1.0)
-canvas.frame_object(t1, viewpoint="front")
+canvas.look_at(t1, viewpoint="front")
 canvas.snapshot()
 ```
 
@@ -224,7 +262,7 @@ you want them drawn over your effects.
 ```{python}
 from nodebpy import compositor as c
 
-canvas.frame_object(t1, viewpoint="front")
+canvas.look_at(t1, viewpoint="front")
 
 # add a bloom glare, then draw annotations back on top
 with canvas.compositor.reset() as (image, output):
@@ -256,13 +294,32 @@ canvas.compositor.reset()
 canvas.compositor.add_annotations()
 ```
 
+### Execution Settings
+
+How the compositor executes at render time is controlled through properties on the same
+[](`~molecularnodes.scene.compositor.CompositorTree`):
+[](`~molecularnodes.scene.compositor.CompositorTree.device`) (`"CPU"` or `"GPU"`),
+[](`~molecularnodes.scene.compositor.CompositorTree.precision`) (`"AUTO"` or `"FULL"`),
+and for Denoise nodes
+[](`~molecularnodes.scene.compositor.CompositorTree.denoise_device`),
+[](`~molecularnodes.scene.compositor.CompositorTree.denoise_preview_quality`) and
+[](`~molecularnodes.scene.compositor.CompositorTree.denoise_final_quality`).
+
+Blender defaults the compositor to the GPU. On a headless machine without one (a render
+farm, CI, some cloud notebooks) GPU compositing aborts the render, so switch it to the
+CPU:
+
+```{python}
+canvas.compositor.device = "CPU"
+```
+
 ## Animations
 
 The [](`~molecularnodes.Canvas.animation`) method can be used to render animations. An optional `frame_start` and `frame_end` can be specified to limit animations to a custom range. The `render_scale` parameter can be used to scale the renders as a percentage of the render resolution.
 
 ```{python}
 # frame resid 1 and 129 in trajectory 1 at frame 97 from the front
-canvas.frame_view(t1.get_view("resid 1 129", frame=97), viewpoint=mn.scene.Viewpoint.FRONT)
+canvas.look_at(t1.get_view("resid 1 129", frame=97), viewpoint=mn.scene.Viewpoint.FRONT)
 t1.average = 1
 # add a universe info annotation to trajectory 1
 t1.annotations.add_universe_info()
@@ -271,4 +328,44 @@ t1.annotations.add_universe_info()
 ```{python}
 # render animation of scene from frame 10 to 50 at 50% sccale
 canvas.animation(frame_start=10, frame_end=50, render_scale=50)
+```
+
+## Frame-by-Frame Recording
+
+Where [](`~molecularnodes.Canvas.animation`) plays back the Blender timeline, a
+recording created with [](`~molecularnodes.Canvas.record`) puts the loop in your
+hands. Change anything about the scene between frames — the timeline, the camera,
+styles, colors — and call
+[](`~molecularnodes.scene.recorder.FrameRecorder.render`) to capture the scene as
+it stands as the next frame. When you're done,
+[](`~molecularnodes.scene.recorder.FrameRecorder.finalize`) assembles the frames
+into an MP4 or GIF.
+
+```{python}
+movie = canvas.record(fps=12)
+
+for i in range(15):
+    canvas.look_at(t1, viewpoint=(90, 0, i * (360 / 15)))
+    movie.render(render_scale=50)
+movie.finalize()
+```
+
+A recorder is also a context manager: give the output path up front and a clean
+exit from the `with` block finalizes to it automatically.
+
+```python
+with canvas.record("orbit.mp4", fps=12) as movie:
+    for i in range(15):
+        canvas.look_at(t1, viewpoint=(90, 0, i * (360 / 15)))
+        movie.render()
+```
+
+By default the frames live in a temporary directory that is cleaned up with the
+recorder. Pass `frames_dir` to render them into a directory that outlives it, and
+add `overwrite=False` to make re-running the same loop resume an interrupted
+recording: frames already on disk are reused and only the missing ones are
+rendered.
+
+```python
+movie = canvas.record(fps=12, frames_dir="renders/orbit", overwrite=False)
 ```

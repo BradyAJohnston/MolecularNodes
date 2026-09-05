@@ -39,9 +39,9 @@ def test_style_1(snapshot, code, assembly, style):
     with mol.tree.reset() as (atoms, join):
         match style:
             case "ball_and_stick":
-                style_node = StyleBallAndStick(sphere_geometry="Mesh")
+                style_node = StyleBallAndStick(sphere="Mesh")
             case "spheres":
-                style_node = StyleSpheres(sphere_geometry="Mesh")
+                style_node = StyleSpheres(sphere="Mesh")
             case "cartoon":
                 style_node = StyleCartoon()
             case "ribbon":
@@ -66,7 +66,9 @@ def test_download_format(code, format):
     mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
     assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
     with db.ObjectTracker() as o:
-        bpy.ops.mn.import_fetch(code=code, file_format=format, cache_dir=str(data_dir))
+        bpy.ops.mn.import_molecule(
+            code=code, file_format=format, cache_dir=str(data_dir)
+        )
         mol2 = bpy.context.scene.MNSession.match(o.latest())
 
     assert np.allclose(mol.position, mol2.position)
@@ -83,6 +85,23 @@ def test_local_pdb(snapshot_custom):
     molecules.append(mn.Molecule.fetch("1l58", format="bcif"))
     for mol in molecules:
         assert snapshot_custom == mol.named_attribute("position")
+
+
+def test_pdb_blank_res_id(snapshot):
+    # VESTA writes PDB files with blank res_id columns, which biotite refuses
+    # to parse without help (#1091)
+    mol = mn.Molecule.load(data_dir / "vesta_blank_res_id.pdb")
+    assert mol.universe.atoms.n_atoms == 20
+    assert (mol.universe.atoms.resids == 1).all()
+    assert snapshot == mol.position
+
+
+def test_cif_no_group_pdb(snapshot):
+    # gemmi omits the optional group_PDB column from atom_site, which biotite
+    # requires for the hetero annotation (#19)
+    mol = mn.Molecule.load(data_dir / "1BNA_gemmi.cif")
+    assert mol.universe.atoms.n_atoms == 566
+    assert snapshot == mol.position
 
 
 @pytest.mark.filterwarnings("ignore:.*elements were guessed.*:UserWarning")

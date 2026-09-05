@@ -78,6 +78,7 @@ class StreamingTrajectory(Molecule):
         create_object=True,
     ):
         super().__init__(universe, name=name, create_object=create_object)
+        self._last_scene_frame: Optional[int] = None
 
     @property
     def n_frames(self) -> Optional[int]:
@@ -96,13 +97,16 @@ class StreamingTrajectory(Molecule):
     def _update_trajectory_positions(self, frame: int) -> None:
         """Override to handle streaming frame updates.
 
-        For streaming trajectories, we ignore the requested frame number
-        and simply advance to the next available frame from the stream.
+        For streaming trajectories, the requested frame number can't be seeked
+        to; instead the stream advances to the next available frame - but only
+        when the scene frame has changed since the last advance. Repeated
+        updates for the same scene frame (render handlers, UI property changes)
+        would otherwise silently consume streamed frames (#1112).
 
         Parameters
         ----------
         frame : int
-            Ignored for streaming trajectories
+            Scene frame number, only used to detect frame changes
 
         Raises
         ------
@@ -111,9 +115,12 @@ class StreamingTrajectory(Molecule):
         Exception
             If there's an error reading from the IMD stream
         """
+        if frame == self._last_scene_frame:
+            return
         try:
             self.universe.trajectory.next()
             self.position = self._scaled_position
+            self._last_scene_frame = frame
         except StopIteration:
             logger.warning("Stream ended or connection lost")
             raise
@@ -147,4 +154,4 @@ class StreamingTrajectory(Molecule):
 
     def _get_annotation_entity_type(self) -> str:
         "Interna: Re-use the annotations for Molecule entity"
-        return EntityType.MD.value
+        return EntityType.MOLECULE

@@ -26,10 +26,10 @@ class CellPack(Ensemble):
         node_setup: bool = True,
     ) -> bpy.types.Object:
         self._create_data_object(name=name)
-        self._create_object_instances(name=name, node_setup=node_setup)
+        collection = self._create_object_instances(name=name, node_setup=node_setup)
 
         with self.tree.reset() as (atoms, join):
-            (atoms >> geometry.EnsembleInstance(instances=self.data_collection) >> join)
+            (atoms >> geometry.EnsembleInstance(instances=collection) >> join)
 
         return self.object
 
@@ -63,7 +63,8 @@ class CellPack(Ensemble):
                 )
                 mod.node_group = instance_tree.tree
 
-        self.data_collection = collection
+        # stored by name via the `Ensemble` property, not as a live `Collection`
+        # reference, which the session could not pickle
         self.instance_collection = collection
 
         return collection

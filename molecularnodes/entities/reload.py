@@ -25,6 +25,10 @@ from .molecule.reader import read_structure
 
 def _reload_molecule(obj: bpy.types.Object) -> Molecule:
     mn = obj.mn
+    # a molecule loaded from topology (+ trajectory) files records those paths;
+    # one parsed from a structure file or fetched records filepath/code instead
+    if mn.filepath_topology:
+        return _reload_trajectory(obj)
     if mn.code:
         file_path = StructureDownloader().download(
             code=mn.code, format="bcif", database=mn.database or "rcsb"
@@ -86,7 +90,6 @@ def _reload_ensemble_cellpack(obj: bpy.types.Object) -> CellPack:
 # so they are intentionally absent and cannot be reloaded
 _RELOADERS = {
     EntityType.MOLECULE.value: _reload_molecule,
-    EntityType.MD.value: _reload_trajectory,
     EntityType.MD_OXDNA.value: _reload_trajectory,
     EntityType.DENSITY.value: _reload_density,
     EntityType.ENSEMBLE_STAR.value: _reload_ensemble_star,

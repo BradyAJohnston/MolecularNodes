@@ -6,11 +6,13 @@ underlying data model.
 """
 
 import functools
+import inspect
 import io
 import logging
+import re
 import warnings
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, Sequence
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -24,12 +26,9 @@ from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...nodes.material import PresetMaterial, append_material
-from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING, styles_mapping
-from ...utils import (
-    count_value_changes,
-    temp_override_property,
-)
-from ..base import EntityType, MolecularEntity
+from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING
+from ...utils import _UNSET, count_value_changes, temp_override_property
+from ..base import EntityType, MolecularEntity, MolecularTree
 from ..utilities import (
     BoolObjectMNProperty,
     IntObjectMNProperty,
@@ -42,6 +41,108 @@ from .helpers import FrameManager, _ag_to_bool
 from .selections import SelectionManager
 
 logger = logging.getLogger(__name__)
+
+#: Colour keywords understood by ``Molecule.add_style(color=...)``. Anything else must
+#: name an existing attribute, be an RGBA sequence, or be a callable building the nodes.
+COLOR_KEYWORDS = ("common", "default", "plddt")
+
+
+# only Cycles ray-traces point clouds; every other engine draws them as a crude
+# polyhedron, so a sphere style left on its "Point" default silently renders wrong
+_POINT_CLOUD_ENGINES = {"CYCLES"}
+
+
+def _sphere_for_engine(style_node: type, engine: str) -> str | None:
+    """
+    The ``sphere`` to use for a style, when the default won't render.
+
+    Returns ``None`` when the default is fine - either the engine can draw point
+    clouds, or this style doesn't default to them in the first place.
+    ``StyleBallAndStick`` already defaults to ``"Instance"``, so only
+    ``StyleSpheres`` is affected.
+    """
+    if engine in _POINT_CLOUD_ENGINES:
+        return None
+    parameter = inspect.signature(style_node).parameters.get("sphere")
+    if parameter is None or parameter.default != "Point":
+        return None
+    return "Instance"
+
+
+def add_style_to_tree(
+    node_tree: bpy.types.GeometryNodeTree,
+    style: STYLE_LITERALS = "spheres",
+    material: bpy.types.Material
+    | PresetMaterial
+    | MaterialBuilder
+    | str = "MN Default",
+    color: Sequence[float] | None = None,
+    selection_attribute: str | None = None,
+    name: str | None = None,
+) -> None:
+    """
+    Add a style branch directly to a node tree, without a session entity.
+
+    The tree-level counterpart of [](`~mn.Molecule.add_style`), used by the UI
+    when an object is not linked to a session entity. Everything that needs the
+    entity's universe is unavailable here: selections must name an existing
+    boolean attribute (MDAnalysis phrases can't be evaluated), color is limited
+    to a uniform RGBA (schemes need chain information), and assembly instancing
+    is not offered.
+
+    Parameters
+    ----------
+    node_tree : bpy.types.GeometryNodeTree
+        The tree to add the style branch to, typically the tree of an object's
+        "Molecular Nodes" modifier.
+    style : str, default "spheres"
+        Name of a predefined style (see ``STYLE_NODE_MAPPING``).
+    material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, default "MN Default"
+        Material for the styled geometry; a string is appended from the asset
+        file.
+    color : Sequence[float] | None, optional
+        Uniform RGBA color applied via a ``Set Color`` node. ``None`` (default)
+        leaves the baked ``Color`` attribute in use.
+    selection_attribute : str | None, optional
+        Name of an existing boolean attribute to restrict the style to.
+    name : str | None, optional
+        Label for the added style node.
+    """
+    from ...nodes import geometry as g
+
+    if style not in STYLE_NODE_MAPPING:
+        raise ValueError(
+            f"Invalid style '{style}'. Supported styles are "
+            f"{sorted(STYLE_NODE_MAPPING)}"
+        )
+
+    kwargs = {}
+    # spheres default to point clouds, which only Cycles can draw
+    geometry = _sphere_for_engine(
+        STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
+    )
+    if geometry is not None:
+        kwargs["sphere"] = geometry
+
+    if isinstance(material, (PresetMaterial, MaterialBuilder)):
+        material = material.material
+    material = append_material(material) if isinstance(material, str) else material
+
+    with MolecularTree(None, node_tree) as tree:
+        selection_input = (
+            NamedAttribute.boolean(selection_attribute) if selection_attribute else None
+        )
+        style_node = STYLE_NODE_MAPPING[style](
+            selection=selection_input, material=material, **kwargs
+        )
+        if name:
+            style_node.node.label = name
+        (
+            tree.atoms
+            >> (g.SetColor(color=tuple(color)) if color is not None else None)
+            >> style_node
+            >> tree.join
+        )
 
 
 class Molecule(MolecularEntity):
@@ -93,8 +194,8 @@ class Molecule(MolecularEntity):
     canvas = mn.Canvas()
     u = mda.Universe(PSF, DCD)
     traj = mn.Molecule(u)
-    traj.add_style("spheres", sphere_geometry="Mesh", selection="resname LYS")
-    canvas.frame_view(traj)
+    traj.add_style("spheres", sphere="Instance", selection="resname LYS")
+    canvas.look_at(traj)
     canvas.snapshot()
     ```
     """
@@ -112,7 +213,7 @@ class Molecule(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
-    _entity_type: EntityType = EntityType.MD
+    _entity_type: EntityType = EntityType.MOLECULE
 
     def __init__(
         self,
@@ -129,14 +230,14 @@ class Molecule(MolecularEntity):
             MDAnalysis Universe with topology and trajectory
         name : str, default="NewUniverseObject"
             Name for the Blender object
-        world_scale : float, default=0.01
-            Scale factor from Angstroms to Blender units
+        world_scale : float, default=0.1
+            Scale factor from nanometers to Blender units
         create_object : bool, default=True
             Whether to immediately create the Blender object
 
         Notes
         -----
-        Default world_scale of 0.01 converts Angstroms to Blender units.
+        Default world_scale of 0.1 converts nanometers to Blender units.
         """
         super().__init__()
         self.universe: mda.Universe = universe
@@ -602,7 +703,6 @@ class Molecule(MolecularEntity):
         self._store_extra_attributes()
         self._setup_modifiers()
         self._save_filepaths_on_object()
-        self._register_asset_nodes()
         set_obj_active(self.object)
         return self.object
 
@@ -611,10 +711,11 @@ class Molecule(MolecularEntity):
         cls,
         topology: Path | str,
         coordinates: Path | str | None = None,
-        name: str | None = None,
-        style: str | None = None,
+        style: STYLE_LITERALS | None = None,
         selection: str | None = None,
         create_object: bool = True,
+        name: str | None = None,
+        **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
 
@@ -632,7 +733,8 @@ class Molecule(MolecularEntity):
             MD trajectory/coordinates file. If omitted, ``topology`` is loaded as a
             single structure file.
         name : str | None, optional
-            Name for the Blender object.
+            Name for the Blender object. Defaults to the topology file name
+            (extension included).
         style : str | None, optional
             If given, the visual style to apply to the loaded entity. If None (the
             default) no style is added, leaving the node tree empty for manual setup.
@@ -640,6 +742,8 @@ class Molecule(MolecularEntity):
             Atom selection to restrict the style to, passed to :meth:`add_style`.
         create_object : bool, optional
             Whether to create the Blender object immediately (MD route only).
+        kwargs : dict, optional
+            Additional keyword arguments to pass to the `MDAnalysis.Universe()` constructor.
 
         Returns
         -------
@@ -649,8 +753,11 @@ class Molecule(MolecularEntity):
         if coordinates is None:
             entity = cls.from_file(topology, name=name)
         else:
-            u = mda.Universe(topology, coordinates)
-            entity = cls(u, name=name or "NewMolecule", create_object=create_object)
+            entity = cls(
+                universe=mda.Universe(topology, coordinates, **kwargs),
+                name=name or Path(topology).name,
+                create_object=create_object,
+            )
 
         if style is not None and create_object:
             entity.add_style(style=style, selection=selection)
@@ -671,12 +778,18 @@ class Molecule(MolecularEntity):
         multi-frame universes. Biological assembly and entity/chain metadata parsed from
         the file are stored on the Blender object.
 
+        Small-molecule crystallographic ``.cif`` files (e.g. from the ICSD or COD)
+        are instead read by :mod:`~molecularnodes.entities.molecule.corecif`, which
+        expands the asymmetric unit by the file's symmetry operators to fill one
+        unit cell. ``.xyz`` files are read natively by MDAnalysis, with elements
+        taken from the atom names.
+
         Parameters
         ----------
         file_path : str | Path | io.BytesIO
             Path to the structure file (or an in-memory ``bcif`` buffer).
         name : str | None, optional
-            Name for the Blender object. Defaults to the file stem.
+            Name for the Blender object. Defaults to the file name (extension included).
 
         Returns
         -------
@@ -684,11 +797,41 @@ class Molecule(MolecularEntity):
             The Universe-backed entity representing the structure.
         """
         from ..molecule.reader import read_structure
+        from . import corecif
+
+        # small-molecule crystallographic CIFs (ICSD, COD) are a different
+        # dialect that biotite cannot parse; route them through the dedicated
+        # MDAnalysis parser, which expands the asymmetric unit to a unit cell
+        if (
+            not isinstance(file_path, io.BytesIO)
+            and Path(file_path).suffix == ".cif"
+            and corecif.is_core_cif(file_path)
+        ):
+            universe = mda.Universe(
+                str(file_path),
+                topology_format=corecif.CoreCIFParser,
+                format=corecif.CoreCIFReader,
+            )
+            return cls(universe, name=name or Path(file_path).name)
+
+        # .xyz files are read natively by MDAnalysis; the atom names are the
+        # element symbols, which the element-derived attributes need
+        if not isinstance(file_path, io.BytesIO) and Path(file_path).suffix == ".xyz":
+            universe = mda.Universe(str(file_path))
+            if not hasattr(universe.atoms, "elements"):
+                universe.add_TopologyAttr(
+                    "elements",
+                    [
+                        re.sub(r"[^A-Za-z]", "", atom_name)[:2].capitalize()
+                        for atom_name in universe.atoms.names
+                    ],
+                )
+            return cls(universe, name=name or Path(file_path).name)
 
         reader = read_structure(file_path)
         universe = universe_from_atoms(reader.array)
         if name is None:
-            name = Path(file_path).stem if not isinstance(file_path, io.BytesIO) else ""
+            name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
         entity = cls(universe, name=name)
         entity._store_structure_metadata(reader, file_path)
         return entity
@@ -732,9 +875,7 @@ class Molecule(MolecularEntity):
         self, reader, file_path: str | Path | io.BytesIO
     ) -> None:
         """Store file-parsed assembly/entity/chain metadata on the Blender object."""
-        # a structure loaded from a single file is a "molecule" rather than an MD
-        # trajectory; whether playback UI is shown is decided by the frame count.
-        self.props.entity_type = EntityType.MOLECULE.value
+        self.props.entity_type = EntityType.MOLECULE
         self.props.entity_ids = reader.entity_ids()
         self.props.chain_ids = reader.chain_ids()
         self.props.biological_assemblies = reader.assemblies(as_json_string=True)
@@ -748,13 +889,14 @@ class Molecule(MolecularEntity):
         Parameters
         ----------
         as_array : bool, optional
-            Return the assemblies as an array of quaternions rather than a dict.
+            Return the assemblies as a structured array of per-chain 4x4 transforms
+            rather than a dict.
 
         Returns
         -------
         dict | np.ndarray | None
-            The biological assemblies as transformation matrices (or quaternions when
-            ``as_array`` is True), or ``None`` when the structure has no assembly data.
+            The biological assemblies as transformation matrices, or ``None`` when
+            the structure has no assembly data.
         """
         from ... import utils
 
@@ -762,20 +904,20 @@ class Molecule(MolecularEntity):
         if not assemblies_info:
             return None
         if as_array:
-            return utils.array_quaternions_from_dict(assemblies_info)
+            try:
+                return utils.array_transforms_from_dict(assemblies_info)
+            except (ValueError, TypeError):
+                return None
         return assemblies_info
 
     def create_data_object(self) -> bpy.types.Object:
         """Create the data object holding the biological assembly transforms."""
-        from ... import utils
         from ...blender import mesh
 
         data_obj_name = f".data_{self.name}_assemblies"
         data_obj = bpy.data.objects.get(data_obj_name)
         if not data_obj:
-            transforms = utils.array_quaternions_from_dict(
-                self.props.biological_assemblies
-            )
+            transforms = self.assemblies(as_array=True)
             data_obj = mesh.create_data_object(array=transforms, name=data_obj_name)
 
         return data_obj
@@ -809,6 +951,12 @@ class Molecule(MolecularEntity):
         -----
         Typically called automatically by frame change handlers, not user code.
         """
+        # single-frame structures have no trajectory to update; skip so that
+        # manually modified positions aren't reset on scene frame changes.
+        # n_frames is None for streaming trajectories, which must still update.
+        n_frames = self.frame_manager.n_frames
+        if n_frames is not None and n_frames <= 1:
+            return
         if self._updating_in_progress:
             logger.debug("Update already in progress, skipping nested update")
             return
@@ -885,7 +1033,7 @@ class Molecule(MolecularEntity):
                 self.uframe = frame
                 db.create_object(
                     vertices=self._scaled_position,
-                    name=f"{self.name}_frame_{i}",
+                    name=f"{self.name}_frame_{i:04d}",
                     collection=frames,
                 )
         finally:
@@ -950,6 +1098,9 @@ class Molecule(MolecularEntity):
         """
         if selection is None:
             return None
+        if callable(selection):
+            # evaluated later, inside the tree context, by `add_style`
+            return None
         if isinstance(selection, AtomGroup):
             return self.selections.from_atomgroup(selection).name
         if isinstance(selection, str):
@@ -972,15 +1123,58 @@ class Molecule(MolecularEntity):
             return self.selections.from_string(selection).name
         return None
 
+    def _style_color_input(self, color: str | Sequence[float] | Callable):
+        """Resolve `add_style`'s color argument into the `Set Color` node input.
+
+        Returns ``None`` if no ``Set Color`` node should be added, which happens when
+        the argument names neither a known keyword nor an existing attribute.
+        """
+        from ...nodes import geometry as g
+
+        # a callable is evaluated here, inside the tree context, so that it can build
+        # nodes from `molecularnodes.nodes.geometry` (which require that context)
+        if callable(color):
+            return color()
+        if not isinstance(color, str):
+            return tuple(color)
+        if color.lower() in ("common", "default"):
+            # standard element colors, with carbons colored randomly per chain
+            return g.ColorElement(c=g.RandomColor(g.ChainID(), 3))
+        if color.lower() == "plddt":
+            return g.ColorPLDDT()
+        # otherwise it must name an existing *color* attribute on the geometry. Reading
+        # a non-color attribute (a float, say) as a color silently renders black, so
+        # check the data type too and not just that the name exists
+        color_attributes = [
+            attribute.name
+            for attribute in self.object.data.attributes
+            if attribute.data_type in ("FLOAT_COLOR", "BYTE_COLOR")
+        ]
+        if color in color_attributes:
+            return NamedAttribute.color(color)
+        warnings.warn(
+            f"Color '{color}' is neither a known color keyword {COLOR_KEYWORDS} nor a "
+            f"color attribute on this molecule (available: {color_attributes}). No "
+            "color will be applied. For coloring beyond the keywords, pass a callable "
+            "that builds the color nodes:\n"
+            "    from molecularnodes.nodes import geometry as mg\n"
+            "    mol.add_style('cartoon', color=lambda: mg.ColorRainbow())",
+            category=UserWarning,
+        )
+        return None
+
     def add_style(
         self,
-        style: STYLE_LITERALS = "spheres",
-        selection: str | AtomGroup | None = None,
+        style: STYLE_LITERALS | Callable = "spheres",
+        selection: str | AtomGroup | Callable | None = None,
         material: bpy.types.Material
         | PresetMaterial
         | MaterialBuilder
         | str
-        | None = "MN Default",
+        | None = _UNSET,
+        color: str | Sequence[float] | Callable | None = None,
+        assembly: bool = False,
+        name: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """
@@ -991,17 +1185,27 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        style : bpy.types.GeometryNodeTree | str, optional
-            The style to apply to the trajectory. Can be a GeometryNodeTree or a string
-            identifying a predefined style (e.g., "spheres", "sticks", "ball_stick").
-            Default is "spheres".
+        style : str | Callable, optional
+            The style to apply. Either a string naming a predefined style
+            ("spheres", "cartoon", "ribbon", "surface", "sticks", "ball_and_stick"),
+            or a zero-argument callable returning a style node, evaluated inside the
+            node tree context::
 
-        selection : str | AtomGroup | None, optional
+                mol.add_style(lambda: mg.StyleCartoon(quality=5, loop_radius=0.6))
+
+            A callable defines the style node itself, so ``selection``, ``material``
+            and extra keyword arguments cannot be combined with it - set them inside
+            the callable. Default is "spheres".
+
+        selection : str | AtomGroup | Callable | None, optional
             Apply the style only to atoms matching this selection. Can be:
             - A string naming an existing boolean attribute on the molecule (used directly)
             - A string MDAnalysis selection phrase (evaluated and stored as a new
               managed selection attribute)
             - A AtomGroup object defining a selection criteria
+            - A zero-argument callable returning a boolean socket, evaluated inside
+              the node tree context, e.g.
+              ``lambda: mg.IsPeptide() & mg.IsSideChain()``
             - None to apply to all atoms (default)
 
             A string is treated as an existing attribute name first; only if no such
@@ -1014,8 +1218,36 @@ class Molecule(MolecularEntity):
             material name to append from the asset file, or None for no material.
             Default is "MN Default".
 
+        color : str | Sequence[float] | Callable | None, optional
+            Coloring to apply upstream of the style via a ``Set Color`` node. Can be:
+            - ``"common"`` / ``"default"`` for standard element colors with carbons
+              colored randomly per chain
+            - ``"plddt"`` to color by pLDDT (B-factor) confidence
+            - the name of an existing *color* attribute on the geometry
+            - an RGBA sequence of floats for a single uniform color
+            - a zero-argument callable returning a color socket, evaluated inside the
+              node tree context, e.g. ``lambda: mg.ColorRainbow()``. This is the way
+              to reach the full set of ``Color*`` nodes without writing out a whole
+              node tree.
+            - None (default) to add no color node, leaving the baked ``Color``
+              attribute in use.
+
+            A string that is neither a keyword nor an existing color attribute raises
+            a ``UserWarning`` and no color is applied.
+
+        assembly : bool, optional
+            Instance the style over the biological assembly transforms parsed from
+            the source file, via an ``Assembly Instance`` node. Default is False.
+
+        name : str | None, optional
+            Optional label for the added style node, shown in the node editor and
+            style lists. Default is None.
+
         **kwargs : optional
-            Additional keyword arguments to pass to the added style node.
+            Additional keyword arguments passed to the style node, matching that
+            node's inputs (e.g. ``quality``, ``scale``, ``sphere`` for
+            ``spheres``). Unknown names raise a ``TypeError``. Cannot be combined
+            with a callable ``style``.
 
         Returns
         -------
@@ -1026,6 +1258,10 @@ class Molecule(MolecularEntity):
         ------
         ValueError
             If an unsupported style string is passed
+        TypeError
+            If a callable ``style`` is combined with ``selection``, ``material`` or
+            extra keyword arguments, or if a keyword argument does not match an input
+            on the style node
 
         Notes
         -----
@@ -1033,17 +1269,50 @@ class Molecule(MolecularEntity):
         named attribute on the trajectory with an automatically generated name (sel_N).
         """
 
-        from ...nodes.geometry import OxDNAStyleRibbon
+        from ...nodes import geometry as g
         from . import OXDNA
 
-        if isinstance(style, str) and style not in styles_mapping:
+        style_is_callable = callable(style)
+        if not style_is_callable and style not in STYLE_NODE_MAPPING:
             raise ValueError(
-                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
+                f"Invalid style '{style}'. Supported styles are "
+                f"{sorted(STYLE_NODE_MAPPING)}"
             )
+        if style_is_callable:
+            # a callable builds the style node itself, so arguments belonging to that
+            # node would be silently discarded - reject them instead of ignoring them
+            owned = [
+                argname
+                for argname, was_given in (
+                    ("selection", selection is not None),
+                    ("material", material is not _UNSET),
+                    *((key, True) for key in kwargs),
+                )
+                if was_given
+            ]
+            if owned:
+                raise TypeError(
+                    "When `style` is a callable it defines the style node itself, so "
+                    f"{owned} cannot also be passed to `add_style()`. Set them inside "
+                    "the callable instead:\n"
+                    "    mol.add_style(lambda: mg.StyleCartoon(quality=5))"
+                )
+
+        material = "MN Default" if material is _UNSET else material
+        # a callable selection is evaluated inside the tree context, below
+        selection_is_callable = callable(selection)
         attribute_name = self._resolve_style_selection(selection)
 
         if isinstance(self, OXDNA):
-            STYLE_NODE_MAPPING["ribbon"] = OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+            STYLE_NODE_MAPPING["ribbon"] = g.OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+
+        if not style_is_callable and "sphere" not in kwargs:
+            # spheres default to point clouds, which only Cycles can draw
+            geometry = _sphere_for_engine(
+                STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
+            )
+            if geometry is not None:
+                kwargs["sphere"] = geometry
 
         if isinstance(material, (PresetMaterial, MaterialBuilder)):
             material = material.material
@@ -1051,14 +1320,31 @@ class Molecule(MolecularEntity):
         material = append_material(material) if isinstance(material, str) else material
 
         with self.tree as tree:
-            (
-                tree.atoms
-                >> STYLE_NODE_MAPPING[style](
-                    selection=NamedAttribute.boolean(attribute_name)
-                    if attribute_name
-                    else None,
+            if style_is_callable:
+                style_node = style()
+            else:
+                if selection_is_callable:
+                    selection_input = selection()
+                elif attribute_name:
+                    selection_input = NamedAttribute.boolean(attribute_name)
+                else:
+                    selection_input = None
+                style_node = STYLE_NODE_MAPPING[style](
+                    selection=selection_input,
                     material=material,
                     **kwargs,
+                )
+            if name:
+                style_node.node.label = name
+            color_input = self._style_color_input(color) if color is not None else None
+            (
+                tree.atoms
+                >> (g.SetColor(color=color_input) if color_input is not None else None)
+                >> style_node
+                >> (
+                    g.AssemblyInstance(data_object=self.create_data_object())
+                    if assembly
+                    else None
                 )
                 >> tree.join
             )
@@ -1080,7 +1366,16 @@ class Molecule(MolecularEntity):
                 if isinstance(topology_filename, (str, Path)):
                     # MD universe backed by on-disk topology (+ trajectory) files
                     state["_universe_topology"] = str(topology_filename)
-                    if isinstance(trajectory_filename, (str, Path)):
+                    # multi-file universes (ChainReader) list every coordinate
+                    # file in `filenames`, while `filename` only holds the first
+                    trajectory_filenames = getattr(
+                        self.universe.trajectory, "filenames", None
+                    )
+                    if trajectory_filenames is not None:
+                        state["_universe_trajectory"] = [
+                            str(f) for f in trajectory_filenames
+                        ]
+                    elif isinstance(trajectory_filename, (str, Path)):
                         state["_universe_trajectory"] = str(trajectory_filename)
                 else:
                     # universe was converted from a structure file (in-memory, so the
@@ -1191,28 +1486,43 @@ class Molecule(MolecularEntity):
         if not hasattr(self, "calculations"):
             self.calculations = state.pop("_preserved_calculations", {})
 
-    def _get_3d_bbox(self, selection: mda.AtomGroup | None) -> list[tuple]:
-        """Get the 3D bounding box vertices of atoms in an AtomGroup"""
+    def _world_positions(self, selection: mda.AtomGroup) -> np.ndarray:
+        """
+        Atom positions in Blender world space.
+
+        The universe holds positions in angstroms while the object is built at
+        ``world_scale``, so a selection's positions have to be scaled and put
+        through the object's transform to end up in the same space as the
+        geometry drawn from them.
+        """
+        positions = np.asarray(selection.positions, dtype=np.float64)
+        positions = positions * self.world_scale
+        matrix = np.array(self.object.matrix_world)
+        return positions @ matrix[:3, :3].T + matrix[:3, 3]
+
+    def _view_points(self, selection: mda.AtomGroup | None) -> list[tuple]:
+        """
+        The world-space positions that make up a view.
+
+        With no selection this is the geometry the molecule actually renders;
+        with one it is the positions of the selected atoms.
+        """
         if selection is None:
-            return blender_utils.get_bounding_box(self.object)
-        v0, v1 = selection.bbox() * self.world_scale
-        bb_verts_3d = [
-            (v0[0], v0[1], v0[2]),
-            (v0[0], v0[1], v1[2]),
-            (v0[0], v1[1], v0[2]),
-            (v0[0], v1[1], v1[2]),
-            (v1[0], v0[1], v0[2]),
-            (v1[0], v0[1], v1[2]),
-            (v1[0], v1[1], v0[2]),
-            (v1[0], v1[1], v1[2]),
-        ]
-        return bb_verts_3d
+            points = blender_utils.evaluated_points(self.object)
+        else:
+            points = self._world_positions(selection)
+        return [tuple(point) for point in points]
 
     def get_view(
         self, selection: str | AtomGroup | None = None, frame: int | None = None
     ) -> list[tuple]:
         """
-        Get the 3D bounding box of a selection within the trajectory
+        The world-space positions of a view onto this molecule.
+
+        Without a selection these are the positions of the geometry the molecule
+        renders; with one they are the positions of the selected atoms. Pass the
+        result to [](`~mn.Canvas.look_at`) to frame it, or combine views from
+        several selections with ``+`` to frame all of them together.
 
         Parameters
         ----------
@@ -1237,7 +1547,7 @@ class Molecule(MolecularEntity):
         with temp_override_property(self, "uframe", frame):
             if selection is None:
                 # return bbox of object when no selection specified
-                return self._get_3d_bbox(None)
+                return self._view_points(None)
             if isinstance(selection, AtomGroup):
                 atom_group = selection
             elif isinstance(selection, str):
@@ -1252,7 +1562,7 @@ class Molecule(MolecularEntity):
 
             if atom_group.n_atoms == 0:
                 # return bbox of object when selection is empty
-                return self._get_3d_bbox(None)
+                return self._view_points(None)
 
             # return the 3D bounding box vertices of the selected AtomGroup
-            return self._get_3d_bbox(atom_group)
+            return self._view_points(atom_group)

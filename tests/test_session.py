@@ -2,6 +2,7 @@ import bpy
 import MDAnalysis as mda
 import pytest
 import molecularnodes as mn
+from molecularnodes.session import MNSession
 from .constants import data_dir
 
 
@@ -127,6 +128,42 @@ def test_reload_ensemble_cellpack_from_file():
     assert session.get(obj.uuid) is reloaded
 
 
+def test_session_pickle_roundtrip_cellpack(tmp_path):
+    session = mn.session.get_session()
+    ensemble = mn.entities.ensemble.CellPack.load(
+        data_dir / "cellpack/square1.bcif", node_setup=False
+    )
+    blend_path = tmp_path / "test.blend"
+
+    session.pickle(blend_path)
+
+    session.clear()
+    session.load(blend_path)
+    restored = session.get(ensemble.uuid)
+    assert isinstance(restored, mn.entities.ensemble.CellPack)
+    assert restored.name == ensemble.name
+    assert restored.instance_collection is not None
+
+
+def test_session_pickle_skips_unpicklable_entity(tmp_path):
+    import threading
+
+    session = mn.session.get_session()
+    good = mn.Molecule.load(data_dir / "1cd3.cif")
+    bad = mn.Molecule.load(data_dir / "1cd3.cif")
+    bad._unpicklable = threading.Lock()
+    blend_path = tmp_path / "test.blend"
+
+    with pytest.warns(UserWarning, match="cannot be serialized"):
+        session.pickle(blend_path)
+
+    # the failed entity is skipped, but doesn't stop the rest of the session saving
+    session.clear()
+    session.load(blend_path)
+    assert session.get(good.uuid) is not None
+    assert session.get(bad.uuid) is None
+
+
 @pytest.fixture()
 def session():
     return mn.session.get_session()
@@ -139,50 +176,66 @@ def universe():
     return mda.Universe(topo, traj)
 
 
-@pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning")
-def test_add_trajectory(session, universe):
-    # add Universe as trajectory
-    t1 = session.add_trajectory(universe, name="u1")
-    assert "u1" in bpy.data.objects
-    assert t1._mn_entity_type == mn.entities.base.EntityType.MD.value
-    # add AtomGroup as trajectory
-    ag = universe.select_atoms("name CA")
-    session.add_trajectory(ag, name="ag1")
-    assert "ag1" in bpy.data.objects
+def test_multi_file_trajectory_paths_relativized():
+    from contextlib import chdir
+    from pathlib import Path
+    from molecularnodes.session import (
+        _make_trajectory_paths_absolute,
+        _make_trajectory_paths_relative,
+    )
+
+    topo = data_dir / "md_ppr/box.gro"
+    coords = data_dir / "md_ppr/first_5_frames.xtc"
+    traj = mn.Molecule(mda.Universe(topo, [coords, coords]), name="multi")
+    n_frames = traj.universe.trajectory.n_frames
+    trajectories = {traj.uuid: traj}
+
+    with chdir(data_dir):
+        _make_trajectory_paths_relative(trajectories)
+        filenames = [Path(f) for f in traj.universe.trajectory.filenames]
+        assert len(filenames) == 2
+        assert all(not f.is_absolute() for f in filenames)
+        assert traj.universe.trajectory.n_frames == n_frames
+
+        _make_trajectory_paths_absolute(trajectories)
+        filenames = [Path(f) for f in traj.universe.trajectory.filenames]
+        assert len(filenames) == 2
+        assert all(f.is_absolute() for f in filenames)
+        assert traj.universe.trajectory.n_frames == n_frames
 
 
-def test_remove_trajectory(session, universe):
-    t1 = session.add_trajectory(universe, name="u1")
-    assert "u1" in bpy.data.objects
-    # remove by trajectory instance
-    session.remove_trajectory(t1)
-    assert "u1" not in bpy.data.objects
-    session.add_trajectory(universe, name="u2")
-    assert "u2" in bpy.data.objects
-    # remove by trajectory name
-    session.remove_trajectory("u2")
-    t3 = session.add_trajectory(universe, name="u3")
-    assert "u3" in bpy.data.objects
-    # remove trajectory from UI using operator
-    bpy.ops.mn.session_remove_item("EXEC_DEFAULT", uuid=t3.uuid)
-    assert "u3" not in bpy.data.objects
+def test_session_pickle_roundtrip_multi_file_trajectory(tmp_path):
+    from contextlib import chdir
+    from pathlib import Path
+
+    topo = data_dir / "md_ppr/box.gro"
+    coords = data_dir / "md_ppr/first_5_frames.xtc"
+    traj = mn.Molecule(mda.Universe(topo, [coords, coords]), name="multi")
+    n_frames = traj.universe.trajectory.n_frames
+    blend_path = tmp_path / "test.blend"
+
+    session = mn.session.get_session()
+    with chdir(tmp_path):
+        session.pickle(blend_path)
+        session.clear()
+        session.load(blend_path)
+
+    restored = session.get(traj.uuid)
+    filenames = [Path(f) for f in restored.universe.trajectory.filenames]
+    assert len(filenames) == 2
+    assert all(f.is_absolute() for f in filenames)
+    assert restored.universe.trajectory.n_frames == n_frames
 
 
-def test_get_trajectory(session, universe):
-    t1 = session.add_trajectory(universe, name="u1")
-    t2 = session.get_trajectory("u1")
-    assert t1 == t2
-
-
-def test_entity_blender_properties(session, universe):
+def test_entity_blender_properties(session: MNSession, universe):
     assert len(session.entities) == 0
-    t1 = session.add_trajectory(universe, name="u1")
+    t1 = mn.Molecule(universe, name="u1")
     # entity is tracked in the session, keyed by uuid
     assert len(session.entities) == 1
     assert t1.uuid in session.entities
     obj = bpy.data.objects["u1"]
     # entity type is stored on the object properties
-    assert obj.mn.entity_type == "md"
+    assert obj.mn.entity_type == "molecule"
     assert obj.uuid == t1.uuid
     # visibility is driven through the object properties
     assert obj.mn.visible
@@ -190,5 +243,66 @@ def test_entity_blender_properties(session, universe):
     obj.mn.visible = False
     assert not obj.visible_get()
     # removal drops the entity from the session
-    session.remove_trajectory("u1")
+    session.remove_entity(t1.uuid)
     assert len(session.entities) == 0
+
+
+def test_remove_tolerates_an_already_deleted_object():
+    """Deleting the object from the outliner leaves the entity behind.
+
+    Removing it must still drop the entity rather than raising
+    ``LinkedObjectError`` on the missing object.
+    """
+    session = mn.session.get_session()
+    session.clear()
+    mol = mn.Molecule.fetch("4ozs")
+    bpy.data.objects.remove(mol.object, do_unlink=True)
+
+    session.remove(mol.uuid)
+    assert mol.uuid not in session.entities
+
+
+def test_remove_unknown_uuid_raises():
+    with pytest.raises(ValueError, match="No entity with UUID"):
+        mn.session.get_session().remove("not-a-uuid")
+
+
+def test_session_saves_when_an_object_was_deleted(tmp_path):
+    """A molecule deleted from the outliner used to abort the session save.
+
+    The .blend still wrote, so the failure was silent - every other entity in
+    the file lost its session state on reload.
+    """
+    session = mn.session.get_session()
+    session.clear()
+    deleted = mn.Molecule.fetch("4ozs")
+    kept = mn.Molecule.fetch("1cbs")
+    bpy.data.objects.remove(deleted.object, do_unlink=True)
+
+    filepath = tmp_path / "deleted.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
+    assert session.stashpath(filepath).exists()
+
+    session.clear()
+    session.load(filepath)
+    assert kept.uuid in session.entities
+    assert deleted.uuid not in session.entities
+
+
+def test_opening_another_file_drops_the_previous_entities(tmp_path):
+    "Entities from a closed file used to linger and raise LinkedObjectError."
+    session = mn.session.get_session()
+    session.clear()
+    mn.Molecule.fetch("4ozs")
+    with_molecule = tmp_path / "with_molecule.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(with_molecule))
+
+    empty = tmp_path / "empty.blend"
+    bpy.ops.wm.read_homefile(app_template="")
+    bpy.ops.wm.save_as_mainfile(filepath=str(empty))
+
+    bpy.ops.wm.open_mainfile(filepath=str(with_molecule))
+    assert session.n_items == 1
+
+    bpy.ops.wm.open_mainfile(filepath=str(empty))
+    assert session.n_items == 0

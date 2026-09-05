@@ -11,7 +11,7 @@ from bpy.props import (
 from nodebpy.nodes.geometry import NamedAttribute
 from ..blender.utils import set_object_visibility
 from ..entities.base import EntityType
-from ..handlers import _update_entities
+from ..handlers import _update_entities, _update_selections
 from ..session import get_entity
 
 uuid_property = StringProperty(
@@ -25,7 +25,6 @@ ENTITY_ITEMS = (
     ("molecule", "Molecule", "A single molecule"),
     ("ensemble", "Ensemble", "A collection of molecules"),
     ("density", "Density", "A density grid"),
-    ("md", "Trajectory", "A molecular dynamics trajectory"),
     ("md-oxdna", "oxDNA Trajectory", "A oxDNA molecular dynamics trajectory"),
     (
         "md-streaming",
@@ -530,23 +529,25 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         name="Selection",
         description="Selection to be applied, written in the MDAnalysis selection language",
         default="name CA",
-        update=_update_entities,
+        update=_update_selections,
     )
 
     previous_string: StringProperty()  # type: ignore
+    previous_updating: BoolProperty(default=True)  # type: ignore
+    previous_periodic: BoolProperty(default=True)  # type: ignore
 
     updating: BoolProperty(  # type: ignore
         name="Updating",
         description="Potential recalculate the selection when the scene frame changes",
         default=True,
-        update=_update_entities,
+        update=_update_selections,
     )
 
     periodic: BoolProperty(  # type: ignore
         name="Periodic",
         description="For geometric selections, whether to account for atoms in different periodic images when searching",
         default=True,
-        update=_update_entities,
+        update=_update_selections,
     )
 
     message: StringProperty(  # type: ignore

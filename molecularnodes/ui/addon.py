@@ -64,8 +64,8 @@ def register():
         except Exception as e:
             print(e)
             pass
-    bpy.types.VIEW3D_MT_object_context_menu.prepend(panel.pt_object_context)
-    bpy.types.VIEW3D_MT_add.prepend(panel.add_menu_options)
+    bpy.types.VIEW3D_MT_object_context_menu.append(panel.pt_object_context)
+    bpy.types.VIEW3D_MT_add.append(panel.add_menu_options)
 
     save_post.append(session._pickle)
     load_post.append(session._load)

@@ -1,6 +1,6 @@
 from abc import ABCMeta
 from contextlib import contextmanager
-from enum import Enum
+from enum import StrEnum
 from typing import TYPE_CHECKING, Iterator, List, NamedTuple, cast
 import bpy
 from bpy.types import GeometryNodeTree, NodesModifier
@@ -10,6 +10,7 @@ from databpy import (
 from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
+from ..nodes.material import add_all_materials
 from ..nodes.nodes import custom_boolean_iswitch, custom_color_iswitch
 from .utilities import BoolObjectMNProperty
 
@@ -17,10 +18,12 @@ if TYPE_CHECKING:
     from ..ui.props import MolecularNodesObjectProperties
 
 
-# create a EntityType enum
-# These should match the entity_type EnumProperty in props.py
-class EntityType(Enum):
-    MD = "md"
+# These should match the entity_type EnumProperty in props.py. As a StrEnum,
+# members compare equal to their string values (e.g. obj.mn.entity_type), so
+# no .value is needed at comparison sites
+class EntityType(StrEnum):
+    # "molecule" covers static structures and MD trajectories alike, both being
+    # Universe-backed; only the specialised loaders keep their own md-* types
     MD_OXDNA = "md-oxdna"
     MD_STREAMING = "md-streaming"
     MOLECULE = "molecule"
@@ -40,8 +43,12 @@ class ResetSockets(NamedTuple):
 
 class MolecularTree(TreeBuilder[GeometryNodeTree]):
     def __init__(
-        self, entity: "MolecularEntity", tree: TreeBuilder | GeometryNodeTree | str
+        self,
+        entity: "MolecularEntity | None",
+        tree: TreeBuilder | GeometryNodeTree | str,
     ) -> None:
+        # the entity is optional so a tree can be built for an object that is
+        # not linked to a session entity (e.g. the UI's object-level add style)
         self._entity = entity
         if isinstance(tree, TreeBuilder):
             super().__init__(cast(GeometryNodeTree, tree.tree))
@@ -149,6 +156,10 @@ class MolecularEntity(
         self._register_with_session()
         self._world_scale = 0.1
         self._tree = None
+        # make every preset material selectable in material dropdowns right
+        # after import, not just the ones a style has already used; materials
+        # already in the file are reused rather than appended again
+        add_all_materials()
 
     def __getstate__(self):
         """Custom serialization."""
@@ -158,21 +169,36 @@ class MolecularEntity(
         state["_tree"] = None
         return state
 
-    def _register_asset_nodes(self) -> None:
+    def create_asset_nodes(self) -> None:
+        """
+        Create asset nodes for the entity object.
 
+        This creates `Select` and `Color` nodes for each property combination. Chains, entities,
+        and segments have nodes created for them if they have IDs. Nodes are created and
+        registered as assets for the current Blender session so they can be added through
+        drag-to-search in the node editor.
+        """
+
+        # the stored labels are ordered to match the integer values of the
+        # attribute each switch reads (see _compute_chain_id_int, _get_entity_id
+        # and _compute_segindices)
         prop_combinations = (
-            ("Chain", self.props.chain_ids),
-            ("Entity", self.props.entity_ids),
-            ("Segment", self.props.segments),
+            ("Chain", self.props.chain_ids, "chain_id"),
+            ("Entity", self.props.entity_ids, "entity_id"),
+            ("Segment", self.props.segments, "segid"),
         )
 
-        for prefix, prop in prop_combinations:
+        for prefix, prop, attribute in prop_combinations:
             if len(prop) == 0:
                 continue
             custom_boolean_iswitch(
-                f"Select {prefix} {self.name}", items=prop
+                name=f"Select {prefix} {self.name}",
+                items=prop,
+                attribute_name=attribute,
             ).asset_mark()
-            custom_color_iswitch(f"Color {prefix} {self.name}", items=prop).asset_mark()
+            custom_color_iswitch(
+                name=f"Color {prefix} {self.name}", items=prop, attribute_name=attribute
+            ).asset_mark()
 
     @property
     def props(self) -> "MolecularNodesObjectProperties":
@@ -189,7 +215,7 @@ class MolecularEntity(
     def modifier(self) -> bpy.types.NodesModifier:
         for mod in self.object.modifiers:
             if mod.type == "NODES" and mod.name == "Molecular Nodes":
-                return mod
+                return cast(bpy.types.NodesModifier, mod)
 
         mod = self.object.modifiers.new("GeometryNodes", "NODES")
         return cast(bpy.types.NodesModifier, mod)
@@ -199,6 +225,20 @@ class MolecularEntity(
         if self._tree is None:
             self._tree = MolecularTree(self, self.modifier_node_tree)
         return self._tree
+
+    @tree.setter
+    def tree(self, value: "MolecularTree | TreeBuilder | GeometryNodeTree") -> None:
+        """Point this entity's Molecular Nodes modifier at an existing node
+        tree (e.g. another entity's), so multiple entities share one styling
+        tree and any style changes apply to all of them."""
+        if not isinstance(value, GeometryNodeTree):
+            value = cast(GeometryNodeTree, value.tree)
+        if "Molecular Nodes" not in self.object.modifiers:
+            self.object.modifiers.new("Molecular Nodes", "NODES")
+        mod = cast(NodesModifier, self.object.modifiers["Molecular Nodes"])
+        mod.node_group = value
+        value.is_modifier = True
+        self._tree = None
 
     @property
     def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:
@@ -248,10 +288,16 @@ class MolecularEntity(
 
     def get_view(self) -> List[tuple]:
         """
-        Get the 3D bounding box of the entity object
+        The world-space positions of the geometry this entity renders.
 
+        Read from the evaluated geometry, so these are the points actually
+        drawn rather than the data they were built from, and they do not go
+        stale between depsgraph updates.
+
+        Pass to [](`~mn.Canvas.look_at`) to frame them. Views from several
+        entities can be combined with ``+`` to frame all of them at once.
         """
-        return blender_utils.get_bounding_box(self.object)
+        return [tuple(point) for point in blender_utils.evaluated_points(self.object)]
 
     def _get_annotation_entity_type(self) -> str:
         """
@@ -262,7 +308,7 @@ class MolecularEntity(
         By default, this returns the string value of the Entity type.
 
         Eg: OXDNA and StreamingTrajectory that derive from the Molecule entity
-        can return EntityType.MD.value to re-use the annotations from
+        can return EntityType.MOLECULE to re-use the annotations from
         the parent Molecule entity.
 
         """

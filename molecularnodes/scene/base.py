@@ -1,11 +1,12 @@
 import os
 import shutil
 import tempfile
-from contextlib import ExitStack
+from contextlib import ExitStack, contextmanager
 from enum import StrEnum
 from pathlib import Path
-from typing import Literal, Tuple
+from typing import Literal, Sequence, Tuple
 import bpy
+import numpy.typing as npt
 from tqdm.auto import tqdm
 from .. import assets
 from ..assets.template import list_templates
@@ -13,21 +14,18 @@ from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
 from ..ui import addon
-from ..utils import suppress_stdout, temp_override_properties
+from ..utils import _UNSET, Unset, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
 from .compositor import CompositorTree, setup_compositor
 from .engines import EEVEE, Cycles
+from .recorder import _ANIMATION_FORMATS, FrameRecorder, _resolve_format, _write_gif
 from .world import WorldTree
 
 try:
-    from IPython.display import Image, Video, display
+    from IPython.display import Image, Video
 except ImportError:
     Image = None
     Video = None
-    display = None
-
-IS_GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS") == "true"
-IS_SELF_HOSTED = os.getenv("RUNNER_ENVIRONMENT") == "self-hosted"
 
 
 class ViewTransform(StrEnum):
@@ -53,6 +51,30 @@ class ViewTransform(StrEnum):
 
 _RENDER_ENGINES = Literal["EEVEE", "CYCLES"]
 
+# still-image formats Blender can write - its image enum, minus FFMPEG which
+# is the video writer
+_IMAGE_FORMATS = Literal[
+    "PNG",
+    "JPEG",
+    "JPEG2000",
+    "AVIF",
+    "WEBP",
+    "BMP",
+    "IRIS",
+    "CINEON",
+    "DPX",
+    "HDR",
+    "TARGA",
+    "TARGA_RAW",
+    "TIFF",
+    "OPEN_EXR",
+    "OPEN_EXR_MULTILAYER",
+]
+
+# the template loaded when nothing else is asked for and there is nothing to lose
+_DEFAULT_TEMPLATE = "Molecular Nodes"
+
+
 # render passes commonly needed for compositor effects, mapped to the
 # `bpy.types.ViewLayer` toggle that enables each one
 RENDER_PASSES = {
@@ -68,6 +90,38 @@ RENDER_PASSES = {
     "ambient_occlusion": "use_pass_ambient_occlusion",
 }
 
+# still-image formats that IPython can embed inline, mapped to the format
+# name expected by IPython.display.Image
+_IPYTHON_IMAGE_FORMATS = {"PNG": "png", "JPEG": "jpeg"}
+
+
+@contextmanager
+def _restore_frame(scene: bpy.types.Scene):
+    """Restore the scene's current frame (via ``frame_set``, so animation data
+    is re-evaluated) on exit."""
+    original = scene.frame_current
+    try:
+        yield
+    finally:
+        scene.frame_set(original)
+
+
+@contextmanager
+def _render_progress(total: int, desc: str):
+    """Show a tqdm progress bar driven by the ``render_write`` handler, which
+    fires once per frame written during an animation render."""
+    bar = tqdm(total=total, desc=desc)
+
+    def _on_frame_write(*args) -> None:
+        bar.update(1)
+
+    bpy.app.handlers.render_write.append(_on_frame_write)
+    try:
+        yield
+    finally:
+        bpy.app.handlers.render_write.remove(_on_frame_write)
+        bar.close()
+
 
 class Canvas:
     """
@@ -75,8 +129,8 @@ class Canvas:
 
     Canvas configures the active Blender scene for Molecular Nodes renders
     (engine, resolution, transparency, color management), exposes convenient
-    properties for common render settings, and provides helpers to frame
-    objects/views and render stills or animations.
+    properties for common render settings, and provides helpers to point the
+    camera at objects/views and render stills or animations.
 
     Parameters
     ----------
@@ -88,11 +142,15 @@ class Canvas:
         Output resolution in pixels as ``(width, height)``.
     transparent : bool, default False
         When ``True``, renders use a transparent film (alpha background).
-    template : pathlib.Path | str | None, default "Molecular Nodes"
-        Scene template to initialize. If a string is provided it can be either
-        the name of an installed Blender app template (e.g. ``"Molecular Nodes"``),
-        or a path to a ``.blend`` file. If ``None``, the Blender default startup
-        file is used.
+    template : pathlib.Path | str | None, optional
+        Scene template to load. If a string is provided it can be either the
+        name of an installed Blender app template (e.g. ``"Molecular Nodes"``),
+        or a path to a ``.blend`` file. A template given here is always loaded,
+        replacing whatever is in the scene. Left out, the "Molecular Nodes"
+        preset is loaded only when the scene holds no molecules, so that
+        re-running ``mn.Canvas()`` - as a notebook cell does - binds to the
+        scene instead of wiping the work in it. ``None`` binds without loading
+        anything. Use [](`~mn.Canvas.load_preset`) to reload a preset deliberately.
 
     Attributes
     ----------
@@ -157,7 +215,7 @@ class Canvas:
         engine: EEVEE | Cycles | _RENDER_ENGINES = "EEVEE",
         resolution=(1280, 720),
         transparent: bool = False,
-        template: Path | str | None = "Molecular Nodes",
+        template: Path | str | None | Unset = _UNSET,
     ) -> None:
         """
         Initialize a Canvas and prepare the Blender scene.
@@ -170,20 +228,62 @@ class Canvas:
             Output resolution in pixels as ``(width, height)``.
         transparent : bool, default False
             Enable a transparent film (alpha background) when ``True``.
-        template : pathlib.Path | str | None, default "Molecular Nodes"
-            Scene template name or path to a ``.blend`` file. Use ``None`` for
-            Blender's default startup scene.
+        template : pathlib.Path | str | None | Unset, optional
+            Scene template name or path to a ``.blend`` file, always loaded when
+            given. Left out, the "Molecular Nodes" preset is loaded only into a
+            scene with no molecules in it. ``None`` binds to the current scene
+            without loading anything.
         """
         addon.register()
         assets.install()
-        if template:
-            self.scene_reset(template=template)
+        self._compositor: CompositorTree | None = None
+        self._world: WorldTree | None = None
+
+        requested = template is not _UNSET
+        if not requested:
+            template = _DEFAULT_TEMPLATE
+
+        session = get_session()
+        # a molecule deleted from the outliner shouldn't count as something to lose
+        session.prune()
+        if template and (requested or session.n_items == 0):
+            # the preset's settings are applied first, then the arguments below
+            self.load_preset(template=template)
+        else:
+            self._bind()
+
         self.engine = engine
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
-        self._compositor: CompositorTree | None = None
-        self._world: WorldTree | None = None
+
+    def _bind(self) -> None:
+        """
+        Attach to the scene as it stands, without resetting anything on it.
+
+        Unlike :meth:`_scene_changed`, the scene has not been replaced, so its
+        compositor is only built if it doesn't have one - rebuilding would
+        discard a compositor that has been set up.
+        """
+        self._compositor = None
+        self._world = None
+        get_session().prune()
+        if self.scene.compositing_node_group is None:
+            setup_compositor(self.scene)
+
+    def _scene_changed(self) -> None:
+        """
+        Rebind scene-backed state after the scene has been replaced.
+
+        The world and compositor builders hold references to the old scene's
+        node trees, so they are discarded and the compositor (with the
+        annotation overlay) is prepared on the new scene. Entities whose objects
+        did not survive the swap are dropped from the session, which would
+        otherwise keep raising ``LinkedObjectError`` when accessed.
+        """
+        self._compositor = None
+        self._world = None
+        get_session().prune()
         setup_compositor(self.scene)
 
     @property
@@ -230,13 +330,20 @@ class Canvas:
     @property
     def engine(self) -> Cycles | EEVEE:
         """
-        Get the configured render engine.
+        Get the active render engine.
 
         Returns
         -------
         EEVEE | Cycles
-            The active engine configuration object.
+            The active engine configuration object. Kept in sync with the
+            scene, so an engine switch made outside of this class (e.g. in the
+            Blender UI or by loading a .blend file) is reflected here.
         """
+        engine_id = self.scene.render.engine
+        if self._engine.name != engine_id:
+            # the engine was changed outside of this class - rebind without
+            # applying the constructor defaults over the scene's settings
+            self._engine = Cycles() if engine_id == "CYCLES" else EEVEE()
         return self._engine
 
     @engine.setter
@@ -276,30 +383,32 @@ class Canvas:
             )
 
         self._engine._enable_engine()
+        # settings given to the engine's constructor are applied on activation
+        self._engine._apply_settings()
 
     @property
-    def fps(self) -> float:
+    def fps(self) -> int:
         """
-        Get the frames per second setting.
+        Get and set the frame rate expressed in frames per second.
 
         Returns
         -------
-        float
+        int
             The current FPS value.
         """
         return self.scene.render.fps
 
     @fps.setter
-    def fps(self, value: float) -> None:
+    def fps(self, value: int) -> None:
         """
-        Set the frames per second.
+        Get and set the frame rate expressed in frames per second.
 
         Parameters
         ----------
-        value : float
+        value : int
             The FPS value to set.
         """
-        self.scene.render.fps = value  # ty: ignore[invalid-assignment]
+        self.scene.render.fps = value
 
     @property
     def frame_start(self) -> int:
@@ -527,7 +636,6 @@ class Canvas:
 
     @property
     def _view_settings(self) -> bpy.types.ColorManagedViewSettings:
-
         view_settings = self.scene.view_settings
         assert view_settings
         return view_settings
@@ -673,97 +781,184 @@ class Canvas:
         """
         self._view_settings.view_transform = ViewTransform(value)  # ty: ignore[invalid-assignment]
 
-    def frame_object(
+    def look_at(
         self,
-        obj: bpy.types.Object | MolecularEntity,
-        viewpoint: Viewpoint | str | None = None,
+        target: MolecularEntity | bpy.types.Object | npt.ArrayLike,
+        viewpoint: Viewpoint | str | Sequence[float] | None = None,
+        margin: float = 0.05,
     ) -> None:
         """
-        Frame an object or MolecularEntity in the active camera view.
+        Position the camera to look at and contain a target.
+
+        The camera is moved as close to the target as keeping all of it in frame
+        allows, without changing where it points, leaving a small margin so that
+        the subject does not sit right against the edge of the frame.
 
         Parameters
         ----------
-        obj : bpy.types.Object | MolecularEntity
-            Blender object or Molecular Nodes entity to frame.
-        viewpoint : Viewpoint | str, optional
-            Viewing direction along a principal axis. One of
-            {"default", "front", "back", "top", "bottom", "left", "right"}.
+        target : MolecularEntity | bpy.types.Object | array_like
+            What to look at: a Molecular Nodes entity, a Blender object, or any
+            ``(N, 3)`` set of positions - a bounding box from ``get_view()``, or
+            the positions themselves. Views can be combined with ``+`` before
+            passing.
 
+            An entity or object is framed on the geometry it *renders*, so
+            styling one chain of four frames that chain rather than the whole
+            molecule.
+        viewpoint : Viewpoint | str | Sequence[float], optional
+            Viewing direction along a principal axis — one of
+            {"default", "front", "back", "top", "bottom", "left", "right"} —
+            or a custom XYZ Euler rotation as three angles in degrees.
+        margin : float, default 0.05
+            Fraction of the frame to leave empty around the target. ``0`` fits
+            the target exactly to the frame, ``0.1`` leaves a ten percent
+            border, and a negative value crops in past its edges.
+
+        Examples
+        --------
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
+        canvas.samples = 8
+        mol = mn.Molecule.fetch("8H1B").add_style("cartoon", selection="chainID A")
+
+        # frames the styled chain, not the whole molecule
+        canvas.look_at(mol, viewpoint="front")
+        display(canvas.snapshot())
+
+        # room to breathe, and framing on a selection rather than the whole entity
+        canvas.look_at(mol.get_view("chainID A and resid 1-40"), margin=0.15)
+        display(canvas.snapshot())
+        ```
+
+        See Also
+        --------
+        molecularnodes.scene.camera.Camera.frame_points : The underlying solve.
         """
-        if isinstance(obj, MolecularEntity):
-            obj = obj.object
         # set the camera viewpoint if specified
         if viewpoint is not None:
             self.camera.set_viewpoint(viewpoint)
-        # set the camera to look at the object
-        blender_utils.look_at_object(obj)
-
-    def frame_view(
-        self,
-        view: list[tuple] | MolecularEntity,
-        viewpoint: Viewpoint | str | None = None,
-    ) -> None:
-        """
-        Frame one or more views of Molecular entities.
-        Multiple views can be combined using ``+`` before passing the result.
-
-        Parameters
-        ----------
-        view : list[tuple] | MolecularEntity
-            A bounding box represented by 8 three-dimensional vertices
-            ``[(x, y, z), ...]`` or an entity from which a view is derived.
-        viewpoint : Viewpoint | str, optional
-            Viewing direction along a principal axis. One of
-            {"default", "front", "back", "top", "bottom", "left", "right"}.
-
-        """
-        if isinstance(view, MolecularEntity):
-            view_tuple = view.get_view()
+        if isinstance(target, MolecularEntity):
+            target = target.object
+        if isinstance(target, bpy.types.Object):
+            points = blender_utils.evaluated_points(target)
         else:
-            view_tuple = view
-        # set the camera viewpoint if specified
-        if viewpoint is not None:
-            self.camera.set_viewpoint(viewpoint)
-        # set the camera to look at the bounding box of the view
-        blender_utils.look_at_bbox(view_tuple)
+            points = target
+        self.camera.frame_points(points, margin=margin, scene=self.scene)
 
     def clear(self) -> None:
         """
-        Clear all Molecular Nodes entities from the scene.
+        Empty the scene, keeping the setup that renders it.
+
+        Removes the molecules and any other content objects, and purges the data
+        they leave behind. The camera and lights are kept, as are the render
+        settings, world shader and compositor - all of which are how the scene
+        is lit and rendered rather than what is in it. The canvas is left
+        configured and ready to render whatever is added next.
 
         Notes
         -----
-        This does not modify lighting, world, or render settings.
+        Data-blocks orphaned by the removed objects are purged recursively. A
+        single molecule leaves over a hundred behind - its mesh, material and
+        the node groups backing its styles - which would otherwise accumulate in
+        the file on every load-and-clear cycle. This also collects unused
+        data-blocks that were already in the file.
+
+        Objects that are not cameras or lights are removed, so set dressing such
+        as the preset's backdrop does not survive. Use
+        [](`~mn.Canvas.load_preset`) to bring a whole preset scene back.
+
+        Only this canvas's scene is emptied - objects living in other scenes of
+        the same file are left alone.
+
+        Examples
+        --------
+        Clearing between renders keeps the lighting and the render settings:
+
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
+        canvas.samples = 8
+
+        for code in ["4ozs", "8H1B"]:
+            mol = mn.Molecule.fetch(code).add_style("cartoon")
+            canvas.look_at(mol)
+            display(canvas.snapshot())
+            canvas.clear()
+
+        print(canvas.resolution, canvas.samples, type(canvas.engine).__name__)
+        ```
         """
         session = get_session()
-        # Iterate over a list copy to avoid modifying the dict during iteration
-        for entity in list(session.entities.values()):
-            session.remove(entity.uuid)
+        # drop entities whose object has already gone before touching any of
+        # them, so that one stale entry can't abort the whole clear
+        session.prune()
 
-    def scene_reset(
+        # entities are removed through the session so that their annotation
+        # objects are cleaned up along with them, but only the ones that are
+        # actually in this canvas's scene
+        for entity in list(session.entities.values()):
+            if entity.name in self.scene.objects:
+                session.remove(entity.uuid)
+
+        for obj in list(self.scene.objects):
+            if obj.type in {"CAMERA", "LIGHT"}:
+                continue
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+        # the node groups behind a style hang off the object's modifier tree, so
+        # only a recursive purge collects them once the object itself is gone
+        bpy.ops.outliner.orphans_purge(
+            do_local_ids=True, do_linked_ids=False, do_recursive=True
+        )
+
+    def load_preset(
         self,
         template: Path | str | None = "Molecular Nodes",
-        engine: Cycles | EEVEE | _RENDER_ENGINES = "EEVEE",
+        engine: Cycles | EEVEE | _RENDER_ENGINES | None = None,
     ) -> None:
         """
-        Reset the scene from a template or startup file.
+        Load a preset scene, replacing everything in the current one.
+
+        A preset is a whole scene - its lighting setup, camera, world shader and
+        render settings - so loading one replaces all of them. The shipped
+        "Molecular Nodes" preset is a small studio: a backdrop, a camera, a key
+        light and a rim light.
+
+        To empty the scene while keeping how it is rendered, use
+        [](`~mn.Canvas.clear`) instead.
 
         Parameters
         ----------
         template : pathlib.Path | str | None, default "Molecular Nodes"
             Name of an installed Blender app template, a path to a ``.blend``
             file, or ``None`` to use Blender's default startup file.
-        engine : EEVEE | Cycles | str, default "EEVEE"
-            Render engine to configure after loading the template.
+        engine : EEVEE | Cycles | str, optional
+            Render engine to configure after loading. When not given, the
+            engine defined by the preset is used.
 
         Raises
         ------
         ValueError
             If ``template`` is not ``None``, not a valid ``.blend`` file path,
             and not a known app template name.
+
+        Examples
+        --------
+        ```{python}
+        import bpy
+        import molecularnodes as mn
+
+        canvas = mn.Canvas()
+        canvas.load_preset()
+        print(sorted(obj.name for obj in bpy.data.objects))
+        ```
         """
         if template is None:
             bpy.ops.wm.read_homefile(app_template="")
+            self._scene_changed()
         else:
             file = Path(template) if isinstance(template, str) else template
             if file.is_file() and file.suffix == ".blend":
@@ -771,6 +966,7 @@ class Canvas:
             elif isinstance(template, str):
                 if template in list_templates():
                     bpy.ops.wm.read_homefile(app_template=template)
+                    self._scene_changed()
                 else:
                     raise ValueError(
                         f"Template '{template}' is not a valid .blend file or app template name."
@@ -781,7 +977,7 @@ class Canvas:
                     f"Template '{template}' is not a valid .blend file or app template name."
                 )
 
-        if engine:
+        if engine is not None:
             self.engine = engine
 
     def load(self, path: str | Path) -> None:
@@ -797,69 +993,186 @@ class Canvas:
         if not file_path.is_file() or file_path.suffix != ".blend":
             raise ValueError(f"File '{path}' is not a valid .blend file.")
         bpy.ops.wm.open_mainfile(filepath=str(file_path.resolve()))
+        self._scene_changed()
+
+    def _render_still(
+        self,
+        path_stem: Path,
+        file_format: _IMAGE_FORMATS = "PNG",
+        render_scale: int = 100,
+    ) -> Path:
+        """
+        Render the scene as it stands to ``path_stem`` plus the format's file
+        extension, restoring the render settings afterwards.
+
+        Parameters
+        ----------
+        path_stem : pathlib.Path
+            Destination path without an extension; the extension Blender uses
+            for ``file_format`` is appended.
+        file_format : str, default "PNG"
+            File format of the rendered image, one of Blender's still-image
+            formats (see :data:`_IMAGE_FORMATS`).
+        render_scale : int, default 100
+            Scale of the rendered image with respect to the resolution.
+
+        Returns
+        -------
+        pathlib.Path
+            Path of the written image file.
+        """
+        render_settings = self.scene.render
+        image_settings = render_settings.image_settings
+        with ExitStack() as stack:
+            temp_override_properties(
+                stack,
+                [
+                    (image_settings, "media_type", "IMAGE"),
+                    (image_settings, "file_format", file_format),
+                    (render_settings, "resolution_percentage", render_scale),
+                ],
+            )
+            render_file = path_stem.with_name(
+                path_stem.name + render_settings.file_extension
+            )
+            temp_override_properties(
+                stack, [(render_settings, "filepath", str(render_file))]
+            )
+            # suppress stdout output generated by render process
+            with suppress_stdout():
+                bpy.ops.render.render(write_still=True, animation=False)
+        return render_file
+
+    def record(
+        self,
+        path: str | Path | None = None,
+        fps: float | None = None,
+        render_scale: int = 100,
+        frames_dir: str | Path | None = None,
+        overwrite: bool = True,
+    ) -> FrameRecorder:
+        """
+        Start a frame-by-frame recording of the scene.
+
+        Where [](`~mn.Canvas.animation`) plays back the Blender timeline, a
+        recording puts the loop in your hands: change anything about the scene
+        between frames and call ``render()`` on the recorder to capture the
+        scene as it stands as the next frame, then ``finalize()`` to assemble
+        the frames into an MP4 or GIF.
+
+        Parameters
+        ----------
+        path : str | Path | None, optional
+            Default file path for ``finalize()`` to write the animation to.
+            When the recorder is used as a context manager, leaving the
+            ``with`` block without an exception finalizes to this path
+            automatically.
+        fps : float, optional
+            Default frame rate for ``finalize()``. When not specified, the
+            scene's fps is used.
+        render_scale : int, default 100
+            Scale the frames are rendered at with respect to the resolution.
+        frames_dir : str | Path | None, optional
+            Directory to render the PNG frames into, created if it doesn't
+            exist. Frames written there are kept after the recorder is gone.
+            When not given, frames go to a temporary directory that is
+            removed with the recorder.
+        overwrite : bool, default True
+            When ``False``, a frame whose numbered file already exists in
+            ``frames_dir`` is reused instead of re-rendered, so re-running
+            the same loop resumes an interrupted recording, only rendering
+            the frames that are missing. Requires ``frames_dir``.
+
+        Returns
+        -------
+        molecularnodes.scene.recorder.FrameRecorder
+            The recorder holding the captured frames.
+
+        Examples
+        --------
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
+        canvas.samples = 8
+        mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+
+        movie = canvas.record(fps=12)
+        for angle in range(0, 360, 45):
+            canvas.look_at(mol, viewpoint=(90, 0, angle))
+            movie.render()
+        movie.finalize()
+        ```
+
+        See Also
+        --------
+        molecularnodes.scene.recorder.FrameRecorder : The recorder itself.
+        molecularnodes.Canvas.animation : Render an animation from the timeline.
+        """
+        return FrameRecorder(
+            self,
+            path=path,
+            fps=fps,
+            render_scale=render_scale,
+            frames_dir=frames_dir,
+            overwrite=overwrite,
+        )
 
     def snapshot(
         self,
         path: str | Path | None = None,
         frame: int | None = None,
-        file_format: str = "PNG",
-    ) -> None:
+        file_format: _IMAGE_FORMATS = "PNG",
+        render_scale: int = 100,
+    ) -> "Image | None":
         """
         Render an image of the current scene.
 
         Parameters
         ----------
         path : str | Path | None, optional
-            File path to write the rendered image to.
+            File path to write the rendered image to. The image is returned
+            for display regardless of whether a path is given.
 
         frame : int, optional
             Frame number of scene to render. When not specified,
             current scene's current_frame is used
 
         file_format : str, optional
-            File format of the rendered image.
+            File format of the rendered image, one of Blender's still-image
+            formats, e.g. ``"PNG"``, ``"JPEG"``, ``"TIFF"``, ``"OPEN_EXR"``.
 
+        render_scale : int, optional
+            Scale of the rendered image with respect to the resolution.
+
+        Returns
+        -------
+        IPython.display.Image | None
+            The rendered image, which displays automatically as the result of
+            a notebook cell. ``None`` if IPython is not installed or the
+            format cannot be displayed in a notebook (e.g. ``"OPEN_EXR"``).
         """
         scene = self.scene
-        render_settings = scene.render
-        image_settings = render_settings.image_settings
-        render_frame = scene.frame_current if frame is None else frame
-        # temporary properties to override
-        override_props = [
-            (render_settings, "use_file_extension", True),
-            (scene, "frame_current", render_frame),
-        ]
-        override_props.append((image_settings, "media_type", "IMAGE"))
-        override_props.append((image_settings, "file_format", file_format))
         with ExitStack() as stack:
-            # set the use_file_extension to auto generate file extension
-            # set the file_format to the specified one
-            temp_override_properties(stack, override_props)
-            # create temporary file with the file_format extension
-            tmp_file = stack.enter_context(
-                tempfile.NamedTemporaryFile(suffix=render_settings.file_extension)
+            # restore the current frame (and animation state) afterwards
+            stack.enter_context(_restore_frame(scene))
+            if frame is not None:
+                # only frame_set will update animation data,
+                # scene.frame_current will only update the timeline
+                scene.frame_set(frame)
+            tmp_dir = stack.enter_context(tempfile.TemporaryDirectory())
+            render_file = self._render_still(
+                Path(tmp_dir) / "snapshot",
+                file_format=file_format,
+                render_scale=render_scale,
             )
-            # set the filepath to the temporary file
-            temp_override_properties(
-                stack,
-                [
-                    (render_settings, "filepath", tmp_file.name),
-                ],
-            )
-            # set the frame number - only frame_set will update animation data
-            # scene.current_frame will only update the timeline
-            scene.frame_set(render_frame)
-            # suppress stdout output generated by render process
-            with suppress_stdout():
-                # render the image
-                bpy.ops.render.render(write_still=True, animation=False)
+            data = render_file.read_bytes()
             if path:
-                # save to file if path specified
-                shutil.copy(tmp_file.name, path)
-            elif display and Image:
-                # only display in notebook if path not specified
-                # and in notebook context
-                display(Image(tmp_file.name))
+                shutil.copy(render_file, path)
+        ipython_format = _IPYTHON_IMAGE_FORMATS.get(file_format.upper())
+        if Image is None or ipython_format is None:
+            return None
+        return Image(data=data, format=ipython_format)
 
     def animation(
         self,
@@ -867,14 +1180,17 @@ class Canvas:
         frame_start: int | None = None,
         frame_end: int | None = None,
         render_scale: int = 100,
-    ) -> None:
+        fps: float | None = None,
+        format: _ANIMATION_FORMATS | None = None,
+    ) -> "Video | Image | None":
         """
         Render an animation of the current scene.
 
         Parameters
         ----------
         path : str | Path | None, optional
-            File path to write the rendered animation to.
+            File path to write the rendered animation to. The animation is
+            returned for display regardless of whether a path is given.
 
         frame_start : int, optional
             Start frame of the animation. When not specified, current scene's
@@ -887,14 +1203,29 @@ class Canvas:
         render_scale : int, optional
             Scale of the rendered animation frames with respect to the resolution.
 
+        fps : float, optional
+            Frame rate of the animation. When not specified, the scene's
+            fps is used.
+
+        format : str, optional
+            Output format, either ``"MP4"`` or ``"GIF"`` (case-insensitive).
+            When not specified, inferred from the suffix of ``path``,
+            defaulting to MP4. GIF output requires the ``pillow`` package.
+
+        Returns
+        -------
+        IPython.display.Video | IPython.display.Image | None
+            The rendered animation (a ``Video`` for MP4, an ``Image`` for
+            GIF), which displays automatically as the result of a notebook
+            cell. ``None`` if IPython is not installed.
         """
         # determine frame range
         start = self.frame_start if frame_start is None else frame_start
         end = self.frame_end if frame_end is None else frame_end
         if end < start:
             raise ValueError(f"End frame {end} cannot be less than start frame {start}")
-        n = len(str(end))
-        frame_range = range(start, end + 1)
+
+        format = _resolve_format(path, format)
 
         scene = self.scene
         render_settings = scene.render
@@ -902,72 +1233,56 @@ class Canvas:
         # temporary properties to override
         override_props = [
             (render_settings, "use_lock_interface", True),
+            (render_settings, "use_file_extension", True),
             (render_settings, "resolution_percentage", render_scale),
-            (render_settings, "filepath", ""),
-            (scene, "frame_current", start),
+            (scene, "frame_start", start),
+            (scene, "frame_end", end),
         ]
-        override_props.append((image_settings, "media_type", "IMAGE"))
-        override_props.append((image_settings, "file_format", "PNG"))
-        # create a temporary directory
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            # render individual frames
-            with ExitStack() as stack:
-                temp_override_properties(stack, override_props)
-                it = tqdm(frame_range, desc="Rendering frames")
-                # render individual frames
-                for frame in it:
-                    render_image = os.path.join(tmp_dir, str(frame).zfill(n)) + ".png"
-                    # set the output file
-                    scene.render.filepath = render_image
-                    # set the frame - only frame_set updates animation data
-                    scene.frame_set(frame)
-                    with suppress_stdout():
-                        # render each frame image
-                        bpy.ops.render.render(write_still=True)
-                it.close()
-
-            # add to video sequence editor
-            sequence_editor = scene.sequence_editor_create()
-            strips = sequence_editor.strips  # .sequences is deprecated
-            image_strip = None
-            for frame in frame_range:
-                render_image = os.path.join(tmp_dir, str(frame).zfill(n)) + ".png"
-                if image_strip is None:
-                    image_strip = strips.new_image("name", render_image, 1, start)
-                else:
-                    image_strip.elements.append(os.path.basename(render_image))
-
-            # render animation
-            video_file = os.path.join(tmp_dir, "animation.mp4")
-            # temporary properties to override
-            override_props = [
-                (render_settings, "use_lock_interface", True),
-                (render_settings, "resolution_percentage", render_scale),
-                (render_settings, "filepath", ""),
-                (scene, "frame_current", start),
-                (scene, "frame_start", start),
-                (scene, "frame_end", end),
+        if fps is not None:
+            override_props.append((render_settings, "fps", fps))
+        if format == "MP4":
+            override_props += [
+                (image_settings, "media_type", "VIDEO"),
+                (image_settings, "file_format", "FFMPEG"),
+                (render_settings.ffmpeg, "format", "MPEG4"),
+                (render_settings.ffmpeg, "codec", "H264"),
             ]
-            override_props.append((image_settings, "media_type", "VIDEO"))
-            override_props.append((image_settings, "file_format", "FFMPEG"))
-            override_props.append((render_settings.ffmpeg, "format", "MPEG4"))
-            with ExitStack() as stack:
-                temp_override_properties(stack, override_props)
-                scene.render.filepath = video_file
-                it = tqdm(range(0, 1), desc="Generating video")
-                for i in it:
-                    with suppress_stdout():
-                        # render the animation of sequence editor images
-                        bpy.ops.render.render(animation=True)
-                it.close()
+        else:
+            # GIF frames are rendered as PNGs and assembled with pillow
+            override_props += [
+                (image_settings, "media_type", "IMAGE"),
+                (image_settings, "file_format", "PNG"),
+            ]
 
-            # clear the video sequence editor
-            strips.remove(image_strip)
+        with tempfile.TemporaryDirectory() as tmp_dir, ExitStack() as stack:
+            temp_override_properties(stack, override_props)
+            # restore the current frame (and animation state) afterwards
+            stack.enter_context(_restore_frame(scene))
+            # Blender appends the frame range (MP4) or frame number (PNG) and
+            # the extension to the output path
+            temp_override_properties(
+                stack, [(render_settings, "filepath", os.path.join(tmp_dir, ""))]
+            )
+            with _render_progress(end - start + 1, "Rendering frames"):
+                with suppress_stdout():
+                    bpy.ops.render.render(animation=True)
 
+            if format == "MP4":
+                output_file = next(Path(tmp_dir).glob("*.mp4"))
+            else:
+                # frame numbers make up the filenames, so sort numerically
+                frames = sorted(Path(tmp_dir).glob("*.png"), key=lambda p: int(p.stem))
+                output_file = Path(tmp_dir) / "animation.gif"
+                _write_gif(frames, output_file, fps if fps is not None else self.fps)
+
+            data = output_file.read_bytes()
             if path:
-                # save to file if path specified
-                shutil.copy(video_file, path)
-            elif display and Video:
-                # only display in notebook if path not specified
-                # and in notebook context
-                display(Video(video_file, embed=True))
+                shutil.copy(output_file, path)
+
+        if format == "MP4":
+            if Video is None:
+                return None
+            return Video(data=data, embed=True, mimetype="video/mp4")
+        if Image is None:
+            return None
+        return Image(data=data, format="gif")

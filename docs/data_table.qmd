@@ -1,6 +1,6 @@
 ---
 toc: true
-toc-depth: 2
+toc-depth: 3
 fig-align: center
 ---
 # Data Tables
@@ -128,3 +128,4 @@ Code for this can be found on the [GitHub Page](https://github.com/BradyAJohnsto
 | O2 | `75::Int` |
 | O4 | `76::Int` |
 | C7 | `77::Int` |
+

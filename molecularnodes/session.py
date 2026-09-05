@@ -1,26 +1,33 @@
-import os
 import pickle as pk
+import warnings
 from contextlib import chdir
 from pathlib import Path
 from typing import Dict, Union
 import bpy
-import MDAnalysis as mda
 from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
-from MDAnalysis.core.groups import AtomGroup
 from .entities import Molecule
 from .entities.base import MolecularEntity
 from .entities.ensemble.base import Ensemble
 from .entities.reload import can_reload, reload_entity
-from .nodes.nodes import styles_mapping
 
 
 def trim(dictionary: dict):
+    """Drop entities whose Blender object no longer exists.
+
+    ``.object`` raises ``LinkedObjectError`` rather than returning ``None`` once
+    the object is gone, so this has to catch as well as test - otherwise a single
+    entity deleted from the outliner takes the whole session save down with it,
+    and every other entity in the file silently loses its state.
+    """
     dic = dictionary.copy()
     for key in list(dic.keys()):
-        if dic[key].object is None:
+        try:
+            if dic[key].object is None:
+                dic.pop(key)
+        except LinkedObjectError:
             dic.pop(key)
     return dic
 
@@ -38,34 +45,36 @@ def _has_ondisk_trajectory(traj: Molecule) -> bool:
     return not str(filename).startswith("imd://")
 
 
-def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:
+def _remap_trajectory_paths(trajectories: Dict[str, Molecule], remap) -> None:
     for key, traj in trajectories.items():
         if not _has_ondisk_trajectory(traj):
             continue
+        # multi-file universes (ChainReader) list every coordinate file in
+        # `filenames`, while `filename` only holds the first one
+        filenames = getattr(traj.universe.trajectory, "filenames", None)
         # save linked universe frame
         uframe = traj.uframe
-        traj.universe.load_new(_make_path_relative(traj.universe.trajectory.filename))
+        if filenames is not None:
+            traj.universe.load_new([remap(f) for f in filenames])
+        else:
+            traj.universe.load_new(remap(traj.universe.trajectory.filename))
         # restore linked universe frame
         traj.uframe = uframe
         traj._save_filepaths_on_object()
+
+
+def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:
+    _remap_trajectory_paths(trajectories, _make_path_relative)
 
 
 def _make_trajectory_paths_absolute(trajectories: Dict[str, Molecule]) -> None:
-    for key, traj in trajectories.items():
-        if not _has_ondisk_trajectory(traj):
-            continue
-        # save linked universe frame
-        uframe = traj.uframe
-        traj.universe.load_new(_make_path_absolute(traj.universe.trajectory.filename))
-        # restore linked universe frame
-        traj.uframe = uframe
-        traj._save_filepaths_on_object()
+    _remap_trajectory_paths(trajectories, _make_path_absolute)
 
 
 def _make_path_relative(filepath):
     "Take a path and make it relative"
     try:
-        return os.path.relpath(filepath)
+        return Path(filepath).relative_to(Path.cwd(), walk_up=True)
     except ValueError:
         return filepath
 
@@ -73,7 +82,7 @@ def _make_path_relative(filepath):
 def _make_path_absolute(filepath):
     "Take a path and make it absolute"
     try:
-        return os.path.abspath(filepath)
+        return Path(filepath).resolve()
     except ValueError:
         return filepath
 
@@ -87,13 +96,7 @@ class MNSession:
         return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
 
     @property
-    def trajectories(self) -> Dict[str, Molecule]:
-        # return a filtered dictionary of only the trajectories using isinstance(item, Molecule)
-        return {k: v for k, v in self.entities.items() if isinstance(v, Molecule)}
-
-    @property
     def ensembles(self) -> Dict[str, Ensemble]:
-        # return a filtered dictionary of only the ensembles using isinstance(item, Ensemble)
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
     def register_entity(self, item: MolecularEntity) -> None:
@@ -137,7 +140,7 @@ class MNSession:
         return len(self.entities)
 
     def __repr__(self) -> str:
-        return f"MNSession with {len(self.molecules)} molecules, {len(self.trajectories)} trajectories and {len(self.ensembles)} ensembles."
+        return f"MNSession with {len(self.molecules)} molecules and {len(self.ensembles)} ensembles."
 
     def pickle(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
@@ -148,18 +151,41 @@ class MNSession:
         if self.n_items == 0:
             return None
 
-        _make_trajectory_paths_relative(self.trajectories)
+        # skip entities that can't be pickled, so that one bad entity doesn't lose
+        # the session state for everything else in the scene
+        picklable = {}
+        for uuid, entity in self.entities.items():
+            try:
+                pk.dumps(entity)
+                picklable[uuid] = entity
+            except Exception as e:
+                warnings.warn(
+                    f"Not saving `{entity.name}` with the session, "
+                    f"as it cannot be serialized: {e}"
+                )
+        if len(picklable) == 0:
+            return None
 
-        with open(pickle_path, "wb") as f:
-            pk.dump(self, f)
-
-        _make_trajectory_paths_absolute(self.trajectories)
+        all_entities = self.entities
+        self.entities = picklable
+        _make_trajectory_paths_relative(self.molecules)
+        # dump to a temporary file and swap it into place, so that a failed dump
+        # can't leave a truncated session file next to the .blend
+        temp_path = pickle_path.with_name(f"{pickle_path.name}.tmp")
+        try:
+            with open(temp_path, "wb") as f:
+                pk.dump(self, f)
+            temp_path.replace(pickle_path)
+        finally:
+            temp_path.unlink(missing_ok=True)
+            _make_trajectory_paths_absolute(self.molecules)
+            self.entities = all_entities
 
         print(f"Saved session to: {pickle_path}")
 
     def load(self, filepath) -> None:
         pickle_path = self.stashpath(filepath)
-        if not os.path.exists(pickle_path):
+        if not pickle_path.exists():
             raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
@@ -179,7 +205,7 @@ class MNSession:
             for ens in session.ensembles.values():
                 self.register_entity(ens)
 
-        _make_trajectory_paths_absolute(self.trajectories)
+        _make_trajectory_paths_absolute(self.molecules)
 
         print(f"Loaded a MNSession from: {pickle_path}")
 
@@ -194,115 +220,32 @@ class MNSession:
             if hasattr(e, "annotations") and e.annotations.visible:
                 e.annotations._draw_handler_add()
 
-    def stashpath(self, filepath) -> str:
-        return f"{filepath}.MNSession"
+    def stashpath(self, filepath) -> Path:
+        return Path(f"{filepath}.MNSession")
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
         self.entities = {}
 
     def remove(self, uuid: str) -> None:
-        """Remove an entity by uuid"""
+        """
+        Remove an entity by uuid, along with the objects backing it.
+
+        An entity whose object has already been deleted - from the outliner, or
+        with `bpy.data.objects.remove()` - is still dropped from the session
+        rather than raising, so that removing is always safe to call.
+        """
         if uuid not in self.entities:
             raise ValueError(f"No entity with UUID '{uuid}'")
         entity = self.entities[uuid]
-        bpy.data.objects.remove(entity.object, do_unlink=True)
+        obj = self.get_object(uuid)
+        if obj is not None:
+            bpy.data.objects.remove(obj, do_unlink=True)
         if hasattr(entity, "annotations"):
-            if entity.annotations.bob:
-                bpy.data.objects.remove(entity.annotations.bob.object, do_unlink=True)
+            bob = entity.annotations.bob
+            if bob is not None and self.get_object(bob.uuid) is not None:
+                bpy.data.objects.remove(bob.object, do_unlink=True)
         self.remove_entity(uuid)
-
-    def add_trajectory(
-        self,
-        universe: mda.Universe | AtomGroup,
-        style: str | None = "spheres",
-        name: str = "NewUniverseObject",
-    ) -> Molecule:
-        """
-        Add a new trajectory
-
-        Parameters
-        ----------
-        universe: mda.Universe | AtomGroup, required
-            MDAnalysis Universe or AtomGroup instance
-
-        style: str | None, optional
-            The style to apply to the Universe or AtomGroup.
-
-        name: str, optional
-            Name of the trajectory object in Blender
-
-        Returns
-        -------
-        Molecule
-            The newly added Molecule instance
-
-        """
-        if style is not None and style not in styles_mapping:
-            raise ValueError(
-                f"Invalid style '{style}'. Supported styles are {[key for key in styles_mapping.keys()]}"
-            )
-        selection = None
-        if isinstance(universe, AtomGroup):
-            traj = Molecule(universe.universe, name=name)  # AtomGroup universe
-            selection = universe  # AtomGroup
-        else:
-            traj = Molecule(universe, name=name)  # Universe
-        traj.add_style(style=style, selection=selection)
-        return traj
-
-    def get_trajectory(
-        self,
-        name: str,
-    ) -> Molecule:
-        """
-        Get trajectory instance by name
-
-        Parameters
-        ----------
-        name: str, required
-            Name of the trajectory object
-
-        Returns
-        -------
-        Molecule
-            A Molecule instance
-
-        Raises
-        ------
-        ValueError if trajectory is not found
-
-        """
-        for v in self.entities.values():
-            if isinstance(v, Molecule) and v.object.name == name:
-                return v
-        raise ValueError(f"No trajectory named '{name}'")
-
-    def remove_trajectory(
-        self,
-        trajectory: Molecule | str,
-    ) -> None:
-        """
-        Remove an existing trajectory
-
-        Parameters
-        ----------
-        trajectory: Molecule | str, required
-            A Molecule instance or name of the trajectory
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        ValueError if trajectory name is not found
-
-        """
-        instance = trajectory
-        if isinstance(trajectory, str):
-            instance = self.get_trajectory(trajectory)
-        self.remove(instance.uuid)
 
 
 def get_session(context: Context | None = None) -> MNSession:
@@ -318,7 +261,7 @@ def get_entity(context: Context | None = None) -> Molecule | Ensemble:
 
 @persistent
 def _pickle(filepath) -> None:
-    with chdir(os.path.dirname(filepath)):
+    with chdir(Path(filepath).parent):
         get_session().pickle(filepath)
 
 
@@ -347,13 +290,19 @@ def _load(filepath: str, printing: str = "quiet") -> None:
         FileNotFoundError: If the file specified by `filepath` does not exist and
             `printing` is set to "verbose", a message will be printed.
     """
+    # the objects belonging to the file we just closed are gone, so drop the
+    # entities that pointed at them before registering this file's own -
+    # otherwise they linger in the session and raise LinkedObjectError
+    session = get_session()
+    session.prune()
+
     # the file hasn't been saved or we are opening a fresh file, so don't
     # attempt to load anything
     if filepath == "":
         return None
     try:
-        with chdir(os.path.dirname(filepath)):
-            get_session().load(filepath)
+        with chdir(Path(filepath).parent):
+            session.load(filepath)
     except FileNotFoundError:
         if printing == "verbose":
             print("No MNSession found to load for this .blend file.")

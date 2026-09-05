@@ -32,30 +32,60 @@ class PDBXReader(ReaderBase):
         self, model: int | None = None, include_bonds: bool = True
     ) -> struc.AtomArray | struc.AtomArrayStack:
         try:
+            self._ensure_group_pdb()
             array = pdbx.get_structure(
                 self.file, model=model, extra_fields=self._extra_fields
             )
         except InvalidFileError:
-            array = pdbx.get_component(self.file)
+            array = self._get_component()
 
         if include_bonds and not array.bonds:
             array.bonds = struc.connect_via_residue_names(array, inter_residue=True)
 
         return array
 
+    def _get_component(self) -> struc.AtomArray:
+        """Fall back to reading the file as a chemical component (e.g. a CCD
+        ligand definition), raising an error that says what the file actually
+        contains when there are no atoms to read at all."""
+        block = self.file.block
+        if block.get("chem_comp_atom") is None:
+            if block.get("refln") is not None or block.get("diffrn_reflns") is not None:
+                raise InvalidFileError(
+                    "This is a crystallographic structure factor file (reflection"
+                    " data) and contains no atomic coordinates. Download the"
+                    " PDBx/mmCIF coordinate file for this entry instead."
+                )
+            raise InvalidFileError(
+                "No atomic coordinates found in the file: it has no 'atom_site'"
+                " or 'chem_comp_atom' category."
+            )
+        return pdbx.get_component(self.file)
+
+    def _ensure_group_pdb(self) -> None:
+        """Default a missing ``group_PDB`` column to ``ATOM``.
+
+        The column is optional in the mmCIF spec and some writers (e.g. gemmi)
+        omit it, but ``pdbx.get_structure`` requires it to set the ``hetero``
+        annotation.
+        """
+        atom_site = self.file.block.get("atom_site")
+        if atom_site is not None and "group_PDB" not in atom_site:
+            atom_site["group_PDB"] = np.full(atom_site.row_count, "ATOM")
+
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
 
     def entity_ids(self):
-        try:
-            return (
-                self.file.block.get("entity")
-                .get("pdbx_description")
-                .as_array()
-                .tolist()
-            )
-        except AttributeError:
+        """Entity labels, in `entity` category order — the same order that
+        `_get_entity_id` numbers the per-atom `entity_id` attribute with."""
+        entity = self.file.block.get("entity")
+        if entity is None:
             return None
+        description = entity.get("pdbx_description")
+        if description is None:
+            return [f"Entity {eid}" for eid in entity["id"].as_array(str)]
+        return description.as_array(str).tolist()
 
     @staticmethod
     def _extract_matrices(category):
@@ -75,7 +105,8 @@ class PDBXReader(ReaderBase):
         ]
 
         columns = [category[name].as_array().astype(float) for name in matrix_columns]
-        matrices = np.empty((len(columns[0]), 4, 4), float)
+        matrices = np.zeros((len(columns[0]), 4, 4), float)
+        matrices[:, 3, 3] = 1.0
 
         col_mask = np.tile((0, 1, 2, 3), 3)
         row_mask = np.repeat((0, 1, 2), 4)
@@ -86,37 +117,49 @@ class PDBXReader(ReaderBase):
 
     @staticmethod
     def _get_entity_id(array, file):
-        chain_ids = file.block["entity_poly"]["pdbx_strand_id"].as_array(str)
+        """Per-atom entity index into the `entity` category, so the integers
+        line up with the labels returned by `entity_ids`."""
+        block = file.block
+        entity_order = {
+            eid: i for i, eid in enumerate(block["entity"]["id"].as_array(str))
+        }
 
-        # the chain_ids are an array of individual items np.array(['A,B', 'C', 'D,E,F'])
-        # which need to be categorised as [1, 1, 2, 3, 3, 3] for their belonging to individual
-        # entities
+        # archive-quality files annotate every atom with its entity directly
+        atom_site = block["atom_site"]
+        if "label_entity_id" in atom_site:
+            per_atom = atom_site["label_entity_id"].as_array(str)
+            return np.array([entity_order.get(eid, -1) for eid in per_atom], int)
 
-        chains = []
-        idx = []
-        for i, chain_str in enumerate(chain_ids):
-            for chain in chain_str.split(","):
-                chains.append(chain)
-                idx.append(i)
+        # otherwise map polymer entities via their chains and non-polymer
+        # entities (ligands, waters) via their residue names
+        chain_lookup = {}
+        poly = block.get("entity_poly")
+        if poly is not None:
+            for eid, chain_str in zip(
+                poly["entity_id"].as_array(str),
+                poly["pdbx_strand_id"].as_array(str),
+            ):
+                for chain in chain_str.split(","):
+                    chain_lookup[chain] = entity_order.get(eid, -1)
 
-        # this is how we map the chain_ids and res_names of our entities to their integer
-        # representations
-        entity_lookup = dict(zip(chains, idx))
+        res_lookup = {}
+        nonpoly = block.get("pdbx_entity_nonpoly")
+        if nonpoly is not None:
+            for eid, comp in zip(
+                nonpoly["entity_id"].as_array(str),
+                nonpoly["comp_id"].as_array(str),
+            ):
+                res_lookup[comp] = entity_order.get(eid, -1)
 
-        # for the hetero atoms, we need to add a new entity_id into the lookup so that
-        # they can be assigned an entity ID
-        unique_res_het = np.unique(array.res_name[array.hetero])
-        for het in unique_res_het:
-            if het not in entity_lookup:
-                entity_lookup[het] = max(entity_lookup.values()) + 1
-
-        entity_id_int = np.zeros(len(array.res_name), int)
-        for i, res_name in enumerate(array.res_name):
-            entity_id_int[i] = entity_lookup.get(
-                res_name, entity_lookup[array.chain_id[i]]
-            )
-
-        return entity_id_int
+        return np.array(
+            [
+                res_lookup.get(res, chain_lookup.get(chain, -1))
+                if het
+                else chain_lookup.get(chain, res_lookup.get(res, -1))
+                for res, chain, het in zip(array.res_name, array.chain_id, array.hetero)
+            ],
+            int,
+        )
 
     @staticmethod
     def _get_secondary_structure(array, file):
@@ -325,7 +368,9 @@ def _extract_matrices(category, scale=True):
 
     columns = [category[name].as_array().astype(float) for name in matrix_columns]
     n = 4 if scale else 3
-    matrices = np.empty((len(columns[0]), n, 4), float)
+    matrices = np.zeros((len(columns[0]), n, 4), float)
+    if scale:
+        matrices[:, 3, 3] = 1.0
 
     col_mask = np.tile((0, 1, 2, 3), 3)
     row_mask = np.repeat((0, 1, 2), 4)

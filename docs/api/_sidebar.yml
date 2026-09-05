@@ -1,17 +1,21 @@
 website:
   sidebar:
-  - collapse-level: 4
+  - collapse-level: 2
     contents:
     - href: api/index.qmd
       text: Introduction
-    - api/styles.qmd
-    - api/trajectories.qmd
-    - api/nodebpy.qmd
-    - api/rendering.qmd
-    - api/materials.qmd
-    - api/annotations.qmd
-    - api/canvas.qmd
-    - api/blender.qmd
+    - text: '---'
+    - contents:
+      - api/styles.qmd
+      - api/trajectories.qmd
+      - api/nodebpy.qmd
+      - api/rendering.qmd
+      - api/materials.qmd
+      - api/annotations.qmd
+      - api/solvent.qmd
+      - api/canvas.qmd
+      - api/blender.qmd
+      section: Guides
     - text: '---'
     - contents:
       - api/reference/index.qmd
@@ -26,14 +30,12 @@ website:
         - api/reference/entities.OXDNA.qmd
         section: Other Entities
       - contents:
-        - api/reference/nodes.geometry.StyleSpheres.qmd
-        - api/reference/nodes.geometry.StyleRibbon.qmd
-        - api/reference/nodes.geometry.StyleCartoon.qmd
-        - api/reference/nodes.geometry.StyleSurface.qmd
-        - api/reference/nodes.geometry.StyleSticks.qmd
-        - api/reference/nodes.geometry.StyleBallAndStick.qmd
-        section: Styles
-      - contents:
+        - api/reference/material.Default.qmd
+        - api/reference/material.AmbientOcclusion.qmd
+        - api/reference/material.Flat.qmd
+        - api/reference/material.Squishy.qmd
+        - api/reference/material.TransparentOutline.qmd
+        - api/reference/material.PresetMaterial.qmd
         - api/reference/material.append_material.qmd
         - api/reference/material.add_all_materials.qmd
         section: Materials
@@ -51,8 +53,29 @@ website:
         - api/reference/Canvas.qmd
         - api/reference/scene.camera.qmd
         - api/reference/scene.compositor.CompositorTree.qmd
+        - api/reference/scene.recorder.FrameRecorder.qmd
         - api/reference/scene.world.WorldTree.qmd
         section: Scene
+      - contents:
+        - api/reference/nodes.materials.qmd
+        - api/reference/nodes.general.qmd
+        - api/reference/nodes.animate.qmd
+        - api/reference/nodes.attributes.qmd
+        - api/reference/nodes.color.qmd
+        - api/reference/nodes.curves.qmd
+        - api/reference/nodes.dna.qmd
+        - api/reference/nodes.density.qmd
+        - api/reference/nodes.ensemble.qmd
+        - api/reference/nodes.geometry.qmd
+        - api/reference/nodes.select.qmd
+        - api/reference/nodes.style.qmd
+        - api/reference/nodes.topology.qmd
+        - api/reference/nodes.utilities.qmd
+        - api/reference/nodes.utilities_attribute.qmd
+        - api/reference/nodes.utilities_boolean.qmd
+        - api/reference/nodes.utilities_color.qmd
+        - api/reference/nodes.utilities_fields.qmd
+        section: Nodes
       section: Reference
     id: api/reference
     search: true

@@ -7,6 +7,7 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from numpy.testing import assert_almost_equal
 import molecularnodes as mn
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
@@ -22,6 +23,24 @@ pytestmark = [
 def dummy_calculation_for_pickle_test(universe):
     """Module-level function for testing calculations pickling."""
     return universe.atoms.positions.mean(axis=0)
+
+
+class TestMoleculeSingleStructure:
+    @pytest.fixture
+    def mol(self) -> mn.Molecule:
+        return mn.Molecule.fetch("4ozs", cache=data_dir)
+
+    def test_positions(self, mol: mn.Molecule):
+        pos_0 = mol.position
+        mol.position -= mol.centroid()
+        pos_moved = mol.position
+        assert not np.allclose(pos_0, pos_moved)
+        # changing the scene frame calls set_frame() on all entities; a
+        # single-frame structure should keep manually modified positions
+        # rather than having them reset to the universe coordinates
+        bpy.context.scene.frame_set(1)
+        bpy.context.scene.frame_set(0)
+        assert_almost_equal(pos_moved, mol.position)
 
 
 class TestTrajectory:
@@ -70,7 +89,7 @@ class TestTrajectory:
         traj.uframe = 2
         expected = traj._scaled_position
         got = databpy.named_attribute(
-            frames.objects[f"{traj.name}_frame_2"], "position"
+            frames.objects[f"{traj.name}_frame_0002"], "position"
         )
         assert np.allclose(got, expected)
 
@@ -194,6 +213,53 @@ class TestTrajectory:
 
         assert not np.allclose(pos_a, pos_b)
         assert snapshot_custom == pos_a
+        traj.correct_periodic = False
+
+    def test_correct_periodic_no_drift(self, univ_across_boundary):
+        # the correction must only bridge the interpolation to the nearest
+        # periodic image: on exact frame ticks the wrapped trajectory positions
+        # are shown as-is. It used to mutate the cached positions, so each
+        # frame was corrected against the previous already-shifted frame and
+        # the trajectory unwrapped further out on every boundary crossing
+        traj = mn.entities.Molecule(univ_across_boundary)
+        traj.subframes = 3
+        traj.interpolate = True
+        traj.correct_periodic = True
+
+        n_frames = traj.universe.trajectory.n_frames
+        # walk the timeline through the subframes, as playback does
+        for scene_frame in range((n_frames - 1) * 4 + 1):
+            bpy.context.scene.frame_set(scene_frame)
+            if scene_frame % 4 == 0:
+                shown = traj.position.copy()
+                raw = traj.frame_manager._position_at_frame(scene_frame // 4)
+                assert np.allclose(shown, raw)
+        traj.correct_periodic = False
+
+    def test_correct_periodic_interpolates_averaged_frames(self, univ_across_boundary):
+        # subframes between averaged frames must also bridge to the nearest
+        # periodic image — the correction used to be skipped when averaging,
+        # so a crossing atom swept across the whole box over the subframes
+        traj = mn.entities.Molecule(univ_across_boundary)
+        traj.subframes = 3
+        traj.interpolate = True
+        traj.average = 1
+        traj.correct_periodic = True
+
+        # within a segment each subframe step is a quarter of the (corrected)
+        # frame-to-frame motion, far below the ~quarter-box sweeps of an
+        # uncorrected crossing; steps onto exact ticks are skipped, as that is
+        # where atoms legitimately wrap to the other side of the box
+        dimensions = traj.universe.dimensions[:3] * traj.world_scale
+        previous = None
+        for scene_frame in range(4, 4 * 7 + 1):
+            bpy.context.scene.frame_set(scene_frame)
+            position = np.asarray(traj.position).copy()
+            if previous is not None and scene_frame % 4 != 0:
+                step = np.abs(position - previous)
+                assert (step < dimensions * 0.2).all()
+            previous = position
+        traj.average = 0
         traj.correct_periodic = False
 
     def test_position_at_frame(self, universe):
@@ -338,7 +404,7 @@ class TestTrajectory:
         del traj
         bpy.ops.wm.open_mainfile(filepath=filepath)
 
-        traj = mn.session.get_session().trajectories[uuid]
+        traj = mn.session.get_session().get(uuid)
 
         # Verify selections were restored
         assert "protein_sel" in traj.list_attributes()

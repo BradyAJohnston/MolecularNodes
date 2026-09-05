@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar, overload
 import bpy
 from databpy.material import append_from_blend
+from nodebpy import geometry as g
 from nodebpy import shader as sh
 from nodebpy.builder import MaterialBuilder
 from ..assets import MN_DATA_FILE
@@ -25,7 +26,13 @@ def append_material(name: str) -> bpy.types.Material:
 
 def add_all_materials() -> dict[str, bpy.types.Material]:
     "Append all pre-defined materials from the MN_DATA_FILE."
-    return {name: append_material(name) for name in MATERIAL_NAMES}
+    materials = {name: append_material(name) for name in MATERIAL_NAMES}
+    # a preset that no style uses yet has zero users, so without a fake user it
+    # would be dropped on save/reload or swept up by an orphan purge before the
+    # user has had a chance to select it
+    for mat in materials.values():
+        mat.use_fake_user = True
+    return materials
 
 
 T = TypeVar("T")
@@ -90,6 +97,10 @@ class PresetMaterial:
     def tree(self) -> MaterialBuilder:
         "The nodebpy tree builder for the material's node tree."
         return self._tree
+
+    def node(self) -> g.Material:
+        "Add a `Material` node to the active GeometryNodeTree and set it to this material."
+        return g.Material(material=self.material)
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}(material={self.material.name!r})"

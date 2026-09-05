@@ -9,7 +9,7 @@ jupyter: python3
 
 Molecular Nodes was first built as an add-on for Blender, intended to be used through the GUI.
 
-A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The version is pinned to the versions of Blender it is intended for, so while MN is currently version `4.5`, it should not be considered that stable.
+A lot of improvements have been made to now allow a scriptable interface, but a lot of these changes should still be considered experimental and may change in future versions. The version is pinned to the versions of Blender it is intended for, so while MN is currently version `520.0`, it should not be considered that stable.
 
 The quirks of progamming within Blender are numerous and will likely remain regardless of version.
 :::
@@ -21,7 +21,7 @@ When scripting with Molecular Nodes, it's important to remember that everything 
 
 Blender itself has a very extensive python API, accessible through the `bpy` module. Molecular Nodes is designed so that for most general usage you shouldn't have to ever directly use `bpy`, but all of the complex settings and controls are still always accessible through that module.
 
-Blender does release the [`bpy`](https://pypi.org/p/bpy) module on pypi, which let's us
+Blender does release the [`bpy`](https://pypi.org/p/bpy) module on PyPI, which lets us use Blender as a regular python package — no Blender install required.
 
 ## Installation
 
@@ -32,15 +32,15 @@ You can also install and use inside of your own python projects.
 ::: { .callout-warning}
 # Python Versions
 
-`molecularnodes` is only compatible with `python==3.11`
+`molecularnodes` is only compatible with `python==3.13`
 
 Blender is very particular about python versions (and especially `numpy` versions). Blender adheres to the [VFX Reference platform](https://vfxplatform.com/) which determines python and common package versions to be used across multiple VFX software for consistency.
 
-Because of this, the `bpy` package upon which `molecularnodes` is build is locked to `python==3.11` and in particular `numpy==1.26`. Going outside of these very particular versions is recipe for distaster. The first Blender release of 2026 will increase to `3.13` and `2.3` repsectively.
+Because of this, the `bpy` package upon which `molecularnodes` is build is locked to `python==3.13` and in particular `numpy>=2.3`. Going outside of these very particular versions is recipe for distaster.
 
 :::
 
-Blender (`bpy`) is listed as an optional dependency for MN so that when installing inside of Blender there isn't a double up with the bunlded `bpy`. This means you'll need to always manually request it when installing or add it as a requirement to your own project.
+Blender (`bpy`) is listed as an optional dependency for MN so if you install inside of Blender itself, there isn't a double up with the bunlded `bpy`. This means you'll need to always manually request it when installing or add it as a requirement for separate projects.
 
 ```bash
 pip install molecularnodes[bpy]
@@ -56,20 +56,27 @@ data model.
 - [](`~mn.Molecule`)
     - Load static structures with [](`mn.Molecule.fetch`) / [](`mn.Molecule.load`), or
       wrap an existing [](`MDAnalysis.Universe`) directly
-    - Structure files are parsed with [](`biotite`) and converted to a `Universe`; large
-      datasets and ensembles still use `biotite` as a lightweight backend
+    - Structure files are parsed with [](`biotite`) and converted to a `mda.Universe`
     - Supports MDAnalysis selection strings on every structure
     - A multi-model structure or trajectory simply has more than one frame, updated from
       the `Universe` as the scene frame changes
 
+
+::: {.callout-note}
 Previously static structures and trajectories were separate `Molecule` and `Trajectory`
 classes; these have now been [unified](https://github.com/BradyAJohnston/MolecularNodes/discussions/949)
-into the single `Molecule`.
-
+into the single `Molecule` from `v520+`.
+:::
 
 ## Molecules
 
-To get started, with import the module start a new scene be creating out [](`~mn.Canvas`) object. This object is how we change settings for how the scene will render and other related settings sich as resolution.
+To get started, with import the module start a new scene be creating out [](`~mn.Canvas`) object. This class lets us more easily control the 3D scene that we create our models and do rendering with. Changing render engine, camera resolution and controlling the camera is all done through this class.
+
+::: {.callout-important}
+
+You _must_ a new canvas first, before loading any structures.
+
+:::
 
 ```{python}
 import molecularnodes as mn
@@ -86,21 +93,22 @@ After loading the molecule, to be able to see anything we must first add a style
 ```{python}
 mol = mn.Molecule.fetch("4ozs")
 mol.add_style("cartoon")
-canvas.frame_object(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 ```{python}
 canvas.clear()
-canvas.background = (0, 0.5, 0.5, 1.0)
+canvas.background = (0, 0.6, 0.6, 1.0)
 canvas.camera.lens = 130
+
 mol = mn.Molecule.fetch("9MD2")
-mol.add_style("cartoon", loop_radius=0.4, material="MN Ambient Occlusion")
-canvas.frame_object(mol)
+mol.add_style("cartoon", loop_radius=0.6, material=mn.material.AmbientOcclusion())
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 
 ```{python}
-canvas.frame_view(mol, (-3.14, 0, 0))
+canvas.look_at(mol, (-180, 0, 0))
 canvas.snapshot()
 ```
 
@@ -117,11 +125,11 @@ with mol.tree.reset() as (atoms, join):
         atoms
         >> mn.nodes.geometry.SetColor(color=mn.nodes.geometry.ColorPLDDT())
         >> mn.nodes.geometry.StyleCartoon(
-            material=mn.material.AmbientOcclusion().material
+            material=mn.material.Default().material
         )
         >> join
     )
-canvas.frame_view(mol)
+canvas.look_at(mol)
 canvas.snapshot()
 ```
 

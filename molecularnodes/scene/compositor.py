@@ -39,6 +39,15 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
     canvas.compositor.add_annotations()
     ```
 
+    Execution settings for the render-time compositor are exposed as
+    properties: :attr:`device`, :attr:`precision`, :attr:`denoise_device`,
+    :attr:`denoise_preview_quality` and :attr:`denoise_final_quality`.
+
+    ```python
+    # on a headless machine without a GPU
+    canvas.compositor.device = "CPU"
+    ```
+
     Notes
     -----
     The surface is intentionally minimal — raw ``nodebpy`` node construction. We
@@ -67,6 +76,61 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             if node.bl_idname == "CompositorNodeRLayers":
                 return node
         return self.tree.nodes.new("CompositorNodeRLayers")
+
+    @property
+    def device(self) -> str:
+        """Device the compositor executes on: ``"CPU"`` or ``"GPU"``.
+
+        Blender defaults to ``"GPU"``. Set to ``"CPU"`` on headless machines
+        without a GPU, where GPU compositing aborts the render.
+        """
+        return self._scene.render.compositor_device
+
+    @device.setter
+    def device(self, value: str) -> None:
+        self._scene.render.compositor_device = value.upper()  # ty: ignore[invalid-assignment]
+
+    @property
+    def precision(self) -> str:
+        """Precision the compositor executes at: ``"AUTO"`` or ``"FULL"``.
+
+        ``"AUTO"`` uses reduced precision for final renders; ``"FULL"`` always
+        uses full precision.
+        """
+        return self._scene.render.compositor_precision
+
+    @precision.setter
+    def precision(self, value: str) -> None:
+        self._scene.render.compositor_precision = value.upper()  # ty: ignore[invalid-assignment]
+
+    @property
+    def denoise_device(self) -> str:
+        """Device Denoise nodes execute on: ``"AUTO"``, ``"CPU"`` or ``"GPU"``."""
+        return self._scene.render.compositor_denoise_device
+
+    @denoise_device.setter
+    def denoise_device(self, value: str) -> None:
+        self._scene.render.compositor_denoise_device = value.upper()  # ty: ignore[invalid-assignment]
+
+    @property
+    def denoise_preview_quality(self) -> str:
+        """Denoise node quality in preview renders: ``"HIGH"``, ``"BALANCED"``
+        or ``"FAST"``."""
+        return self._scene.render.compositor_denoise_preview_quality
+
+    @denoise_preview_quality.setter
+    def denoise_preview_quality(self, value: str) -> None:
+        self._scene.render.compositor_denoise_preview_quality = value.upper()  # ty: ignore[invalid-assignment]
+
+    @property
+    def denoise_final_quality(self) -> str:
+        """Denoise node quality in final renders: ``"HIGH"``, ``"BALANCED"``
+        or ``"FAST"``."""
+        return self._scene.render.compositor_denoise_final_quality
+
+    @denoise_final_quality.setter
+    def denoise_final_quality(self, value: str) -> None:
+        self._scene.render.compositor_denoise_final_quality = value.upper()  # ty: ignore[invalid-assignment]
 
     @property
     def image(self) -> ColorSocket:

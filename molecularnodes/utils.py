@@ -2,11 +2,45 @@ import json
 import os
 import sys
 from contextlib import ExitStack
-from typing import List
+from typing import List, cast
 import addon_utils
 import bpy
 import numpy as np
-from mathutils import Matrix
+
+_INCREASED_CLIP_END = 1e4
+_DEFAULT_CAMERA_CLIP_END = 1e2
+_DEFAULT_VIEWPORT_CLIP_END = 1e3
+
+
+class Unset:
+    """Sentinel for an argument that was not passed (``None`` is a meaningful value)."""
+
+    def __repr__(self) -> str:
+        return "<unset>"
+
+
+_UNSET = Unset()
+
+
+def _increase_view_distance():
+    scene = bpy.context.scene
+    assert scene
+    if scene.camera is not None:
+        camera = cast(bpy.types.Camera, scene.camera.data)
+        if camera.clip_end == _DEFAULT_CAMERA_CLIP_END:
+            camera.clip_end = _INCREASED_CLIP_END
+
+    # viewport clip end is stored per 3D Viewport space, so update every
+    # VIEW_3D area across all screens (covers currently inactive workspaces)
+    for screen in bpy.data.screens:
+        for area in screen.areas:
+            if area.type != "VIEW_3D":
+                continue
+            for space in area.spaces:
+                if space.type == "VIEW_3D":
+                    space = cast(bpy.types.SpaceView3D, space)
+                    if space.clip_end == _DEFAULT_VIEWPORT_CLIP_END:
+                        space.clip_end = _INCREASED_CLIP_END
 
 
 def load_extension_module():
@@ -28,11 +62,12 @@ def fraction(x, y):
 def correct_periodic_1d(
     value1: np.ndarray, value2: np.ndarray, boundary: float
 ) -> np.ndarray:
+    # shift value2 by whole box lengths to the periodic image nearest value1.
+    # A pure function of its inputs: mutating value2 in place would poison the
+    # frame position cache, chaining each frame's correction onto the previous
+    # already-shifted frame so positions unwrap further out every crossing
     diff = value2 - value1
-    half = boundary / 2
-    value2[diff > half] -= boundary
-    value2[diff < -half] += boundary
-    return value2
+    return value2 - boundary * np.round(diff / boundary)
 
 
 def correct_periodic_positions(
@@ -91,40 +126,27 @@ def frames_to_average(
 # data types for the np.array that will store per-chain symmetry operations
 
 
-def array_quaternions_from_dict(transforms_dict):
-    n_transforms = 0
-
+def array_transforms_from_dict(transforms_dict):
     if isinstance(transforms_dict, str):
         transforms_dict = json.loads(transforms_dict.replace("nan", "0.0"))
 
-    for assembly in transforms_dict.values():
-        # add the number of chains for each transform together, this gives us the total
-        # number of transforms we need to initialise
-        n_transforms += sum(len(transform["chain_ids"]) for transform in assembly)
-
     dtype = [
         ("assembly_id", int),
-        ("transform_id", int),
+        ("sym_id", int),
         ("chain_id", "U10"),
-        ("rotation", float, 4),  # quaternion form
-        ("translation", float, 3),
+        ("transform", float, (4, 4)),
         ("pdb_model_num", int),
     ]
-
-    arr = np.array((n_transforms), dtype=dtype)
 
     transforms = []
     for i, assembly in enumerate(transforms_dict.values()):
         for j, transform in enumerate(assembly):
             chains = transform["chain_ids"]
             arr = np.zeros((len(chains)), dtype=dtype)
-            matrix = transform["matrix"]
-            translation, rotation, scale = Matrix(matrix).decompose()
             arr["assembly_id"] = i + 1
-            arr["transform_id"] = j
+            arr["sym_id"] = j
             arr["chain_id"] = chains
-            arr["rotation"] = rotation
-            arr["translation"] = translation
+            arr["transform"] = transform["matrix"]
             arr["pdb_model_num"] = transform["pdb_model_num"]
             transforms.append(arr)
 
@@ -165,23 +187,33 @@ class suppress_stdout(object):
         with suppress_stdout():
             do_something()
 
+    Suppression is skipped when the ``MN_VERBOSE`` environment variable is
+    set, letting Blender's render output through for debugging.
+
     From: https://stackoverflow.com/a/14797594
 
     """
 
     def __init__(self, *args, **kw):
+        self._suppress = not os.environ.get("MN_VERBOSE")
+        if not self._suppress:
+            return
         sys.stdout.flush()
         self._origstdout = sys.stdout
         self._oldstdout_fno = os.dup(sys.stdout.fileno())
         self._devnull = os.open(os.devnull, os.O_WRONLY)
 
     def __enter__(self):
+        if not self._suppress:
+            return
         self._newstdout = os.dup(1)
         os.dup2(self._devnull, 1)
         os.close(self._devnull)
         sys.stdout = os.fdopen(self._newstdout, "w")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self._suppress:
+            return
         sys.stdout = self._origstdout
         sys.stdout.flush()
         os.dup2(self._oldstdout_fno, 1)
@@ -197,7 +229,7 @@ class temp_override_property:
         self.obj = obj
         self.prop_name = prop_name
         self.value = value
-        self.orig_value = None
+        self.orig_value = _UNSET
 
     def __enter__(self):
         if not hasattr(self.obj, self.prop_name):
@@ -207,7 +239,7 @@ class temp_override_property:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.orig_value is not None:
+        if self.orig_value is not _UNSET:
             setattr(self.obj, self.prop_name, self.orig_value)
 
 
