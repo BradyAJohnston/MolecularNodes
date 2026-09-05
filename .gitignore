@@ -40,5 +40,6 @@ tests/data/cellpack/petworld/*.cif
 *.lock
 /docs/_inv
 /tests/blend_files/**.blend
+.envrc
 docs/_node_links.yml
 docs/_node_links.lua

@@ -85,7 +85,7 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         self,
         name: str = "NewEnsemble",
         node_setup: bool = True,
-    ) -> bpy.types.Object:
+    ):
         """
         Create a 3D object for the ensemble.
 

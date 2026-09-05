@@ -536,6 +536,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
 ENSEMBLE_TYPES = (
     ("starfile", "Starfile", "Import a .star mapback file"),
     ("cellpack", "CellPack", "Import a CellPack .cif / .bcif model"),
+    (
+        "cryosparc-particles",
+        "CryoSPARC Particles",
+        "Load CryoSPARC particle metadata from a .cs file",
+    ),
 )
 
 
@@ -575,17 +580,28 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
 
     def execute(self, context):
         file_path = path_resolve(self.filepath)
-        if self.ensemble_type == "cellpack":
-            ensemble.CellPack.load(
-                file_path=file_path,
-                name=Path(self.filepath).name,
-                node_setup=self.node_setup,
-            )
-        else:
-            ensemble.StarFile.load(
-                file_path=file_path,
-                node_setup=self.node_setup,
-            )
+        match self.ensemble_type:
+            case "cellpack":
+                ensemble.CellPack.load(
+                    file_path=file_path,
+                    name=Path(self.filepath).name,
+                    node_setup=self.node_setup,
+                )
+            case "cryosparc-particles":
+                ensemble.CryoSPARCParticles.load(
+                    file_path=file_path, name=self.name, node_setup=self.node_setup
+                )
+            case "starfile":
+                ensemble.StarFile.load(
+                    file_path=file_path,
+                    node_setup=self.node_setup,
+                )
+            case _:
+                self.report(
+                    {"ERROR"},
+                    message=f"Unsupported file type: {type(self.ensemble_type)}",
+                )
+                return {"CANCELLED"}
 
         _increase_view_distance()
         return {"FINISHED"}
@@ -1312,6 +1328,7 @@ CLASSES = [
     MN_OT_Reload_Trajectory,
     MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,
+    MN_OT_Import_Molecule,
     MN_OT_Import_Ensemble,
     MN_FH_Import_Molecule,
     MN_OT_Add_Style,

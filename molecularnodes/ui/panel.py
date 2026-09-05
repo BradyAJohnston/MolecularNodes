@@ -1,4 +1,4 @@
-from typing import cast
+from typing import TYPE_CHECKING, cast
 import bpy
 from bpy.types import UILayout
 from ..entities import Molecule, StreamingTrajectory, molecule
@@ -8,6 +8,9 @@ from ..session import get_session
 from .ops import MN_OT_add_selection_to_style
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
+
+if TYPE_CHECKING:
+    pass
 
 
 def import_options(layout: UILayout) -> None:
@@ -29,6 +32,10 @@ def import_options(layout: UILayout) -> None:
     op.ensemble_type = "starfile"
     op = layout.operator("mn.import_ensemble", text="CellPack", icon="IMPORT")
     op.ensemble_type = "cellpack"
+    op = layout.operator(
+        "mn.import_ensemble", text="CryoSPARC Particles", icon="IMPORT"
+    )
+    op.ensemble_type = "cryosparc-particles"
 
     layout.separator()
     # MD trajectories are loaded through the same unified import dialog
