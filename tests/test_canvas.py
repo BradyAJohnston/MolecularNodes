@@ -428,10 +428,10 @@ def test_clear_removes_content_but_keeps_lighting(canvas):
 
     canvas.clear()
     remaining = {obj.name: obj.type for obj in bpy.data.objects}
-    # the molecule, the user's cube and the backdrop are content and go
+    # the molecule, the user's cube and the focal point empty are content and go
     assert "4ozs" not in remaining
     assert "UserCube" not in remaining
-    assert "Backdrop" not in remaining
+    assert "focal_point" not in remaining
     # the camera and lights are how the scene is rendered, and stay
     assert set(remaining.values()) == {"CAMERA", "LIGHT"}
     assert canvas.scene.camera is not None
@@ -479,11 +479,11 @@ def test_clear_does_not_leak_datablocks(canvas):
 
 def test_load_preset_restores_the_preset_scene(canvas):
     canvas.clear()
-    assert "Backdrop" not in {obj.name for obj in bpy.data.objects}
+    assert "focal_point" not in {obj.name for obj in bpy.data.objects}
 
     canvas.load_preset()
     names = {obj.name for obj in bpy.data.objects}
-    assert {"Backdrop", "Camera", "Key Light", "Rim Light"} <= names
+    assert {"Camera", "Sun", "Sun.001", "Sun.002", "focal_point"} <= names
 
 
 def test_load_preset_prunes_dangling_entities(canvas):
@@ -522,7 +522,7 @@ def test_canvas_loads_the_preset_into_an_empty_scene():
     "The out-of-the-box lighting still arrives on a first Canvas()."
     canvas = mn.Canvas()
     names = {obj.name for obj in canvas.scene.objects}
-    assert {"Backdrop", "Camera", "Key Light", "Rim Light"} <= names
+    assert {"Camera", "Sun", "Sun.001", "Sun.002", "focal_point"} <= names
 
 
 def test_canvas_rerun_does_not_wipe_the_scene(canvas):
@@ -574,7 +574,7 @@ def test_canvas_ignores_dangling_entities_when_deciding(canvas):
     bpy.data.objects.remove(mol.object, do_unlink=True)
 
     again = mn.Canvas()
-    assert "Backdrop" in again.scene.objects
+    assert "focal_point" in again.scene.objects
     assert mn.session.get_session().n_items == 0
 
 
