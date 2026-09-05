@@ -1,6 +1,6 @@
 [project]
 name = "molecularnodes"
-version = "520.0.0"
+version = "520.0.1"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [

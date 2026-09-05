@@ -1,3 +1,4 @@
+import io
 import json
 import os
 import sys
@@ -200,8 +201,19 @@ class suppress_stdout(object):
             return
         sys.stdout.flush()
         self._origstdout = sys.stdout
-        self._oldstdout_fno = os.dup(sys.stdout.fileno())
-        self._devnull = os.open(os.devnull, os.O_WRONLY)
+        try:
+            stdout_fno = sys.stdout.fileno()
+        except (AttributeError, io.UnsupportedOperation, ValueError):
+            # sys.stdout has been replaced with a stream that has no real
+            # file descriptor (e.g. ipykernel in Jupyter / Colab), but the
+            # C-level stdout that Blender writes to is still fd 1
+            stdout_fno = 1
+        try:
+            self._oldstdout_fno = os.dup(stdout_fno)
+            self._devnull = os.open(os.devnull, os.O_WRONLY)
+        except OSError:
+            # no usable stdout fd at all; skip suppression rather than fail
+            self._suppress = False
 
     def __enter__(self):
         if not self._suppress:
@@ -209,14 +221,17 @@ class suppress_stdout(object):
         self._newstdout = os.dup(1)
         os.dup2(self._devnull, 1)
         os.close(self._devnull)
-        sys.stdout = os.fdopen(self._newstdout, "w")
+        self._fdopen_stdout = os.fdopen(self._newstdout, "w")
+        sys.stdout = self._fdopen_stdout
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if not self._suppress:
             return
         sys.stdout = self._origstdout
         sys.stdout.flush()
+        self._fdopen_stdout.close()
         os.dup2(self._oldstdout_fno, 1)
+        os.close(self._oldstdout_fno)
 
 
 class temp_override_property:
