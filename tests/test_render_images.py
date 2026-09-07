@@ -14,8 +14,10 @@ failure the received and difference images are written to
 ``tests/image_failures/``.
 """
 
+from itertools import product
 import pytest
 import molecularnodes as mn
+import molecularnodes.nodes.geometry as mg
 from .constants import data_dir
 from .utils import ImageSnapshotExtension
 
@@ -106,5 +108,30 @@ def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
     mol = _fetch_molecule()
     mol.add_style("cartoon")
     mol.add_style("sticks", selection=mol.universe.select_atoms("resid 100:150"))
+    golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "code,node,assembly",
+    product(["4ozs", "1cd3", "3J2V"], [True, False], [True, False]),
+)
+def test_render_assembly(golden_canvas, tmp_path, image_snapshot, code, node, assembly):
+    mol = mn.Molecule.fetch(code)
+    mat = mn.material.Flat()
+    if node:
+        with mol.tree.reset() as (atoms, join):
+            (
+                atoms
+                >> mg.StyleRibbon(material=mat.material)
+                >> (
+                    mg.AssemblyInstance(data_object=mol.create_data_object())
+                    if assembly
+                    else None
+                )
+                >> join
+            )
+    else:
+        mol.add_style("ribbon", material=mat, assembly=assembly)
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
