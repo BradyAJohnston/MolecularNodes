@@ -16,8 +16,10 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
+from ...nodes import nodes
 from ..base import EntityType
 from .base import Molecule
+from .helpers import FrameManager
 
 DNA_SCALE = 10
 
@@ -74,9 +76,11 @@ class OXDNAParser(TopologyReaderBase):
 
         res_name_list = []
         chain_id_list = []
+        is_circular_list = []
         for i, line in enumerate(lines[1:]):
             is_rna = "type=RNA" in line
             _is_dna = not is_rna
+            is_circular = "circular=true" in line
 
             line_split = line.split()
             bases = line_split[0]
@@ -85,13 +89,13 @@ class OXDNAParser(TopologyReaderBase):
             start = 0
             end = 0
             in_custom_base = False
-            for i, letter in enumerate(bases):
+            for j, letter in enumerate(bases):
                 if letter == "(":
-                    start = i + 1
+                    start = j + 1
                     in_custom_base = True
                     continue
                 if letter == ")":
-                    end = i
+                    end = j
                     base_list.append(line[start:end])
                     in_custom_base = False
                     continue
@@ -103,6 +107,7 @@ class OXDNAParser(TopologyReaderBase):
             chain_id_list.append(np.repeat(i, len(base_list)))
 
             res_name_list.append(np.array(base_list))
+            is_circular_list.append(is_circular)
 
         res_names = np.hstack(res_name_list)
         chain_ids = np.hstack(chain_id_list)
@@ -111,11 +116,13 @@ class OXDNAParser(TopologyReaderBase):
         bond_idx[:, :] = -1
 
         for i in atom_idx:
-            if i == 1:
-                continue
-            if chain_ids[i] == chain_ids[-1]:
-                bond_idx[i, :] = np.array((i, i - 1), dtype=int)
-
+            is_first_in_chain = (i == 0 or chain_ids[i] != chain_ids[i-1])
+            if is_first_in_chain and is_circular_list[chain_ids[i]]:
+                end_chain_id = i + len(chain_id_list[chain_ids[i]]) - 1
+                bond_idx[i, :] = np.array((i, end_chain_id), dtype=int)
+            else:
+                bond_idx[i, :] = np.array((i, i-1), dtype=int)
+                
         mask = np.logical_and(bond_idx[:, 0] != -1, bond_idx[:, 1] != -1)
         bond_idx = bond_idx[mask, :]
 
@@ -393,6 +400,7 @@ class OXDNA(Molecule):
             world_scale=world_scale * DNA_SCALE,
             create_object=create_object,
         )
+        self.frame_manager = FrameManager(self)
 
     @classmethod
     def load(
@@ -456,18 +464,39 @@ class OXDNA(Molecule):
             "Color": self._compute_color,
         }
 
+    def _create_object(self, name: str = "NewUniverseObject") -> None:
+        """
+        Create a new object with the trajectory data. oxDNA attributes are initialized by calling set_frame().
+
+        Parameters
+        ----------
+        style : str, optional
+            Style of the object representation, by default "oxdna"
+        name : str, optional
+            Name of the new object, by default "NewUniverseObject"
+        """
+        super()._create_object(name=name)
+        self.set_frame(0)
+
     def set_frame(self, frame: int) -> None:
         super()._update_positions(frame)
-        self._update_timestep_values()
+        self._update_attributes(frame)
 
-    def _update_timestep_values(self):
+    def _update_attributes(self, frame: int) -> None:
+        """Update attributes for the given frame.
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
         """
-        Update the timestep values for all tracked attributes.
-        """
+
+        attributes = self.frame_manager.get_attributes_at_frame(frame)
+
         for name in self._att_names:
             try:
                 self.store_named_attribute(
-                    data=self.universe.trajectory.ts.data[name] * self.world_scale,
+                    data=attributes[name],
                     name=name,
                     atype=db.AttributeTypes.FLOAT_VECTOR,
                 )
@@ -476,4 +505,4 @@ class OXDNA(Molecule):
 
     def _get_annotation_entity_type(self) -> str:
         "Interna: Re-use the annotations for Molecule entity"
-        return EntityType.MOLECULE
+        return EntityType.MD.value
