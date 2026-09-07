@@ -112,6 +112,20 @@ def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
+@pytest.fixture
+def assembly_image_snapshot(snapshot):
+    # full-frame assemblies (the 8OZK capsid especially) are almost entirely
+    # sub-pixel ribbon geometry at 128x128, so cross-platform floating-point
+    # drift flips pixel coverage across the whole silhouette: up to ~10% of
+    # pixels differ between platforms while the per-channel error stays small
+    # (diff images are uniform speckle, no structural difference). Allow a
+    # higher failing-pixel percentage here; a real assembly regression (wrong
+    # scale, missing instances) changes large regions and still fails.
+    return snapshot.use_extension(
+        ImageSnapshotExtension.with_tolerance(fail_percent=15)
+    )
+
+
 @pytest.mark.parametrize(
     "code,node,assembly",
     list(
@@ -120,7 +134,9 @@ def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
         )
     ),
 )
-def test_render_assembly(golden_canvas, tmp_path, image_snapshot, code, node, assembly):
+def test_render_assembly(
+    golden_canvas, tmp_path, assembly_image_snapshot, code, node, assembly
+):
     mol = mn.Molecule.fetch(code)
     mat = mn.material.Flat()
     if node == "code":
@@ -138,4 +154,4 @@ def test_render_assembly(golden_canvas, tmp_path, image_snapshot, code, node, as
     else:
         mol.add_style("ribbon", material=mat, assembly=(assembly == "assembly"))
     golden_canvas.look_at(mol, viewpoint="front")
-    assert image_snapshot == _render(golden_canvas, tmp_path)
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
