@@ -16,7 +16,6 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
-from ...nodes import nodes
 from ..base import EntityType
 from .base import Molecule
 from .helpers import FrameManager
@@ -506,3 +505,4 @@ class OXDNA(Molecule):
     def _get_annotation_entity_type(self) -> str:
         "Interna: Re-use the annotations for Molecule entity"
         return EntityType.MOLECULE
+    
