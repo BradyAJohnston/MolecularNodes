@@ -59,6 +59,8 @@ def create_data_object(
     for column, type in attributes:
         try:
             data = array[column]
+            if column == "transform":
+                data[:, :3, 3] *= world_scale
         except ValueError:
             continue
         # us the unique sorted integer encoding version of the non-numeric

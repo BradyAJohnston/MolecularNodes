@@ -91,10 +91,30 @@ class ImageSnapshotExtension(SingleFileSnapshotExtension):
     """
 
     file_extension = "png"
+    fail_threshold = IMAGE_FAIL_THRESHOLD
+    fail_percent = IMAGE_FAIL_PERCENT
+
+    @classmethod
+    def with_tolerance(
+        cls,
+        fail_threshold: float = IMAGE_FAIL_THRESHOLD,
+        fail_percent: float = IMAGE_FAIL_PERCENT,
+    ) -> type["ImageSnapshotExtension"]:
+        """A variant of this extension with looser comparison tolerances."""
+        return type(
+            cls.__name__,
+            (cls,),
+            {"fail_threshold": fail_threshold, "fail_percent": fail_percent},
+        )
 
     def matches(self, *, serialized_data, snapshot_data) -> bool:
         try:
-            ok, stats = compare_images(bytes(snapshot_data), bytes(serialized_data))
+            ok, stats = compare_images(
+                bytes(snapshot_data),
+                bytes(serialized_data),
+                fail_threshold=self.fail_threshold,
+                fail_percent=self.fail_percent,
+            )
         except Exception as e:
             return self._dump_failure(serialized_data, f"decode failed: {e}")
         if not ok:
