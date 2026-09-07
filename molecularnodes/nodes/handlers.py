@@ -4,19 +4,21 @@ Run custom setup when MolecularNodes node group assets are added to a tree.
 Since the node groups are shipped as regular assets in an asset library, no
 MolecularNodes code runs when a user drags one into a node tree. The
 ``blend_import_post`` handler fires for every link/append operation — including
-asset drag-and-drop, and re-drops that reuse an already-appended group — which
-gives us a hook to restore the conveniences the old custom add operator
-provided (assigning a default material) and to add new ones (building assembly
-data for the entity the node was dropped onto).
+asset drag-and-drop and Add-menu asset adds, whether the asset library's import
+method appends, links or packs, and for re-adds that reuse an already imported
+group — which gives us a hook to restore the conveniences the old custom add
+operator provided (assigning a default material) and to add new ones (building
+assembly data for the entity the node was dropped onto).
 
-Setup runs in two phases, because the handler fires while the drop operator is
-still appending the datablock, before the node instance exists in the tree:
+Setup runs in two phases, because the handler fires while the add operator is
+still importing the datablock, before the node instance exists in the tree:
 
-- ``tree_setup`` runs immediately on the imported ``NodeTree`` datablock. Any
-  interface defaults set here are inherited by the node instance the drop
-  operator creates a moment later.
+- ``tree_setup`` runs immediately on the imported ``NodeTree`` datablock, and
+  only when the tree was appended — linked (and packed) trees are read-only.
 - ``node_setup`` runs on each new node instance via a one-shot timer scheduled
   by the handler, which fires right after the operator has created the node.
+  Node instances are local even when their node group is linked, so their
+  input socket values and custom properties are always writable.
 
 Callbacks must be idempotent — they may run more than once for the same
 datablock and are also invoked on nodes created programmatically, so they
@@ -26,6 +28,7 @@ entity, ...).
 
 import logging
 import re
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -36,7 +39,7 @@ from ..assets import MN_DATA_FILE
 logger = logging.getLogger(__name__)
 
 # stamped onto a node instance once its node_setup has been attempted, so a
-# later drop of the same asset doesn't re-run setup on pre-existing nodes
+# later add of the same asset doesn't re-run setup on pre-existing nodes
 _MARKER = "mn_on_add_done"
 _DUPLICATE_SUFFIX = re.compile(r"\.\d{3}$")
 
@@ -53,12 +56,39 @@ class AssetOnAdd:
 
 _registry: dict[str, AssetOnAdd] = {}
 _predicates: list[tuple[Callable[[str], bool], AssetOnAdd]] = []
-# (imported tree name, drop-target tree name, context object name) awaiting
-# node_setup once the drop operator has created the node instance
+# (imported group name, drop-target tree name, context object name) awaiting
+# node_setup once the add operator has created the node instance
 _pending: list[tuple[str, str | None, str | None]] = []
-# guards against re-entering the handler when a callback itself appends data
-# (e.g. materials) from another .blend file
-_in_setup = False
+
+# guards against re-entering the handler when a setup callback itself appends
+# data (e.g. materials) from another .blend file; attached to
+# bpy.types.WindowManager in ui.addon so the flag lives as a documented,
+# runtime-only Blender property rather than in module state
+importing_assets_property = bpy.props.BoolProperty(
+    name="MN Importing Assets",
+    description=(
+        "True while MolecularNodes' own on-add setup is importing data from a "
+        ".blend file (e.g. appending materials), so that its blend_import_post "
+        "handler ignores imports it caused itself. Runtime-only, never saved"
+    ),
+    default=False,
+    options={"HIDDEN", "SKIP_SAVE"},
+)
+
+
+def _in_setup() -> bool:
+    return bpy.context.window_manager.mn_importing_assets
+
+
+@contextmanager
+def _own_imports_flagged():
+    """Flag imports we cause ourselves so the handler ignores them."""
+    wm = bpy.context.window_manager
+    wm.mn_importing_assets = True
+    try:
+        yield
+    finally:
+        wm.mn_importing_assets = False
 
 
 def register_on_add(
@@ -77,8 +107,9 @@ def register_on_add(
         Either the exact name of the asset's node group, or a predicate called
         with the (duplicate-suffix stripped) name of each imported group.
     tree_setup : Callable, optional
-        Called with the imported ``NodeTree`` datablock during the import, before
-        the dropped node instance exists.
+        Called with the imported ``NodeTree`` datablock during the import,
+        before the dropped node instance exists. Only runs for appended trees,
+        as linked ones are read-only.
     node_setup : Callable, optional
         Called with each newly added node instance and the object whose modifier
         tree it was added to (or ``None`` when that can't be determined).
@@ -121,10 +152,10 @@ def node_asset_import_post(ctx: bpy.types.BlendImportContext) -> None:
     Dispatch registered setup for MN node group assets after they are imported.
 
     Registered on ``bpy.app.handlers.blend_import_post``, which fires for asset
-    drag-and-drop as well as any other link/append, including drops that reuse
-    an already-appended group.
+    drag-and-drop as well as any other link/append/pack, including adds that
+    reuse an already imported group.
     """
-    if _in_setup:
+    if _in_setup():
         return
     schedule = False
     for item in ctx.import_items:
@@ -132,15 +163,16 @@ def node_asset_import_post(ctx: bpy.types.BlendImportContext) -> None:
         if item.id_type != "NODETREE" or item.import_info:
             continue
         tree = item.id
-        # linked (rather than appended) data is read-only, so leave it alone
-        if tree is None or tree.library is not None:
+        if tree is None:
             continue
         if not _is_mn_source(item):
             continue
         entry = _lookup(item.name)
         if entry is None:
             continue
-        if entry.tree_setup is not None:
+        # linked (rather than appended) trees are read-only, so only run
+        # datablock-level setup on appended copies
+        if entry.tree_setup is not None and tree.library is None:
             _run_tree_setup(entry.tree_setup, tree)
         if entry.node_setup is not None:
             # the node instance doesn't exist yet — capture where the drop is
@@ -150,7 +182,7 @@ def node_asset_import_post(ctx: bpy.types.BlendImportContext) -> None:
             obj = getattr(bpy.context, "object", None)
             _pending.append(
                 (
-                    tree.name,
+                    _DUPLICATE_SUFFIX.sub("", tree.name),
                     target.name if target is not None else None,
                     obj.name if obj is not None else None,
                 )
@@ -164,14 +196,11 @@ def _run_tree_setup(
     setup: Callable[[bpy.types.GeometryNodeTree], None],
     tree: bpy.types.GeometryNodeTree,
 ) -> None:
-    global _in_setup
-    _in_setup = True
     try:
-        setup(tree)
+        with _own_imports_flagged():
+            setup(tree)
     except Exception:
         logger.exception(f"tree_setup failed for imported node group {tree.name!r}")
-    finally:
-        _in_setup = False
 
 
 def _object_using_tree(tree: bpy.types.NodeTree) -> bpy.types.Object | None:
@@ -186,11 +215,8 @@ def _object_using_tree(tree: bpy.types.NodeTree) -> bpy.types.Object | None:
 def _process_pending() -> None:
     """Run deferred node_setup callbacks on newly added node instances."""
     entries, _pending[:] = list(_pending), []
-    for tree_name, target_name, object_name in entries:
-        tree = bpy.data.node_groups.get(tree_name)
-        if tree is None:
-            continue
-        entry = _lookup(tree.name)
+    for group_name, target_name, object_name in entries:
+        entry = _lookup(group_name)
         if entry is None or entry.node_setup is None:
             continue
         if target_name is not None and target_name in bpy.data.node_groups:
@@ -206,7 +232,10 @@ def _process_pending() -> None:
             for node in host.nodes:
                 if (
                     node.bl_idname != "GeometryNodeGroup"
-                    or node.node_tree != tree
+                    or node.node_tree is None
+                    # match by name so appended, linked and packed copies of
+                    # the same asset group are all handled
+                    or _DUPLICATE_SUFFIX.sub("", node.node_tree.name) != group_name
                     or node.get(_MARKER)
                 ):
                     continue
@@ -214,7 +243,8 @@ def _process_pending() -> None:
                 # back to the object that was active when the asset was dropped
                 obj = _object_using_tree(host) or fallback_obj
                 try:
-                    entry.node_setup(node, obj)
+                    with _own_imports_flagged():
+                        entry.node_setup(node, obj)
                 except Exception:
                     logger.exception(
                         f"node_setup failed for node {node.name!r} in {host.name!r}"
@@ -230,31 +260,22 @@ def unregister_pending() -> None:
         bpy.app.timers.unregister(_process_pending)
 
 
-def _style_material_default(tree: bpy.types.GeometryNodeTree) -> None:
+def _style_node_material(
+    node: bpy.types.GeometryNodeGroup, obj: bpy.types.Object | None
+) -> None:
     """
-    Give a style's Material input the default MN material.
+    Give a newly added style node's Material input the default MN material.
 
-    Setting the default on the tree interface means every node instance created
-    from it — including the one about to be created by the asset drop — starts
-    with the material assigned, matching what the old custom add operator did.
+    Set on the node instance rather than the tree interface so it works for
+    linked and packed node groups too, matching what the old custom add
+    operator did.
     """
     from .material import add_all_materials
 
-    socket = next(
-        (
-            s
-            for s in tree.interface.items_tree
-            if s.item_type == "SOCKET"
-            and s.in_out == "INPUT"
-            and s.socket_type == "NodeSocketMaterial"
-        ),
-        None,
-    )
+    socket = next((s for s in node.inputs if s.bl_idname == "NodeSocketMaterial"), None)
     if socket is None or socket.default_value is not None:
         return
     socket.default_value = add_all_materials()["MN Default"]
 
 
-register_on_add(
-    lambda name: name.startswith("Style "), tree_setup=_style_material_default
-)
+register_on_add(lambda name: name.startswith("Style "), node_setup=_style_node_material)
