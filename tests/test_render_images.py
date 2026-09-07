@@ -114,7 +114,7 @@ def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
 
 @pytest.mark.parametrize(
     "code,node,assembly",
-    product(["4ozs", "1cd3", "3J2V"], [True, False], [True, False]),
+    product(["4ozs", "1cd3", "8OZK"], [True, False], [True, False]),
 )
 def test_render_assembly(golden_canvas, tmp_path, image_snapshot, code, node, assembly):
     mol = mn.Molecule.fetch(code)
