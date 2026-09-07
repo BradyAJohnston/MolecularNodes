@@ -115,7 +115,7 @@ class OXDNAParser(TopologyReaderBase):
         bond_idx[:, :] = -1
 
         for i in atom_idx:
-            is_first_in_chain = i == 0 or chain_ids[i] != chain_ids[i-1]
+            is_first_in_chain = i == 0 or chain_ids[i] != chain_ids[i - 1]
             if is_first_in_chain and is_circular_list[chain_ids[i]]:
                 end_chain_id = i + len(chain_id_list[chain_ids[i]]) - 1
                 bond_idx[i, :] = np.array((i, end_chain_id), dtype=int)
