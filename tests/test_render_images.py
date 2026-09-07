@@ -114,24 +114,28 @@ def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
 
 @pytest.mark.parametrize(
     "code,node,assembly",
-    product(["4ozs", "1cd3", "8OZK"], [True, False], [True, False]),
+    list(
+        product(
+            ["4ozs", "1cd3", "8OZK"], ["code", "method"], ["assembly", "no_assembly"]
+        )
+    ),
 )
 def test_render_assembly(golden_canvas, tmp_path, image_snapshot, code, node, assembly):
     mol = mn.Molecule.fetch(code)
     mat = mn.material.Flat()
-    if node:
+    if node == "code":
         with mol.tree.reset() as (atoms, join):
             (
                 atoms
                 >> mg.StyleRibbon(material=mat.material)
                 >> (
                     mg.AssemblyInstance(data_object=mol.create_data_object())
-                    if assembly
+                    if assembly == "assembly"
                     else None
                 )
                 >> join
             )
     else:
-        mol.add_style("ribbon", material=mat, assembly=assembly)
+        mol.add_style("ribbon", material=mat, assembly=(assembly == "assembly"))
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
