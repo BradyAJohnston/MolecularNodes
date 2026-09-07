@@ -505,4 +505,4 @@ class OXDNA(Molecule):
 
     def _get_annotation_entity_type(self) -> str:
         "Interna: Re-use the annotations for Molecule entity"
-        return EntityType.MD.value
+        return EntityType.MOLECULE
