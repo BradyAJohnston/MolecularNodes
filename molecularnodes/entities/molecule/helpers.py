@@ -470,7 +470,7 @@ class FrameManager:
         for f in frames_to_cache:
             if f not in self.attribute_caches[first_cache_key]:
                 frames_not_cached.append(f)
-                
+
         for n in frames_not_cached:
             attributes_at_frame = self._attributes_at_frame(n)
             for name in self.attribute_caches:
@@ -522,7 +522,7 @@ class FrameManager:
         dict[str, np.ndarray]
             Processed oxDNA attributes sorted by name
         """
-        
+
         if not self.trajectory.update_with_scene:
             # Just return attributes at the frame without any special handling
             return self._attributes_at_frame(frame)

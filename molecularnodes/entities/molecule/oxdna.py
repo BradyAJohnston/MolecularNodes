@@ -122,7 +122,7 @@ class OXDNAParser(TopologyReaderBase):
                 bond_idx[i, :] = np.array((i, end_chain_id), dtype=int)
             else:
                 bond_idx[i, :] = np.array((i, i-1), dtype=int)
-                
+
         mask = np.logical_and(bond_idx[:, 0] != -1, bond_idx[:, 1] != -1)
         bond_idx = bond_idx[mask, :]
 
