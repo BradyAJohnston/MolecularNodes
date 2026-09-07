@@ -1595,6 +1595,4 @@ def _on_add_assembly_instance(
     socket.default_value = entity.create_data_object()
 
 
-node_handlers.register_on_add(
-    AssemblyInstance._name, node_setup=_on_add_assembly_instance
-)
+node_handlers.register_on_add(AssemblyInstance._name, _on_add_assembly_instance)

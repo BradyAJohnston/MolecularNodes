@@ -2,17 +2,17 @@
 title: "Changelog"
 ---
 
-# UNRELEASED
+# v520.1.0 - UNRELEASED
 
-## Fixed
-- Added a  general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
+## Added
+- Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 
-# v520.0.1 2026-09-06
+# v520.0.1 - 2026-09-06
 
 ## Fixed
 - Text printing in a jupyter notebook crashed rendering [#1185](https://github.com/BradyAJohnston/MolecularNodes/pull/1185)
 
-# 520.0.0 - 2026-09-05
+# v520.0.0 - 2026-09-05
 
 ## Added
 - On using the import operators, the camera and viewport end clipping distance is increased to 10000 from 100 so users aren't confused when importing larger structures and systems #1150

@@ -86,9 +86,6 @@ def register():
     bpy.types.Object.mn_trajectory_selections = CollectionProperty(  # type: ignore
         type=props.TrajectorySelectionItem
     )
-    bpy.types.WindowManager.mn_importing_assets = (  # type: ignore
-        node_handlers.importing_assets_property
-    )
     # bpy.types.Object.mn_annotations is dynamically created and updated based
     # on different annotation types. It has to be a top level property to avoid
     # AttributeError: '_PropertyDeferred' object has no attribute '...'
@@ -135,7 +132,6 @@ def unregister():
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore
-    del bpy.types.WindowManager.mn_importing_assets  # type: ignore
     _mn_annotations = bpy.types.Object.mn_annotations
     del bpy.types.Object.mn_annotations  # type: ignore
     unregister_templates_menu()
