@@ -426,7 +426,10 @@ class FrameManager:
         attributes = {}
 
         for name in self.trajectory._att_names:
-            attributes[name] = self.trajectory.universe.trajectory[frame].data[name] * self.trajectory.world_scale
+            attributes[name] = (
+                self.trajectory.universe.trajectory[frame].data[name]
+                * self.trajectory.world_scale
+            )
 
         return attributes
 
@@ -560,7 +563,9 @@ class FrameManager:
                 # Interpolate between the two sets of positions
                 array1 = attrib_current[name]
                 array2 = attrib_next[name]
-                lerps[name] = db.lerp(array1, array2, t=fraction(frame, self.trajectory.subframes + 1))
+                lerps[name] = db.lerp(
+                    array1, array2, t=fraction(frame, self.trajectory.subframes + 1)
+                )
             return lerps
         elif self.trajectory.average > 0:
             # Return mean attributes for cached frames
