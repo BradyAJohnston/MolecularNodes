@@ -17,6 +17,7 @@ from ...utils import (
     frame_mapper,
     frames_to_average,
 )
+from .. import base
 
 logger = logging.getLogger(__name__)
 
@@ -164,6 +165,10 @@ class FrameManager:
         """
         self.trajectory = trajectory
         self.cache = PositionCache()
+        self.attribute_caches = {}
+        if trajectory._entity_type == base.EntityType.MD_OXDNA:
+            for name in self.trajectory._att_names:
+                self.attribute_caches[name] = PositionCache()
 
     @property
     def n_frames(self) -> Optional[int]:
@@ -402,3 +407,164 @@ class FrameManager:
         else:
             # Just return current positions
             return self._position_at_frame(uframe_current)
+
+    def _attributes_at_frame(self, frame: int) -> dict[str, np.ndarray]:
+        """Get oxDNA attributes at a specific universe frame.
+
+        Parameters
+        ----------
+        frame : int
+            Universe frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            oxDNA attributes sorted by name
+        """
+
+        self.trajectory.uframe = frame
+        attributes = {}
+
+        for name in self.trajectory._att_names:
+            attributes[name] = self.trajectory.universe.trajectory[frame].data[name] * self.trajectory.world_scale
+
+        return attributes
+
+    def update_attribute_caches(self, frame: int, cache_ahead: bool = True) -> None:
+        """Update the oxDNA attribute caches for the current frame.
+
+        Intelligently caches based on averaging and interpolation settings,
+        prefetching the next frame when needed.
+
+        Parameters
+        ----------
+        frame : int
+            Current frame number
+        cache_ahead : bool, default=True
+            Whether to cache next frame for interpolation
+        """
+        frames_to_cache = self._frame_range(frame)
+        n_frames = self.n_frames
+
+        # If interpolating, ensure we cache 1 frame ahead
+        # Skip for streaming trajectories (n_frames is None)
+        if (
+            len(frames_to_cache) == 1
+            and n_frames is not None
+            and frames_to_cache[0] != (n_frames - 1)
+            and cache_ahead
+        ):
+            frames_to_cache = np.array(
+                (frames_to_cache[0], frames_to_cache[0] + 1), dtype=int
+            )
+
+        for name in self.attribute_caches:
+            # Only cleanup the cache if we have more than 2 frames stored
+            if len(self.attribute_caches[name].keys()) > 2:
+                self.attribute_caches[name].remove_frames_except(frames_to_cache)
+
+        # Update the attribute caches with any frames that are not yet cached
+        # For efficiency, assumes caches contain same frames since they are always handled together
+        first_cache_key = next(iter(self.attribute_caches))
+        frames_not_cached = []
+        for f in frames_to_cache:
+            if f not in self.attribute_caches[first_cache_key]:
+                frames_not_cached.append(f)
+                
+        for n in frames_not_cached:
+            attributes_at_frame = self._attributes_at_frame(n)
+            for name in self.attribute_caches:
+                self.attribute_caches[name][n] = attributes_at_frame[name]
+
+    def attribute_cache_means(self, frame: int) -> dict[str, np.ndarray]:
+        """Get mean oxDNA attributes from cached frames.
+
+        Computes average over the averaging window.
+
+        Parameters
+        ----------
+        frame : int
+            Center frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Mean oxDNA attributes (or single frame if not averaging) sorted by name
+        """
+        self.update_attribute_caches(frame)
+
+        mean_attributes = {}
+
+        if self.trajectory.average == 0:
+            for name in self.attribute_caches:
+                mean_attributes[name] = self.attribute_caches[name][frame]
+            return mean_attributes
+
+        for name in self.attribute_caches:
+            cache = self.attribute_caches[name]
+            array = cache.get_ordered_array()
+            mean_attributes[name] = np.mean(array, axis=0)
+        return mean_attributes
+
+    def get_attributes_at_frame(self, frame) -> dict[str, np.ndarray]:
+        """Get oxDNA attributes for a given frame with all processing applied.
+
+        Main entry point for position retrieval. Handles frame mapping, interpolation,
+        and averaging.
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Processed oxDNA attributes sorted by name
+        """
+        
+        if not self.trajectory.update_with_scene:
+            # Just return attributes at the frame without any special handling
+            return self._attributes_at_frame(frame)
+
+        n_frames = self.n_frames
+
+        # Map scene frame to universe frame
+        uframe_current = frame_mapper(
+            frame=frame,
+            subframes=self.trajectory.subframes,
+            offset=self.trajectory.offset,
+        )
+        uframe_next = uframe_current + 1
+
+        # Handle frame bounds for non-streaming trajectories
+        if n_frames is not None:
+            last_frame = n_frames - 1
+            if uframe_current >= last_frame:
+                uframe_current = last_frame
+                uframe_next = uframe_current
+
+        # Update the frame_hidden property for the UI
+        try:
+            self.trajectory._frame = uframe_current
+        except AttributeError:
+            # Silently ignore if we can't write to Blender property
+            pass
+
+        if self.trajectory.subframes > 0 and self.trajectory.interpolate:
+            # Interpolate between current and next frames
+            attrib_current = self.attribute_cache_means(uframe_current)
+            attrib_next = self.attribute_cache_means(uframe_next)
+            lerps = {}
+            for name in self.attribute_caches:
+                # Interpolate between the two sets of positions
+                array1 = attrib_current[name]
+                array2 = attrib_next[name]
+                lerps[name] = db.lerp(array1, array2, t=fraction(frame, self.trajectory.subframes + 1))
+            return lerps
+        elif self.trajectory.average > 0:
+            # Return mean attributes for cached frames
+            return self.attribute_cache_means(uframe_current)
+        else:
+            # Just return current attributes
+            return self._attributes_at_frame(uframe_current)
