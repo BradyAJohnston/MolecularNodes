@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>attributes – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -38,10 +41,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,6 +81,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
 
 </head>
@@ -104,8 +159,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./examples/"> 
@@ -229,101 +292,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
       </ul>
   </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="./nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/animate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Animate</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/color.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Color</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/curves.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Curves</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/density.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/ensemble.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Ensemble</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/geometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/select.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Select</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/style.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Style</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/topology.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Topology</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./nodes/utils.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utilities</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
@@ -353,7 +321,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./attributes.html">Reference</a></li><li class="breadcrumb-item"><a href="./attributes.html">Attributes</a></li></ol></nav><h1 id="attribute" class="title display-7">Attribute</h1></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./attributes.html">Reference</a></li><li class="breadcrumb-item"><a href="./attributes.html">Attributes</a></li></ol></nav></header>
 
 
 
@@ -363,9 +331,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Below are the attributes which are potentially created when a structure is imported. Explanations of type and domain conversions can be found in the Blender documentation <a href="https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/attributes_reference.html">here</a></p>
 <section id="world-scale" class="level2">
 <h2 class="anchored" data-anchor-id="world-scale">World Scale</h2>
-<p>In Molecular Nodes, the world scale determines how real-world measurements are translated into the 3D environment of Blender which uses metres. Currently, 1 angstrom (Å) is equivalent to 1 centimeter (cm). Scaling structural coodinates by <code>0.01</code> correctly converts them and <code>0.01</code> is referred to as the world scale.</p>
-<p>This scale will change in Blender 5.0 to be <code>0.1</code> so 1 nm will equal 1 m.</p>
-<p>When an attribute is going to be read from the geometry, it is colored red like so: <code class="custom-input">Index</code>, <code class="custom-attribute">chain_id</code>, while when a specific data type is refernce it will be colored accoring to the data type like so: <code class="custom-int">Int</code>, <code class="custom-float">Float</code>, <code class="custom-vector">Vector</code>, etc.</p>
+<p>In Molecular Nodes, the world scale determines how real-world measurements are translated into the 3D environment of Blender which uses metres. Currently, 1 nanometre (nm) is equivalent to 1 metre (m). Scaling structural coordinates (which are in Å) by <code class="custom-float">0.1</code> correctly converts them and <code class="custom-float">0.1</code> is referred to as the <code class="custom-float">world_scale</code>.</p>
+<p>This changed with Molecular Nodes <code>v520</code>: previously the world scale was <code class="custom-float">0.01</code>, so 1 Å equalled 1 cm.</p>
+<p>When an attribute is going to be read from the geometry, it is colored red like so: <code class="custom-input">Index</code>, <code class="custom-attribute">chain_id</code>, while when a specific data type is referenced it will be colored according to the data type like so: <code class="custom-int">Int</code>, <code class="custom-float">Float</code>, <code class="custom-vector">Vector</code>, etc.</p>
 </section>
 <section id="data-types" class="level2">
 <h2 class="anchored" data-anchor-id="data-types">Data Types</h2>
@@ -374,8 +342,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Attributes are always associated with <code class="custom-geometry">Geometry</code>. They will be stored on one of the <a href="#domains">domains</a> of the geometry. The type of the attribute is determined by the type of the data it contains. The following types are supported by Geometry Nodes.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 84%">
+<col style="width: 13%">
+<col style="width: 86%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -398,19 +366,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td><code class="custom-vector">Vector</code></td>
-<td>3D vectors</td>
+<td>A vector of <code class="custom-float">(x, y, z)</code> values. Can also be 2D, 3D or 4D although support outside of 3D vectors is limited.</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-matrix">Matrix</code></td>
-<td>4x4 matrices, also references as <code class="custom-matrix">Transform</code> inside of Geometry Nodes</td>
+<td>4x4 floating point matrices, also references as <code class="custom-matrix">Transform</code> inside of Geometry Nodes</td>
 </tr>
 <tr class="even">
 <td><code class="custom-color">Color</code></td>
-<td>RGBA colors, stored as 0..1 values</td>
+<td>Linear RGBA colors, stored as <code class="custom-float">(0..1, 0..1, 0..1, 0..1)</code> values</td>
 </tr>
 <tr class="odd">
 <td><code class="custom-rotation">Rotation</code></td>
-<td>A rotation that internally is represented as a quaternion, but can implicitly be converted to an <code class="custom-vector">Euler</code> vector.</td>
+<td>A <code class="custom-float">(w, x, y, z)</code> rotation that internally is represented as a quaternion, but can implicitly be converted to an <code class="custom-vector">Euler</code> vector.</td>
 </tr>
 </tbody>
 </table>
@@ -450,6 +418,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-menu">Menu</code></td>
 <td>A menu for selecting a value from a list of options</td>
 </tr>
+<tr class="even">
+<td><code class="custom-image">Image</code></td>
+<td>A reference to an image data-block, for sampling or texturing</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-shader">Shader</code></td>
+<td>The output of shader nodes, used when building materials rather than geometry</td>
+</tr>
+<tr class="even">
+<td><code class="custom-bundle">Bundle</code></td>
+<td>New in Blender 5.0: multiple sockets packed together and passed along a single link</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-closure">Closure</code></td>
+<td>New in Blender 5.0: a piece of node tree logic passed around as a value, to be evaluated elsewhere</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -462,121 +446,153 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="point-attributes" class="level3">
 <h3 class="anchored" data-anchor-id="point-attributes">Point Attributes</h3>
 <table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Attribute</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td><h1 id="type">Type</h1></td>
-<td><h1 id="description">Description</h1></td>
+<td style="text-align: left;"><code class="custom-attribute">Position</code></td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Coordinates in 3D space of the points, read from the molecular data file. They are scaled by the world scale <code class="custom-float">0.1</code> on import so that 1 nm == 1 m.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">Position</code></td>
-<td><code class="custom-vector">Vector</code></td>
-<td>Coordinates in 3D space of the points, read from the molecular data file. They are scaled by the world scale <code class="custom-float">0.01</code> on import so that 1 Å == 1 cm.</td>
+<td style="text-align: left;"><code class="custom-attribute">b_factor</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The temperature factor for the atom on import. If importing an AlphaFold structure this corresponds to the <code class="custom-float">pLDDT</code> value.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">b_factor</code></td>
-<td><code class="custom-float">Float</code></td>
-<td>The temperature factor for the atom on import. If importing an AlphaFold structure this corresponds to the <code class="custom-float">pLDDT</code> value.</td>
+<td style="text-align: left;"><code class="custom-attribute">occupancy</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The crystallographic occupancy of the atom, or <code class="custom-float">0.0</code> if the file has none.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">vdw_radii</code></td>
-<td><code class="custom-float">Float</code></td>
-<td>The radii of the atom, stored in world space (~<code class="custom-float">0.015</code>). Values sourced from <a href="https://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)">Wikipedia</a>.</td>
+<td style="text-align: left;"><code class="custom-attribute">charge</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The charge of the atom: partial charges when the topology provides them (e.g.&nbsp;simulation topologies), formal charges from structure files, or <code class="custom-float">0.0</code> if unavailable.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">sec_struct</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>Defines secondary structure for the residue the atom is part of. <code class="custom-int">0</code> for not a protein. <code class="custom-int">1</code> for helices, <code class="custom-int">2</code> for sheets, <code class="custom-int">3</code> for coils / unstructured.</td>
+<td style="text-align: left;"><code class="custom-attribute">vdw_radii</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The radii of the atom, stored in world space (~<code class="custom-float">0.15</code>). Values sourced from <a href="https://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)">Wikipedia</a>.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">mass</code></td>
-<td><code class="custom-float">Float</code></td>
-<td>Mass of the element</td>
+<td style="text-align: left;"><code class="custom-attribute">lipophobicity</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Lipophobicity value for the atom, looked up from its residue and atom name.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">chain_id</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>The integer representation of the chain ID, for it’s position in the sorted list of chain IDs in the structure.</td>
+<td style="text-align: left;"><code class="custom-attribute">sec_struct</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Defines secondary structure for the residue the atom is part of. <code class="custom-int">0</code> for not a protein. <code class="custom-int">1</code> for helices, <code class="custom-int">2</code> for sheets, <code class="custom-int">3</code> for coils / unstructured.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">entity_id</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>Multiple chains can be the same <code>entity</code>, if they are copies of the same protein that appear multiple times in the structure. Also sorted and assigned integers on import.</td>
+<td style="text-align: left;"><code class="custom-attribute">mass</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Mass of the element</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">res_name</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>Residues are mapped to integer values based on the <a href="./data_table.html#residue-names">lookup table</a>.</td>
+<td style="text-align: left;"><code class="custom-attribute">chain_id</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The integer representation of the chain ID, for it’s position in the sorted list of chain IDs in the structure.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">res_id</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>The residue number, which starts at <code class="custom-int">1</code> for the first residue in each chain. If a structure is truncated it might not start at 1.</td>
+<td style="text-align: left;"><code class="custom-attribute">segid</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index of the segment the atom belongs to, when the topology defines segments. The segment names are stored as metadata on the object.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">ures_id</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>The <code class="custom-attribute">ures_id</code> starts at <code class="custom-int">0</code> and increases by 1 for each residue across the whole structure, compared to the <code class="custom-attribute">res_id</code> which starts at <code class="custom-int">1</code> and restarts at 1 for each chain.</td>
+<td style="text-align: left;"><code class="custom-attribute">entity_id</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Multiple chains can be the same <code>entity</code>, if they are copies of the same protein that appear multiple times in the structure. Also sorted and assigned integers on import.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">atomic_number</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>Stores the atomic number of the atom for it’s position on the periodic table, instead of the element’s name.</td>
+<td style="text-align: left;"><code class="custom-attribute">res_name</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Residues are mapped to integer values based on the <a href="./data_table.html#residue-names">lookup table</a>.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">atom_name</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>Atom names are mapped to integer values based on the <a href="./attributes.html#atom-names">lookup table</a>.</td>
+<td style="text-align: left;"><code class="custom-attribute">res_id</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The residue number, which starts at <code class="custom-int">1</code> for the first residue in each chain. If a structure is truncated it might not start at 1.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">Color</code></td>
-<td><code class="custom-color">Color</code></td>
-<td>Color of the atom, assigned on import but often changed in node trees.</td>
+<td style="text-align: left;"><code class="custom-attribute">ures_id</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The <code class="custom-attribute">ures_id</code> starts at <code class="custom-int">0</code> and increases by 1 for each residue across the whole structure, compared to the <code class="custom-attribute">res_id</code> which starts at <code class="custom-int">1</code> and restarts at 1 for each chain.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">atom_id</code></td>
-<td><code class="custom-int">Int</code></td>
-<td>Unique ascending value for each atom in the file, starting at <code class="custom-int">1</code></td>
+<td style="text-align: left;"><code class="custom-attribute">atomic_number</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Stores the atomic number of the atom for it’s position on the periodic table, instead of the element’s name.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">is_alpha_carbon</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">atom_name</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Atom names are mapped to integer values based on the <a href="./data_table.html#atom-names">lookup table</a>.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">is_side_chain</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">atom_types</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The force-field atom types from simulation topologies, sorted uniquely and assigned integers on import. The type names are stored as metadata on the object.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">is_backbone</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">Color</code></td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color of the atom, assigned on import but often changed in node trees.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">is_solvent</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">atom_id</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Unique ascending value for each atom in the file, starting at <code class="custom-int">1</code></td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">is_nucleic</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">is_alpha_carbon</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is an alpha carbon (atom name <code>CA</code>, or <code>BB</code> for coarse-grained structures).</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">is_peptide</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">is_side_chain</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is part of a side chain: a peptide or nucleic atom that is not part of the backbone.</td>
 </tr>
 <tr class="even">
-<td><code class="custom-attribute">is_hetero</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">is_backbone</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is part of the peptide or nucleic backbone, based on its atom name.</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-attribute">is_carb</code></td>
-<td><code class="custom-bool">Bool</code></td>
-<td>Computed on import or from the <code class="custom-attribute">atom_name</code> attribute.</td>
+<td style="text-align: left;"><code class="custom-attribute">is_solvent</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is part of a solvent molecule, based on its residue and atom names.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code class="custom-attribute">is_nucleic</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is part of a nucleic acid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code class="custom-attribute">is_peptide</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is part of a peptide, including coarse-grained (Martini) beads.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code class="custom-attribute">is_lipid</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is part of a lipid, based on its residue name.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code class="custom-attribute">is_hetero</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is flagged as a hetero atom in the structure file.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code class="custom-attribute">is_carb</code></td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether the atom is part of a carbohydrate, based on its residue name.</td>
 </tr>
 </tbody>
 </table>
@@ -760,13 +776,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

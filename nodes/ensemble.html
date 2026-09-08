@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>ensemble – Molecular Nodes</title>
+<title>Ensemble – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -30,18 +33,18 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/fields.html" rel="next">
-<link href="../nodes/DNA.html" rel="prev">
+<link href="../nodes/geometry.html" rel="next">
+<link href="../nodes/density.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,6 +81,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
 
 </head>
@@ -100,12 +155,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../tutorials/index.html" aria-current="page"> 
+    <a class="nav-link" href="../tutorials/index.html"> 
 <span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../nodes/index.html" aria-current="page"> 
+<span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
@@ -129,7 +192,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/ensemble.html">Ensemble</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/ensemble.html">Ensemble</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -141,189 +204,126 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorials</span></a>
+  <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
+  <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/trajectories.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trajectories</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/streaming-trajectories.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Streaming Trajectories</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data Tables</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Attributes</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Curves</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Density</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Topology</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/utilities.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Utilities</span></a>
   </div>
 </li>
-      </ul>
-  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/generated_nodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generated Node Groups</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -334,709 +334,607 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#ensemble" id="toc-ensemble" class="nav-link active" data-scroll-target="#ensemble">Ensemble</a>
-  <ul class="collapse">
-  <li><a href="#mn_assembly_" id="toc-mn_assembly_" class="nav-link" data-scroll-target="#mn_assembly_">MN_assembly_</a></li>
-  <li><a href="#mn_assembly_center" id="toc-mn_assembly_center" class="nav-link" data-scroll-target="#mn_assembly_center">MN_assembly_center</a></li>
+  <li><a href="#assembly-instance" id="toc-assembly-instance" class="nav-link active" data-scroll-target="#assembly-instance">Assembly Instance</a></li>
   <li><a href="#ensemble-instance" id="toc-ensemble-instance" class="nav-link" data-scroll-target="#ensemble-instance">Ensemble Instance</a></li>
+  <li><a href="#lattice-grid" id="toc-lattice-grid" class="nav-link" data-scroll-target="#lattice-grid">Lattice Grid</a></li>
   <li><a href="#periodic-array" id="toc-periodic-array" class="nav-link" data-scroll-target="#periodic-array">Periodic Array</a></li>
   <li><a href="#periodic-box" id="toc-periodic-box" class="nav-link" data-scroll-target="#periodic-box">Periodic Box</a></li>
   <li><a href="#periodic-image" id="toc-periodic-image" class="nav-link" data-scroll-target="#periodic-image">Periodic Image</a></li>
-  <li><a href="#lattice-grid" id="toc-lattice-grid" class="nav-link" data-scroll-target="#lattice-grid">Lattice Grid</a></li>
-  <li><a href="#starfile-instances" id="toc-starfile-instances" class="nav-link" data-scroll-target="#starfile-instances">Starfile Instances</a></li>
-  <li><a href="#rotation-relion" id="toc-rotation-relion" class="nav-link" data-scroll-target="#rotation-relion">Rotation RELION</a></li>
   <li><a href="#rotation-cistem" id="toc-rotation-cistem" class="nav-link" data-scroll-target="#rotation-cistem">Rotation cisTEM</a></li>
-  </ul></li>
+  <li><a href="#rotation-relion" id="toc-rotation-relion" class="nav-link" data-scroll-target="#rotation-relion">Rotation RELION</a></li>
+  <li><a href="#tem-rotation" id="toc-tem-rotation" class="nav-link" data-scroll-target="#tem-rotation">TEM Rotation</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/ensemble.html">Ensemble</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Ensemble</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="ensemble" class="level1">
-<h1>Ensemble</h1>
-<section id="mn_assembly_" class="level2">
-<h2 class="anchored" data-anchor-id="mn_assembly_">MN_assembly_</h2>
-<p>Creates a biological assembly by applying rotation and translation matrices to individual chains in the structure. It is created on an individual molecule basis, if assembly instructions are detected when imported. ::: callout-caution Style Spheres requires the material to be set again after the assembly node, as the material is currently lost when joining multiple point clouds. :::</p>
-<section id="outputs" class="level3">
-<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Instance and manipulate ensembles and assemblies</p>
+<section id="assembly-instance" class="level2">
+<h2 class="anchored" data-anchor-id="assembly-instance">Assembly Instance</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Assembled Chain Instances</code></td>
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry that is instanced on the points</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Data Object</td>
+<td style="text-align: left;"><code class="custom-object">Object</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Assembly ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Realize All</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Amount of mixing between the A and B inputs</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Amount of mixing between the A and B inputs</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>Any geometry to separate into chains and instance</td>
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td><code class="custom-float">Rotation</code></td>
-<td style="text-align: center;">1.0</td>
-<td>Amount to apply the rotation of the matrix</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Translation</code></td>
-<td style="text-align: center;">1.0</td>
-<td>Amount to apply the translation of the matrix</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">assembly_id</code></td>
-<td style="text-align: center;">1</td>
-<td>Which biological assembly to create</td>
+<td style="text-align: left;">chain_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="mn_assembly_center" class="level2">
-<h2 class="anchored" data-anchor-id="mn_assembly_center">MN_assembly_center</h2>
-<p>Move an instanced assembly to the world origin. Some structures are not centred on the world origin, so this node can reset them to the world origin for convenient rotation and translation and animation.</p>
-<p><video src="https://imgur.com/pgFTmgC.mp4" class="img-fluid" controls=""><a href="https://imgur.com/pgFTmgC.mp4">Video</a></video></p>
-<section id="outputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The translated assembly</td>
-<td style="text-align: right;"><code class="custom-geometry">Assembly Instances</code></td>
-</tr>
-<tr class="even">
-<td>The old centre point of the assembly</td>
-<td style="text-align: right;"><code class="custom-vector">Old Centre</code></td>
-</tr>
-<tr class="odd">
-<td>The transformation that was applied to the assembly</td>
-<td style="text-align: right;"><code class="custom-vector">Transform Vector</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Assembly Instances</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>The instances of an assembly, the result of <code>MN_assembly</code></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Center</code></td>
-<td style="text-align: center;">True</td>
-<td>Whether to center the assembly</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-vector">Translation</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td>Additional translation to apply to the centered assembly</td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.AssemblyInstance"><code>nodes.geometry.AssemblyInstance</code></a></p>
 </section>
 <section id="ensemble-instance" class="level2">
 <h2 class="anchored" data-anchor-id="ensemble-instance">Ensemble Instance</h2>
 <p>Instance the items of an ensemble onto the given points</p>
-<section id="outputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+<td style="text-align: left;">Points</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Selection Type</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-collection">Collection</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fraction</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">As Points</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Point Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Point Material</td>
+<td style="text-align: left;"><code class="custom-material">Material</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Points</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-menu">Selection Type</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-collection">Instances</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Fraction</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">As Points</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Point Radius</code></td>
-<td style="text-align: center;">0.1</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-material">Point Material</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="periodic-array" class="level2">
-<h2 class="anchored" data-anchor-id="periodic-array">Periodic Array</h2>
-<p>Replicate the trajectory across periodic boundaries.</p>
-<section id="outputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Update</code></td>
-<td style="text-align: center;">True</td>
-<td>Update the box lengths and angles with the simulation</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">a</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">b</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">c</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">alpha</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">beta</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">gamma</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">X</code></td>
-<td style="text-align: center;">3</td>
-<td>Number of images along the a vector</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Y</code></td>
-<td style="text-align: center;">3</td>
-<td>Number of images along the b vector</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Z</code></td>
-<td style="text-align: center;">3</td>
-<td>Number of images along the c vector</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="periodic-box" class="level2">
-<h2 class="anchored" data-anchor-id="periodic-box">Periodic Box</h2>
-<p>Get the box vectors for a trajectory’s periodic simulation box. These vectors can be used to create periodic images of the trajectory</p>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">A</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">B</code></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">C</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-bool">Update</code></td>
-<td style="text-align: center;">True</td>
-<td>Update the box lengths and angles with the simulation</td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">a</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">b</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">c</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">alpha</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">beta</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">gamma</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="periodic-image" class="level2">
-<h2 class="anchored" data-anchor-id="periodic-image">Periodic Image</h2>
-<p>Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice indices.</p>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Points</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-vector">A</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-vector">B</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-vector">C</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Image A</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Image B</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Image C</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.EnsembleInstance"><code>nodes.geometry.EnsembleInstance</code></a></p>
 </section>
 <section id="lattice-grid" class="level2">
 <h2 class="anchored" data-anchor-id="lattice-grid">Lattice Grid</h2>
 <p>Create a grid of lattice points based on the periodic box vectors.</p>
-<section id="outputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Grid</code></td>
+<td style="text-align: left;">A</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of images along the a vector</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of images along the b vector</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Z</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of images along the c vector</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-vector">A</code></td>
-<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-vector">B</code></td>
-<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-vector">C</code></td>
-<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">X</code></td>
-<td style="text-align: center;">3</td>
-<td>Number of images along the a vector</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Y</code></td>
-<td style="text-align: center;">3</td>
-<td>Number of images along the b vector</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Z</code></td>
-<td style="text-align: center;">3</td>
-<td>Number of images along the c vector</td>
+<td style="text-align: left;">Grid</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.LatticeGrid"><code>nodes.geometry.LatticeGrid</code></a></p>
 </section>
-</section>
-<section id="starfile-instances" class="level2">
-<h2 class="anchored" data-anchor-id="starfile-instances">Starfile Instances</h2>
-<p>Instance an object onto the given starfile points</p>
-<section id="outputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<section id="periodic-array" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-array">Periodic Array</h2>
+<p>Replicate the trajectory across periodic boundaries.</p>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Update</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Update the box lengths and angles with the simulation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">b</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">beta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gamma</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of images along the a vector</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Y</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of images along the b vector</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Z</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of images along the c vector</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Points</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Image</code></td>
-<td style="text-align: center;">1</td>
-<td>The ID of the image that should be shown</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-menu">Menu</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-object">Instance</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>The object that should be placed at each instance</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-material">Material</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>Material to apply to the resulting geometry</td>
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicArray"><code>nodes.geometry.PeriodicArray</code></a></p>
 </section>
-</section>
-<section id="rotation-relion" class="level2">
-<h2 class="anchored" data-anchor-id="rotation-relion">Rotation RELION</h2>
-<p>A rotation calculated from relevant columns of a RELION .star file</p>
-<section id="outputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<section id="periodic-box" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-box">Periodic Box</h2>
+<p>Get the box vectors for a trajectory’s periodic simulation box. These vectors can be used to create periodic images of the trajectory</p>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
+<td style="text-align: left;">Update</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.</td>
 </tr>
 <tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;">a</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">b</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gamma</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicBox"><code>nodes.geometry.PeriodicBox</code></a></p>
 </section>
+<section id="periodic-image" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-image">Periodic Image</h2>
+<p>Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice indices.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Image A</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Image B</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Image C</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Points</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicImage"><code>nodes.geometry.PeriodicImage</code></a></p>
 </section>
 <section id="rotation-cistem" class="level2">
 <h2 class="anchored" data-anchor-id="rotation-cistem">Rotation cisTEM</h2>
 <p>A rotation calculated from relevant columns of a cisTEM .star file</p>
-<section id="outputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;">Is Valid</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.RotationCisTEM"><code>nodes.geometry.RotationCisTEM</code></a></p>
+</section>
+<section id="rotation-relion" class="level2">
+<h2 class="anchored" data-anchor-id="rotation-relion">Rotation RELION</h2>
+<p>A rotation calculated from relevant columns of a RELION .star file</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Is Valid</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.RotationRELION"><code>nodes.geometry.RotationRELION</code></a></p>
+</section>
+<section id="tem-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="tem-rotation">TEM Rotation</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Phi</td>
+<td style="text-align: left;"><code class="custom-string">String</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Theta</td>
+<td style="text-align: left;"><code class="custom-string">String</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Psi</td>
+<td style="text-align: left;"><code class="custom-string">String</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;">The combined Rotation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Boolean</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.TEMRotation"><code>nodes.geometry.TEMRotation</code></a></p>
 
 
-</section>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1091,13 +989,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1441,13 +1340,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/DNA.html" class="pagination-link" aria-label="DNA">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">DNA</span>
+      <a href="../nodes/density.html" class="pagination-link" aria-label="Density">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Density</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/fields.html" class="pagination-link" aria-label="Fields">
-        <span class="nav-page-text">Fields</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/geometry.html" class="pagination-link" aria-label="Geometry">
+        <span class="nav-page-text">Geometry</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

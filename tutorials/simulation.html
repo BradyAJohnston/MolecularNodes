@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Simulation – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -40,10 +43,13 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -80,6 +86,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
 
 </head>
@@ -106,8 +164,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
@@ -231,101 +297,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
       </ul>
   </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Animate</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Color</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Curves</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Ensemble</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Select</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Style</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Topology</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utilities</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
@@ -388,7 +359,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <div id="fig-larger-structure" class="quarto-float quarto-figure quarto-figure-center anchored" autoplay="true" loop="true" muted="true">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-larger-structure-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<video src="https://imgur.com/NCIYxg0.mp4" class="img-fluid" autoplay="true" loop="true" muted="true" controls=""><a href="https://imgur.com/NCIYxg0.mp4">Video</a></video>
+<a href="https://imgur.com/NCIYxg0.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: 9I2R Simulated with the elastic network created from alpha carbons and some gentle brownian motion."><video src="https://imgur.com/NCIYxg0.mp4" class="img-fluid" autoplay="true" loop="true" muted="true" controls=""></video></a><a href="https://imgur.com/NCIYxg0.mp4">Video</a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-larger-structure-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: <a href="https://rcsb.org/structure/9I2R">9I2R</a> Simulated with the elastic network created from alpha carbons and some gentle brownian motion.
@@ -407,7 +378,7 @@ Figure&nbsp;1: <a href="https://rcsb.org/structure/9I2R">9I2R</a> Simulated with
 <div id="fig-disordered" class="quarto-float quarto-figure quarto-figure-center anchored" autoplay="true" loop="true" muted="true">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-disordered-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<video src="https://imgur.com/rFEEPf1.mp4" class="img-fluid" autoplay="true" loop="true" muted="true" controls=""><a href="https://imgur.com/rFEEPf1.mp4">Video</a></video>
+<a href="https://imgur.com/rFEEPf1.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: With the right settings, we can emulate structural dynamics quite convincingly. 2TPR is an NMR structure with a small ordered and small intrinsically disordered region."><video src="https://imgur.com/rFEEPf1.mp4" class="img-fluid" autoplay="true" loop="true" muted="true" controls=""></video></a><a href="https://imgur.com/rFEEPf1.mp4">Video</a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-disordered-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: With the right settings, we can emulate structural dynamics quite convincingly. <a href="https://rcsb.org/structure/2TPR">2TPR</a> is an NMR structure with a small ordered and small intrinsically disordered region.
@@ -417,28 +388,28 @@ Figure&nbsp;2: With the right settings, we can emulate structural dynamics quite
 <p>This node simulates the edges of a mesh. It’s intended for simulating an elastic network, but any mesh that is passed in will be simulated. By default the starting length of the edges be used as the rest length and the simulation will attempt to keep the edges at that length.</p>
 <p>In the below examble, we create an elastic network between the alpha carbons of a protein structure, then use the node to simulate the network. This can then be styled using the <strong>Style Ribbon</strong> node, which only requires the alpha carbons of a structure to work.</p>
 <p>Changing the <code class="custom-float">Alpha Carbon</code> value for the <strong>Build Elastic Network</strong> node increases the search distance. More edges are created leading to more structural stability, but also more computational cost.</p>
-<p><video src="https://imgur.com/kKUotlO.mp4" class="img-fluid" controls=""><a href="https://imgur.com/kKUotlO.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/kKUotlO.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><video src="https://imgur.com/kKUotlO.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/kKUotlO.mp4">Video</a></p>
 <section id="all-atom-simulation" class="level4">
 <h4 class="anchored" data-anchor-id="all-atom-simulation">All-atom Simulation</h4>
 <p>We can create an elastic network that includes all atoms by selecting the <code class="custom-menu">All Atom</code> enum for the <strong>Build Elastic Network</strong> node. The <code class="custom-float">Alpha Carbon</code> input will still be used for building a network between the alpha carbons for overall structure stability, but the <code class="custom-float">All Atom</code> input will be used for building a shorter-range network between all atoms.</p>
 <p>We can’t just use the <strong>Style Ball and Stick</strong> node because the edges are now between all of the atoms. Instead, we can sample the positions from the resulting simulation using the <strong>Sample Position</strong> node update the positions of our starting atoms using the <strong>Set Position</strong> node. Then we can style accordingly.</p>
-<p><img src="https://imgur.com/ZcjIzzQ.png" class="img-fluid"></p>
-<p><video src="https://imgur.com/v9lav5I.mp4" class="img-fluid" controls=""><a href="https://imgur.com/v9lav5I.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/ZcjIzzQ.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="https://imgur.com/ZcjIzzQ.png" class="img-fluid"></a></p>
+<p><a href="https://imgur.com/v9lav5I.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><video src="https://imgur.com/v9lav5I.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/v9lav5I.mp4">Video</a></p>
 </section>
 </section>
 <section id="simulate-curve" class="level2">
 <h2 class="anchored" data-anchor-id="simulate-curve">Simulate Curve</h2>
 <p>This is the simplest simulation nodes, which simulates any <em>Curve</em> geometry that it is given, attempting to maintain the length between points of the curve and also handling point collisions.</p>
 <p>The simplest inputs for this simulation are <code class="custom-int">Points</code> which indicate how many points on the curve before and after this current point to check when trying to maintain length, and also the <code class="custom-float">Straightness</code> which is a value between 0 and 1 that determines how straight the curve should be.</p>
-<p><video src="https://imgur.com/Uiy3fEO.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Uiy3fEO.mp4">Video</a></video></p>
-<p><video src="https://imgur.com/qpoWQsa.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qpoWQsa.mp4">Video</a></video></p>
-<p><video src="https://imgur.com/0975uoT.mp4" class="img-fluid" controls=""><a href="https://imgur.com/0975uoT.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/Uiy3fEO.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><video src="https://imgur.com/Uiy3fEO.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/Uiy3fEO.mp4">Video</a></p>
+<p><a href="https://imgur.com/qpoWQsa.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><video src="https://imgur.com/qpoWQsa.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/qpoWQsa.mp4">Video</a></p>
+<p><a href="https://imgur.com/0975uoT.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><video src="https://imgur.com/0975uoT.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/0975uoT.mp4">Video</a></p>
 </section>
 <section id="simulate-on-faces" class="level2">
 <h2 class="anchored" data-anchor-id="simulate-on-faces">Simulate on Faces</h2>
 <p>This node simulates points with collisions, while also ensuring they remain attached to the faces of a mesh. It’s intended for simulating membranes or something similar, where points need to collide side to side, but you can input and shape mesh and it will ensure the points stay attached to it.</p>
-<p><video src="https://imgur.com/RnrAKHE.mp4" class="img-fluid" controls=""><a href="https://imgur.com/RnrAKHE.mp4">Video</a></video></p>
-<p><img src="https://imgur.com/sinnXcW.png" class="img-fluid"></p>
+<p><a href="https://imgur.com/RnrAKHE.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><video src="https://imgur.com/RnrAKHE.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/RnrAKHE.mp4">Video</a></p>
+<p><a href="https://imgur.com/sinnXcW.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="https://imgur.com/sinnXcW.png" class="img-fluid"></a></p>
 </section>
 <section id="node-inputs" class="level2">
 <h2 class="anchored" data-anchor-id="node-inputs">Node Inputs</h2>
@@ -468,7 +439,7 @@ Figure&nbsp;2: With the right settings, we can emulate structural dynamics quite
 <div id="fig-forces" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-forces-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="https://imgur.com/Tw4Akxt.png" class="img-fluid figure-img">
+<a href="https://imgur.com/Tw4Akxt.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;3: You can chain multiple force nodes together to build up a more complex simulation."><img src="https://imgur.com/Tw4Akxt.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-forces-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: You can chain multiple force nodes together to build up a more complex simulation.
@@ -483,7 +454,7 @@ Figure&nbsp;3: You can chain multiple force nodes together to build up a more co
 <div id="fig-hook-pin" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-hook-pin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="https://imgur.com/DR8Z02K.png" class="img-fluid figure-img">
+<a href="https://imgur.com/DR8Z02K.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;4: The inputs for hooking &amp; pinning points in a simulation"><img src="https://imgur.com/DR8Z02K.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hook-pin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;4: The inputs for hooking &amp; pinning points in a simulation
@@ -546,13 +517,14 @@ Figure&nbsp;4: The inputs for hooking &amp; pinning points in a simulation
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -920,6 +892,38 @@ Figure&nbsp;4: The inputs for hooking &amp; pinning points in a simulation
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

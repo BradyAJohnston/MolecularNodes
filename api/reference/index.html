@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>index – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -37,10 +40,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -77,6 +80,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
 
 </head>
@@ -103,8 +158,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../examples/"> 
@@ -154,46 +217,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
  <span class="menu-text">Introduction</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/styles.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Styles</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/density.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Density</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/annotations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Annotations</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/canvas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Canvas</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/blender.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender</span></a>
-  </div>
-</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Trajectory</span></a>
+ <span class="menu-text">Guides</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -201,20 +229,56 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/trajectory/rendering.html" class="sidebar-item-text sidebar-link">
+  <a href="../../api/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectories</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/nodebpy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Node Trees</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/rendering.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Rendering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/trajectory/solvent.html" class="sidebar-item-text sidebar-link">
+  <a href="../../api/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/trajectory/styles.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Styles</span></a>
+  <a href="../../api/canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/blender.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender</span></a>
   </div>
 </li>
       </ul>
@@ -237,13 +301,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Entity</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Molecule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/Molecule.html" class="sidebar-item-text sidebar-link">
@@ -252,16 +316,33 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/MoleculeSelector.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">MoleculeSelector</span></a>
+  <a href="../../api/reference/entities.molecule.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.SelectionManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/Trajectory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trajectory</span></a>
+  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPManager</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Other Entities</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
@@ -278,95 +359,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Trajectory</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/Trajectory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trajectory</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.SelectionManager</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.DSSPManager</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.StreamingTrajectory</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Styles</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleSpheres.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleSpheres</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleRibbon.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleRibbon</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleCartoon.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleCartoon</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleSurface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleSurface</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleSticks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleSticks</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleBallAndStick.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleBallAndStick</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
  <span class="menu-text">Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Default</span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.AmbientOcclusion.html" class="sidebar-item-text sidebar-link">
@@ -375,8 +380,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.Default</span></a>
+  <a href="../../api/reference/material.Flat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Flat</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -387,27 +392,39 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.FlatOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.FlatOutline</span></a>
+  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.TransparentOutline</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
+  <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.PresetMaterial</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.append_material.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.append_material</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.add_all_materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.add_all_materials</span></a>
   </div>
 </li>
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
  <span class="menu-text">Session</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/session.MNSession.html" class="sidebar-item-text sidebar-link">
@@ -418,13 +435,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
  <span class="menu-text">Annotations</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/annotations.base.html" class="sidebar-item-text sidebar-link">
@@ -445,12 +462,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.annotations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.annotations</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/entities.molecule.annotations.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.molecule.annotations</span></a>
   </div>
@@ -465,13 +476,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
  <span class="menu-text">Scene</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/Canvas.html" class="sidebar-item-text sidebar-link">
@@ -482,6 +493,143 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/scene.camera.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">scene.camera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.compositor.CompositorTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.compositor.CompositorTree</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.recorder.FrameRecorder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.recorder.FrameRecorder</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.world.WorldTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.world.WorldTree</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Nodes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.animate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Animate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.curves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Curves</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.select.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topology</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
   </div>
 </li>
       </ul>
@@ -500,13 +648,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <ul>
   <li><a href="#function-reference" id="toc-function-reference" class="nav-link active" data-scroll-target="#function-reference">Function reference</a>
   <ul class="collapse">
-  <li><a href="#entity" id="toc-entity" class="nav-link" data-scroll-target="#entity">Entity</a></li>
-  <li><a href="#trajectory" id="toc-trajectory" class="nav-link" data-scroll-target="#trajectory">Trajectory</a></li>
-  <li><a href="#styles" id="toc-styles" class="nav-link" data-scroll-target="#styles">Styles</a></li>
+  <li><a href="#molecule" id="toc-molecule" class="nav-link" data-scroll-target="#molecule">Molecule</a></li>
+  <li><a href="#other-entities" id="toc-other-entities" class="nav-link" data-scroll-target="#other-entities">Other Entities</a></li>
   <li><a href="#materials" id="toc-materials" class="nav-link" data-scroll-target="#materials">Materials</a></li>
   <li><a href="#session" id="toc-session" class="nav-link" data-scroll-target="#session">Session</a></li>
   <li><a href="#annotations" id="toc-annotations" class="nav-link" data-scroll-target="#annotations">Annotations</a></li>
   <li><a href="#scene" id="toc-scene" class="nav-link" data-scroll-target="#scene">Scene</a></li>
+  <li><a href="#nodes" id="toc-nodes" class="nav-link" data-scroll-target="#nodes">Nodes</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -519,114 +667,82 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 <section id="function-reference" class="level1 doc doc-index">
 <h1 class="doc doc-index">Function reference</h1>
-<section id="entity" class="level2">
-<h2 class="anchored" data-anchor-id="entity">Entity</h2>
-<p>Importing and manipulating different molecular entities</p>
+<section id="molecule" class="level2">
+<h2 class="anchored" data-anchor-id="molecule">Molecule</h2>
+<p>The unified <code>Molecule</code> entity and its facets. A <code>Molecule</code> represents any structure — static or trajectory — backed by an <code>MDAnalysis.Universe</code>.</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td><a href="../../api/reference/Molecule.html#molecularnodes.Molecule">Molecule</a></td>
-<td>Primary Molecular Nodes class that coordinates the conversion of structural bioinformatic data</td>
+<td>Universe-backed molecular entity for Blender visualization.</td>
 </tr>
 <tr class="even">
-<td><a href="../../api/reference/MoleculeSelector.html#molecularnodes.MoleculeSelector">MoleculeSelector</a></td>
-<td>A helper to create selections for Molecules and AtomArrays.</td>
+<td><a href="../../api/reference/entities.molecule.SelectionManager.html#molecularnodes.entities.molecule.SelectionManager">entities.molecule.SelectionManager</a></td>
+<td>Manages atom selections for a trajectory.</td>
 </tr>
 <tr class="odd">
-<td><a href="../../api/reference/Trajectory.html#molecularnodes.Trajectory">Trajectory</a></td>
-<td>MD trajectory entity for Blender visualization.</td>
+<td><a href="../../api/reference/entities.molecule.DSSPManager.html#molecularnodes.entities.molecule.DSSPManager">entities.molecule.DSSPManager</a></td>
+<td>DSSP Manager for trajectories</td>
 </tr>
 <tr class="even">
+<td><a href="../../api/reference/entities.StreamingTrajectory.html#molecularnodes.entities.StreamingTrajectory">entities.StreamingTrajectory</a></td>
+<td>Molecule subclass for IMD streaming connections.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="other-entities" class="level2">
+<h2 class="anchored" data-anchor-id="other-entities">Other Entities</h2>
+<p>Additional molecular entities for ensembles and coarse-grained models</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
 <td><a href="../../api/reference/entities.Ensemble.html#molecularnodes.entities.Ensemble">entities.Ensemble</a></td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="../../api/reference/entities.OXDNA.html#molecularnodes.entities.OXDNA">entities.OXDNA</a></td>
 <td>A class to handle oxDNA trajectory data.</td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="trajectory" class="level2">
-<h2 class="anchored" data-anchor-id="trajectory">Trajectory</h2>
-<p>Working with molecular dynamics trajectories</p>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td><a href="../../api/reference/Trajectory.html#molecularnodes.Trajectory">Trajectory</a></td>
-<td>MD trajectory entity for Blender visualization.</td>
-</tr>
-<tr class="even">
-<td><a href="../../api/reference/entities.trajectory.SelectionManager.html#molecularnodes.entities.trajectory.SelectionManager">entities.trajectory.SelectionManager</a></td>
-<td>Manages atom selections for a trajectory.</td>
-</tr>
-<tr class="odd">
-<td><a href="../../api/reference/entities.trajectory.DSSPManager.html#molecularnodes.entities.trajectory.DSSPManager">entities.trajectory.DSSPManager</a></td>
-<td>DSSP Manager for trajectories</td>
-</tr>
-<tr class="even">
-<td><a href="../../api/reference/entities.StreamingTrajectory.html#molecularnodes.entities.StreamingTrajectory">entities.StreamingTrajectory</a></td>
-<td>Trajectory subclass for IMD streaming connections.</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="styles" class="level2">
-<h2 class="anchored" data-anchor-id="styles">Styles</h2>
-<p>Setting and controlling the different styles</p>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td><a href="../../api/reference/StyleSpheres.html#molecularnodes.StyleSpheres">StyleSpheres</a></td>
-<td>Style class for Style Spheres</td>
-</tr>
-<tr class="even">
-<td><a href="../../api/reference/StyleRibbon.html#molecularnodes.StyleRibbon">StyleRibbon</a></td>
-<td>Style class for Style Ribbon</td>
-</tr>
-<tr class="odd">
-<td><a href="../../api/reference/StyleCartoon.html#molecularnodes.StyleCartoon">StyleCartoon</a></td>
-<td>Style class for Style Cartoon</td>
-</tr>
-<tr class="even">
-<td><a href="../../api/reference/StyleSurface.html#molecularnodes.StyleSurface">StyleSurface</a></td>
-<td>Style class for Style Surface</td>
-</tr>
-<tr class="odd">
-<td><a href="../../api/reference/StyleSticks.html#molecularnodes.StyleSticks">StyleSticks</a></td>
-<td>Style class for Style Sticks</td>
-</tr>
-<tr class="even">
-<td><a href="../../api/reference/StyleBallAndStick.html#molecularnodes.StyleBallAndStick">StyleBallAndStick</a></td>
-<td>Style class for Style Ball and Stick</td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="materials" class="level2">
 <h2 class="anchored" data-anchor-id="materials">Materials</h2>
-<p>Setting and controlling the different materials</p>
+<p>The pre-built materials and their tweakable parameters</p>
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
-<td><a href="../../api/reference/material.AmbientOcclusion.html#molecularnodes.material.AmbientOcclusion">material.AmbientOcclusion</a></td>
-<td></td>
+<td><a href="../../api/reference/material.Default.html#molecularnodes.material.Default">material.Default</a></td>
+<td>The default MolecularNodes material.</td>
 </tr>
 <tr class="even">
-<td><a href="../../api/reference/material.Default.html#molecularnodes.material.Default">material.Default</a></td>
-<td></td>
+<td><a href="../../api/reference/material.AmbientOcclusion.html#molecularnodes.material.AmbientOcclusion">material.AmbientOcclusion</a></td>
+<td>Colors shaded only by ambient occlusion.</td>
 </tr>
 <tr class="odd">
-<td><a href="../../api/reference/material.Squishy.html#molecularnodes.material.Squishy">material.Squishy</a></td>
-<td></td>
+<td><a href="../../api/reference/material.Flat.html#molecularnodes.material.Flat">material.Flat</a></td>
+<td>Flat cartoon-like shading with an optional dark outline.</td>
 </tr>
 <tr class="even">
-<td><a href="../../api/reference/material.FlatOutline.html#molecularnodes.material.FlatOutline">material.FlatOutline</a></td>
-<td></td>
+<td><a href="../../api/reference/material.Squishy.html#molecularnodes.material.Squishy">material.Squishy</a></td>
+<td>A soft, subsurface-scattering material that makes molecules look jelly-like.</td>
 </tr>
 <tr class="odd">
 <td><a href="../../api/reference/material.TransparentOutline.html#molecularnodes.material.TransparentOutline">material.TransparentOutline</a></td>
-<td></td>
+<td>A partially transparent material with an optional solid outline.</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/material.PresetMaterial.html#molecularnodes.material.PresetMaterial">material.PresetMaterial</a></td>
+<td>Base class for the pre-built MolecularNodes materials.</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/material.append_material.html#molecularnodes.material.append_material">material.append_material</a></td>
+<td>Append a material from the MN_DATA_FILE.</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/material.add_all_materials.html#molecularnodes.material.add_all_materials">material.add_all_materials</a></td>
+<td>Append all pre-defined materials from the MN_DATA_FILE.</td>
 </tr>
 </tbody>
 </table>
@@ -661,14 +777,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td></td>
 </tr>
 <tr class="even">
-<td><a href="../../api/reference/entities.trajectory.annotations.html#molecularnodes.entities.trajectory.annotations">entities.trajectory.annotations</a></td>
-<td></td>
-</tr>
-<tr class="odd">
 <td><a href="../../api/reference/entities.molecule.annotations.html#molecularnodes.entities.molecule.annotations">entities.molecule.annotations</a></td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="../../api/reference/entities.density.annotations.html#molecularnodes.entities.density.annotations">entities.density.annotations</a></td>
 <td></td>
 </tr>
@@ -686,6 +798,98 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td><a href="../../api/reference/scene.camera.html#molecularnodes.scene.camera">scene.camera</a></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/scene.compositor.CompositorTree.html#molecularnodes.scene.compositor.CompositorTree">scene.compositor.CompositorTree</a></td>
+<td>Builder for the scene’s compositor node tree.</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/scene.recorder.FrameRecorder.html#molecularnodes.scene.recorder.FrameRecorder">scene.recorder.FrameRecorder</a></td>
+<td>Collect manually rendered frames into an animation.</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/scene.world.WorldTree.html#molecularnodes.scene.world.WorldTree">scene.world.WorldTree</a></td>
+<td>Builder for the scene world’s shader node tree (lighting &amp; background).</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="nodes" class="level2">
+<h2 class="anchored" data-anchor-id="nodes">Nodes</h2>
+<p>The node groups included with Molecular Nodes, grouped by the same categories as the add menu inside of Geometry Nodes. Each node group is also available as a typed Python class for scripting.</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.materials.html">Materials</a></td>
+<td>Shader node groups for the pre-built materials</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.general.html">General</a></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.animate.html">Animate</a></td>
+<td>Animate values and geometry over frames</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.attributes.html">Attributes</a></td>
+<td>Read attributes from structures</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.color.html">Color</a></td>
+<td>Set and manipulate the colors of atoms</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.curves.html">Curves</a></td>
+<td>Create and manipulate curves</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.dna.html">DNA</a></td>
+<td>Nodes for working with oxDNA and other DNA models</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.density.html">Density</a></td>
+<td>Work with volumetric density data</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.ensemble.html">Ensemble</a></td>
+<td>Instance and manipulate ensembles and assemblies</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.geometry.html">Geometry</a></td>
+<td>General geometry processing utilities</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.select.html">Select</a></td>
+<td>Create boolean selections based on the atomic attributes</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.style.html">Style</a></td>
+<td>Generate geometry for the different molecular styles</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.topology.html">Topology</a></td>
+<td>Work with the bond and residue topology of structures</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.utilities.html">Utilities</a></td>
+<td>Small helper node groups used throughout Molecular Nodes</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.utilities_attribute.html">Utilities / Attribute</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.utilities_boolean.html">Utilities / Boolean</a></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.utilities_color.html">Utilities / Color</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/nodes.utilities_fields.html">Utilities / Fields</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -747,13 +951,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

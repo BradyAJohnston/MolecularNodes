@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Fetch from the PDB – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -38,10 +41,13 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,6 +84,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 <script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
 <script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
@@ -107,8 +165,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
@@ -232,101 +298,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
       </ul>
   </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Animate</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Color</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Curves</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Ensemble</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Select</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Style</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Topology</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utilities</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
@@ -375,7 +346,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Molecules, simulations and other file formats can all be imported via the <code>Molecular Nodes</code> subpanel. This panel can be found under the <code>Scene Properties</code> panel. This is the small cone and spheres icon on the right. This contains all of the different options for importing molecular data currently available inside of Molecular Nodes.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/panel-location.png" class="img-fluid figure-img"></p>
+<p><a href="images/panel-location.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="The panel location."><img src="images/panel-location.png" class="img-fluid figure-img" alt="The panel location."></a></p>
 <figcaption>The panel location.</figcaption>
 </figure>
 </div>
@@ -386,7 +357,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>In this tab you can input the PDB ID to be used for downloading the structure. You can also change where Molecular Nodes caches the downloaded structures. By default it will be in a hidden <code>.MolecularNodes</code> folder in your home directory.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/tab-pdb.png" class="img-fluid figure-img"></p>
+<p><a href="images/tab-pdb.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The PDB import tab."><img src="images/tab-pdb.png" class="img-fluid figure-img" alt="The PDB import tab."></a></p>
 <figcaption>The PDB import tab.</figcaption>
 </figure>
 </div>
@@ -394,7 +365,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>The molecule may appear inside of the default cube, so you may have to delete it before the protein becomes visible.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/dnVJSuH.mp4" class="img-fluid" controls=""><a href="https://imgur.com/dnVJSuH.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/dnVJSuH.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Downloading 4OZS from the PDB"><video src="https://imgur.com/dnVJSuH.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/dnVJSuH.mp4">Downloading 4OZS from the PDB</a></p>
 <figcaption>Downloading <code>4OZS</code> from the PDB</figcaption>
 </figure>
 </div>
@@ -404,14 +375,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>The protein is imported as a 3D mesh, with a vertex for each atom and an edge for each bond. What you are seeing is the result of passing that data through a geometry-processing pipeline. The underlying data is still available, and you can even look at it (and edit it if you wish) by going using edit mode with <kbd>Tab</kbd></p>
 <p>You are editing the <em>underlying</em> atomic data, not the cartoon itself. The cartoon is rebuilt on top of the edited atomic data, which is why part of it also moves with the atoms when they are moved.</p>
 <p>It is probably ill-advised to manually edit the atomic data by hand, but it is important to understand the structure of the data inside of Blender &amp; Molecular Nodes.</p>
-<p><video src="https://imgur.com/MFeB05p.mp4" class="img-fluid" controls=""><a href="https://imgur.com/MFeB05p.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/MFeB05p.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><video src="https://imgur.com/MFeB05p.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/MFeB05p.mp4">Video</a></p>
 </section>
 <section id="rendered-views" class="level2">
 <h2 class="anchored" data-anchor-id="rendered-views">Rendered Views</h2>
 <p>While the molecule is imported, we are in 3D view by default. We can change to a rendered view to view the molecule with more accurately calculated lighting effects.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/oF05D7S.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oF05D7S.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/oF05D7S.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Changing to rendered views in different rendering engines."><video src="https://imgur.com/oF05D7S.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/oF05D7S.mp4">Changing to rendered views in different rendering engines.</a></p>
 <figcaption>Changing to rendered views in different rendering engines.</figcaption>
 </figure>
 </div>
@@ -422,14 +393,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>To access <code>Geometry Nodes</code> panel, we can either select the <code>Geoemtry Nodes</code> workspace, or split the current viewport and change one of the workspaces into the node editor.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/0HaIgZp.mp4" class="img-fluid" controls=""><a href="https://imgur.com/0HaIgZp.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/0HaIgZp.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Arranging workspaces."><video src="https://imgur.com/0HaIgZp.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/0HaIgZp.mp4">Arranging workspaces.</a></p>
 <figcaption>Arranging workspaces.</figcaption>
 </figure>
 </div>
 <p>You can change the workspace through the tabs in the top of Blender. You can split workspaces by hovering over the corner of a workspace, and then clicking and dragging. You can merge to workspaces by clicking and dragging from one into another, while dragging into the same workspace will split it and create two workspaces.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/24urpXp.mp4" class="img-fluid" controls=""><a href="https://imgur.com/24urpXp.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/24urpXp.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Opening the Geometry Nodes workspaces."><video src="https://imgur.com/24urpXp.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/24urpXp.mp4">Opening the Geometry Nodes workspaces.</a></p>
 <figcaption>Opening the Geometry Nodes workspaces.</figcaption>
 </figure>
 </div>
@@ -438,7 +409,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>We can add a new node through the <code>Add</code> menu, or we can use <kbd>Shift</kbd> + <kbd>A</kbd> to add new nodes. We can click and drag on the noodle outputs and inputs to remove and create new connections. Notice how when the complete ‘circuit’ or ‘flow diagram’ goes through the ball and stick node, the style changes to ball and stick. When it flows through the cartoon node, the style changes to cartoon.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/bghzMwj.mp4" class="img-fluid" controls=""><a href="https://imgur.com/bghzMwj.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/bghzMwj.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Adding a new node to change the output style."><video src="https://imgur.com/bghzMwj.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/bghzMwj.mp4">Adding a new node to change the output style.</a></p>
 <figcaption>Adding a new node to change the output style.</figcaption>
 </figure>
 </div>
@@ -449,7 +420,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>The data flows like a river, along the green noodles of the node graph. There must be only 1 final output. If you are using the molecular data, then there must also be a single input.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/gn_flow_information.png" class="img-fluid figure-img"></p>
+<p><a href="images/gn_flow_information.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Example node tree, demonstrating the flow of information through the nodes."><img src="images/gn_flow_information.png" class="img-fluid figure-img" alt="Example node tree, demonstrating the flow of information through the nodes."></a></p>
 <figcaption>Example node tree, demonstrating the flow of information through the nodes.</figcaption>
 </figure>
 </div>
@@ -471,12 +442,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/mn-gn-workspace.png" class="img-fluid figure-img"></p>
+<p><a href="images/mn-gn-workspace.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Screenshot of the Geometry Nodes workspace."><img src="images/mn-gn-workspace.png" class="img-fluid figure-img" alt="Screenshot of the Geometry Nodes workspace."></a></p>
 <figcaption>Screenshot of the Geometry Nodes workspace.</figcaption>
 </figure>
 </div>
 <p>The starting style <code>MOL_style_atoms_cycles</code> is only visible via inside of the Cycles render engine. You can add other styles manipulate the data through other nodes, by adding them with <kbd>Shift</kbd> + <kbd>A</kbd> and navigating to the MolecularNodes panel at the bottom. There are several categories of nodes for different animations and styles. You can add the <code>Ribbon Protein</code> node, which will create a ribbon representation based on the alpha carbons in the structure. If there is not colour in the structure, ensure that the node has a material <code>MOL_atomic_material</code> at the bottom of the node.</p>
-<p><img src="images/mn-gn-style-ribbon.png" class="img-fluid"></p>
+<p><a href="images/mn-gn-style-ribbon.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="images/mn-gn-style-ribbon.png" class="img-fluid"></a></p>
 <p>The data flows through the node graph from left to right. There should always be one input, which is the atomic data that is stored in the 3D mesh of the atoms and bonds. There should also be only one output, which is the final geometry that has been created throughout the node graph.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -508,7 +479,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>The node graph in between can be as complex as you want to make it, as long as there is a continuous connection to the output of the geometry, it should produce a result.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/gn_complex_graph.png" class="img-fluid figure-img" width="500"></p>
+<p><a href="images/gn_complex_graph.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="An example of a more complex node graph, with multiple branches that diverge and come back together."><img src="images/gn_complex_graph.png" class="img-fluid figure-img" width="500" alt="An example of a more complex node graph, with multiple branches that diverge and come back together."></a></p>
 <figcaption>An example of a more complex node graph, with multiple branches that diverge and come back together.</figcaption>
 </figure>
 </div>
@@ -519,7 +490,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>To change how each style looks, you can edit the default values of the nodes. By changing the values, you change the numbers that are used in the creation of the 3D models. The style will only change if it is being output through the node tree. You can click and drag to change the values smoothly. You can hold <kbd>Shift</kbd> while dragging the values to change them more accurately.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/zgg6HZE.mp4" class="img-fluid" controls=""><a href="https://imgur.com/zgg6HZE.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/zgg6HZE.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Tweaking the default values of the styles."><video src="https://imgur.com/zgg6HZE.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/zgg6HZE.mp4">Tweaking the default values of the styles.</a></p>
 <figcaption>Tweaking the default values of the styles.</figcaption>
 </figure>
 </div>
@@ -529,10 +500,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="combining-styles">Combining Styles</h2>
 <p>To complete this tutorial, we will combine the use of <code>Selection</code> and <code>Join Geometry</code> to create a style which shows the side chains as <em>ball and stick</em> while also showing the cartoon style.</p>
 <p>The style should usually be the last node that you apply to a model. You can’t apply a style after another style, as the output of a style is 3D geometry and not ‘atom-like’ geometry. Instead, we can combine two styles with a <code>Join Geometry</code> node. That way, we create both styles in parallel and then join them together before outputting them all through the <code>Group Output</code> node.</p>
-<p>The node can be found under <code class="custom-attribute">Geometry</code> or by going through the search for <code>Join Geometry</code></p>
+<p>The node can be found under <code>Geometry</code> or by going through the search for <code>Join Geometry</code></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/U3pJo4v.mp4" class="img-fluid" controls=""><a href="https://imgur.com/U3pJo4v.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/U3pJo4v.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Adding a Join Geometry node."><video src="https://imgur.com/U3pJo4v.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/U3pJo4v.mp4">Adding a Join Geometry node.</a></p>
 <figcaption>Adding a Join Geometry node.</figcaption>
 </figure>
 </div>
@@ -544,7 +515,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>You can see as we connect different outputs from the <code>Backbone</code> node, we get different results in the final style.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/ZOHK9CO.mp4" class="img-fluid" controls=""><a href="https://imgur.com/ZOHK9CO.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/ZOHK9CO.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Changing selections for the Ball and Stick style."><video src="https://imgur.com/ZOHK9CO.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/ZOHK9CO.mp4">Changing selections for the Ball and Stick style.</a></p>
 <figcaption>Changing selections for the Ball and Stick style.</figcaption>
 </figure>
 </div>
@@ -604,13 +575,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -978,6 +950,38 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

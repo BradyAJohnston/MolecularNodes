@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>nodes.ensemble – Molecular Nodes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../api/reference/nodes.geometry.html" rel="next">
+<link href="../../api/reference/nodes.density.html" rel="prev">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../tutorials/index.html"> 
+<span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../citations/"> 
+<span class="menu-text">Citations</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.ensemble.html">Ensemble</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Guides</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectories</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/nodebpy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Node Trees</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/rendering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rendering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/blender.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Molecule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/Molecule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Molecule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.SelectionManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Other Entities</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Default</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.AmbientOcclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.AmbientOcclusion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.Flat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Flat</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.Squishy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Squishy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.TransparentOutline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.PresetMaterial</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.append_material.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.append_material</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.add_all_materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.add_all_materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Session</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/session.MNSession.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">session.MNSession</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Annotations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/annotations.base.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.base</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/annotations.interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/annotations.manager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.manager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.density.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.density.annotations</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Scene</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/Canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.camera.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.camera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.compositor.CompositorTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.compositor.CompositorTree</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.recorder.FrameRecorder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.recorder.FrameRecorder</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.world.WorldTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.world.WorldTree</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Nodes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.animate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Animate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.curves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Curves</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.ensemble.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.select.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topology</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#ensemble" id="toc-ensemble" class="nav-link active" data-scroll-target="#ensemble">Ensemble</a></li>
+  <li><a href="#molecularnodes.nodes.geometry.AssemblyInstance" id="toc-molecularnodes.nodes.geometry.AssemblyInstance" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.AssemblyInstance">Assembly Instance</a>
+  <ul class="collapse">
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#inputs" id="toc-inputs" class="nav-link" data-scroll-target="#inputs">Inputs</a></li>
+  <li><a href="#outputs" id="toc-outputs" class="nav-link" data-scroll-target="#outputs">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.EnsembleInstance" id="toc-molecularnodes.nodes.geometry.EnsembleInstance" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.EnsembleInstance">Ensemble Instance</a>
+  <ul class="collapse">
+  <li><a href="#parameters-1" id="toc-parameters-1" class="nav-link" data-scroll-target="#parameters-1">Parameters</a></li>
+  <li><a href="#inputs-1" id="toc-inputs-1" class="nav-link" data-scroll-target="#inputs-1">Inputs</a></li>
+  <li><a href="#outputs-1" id="toc-outputs-1" class="nav-link" data-scroll-target="#outputs-1">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.LatticeGrid" id="toc-molecularnodes.nodes.geometry.LatticeGrid" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.LatticeGrid">Lattice Grid</a>
+  <ul class="collapse">
+  <li><a href="#parameters-2" id="toc-parameters-2" class="nav-link" data-scroll-target="#parameters-2">Parameters</a></li>
+  <li><a href="#inputs-2" id="toc-inputs-2" class="nav-link" data-scroll-target="#inputs-2">Inputs</a></li>
+  <li><a href="#outputs-2" id="toc-outputs-2" class="nav-link" data-scroll-target="#outputs-2">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.PeriodicArray" id="toc-molecularnodes.nodes.geometry.PeriodicArray" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.PeriodicArray">Periodic Array</a>
+  <ul class="collapse">
+  <li><a href="#parameters-3" id="toc-parameters-3" class="nav-link" data-scroll-target="#parameters-3">Parameters</a></li>
+  <li><a href="#inputs-3" id="toc-inputs-3" class="nav-link" data-scroll-target="#inputs-3">Inputs</a></li>
+  <li><a href="#outputs-3" id="toc-outputs-3" class="nav-link" data-scroll-target="#outputs-3">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.PeriodicBox" id="toc-molecularnodes.nodes.geometry.PeriodicBox" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.PeriodicBox">Periodic Box</a>
+  <ul class="collapse">
+  <li><a href="#parameters-4" id="toc-parameters-4" class="nav-link" data-scroll-target="#parameters-4">Parameters</a></li>
+  <li><a href="#inputs-4" id="toc-inputs-4" class="nav-link" data-scroll-target="#inputs-4">Inputs</a></li>
+  <li><a href="#outputs-4" id="toc-outputs-4" class="nav-link" data-scroll-target="#outputs-4">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.PeriodicImage" id="toc-molecularnodes.nodes.geometry.PeriodicImage" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.PeriodicImage">Periodic Image</a>
+  <ul class="collapse">
+  <li><a href="#parameters-5" id="toc-parameters-5" class="nav-link" data-scroll-target="#parameters-5">Parameters</a></li>
+  <li><a href="#inputs-5" id="toc-inputs-5" class="nav-link" data-scroll-target="#inputs-5">Inputs</a></li>
+  <li><a href="#outputs-5" id="toc-outputs-5" class="nav-link" data-scroll-target="#outputs-5">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.RotationCisTEM" id="toc-molecularnodes.nodes.geometry.RotationCisTEM" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.RotationCisTEM">Rotation cisTEM</a>
+  <ul class="collapse">
+  <li><a href="#outputs-6" id="toc-outputs-6" class="nav-link" data-scroll-target="#outputs-6">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.RotationRELION" id="toc-molecularnodes.nodes.geometry.RotationRELION" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.RotationRELION">Rotation RELION</a>
+  <ul class="collapse">
+  <li><a href="#outputs-7" id="toc-outputs-7" class="nav-link" data-scroll-target="#outputs-7">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.TEMRotation" id="toc-molecularnodes.nodes.geometry.TEMRotation" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TEMRotation">TEM Rotation</a>
+  <ul class="collapse">
+  <li><a href="#parameters-6" id="toc-parameters-6" class="nav-link" data-scroll-target="#parameters-6">Parameters</a></li>
+  <li><a href="#inputs-6" id="toc-inputs-6" class="nav-link" data-scroll-target="#inputs-6">Inputs</a></li>
+  <li><a href="#outputs-8" id="toc-outputs-8" class="nav-link" data-scroll-target="#outputs-8">Outputs</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.ensemble.html">Ensemble</a></li></ol></nav></header>
+
+
+
+
+<section id="ensemble" class="level1">
+<h1>Ensemble</h1>
+<p>Instance and manipulate ensembles and assemblies</p>
+</section>
+<section id="molecularnodes.nodes.geometry.AssemblyInstance" class="level1">
+<h1>Assembly Instance</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.AssemblyInstance(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    data_object<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    assembly_id<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    realize_all<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    rotation<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#assembly-instance">Assembly Instance</a>.</p>
+<section id="parameters" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 26%">
+<col style="width: 59%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>geometry</td>
+<td><code class="custom-geometry">InputGeometry</code></td>
+<td>Geometry that is instanced on the points</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Selection</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>data_object</td>
+<td><code class="custom-object">InputObject</code></td>
+<td>Data Object</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>assembly_id</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Assembly ID</td>
+<td><code>1</code></td>
+</tr>
+<tr class="odd">
+<td>realize_all</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>position</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Amount of mixing between the A and B inputs</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="odd">
+<td>rotation</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Amount of mixing between the A and B inputs</td>
+<td><code>1.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 18%">
+<col style="width: 71%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.geometry</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Geometry that is instanced on the points</td>
+</tr>
+<tr class="even">
+<td>i.selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Selection</td>
+</tr>
+<tr class="odd">
+<td>i.data_object</td>
+<td><code class="custom-object">ObjectSocket</code></td>
+<td>Data Object</td>
+</tr>
+<tr class="even">
+<td>i.assembly_id</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Assembly ID</td>
+</tr>
+<tr class="odd">
+<td>i.realize_all</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input</td>
+</tr>
+<tr class="even">
+<td>i.position</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Amount of mixing between the A and B inputs</td>
+</tr>
+<tr class="odd">
+<td>i.rotation</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Amount of mixing between the A and B inputs</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.instances</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Instances</td>
+</tr>
+<tr class="even">
+<td>o.chain_id</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>chain_id</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.EnsembleInstance" class="level1">
+<h1>Ensemble Instance</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.EnsembleInstance(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    points<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    selection_type<span class="op">=</span><span class="st">'Simple'</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    instances<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    fraction<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    as_points<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    point_radius<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    point_material<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#ensemble-instance">Ensemble Instance</a>.</p>
+<section id="parameters-1" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>points</td>
+<td><code class="custom-geometry">InputGeometry</code></td>
+<td>Points</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Selection of atoms to apply this node to</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>selection_type</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Simple', 'Precise']</td>
+<td>Selection Type</td>
+<td><code class="custom-string">'Simple'</code></td>
+</tr>
+<tr class="even">
+<td>instances</td>
+<td><code class="custom-collection">InputCollection</code></td>
+<td>Instances</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>fraction</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Fraction</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="even">
+<td>as_points</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>As Points</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>point_radius</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Point Radius</td>
+<td><code>0.1</code></td>
+</tr>
+<tr class="even">
+<td>point_material</td>
+<td><code class="custom-material">InputMaterial</code></td>
+<td>Point Material</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-1" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-1">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 34%">
+<col style="width: 45%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.points</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Points</td>
+</tr>
+<tr class="even">
+<td>i.selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td>i.selection_type</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Selection Type</td>
+</tr>
+<tr class="even">
+<td>i.instances</td>
+<td><code class="custom-collection">CollectionSocket</code></td>
+<td>Instances</td>
+</tr>
+<tr class="odd">
+<td>i.fraction</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Fraction</td>
+</tr>
+<tr class="even">
+<td>i.as_points</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>As Points</td>
+</tr>
+<tr class="odd">
+<td>i.point_radius</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Point Radius</td>
+</tr>
+<tr class="even">
+<td>i.point_material</td>
+<td><code class="custom-material">MaterialSocket</code></td>
+<td>Point Material</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-1">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.instances</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Instances</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.LatticeGrid" class="level1">
+<h1>Lattice Grid</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.LatticeGrid(a<span class="op">=</span><span class="va">None</span>, b<span class="op">=</span><span class="va">None</span>, c<span class="op">=</span><span class="va">None</span>, x<span class="op">=</span><span class="dv">3</span>, y<span class="op">=</span><span class="dv">3</span>, z<span class="op">=</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#lattice-grid">Lattice Grid</a>.</p>
+<section id="parameters-2" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 45%">
+<col style="width: 36%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>a</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>A</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>b</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>B</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>c</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>C</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>x</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of images along the a vector</td>
+<td><code>3</code></td>
+</tr>
+<tr class="odd">
+<td>y</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of images along the b vector</td>
+<td><code>3</code></td>
+</tr>
+<tr class="even">
+<td>z</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of images along the c vector</td>
+<td><code>3</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-2" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-2">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 34%">
+<col style="width: 53%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.a</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td>i.b</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td>i.c</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>C</td>
+</tr>
+<tr class="even">
+<td>i.x</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of images along the a vector</td>
+</tr>
+<tr class="odd">
+<td>i.y</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of images along the b vector</td>
+</tr>
+<tr class="even">
+<td>i.z</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of images along the c vector</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-2" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-2">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.grid</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Grid</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.PeriodicArray" class="level1">
+<h1>Periodic Array</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PeriodicArray(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    update<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    z<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#periodic-array">Periodic Array</a>.</p>
+<section id="parameters-3" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 38%">
+<col style="width: 44%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>geometry</td>
+<td><code class="custom-geometry">InputGeometry</code></td>
+<td>Geometry</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>update</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Update the box lengths and angles with the simulation</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>a</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>a</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>b</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>b</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>c</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>c</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>alpha</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>alpha</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>beta</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>beta</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>gamma</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>gamma</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>x</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of images along the a vector</td>
+<td><code>3</code></td>
+</tr>
+<tr class="even">
+<td>y</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of images along the b vector</td>
+<td><code>3</code></td>
+</tr>
+<tr class="odd">
+<td>z</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of images along the c vector</td>
+<td><code>3</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-3" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-3">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 29%">
+<col style="width: 57%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.geometry</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Geometry</td>
+</tr>
+<tr class="even">
+<td>i.update</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Update the box lengths and angles with the simulation</td>
+</tr>
+<tr class="odd">
+<td>i.a</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>a</td>
+</tr>
+<tr class="even">
+<td>i.b</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>b</td>
+</tr>
+<tr class="odd">
+<td>i.c</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>c</td>
+</tr>
+<tr class="even">
+<td>i.alpha</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>alpha</td>
+</tr>
+<tr class="odd">
+<td>i.beta</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>beta</td>
+</tr>
+<tr class="even">
+<td>i.gamma</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>gamma</td>
+</tr>
+<tr class="odd">
+<td>i.x</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of images along the a vector</td>
+</tr>
+<tr class="even">
+<td>i.y</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of images along the b vector</td>
+</tr>
+<tr class="odd">
+<td>i.z</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of images along the c vector</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-3" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-3">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.instances</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Instances</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.PeriodicBox" class="level1">
+<h1>Periodic Box</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PeriodicBox(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    update<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#periodic-box">Periodic Box</a>.</p>
+<section id="parameters-4" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 17%">
+<col style="width: 75%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>update</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="even">
+<td>a</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>a</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>b</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>b</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>c</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>c</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>alpha</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>alpha</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>beta</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>beta</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>gamma</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>gamma</td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-4">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 10%">
+<col style="width: 85%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.update</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.</td>
+</tr>
+<tr class="even">
+<td>i.a</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>a</td>
+</tr>
+<tr class="odd">
+<td>i.b</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>b</td>
+</tr>
+<tr class="even">
+<td>i.c</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>c</td>
+</tr>
+<tr class="odd">
+<td>i.alpha</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>alpha</td>
+</tr>
+<tr class="even">
+<td>i.beta</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>beta</td>
+</tr>
+<tr class="odd">
+<td>i.gamma</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>gamma</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-4" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-4">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.a</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td>o.b</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td>o.c</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>C</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.PeriodicImage" class="level1">
+<h1>Periodic Image</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PeriodicImage(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    image_a<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    image_b<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    image_c<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#periodic-image">Periodic Image</a>.</p>
+<section id="parameters-5" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 56%">
+<col style="width: 18%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>a</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>A</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>b</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>B</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>c</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>C</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>image_a</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Image A</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td>image_b</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Image B</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td>image_c</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Image C</td>
+<td><code>0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-5" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-5">Inputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.a</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>A</td>
+</tr>
+<tr class="even">
+<td>i.b</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>B</td>
+</tr>
+<tr class="odd">
+<td>i.c</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>C</td>
+</tr>
+<tr class="even">
+<td>i.image_a</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Image A</td>
+</tr>
+<tr class="odd">
+<td>i.image_b</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Image B</td>
+</tr>
+<tr class="even">
+<td>i.image_c</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Image C</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-5" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-5">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.points</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Points</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.RotationCisTEM" class="level1">
+<h1>Rotation cisTEM</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.RotationCisTEM()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#rotation-cistem">Rotation cisTEM</a>.</p>
+<section id="outputs-6" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-6">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.rotation</td>
+<td><code class="custom-rotation">RotationSocket</code></td>
+<td>Rotation</td>
+</tr>
+<tr class="even">
+<td>o.is_valid</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Is Valid</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.RotationRELION" class="level1">
+<h1>Rotation RELION</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.RotationRELION()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#rotation-relion">Rotation RELION</a>.</p>
+<section id="outputs-7" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-7">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.rotation</td>
+<td><code class="custom-rotation">RotationSocket</code></td>
+<td>Rotation</td>
+</tr>
+<tr class="even">
+<td>o.is_valid</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Is Valid</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.TEMRotation" class="level1">
+<h1>TEM Rotation</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TEMRotation(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    phi<span class="op">=</span><span class="st">'rlnAngleRot'</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    theta<span class="op">=</span><span class="st">'rlnAngleTilt'</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    psi<span class="op">=</span><span class="st">'rlnAnglePsi'</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/ensemble.html#tem-rotation">TEM Rotation</a>.</p>
+<section id="parameters-6" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 51%">
+<col style="width: 17%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>phi</td>
+<td><code class="custom-string">InputString</code></td>
+<td>Phi</td>
+<td><code class="custom-string">'rlnAngleRot'</code></td>
+</tr>
+<tr class="even">
+<td>theta</td>
+<td><code class="custom-string">InputString</code></td>
+<td>Theta</td>
+<td><code class="custom-string">'rlnAngleTilt'</code></td>
+</tr>
+<tr class="odd">
+<td>psi</td>
+<td><code class="custom-string">InputString</code></td>
+<td>Psi</td>
+<td><code class="custom-string">'rlnAnglePsi'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-6">Inputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.phi</td>
+<td><code class="custom-string">StringSocket</code></td>
+<td>Phi</td>
+</tr>
+<tr class="even">
+<td>i.theta</td>
+<td><code class="custom-string">StringSocket</code></td>
+<td>Theta</td>
+</tr>
+<tr class="odd">
+<td>i.psi</td>
+<td><code class="custom-string">StringSocket</code></td>
+<td>Psi</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-8" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-8">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.rotation</td>
+<td><code class="custom-rotation">RotationSocket</code></td>
+<td>The combined Rotation</td>
+</tr>
+<tr class="even">
+<td>o.boolean</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Boolean</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../../api/reference/nodes.density.html" class="pagination-link" aria-label="Density">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Density</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../api/reference/nodes.geometry.html" class="pagination-link" aria-label="Geometry">
+        <span class="nav-page-text">Geometry</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

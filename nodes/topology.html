@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>topology – Molecular Nodes</title>
+<title>Topology – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -30,7 +33,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/utils.html" rel="next">
+<link href="../nodes/utilities.html" rel="next">
 <link href="../nodes/style.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -38,10 +41,13 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,6 +84,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
 
 </head>
@@ -100,12 +158,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../tutorials/index.html" aria-current="page"> 
+    <a class="nav-link" href="../tutorials/index.html"> 
 <span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../nodes/index.html" aria-current="page"> 
+<span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
@@ -129,7 +195,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/topology.html">Topology</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/topology.html">Topology</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -141,189 +207,126 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorials</span></a>
+  <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
+  <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/trajectories.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trajectories</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/streaming-trajectories.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Streaming Trajectories</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data Tables</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Attributes</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Curves</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Density</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Topology</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/utilities.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Utilities</span></a>
   </div>
 </li>
-      </ul>
-  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/generated_nodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generated Node Groups</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -334,2064 +337,2781 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#topology" id="toc-topology" class="nav-link active" data-scroll-target="#topology">Topology</a>
-  <ul class="collapse">
-  <li><a href="#topology-dssp" id="toc-topology-dssp" class="nav-link" data-scroll-target="#topology-dssp">Topology DSSP</a></li>
+  <li><a href="#animate-dihedrals" id="toc-animate-dihedrals" class="nav-link active" data-scroll-target="#animate-dihedrals">Animate Dihedrals</a></li>
+  <li><a href="#atoms-to-ca-curves" id="toc-atoms-to-ca-curves" class="nav-link" data-scroll-target="#atoms-to-ca-curves">Atoms to CA Curves</a></li>
+  <li><a href="#atoms-to-curves" id="toc-atoms-to-curves" class="nav-link" data-scroll-target="#atoms-to-curves">Atoms to Curves</a></li>
+  <li><a href="#backbone-c" id="toc-backbone-c" class="nav-link" data-scroll-target="#backbone-c">Backbone C</a></li>
+  <li><a href="#backbone-ca" id="toc-backbone-ca" class="nav-link" data-scroll-target="#backbone-ca">Backbone CA</a></li>
+  <li><a href="#backbone-n" id="toc-backbone-n" class="nav-link" data-scroll-target="#backbone-n">Backbone N</a></li>
+  <li><a href="#backbone-nh" id="toc-backbone-nh" class="nav-link" data-scroll-target="#backbone-nh">Backbone NH</a></li>
+  <li><a href="#backbone-o" id="toc-backbone-o" class="nav-link" data-scroll-target="#backbone-o">Backbone O</a></li>
+  <li><a href="#backbone-positions" id="toc-backbone-positions" class="nav-link" data-scroll-target="#backbone-positions">Backbone Positions</a></li>
+  <li><a href="#backbone-vector-list" id="toc-backbone-vector-list" class="nav-link" data-scroll-target="#backbone-vector-list">Backbone Vector List</a></li>
+  <li><a href="#backbone-vectors" id="toc-backbone-vectors" class="nav-link" data-scroll-target="#backbone-vectors">Backbone Vectors</a></li>
+  <li><a href="#bond-count" id="toc-bond-count" class="nav-link" data-scroll-target="#bond-count">Bond Count</a></li>
+  <li><a href="#break-bonds" id="toc-break-bonds" class="nav-link" data-scroll-target="#break-bonds">Break Bonds</a></li>
+  <li><a href="#chain-parameter" id="toc-chain-parameter" class="nav-link" data-scroll-target="#chain-parameter">Chain Parameter</a></li>
+  <li><a href="#color-backbone" id="toc-color-backbone" class="nav-link" data-scroll-target="#color-backbone">Color Backbone</a></li>
+  <li><a href="#curve-offset-dihedral" id="toc-curve-offset-dihedral" class="nav-link" data-scroll-target="#curve-offset-dihedral">Curve Offset Dihedral</a></li>
+  <li><a href="#dihedral-chi-angle" id="toc-dihedral-chi-angle" class="nav-link" data-scroll-target="#dihedral-chi-angle">Dihedral Chi Angle</a></li>
+  <li><a href="#dihedral-nucleic-angle" id="toc-dihedral-nucleic-angle" class="nav-link" data-scroll-target="#dihedral-nucleic-angle">Dihedral Nucleic Angle</a></li>
   <li><a href="#dihedral-phi" id="toc-dihedral-phi" class="nav-link" data-scroll-target="#dihedral-phi">Dihedral Phi</a></li>
   <li><a href="#dihedral-psi" id="toc-dihedral-psi" class="nav-link" data-scroll-target="#dihedral-psi">Dihedral Psi</a></li>
-  <li><a href="#dihedral-chi-angle" id="toc-dihedral-chi-angle" class="nav-link" data-scroll-target="#dihedral-chi-angle">Dihedral Chi Angle</a></li>
-  <li><a href="#dihedral-chi-angle-1" id="toc-dihedral-chi-angle-1" class="nav-link" data-scroll-target="#dihedral-chi-angle-1">Dihedral Chi Angle</a></li>
-  <li><a href="#dihedral-nucleic-angle" id="toc-dihedral-nucleic-angle" class="nav-link" data-scroll-target="#dihedral-nucleic-angle">Dihedral Nucleic Angle</a></li>
-  <li><a href="#residue-mask" id="toc-residue-mask" class="nav-link" data-scroll-target="#residue-mask">Residue Mask</a></li>
+  <li><a href="#edge-group-id" id="toc-edge-group-id" class="nav-link" data-scroll-target="#edge-group-id">Edge Group ID</a></li>
+  <li><a href="#edge-info" id="toc-edge-info" class="nav-link" data-scroll-target="#edge-info">Edge Info</a></li>
+  <li><a href="#edge-length" id="toc-edge-length" class="nav-link" data-scroll-target="#edge-length">Edge Length</a></li>
+  <li><a href="#find-bonded-atom" id="toc-find-bonded-atom" class="nav-link" data-scroll-target="#find-bonded-atom">Find Bonded Atom</a></li>
+  <li><a href="#find-bonds" id="toc-find-bonds" class="nav-link" data-scroll-target="#find-bonds">Find Bonds</a></li>
   <li><a href="#menu-residue-mask" id="toc-menu-residue-mask" class="nav-link" data-scroll-target="#menu-residue-mask">Menu Residue Mask</a></li>
   <li><a href="#menu-residue-name" id="toc-menu-residue-name" class="nav-link" data-scroll-target="#menu-residue-name">Menu Residue Name</a></li>
-  <li><a href="#menu-atom-name" id="toc-menu-atom-name" class="nav-link" data-scroll-target="#menu-atom-name">Menu Atom Name</a></li>
-  <li><a href="#backbone-positions" id="toc-backbone-positions" class="nav-link" data-scroll-target="#backbone-positions">Backbone Positions</a></li>
-  <li><a href="#peptide-dihedral" id="toc-peptide-dihedral" class="nav-link" data-scroll-target="#peptide-dihedral">Peptide Dihedral</a></li>
-  <li><a href="#peptide-chi" id="toc-peptide-chi" class="nav-link" data-scroll-target="#peptide-chi">Peptide Chi</a></li>
-  <li><a href="#nucleic-dihedral" id="toc-nucleic-dihedral" class="nav-link" data-scroll-target="#nucleic-dihedral">Nucleic Dihedral</a></li>
   <li><a href="#nucleic-chi" id="toc-nucleic-chi" class="nav-link" data-scroll-target="#nucleic-chi">Nucleic Chi</a></li>
-  <li><a href="#set-phi-psi-angle" id="toc-set-phi-psi-angle" class="nav-link" data-scroll-target="#set-phi-psi-angle">Set Phi Psi Angle</a></li>
-  <li><a href="#set-nucleic-dihedral" id="toc-set-nucleic-dihedral" class="nav-link" data-scroll-target="#set-nucleic-dihedral">Set Nucleic Dihedral</a></li>
-  <li><a href="#set-chi-angle" id="toc-set-chi-angle" class="nav-link" data-scroll-target="#set-chi-angle">Set Chi Angle</a></li>
-  <li><a href="#backbone-n" id="toc-backbone-n" class="nav-link" data-scroll-target="#backbone-n">Backbone N</a></li>
-  <li><a href="#backbone-ca" id="toc-backbone-ca" class="nav-link" data-scroll-target="#backbone-ca">Backbone CA</a></li>
-  <li><a href="#backbone-c" id="toc-backbone-c" class="nav-link" data-scroll-target="#backbone-c">Backbone C</a></li>
-  <li><a href="#backbone-o" id="toc-backbone-o" class="nav-link" data-scroll-target="#backbone-o">Backbone O</a></li>
-  <li><a href="#backbone-nh" id="toc-backbone-nh" class="nav-link" data-scroll-target="#backbone-nh">Backbone NH</a></li>
-  <li><a href="#set-ures-id" id="toc-set-ures-id" class="nav-link" data-scroll-target="#set-ures-id">Set URes ID</a></li>
-  <li><a href="#backbone-vectors" id="toc-backbone-vectors" class="nav-link" data-scroll-target="#backbone-vectors">Backbone Vectors</a></li>
-  <li><a href="#edge-group-id" id="toc-edge-group-id" class="nav-link" data-scroll-target="#edge-group-id">Edge Group ID</a></li>
-  <li><a href="#is-backbone-edge" id="toc-is-backbone-edge" class="nav-link" data-scroll-target="#is-backbone-edge">Is Backbone Edge</a></li>
-  <li><a href="#sample-atomic-attributes" id="toc-sample-atomic-attributes" class="nav-link" data-scroll-target="#sample-atomic-attributes">Sample Atomic Attributes</a></li>
-  <li><a href="#find-bonded-atom" id="toc-find-bonded-atom" class="nav-link" data-scroll-target="#find-bonded-atom">Find Bonded Atom</a></li>
-  <li><a href="#topology-find-bonds" id="toc-topology-find-bonds" class="nav-link" data-scroll-target="#topology-find-bonds">Topology Find Bonds</a></li>
-  <li><a href="#topology-break-bonds" id="toc-topology-break-bonds" class="nav-link" data-scroll-target="#topology-break-bonds">Topology Break Bonds</a></li>
-  <li><a href="#bond-count" id="toc-bond-count" class="nav-link" data-scroll-target="#bond-count">Bond Count</a></li>
-  <li><a href="#edge-info" id="toc-edge-info" class="nav-link" data-scroll-target="#edge-info">Edge Info</a></li>
+  <li><a href="#nucleic-dihedral" id="toc-nucleic-dihedral" class="nav-link" data-scroll-target="#nucleic-dihedral">Nucleic Dihedral</a></li>
+  <li><a href="#peptide-chi" id="toc-peptide-chi" class="nav-link" data-scroll-target="#peptide-chi">Peptide Chi</a></li>
+  <li><a href="#peptide-dihedral" id="toc-peptide-dihedral" class="nav-link" data-scroll-target="#peptide-dihedral">Peptide Dihedral</a></li>
   <li><a href="#point-edge-angle" id="toc-point-edge-angle" class="nav-link" data-scroll-target="#point-edge-angle">Point Edge Angle</a></li>
   <li><a href="#points-of-edge" id="toc-points-of-edge" class="nav-link" data-scroll-target="#points-of-edge">Points of Edge</a></li>
-  </ul></li>
+  <li><a href="#residue-dihedral-angle" id="toc-residue-dihedral-angle" class="nav-link" data-scroll-target="#residue-dihedral-angle">Residue Dihedral Angle</a></li>
+  <li><a href="#residue-mask" id="toc-residue-mask" class="nav-link" data-scroll-target="#residue-mask">Residue Mask</a></li>
+  <li><a href="#residue-parameter" id="toc-residue-parameter" class="nav-link" data-scroll-target="#residue-parameter">Residue Parameter</a></li>
+  <li><a href="#sample-nearest-atoms" id="toc-sample-nearest-atoms" class="nav-link" data-scroll-target="#sample-nearest-atoms">Sample Nearest Atoms</a></li>
+  <li><a href="#set-chi-angle" id="toc-set-chi-angle" class="nav-link" data-scroll-target="#set-chi-angle">Set Chi Angle</a></li>
+  <li><a href="#set-nucleic-dihedral" id="toc-set-nucleic-dihedral" class="nav-link" data-scroll-target="#set-nucleic-dihedral">Set Nucleic Dihedral</a></li>
+  <li><a href="#set-phi-psi-angle" id="toc-set-phi-psi-angle" class="nav-link" data-scroll-target="#set-phi-psi-angle">Set Phi Psi Angle</a></li>
+  <li><a href="#set-ures-id" id="toc-set-ures-id" class="nav-link" data-scroll-target="#set-ures-id">Set URes ID</a></li>
+  <li><a href="#structure-parameter" id="toc-structure-parameter" class="nav-link" data-scroll-target="#structure-parameter">Structure Parameter</a></li>
+  <li><a href="#switch-residue-name" id="toc-switch-residue-name" class="nav-link" data-scroll-target="#switch-residue-name">Switch Residue Name</a></li>
+  <li><a href="#topology-dssp" id="toc-topology-dssp" class="nav-link" data-scroll-target="#topology-dssp">Topology DSSP</a></li>
+  <li><a href="#unique-chain-id" id="toc-unique-chain-id" class="nav-link" data-scroll-target="#unique-chain-id">Unique Chain ID</a></li>
+  <li><a href="#unique-residue-id" id="toc-unique-residue-id" class="nav-link" data-scroll-target="#unique-residue-id">Unique Residue ID</a></li>
+  <li><a href="#visualize-chi-angle" id="toc-visualize-chi-angle" class="nav-link" data-scroll-target="#visualize-chi-angle">Visualize Chi Angle</a></li>
+  <li><a href="#visualize-relative-atoms" id="toc-visualize-relative-atoms" class="nav-link" data-scroll-target="#visualize-relative-atoms">Visualize Relative Atoms</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/topology.html">Topology</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Topology</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="topology" class="level1">
-<h1>Topology</h1>
-<section id="topology-dssp" class="level2">
-<h2 class="anchored" data-anchor-id="topology-dssp">Topology DSSP</h2>
-<p>Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm</p>
-<p>Calculate the secondary structure of a structure, storing it on the <code class="custom-attribute">sec_struct</code> attribute.</p>
-<section id="outputs" class="level3">
-<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Work with the bond and residue topology of structures</p>
+<section id="animate-dihedrals" class="level2">
+<h2 class="anchored" data-anchor-id="animate-dihedrals">Animate Dihedrals</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>The input <code>Atoms</code> with updated <code class="custom-attribute">sec_struct</code> attributes based on the DSSP algorithm</td>
-<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
 </tr>
 <tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Selection of atoms to apply this node to</td>
 </tr>
-</tbody>
-</table>
-</section>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Atoms</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>Atomic geometry that contains vertices and edges</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="dihedral-phi" class="level2">
-<h2 class="anchored" data-anchor-id="dihedral-phi">Dihedral Phi</h2>
-<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
-<section id="outputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The calculated <code>Phi</code> angle for the residue, in the range of <code>(-pi, pi)</code></td>
-<td style="text-align: right;"><code class="custom-float">Phi</code></td>
+<td style="text-align: left;">Frames</td>
+<td style="text-align: left;"><code class="custom-collection">Collection</code></td>
+<td style="text-align: left;">Collection which holds the frames of the trajectory</td>
 </tr>
 <tr class="even">
-<td>The perpendicular vector from the line of BC to the point A</td>
-<td style="text-align: right;"><code class="custom-vector">Up</code></td>
+<td style="text-align: left;">Smoother Step</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Ease in and out of the individual frames if interpolating</td>
 </tr>
 <tr class="odd">
-<td>The vector BC corresponding to the backbone vector around which the angle is calculated</td>
-<td style="text-align: right;"><code class="custom-vector">Axis</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Menu</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="dihedral-psi" class="level2">
-<h2 class="anchored" data-anchor-id="dihedral-psi">Dihedral Psi</h2>
-<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
-<section id="outputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The calculated <code>Psi</code> angle for the residue, in the range of <code>(-pi, pi)</code></td>
-<td style="text-align: right;"><code class="custom-float">Psi</code></td>
+<td style="text-align: left;">Interpolate</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether to interpolate between frames of a trajectory or snap</td>
 </tr>
 <tr class="even">
-<td>The perpendicular vector from the line of BC to the point A</td>
-<td style="text-align: right;"><code class="custom-vector">Up</code></td>
-</tr>
-<tr class="odd">
-<td>The vector BC corresponding to the backbone vector around which the angle is calculated</td>
-<td style="text-align: right;"><code class="custom-vector">Axis</code></td>
+<td style="text-align: left;">Frame</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry with new positions based on the trajectory</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.AnimateDihedrals"><code>nodes.geometry.AnimateDihedrals</code></a></p>
 </section>
-</section>
-<section id="dihedral-chi-angle" class="level2">
-<h2 class="anchored" data-anchor-id="dihedral-chi-angle">Dihedral Chi Angle</h2>
-<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
-<section id="outputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
+<section id="atoms-to-ca-curves" class="level2">
+<h2 class="anchored" data-anchor-id="atoms-to-ca-curves">Atoms to CA Curves</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-float">Angle</code></td>
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
 </tr>
 <tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">Up</code></td>
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Selection of atoms to apply this node to</td>
 </tr>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">Axis</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="dihedral-chi-angle-1" class="level2">
-<h2 class="anchored" data-anchor-id="dihedral-chi-angle-1">Dihedral Chi Angle</h2>
-<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-float">Angle</code></td>
+<td style="text-align: left;">BS Smoothing</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">Up</code></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">Axis</code></td>
+<td style="text-align: left;">Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Distance (Angstroms) over which subsequent CA points are treated as a new chain</td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="dihedral-nucleic-angle" class="level2">
-<h2 class="anchored" data-anchor-id="dihedral-nucleic-angle">Dihedral Nucleic Angle</h2>
-<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>The angle between the vectors AB and CD, when made perpendicular to BC.</td>
-<td style="text-align: right;"><code class="custom-float">Angle</code></td>
+<td style="text-align: left;">Curves</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.AtomsToCACurves"><code>nodes.geometry.AtomsToCACurves</code></a></p>
+</section>
+<section id="atoms-to-curves" class="level2">
+<h2 class="anchored" data-anchor-id="atoms-to-curves">Atoms to Curves</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
 </tr>
 <tr class="even">
-<td>The vector BA when made perpendicular to the axis BC</td>
-<td style="text-align: right;"><code class="custom-vector">Up</code></td>
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Points to maintain and use for splines, non-selected points are removed</td>
 </tr>
 <tr class="odd">
-<td>The axis vector BC</td>
-<td style="text-align: right;"><code class="custom-vector">Axis</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="residue-mask" class="level2">
-<h2 class="anchored" data-anchor-id="residue-mask">Residue Mask</h2>
-<p>Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom. In the video example, the <code class="custom-attribute">atom_name</code> is used to select an atom within the groups. Each atom’s position is then offset to that position, showing the group-wise selection.</p>
-<p><video src="https://imgur.com/sD3jRTR.mp4" class="img-fluid" controls=""><a href="https://imgur.com/sD3jRTR.mp4">Video</a></video></p>
-<section id="outputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Group contains only one occurrance of the selected atom. None or more than one returns False</td>
-<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
+<td style="text-align: left;">Sort Points</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Sort points first by atom_id and chain_id before splitting to curves</td>
 </tr>
 <tr class="even">
-<td>Index for the group’s atom with specified name, returns -1 if not valid</td>
-<td style="text-align: right;"><code class="custom-int">Index</code></td>
-</tr>
-<tr class="odd">
-<td>Position of the picked point in the group, returns (0, 0, 0) if not valid</td>
-<td style="text-align: right;"><code class="custom-vector">Position</code></td>
+<td style="text-align: left;">Cutoff</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-int">atom_name</code></td>
-<td style="text-align: center;">1</td>
-<td>Atom to pick from the group</td>
+<td style="text-align: left;">Curves</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="menu-residue-mask" class="level2">
-<h2 class="anchored" data-anchor-id="menu-residue-mask">Menu Residue Mask</h2>
-<p>Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom. In the video example, the <code class="custom-attribute">atom_name</code> is used to select an atom within the groups. Each atom’s position is then offset to that position, showing the group-wise selection.</p>
-<p><video src="https://imgur.com/sD3jRTR.mp4" class="img-fluid" controls=""><a href="https://imgur.com/sD3jRTR.mp4">Video</a></video></p>
-<section id="outputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Group contains only one occurrance of the selected atom. None or more than one returns False</td>
-<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
-</tr>
-<tr class="even">
-<td>Index for the group’s atom with specified name, returns -1 if not valid</td>
-<td style="text-align: right;"><code class="custom-int">Index</code></td>
-</tr>
-<tr class="odd">
-<td>Position of the picked point in the group, returns (0, 0, 0) if not valid</td>
-<td style="text-align: right;"><code class="custom-vector">Position</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Atom Name</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="menu-residue-name" class="level2">
-<h2 class="anchored" data-anchor-id="menu-residue-name">Menu Residue Name</h2>
-<section id="outputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-int">res_name</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Residue Name</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="menu-atom-name" class="level2">
-<h2 class="anchored" data-anchor-id="menu-atom-name">Menu Atom Name</h2>
-<section id="outputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-int">atom_name</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Selection</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Atom Name</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="backbone-positions" class="level2">
-<h2 class="anchored" data-anchor-id="backbone-positions">Backbone Positions</h2>
-<p>If the atoms have been through the “Compute Backbone” node, then the backbone atom positions will be available as attributes through this node. In the video example, the <code>Alpha Carbons</code> output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.</p>
-<p><video src="https://imgur.com/6X2wnpY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/6X2wnpY.mp4">Video</a></video></p>
-<section id="outputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-10">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The position of the backbone <em>O</em> atom for the residue</td>
-<td style="text-align: right;"><code class="custom-vector">O</code></td>
-</tr>
-<tr class="even">
-<td>The position of the backbone <em>C</em> atom for the residue</td>
-<td style="text-align: right;"><code class="custom-vector">C</code></td>
-</tr>
-<tr class="odd">
-<td>The position of the backbone <em>CA</em> atom for the residue</td>
-<td style="text-align: right;"><code class="custom-vector">CA</code></td>
-</tr>
-<tr class="even">
-<td>The position of the backbone <em>N</em> atom for the residue</td>
-<td style="text-align: right;"><code class="custom-vector">N</code></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">NH</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-7">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="peptide-dihedral" class="level2">
-<h2 class="anchored" data-anchor-id="peptide-dihedral">Peptide Dihedral</h2>
-<p>Rotate the atoms cumulatively for each residue, adjusting the <code>phi</code> and <code>psi</code> angles for the selected residues</p>
-<section id="outputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-11">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Transformed vector</td>
-<td style="text-align: right;"><code class="custom-vector">Position</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-8">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-vector">Position</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>The resulting selection must overlap with this input selection</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Phi</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Psi</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="peptide-chi" class="level2">
-<h2 class="anchored" data-anchor-id="peptide-chi">Peptide Chi</h2>
-<p>Rotate the Chi angles for amino acid side chains</p>
-<section id="outputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-12">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">Position</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-9">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-vector">Position</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">X1</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">X2</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">X3</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">X4</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">X5</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="nucleic-dihedral" class="level2">
-<h2 class="anchored" data-anchor-id="nucleic-dihedral">Nucleic Dihedral</h2>
-<p>Rotate the dihedral angles for nucleic acid backbone</p>
-<section id="outputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-13">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Transformed vector</td>
-<td style="text-align: right;"><code class="custom-vector">Position</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-10" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-10">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-vector">Position</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>The resulting selection must overlap with this input selection</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Alpha</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Beta</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Gamma</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Epsilon</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Zeta</code></td>
-<td style="text-align: center;">0.0</td>
-<td>Amount to rotate around the axis</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="nucleic-chi" class="level2">
-<h2 class="anchored" data-anchor-id="nucleic-chi">Nucleic Chi</h2>
-<p>Rotate the Chi angles for nucleic acid side chains</p>
-<section id="outputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-14">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Transformed vector</td>
-<td style="text-align: right;"><code class="custom-vector">Position</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-11" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-11">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-vector">Position</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>The resulting selection must overlap with this input selection</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">X1</code></td>
-<td style="text-align: center;">0.0</td>
-<td>Amount to rotate around the axis</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="set-phi-psi-angle" class="level2">
-<h2 class="anchored" data-anchor-id="set-phi-psi-angle">Set Phi Psi Angle</h2>
-<section id="outputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-15">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-12" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-12">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Phi</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Psi</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="set-nucleic-dihedral" class="level2">
-<h2 class="anchored" data-anchor-id="set-nucleic-dihedral">Set Nucleic Dihedral</h2>
-<section id="outputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-16">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-13" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-13">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>The resulting selection must overlap with this input selection</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Alpha</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Beta</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Gamma</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Epsilon</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Zeta</code></td>
-<td style="text-align: center;">0.0</td>
-<td>Amount to rotate around the axis</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="set-chi-angle" class="level2">
-<h2 class="anchored" data-anchor-id="set-chi-angle">Set Chi Angle</h2>
-<section id="outputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-17">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-14" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-14">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">X1</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">X2</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">X3</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">X4</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">X5</code></td>
-<td style="text-align: center;">0.0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="backbone-n" class="level2">
-<h2 class="anchored" data-anchor-id="backbone-n">Backbone N</h2>
-<section id="outputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-18">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">N</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-15" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-15">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="backbone-ca" class="level2">
-<h2 class="anchored" data-anchor-id="backbone-ca">Backbone CA</h2>
-<section id="outputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-19">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">CA</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-16" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-16">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.AtomsToCurves"><code>nodes.geometry.AtomsToCurves</code></a></p>
 </section>
 <section id="backbone-c" class="level2">
 <h2 class="anchored" data-anchor-id="backbone-c">Backbone C</h2>
-<section id="outputs-20" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-20">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">C</code></td>
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-17" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-17">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td style="text-align: left;">C</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackboneC"><code>nodes.geometry.BackboneC</code></a></p>
 </section>
-</section>
-<section id="backbone-o" class="level2">
-<h2 class="anchored" data-anchor-id="backbone-o">Backbone O</h2>
-<section id="outputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-21">Outputs</h3>
+<section id="backbone-ca" class="level2">
+<h2 class="anchored" data-anchor-id="backbone-ca">Backbone CA</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">O</code></td>
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-18" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-18">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackboneCA"><code>nodes.geometry.BackboneCA</code></a></p>
 </section>
+<section id="backbone-n" class="level2">
+<h2 class="anchored" data-anchor-id="backbone-n">Backbone N</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">N</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackboneN"><code>nodes.geometry.BackboneN</code></a></p>
 </section>
 <section id="backbone-nh" class="level2">
 <h2 class="anchored" data-anchor-id="backbone-nh">Backbone NH</h2>
-<section id="outputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-22">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">NH</code></td>
+<td style="text-align: left;">Menu</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-19" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-19">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-menu">Menu</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td style="text-align: left;">NH</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackboneNH"><code>nodes.geometry.BackboneNH</code></a></p>
 </section>
-</section>
-<section id="set-ures-id" class="level2">
-<h2 class="anchored" data-anchor-id="set-ures-id">Set URes ID</h2>
-<section id="outputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-23">Outputs</h3>
+<section id="backbone-o" class="level2">
+<h2 class="anchored" data-anchor-id="backbone-o">Backbone O</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-20" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-20">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td style="text-align: left;">O</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackboneO"><code>nodes.geometry.BackboneO</code></a></p>
 </section>
+<section id="backbone-positions" class="level2">
+<h2 class="anchored" data-anchor-id="backbone-positions">Backbone Positions</h2>
+<p><a href="https://imgur.com/6X2wnpY.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><video src="https://imgur.com/6X2wnpY.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/6X2wnpY.mp4">Video</a></p>
+<p>If the atoms have been through the “Compute Backbone” node, then the backbone atom positions will be available as attributes through this node. In the video example, the <code>Alpha Carbons</code> output is styled as spheres, where the position is mixed with some of the backbone posiitons. The backbone positions can also be selected from the AA residue higher or lower with the specified offset.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">O</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The position of the backbone <em>O</em> atom for the residue</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The position of the backbone <em>C</em> atom for the residue</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CA</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The position of the backbone <em>CA</em> atom for the residue</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">N</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The position of the backbone <em>N</em> atom for the residue</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NH</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackbonePositions"><code>nodes.geometry.BackbonePositions</code></a></p>
+</section>
+<section id="backbone-vector-list" class="level2">
+<h2 class="anchored" data-anchor-id="backbone-vector-list">Backbone Vector List</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CA Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The <code class="custom-attribute">Index</code> at which to sample the <code class="custom-attribute">Position</code> field from</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Output list with evaluated field values</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CA Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackboneVectorList"><code>nodes.geometry.BackboneVectorList</code></a></p>
 </section>
 <section id="backbone-vectors" class="level2">
 <h2 class="anchored" data-anchor-id="backbone-vectors">Backbone Vectors</h2>
 <p>The <code>Vectors</code> that are useful for a curve when reading from a peptide backbone</p>
 <p>Calculate <code class="custom-attribute">Normal</code>, <code>Tangent</code> and <code>Bitangent</code> values from protein backbone atom positions</p>
-<p><video src=".mp4" class="img-fluid" controls=""><a href=".mp4">Video</a></video></p>
-<section id="outputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-24">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>The vector used for the <code class="custom-attribute">Normal</code> of a curve when reading positions from a peptide backbone</td>
-<td style="text-align: right;"><code class="custom-vector">Normal</code></td>
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector used for the <code class="custom-attribute">Normal</code> of a curve when reading positions from a peptide backbone</td>
 </tr>
 <tr class="even">
-<td>The vector used as the <code>Tangent</code> for a curve when reading values from a peptide backbone</td>
-<td style="text-align: right;"><code class="custom-vector">Tangent</code></td>
+<td style="text-align: left;">Tangent</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector used as the <code>Tangent</code> for a curve when reading values from a peptide backbone</td>
 </tr>
 <tr class="odd">
-<td>Cross product of the Normal and Tangent</td>
-<td style="text-align: right;"><code class="custom-vector">Bitangent</code></td>
+<td style="text-align: left;">Bitangent</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Cross product of the Normal and Tangent</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-21" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-21">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="edge-group-id" class="level2">
-<h2 class="anchored" data-anchor-id="edge-group-id">Edge Group ID</h2>
-<p>Check if both vertices of an edge are in the same <code>Group ID</code>.</p>
-<section id="outputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-25">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-int">Difference</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Is Equal</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-22" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-22">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-int">Group ID</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="is-backbone-edge" class="level2">
-<h2 class="anchored" data-anchor-id="is-backbone-edge">Is Backbone Edge</h2>
-<p>If both vertices of an edge are an alpha carbon and the edge is part of the same <code class="custom-attribute">chain_id</code>.</p>
-<section id="outputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-26">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Is Backbone Edge</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="sample-atomic-attributes" class="level2">
-<h2 class="anchored" data-anchor-id="sample-atomic-attributes">Sample Atomic Attributes</h2>
-<p>Sample relevant atomic attributes from a set of sample atoms, onto a new set of atoms / points. Attributes are selected based on the <code class="custom-attribute">Index</code> input.</p>
-<section id="outputs-27" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-27">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-23" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-23">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Atoms</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-geometry">Sample Atoms</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Index</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="find-bonded-atom" class="level2">
-<h2 class="anchored" data-anchor-id="find-bonded-atom">Find Bonded Atom</h2>
-<section id="outputs-28" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-28">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-int">Index</code></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-vector">Position</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-24" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-24">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-int">Index</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-menu">Method</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-menu">Atom Name</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Distance</code></td>
-<td style="text-align: center;">2</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="topology-find-bonds" class="level2">
-<h2 class="anchored" data-anchor-id="topology-find-bonds">Topology Find Bonds</h2>
-<p>Finds bonds between atoms based on distance. Based on the vdw_radii for each point, finds other points within a certain radius to create a bond to. Does not preserve the index for the points, detect bond type, or transfer all attributes</p>
-<p><video src="https://imgur.com/oUo5TsM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oUo5TsM.mp4">Video</a></video></p>
-<section id="outputs-29" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-29">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-25" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-25">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Atoms</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>Atomic geometry that contains vertices and edges</td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Scale</code></td>
-<td style="text-align: center;">1.0</td>
-<td>Scale the VDW radii of the atoms when searching for bonds</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="topology-break-bonds" class="level2">
-<h2 class="anchored" data-anchor-id="topology-break-bonds">Topology Break Bonds</h2>
-<p>Will delete a bond between atoms that already exists based on a distance cutoff, or is selected in the <code>Selection</code> input. Leaves the atoms unaffected</p>
-<p><video src="https://imgur.com/n8cTN0k.mp4" class="img-fluid" controls=""><a href="https://imgur.com/n8cTN0k.mp4">Video</a></video></p>
-<section id="outputs-30" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-30">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Atomic geometry that contains vertices and edges</td>
-<td style="text-align: right;"><code class="custom-geometry">Atoms</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-26" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-26">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-geometry">Atoms</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td>Atomic geometry that contains vertices and edges</td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">False</td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Cutoff</code></td>
-<td style="text-align: center;">2.5</td>
-<td>Cutoff distance over which to remove bonds (Angstrom)</td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BackboneVectors"><code>nodes.geometry.BackboneVectors</code></a></p>
 </section>
 <section id="bond-count" class="level2">
 <h2 class="anchored" data-anchor-id="bond-count">Bond Count</h2>
 <p>The number of bonds for an atom</p>
-<section id="outputs-31" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-31">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>If the point has an edge / bond to another point</td>
-<td style="text-align: right;"><code class="custom-bool">Is Bonded</code></td>
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Is Bonded</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">If the point has an edge / bond to another point</td>
 </tr>
 <tr class="even">
-<td>The number of bonds or edges that a point has</td>
-<td style="text-align: right;"><code class="custom-int">Bonds</code></td>
+<td style="text-align: left;">Bonds</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The number of bonds or edges that a point has</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BondCount"><code>nodes.geometry.BondCount</code></a></p>
 </section>
-<section id="inputs-27" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-27">Inputs</h3>
+<section id="break-bonds" class="level2">
+<h2 class="anchored" data-anchor-id="break-bonds">Break Bonds</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-int">Index</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cutoff</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Cutoff distance over which to remove bonds (Angstrom)</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.BreakBonds"><code>nodes.geometry.BreakBonds</code></a></p>
 </section>
+<section id="chain-parameter" class="level2">
+<h2 class="anchored" data-anchor-id="chain-parameter">Chain Parameter</h2>
+<p>Information for each residue within the context of the chain</p>
+<p>Read information about the residues within the context of each chain</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Residue Count</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of residues in the chain</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Residue Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Res ID along the chain if counting from 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">First res_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The first Res ID in a chain (truncated chains start above 1)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Last res_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The Res ID of the last residue in chain (not equal to Length if chain is truncated)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index of First</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index in whole structure of the first atom in the chain</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Index of Last</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index in the whole structure the last atom in the chain</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.ChainParameter"><code>nodes.geometry.ChainParameter</code></a></p>
+</section>
+<section id="color-backbone" class="level2">
+<h2 class="anchored" data-anchor-id="color-backbone">Color Backbone</h2>
+<p><a href="https://imgur.com/nadPkJd.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><video src="https://imgur.com/nadPkJd.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/nadPkJd.mp4">Video</a></p>
+<p>Select colors for atoms that are part of the backbone or the side chain of a peptide or nucleic acid polymer. Atoms that are neither maintain their current <code class="custom-attribute">Color</code> attribute</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Backbone</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Side Chain</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.ColorBackbone"><code>nodes.geometry.ColorBackbone</code></a></p>
+</section>
+<section id="curve-offset-dihedral" class="level2">
+<h2 class="anchored" data-anchor-id="curve-offset-dihedral">Curve Offset Dihedral</h2>
+<p>Offset from the current point a number of points, then use their <code class="custom-attribute">Position</code> and <code class="custom-attribute">Normal</code> to calculat a dihdral angle between them</p>
+<p>Calculate the Dihredral angle between the current point and another point offset along the curve, using their <code class="custom-attribute">Normal</code>s</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector to use as the B &amp; C components for <code>Dihedral Angle</code> calculation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The normal that will be added the <code class="custom-attribute">Position</code> to create the A &amp; D components of the dihedral calcaulation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index of the current point to calculate from</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Offset</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The number of points to offset before calculating the angle</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Angle</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The calculated angle in radians</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.CurveOffsetDihedral"><code>nodes.geometry.CurveOffsetDihedral</code></a></p>
+</section>
+<section id="dihedral-chi-angle" class="level2">
+<h2 class="anchored" data-anchor-id="dihedral-chi-angle">Dihedral Chi Angle</h2>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Angle</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Up</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.DihedralChiAngle"><code>nodes.geometry.DihedralChiAngle</code></a></p>
+</section>
+<section id="dihedral-nucleic-angle" class="level2">
+<h2 class="anchored" data-anchor-id="dihedral-nucleic-angle">Dihedral Nucleic Angle</h2>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Angle</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The angle between the vectors AB and CD, when made perpendicular to BC.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Up</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector BA when made perpendicular to the axis BC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The axis vector BC</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.DihedralNucleicAngle"><code>nodes.geometry.DihedralNucleicAngle</code></a></p>
+</section>
+<section id="dihedral-phi" class="level2">
+<h2 class="anchored" data-anchor-id="dihedral-phi">Dihedral Phi</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Menu</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Phi</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The calculated <code>Phi</code> angle for the residue, in the range of <code>(-pi, pi)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Up</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The perpendicular vector from the line of BC to the point A</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector BC corresponding to the backbone vector around which the angle is calculated</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.DihedralPhi"><code>nodes.geometry.DihedralPhi</code></a></p>
+</section>
+<section id="dihedral-psi" class="level2">
+<h2 class="anchored" data-anchor-id="dihedral-psi">Dihedral Psi</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Psi</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The calculated <code>Psi</code> angle for the residue, in the range of <code>(-pi, pi)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Up</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The perpendicular vector from the line of BC to the point A</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector BC corresponding to the backbone vector around which the angle is calculated</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.DihedralPsi"><code>nodes.geometry.DihedralPsi</code></a></p>
+</section>
+<section id="edge-group-id" class="level2">
+<h2 class="anchored" data-anchor-id="edge-group-id">Edge Group ID</h2>
+<p>Check if both vertices of an edge are in the same <code>Group ID</code>.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Group ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Difference</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Is Equal</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.EdgeGroupID"><code>nodes.geometry.EdgeGroupID</code></a></p>
 </section>
 <section id="edge-info" class="level2">
 <h2 class="anchored" data-anchor-id="edge-info">Edge Info</h2>
+<p><a href="https://imgur.com/Ykyis3e.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><video src="https://imgur.com/Ykyis3e.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/Ykyis3e.mp4">Video</a></p>
 <p>Get information for the selected edge, evaluated on the point domain. The “Edge Index” selects the edge from all possible connected edges. Edges are unfortunately stored somewhat randomly. The resulting information is between the evaluating point and the point that the edge is between. Point Index returns -1 if not connected. In the video example, cones are instanced on each point where the Edge Index returns a valid connection. The Edge Vector can be used to align the instanced cone along that edge. The length of the edge can be used to scale the cone to the other point. As the “Edge Index” is changed, the selected edge changes. When “Edge Index” == 3, only the atoms with 4 connections are selected, which in this model (1BNA) are just the phosphates.</p>
-<p><video src="https://imgur.com/Ykyis3e.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Ykyis3e.mp4">Video</a></video></p>
-<section id="outputs-32" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-32">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Whether there is a valid edge corresponding to the given index</td>
-<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
+<td style="text-align: left;">Vertex Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td>The index for the other point involved in this edge, -1 if not connected</td>
-<td style="text-align: right;"><code class="custom-int">Point Index</code></td>
-</tr>
-<tr class="odd">
-<td>The position for the other point involved in this edge, (0, 0, 0) if not connected</td>
-<td style="text-align: right;"><code class="custom-vector">Point Position</code></td>
-</tr>
-<tr class="even">
-<td>The index on the edge domain for the selected edge. -1 if not connected</td>
-<td style="text-align: right;"><code class="custom-int">Edge Index</code></td>
-</tr>
-<tr class="odd">
-<td>The vector along the selected edge. (0, 0, 0) if not connected</td>
-<td style="text-align: right;"><code class="custom-vector">Edge Vector</code></td>
-</tr>
-<tr class="even">
-<td>Length of the selected edge, -1 if not connected</td>
-<td style="text-align: right;"><code class="custom-float">Edge Length</code></td>
+<td style="text-align: left;">Edge Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index within the gorup of edges that are connected to this point</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-28" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-28">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-int">Vertex Index</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
+<td style="text-align: left;">Is Valid</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Whether there is a valid edge corresponding to the given index</td>
 </tr>
 <tr class="even">
-<td><code class="custom-int">Edge Index</code></td>
-<td style="text-align: center;">0</td>
-<td>Index within the gorup of edges that are connected to this point</td>
+<td style="text-align: left;">Point Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index for the other point involved in this edge, -1 if not connected</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Point Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The position for the other point involved in this edge, (0, 0, 0) if not connected</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edge Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index on the edge domain for the selected edge. -1 if not connected</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Edge Vector</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector along the selected edge. (0, 0, 0) if not connected</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edge Length</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of the selected edge, -1 if not connected</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.EdgeInfo"><code>nodes.geometry.EdgeInfo</code></a></p>
 </section>
+<section id="edge-length" class="level2">
+<h2 class="anchored" data-anchor-id="edge-length">Edge Length</h2>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Length</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.EdgeLength"><code>nodes.geometry.EdgeLength</code></a></p>
+</section>
+<section id="find-bonded-atom" class="level2">
+<h2 class="anchored" data-anchor-id="find-bonded-atom">Find Bonded Atom</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Atom Name</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Distance</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Is Valid</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.FindBondedAtom"><code>nodes.geometry.FindBondedAtom</code></a></p>
+</section>
+<section id="find-bonds" class="level2">
+<h2 class="anchored" data-anchor-id="find-bonds">Find Bonds</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Selection of atoms to apply this node to</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Scale the VDW radii of the atoms when searching for bonds</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.FindBonds"><code>nodes.geometry.FindBonds</code></a></p>
+</section>
+<section id="menu-residue-mask" class="level2">
+<h2 class="anchored" data-anchor-id="menu-residue-mask">Menu Residue Mask</h2>
+<p><a href="https://imgur.com/sD3jRTR.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><video src="https://imgur.com/sD3jRTR.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/sD3jRTR.mp4">Video</a></p>
+<p>Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom. In the video example, the <code class="custom-attribute">atom_name</code> is used to select an atom within the groups. Each atom’s position is then offset to that position, showing the group-wise selection.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atom Name</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Is Valid</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Group contains only one occurrance of the selected atom. None or more than one returns False</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for the group’s atom with specified name, returns -1 if not valid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Position of the picked point in the group, returns (0, 0, 0) if not valid</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.MenuResidueMask"><code>nodes.geometry.MenuResidueMask</code></a></p>
+</section>
+<section id="menu-residue-name" class="level2">
+<h2 class="anchored" data-anchor-id="menu-residue-name">Menu Residue Name</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Residue Name</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">res_name</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.MenuResidueName"><code>nodes.geometry.MenuResidueName</code></a></p>
+</section>
+<section id="nucleic-chi" class="level2">
+<h2 class="anchored" data-anchor-id="nucleic-chi">Nucleic Chi</h2>
+<p>Rotate the Chi angles for nucleic acid side chains</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X1</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Amount to rotate around the axis</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Transformed vector</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.NucleicChi"><code>nodes.geometry.NucleicChi</code></a></p>
+</section>
+<section id="nucleic-dihedral" class="level2">
+<h2 class="anchored" data-anchor-id="nucleic-dihedral">Nucleic Dihedral</h2>
+<p>Rotate the dihedral angles for nucleic acid backbone</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Beta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gamma</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Epsilon</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zeta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Amount to rotate around the axis</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Transformed vector</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.NucleicDihedral"><code>nodes.geometry.NucleicDihedral</code></a></p>
+</section>
+<section id="peptide-chi" class="level2">
+<h2 class="anchored" data-anchor-id="peptide-chi">Peptide Chi</h2>
+<p>Rotate the Chi angles for amino acid side chains</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X1</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X2</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X3</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X4</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X5</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.PeptideChi"><code>nodes.geometry.PeptideChi</code></a></p>
+</section>
+<section id="peptide-dihedral" class="level2">
+<h2 class="anchored" data-anchor-id="peptide-dihedral">Peptide Dihedral</h2>
+<p>Rotate the atoms cumulatively for each residue, adjusting the <code>phi</code> and <code>psi</code> angles for the selected residues</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Phi</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Psi</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Transformed vector</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.PeptideDihedral"><code>nodes.geometry.PeptideDihedral</code></a></p>
 </section>
 <section id="point-edge-angle" class="level2">
 <h2 class="anchored" data-anchor-id="point-edge-angle">Point Edge Angle</h2>
+<p><a href="https://imgur.com/oQP6Cv8.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><video src="https://imgur.com/oQP6Cv8.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/oQP6Cv8.mp4">Video</a></p>
 <p>Calculate the angle between two edges, selected with the edge indices. For molecule bonds, combinations of [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)] will select all possible bond angles. In the video example, two edges are selected with their “Edge Index” values. Those atoms which aren’t valid return false and do not get instanced. The two edge vectors are used to calculate the perpendicular vector through cross product, around which the rotation for the cone is rotated. This demonstrates the ability to calculate the edge angle between the two selected edges.</p>
-<p><video src="https://imgur.com/oQP6Cv8.mp4" class="img-fluid" controls=""><a href="https://imgur.com/oQP6Cv8.mp4">Video</a></video></p>
-<section id="outputs-33" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-33">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Both of the selected edges are valid</td>
-<td style="text-align: right;"><code class="custom-bool">Is Valid</code></td>
+<td style="text-align: left;">Vertex Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index of the point at which to evaluate this node</td>
 </tr>
 <tr class="even">
-<td>Angle between the two selected edges in radians. Returns 0 if not valid</td>
-<td style="text-align: right;"><code class="custom-float">Angle</code></td>
+<td style="text-align: left;">Edge A</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index of the edges of this point to select</td>
 </tr>
 <tr class="odd">
-<td>Index for “Edge A” in the Edge domain of the geometry. Returns -1 if not valid</td>
-<td style="text-align: right;"><code class="custom-int">Edge Index A</code></td>
-</tr>
-<tr class="even">
-<td>Index for “Edge B” in the Edge domain of the geometry. Returns -1 if not valid</td>
-<td style="text-align: right;"><code class="custom-int">Edge Index B</code></td>
-</tr>
-<tr class="odd">
-<td>Vector from the current point to the other point in Edge A. Returns (0, 0, 0) if not valid.</td>
-<td style="text-align: right;"><code class="custom-vector">Edge Vector A</code></td>
-</tr>
-<tr class="even">
-<td>Vector from the current point to the other point in Edge B. Returns (0, 0, 0) if not valid.</td>
-<td style="text-align: right;"><code class="custom-vector">Edge Vector B</code></td>
+<td style="text-align: left;">Edge B</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index of the edges of this point to select</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-29" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-29">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-int">Vertex Index</code></td>
-<td style="text-align: center;">0</td>
-<td>The index of the point at which to evaluate this node</td>
+<td style="text-align: left;">Is Valid</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Both of the selected edges are valid</td>
 </tr>
 <tr class="even">
-<td><code class="custom-int">Edge A</code></td>
-<td style="text-align: center;">0</td>
-<td>The index of the edges of this point to select</td>
+<td style="text-align: left;">Angle</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between the two selected edges in radians. Returns 0 if not valid</td>
 </tr>
 <tr class="odd">
-<td><code class="custom-int">Edge B</code></td>
-<td style="text-align: center;">1</td>
-<td>The index of the edges of this point to select</td>
+<td style="text-align: left;">Edge Index A</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for “Edge A” in the Edge domain of the geometry. Returns -1 if not valid</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edge Index B</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for “Edge B” in the Edge domain of the geometry. Returns -1 if not valid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Edge Vector A</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Vector from the current point to the other point in Edge A. Returns (0, 0, 0) if not valid.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edge Vector B</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Vector from the current point to the other point in Edge B. Returns (0, 0, 0) if not valid.</td>
 </tr>
 </tbody>
 </table>
-</section>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.PointEdgeAngle"><code>nodes.geometry.PointEdgeAngle</code></a></p>
 </section>
 <section id="points-of-edge" class="level2">
 <h2 class="anchored" data-anchor-id="points-of-edge">Points of Edge</h2>
+<p><a href="https://imgur.com/fZ6srIS.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><video src="https://imgur.com/fZ6srIS.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/fZ6srIS.mp4">Video</a></p>
 <p>Finds the conntected point for the selected “Edge Index”, and returns each point index for all of the points connected to that point. If the connection doesn’t exist, or the connection is back to the original point, -1 is returned. In the video example, a new point is selected based on the “Edge Index”. At that point, all of the connecting points are exposed as indices <code>0, 1, 2, 3</code>. If that index is not a valid point or connection, or the point is the same as the original point that is being evaluated, then -1 is returned. This is one of the more complicated topology nodes, but allows indexing of the atoms that are bonded to a bonded atom. This helps with doing calculations for planar molecules.</p>
-<p><video src="https://imgur.com/fZ6srIS.mp4" class="img-fluid" controls=""><a href="https://imgur.com/fZ6srIS.mp4">Video</a></video></p>
-<section id="outputs-34" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-34">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Index for the 0th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
-<td style="text-align: right;"><code class="custom-int">0</code></td>
+<td style="text-align: left;">Vertex Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td>Index for the 1th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
-<td style="text-align: right;"><code class="custom-int">1</code></td>
-</tr>
-<tr class="odd">
-<td>Index for the 2th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
-<td style="text-align: right;"><code class="custom-int">2</code></td>
-</tr>
-<tr class="even">
-<td>Index for the 3th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
-<td style="text-align: right;"><code class="custom-int">3</code></td>
-</tr>
-<tr class="odd">
-<td>Number of edges conncted to the connected point, including this edge</td>
-<td style="text-align: right;"><code class="custom-int">Total</code></td>
+<td style="text-align: left;">Edge Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index within the gorup of edges that are connected to this point</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-30" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-30">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-int">Vertex Index</code></td>
-<td style="text-align: center;">0</td>
-<td></td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for the 0th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
 </tr>
 <tr class="even">
-<td><code class="custom-int">Edge Index</code></td>
-<td style="text-align: center;">0</td>
-<td>Index within the gorup of edges that are connected to this point</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for the 1th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for the 2th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for the 3th point, connected to the point at the end of the selected edge. Returns -1 if not connected or self</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Total</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of edges conncted to the connected point, including this edge</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.PointsOfEdge"><code>nodes.geometry.PointsOfEdge</code></a></p>
+</section>
+<section id="residue-dihedral-angle" class="level2">
+<h2 class="anchored" data-anchor-id="residue-dihedral-angle">Residue Dihedral Angle</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Atom to pick from the group</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Atom to pick from the group</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Atom to pick from the group</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BA⟂(BC)</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The vector BA when made perpendicular to the axis BC</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CD⟂(BC)</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The Vector CD when makde perpendicular to the axis BC</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BC</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The axis vector BC</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.ResidueDihedralAngle"><code>nodes.geometry.ResidueDihedralAngle</code></a></p>
+</section>
+<section id="residue-mask" class="level2">
+<h2 class="anchored" data-anchor-id="residue-mask">Residue Mask</h2>
+<p><a href="https://imgur.com/sD3jRTR.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><video src="https://imgur.com/sD3jRTR.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/sD3jRTR.mp4">Video</a></p>
+<p>Returns the index for the atom for each unique group (from res_id) for each point in that group. Allows for example, all atoms in a group to be rotated around the position of the selected atom. In the video example, the <code class="custom-attribute">atom_name</code> is used to select an atom within the groups. Each atom’s position is then offset to that position, showing the group-wise selection.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">atom_name</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Atom to pick from the group</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Is Valid</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Group contains only one occurrance of the selected atom. None or more than one returns False</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for the group’s atom with specified name, returns -1 if not valid</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Position of the picked point in the group, returns (0, 0, 0) if not valid</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.ResidueMask"><code>nodes.geometry.ResidueMask</code></a></p>
+</section>
+<section id="residue-parameter" class="level2">
+<h2 class="anchored" data-anchor-id="residue-parameter">Residue Parameter</h2>
+<p>Read information about the atoms with the context of each residue the atom is in</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">An atom’s relative position in a residue, with the first atom being 0 and the last atom being 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Atom Count</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of atoms in a residue</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Atom Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index of an atom in a residue when counting from 0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">First atom_name</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">the atom_name for the first atom in a residue</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Last atom_name</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The atom_name for the last atom in a residue</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index of First</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index (in the whole structure) for the first atom in a residue</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Index of Last</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index (in the whole structure) for the last atom in a residue</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.ResidueParameter"><code>nodes.geometry.ResidueParameter</code></a></p>
+</section>
+<section id="sample-nearest-atoms" class="level2">
+<h2 class="anchored" data-anchor-id="sample-nearest-atoms">Sample Nearest Atoms</h2>
+<p><a href="https://imgur.com/UzNwLv2.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><video src="https://imgur.com/UzNwLv2.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/UzNwLv2.mp4">Video</a></p>
+<p>Sample the nearest atoms from another object, to get the colors or other attributes and apply them to a volume mesh.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">b_factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">atomic_number</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">chain_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">res_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">res_name</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.SampleNearestAtoms"><code>nodes.geometry.SampleNearestAtoms</code></a></p>
+</section>
+<section id="set-chi-angle" class="level2">
+<h2 class="anchored" data-anchor-id="set-chi-angle">Set Chi Angle</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X1</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X2</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X3</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X4</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X5</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.SetChiAngle"><code>nodes.geometry.SetChiAngle</code></a></p>
+</section>
+<section id="set-nucleic-dihedral" class="level2">
+<h2 class="anchored" data-anchor-id="set-nucleic-dihedral">Set Nucleic Dihedral</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Beta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gamma</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Epsilon</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Zeta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Amount to rotate around the axis</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.SetNucleicDihedral"><code>nodes.geometry.SetNucleicDihedral</code></a></p>
+</section>
+<section id="set-phi-psi-angle" class="level2">
+<h2 class="anchored" data-anchor-id="set-phi-psi-angle">Set Phi Psi Angle</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Phi</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Psi</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.SetPhiPsiAngle"><code>nodes.geometry.SetPhiPsiAngle</code></a></p>
+</section>
+<section id="set-ures-id" class="level2">
+<h2 class="anchored" data-anchor-id="set-ures-id">Set URes ID</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.SetUResID"><code>nodes.geometry.SetUResID</code></a></p>
+</section>
+<section id="structure-parameter" class="level2">
+<h2 class="anchored" data-anchor-id="structure-parameter">Structure Parameter</h2>
+<p>Read information about the atoms with the context of the whole structure</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atom Factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Factor of the atom within the structure, which is the relative position of the <code class="custom-attribute">Index</code> within the overall structure between 0 and 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"><code class="custom-attribute">Index</code> of the point within the structure. Equal to the <code class="custom-attribute">Index</code> input node</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Atom Count</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of atoms in the structure, equal to the size of the Point Domain</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index of First</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"><code class="custom-attribute">Index</code> of first atom in the entire structure, which will always be 0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Index of Last</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index of last atom in the entire structure. Equal to <code>Atom Count</code> - 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Residue Factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Residue Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">A unique <code>Group ID</code> that increases whenever <code>Sub Group ID</code> or <code>Group ID</code> change</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Residue Count</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.StructureParameter"><code>nodes.geometry.StructureParameter</code></a></p>
+</section>
+<section id="switch-residue-name" class="level2">
+<h2 class="anchored" data-anchor-id="switch-residue-name">Switch Residue Name</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ALA</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARG</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ASN</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ASP</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CYS</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GLU</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GLN</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GLY</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HIS</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ILE</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">LEU</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LYS</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MET</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PHE</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PRO</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SER</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">THR</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TRP</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TYR</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">VAL</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Output</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.SwitchResidueName"><code>nodes.geometry.SwitchResidueName</code></a></p>
+</section>
+<section id="topology-dssp" class="level2">
+<h2 class="anchored" data-anchor-id="topology-dssp">Topology DSSP</h2>
+<p>Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm</p>
+<p>Calculate the secondary structure of a structure, storing it on the <code class="custom-attribute">sec_struct</code> attribute.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">The input <code>Atoms</code> with updated <code class="custom-attribute">sec_struct</code> attributes based on the DSSP algorithm</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.TopologyDSSP"><code>nodes.geometry.TopologyDSSP</code></a></p>
+</section>
+<section id="unique-chain-id" class="level2">
+<h2 class="anchored" data-anchor-id="unique-chain-id">Unique Chain ID</h2>
+<p>Compute a unique Group ID based on the <code class="custom-attribute">chain_id</code> attribute, but also incrememnting if subsequent points are over a cutoff distance from each other</p>
+<p>Assumes only CA points in the geometry. Unique <code class="custom-int">Group ID</code> for each chain, incrementing if distance between CA points are greater than threshold</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cutoff</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Threshold distance over which the next points are considered to be part of a new chain</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Group ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Calculated <code>Group ID</code> attribute</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.UniqueChainID"><code>nodes.geometry.UniqueChainID</code></a></p>
+</section>
+<section id="unique-residue-id" class="level2">
+<h2 class="anchored" data-anchor-id="unique-residue-id">Unique Residue ID</h2>
+<p>A unique Group ID that is calculated for every residue in the structure</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Group ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">A unique Group ID for eash residue</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.UniqueResidueID"><code>nodes.geometry.UniqueResidueID</code></a></p>
+</section>
+<section id="visualize-chi-angle" class="level2">
+<h2 class="anchored" data-anchor-id="visualize-chi-angle">Visualize Chi Angle</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">A value which will be scaled appropriately for the world</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mesh</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Curve</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.VisualizeChiAngle"><code>nodes.geometry.VisualizeChiAngle</code></a></p>
+</section>
+<section id="visualize-relative-atoms" class="level2">
+<h2 class="anchored" data-anchor-id="visualize-relative-atoms">Visualize Relative Atoms</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Scale</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Target Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index for the selected point to measure to</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Target Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.VisualizeRelativeAtoms"><code>nodes.geometry.VisualizeRelativeAtoms</code></a></p>
 
 
-</section>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -2446,13 +3166,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -2801,7 +3522,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/utils.html" class="pagination-link" aria-label="Utilities">
+      <a href="../nodes/utilities.html" class="pagination-link" aria-label="Utilities">
         <span class="nav-page-text">Utilities</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -2820,6 +3541,38 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

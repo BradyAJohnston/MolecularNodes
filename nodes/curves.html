@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>curves – Molecular Nodes</title>
+<title>Curves – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -30,7 +33,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/density.html" rel="next">
+<link href="../nodes/dna.html" rel="next">
 <link href="../nodes/color.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -38,10 +41,13 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,6 +84,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
 
 </head>
@@ -100,12 +158,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="../tutorials/index.html" aria-current="page"> 
+    <a class="nav-link" href="../tutorials/index.html"> 
 <span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../nodes/index.html" aria-current="page"> 
+<span class="menu-text">Nodes</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
@@ -129,7 +195,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/curves.html">Curves</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/curves.html">Curves</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -141,189 +207,126 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Tutorials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Tutorials</span></a>
+  <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Installation</span></a>
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../tutorials/interface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender’s Interface</span></a>
+  <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/importing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fetch from the PDB</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/selections.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Selections</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/trajectories.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trajectories</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/streaming-trajectories.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Streaming Trajectories</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/cryoem.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CryoEM Maps</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../tutorials/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../data_table.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data Tables</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Attributes</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Curves</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Density</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Ensemble</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Topology</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/utilities.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Utilities</span></a>
   </div>
 </li>
-      </ul>
-  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/generated_nodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generated Node Groups</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -334,643 +337,562 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#curves" id="toc-curves" class="nav-link active" data-scroll-target="#curves">Curves</a>
-  <ul class="collapse">
-  <li><a href="#curve-vectors" id="toc-curve-vectors" class="nav-link" data-scroll-target="#curve-vectors">Curve Vectors</a></li>
-  <li><a href="#curve-offset-dihedral" id="toc-curve-offset-dihedral" class="nav-link" data-scroll-target="#curve-offset-dihedral">Curve Offset Dihedral</a></li>
-  <li><a href="#curve-transform" id="toc-curve-transform" class="nav-link" data-scroll-target="#curve-transform">Curve Transform</a></li>
-  <li><a href="#curve-rotation" id="toc-curve-rotation" class="nav-link" data-scroll-target="#curve-rotation">Curve Rotation</a></li>
+  <li><a href="#break-curves" id="toc-break-curves" class="nav-link active" data-scroll-target="#break-curves">Break Curves</a></li>
   <li><a href="#cumulative-length" id="toc-cumulative-length" class="nav-link" data-scroll-target="#cumulative-length">Cumulative Length</a></li>
-  <li><a href="#curve-offset-dot" id="toc-curve-offset-dot" class="nav-link" data-scroll-target="#curve-offset-dot">Curve Offset Dot</a></li>
-  <li><a href="#offset-point-along-curve" id="toc-offset-point-along-curve" class="nav-link" data-scroll-target="#offset-point-along-curve">Offset Point Along Curve</a></li>
-  <li><a href="#curve-endpoint-values" id="toc-curve-endpoint-values" class="nav-link" data-scroll-target="#curve-endpoint-values">Curve Endpoint Values</a></li>
-  <li><a href="#curve-visualize" id="toc-curve-visualize" class="nav-link" data-scroll-target="#curve-visualize">Curve Visualize</a></li>
   <li><a href="#curve-custom-profile" id="toc-curve-custom-profile" class="nav-link" data-scroll-target="#curve-custom-profile">Curve Custom Profile</a></li>
-  </ul></li>
+  <li><a href="#curve-endpoint-values" id="toc-curve-endpoint-values" class="nav-link" data-scroll-target="#curve-endpoint-values">Curve Endpoint Values</a></li>
+  <li><a href="#curve-offset-dot" id="toc-curve-offset-dot" class="nav-link" data-scroll-target="#curve-offset-dot">Curve Offset Dot</a></li>
+  <li><a href="#curve-rotation" id="toc-curve-rotation" class="nav-link" data-scroll-target="#curve-rotation">Curve Rotation</a></li>
+  <li><a href="#curve-transform" id="toc-curve-transform" class="nav-link" data-scroll-target="#curve-transform">Curve Transform</a></li>
+  <li><a href="#curve-vectors" id="toc-curve-vectors" class="nav-link" data-scroll-target="#curve-vectors">Curve Vectors</a></li>
+  <li><a href="#offset-point-along-curve" id="toc-offset-point-along-curve" class="nav-link" data-scroll-target="#offset-point-along-curve">Offset Point Along Curve</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/index.html">Nodes</a></li><li class="breadcrumb-item"><a href="../nodes/curves.html">Curves</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Curves</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="curves" class="level1">
-<h1>Curves</h1>
-<section id="curve-vectors" class="level2">
-<h2 class="anchored" data-anchor-id="curve-vectors">Curve Vectors</h2>
-<p>Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent</p>
-<section id="outputs" class="level3">
-<h3 class="anchored" data-anchor-id="outputs">Outputs</h3>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Create and manipulate curves</p>
+<section id="break-curves" class="level2">
+<h2 class="anchored" data-anchor-id="break-curves">Break Curves</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>The normal of the control point. Used for calculating the rotation for the point and when calculating <code>Curve to Mesh</code></td>
-<td style="text-align: right;"><code class="custom-vector">Normal</code></td>
+<td style="text-align: left;">Curves</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to delete elements from</td>
 </tr>
 <tr class="even">
-<td>The tangent of the point, which is calculated as the direction from the previous point to the next point</td>
-<td style="text-align: right;"><code class="custom-vector">Tangent</code></td>
-</tr>
-<tr class="odd">
-<td>The cross product of the Normal and the Tangent</td>
-<td style="text-align: right;"><code class="custom-vector">Bitangent</code></td>
+<td style="text-align: left;">Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="curve-offset-dihedral" class="level2">
-<h2 class="anchored" data-anchor-id="curve-offset-dihedral">Curve Offset Dihedral</h2>
-<p>Offset from the current point a number of points, then use their <code class="custom-attribute">Position</code> and <code class="custom-attribute">Normal</code> to calculat a dihdral angle between them</p>
-<p>Calculate the Dihredral angle between the current point and another point offset along the curve, using their <code class="custom-attribute">Normal</code>s</p>
-<section id="outputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-1">Outputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>The calculated angle in radians</td>
-<td style="text-align: right;"><code class="custom-float">Angle</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs" class="level3">
-<h3 class="anchored" data-anchor-id="inputs">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-vector">Position</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td>The vector to use as the B &amp; C components for <code>Dihedral Angle</code> calculation</td>
+<td style="text-align: left;">Curves</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td><code class="custom-vector">Normal</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td>The normal that will be added the <code class="custom-attribute">Position</code> to create the A &amp; D components of the dihedral calcaulation</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Index</code></td>
-<td style="text-align: center;">0</td>
-<td>The index of the current point to calculate from</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Offset</code></td>
-<td style="text-align: center;">0</td>
-<td>The number of points to offset before calculating the angle</td>
+<td style="text-align: left;">Original Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index of Spline before segments removed</td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="curve-transform" class="level2">
-<h2 class="anchored" data-anchor-id="curve-transform">Curve Transform</h2>
-<p>Calculates the transformation matrix for the point on the curve. Position is taken from the <code class="custom-attribute">Position</code>, <code class="custom-attribute">Rotation</code> is calculated from the <code class="custom-attribute">Normal</code> and <code>Tangent</code> values, and the <code>Radius</code> drives the scale</p>
-<p>The transform for the point, combining the <code class="custom-attribute">Position</code> and <code>Curve Rotation</code> using <code class="custom-attribute">Normal</code> and <code>Tangent</code></p>
-<section id="outputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-2">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The combine 4X4 transformation matrix for the point of the curve</td>
-<td style="text-align: right;"><code class="custom-matrix">Transform</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="curve-rotation" class="level2">
-<h2 class="anchored" data-anchor-id="curve-rotation">Curve Rotation</h2>
-<p>Computes the rotation of the point on the curve, by default using the <code class="custom-attribute">Normal</code> attribute and the <code>Tangent</code> axis</p>
-<p>The <code class="custom-attribute">Rotation</code> for the point, using the <code class="custom-attribute">Normal</code> and <code>Tangent</code> of the point</p>
-<section id="outputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-3">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The computed rotation for the point on the curve</td>
-<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-1" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-1">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-vector">Normal</code></td>
-<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
-<td>The default direction to use as the Secondary Axis / X axis when computing the rotation</td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.BreakCurves"><code>nodes.geometry.BreakCurves</code></a></p>
 </section>
 <section id="cumulative-length" class="level2">
 <h2 class="anchored" data-anchor-id="cumulative-length">Cumulative Length</h2>
 <p>The length of the current point, added onto the cumulative length with all previous splines in the curve</p>
-<section id="outputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-4">Outputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>The length along the current spline added to all previous spline lengths</td>
-<td style="text-align: right;"><code class="custom-float">Length</code></td>
+<td style="text-align: left;">Length</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The length along the current spline added to all previous spline lengths</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.CumulativeLength"><code>nodes.geometry.CumulativeLength</code></a></p>
 </section>
-</section>
-<section id="curve-offset-dot" class="level2">
-<h2 class="anchored" data-anchor-id="curve-offset-dot">Curve Offset Dot</h2>
-<p>Calculate the dot product of the current point and another, using their <code class="custom-attribute">Normal</code> attributes. Also returns the dot producted thresholded for a particular cutoff</p>
-<section id="outputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-5">Outputs</h3>
+<section id="curve-custom-profile" class="level2">
+<h2 class="anchored" data-anchor-id="curve-custom-profile">Curve Custom Profile</h2>
+<p><code>Curve to Mesh</code> but with the potential for a custom profile, with fields for custom rotations and scaling along the curve while generating the geometry</p>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-bool">Thresholded</code></td>
+<td style="text-align: left;">Curve</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td></td>
-<td style="text-align: right;"><code class="custom-int">Leading</code></td>
+<td style="text-align: left;">Subdivisions</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;">Profile Type</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UV Map</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Compute and store the <code>uv_map</code> attribute on the <code>Face Corner</code> domain of the final mesh</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">U Component</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Profile Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Profile Scale</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Profile Curve</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Profile Resolution</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Profile Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Profile Rotation</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-2" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-2">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-vector">Normal</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Offset</code></td>
-<td style="text-align: center;">-1</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-menu">Threshold Direction</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Threshold Cutoff</code></td>
-<td style="text-align: center;">-0.9</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-vector">Rotation Axis</code></td>
-<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Rotation Amount</code></td>
-<td style="text-align: center;">3.142</td>
-<td></td>
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="offset-point-along-curve" class="level2">
-<h2 class="anchored" data-anchor-id="offset-point-along-curve">Offset Point Along Curve</h2>
-<p>Offset along the current point’s curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between <code>Point Index</code> + 1 and <code>Point Index</code> + 2, returning the <code>Length</code> and the <code>Factor</code> for this point on the curve</p>
-<p>Return the <code>Factor</code> or <code>Length</code> of a point, when offset an amount of points along their curve. A value of 1.5 returns the <code>Factor</code> / <code>Length</code> that is half way between the two points that are +1 and +2 from the current <code>Point Index</code>, Useful for sampling the same curve, at a different point along the curve. Helps with interpolating along a bezier curve without having to evaluate to the intermediate points first</p>
-<p><video src="https://imgur.com/NX6dZXR.mp4" class="img-fluid" controls=""><a href="https://imgur.com/NX6dZXR.mp4">Video</a></video></p>
-<p><video src="https://imgur.com/05AmdjU.mp4" class="img-fluid" controls=""><a href="https://imgur.com/05AmdjU.mp4">Video</a></video></p>
-<section id="outputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-6">Outputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
-<td style="text-align: right;"><code class="custom-bool">Is Off Spline</code></td>
-</tr>
-<tr class="even">
-<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
-<td style="text-align: right;"><code class="custom-float">Factor</code></td>
-</tr>
-<tr class="odd">
-<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
-<td style="text-align: right;"><code class="custom-float">Length</code></td>
-</tr>
-<tr class="even">
-<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
-<td style="text-align: right;"><code class="custom-int">Index A</code></td>
-</tr>
-<tr class="odd">
-<td>The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
-<td style="text-align: right;"><code class="custom-int">Index B</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-3" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-3">Inputs</h3>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code class="custom-int">Point Index</code></td>
-<td style="text-align: center;">0</td>
-<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Offset</code></td>
-<td style="text-align: center;">0.0</td>
-<td>The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
-</tr>
-</tbody>
-</table>
-</section>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.CurveCustomProfile"><code>nodes.geometry.CurveCustomProfile</code></a></p>
 </section>
 <section id="curve-endpoint-values" class="level2">
 <h2 class="anchored" data-anchor-id="curve-endpoint-values">Curve Endpoint Values</h2>
 <p>Output a different integer value for the endpoints of a curve and the middle of a curve</p>
 <p>Integer values for the ends of splines, specifying the start and end sizes</p>
-<section id="outputs-7" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-7">Outputs</h3>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>The value for the point, determined by the inputs if it is in the start, end or ‘other’ region</td>
-<td style="text-align: right;"><code class="custom-int">Value</code></td>
+<td style="text-align: left;">Start Size</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The size of the starting points of the curve</td>
 </tr>
 <tr class="even">
-<td>The <code>n</code> points at the start of a spline determined by <code>Start Size</code></td>
-<td style="text-align: right;"><code class="custom-bool">Start Selection</code></td>
+<td style="text-align: left;">Start Value</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The value to output for the starting points of the curve</td>
 </tr>
 <tr class="odd">
-<td>The <code>n</code> points at the end of a spline determined by <code>End Size</code></td>
-<td style="text-align: right;"><code class="custom-bool">End Selection</code></td>
+<td style="text-align: left;">Other Value</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The value for the points which aren’t part of the start or end points</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">End Size</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The size of the end points</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">End Value</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The value that is returned for the end points of the curve</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-4" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-4">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-int">Start Size</code></td>
-<td style="text-align: center;">1</td>
-<td>The size of the starting points of the curve</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The value for the point, determined by the inputs if it is in the start, end or ‘other’ region</td>
 </tr>
 <tr class="even">
-<td><code class="custom-int">Start Value</code></td>
-<td style="text-align: center;">1</td>
-<td>The value to output for the starting points of the curve</td>
+<td style="text-align: left;">Start Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The <code>n</code> points at the start of a spline determined by <code>Start Size</code></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-int">Other Value</code></td>
-<td style="text-align: center;">0</td>
-<td>The value for the points which aren’t part of the start or end points</td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">End Size</code></td>
-<td style="text-align: center;">1</td>
-<td>The size of the end points</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">End Value</code></td>
-<td style="text-align: center;">-1</td>
-<td>The value that is returned for the end points of the curve</td>
+<td style="text-align: left;">End Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The <code>n</code> points at the end of a spline determined by <code>End Size</code></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.CurveEndpointValues"><code>nodes.geometry.CurveEndpointValues</code></a></p>
 </section>
-</section>
-<section id="curve-visualize" class="level2">
-<h2 class="anchored" data-anchor-id="curve-visualize">Curve Visualize</h2>
-<p>Visualize curves, instancing Gimbals with the resulting curve rotation and positions</p>
-<p><video src="https://imgur.com/KKY7v12.mp4" class="img-fluid" controls=""><a href="https://imgur.com/KKY7v12.mp4">Video</a></video></p>
-<section id="outputs-8" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-8">Outputs</h3>
+<section id="curve-offset-dot" class="level2">
+<h2 class="anchored" data-anchor-id="curve-offset-dot">Curve Offset Dot</h2>
+<p>Calculate the dot product of the current point and another, using their <code class="custom-attribute">Normal</code> attributes. Also returns the dot producted thresholded for a particular cutoff</p>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Instances</code></td>
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Offset</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Threshold Direction</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Threshold Cutoff</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rotation Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rotation Amount</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-5" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-5">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Curve</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
+<td style="text-align: left;">Thresholded</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td><code class="custom-bool">Selection</code></td>
-<td style="text-align: center;">True</td>
-<td></td>
+<td style="text-align: left;">Leading</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
-<td><code class="custom-vector">Position</code></td>
-<td style="text-align: center;">[0.0, 0.0, 0.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-vector">Normal</code></td>
-<td style="text-align: center;">[0.0, 0.0, 1.0]</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-bool">Handles</code></td>
-<td style="text-align: center;">False</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Value</code></td>
-<td style="text-align: center;">3.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Arrow Size</code></td>
-<td style="text-align: center;">2.0</td>
-<td></td>
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.CurveOffsetDot"><code>nodes.geometry.CurveOffsetDot</code></a></p>
 </section>
-</section>
-<section id="curve-custom-profile" class="level2">
-<h2 class="anchored" data-anchor-id="curve-custom-profile">Curve Custom Profile</h2>
-<p><code>Curve to Mesh</code> but with the potential for a custom profile, with fields for custom rotations and scaling along the curve while generating the geometry</p>
-<section id="outputs-9" class="level3">
-<h3 class="anchored" data-anchor-id="outputs-9">Outputs</h3>
+<section id="curve-rotation" class="level2">
+<h2 class="anchored" data-anchor-id="curve-rotation">Curve Rotation</h2>
+<p>Computes the rotation of the point on the curve, by default using the <code class="custom-attribute">Normal</code> attribute and the <code>Tangent</code> axis</p>
+<p>The <code>Rotation</code> for the point, using the <code class="custom-attribute">Normal</code> and <code>Tangent</code> of the point</p>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 90%">
-<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Description</th>
-<th style="text-align: right;">Socket</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td></td>
-<td style="text-align: right;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The default direction to use as the Secondary Axis / X axis when computing the rotation</td>
 </tr>
 </tbody>
 </table>
-</section>
-<section id="inputs-6" class="level3">
-<h3 class="anchored" data-anchor-id="inputs-6">Inputs</h3>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 76%">
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Socket</th>
-<th style="text-align: center;">Default</th>
-<th>Description</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code class="custom-geometry">Curve</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-int">Subdivisions</code></td>
-<td style="text-align: center;">6</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-menu">Profile Type</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-bool">UV Map</code></td>
-<td style="text-align: center;">False</td>
-<td>Compute and store the <code>uv_map</code> attribute on the <code>Face Corner</code> domain of the final mesh</td>
-</tr>
-<tr class="odd">
-<td><code class="custom-menu">U Component</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-rotation">Profile Rotation</code></td>
-<td style="text-align: center;">Euler(0.0, 0.0, 0.0), ‘XYZ’)</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-vector">Profile Scale</code></td>
-<td style="text-align: center;">[1.0, 1.0, 1.0]</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-geometry">Profile Curve</code></td>
-<td style="text-align: center;"><em>None</em></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-int">Profile Resolution</code></td>
-<td style="text-align: center;">4</td>
-<td></td>
-</tr>
-<tr class="even">
-<td><code class="custom-float">Profile Radius</code></td>
-<td style="text-align: center;">1.0</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><code class="custom-float">Profile Rotation</code></td>
-<td style="text-align: center;">0.785</td>
-<td></td>
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;">The computed rotation for the point on the curve</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.CurveRotation"><code>nodes.geometry.CurveRotation</code></a></p>
+</section>
+<section id="curve-transform" class="level2">
+<h2 class="anchored" data-anchor-id="curve-transform">Curve Transform</h2>
+<p>Calculates the transformation matrix for the point on the curve. Position is taken from the <code class="custom-attribute">Position</code>, <code>Rotation</code> is calculated from the <code class="custom-attribute">Normal</code> and <code>Tangent</code> values, and the <code>Radius</code> drives the scale</p>
+<p>The transform for the point, combining the <code class="custom-attribute">Position</code> and <code>Curve Rotation</code> using <code class="custom-attribute">Normal</code> and <code>Tangent</code></p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Transform</td>
+<td style="text-align: left;"><code class="custom-matrix">Matrix</code></td>
+<td style="text-align: left;">The combine 4X4 transformation matrix for the point of the curve</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.CurveTransform"><code>nodes.geometry.CurveTransform</code></a></p>
+</section>
+<section id="curve-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="curve-vectors">Curve Vectors</h2>
+<p>Vectors relevant to orientations on a curve: Normal, Tangent and Bitangent</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The normal of the control point. Used for calculating the rotation for the point and when calculating <code>Curve to Mesh</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tangent</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The tangent of the point, which is calculated as the direction from the previous point to the next point</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bitangent</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The cross product of the Normal and the Tangent</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.CurveVectors"><code>nodes.geometry.CurveVectors</code></a></p>
+</section>
+<section id="offset-point-along-curve" class="level2">
+<h2 class="anchored" data-anchor-id="offset-point-along-curve">Offset Point Along Curve</h2>
+<p><a href="https://imgur.com/NX6dZXR.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><video src="https://imgur.com/NX6dZXR.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/NX6dZXR.mp4">Video</a></p>
+<p><a href="https://imgur.com/05AmdjU.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><video src="https://imgur.com/05AmdjU.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/05AmdjU.mp4">Video</a></p>
+<p>Offset along the current point’s curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between <code>Point Index</code> + 1 and <code>Point Index</code> + 2, returning the <code>Length</code> and the <code>Factor</code> for this point on the curve</p>
+<p>Return the <code class="custom-float">Factor</code> or <code class="custom-float">Length</code> of a point, when offset an amount of points along their curve. A value of 1.5 returns the <code class="custom-float">Factor</code> / <code class="custom-float">Length</code> that is half way between the two points that are +1 and +2 from the current <code>Point Index</code>, Useful for sampling the same curve, at a different point along the curve. Helps with interpolating along a bezier curve without having to evaluate to the intermediate points first</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Point Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Offset</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The offset to apply to the <code class="custom-attribute">Index</code> before evaluating the input field</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Is Off Spline</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Length</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index A</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Index B</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The field evaluated at the offset <code class="custom-attribute">Index</code> value</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.curves.html#molecularnodes.nodes.geometry.OffsetPointAlongCurve"><code>nodes.geometry.OffsetPointAlongCurve</code></a></p>
 
 
-</section>
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1025,13 +947,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1380,8 +1303,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/density.html" class="pagination-link" aria-label="Density">
-        <span class="nav-page-text">Density</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/dna.html" class="pagination-link" aria-label="DNA">
+        <span class="nav-page-text">DNA</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1399,6 +1322,38 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

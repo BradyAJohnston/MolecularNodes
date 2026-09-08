@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>canvas – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -58,7 +61,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -73,10 +76,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -113,6 +119,61 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -139,8 +200,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../examples/"> 
@@ -190,46 +259,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
  <span class="menu-text">Introduction</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/styles.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Styles</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/density.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Density</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/annotations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Annotations</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/canvas.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Canvas</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/blender.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Blender</span></a>
-  </div>
-</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Trajectory</span></a>
+ <span class="menu-text">Guides</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -237,20 +271,56 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/trajectory/rendering.html" class="sidebar-item-text sidebar-link">
+  <a href="../../api/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trajectories</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/nodebpy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Node Trees</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/rendering.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Rendering</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/trajectory/solvent.html" class="sidebar-item-text sidebar-link">
+  <a href="../../api/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/trajectory/styles.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Styles</span></a>
+  <a href="../../api/canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/blender.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender</span></a>
   </div>
 </li>
       </ul>
@@ -273,13 +343,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Entity</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Molecule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/Molecule.html" class="sidebar-item-text sidebar-link">
@@ -288,16 +358,33 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/MoleculeSelector.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">MoleculeSelector</span></a>
+  <a href="../../api/reference/entities.molecule.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.SelectionManager</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/Trajectory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trajectory</span></a>
+  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPManager</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Other Entities</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
@@ -314,95 +401,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Trajectory</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/Trajectory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Trajectory</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.SelectionManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.SelectionManager</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.DSSPManager</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.StreamingTrajectory</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Styles</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleSpheres.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleSpheres</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleRibbon.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleRibbon</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleCartoon.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleCartoon</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleSurface.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleSurface</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleSticks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleSticks</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../api/reference/StyleBallAndStick.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">StyleBallAndStick</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
  <span class="menu-text">Materials</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Default</span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.AmbientOcclusion.html" class="sidebar-item-text sidebar-link">
@@ -411,8 +422,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.Default</span></a>
+  <a href="../../api/reference/material.Flat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Flat</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -423,27 +434,39 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.FlatOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.FlatOutline</span></a>
+  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.TransparentOutline</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
+  <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.PresetMaterial</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.append_material.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.append_material</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/material.add_all_materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.add_all_materials</span></a>
   </div>
 </li>
       </ul>
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
  <span class="menu-text">Session</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/session.MNSession.html" class="sidebar-item-text sidebar-link">
@@ -454,13 +477,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
  <span class="menu-text">Annotations</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/annotations.base.html" class="sidebar-item-text sidebar-link">
@@ -481,12 +504,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.trajectory.annotations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.trajectory.annotations</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/entities.molecule.annotations.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">entities.molecule.annotations</span></a>
   </div>
@@ -501,13 +518,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </li>
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
  <span class="menu-text">Scene</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/Canvas.html" class="sidebar-item-text sidebar-link active">
@@ -518,6 +535,143 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/scene.camera.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">scene.camera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.compositor.CompositorTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.compositor.CompositorTree</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.recorder.FrameRecorder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.recorder.FrameRecorder</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/scene.world.WorldTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.world.WorldTree</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Nodes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.animate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Animate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.curves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Curves</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.select.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topology</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
   </div>
 </li>
       </ul>
@@ -534,9 +688,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#molecularnodes.Canvas" id="toc-molecularnodes.Canvas" class="nav-link active" data-scroll-target="#molecularnodes.Canvas">Canvas</a>
-  <ul class="collapse">
-  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link active" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#attributes" id="toc-attributes" class="nav-link" data-scroll-target="#attributes">Attributes</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
@@ -544,32 +696,45 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <ul class="collapse">
   <li><a href="#molecularnodes.Canvas.animation" id="toc-molecularnodes.Canvas.animation" class="nav-link" data-scroll-target="#molecularnodes.Canvas.animation">animation</a></li>
   <li><a href="#molecularnodes.Canvas.clear" id="toc-molecularnodes.Canvas.clear" class="nav-link" data-scroll-target="#molecularnodes.Canvas.clear">clear</a></li>
-  <li><a href="#molecularnodes.Canvas.frame_object" id="toc-molecularnodes.Canvas.frame_object" class="nav-link" data-scroll-target="#molecularnodes.Canvas.frame_object">frame_object</a></li>
-  <li><a href="#molecularnodes.Canvas.frame_view" id="toc-molecularnodes.Canvas.frame_view" class="nav-link" data-scroll-target="#molecularnodes.Canvas.frame_view">frame_view</a></li>
   <li><a href="#molecularnodes.Canvas.load" id="toc-molecularnodes.Canvas.load" class="nav-link" data-scroll-target="#molecularnodes.Canvas.load">load</a></li>
-  <li><a href="#molecularnodes.Canvas.scene_reset" id="toc-molecularnodes.Canvas.scene_reset" class="nav-link" data-scroll-target="#molecularnodes.Canvas.scene_reset">scene_reset</a></li>
+  <li><a href="#molecularnodes.Canvas.load_preset" id="toc-molecularnodes.Canvas.load_preset" class="nav-link" data-scroll-target="#molecularnodes.Canvas.load_preset">load_preset</a></li>
+  <li><a href="#molecularnodes.Canvas.look_at" id="toc-molecularnodes.Canvas.look_at" class="nav-link" data-scroll-target="#molecularnodes.Canvas.look_at">look_at</a></li>
+  <li><a href="#molecularnodes.Canvas.record" id="toc-molecularnodes.Canvas.record" class="nav-link" data-scroll-target="#molecularnodes.Canvas.record">record</a></li>
   <li><a href="#molecularnodes.Canvas.snapshot" id="toc-molecularnodes.Canvas.snapshot" class="nav-link" data-scroll-target="#molecularnodes.Canvas.snapshot">snapshot</a></li>
-  </ul></li>
   </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/Canvas.html">Scene</a></li><li class="breadcrumb-item"><a href="../../api/reference/Canvas.html">Canvas</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/Canvas.html">Scene</a></li><li class="breadcrumb-item"><a href="../../api/reference/Canvas.html">Canvas</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Canvas</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
 
-<section id="molecularnodes.Canvas" class="level1">
-<h1>Canvas</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Canvas(</span>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Canvas(</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    engine<span class="op">=</span><span class="st">'EEVEE'</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    resolution<span class="op">=</span>(<span class="dv">1280</span>, <span class="dv">720</span>),</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    transparent<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    template<span class="op">=</span><span class="st">'Molecular Nodes'</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    template<span class="op">=</span>_UNSET,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>High-level render controller for Blender scenes.</p>
-<p>Canvas configures the active Blender scene for Molecular Nodes renders (engine, resolution, transparency, color management), exposes convenient properties for common render settings, and provides helpers to frame objects/views and render stills or animations.</p>
+<p>Canvas configures the active Blender scene for Molecular Nodes renders (engine, resolution, transparency, color management), exposes convenient properties for common render settings, and provides helpers to point the camera at objects/views and render stills or animations.</p>
 <section id="parameters" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
@@ -603,8 +768,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td>template</td>
 <td><a href="https://docs.python.org/3/library/pathlib.html#module-pathlib">pathlib</a>.<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
-<td>Scene template to initialize. If a string is provided it can be either the name of an installed Blender app template (e.g.&nbsp;<code>"Molecular Nodes"</code>), or a path to a <code>.blend</code> file. If <code class="custom-object">None</code>, the Blender default startup file is used.</td>
-<td><code>"Molecular Nodes"</code></td>
+<td>Scene template to load. If a string is provided it can be either the name of an installed Blender app template (e.g.&nbsp;<code>"Molecular Nodes"</code>), or a path to a <code>.blend</code> file. A template given here is always loaded, replacing whatever is in the scene. Left out, the “Molecular Nodes” preset is loaded only when the scene holds no molecules, so that re-running <code>mn.Canvas()</code> - as a notebook cell does - binds to the scene instead of wiping the work in it. <code>None</code> binds without loading anything. Use <a href="../../api/reference/Canvas.html#molecularnodes.Canvas.load_preset"><code>load_preset</code></a> to reload a preset deliberately.</td>
+<td><code>_UNSET</code></td>
 </tr>
 </tbody>
 </table>
@@ -622,7 +787,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>scene</td>
-<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Scene.html#bpy.types.Scene">Scene</a></td>
+<td><code>bpy</code>.<a href="file://objects_inv/bpy/bpy.types.html#module-bpy.types">types</a>.<a href="file://objects_inv/bpy/bpy.types.Scene.html#bpy.types.Scene">Scene</a></td>
 <td>The active Blender scene.</td>
 </tr>
 <tr class="even">
@@ -670,6 +835,56 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>{<code>Standard</code>, 'Khronos PBR Neutral', <code>AgX</code>, <code>Filmic</code>, 'Filmic Log', 'False Color', <code>Raw</code>}</td>
 <td>Active view transform for color management.</td>
 </tr>
+<tr class="odd">
+<td>compositor</td>
+<td><code>molecularnodes</code>.<code>scene</code>.<code>compositor</code>.<a href="../../api/reference/scene.compositor.CompositorTree.html#molecularnodes.scene.compositor.CompositorTree">CompositorTree</a></td>
+<td>Builder for the scene compositor node tree (post-processing effects).</td>
+</tr>
+<tr class="even">
+<td>world</td>
+<td><code>molecularnodes</code>.<code>scene</code>.<code>world</code>.<a href="../../api/reference/scene.world.WorldTree.html#molecularnodes.scene.world.WorldTree">WorldTree</a></td>
+<td>Builder for the world shader node tree (lighting and background).</td>
+</tr>
+<tr class="odd">
+<td>samples</td>
+<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td>Render sample count on the active engine.</td>
+</tr>
+<tr class="even">
+<td>frame</td>
+<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td>Current scene frame.</td>
+</tr>
+<tr class="odd">
+<td>frame_range</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a href="https://docs.python.org/3/library/functions.html#int">int</a>, <a href="https://docs.python.org/3/library/functions.html#int">int</a>]</td>
+<td>Scene <code>(frame_start, frame_end)</code>.</td>
+</tr>
+<tr class="even">
+<td>render_scale</td>
+<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td>Render resolution percentage (100 = full).</td>
+</tr>
+<tr class="odd">
+<td>exposure</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>Color-management exposure.</td>
+</tr>
+<tr class="even">
+<td>gamma</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>Color-management gamma.</td>
+</tr>
+<tr class="odd">
+<td>look</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td>Color-management look (contrast preset).</td>
+</tr>
+<tr class="even">
+<td>passes</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</td>
+<td>Enabled render passes (see :data:<code>RENDER_PASSES</code>).</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -700,23 +915,23 @@ cv.snapshot("frame.png")</code></pre>
 </tr>
 <tr class="even">
 <td><a href="#molecularnodes.Canvas.clear">clear</a></td>
-<td>Clear all Molecular Nodes entities from the scene.</td>
-</tr>
-<tr class="odd">
-<td><a href="#molecularnodes.Canvas.frame_object">frame_object</a></td>
-<td>Frame an object or MolecularEntity in the active camera view.</td>
-</tr>
-<tr class="even">
-<td><a href="#molecularnodes.Canvas.frame_view">frame_view</a></td>
-<td>Frame one or more views of Molecular entities.</td>
+<td>Empty the scene, keeping the setup that renders it.</td>
 </tr>
 <tr class="odd">
 <td><a href="#molecularnodes.Canvas.load">load</a></td>
 <td>Load a .blend file replacing the current scene.</td>
 </tr>
 <tr class="even">
-<td><a href="#molecularnodes.Canvas.scene_reset">scene_reset</a></td>
-<td>Reset the scene from a template or startup file.</td>
+<td><a href="#molecularnodes.Canvas.load_preset">load_preset</a></td>
+<td>Load a preset scene, replacing everything in the current one.</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.Canvas.look_at">look_at</a></td>
+<td>Position the camera to look at and contain a target.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.Canvas.record">record</a></td>
+<td>Start a frame-by-frame recording of the scene.</td>
 </tr>
 <tr class="odd">
 <td><a href="#molecularnodes.Canvas.snapshot">snapshot</a></td>
@@ -726,7 +941,14 @@ cv.snapshot("frame.png")</code></pre>
 </table>
 <section id="molecularnodes.Canvas.animation" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.Canvas.animation">animation</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Canvas.animation(path<span class="op">=</span><span class="va">None</span>, frame_start<span class="op">=</span><span class="va">None</span>, frame_end<span class="op">=</span><span class="va">None</span>, render_scale<span class="op">=</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Canvas.animation(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    path<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    frame_start<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    frame_end<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    render_scale<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    fps<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Render an animation of the current scene.</p>
 <section id="parameters-1" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h4>
@@ -743,20 +965,20 @@ cv.snapshot("frame.png")</code></pre>
 <tr class="odd">
 <td>path</td>
 <td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | None</td>
-<td>File path to write the rendered animation to.</td>
-<td><code class="custom-object">None</code></td>
+<td>File path to write the rendered animation to. The animation is returned for display regardless of whether a path is given.</td>
+<td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>frame_start</td>
 <td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
 <td>Start frame of the animation. When not specified, current scene’s start frame is used</td>
-<td><code class="custom-object">None</code></td>
+<td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>frame_end</td>
 <td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
 <td>End frame of the animation. When not specified, current scene’s end frame is used</td>
-<td><code class="custom-object">None</code></td>
+<td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>render_scale</td>
@@ -764,89 +986,106 @@ cv.snapshot("frame.png")</code></pre>
 <td>Scale of the rendered animation frames with respect to the resolution.</td>
 <td><code>100</code></td>
 </tr>
+<tr class="odd">
+<td>fps</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>Frame rate of the animation. When not specified, the scene’s fps is used.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>format</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td>Output format, either <code>"MP4"</code> or <code>"GIF"</code> (case-insensitive). When not specified, inferred from the suffix of <code>path</code>, defaulting to MP4. GIF output requires the <code>pillow</code> package.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 2%">
+<col style="width: 50%">
+<col style="width: 47%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><code>IPython</code>.<code>display</code>.<code>Video</code> | <code>IPython</code>.<code>display</code>.<code>Image</code> | None</td>
+<td>The rendered animation (a <code>Video</code> for MP4, an <code>Image</code> for GIF), which displays automatically as the result of a notebook cell. <code>None</code> if IPython is not installed.</td>
+</tr>
 </tbody>
 </table>
 </section>
 </section>
 <section id="molecularnodes.Canvas.clear" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.Canvas.clear">clear</h3>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Canvas.clear()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Clear all Molecular Nodes entities from the scene.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Canvas.clear()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Empty the scene, keeping the setup that renders it.</p>
+<p>Removes the molecules and any other content objects, and purges the data they leave behind. The camera and lights are kept, as are the render settings, world shader and compositor - all of which are how the scene is lit and rendered rather than what is in it. The canvas is left configured and ready to render whatever is added next.</p>
 <section id="notes" class="level4 doc-section doc-section-notes">
 <h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes">Notes</h4>
-<p>This does not modify lighting, world, or render settings.</p>
+<p>Data-blocks orphaned by the removed objects are purged recursively. A single molecule leaves over a hundred behind - its mesh, material and the node groups backing its styles - which would otherwise accumulate in the file on every load-and-clear cycle. This also collects unused data-blocks that were already in the file.</p>
+<p>Objects that are not cameras or lights are removed, so set dressing such as the preset’s backdrop does not survive. Use <a href="../../api/reference/Canvas.html#molecularnodes.Canvas.load_preset"><code>load_preset</code></a> to bring a whole preset scene back.</p>
+<p>Only this canvas’s scene is emptied - objects living in other scenes of the same file are left alone.</p>
 </section>
-</section>
-<section id="molecularnodes.Canvas.frame_object" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.Canvas.frame_object">frame_object</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Canvas.frame_object(obj, viewpoint<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Frame an object or MolecularEntity in the active camera view.</p>
-<section id="parameters-2" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>obj</td>
-<td><code>bpy</code>.<a href="https://docs.blender.org/api/current/bpy.types.html#module-bpy.types">types</a>.<a href="https://docs.blender.org/api/current/bpy.types.Object.html#bpy.types.Object">Object</a> | <code>MolecularEntity</code></td>
-<td>Blender object or Molecular Nodes entity to frame.</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td>viewpoint</td>
-<td><code>Viewpoints</code> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>Viewing direction along a principal axis. One of {“default”, “front”, “back”, “top”, “bottom”, “left”, “right”}.</td>
-<td><code class="custom-object">None</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.Canvas.frame_view" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.Canvas.frame_view">frame_view</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Canvas.frame_view(view, viewpoint<span class="op">=</span><span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Frame one or more views of Molecular entities. Multiple views can be combined using <code>+</code> before passing the result.</p>
-<section id="parameters-3" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>view</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#list">list</a>[<a href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>] | <code>MolecularEntity</code></td>
-<td>A bounding box represented by 8 three-dimensional vertices <code>[(x, y, z), ...]</code> or an entity from which a view is derived.</td>
-<td><em>required</em></td>
-</tr>
-<tr class="even">
-<td>viewpoint</td>
-<td><code>Viewpoints</code> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>Viewing direction along a principal axis. One of {“default”, “front”, “back”, “top”, “bottom”, “left”, “right”}.</td>
-<td><code class="custom-object">None</code></td>
-</tr>
-</tbody>
-</table>
+<section id="examples-1" class="level4 doc-section doc-section-examples">
+<h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples-1">Examples</h4>
+<p>Clearing between renders keeps the lighting and the render settings:</p>
+<div id="dfd00771" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(engine<span class="op">=</span><span class="st">"CYCLES"</span>, resolution<span class="op">=</span>(<span class="dv">400</span>, <span class="dv">300</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>canvas.samples <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> code <span class="kw">in</span> [<span class="st">"4ozs"</span>, <span class="st">"8H1B"</span>]:</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    mol <span class="op">=</span> mn.Molecule.fetch(code).add_style(<span class="st">"cartoon"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    canvas.look_at(mol)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    display(canvas.snapshot())</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    canvas.clear()</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(canvas.resolution, canvas.samples, <span class="bu">type</span>(canvas.engine).<span class="va">__name__</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>00:00.445  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="Canvas_files/figure-html/cell-2-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="Canvas_files/figure-html/cell-2-output-2.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Info: Deleted 2 data-block(s)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="Canvas_files/figure-html/cell-2-output-4.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="Canvas_files/figure-html/cell-2-output-4.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Info: Deleted 2 data-block(s)
+(400, 300) 8 Cycles</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="molecularnodes.Canvas.load" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.Canvas.load">load</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Canvas.load(path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Canvas.load(path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Load a .blend file replacing the current scene.</p>
-<section id="parameters-4" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h4>
+<section id="parameters-2" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -867,12 +1106,14 @@ cv.snapshot("frame.png")</code></pre>
 </table>
 </section>
 </section>
-<section id="molecularnodes.Canvas.scene_reset" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.Canvas.scene_reset">scene_reset</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Canvas.scene_reset(template<span class="op">=</span><span class="st">'Molecular Nodes'</span>, engine<span class="op">=</span><span class="st">'EEVEE'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Reset the scene from a template or startup file.</p>
-<section id="parameters-5" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h4>
+<section id="molecularnodes.Canvas.load_preset" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.Canvas.load_preset">load_preset</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Canvas.load_preset(template<span class="op">=</span><span class="st">'Molecular Nodes'</span>, engine<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Load a preset scene, replacing everything in the current one.</p>
+<p>A preset is a whole scene - its lighting setup, camera, world shader and render settings - so loading one replaces all of them. The shipped “Molecular Nodes” preset is a small studio: a backdrop, a camera, a key light and a rim light.</p>
+<p>To empty the scene while keeping how it is rendered, use <a href="../../api/reference/Canvas.html#molecularnodes.Canvas.clear"><code>clear</code></a> instead.</p>
+<section id="parameters-3" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -886,14 +1127,14 @@ cv.snapshot("frame.png")</code></pre>
 <tr class="odd">
 <td>template</td>
 <td><a href="https://docs.python.org/3/library/pathlib.html#module-pathlib">pathlib</a>.<a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
-<td>Name of an installed Blender app template, a path to a <code>.blend</code> file, or <code class="custom-object">None</code> to use Blender’s default startup file.</td>
+<td>Name of an installed Blender app template, a path to a <code>.blend</code> file, or <code>None</code> to use Blender’s default startup file.</td>
 <td><code>"Molecular Nodes"</code></td>
 </tr>
 <tr class="even">
 <td>engine</td>
 <td><code>EEVEE</code> | <code>Cycles</code> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>Render engine to configure after loading the template.</td>
-<td><code>"EEVEE"</code></td>
+<td>Render engine to configure after loading. When not given, the engine defined by the preset is used.</td>
+<td><code>None</code></td>
 </tr>
 </tbody>
 </table>
@@ -912,15 +1153,206 @@ cv.snapshot("frame.png")</code></pre>
 <tr class="odd">
 <td></td>
 <td><a href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></td>
-<td>If <code>template</code> is not <code class="custom-object">None</code>, not a valid <code>.blend</code> file path, and not a known app template name.</td>
+<td>If <code>template</code> is not <code>None</code>, not a valid <code>.blend</code> file path, and not a known app template name.</td>
 </tr>
 </tbody>
 </table>
 </section>
+<section id="examples-2" class="level4 doc-section doc-section-examples">
+<h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples-2">Examples</h4>
+<div id="3141f383" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> bpy</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>canvas.load_preset()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">sorted</span>(obj.name <span class="cf">for</span> obj <span class="kw">in</span> bpy.data.objects))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>['Camera', 'Sun', 'Sun.001', 'Sun.002', 'focal_point']</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="molecularnodes.Canvas.look_at" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.Canvas.look_at">look_at</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>Canvas.look_at(target, viewpoint<span class="op">=</span><span class="va">None</span>, margin<span class="op">=</span><span class="fl">0.05</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Position the camera to look at and contain a target.</p>
+<p>The camera is moved as close to the target as keeping all of it in frame allows, without changing where it points, leaving a small margin so that the subject does not sit right against the edge of the frame.</p>
+<section id="parameters-4" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>target</td>
+<td><code>MolecularEntity</code> | <code>bpy</code>.<a href="file://objects_inv/bpy/bpy.types.html#module-bpy.types">types</a>.<a href="file://objects_inv/bpy/bpy.types.Object.html#bpy.types.Object">Object</a> | <code>array_like</code></td>
+<td>What to look at: a Molecular Nodes entity, a Blender object, or any <code>(N, 3)</code> set of positions - a bounding box from <code>get_view()</code>, or the positions themselves. Views can be combined with <code>+</code> before passing. An entity or object is framed on the geometry it <em>renders</em>, so styling one chain of four frames that chain rather than the whole molecule.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td>viewpoint</td>
+<td><code>Viewpoint</code> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a href="https://docs.python.org/3/library/functions.html#float">float</a>]</td>
+<td>Viewing direction along a principal axis — one of {“default”, “front”, “back”, “top”, “bottom”, “left”, “right”} — or a custom XYZ Euler rotation as three angles in degrees.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>margin</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>Fraction of the frame to leave empty around the target. <code>0</code> fits the target exactly to the frame, <code>0.1</code> leaves a ten percent border, and a negative value crops in past its edges.</td>
+<td><code>0.05</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples-3" class="level4 doc-section doc-section-examples">
+<h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples-3">Examples</h4>
+<div id="ecca52b2" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(engine<span class="op">=</span><span class="st">"CYCLES"</span>, resolution<span class="op">=</span>(<span class="dv">400</span>, <span class="dv">300</span>))</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>canvas.samples <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>).add_style(<span class="st">"cartoon"</span>, selection<span class="op">=</span><span class="st">"chainID A"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># frames the styled chain, not the whole molecule</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol, viewpoint<span class="op">=</span><span class="st">"front"</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>display(canvas.snapshot())</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># room to breathe, and framing on a selection rather than the whole entity</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol.get_view(<span class="st">"chainID A and resid 1-40"</span>), margin<span class="op">=</span><span class="fl">0.15</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>display(canvas.snapshot())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="Canvas_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="Canvas_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="Canvas_files/figure-html/cell-4-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="Canvas_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="see-also-1" class="level4 doc-section doc-section-see-also">
+<h4 class="doc-section doc-section-see-also anchored" data-anchor-id="see-also-1">See Also</h4>
+<p>molecularnodes.scene.camera.Camera.frame_points : The underlying solve.</p>
+</section>
+</section>
+<section id="molecularnodes.Canvas.record" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.Canvas.record">record</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Canvas.record(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    path<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    fps<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    render_scale<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    frames_dir<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    overwrite<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Start a frame-by-frame recording of the scene.</p>
+<p>Where <a href="../../api/reference/Canvas.html#molecularnodes.Canvas.animation"><code>animation</code></a> plays back the Blender timeline, a recording puts the loop in your hands: change anything about the scene between frames and call <code>render()</code> on the recorder to capture the scene as it stands as the next frame, then <code>finalize()</code> to assemble the frames into an MP4 or GIF.</p>
+<section id="parameters-5" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>path</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | None</td>
+<td>Default file path for <code>finalize()</code> to write the animation to. When the recorder is used as a context manager, leaving the <code>with</code> block without an exception finalizes to this path automatically.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>fps</td>
+<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td>Default frame rate for <code>finalize()</code>. When not specified, the scene’s fps is used.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>render_scale</td>
+<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td>Scale the frames are rendered at with respect to the resolution.</td>
+<td><code>100</code></td>
+</tr>
+<tr class="even">
+<td>frames_dir</td>
+<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | None</td>
+<td>Directory to render the PNG frames into, created if it doesn’t exist. Frames written there are kept after the recorder is gone. When not given, frames go to a temporary directory that is removed with the recorder.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>overwrite</td>
+<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td>When <code class="custom-bool">False</code>, a frame whose numbered file already exists in <code>frames_dir</code> is reused instead of re-rendered, so re-running the same loop resumes an interrupted recording, only rendering the frames that are missing. Requires <code>frames_dir</code>.</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-1" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><code>molecularnodes</code>.<code>scene</code>.<code>recorder</code>.<a href="../../api/reference/scene.recorder.FrameRecorder.html#molecularnodes.scene.recorder.FrameRecorder">FrameRecorder</a></td>
+<td>The recorder holding the captured frames.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples-4" class="level4 doc-section doc-section-examples">
+<h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples-4">Examples</h4>
+<div id="f637fa84" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(engine<span class="op">=</span><span class="st">"CYCLES"</span>, resolution<span class="op">=</span>(<span class="dv">400</span>, <span class="dv">300</span>))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>canvas.samples <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"4ozs"</span>).add_style(<span class="st">"cartoon"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>movie <span class="op">=</span> canvas.record(fps<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> angle <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">360</span>, <span class="dv">45</span>):</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    canvas.look_at(mol, viewpoint<span class="op">=</span>(<span class="dv">90</span>, <span class="dv">0</span>, angle))</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    movie.render()</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>movie.finalize()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<video controls="">
+ <source src="data:video/mp4;base64,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" type="video/mp4">
+ Your browser does not support the video tag.
+ </video>
+</div>
+</div>
+</section>
+<section id="see-also-2" class="level4 doc-section doc-section-see-also">
+<h4 class="doc-section doc-section-see-also anchored" data-anchor-id="see-also-2">See Also</h4>
+<p>molecularnodes.scene.recorder.FrameRecorder : The recorder itself. molecularnodes.Canvas.animation : Render an animation from the timeline.</p>
+</section>
 </section>
 <section id="molecularnodes.Canvas.snapshot" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.Canvas.snapshot">snapshot</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Canvas.snapshot(path<span class="op">=</span><span class="va">None</span>, frame<span class="op">=</span><span class="va">None</span>, file_format<span class="op">=</span><span class="st">'PNG'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Canvas.snapshot(path<span class="op">=</span><span class="va">None</span>, frame<span class="op">=</span><span class="va">None</span>, file_format<span class="op">=</span><span class="st">'PNG'</span>, render_scale<span class="op">=</span><span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Render an image of the current scene.</p>
 <section id="parameters-6" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h4>
@@ -937,26 +1369,55 @@ cv.snapshot("frame.png")</code></pre>
 <tr class="odd">
 <td>path</td>
 <td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | None</td>
-<td>File path to write the rendered image to.</td>
-<td><code class="custom-object">None</code></td>
+<td>File path to write the rendered image to. The image is returned for display regardless of whether a path is given.</td>
+<td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>frame</td>
 <td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
 <td>Frame number of scene to render. When not specified, current scene’s current_frame is used</td>
-<td><code class="custom-object">None</code></td>
+<td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>file_format</td>
 <td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
-<td>File format of the rendered image.</td>
+<td>File format of the rendered image, one of Blender’s still-image formats, e.g.&nbsp;<code>"PNG"</code>, <code>"JPEG"</code>, <code>"TIFF"</code>, <code>"OPEN_EXR"</code>.</td>
 <td><code class="custom-string">'PNG'</code></td>
+</tr>
+<tr class="even">
+<td>render_scale</td>
+<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td>Scale of the rendered image with respect to the resolution.</td>
+<td><code>100</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-2" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-2">Returns</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 2%">
+<col style="width: 31%">
+<col style="width: 65%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><code>IPython</code>.<code>display</code>.<code>Image</code> | None</td>
+<td>The rendered image, which displays automatically as the result of a notebook cell. <code>None</code> if IPython is not installed or the format cannot be displayed in a notebook (e.g.&nbsp;<code>"OPEN_EXR"</code>).</td>
 </tr>
 </tbody>
 </table>
 
 
-</section>
 </section>
 </section>
 </section>
@@ -1013,13 +1474,14 @@ cv.snapshot("frame.png")</code></pre>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1387,6 +1849,38 @@ cv.snapshot("frame.png")</code></pre>
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

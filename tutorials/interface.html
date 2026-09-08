@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Blender’s Interface – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -38,10 +41,13 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,6 +84,58 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
 
 </head>
@@ -104,8 +162,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
@@ -229,101 +295,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
       </ul>
   </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Nodes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Animate</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Attributes</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Color</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Curves</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Density</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/DNA.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">DNA</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Ensemble</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/fields.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fields</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Geometry</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Select</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Simulation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Style</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Topology</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../nodes/utils.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Utilities</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
@@ -379,13 +350,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>In the 3D viewport, much like in real life, there are three (3) axes of possible movement and direction. Inside Blender are <code>X</code>, <code>Y</code>, and <code>Z</code>. The floor is made of <code>X</code> and <code>Y</code>, which form the flat grid you see in the viewport coloured red and green/yellow, while <code>Z</code> is the blue vertical axis. These are labelled and highlighted on the axis widget, which is present in the top right corner of the viewport. This will rotate as you rotate the view, so it can always be used as a reference point.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/widgets.png" class="img-fluid figure-img"></p>
+<p><a href="images/widgets.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="The different widgets in the 3D viewport. Note the colouring of the different axes."><img src="images/widgets.png" class="img-fluid figure-img" alt="The different widgets in the 3D viewport. Note the colouring of the different axes."></a></p>
 <figcaption>The different widgets in the 3D viewport. Note the colouring of the different axes.</figcaption>
 </figure>
 </div>
 <p>You can rotate the camera view either using the middle mouse button <kbd>MMB</kbd> or using your touchpad if you are on a laptop. You can also click and drag the axis widget to rotate the camera.</p>
 <p>You can pan the camera using <kbd>Shift</kbd> + <kbd>MMB</kbd></p>
-<p><video src="https://imgur.com/i4kyvQX.mp4" class="img-fluid" controls=""><a href="https://imgur.com/i4kyvQX.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/i4kyvQX.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><video src="https://imgur.com/i4kyvQX.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/i4kyvQX.mp4">Video</a></p>
 </section>
 <section id="transforming-objects" class="level2">
 <h2 class="anchored" data-anchor-id="transforming-objects">Transforming Objects</h2>
@@ -397,11 +368,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><p><kbd>S</kbd> - <strong>Scaling:</strong> Changing the relative size of an object.</p></li>
 <li><p><kbd>R</kbd> - <strong>Rotating:</strong> Rotating the object in 3D space.</p></li>
 </ul>
-<p><video src="https://imgur.com/QIqR2yB.mp4" class="img-fluid" controls=""><a href="https://imgur.com/QIqR2yB.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/QIqR2yB.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><video src="https://imgur.com/QIqR2yB.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/QIqR2yB.mp4">Video</a></p>
 <section id="locking-to-an-axis" class="level3">
 <h3 class="anchored" data-anchor-id="locking-to-an-axis">Locking to an Axis</h3>
 <p>When transforming by grabbing, rotating or scaling, you can lock the transformation to a particular axis. Click <kbd>X</kbd> / <kbd>Y</kbd> / <kbd>Z</kbd> after starting the transformation to lock it to those axes, or <kbd>Shift</kbd> + <kbd>X</kbd> / <kbd>Y</kbd> / <kbd>Z</kbd> to lock the transformation to be <em>perpendicular</em> to that axis.</p>
-<p><video src="https://imgur.com/v1qKndu.mp4" class="img-fluid" controls=""><a href="https://imgur.com/v1qKndu.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/v1qKndu.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><video src="https://imgur.com/v1qKndu.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/v1qKndu.mp4">Video</a></p>
 </section>
 </section>
 <section id="rendered-view" class="level2">
@@ -409,7 +380,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>By default you start in <code>3D View</code>, which is characterised by everything being gray and not rendered properly.</p>
 <p>You can change to the different views via the render view buttons, or by holding <kbd>Z</kbd> and selecting one of the options.</p>
 <p>Each of the views are useful in their own way. If you have a powerful enough computer, you can spend the majority of your time in either <code>Rendered</code> or <code>Material Preview</code> view which will ensure everything is shaded and lighting is calculated. If a scene is becoming complex and your computer is slow, you can switch back to <code>3D View</code> which should improve performance.</p>
-<p><video src="https://imgur.com/Uwakbpx.mp4" class="img-fluid" controls=""><a href="https://imgur.com/Uwakbpx.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/Uwakbpx.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><video src="https://imgur.com/Uwakbpx.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/Uwakbpx.mp4">Video</a></p>
 </section>
 <section id="rendering-engines" class="level2">
 <h2 class="anchored" data-anchor-id="rendering-engines">Rendering Engines</h2>
@@ -419,7 +390,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <blockquote class="blockquote">
 <p>If you have the option available, ensure to switch to <code>GPU Compute</code> instead of <code>CPU</code> when using the Cycles render engine. This will usually always be the better option, and the perforamnce will be much better.</p>
 </blockquote>
-<p><video src="https://imgur.com/eeLN5gG.mp4" class="img-fluid" controls=""><a href="https://imgur.com/eeLN5gG.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/eeLN5gG.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><video src="https://imgur.com/eeLN5gG.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/eeLN5gG.mp4">Video</a></p>
 </section>
 <section id="adding-objects" class="level2">
 <h2 class="anchored" data-anchor-id="adding-objects">Adding Objects</h2>
@@ -427,11 +398,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>There are a number of different object types that can be added. The most common that you will use will be <code>Mesh</code> and <code>Light</code>. Try adding some new objects, <em><strong>G</strong>rabbing</em> them to move them around, <em><strong>R</strong>otating</em> them and <em><strong>S</strong>caling</em> them to different sizes. If you have just added a new object and it isn’t immediately visible, it might be inside another object, or it could be <em>too big</em> or <em>too small</em> to be immediately visible. Try moving the camera or the object around to get a better view.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/menu_add.png" class="img-fluid figure-img"></p>
+<p><a href="images/menu_add.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="The add menu. Also accesible through Shift + A"><img src="images/menu_add.png" class="img-fluid figure-img" alt="The add menu. Also accesible through Shift + A"></a></p>
 <figcaption>The add menu. Also accesible through <code>Shift + A</code></figcaption>
 </figure>
 </div>
-<p><video src="https://imgur.com/qk8SjW6.mp4" class="img-fluid" controls=""><a href="https://imgur.com/qk8SjW6.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/qk8SjW6.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><video src="https://imgur.com/qk8SjW6.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/qk8SjW6.mp4">Video</a></p>
 </section>
 <section id="rendering-an-image" class="level2">
 <h2 class="anchored" data-anchor-id="rendering-an-image">Rendering an Image</h2>
@@ -440,11 +411,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <blockquote class="blockquote">
 <p>The backtick is directly under the <kdb>Esc key on most American / Enlgish keyboards. It can vary in other language layouts.</kdb></p>
 </blockquote>
-<p><video src="https://imgur.com/gMGHAsT.mp4" class="img-fluid" controls=""><a href="https://imgur.com/gMGHAsT.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/gMGHAsT.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><video src="https://imgur.com/gMGHAsT.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/gMGHAsT.mp4">Video</a></p>
 <p>Once you are happy with the camera framing, click render.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/menu_render.png" class="img-fluid figure-img"></p>
+<p><a href="images/menu_render.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="The render menu."><img src="images/menu_render.png" class="img-fluid figure-img" alt="The render menu."></a></p>
 <figcaption>The render menu.</figcaption>
 </figure>
 </div>
@@ -452,7 +423,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>The rendered image is not saved. You have to manually save the image by clicking <code>Image</code> -&gt; <code>Save As</code> and choose where to save the image.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/render_example_1.png" class="img-fluid figure-img"></p>
+<p><a href="images/render_example_1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="The rendered image window."><img src="images/render_example_1.png" class="img-fluid figure-img" alt="The rendered image window."></a></p>
 <figcaption>The rendered image window.</figcaption>
 </figure>
 </div>
@@ -462,7 +433,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>We can make our 3D scene more interesting by adding more lights. When the light object is selected, the green <code>Light Settings</code> tab becomes available, appearing as a small green lightbulb. Under these settings, we can change the colour of our light, along with the <code>Power</code>. Try tweaking these settings to your liking. You can duplicate an object without adding a new one by clicking <kbd>Shift</kbd> + <kbd>D</kbd>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/CYPV688.mp4" class="img-fluid" controls=""><a href="https://imgur.com/CYPV688.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/CYPV688.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Adding more lights to the scene."><video src="https://imgur.com/CYPV688.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/CYPV688.mp4">Adding more lights to the scene.</a></p>
 <figcaption>Adding more lights to the scene.</figcaption>
 </figure>
 </div>
@@ -474,11 +445,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <blockquote class="blockquote">
 <p>If you can’t see the colors changing, ensure you are in Rendered view.</p>
 </blockquote>
-<p>In the example below, we create a <em>new material</em> called <code>Material.001</code> for the monkey which we change to red. The cube already has a material called <code class="custom-attribute">Material</code>. We change the material being used to the monkey’s material, before changing it back and editing the starting material so that it is blue.</p>
+<p>In the example below, we create a <em>new material</em> called <code>Material.001</code> for the monkey which we change to red. The cube already has a material called <code>Material</code>. We change the material being used to the monkey’s material, before changing it back and editing the starting material so that it is blue.</p>
 <p>Try playing around with some of the other material settings, to see what effects you can create.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/UwwWnaY.mp4" class="img-fluid" controls=""><a href="https://imgur.com/UwwWnaY.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/UwwWnaY.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Assigning materials to objects."><video src="https://imgur.com/UwwWnaY.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/UwwWnaY.mp4">Assigning materials to objects.</a></p>
 <figcaption>Assigning materials to objects.</figcaption>
 </figure>
 </div>
@@ -488,14 +459,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>The last thing to be aware of when working inside of a 3D program like Blender, is that you can manually edit the 3D objects that are inside of the scene. In the top left hand corner of the 3D viewport. With an object selected, you can change between the different modes. You can edit the physical shape of a mesh, by moving individual or groups of vertices, by going into <code>Edit Mode</code>. You can also use the keyboard shortcut <kbd>Tab</kbd></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/edit_mode_selection.png" class="img-fluid figure-img"></p>
+<p><a href="images/edit_mode_selection.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="The different modes are available when an object is selected."><img src="images/edit_mode_selection.png" class="img-fluid figure-img" alt="The different modes are available when an object is selected."></a></p>
 <figcaption>The different modes are available when an object is selected.</figcaption>
 </figure>
 </div>
 <p>With a mesh object selected, you can change in to edit mode. While in edit mode, different options are available to you, and you can phsyically edit the mesh. Try selecting some vertices of the mesh and moving them around individually.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><video src="https://imgur.com/buDdGvM.mp4" class="img-fluid" controls=""><a href="https://imgur.com/buDdGvM.mp4">Video</a></video></p>
+<p><a href="https://imgur.com/buDdGvM.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Example of entering edit mode."><video src="https://imgur.com/buDdGvM.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/buDdGvM.mp4">Example of entering edit mode.</a></p>
 <figcaption>Example of entering edit mode.</figcaption>
 </figure>
 </div>
@@ -557,13 +528,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -931,6 +903,38 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Working with multi-frame molecules and molecular dynamics data">
+
+<title>Trajectories – Molecular Nodes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../api/nodebpy.html" rel="next">
+<link href="../api/styles.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> 
+<span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../citations/"> 
+<span class="menu-text">Citations</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/styles.html">Guides</a></li><li class="breadcrumb-item"><a href="../api/trajectories.html">Trajectories</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Guides</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/styles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Styles</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/trajectories.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Trajectories</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/nodebpy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Node Trees</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/rendering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rendering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/solvent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/blender.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Blender</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Reference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Function reference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Molecule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/Molecule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Molecule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.SelectionManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.SelectionManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.StreamingTrajectory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.StreamingTrajectory</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Other Entities</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.Ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.OXDNA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.OXDNA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Materials</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.Default.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Default</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.AmbientOcclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.AmbientOcclusion</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.Flat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Flat</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.Squishy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.Squishy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.TransparentOutline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.PresetMaterial</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.append_material.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.append_material</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/material.add_all_materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">material.add_all_materials</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Session</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/session.MNSession.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">session.MNSession</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Annotations</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.base.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.base</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/annotations.manager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">annotations.manager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.annotations</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.density.annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.density.annotations</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Scene</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/Canvas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Canvas</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/scene.camera.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.camera</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/scene.compositor.CompositorTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.compositor.CompositorTree</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/scene.recorder.FrameRecorder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.recorder.FrameRecorder</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/scene.world.WorldTree.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scene.world.WorldTree</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Nodes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.animate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Animate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.curves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Curves</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.select.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Style</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topology</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.utilities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#initial-snapshot-of-the-universe" id="toc-initial-snapshot-of-the-universe" class="nav-link active" data-scroll-target="#initial-snapshot-of-the-universe">Initial snapshot of the Universe</a></li>
+  <li><a href="#playback" id="toc-playback" class="nav-link" data-scroll-target="#playback">Playback</a></li>
+  <li><a href="#selections-from-the-trajectory" id="toc-selections-from-the-trajectory" class="nav-link" data-scroll-target="#selections-from-the-trajectory">Selections from the trajectory</a></li>
+  <li><a href="#colouring-by-computed-values" id="toc-colouring-by-computed-values" class="nav-link" data-scroll-target="#colouring-by-computed-values">Colouring by computed values</a></li>
+  <li><a href="#a-sub-selection-of-atoms" id="toc-a-sub-selection-of-atoms" class="nav-link" data-scroll-target="#a-sub-selection-of-atoms">A sub-selection of atoms</a></li>
+  <li><a href="#streaming-trajectories" id="toc-streaming-trajectories" class="nav-link" data-scroll-target="#streaming-trajectories">Streaming trajectories</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../api/styles.html">Guides</a></li><li class="breadcrumb-item"><a href="../api/trajectories.html">Trajectories</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Trajectories</h1>
+</div>
+
+<div>
+  <div class="description">
+    Working with multi-frame molecules and molecular dynamics data
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>A trajectory is not a special class — it is simply a <a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>Molecule</code></a> whose underlying <code>MDAnalysis.Universe</code> has more than one frame. Loading, styling and rendering all work exactly as they do for a static structure. This page covers the extra behaviour that only applies when there is more than one frame: playback, per-frame updates, and colouring by values computed from a trajectory.</p>
+<div id="b5a39413" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> PSF, DCD</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysisData <span class="im">import</span> datasets</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis <span class="im">import</span> transformations</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.analysis <span class="im">import</span> rms, align</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> colormaps</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(mn.scene.Cycles(samples<span class="op">=</span><span class="dv">16</span>), (<span class="dv">800</span>, <span class="dv">800</span>), transparent<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>00:00.554  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library</code></pre>
+</div>
+</div>
+<section id="initial-snapshot-of-the-universe" class="level2">
+<h2 class="anchored" data-anchor-id="initial-snapshot-of-the-universe">Initial snapshot of the Universe</h2>
+<p>The simplest rendering is just loading the <code>Molecule</code>, adding a style and then rendering an image — no different from a static structure.</p>
+<div id="cell-fig-simple" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(PSF, DCD)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>traj <span class="op">=</span> mn.Molecule(u)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>traj.add_style(<span class="st">"spheres"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>canvas.look_at(traj)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>display(canvas.snapshot())</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-simple" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-simple-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="trajectories_files/figure-html/fig-simple-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: A simple render of the atoms in the mda.Universe."><img src="trajectories_files/figure-html/fig-simple-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-simple-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: A simple render of the atoms in the <code>mda.Universe</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Info: Deleted 2 data-block(s)</code></pre>
+</div>
+</div>
+</section>
+<section id="playback" class="level2">
+<h2 class="anchored" data-anchor-id="playback">Playback</h2>
+<p>The connection to the <code>Universe</code> is maintained as the scene frame changes, so the positions update live during playback. Several properties on the <code>Molecule</code> control how frames are sampled and interpolated:</p>
+<ul>
+<li><code>frame</code> — the current frame (synced with Blender’s scene frame).</li>
+<li><code>subframes</code> — interpolation steps inserted between frames.</li>
+<li><code>offset</code> — a frame offset applied during playback.</li>
+<li><code>average</code> — number of frames to average for smoothing.</li>
+<li><code>interpolate</code> — enable position interpolation between frames.</li>
+<li><code>correct_periodic</code> — apply periodic boundary corrections.</li>
+</ul>
+<div id="1dc5707e" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>traj <span class="op">=</span> mn.Molecule(u)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>traj.subframes <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>traj.interpolate <span class="op">=</span> <span class="va">True</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="selections-from-the-trajectory" class="level2">
+<h2 class="anchored" data-anchor-id="selections-from-the-trajectory">Selections from the trajectory</h2>
+<p>We can reset the node tree to clear existing styles, and selectively add them based on some selection. The selection can be an <code>AtomGroup</code> or a string. If a string, first the existence of a <code>Named Attribute</code> is checked and if it exists that is used as a boolean to apply the selection. If the attribute doesn’t exist, the string is used as an MDAnalysis selection string — equivalent to doing <code>u.select_atoms()</code> and passing that atom group as a selection.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Materials on Point Clouds
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The default geometry for <code>StyleSpheres()</code> is <code>"Point"</code> which uses point cloud rendering inside of Blender. It’s a limitation of Blender that we can’t have multiple materials on the same point cloud, so we get issues if we try to assign different materials and join them back together. To get around this we have to use the <code>"Instance"</code> geometry (which can be combined with a point cloud that has a different material).</p>
+</div>
+</div>
+<div id="cell-fig-selections" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> mg</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nodebpy.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>median <span class="op">=</span> np.median(traj.atoms.positions, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> traj.selections.from_string(<span class="ss">f"prop x &gt; </span><span class="sc">{</span>median[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> traj.tree.reset() <span class="im">as</span> (atoms, join):</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    selection <span class="op">=</span> sel.node()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        atoms</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> mg.StyleSpheres(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            ...,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            selection,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Instance"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>            quality<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>            material<span class="op">=</span>mn.material.Flat().material</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> mg.StyleSpheres(</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            ...,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">~</span>selection,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            material<span class="op">=</span>mn.material.Default().material</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            ) <span class="op">&gt;&gt;</span> join</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>canvas.look_at(traj)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div id="fig-selections" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-selections-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="trajectories_files/figure-html/fig-selections-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Selectively apply the style using an MDAnalysis selection string."><img src="trajectories_files/figure-html/fig-selections-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-selections-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Selectively apply the style using an MDAnalysis selection string.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="3c739d5d" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>traj.tree</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div id="gnwr-1bf981d97fe542f2a58d4aeade35c278" style="height: 480px; width: 100%; border-radius: 8px; overflow: hidden;"></div>
+<script type="module">
+if (!document.getElementById("gnwr-stylesheet")) {
+  const link = document.createElement("link");
+  link.id = "gnwr-stylesheet";
+  link.rel = "stylesheet";
+  link.href = "https://esm.sh/geonodes-web-render@0.3/dist/embed.css";
+  document.head.appendChild(link);
+}
+import { mountGraphView } from "https://esm.sh/geonodes-web-render@0.3/embed";
+mountGraphView(document.getElementById("gnwr-1bf981d97fe542f2a58d4aeade35c278"), { payload: "TreeClipper::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", showCopyButton: false, allowSelection: false });
+</script>
+</div>
+</div>
+<p>Transformations applied to the <code>Universe</code> (such as rotations or unwrapping) carry through to the rendered molecule.</p>
+<div id="24c2f780" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>rot <span class="op">=</span> [</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    transformations.rotate.rotateby(<span class="dv">90</span>, direction<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>], point<span class="op">=</span>np.zeros(<span class="dv">3</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(PSF, DCD, transformations<span class="op">=</span>rot)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>g2 <span class="op">=</span> mn.Molecule(u).add_style(<span class="st">"spheres"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>canvas.look_at(g2)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Info: Deleted 4 data-block(s)</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+<figure class="figure">
+<p><a href="trajectories_files/figure-html/cell-7-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="trajectories_files/figure-html/cell-7-output-2.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="colouring-by-computed-values" class="level2">
+<h2 class="anchored" data-anchor-id="colouring-by-computed-values">Colouring by computed values</h2>
+<p>A common trajectory workflow is to compute a per-atom value with an MDAnalysis analysis and use it to colour the render. Here we align the trajectory and compute the per-residue RMSF.</p>
+<div id="d299cae4" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>adk <span class="op">=</span> datasets.fetch_adk_equilibrium()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> mda.Universe(adk.topology, adk.trajectory)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>average <span class="op">=</span> align.AverageStructure(u, u, select<span class="op">=</span><span class="st">"protein and name CA"</span>, ref_frame<span class="op">=</span><span class="dv">0</span>).run()</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ref <span class="op">=</span> average.results.universe</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>aligner <span class="op">=</span> align.AlignTraj(u, ref, select<span class="op">=</span><span class="st">"protein and name CA"</span>, in_memory<span class="op">=</span><span class="va">True</span>).run()</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>c_alphas <span class="op">=</span> u.select_atoms(<span class="st">"protein and name CA"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> rms.RMSF(c_alphas).run()</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>u.add_TopologyAttr(<span class="st">"tempfactors"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>protein <span class="op">=</span> u.select_atoms(<span class="st">"protein"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> residue, r_value <span class="kw">in</span> <span class="bu">zip</span>(protein.residues, R.results.rmsf):</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    residue.atoms.tempfactors <span class="op">=</span> r_value</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Compute a numpy array of color values <code>(Red, Green, Blue, Alpha)</code> that we can then store on the mesh object inside of Blender that will be used for coloring in the final render.</p>
+<div id="aed3f7fa" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>viridis <span class="op">=</span> colormaps[<span class="st">"inferno"</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">=</span> u.atoms.tempfactors</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">/=</span> col_array.<span class="bu">max</span>()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>col_array <span class="op">=</span> viridis(col_array)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>col_array</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>array([[0.453651, 0.103848, 0.430498, 1.      ],
+       [0.453651, 0.103848, 0.430498, 1.      ],
+       [0.453651, 0.103848, 0.430498, 1.      ],
+       ...,
+       [0.832299, 0.283913, 0.257383, 1.      ],
+       [0.832299, 0.283913, 0.257383, 1.      ],
+       [0.832299, 0.283913, 0.257383, 1.      ]], shape=(3341, 4))</code></pre>
+</div>
+</div>
+<p>Create the <code>Molecule</code> object that will be visualised inside of Blender. After initialising it, we store the computed colors as a <code>Named Attribute</code> on the mesh with the <code>store_named_attribute()</code> function, or directly by doing <code>Molecule["Color"] = col_array</code>. We have direct access to the named attributes on the mesh of the Molecule object, to get and set the values. By defualt the Nodes will use the <code class="custom-attribute">Color</code> named attribute for assigning the final color that is used in the render.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>traj <span class="op">=</span> mn.Molecule(u)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>traj[<span class="st">"Color"</span>] <span class="op">=</span> col_array</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>traj.add_style(<span class="st">"spheres"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>canvas.look_at(traj)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>display(canvas.snapshot())</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> traj.tree.reset() <span class="im">as</span> (atoms, join):</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> mg.StyleRibbon(</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        quality<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        peptide_radius<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        material<span class="op">=</span>mn.material.Default().material</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        ) <span class="op">&gt;&gt;</span> join</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>canvas.look_at(traj)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="fig-compute-color" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-compute-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<pre><code>Info: Deleted 2 data-block(s)</code></pre>
+</div>
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-compute-color" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-compute-color-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-compute-color-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="trajectories_files/figure-html/fig-compute-color-output-2.png" class="lightbox" data-gallery="fig-compute-color" title="Figure&nbsp;3&nbsp;(a): Spheres each use the atom’s color."><img src="trajectories_files/figure-html/fig-compute-color-output-2.png" class="img-fluid figure-img" data-ref-parent="fig-compute-color"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-compute-color-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Spheres each use the atom’s color.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="cell-output cell-output-display quarto-layout-cell-subref quarto-layout-cell" data-execution_count="9" data-ref-parent="fig-compute-color" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-compute-color-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-compute-color-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="trajectories_files/figure-html/fig-compute-color-output-3.png" class="lightbox" data-gallery="fig-compute-color" title="Figure&nbsp;3&nbsp;(b): Ribbon and cartoon use the color from the alpha carbon."><img src="trajectories_files/figure-html/fig-compute-color-output-3.png" class="img-fluid figure-img" data-ref-parent="fig-compute-color"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-compute-color-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Ribbon and cartoon use the color from the alpha carbon.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-compute-color-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: We can compute custom color values and then use those in the final render.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="a-sub-selection-of-atoms" class="level2">
+<h2 class="anchored" data-anchor-id="a-sub-selection-of-atoms">A sub-selection of atoms</h2>
+<p>When adding a style, we can ensure it is only applied to some selection of atoms. The <code>selection</code> can be an <code>AtomGroup</code> or a string. In this case we pass an <code>AtomGroup</code> and the selection is only applied to those atoms from the group.</p>
+<div id="9f25c3d6" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>traj.tree.clear()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>traj.add_style(<span class="st">"spheres"</span>, selection<span class="op">=</span>u.atoms[u.atoms.names <span class="op">==</span> <span class="st">"CA"</span>], scale<span class="op">=</span><span class="fl">1.75</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>canvas.look_at(traj.get_view())</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+<figure class="figure">
+<p><a href="trajectories_files/figure-html/cell-11-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="trajectories_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="streaming-trajectories" class="level2">
+<h2 class="anchored" data-anchor-id="streaming-trajectories">Streaming trajectories</h2>
+<p>A currently-running simulation can be streamed frame-by-frame rather than loaded from disk, using MDAnalysis and IMDClient. See the <a href="../api/reference/entities.StreamingTrajectory.html#molecularnodes.entities.StreamingTrajectory"><code>StreamingTrajectory</code></a> reference and the <a href="../tutorials/streaming-trajectories.html">Streaming Trajectories</a> tutorial for a full walkthrough.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../api/styles.html" class="pagination-link" aria-label="Styles">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Styles</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../api/nodebpy.html" class="pagination-link" aria-label="Node Trees">
+        <span class="nav-page-text">Node Trees</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Citing Molecular Nodes – Molecular Nodes</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -38,10 +41,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-b07e010628e15f87c370bfc2ac60ad8e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -80,7 +83,8 @@ ul.task-list li input[type="checkbox"] {
 
     const options = {
       valueNames: ['listing-title','listing-image','listing-doi',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
+      page: 18,
+    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
       searchColumns: ["listing-title","listing-image","listing-doi"],
     };
 
@@ -107,9 +111,61 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -122,7 +178,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -162,8 +218,16 @@ window.Quarto = {
 <span class="menu-text">Documentation</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="../api/"> 
 <span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../examples/"> 
@@ -217,6 +281,177 @@ window.Quarto = {
 <div id="listing-listing-citations" class="quarto-listing quarto-listing-container-grid">
 <div class="list grid quarto-listing-cols-3">
 <div class="g-col-1" data-index="0">
+<a href="https://www.pnas.org/doi/abs/10.1073/pnas.2420493123" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Unraveling the maturation pathway of a eukaryotic virus through cryo-EM
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1073/pnas.2420493123
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="1">
+<a href="https://academic.oup.com/nar/article/54/2/gkaf1483/8433883" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://oup.silverchair-cdn.com/oup/backfile/Content_public/Journal/nar/54/2/10.1093_nar_gkaf1483/1/m_gkaf1483figgra1.jpeg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+The transitional kinetics between open and closed Rep structures can be tuned by salt via two intermediate states
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1093/nar/gkaf1483
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="2">
+<a href="https://link.springer.com/content/pdf/10.1038/s44319-025-00654-8.pdf" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs44319-025-00654-8/MediaObjects/44319_2025_654_Figa_HTML.jpg?as=webp" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Microscopy Nodes: versatile 3D microscopy visualization with Blender
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1038/s44319-025-00654-8
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="3">
+<a href="https://www.biorxiv.org/content/10.64898/2026.01.07.698105v1.full" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://www.biorxiv.org/content/biorxiv/early/2026/01/08/2026.01.07.698105/F2.large.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Biomolecular condensate architecture of an autophagic cargo at molecular resolution in situ
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.64898/2026.01.07.698105
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="4">
+<a href="https://dl.acm.org/doi/epdf/10.1145/3730868" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+In Search of Empty Spheres: 3D Apollonius Diagrams on GPU
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1145/3730868
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="5">
+<a href="https://journals.iucr.org/m/issues/2025/04/00/eh5022/eh5022.pdf" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://journals.iucr.org/m/issues/2025/04/00/eh5022/eh5022fig2.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+In situ high-resolution cryo-EM reconstructions from CEMOVIS
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1107/S2052252525005196
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="6">
+<a href="https://pubs.acs.org/doi/10.1021/acsmeasuresciau.5c00001" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://pubs.acs.org/cms/10.1021/acsmeasuresciau.5c00001/asset/images/medium/tg5c00001_0007.gif" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Method for Mid-IR Spectroscopy of Extracellular Vesicles at the Subvesicle Level
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1021/acsmeasuresciau.5c00001
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="7">
 <a href="https://www.annualreviews.org/content/journals/10.1146/annurev-matsci-080423-114451" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -241,7 +476,107 @@ https://doi.org/10.1146/annurev-matsci-080423-114451
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="1">
+<div class="g-col-1" data-index="8">
+<a href="https://www.biorxiv.org/content/10.1101/2025.08.31.673340v1.full" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://www.biorxiv.org/content/biorxiv/early/2025/09/04/2025.08.31.673340/F25.large.jpg" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Structural and dynamic basis of indirect apoptosis inhibition by Bcl-xL: a case study with Bid
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1101/2025.08.31.673340
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="9">
+<a href="https://pubs.acs.org/doi/full/10.1021/acsmeasuresciau.5c00001" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://pubs.acs.org/cms/10.1021/acsmeasuresciau.5c00001/asset/images/medium/tg5c00001_0001.gif" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Method for Mid-IR Spectroscopy of Extracellular Vesicles at the Subvesicle Level
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1021/acsmeasuresciau.5c00001
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="10">
+<a href="https://www.nature.com/articles/s41586-025-10056-4" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-025-10056-4/MediaObjects/41586_2025_10056_MOESM3_ESM.mp4" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Non-equilibrium snapshots of ligand efficacy at the μ-opioid receptor
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1038/s41586-025-10056-4
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="11">
+<a href="https://www.annualreviews.org/content/journals/10.1146/annurev-matsci-080423-114451" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="https://www.annualreviews.org/docserver/ahah/fulltext/matsci/55/1/mr550307.f1_thmb.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Recent Advances in the Development and Use of Silk-Based Biomaterials
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.1146/annurev-matsci-080423-114451
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="12">
 <a href="https://dl.acm.org/doi/abs/10.1145/3730868" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 
@@ -264,7 +599,7 @@ https://doi.org/10.1145/3730868
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="2">
+<div class="g-col-1" data-index="13">
 <a href="https://www.nature.com/articles/s41579-025-01200-y" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -289,7 +624,7 @@ https://doi.org/10.1038/s41579-025-01200-y
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="3">
+<div class="g-col-1" data-index="14">
 <a href="https://www.biorxiv.org/content/10.1101/2025.03.29.646093v1" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -314,7 +649,7 @@ https://doi.org/10.1101/2025.03.29.646093
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="4">
+<div class="g-col-1" data-index="15">
 <a href="https://www.frontiersin.org/journals/bioinformatics/articles/10.3389/fbinf.2025.1589122/full" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -339,7 +674,7 @@ https://doi.org/10.3389/fbinf.2025.1589122
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="5">
+<div class="g-col-1" data-index="16">
 <a href="https://www.biorxiv.org/content/10.1101/2025.04.30.651413v1.full" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -364,7 +699,7 @@ https://doi.org/10.1101/2025.04.30.651413
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="6">
+<div class="g-col-1" data-index="17">
 <a href="https://www.biorxiv.org/content/10.1101/2024.02.09.579479v1.full" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
@@ -389,11 +724,11 @@ https://doi.org/10.1101/2024.02.09.579479
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="7">
+<div class="g-col-1" data-index="18">
 <a href="https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/anbr.202400088" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://advanced.onlinelibrary.wiley.com/cms/asset/7810a557-fd0f-4cbe-a4c3-002ff7926356/anbr202400088-fig-0003-m.jpg" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://advanced.onlinelibrary.wiley.com/cms/asset/7810a557-fd0f-4cbe-a4c3-002ff7926356/anbr202400088-fig-0003-m.jpg" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -414,11 +749,57 @@ https://doi.org/10.1002/anbr.202400088
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="8">
+<div class="g-col-1" data-index="19">
+<a href="https://shonan.nii.ac.jp/docs/e99700c7c681ca8538ef9cfa5d9ee7242cc2e793.pdf" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Colors and Visualization Strategies in Structural and Cellular Biology
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+&nbsp;
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="20">
+<a href="https://chemrxiv.org/doi/pdf/10.26434/chemrxiv-2025-lps7x" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Surface-Tethered Curved Membrane Mimics for Characterizing Alpha Synuclein-Membrane Interactions by Surface Plasmon Resonance
+</h5>
+<table class="card-other-values">
+
+<tbody><tr>
+<td>
+doi
+</td>
+<td class="doi">
+https://doi.org/10.26434/chemrxiv-2025-lps7x
+</td>
+</tr>
+
+</tbody></table>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="21">
 <a href="https://www.sciencedirect.com/science/article/pii/S0959440X24000642?via%3Dihub" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://ars.els-cdn.com/content/image/1-s2.0-S0959440X24000642-gr1.jpg" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://ars.els-cdn.com/content/image/1-s2.0-S0959440X24000642-gr1.jpg" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -439,11 +820,11 @@ https://doi.org/10.1016/j.sbi.2024.102837
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="9">
+<div class="g-col-1" data-index="22">
 <a href="https://papers.cnl.salk.edu/PDFs/Electrophysical%20cardiac%20remodeling%20at%20the%20molecular%20level_%20insights%20into%20Ryanodine%20Receptor%20activation%20and%20calcium-induced%20calcium%20release%20from%20a%20stochastic%20explicit-particle%20model%202024-4666.pdf" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://imgur.com/P84FZ2v.png" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://imgur.com/P84FZ2v.png" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -464,11 +845,11 @@ https://doi.org/10.1016/j.bpj.2024.09.029
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="10">
+<div class="g-col-1" data-index="23">
 <a href="https://www.nature.com/articles/s41467-023-43892-x.pdf" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://imgur.com/sa4A8yr.png" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://imgur.com/sa4A8yr.png" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -489,11 +870,11 @@ https://doi.org/10.1038/s41467-023-43892-x
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="11">
+<div class="g-col-1" data-index="24">
 <a href="https://journals.asm.org/doi/10.1128/mbio.00859-23" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://journals.asm.org/cms/10.1128/mbio.00859-23/asset/73ca5da9-6f89-43f4-a18b-790149533ac7/assets/images/large/mbio.00859-23.f005.jpg" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://journals.asm.org/cms/10.1128/mbio.00859-23/asset/73ca5da9-6f89-43f4-a18b-790149533ac7/assets/images/large/mbio.00859-23.f005.jpg" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -514,11 +895,11 @@ https://doi.org/10.1128/mbio.00859-23
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="12">
+<div class="g-col-1" data-index="25">
 <a href="https://arxiv.org/pdf/2409.17726" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://arxiv.org/html/2409.17726v1/extracted/5880997/images/Fig1-pointcloud-light.png" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://arxiv.org/html/2409.17726v1/extracted/5880997/images/Fig1-pointcloud-light.png" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -539,11 +920,11 @@ https://doi.org/10.48550/arXiv.2409.17726
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="13">
+<div class="g-col-1" data-index="26">
 <a href="https://www.mdpi.com/2077-0375/14/12/249" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://www.mdpi.com/membranes/membranes-14-00249/article_deploy/html/images/membranes-14-00249-g003-550.jpg" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://www.mdpi.com/membranes/membranes-14-00249/article_deploy/html/images/membranes-14-00249-g003-550.jpg" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -564,11 +945,11 @@ https://doi.org/10.3390/membranes14120249
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="14">
+<div class="g-col-1" data-index="27">
 <a href="https://www.cell.com/biophysj/fulltext/S0006-3495(24)00389-8?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0006349524003898%3Fshowall%3Dtrue" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://www.cell.com/cms/10.1016/j.bpj.2024.06.006/asset/7e712926-d4ed-4204-909e-ac4cc69261bf/main.assets/gr1.jpg" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://www.cell.com/cms/10.1016/j.bpj.2024.06.006/asset/7e712926-d4ed-4204-909e-ac4cc69261bf/main.assets/gr1.jpg" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -589,11 +970,11 @@ https://doi.org/10.1016/j.bpj.2024.06.006
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="15">
+<div class="g-col-1" data-index="28">
 <a href="https://www.biorxiv.org/content/10.1101/2024.08.31.610394v1" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://www.biorxiv.org/content/biorxiv/early/2024/08/31/2024.08.31.610394/F1.medium.gif" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://www.biorxiv.org/content/biorxiv/early/2024/08/31/2024.08.31.610394/F1.medium.gif" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -614,11 +995,11 @@ https://doi.org/10.1101/2024.08.31.610394
 </div>
 </div></a>
 </div>
-<div class="g-col-1" data-index="16">
+<div class="g-col-1" data-index="29">
 <a href="https://www.nature.com/articles/s41467-024-52911-4" class="quarto-grid-link">
 <div class="quarto-grid-item card h-100 card-left">
 <p class="card-img-top">
-<img loading="lazy" src="https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs41467-024-52911-4/MediaObjects/41467_2024_52911_Fig4_HTML.png" class="thumbnail-image card-img" style="height: 150px;">
+<img loading="lazy" data-src="https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs41467-024-52911-4/MediaObjects/41467_2024_52911_Fig4_HTML.png" class="thumbnail-image card-img" style="height: 150px;">
 </p>
 <div class="card-body post-contents">
 <h5 class="no-anchor card-title listing-title">
@@ -641,6 +1022,9 @@ https://doi.org/10.1038/s41467-024-52911-4
 </div>
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
+<nav id="listing-citations-pagination" class="listing-pagination" aria-label="Page Navigation">
+  <ul class="pagination"></ul>
+</nav>
 </div>
 
 
@@ -698,13 +1082,14 @@ https://doi.org/10.1038/s41467-024-52911-4
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
