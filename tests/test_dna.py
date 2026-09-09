@@ -30,8 +30,12 @@ class TestOXDNAReading:
         return data_dir / "oxdna/top_old.top"
 
     @pytest.fixture(scope="module")
-    def file_traj_old_new(self):
-        return data_dir / "oxdna/traj_old_new.dat"
+    def file_traj_new(self):
+        return data_dir / "oxdna/traj_new.dat"
+
+    @pytest.fixture(scope="module")
+    def file_traj_old(self):
+        return data_dir / "oxdna/traj_old.dat"
 
     @pytest.fixture(scope="module")
     def file_holl_dat(self):
@@ -86,11 +90,18 @@ class TestOXDNAReading:
             assert top.n_atoms == 12
             assert top.n_residues == 12
 
-    @pytest.mark.parametrize("topfile", ["top_new", "top_new_custom", "top_old"])
-    def test_comparing_topologies(self, snapshot, topfile, file_traj_old_new):
+    @pytest.mark.parametrize(
+        "topfile, trajfile",
+        [
+            ("top_new", "traj_new"),
+            ("top_new_custom", "traj_new"),
+            ("top_old", "traj_old)"),
+        ],
+    )
+    def test_comparing_topologies(self, snapshot, topfile, trajfile):
         u = mda.Universe(
             data_dir / f"oxdna/{topfile}.top",
-            file_traj_old_new,
+            data_dir / f"oxdna/{trajfile}.top",
             topology_format=oxdna.OXDNAParser,
             format=oxdna.OXDNAReader,
         )
