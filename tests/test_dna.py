@@ -31,7 +31,7 @@ class TestOXDNAReading:
 
     @pytest.fixture(scope="module")
     def file(self):
-        def _file_path(self, file_key):
+        def _file_path(file_key: str):
             return data_dir / f"oxdna/{self.file_dict[file_key]}"
 
         return _file_path
