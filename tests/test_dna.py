@@ -36,6 +36,15 @@ class TestOXDNAReading:
 
         return _file_path
 
+    @pytest.fixture(scope="module")
+    def universe(self, file):
+        return mda.Universe(
+            file("holl_top_old"),
+            file("holl_traj_old"),
+            format=oxdna.OXDNAReader,
+            topology_format=oxdna.OXDNAParser,
+        )
+
     def test_read_as_universe(self, snapshot, file):
         u = mda.Universe(
             file("holl_top_old"),
