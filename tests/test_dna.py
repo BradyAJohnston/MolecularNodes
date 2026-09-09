@@ -22,6 +22,22 @@ class TestOXDNAReading:
         return data_dir / "oxdna/holliday.dat"
 
     @pytest.fixture(scope="module")
+    def file_circ_top_new(self):
+        return data_dir / "oxdna/minicircle_new.top"
+
+    @pytest.fixture(scope="module")
+    def file_circ_conf_new(self):
+        return data_dir / "oxdna/minicircle_new.dat"
+
+    @pytest.fixture(scope="module")
+    def file_circ_top_old(self):
+        return data_dir / "oxdna/minicircle_old.top"
+
+    @pytest.fixture(scope="module")
+    def file_circ_conf_old(self):
+        return data_dir / "oxdna/minicircle_old.dat"
+
+    @pytest.fixture(scope="module")
     def file_top_new(self):
         return data_dir / "oxdna/top_new.top"
 
@@ -101,7 +117,7 @@ class TestOXDNAReading:
     def test_comparing_topologies(self, snapshot, topfile, trajfile):
         u = mda.Universe(
             data_dir / f"oxdna/{topfile}.top",
-            data_dir / f"oxdna/{trajfile}.top",
+            data_dir / f"oxdna/{trajfile}.dat",
             topology_format=oxdna.OXDNAParser,
             format=oxdna.OXDNAReader,
         )
@@ -110,6 +126,19 @@ class TestOXDNAReading:
         assert snapshot == traj.atoms.bonds.indices.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
             assert snapshot == str(traj[att])
+
+    @pytest.mark.parametrize(
+        "basename", ["minicircle_new", "minicircle_old", "linear_new", "linear_old"]
+    )
+    def test_reading_ligation(self, snapshot, basename):
+        u = mda.Universe(
+            data_dir / f"oxdna/{basename}.top",
+            data_dir / f"oxdna/{basename}.dat",
+            topology_format=oxdna.OXDNAParser,
+            format=oxdna.OXDNAReader,
+        )
+        traj = oxdna.OXDNA(u)
+        assert snapshot == traj.atoms.bonds.indices.tolist()
 
     def test_reading_example(self):
         traj = oxdna.OXDNA(
