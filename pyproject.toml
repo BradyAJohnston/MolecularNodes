@@ -65,6 +65,9 @@ include-package-data = true
 [tool.uv]
 config-settings = { editable_mode = "compat" }
 
+[tool.uv.sources]
+nodebpy = { path = "../nodebpy" }
+
 [tool.setuptools.packages.find]
 where = ["."]
 exclude = ["molecularnodes.nodes._generation*"]
@@ -110,6 +113,7 @@ order-by-type = true
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
 "molecularnodes/nodes/geometry.py" = ["E741"]
+"molecularnodes/nodes/*" = ["E741"]
 # "molecularnodes/nodes/shader.py" = ["E741"]
 # "molecularnodes/nodes/compositor.py" = ["E741"]
 
