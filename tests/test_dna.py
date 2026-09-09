@@ -13,21 +13,74 @@ pytestmark = pytest.mark.filterwarnings(
 
 
 class TestOXDNAReading:
-    @pytest.fixture(scope="module")
-    def file_holl_top(self):
-        return data_dir / "oxdna/holliday.top"
+    # def filepath(self, file):
+    #     return data_dir / f"oxdna/{file}"
+
+    # @pytest.fixture(
+    #     scope="module",
+    #     params=[
+    #         "linear.top",
+    #         "linear_custom.top",
+    #         "linear_traj.dat",
+    #         "linear_old.top",
+    #         "linear_old_traj.dat",
+    #         "holliday_old.top",
+    #         "holliday_old_traj.dat",
+    #         "minicircle.top",
+    #         "minicircle.dat",
+    #         "minicircle_old.top",
+    #         "minicircle_old.dat",
+    #         "origami_old.top",
+    #         "origami_old.dat",
+    #     ],
+    # )
+    # def file_name(self, request):
+    #     return request.param
+
+    # def test_read_as_universe(self, snapshot, file_holl_top_old, file_holl_traj_old):
+    #     u = mda.Universe(
+    #         file_holl_top_old,
+    #         file_holl_traj_old,
+    #         format=oxdna.OXDNAReader,
+    #         topology_format=oxdna.OXDNAParser,
+    #     )
+    #     assert snapshot == u.atoms.n_atoms
 
     @pytest.fixture(scope="module")
-    def file_holl_conf(self):
-        return data_dir / "oxdna/holliday.dat"
+    def file_lin_top(self):
+        return data_dir / "oxdna/linear.top"
 
     @pytest.fixture(scope="module")
-    def file_circ_top_new(self):
-        return data_dir / "oxdna/minicircle_new.top"
+    def file_lin_top_custom(self):
+        return data_dir / "oxdna/linear_custom.top"
 
     @pytest.fixture(scope="module")
-    def file_circ_conf_new(self):
-        return data_dir / "oxdna/minicircle_new.dat"
+    def file_lin_traj(self):
+        return data_dir / "oxdna/linear_traj.dat"
+
+    @pytest.fixture(scope="module")
+    def file_lin_top_old(self):
+        return data_dir / "oxdna/linear_old.top"
+
+    @pytest.fixture(scope="module")
+    def file_lin_traj_old(self):
+        return data_dir / "oxdna/linear_old_traj.dat"
+
+    @pytest.fixture(scope="module")
+    def file_holl_top_old(self):
+        return data_dir / "oxdna/holliday_old.top"
+
+    @pytest.fixture(scope="module")
+    def file_holl_traj_old(self):
+        return data_dir / "oxdna/holliday_old_traj.dat"
+
+    @pytest.fixture(scope="module")
+    def file_circ_top(self):
+        return data_dir / "oxdna/minicircle.top"
+
+    @pytest.fixture(scope="module")
+    def file_circ_conf(self):
+        return data_dir / "oxdna/minicircle.dat"
 
     @pytest.fixture(scope="module")
     def file_circ_top_old(self):
@@ -38,42 +91,21 @@ class TestOXDNAReading:
         return data_dir / "oxdna/minicircle_old.dat"
 
     @pytest.fixture(scope="module")
-    def file_top_new(self):
-        return data_dir / "oxdna/top_new.top"
+    def file_origami_top_old(self):
+        return data_dir / "oxdna/origami_old.top"
 
     @pytest.fixture(scope="module")
-    def file_top_new_custom(self):
-        return data_dir / "oxdna/top_new_custom.top"
+    def file_origami_conf_old(self):
+        return data_dir / "oxdna/origami_old.dat"
 
-    @pytest.fixture(scope="module")
-    def file_traj_new(self):
-        return data_dir / "oxdna/traj_new.dat"
-
-    @pytest.fixture(scope="module")
-    def file_top_old(self):
-        return data_dir / "oxdna/top_old.top"
-
-    @pytest.fixture(scope="module")
-    def file_traj_old(self):
-        return data_dir / "oxdna/traj_old.dat"
-
-    @pytest.fixture(scope="module")
-    def universe(self, file_holl_top, file_holl_conf):
-        return mda.Universe(
-            file_holl_top,
-            file_holl_conf,
-            format=oxdna.OXDNAReader,
-            topology_format=oxdna.OXDNAParser,
-        )
-
-    def test_read_as_universe(self, file_holl_top, file_holl_conf):
+    def test_read_as_universe(self, snapshot, file_holl_top_old, file_holl_traj_old):
         u = mda.Universe(
-            file_holl_top,
-            file_holl_conf,
+            file_holl_top_old,
+            file_holl_traj_old,
             format=oxdna.OXDNAReader,
             topology_format=oxdna.OXDNAParser,
         )
-        assert u.atoms.n_atoms == 98
+        assert snapshot == u.atoms.n_atoms
 
     def test_univ_as_traj(self, universe):
         traj = oxdna.OXDNA(universe, create_object=False)
@@ -87,31 +119,28 @@ class TestOXDNAReading:
         for name in ["position", "res_name", "res_id", "chain_id"]:
             assert snapshot_custom == str(traj[name])
 
-    def test_detect_new_top(self, file_top_old, file_top_new, file_top_new_custom):
-        assert oxdna.OXDNAParser._is_new_topology(file_top_new)
-        assert oxdna.OXDNAParser._is_new_topology(file_top_new_custom)
-        assert not oxdna.OXDNAParser._is_new_topology(file_top_old)
+    def test_detect_new_top(self, file_lin_top_old, file_lin_top, file_lin_top_custom):
+        assert oxdna.OXDNAParser._is_new_topology(file_lin_top)
+        assert oxdna.OXDNAParser._is_new_topology(file_lin_top_custom)
+        assert not oxdna.OXDNAParser._is_new_topology(file_lin_top_old)
 
     def test_topo_reading(
-        self,
-        file_top_old,
-        file_top_new,
-        file_top_new_custom,
+        self, snapshot, file_lin_top_old, file_lin_top, file_lin_top_custom
     ):
-        top_new = oxdna.OXDNAParser._read_topo_new(file_top_new)
-        top_new_custom = oxdna.OXDNAParser._read_topo_new(file_top_new_custom)
-        top_old = oxdna.OXDNAParser._read_topo_old(file_top_old)
+        top_new = oxdna.OXDNAParser._read_topo_new(file_lin_top)
+        top_new_custom = oxdna.OXDNAParser._read_topo_new(file_lin_top_custom)
+        top_old = oxdna.OXDNAParser._read_topo_old(file_lin_top_old)
 
         for top in [top_new, top_old, top_new_custom]:
-            assert top.n_atoms == 12
-            assert top.n_residues == 12
+            assert snapshot == top.n_atoms
+            assert snapshot == top.n_residues
 
     @pytest.mark.parametrize(
         "topfile, trajfile",
         [
-            ("top_new", "traj_new"),
-            ("top_new_custom", "traj_new"),
-            ("top_old", "traj_old)"),
+            ("linear", "linear_traj"),
+            ("linear_custom", "linear_traj"),
+            ("linear_old", "linear_old_traj"),
         ],
     )
     def test_comparing_topologies(self, snapshot, topfile, trajfile):
@@ -122,41 +151,47 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
-        assert len(traj) == 12
+        assert snapshot == len(traj)
         assert snapshot == traj.atoms.bonds.indices.tolist()
         for att in ["res_id", "chain_id", "res_name"]:
             assert snapshot == str(traj[att])
 
     @pytest.mark.parametrize(
-        "basename", ["minicircle_new", "minicircle_old", "linear_new", "linear_old"]
+        "topfile, trajfile",
+        [
+            ("minicircle", "minicircle"),
+            ("minicircle_old", "minicircle_old"),
+            ("linear", "linear_traj"),
+            ("linear_old", "linear_old_traj"),
+        ],
     )
-    def test_reading_ligation(self, snapshot, basename):
+    def test_reading_ligation(self, snapshot, topfile, trajfile):
         u = mda.Universe(
-            data_dir / f"oxdna/{basename}.top",
-            data_dir / f"oxdna/{basename}.dat",
+            data_dir / f"oxdna/{topfile}.top",
+            data_dir / f"oxdna/{trajfile}.dat",
             topology_format=oxdna.OXDNAParser,
             format=oxdna.OXDNAReader,
         )
         traj = oxdna.OXDNA(u)
         assert snapshot == traj.atoms.bonds.indices.tolist()
 
-    def test_reading_example(self):
-        traj = oxdna.OXDNA(
-            mda.Universe(
-                data_dir / "CanDo2oxDNA/top.top",
-                data_dir / "CanDo2oxDNA/traj.oxdna",
-                topology_format=oxdna.OXDNAParser,
-                format=oxdna.OXDNAReader,
-            )
+    @pytest.mark.parametrize("topfile, trajfile", [("origami_old", "origami_old")])
+    def test_reading_example(self, snapshot, topfile, trajfile):
+        u = mda.Universe(
+            data_dir / f"oxdna/{topfile}.top",
+            data_dir / f"oxdna/{trajfile}.dat",
+            topology_format=oxdna.OXDNAParser,
+            format=oxdna.OXDNAReader,
         )
-        assert len(np.unique(traj.named_attribute("res_id"))) == 15166
-        assert len(np.unique(traj.named_attribute("chain_id"))) == 178
+        traj = oxdna.OXDNA(u)
+        for att in ["res_id", "chain_id"]:
+            assert snapshot == len(np.unique(traj.named_attribute[att]))
 
-    def test_session_register(self, file_holl_top, file_holl_conf):
+    def test_session_register(self, file_holl_top_old, file_holl_traj_old):
         session = mn.session.get_session()
         u = mda.Universe(
-            file_holl_top,
-            file_holl_conf,
+            file_holl_top_old,
+            file_holl_traj_old,
             topology_format=oxdna.OXDNAParser,
             format=oxdna.OXDNAReader,
         )
@@ -165,11 +200,11 @@ class TestOXDNAReading:
         assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
         assert traj._mn_entity_type == mn.entities.base.EntityType.MD_OXDNA.value
 
-    def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_conf):
+    def test_reload_lost_connection(self, file_holl_top_old, file_holl_traj_old):
         session = mn.session.get_session()
         u = mda.Universe(
-            file_holl_top,
-            file_holl_conf,
+            file_holl_top_old,
+            file_holl_traj_old,
             topology_format=oxdna.OXDNAParser,
             format=oxdna.OXDNAReader,
         )
