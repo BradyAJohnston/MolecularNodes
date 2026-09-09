@@ -112,7 +112,7 @@ class TestOXDNAReading:
         )
         traj = oxdna.OXDNA(u)
         for att in ["res_id", "chain_id"]:
-            assert snapshot == len(np.unique(traj.named_attribute[att]))
+            assert snapshot == len(np.unique(traj.named_attribute(att)))
 
     def test_session_register(self, file):
         session = mn.session.get_session()
