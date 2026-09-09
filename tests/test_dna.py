@@ -18,6 +18,10 @@ class TestOXDNAReading:
         return data_dir / "oxdna/holliday.top"
 
     @pytest.fixture(scope="module")
+    def file_holl_conf(self):
+        return data_dir / "oxdna/holliday.dat"
+
+    @pytest.fixture(scope="module")
     def file_top_new(self):
         return data_dir / "oxdna/top_new.top"
 
@@ -26,34 +30,30 @@ class TestOXDNAReading:
         return data_dir / "oxdna/top_new_custom.top"
 
     @pytest.fixture(scope="module")
-    def file_top_old(self):
-        return data_dir / "oxdna/top_old.top"
-
-    @pytest.fixture(scope="module")
     def file_traj_new(self):
         return data_dir / "oxdna/traj_new.dat"
+
+    @pytest.fixture(scope="module")
+    def file_top_old(self):
+        return data_dir / "oxdna/top_old.top"
 
     @pytest.fixture(scope="module")
     def file_traj_old(self):
         return data_dir / "oxdna/traj_old.dat"
 
     @pytest.fixture(scope="module")
-    def file_holl_dat(self):
-        return data_dir / "oxdna/holliday.dat"
-
-    @pytest.fixture(scope="module")
-    def universe(self, file_holl_top, file_holl_dat):
+    def universe(self, file_holl_top, file_holl_conf):
         return mda.Universe(
             file_holl_top,
-            file_holl_dat,
+            file_holl_conf,
             format=oxdna.OXDNAReader,
             topology_format=oxdna.OXDNAParser,
         )
 
-    def test_read_as_universe(self, file_holl_top, file_holl_dat):
+    def test_read_as_universe(self, file_holl_top, file_holl_conf):
         u = mda.Universe(
             file_holl_top,
-            file_holl_dat,
+            file_holl_conf,
             format=oxdna.OXDNAReader,
             topology_format=oxdna.OXDNAParser,
         )
@@ -123,11 +123,11 @@ class TestOXDNAReading:
         assert len(np.unique(traj.named_attribute("res_id"))) == 15166
         assert len(np.unique(traj.named_attribute("chain_id"))) == 178
 
-    def test_session_register(self, file_holl_top, file_holl_dat):
+    def test_session_register(self, file_holl_top, file_holl_conf):
         session = mn.session.get_session()
         u = mda.Universe(
             file_holl_top,
-            file_holl_dat,
+            file_holl_conf,
             topology_format=oxdna.OXDNAParser,
             format=oxdna.OXDNAReader,
         )
@@ -136,11 +136,11 @@ class TestOXDNAReading:
         assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
         assert traj._mn_entity_type == mn.entities.base.EntityType.MD_OXDNA.value
 
-    def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_dat):
+    def test_reload_lost_connection(self, snapshot, file_holl_top, file_holl_conf):
         session = mn.session.get_session()
         u = mda.Universe(
             file_holl_top,
-            file_holl_dat,
+            file_holl_conf,
             topology_format=oxdna.OXDNAParser,
             format=oxdna.OXDNAReader,
         )
