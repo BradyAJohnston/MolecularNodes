@@ -79,7 +79,8 @@ class OXDNAParser(TopologyReaderBase):
         for i, line in enumerate(lines[1:]):
             is_rna = "type=RNA" in line
             _is_dna = not is_rna
-            is_circular = "circular=true" in line
+            # oxDNA tooling writes both `circular=true` and `circular=True`
+            is_circular = "circular=true" in line.lower()
 
             line_split = line.split()
             bases = line_split[0]
@@ -95,7 +96,7 @@ class OXDNAParser(TopologyReaderBase):
                     continue
                 if letter == ")":
                     end = j
-                    base_list.append(line[start:end])
+                    base_list.append(bases[start:end])
                     in_custom_base = False
                     continue
 
@@ -115,12 +116,16 @@ class OXDNAParser(TopologyReaderBase):
         bond_idx[:, :] = -1
 
         for i in atom_idx:
-            is_first_in_chain = i == 0 or chain_ids[i] != chain_ids[i - 1]
-            if is_first_in_chain and is_circular_list[chain_ids[i]]:
-                end_chain_id = i + len(chain_id_list[chain_ids[i]]) - 1
-                bond_idx[i, :] = np.array((i, end_chain_id), dtype=int)
-            else:
+            chain = chain_ids[i]
+            is_first_in_chain = i == 0 or chain != chain_ids[i - 1]
+            if not is_first_in_chain:
                 bond_idx[i, :] = np.array((i, i - 1), dtype=int)
+            elif is_circular_list[chain]:
+                # close the ring: bond the strand's first nucleotide to its last.
+                # First nucleotides of linear strands keep the (-1, -1) sentinel
+                # and are dropped by the mask below
+                last_in_chain = i + len(chain_id_list[chain]) - 1
+                bond_idx[i, :] = np.array((i, last_in_chain), dtype=int)
 
         mask = np.logical_and(bond_idx[:, 0] != -1, bond_idx[:, 1] != -1)
         bond_idx = bond_idx[mask, :]

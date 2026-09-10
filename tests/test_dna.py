@@ -103,6 +103,29 @@ class TestOXDNAReading:
         for att in ["res_id", "chain_id", "res_name"]:
             assert snapshot == str(traj[att])
 
+    @pytest.mark.parametrize(
+        "new_top, new_traj, old_top, old_traj",
+        [
+            ("lin_top", "lin_traj", "lin_top_old", "lin_traj_old"),
+            ("circ_top", "circ_conf", "circ_top_old", "circ_conf_old"),
+        ],
+    )
+    def test_new_old_topology_bonds_match(
+        self, file, new_top, new_traj, old_top, old_traj
+    ):
+        # both topology formats describe the same molecule, so the parsed bond
+        # graphs must agree (linear strands stay separate, circles stay closed)
+        def bond_set(topkey, trajkey):
+            u = mda.Universe(
+                file(topkey),
+                file(trajkey),
+                topology_format=oxdna.OXDNAParser,
+                format=oxdna.OXDNAReader,
+            )
+            return {tuple(sorted(bond)) for bond in u.atoms.bonds.indices.tolist()}
+
+        assert bond_set(new_top, new_traj) == bond_set(old_top, old_traj)
+
     def test_reading_example(self, snapshot, file):
         u = mda.Universe(
             file("orig_top_old"),
