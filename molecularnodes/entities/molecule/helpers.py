@@ -17,7 +17,6 @@ from ...utils import (
     frame_mapper,
     frames_to_average,
 )
-from .. import base
 
 logger = logging.getLogger(__name__)
 
@@ -165,10 +164,17 @@ class FrameManager:
         """
         self.trajectory = trajectory
         self.cache = PositionCache()
+        # entities can declare extra per-frame vector attributes (e.g. oxDNA
+        # base vectors) via `_att_names`. Only names the reader actually found
+        # in the file get a cache — trailing columns such as velocities are
+        # optional in oxDNA configurations
         self.attribute_caches = {}
-        if trajectory._entity_type == base.EntityType.MD_OXDNA:
-            for name in self.trajectory._att_names:
-                self.attribute_caches[name] = PositionCache()
+        att_names = getattr(trajectory, "_att_names", ())
+        if att_names:
+            ts_data = trajectory.universe.trajectory.ts.data
+            self.attribute_caches = {
+                name: PositionCache() for name in att_names if name in ts_data
+            }
 
     @property
     def n_frames(self) -> Optional[int]:
@@ -423,15 +429,11 @@ class FrameManager:
         """
 
         self.trajectory.uframe = frame
-        attributes = {}
-
-        for name in self.trajectory._att_names:
-            attributes[name] = (
-                self.trajectory.universe.trajectory[frame].data[name]
-                * self.trajectory.world_scale
-            )
-
-        return attributes
+        ts_data = self.trajectory.universe.trajectory.ts.data
+        return {
+            name: ts_data[name] * self.trajectory.world_scale
+            for name in self.attribute_caches
+        }
 
     def update_attribute_caches(self, frame: int, cache_ahead: bool = True) -> None:
         """Update the oxDNA attribute caches for the current frame.
@@ -496,18 +498,17 @@ class FrameManager:
         """
         self.update_attribute_caches(frame)
 
-        mean_attributes = {}
-
         if self.trajectory.average == 0:
-            for name in self.attribute_caches:
-                mean_attributes[name] = self.attribute_caches[name][frame]
-            return mean_attributes
+            return {name: cache[frame] for name, cache in self.attribute_caches.items()}
 
-        for name in self.attribute_caches:
-            cache = self.attribute_caches[name]
-            array = cache.get_ordered_array()
-            mean_attributes[name] = np.mean(array, axis=0)
-        return mean_attributes
+        # average exactly the window for this frame — the cache can hold other
+        # frames (interpolation look-ahead, a previous window), which must not
+        # leak into the mean
+        window = self._frame_range(frame)
+        return {
+            name: np.mean([cache[f] for f in window], axis=0)
+            for name, cache in self.attribute_caches.items()
+        }
 
     def get_attributes_at_frame(self, frame) -> dict[str, np.ndarray]:
         """Get oxDNA attributes for a given frame with all processing applied.
@@ -525,6 +526,8 @@ class FrameManager:
         dict[str, np.ndarray]
             Processed oxDNA attributes sorted by name
         """
+        if not self.attribute_caches:
+            return {}
 
         if not self.trajectory.update_with_scene:
             # Just return attributes at the frame without any special handling
