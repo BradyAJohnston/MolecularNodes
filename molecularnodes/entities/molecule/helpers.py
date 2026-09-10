@@ -268,6 +268,79 @@ class FrameManager:
 
         return frames
 
+    def _frames_to_cache(
+        self, frame: int, cache_ahead: bool = True
+    ) -> npt.NDArray[np.int64]:
+        """Get the frame numbers to hold in a cache for this frame.
+
+        Extends a single-frame window by one look-ahead frame for
+        interpolation, except at the end of the trajectory and for
+        streaming trajectories (n_frames is None).
+
+        Parameters
+        ----------
+        frame : int
+            Current frame number
+        cache_ahead : bool, default=True
+            Whether to cache next frame for interpolation
+
+        Returns
+        -------
+        np.ndarray
+            Frame numbers to cache
+        """
+        frames_to_cache = self._frame_range(frame)
+        n_frames = self.n_frames
+        if (
+            len(frames_to_cache) == 1
+            and n_frames is not None
+            and frames_to_cache[0] != (n_frames - 1)
+            and cache_ahead
+        ):
+            frames_to_cache = np.array(
+                (frames_to_cache[0], frames_to_cache[0] + 1), dtype=int
+            )
+        return frames_to_cache
+
+    def _mapped_uframes(self, frame: int) -> tuple[int, int]:
+        """Map a scene frame to the current and next universe frames.
+
+        Applies the subframe/offset mapping, clamps to trajectory bounds for
+        non-streaming trajectories, and updates the UI frame property.
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
+
+        Returns
+        -------
+        tuple[int, int]
+            Current and next universe frame numbers
+        """
+        uframe_current = frame_mapper(
+            frame=frame,
+            subframes=self.trajectory.subframes,
+            offset=self.trajectory.offset,
+        )
+        uframe_next = uframe_current + 1
+
+        n_frames = self.n_frames
+        if n_frames is not None:
+            last_frame = n_frames - 1
+            if uframe_current >= last_frame:
+                uframe_current = last_frame
+                uframe_next = uframe_current
+
+        # Update the frame_hidden property for the UI
+        try:
+            self.trajectory._frame = uframe_current
+        except AttributeError:
+            # Silently ignore if we can't write to Blender property
+            pass
+
+        return uframe_current, uframe_next
+
     def update_position_cache(self, frame: int, cache_ahead: bool = True) -> None:
         """Update the position cache for the current frame.
 
@@ -281,20 +354,7 @@ class FrameManager:
         cache_ahead : bool, default=True
             Whether to cache next frame for interpolation
         """
-        frames_to_cache = self._frame_range(frame)
-        n_frames = self.n_frames
-
-        # If interpolating, ensure we cache 1 frame ahead
-        # Skip for streaming trajectories (n_frames is None)
-        if (
-            len(frames_to_cache) == 1
-            and n_frames is not None
-            and frames_to_cache[0] != (n_frames - 1)
-            and cache_ahead
-        ):
-            frames_to_cache = np.array(
-                (frames_to_cache[0], frames_to_cache[0] + 1), dtype=int
-            )
+        frames_to_cache = self._frames_to_cache(frame, cache_ahead)
 
         # Only cleanup the cache if we have more than 2 frames stored
         if len(self.cache.keys()) > 2:
@@ -368,29 +428,7 @@ class FrameManager:
             # Just return positions at the frame without any special handling
             return self._position_at_frame(frame)
 
-        n_frames = self.n_frames
-
-        # Map scene frame to universe frame
-        uframe_current = frame_mapper(
-            frame=frame,
-            subframes=self.trajectory.subframes,
-            offset=self.trajectory.offset,
-        )
-        uframe_next = uframe_current + 1
-
-        # Handle frame bounds for non-streaming trajectories
-        if n_frames is not None:
-            last_frame = n_frames - 1
-            if uframe_current >= last_frame:
-                uframe_current = last_frame
-                uframe_next = uframe_current
-
-        # Update the frame_hidden property for the UI
-        try:
-            self.trajectory._frame = uframe_current
-        except AttributeError:
-            # Silently ignore if we can't write to Blender property
-            pass
+        uframe_current, uframe_next = self._mapped_uframes(frame)
 
         if self.trajectory.subframes > 0 and self.trajectory.interpolate:
             # Interpolate between current and next frame
@@ -448,38 +486,21 @@ class FrameManager:
         cache_ahead : bool, default=True
             Whether to cache next frame for interpolation
         """
-        frames_to_cache = self._frame_range(frame)
-        n_frames = self.n_frames
+        frames_to_cache = self._frames_to_cache(frame, cache_ahead)
 
-        # If interpolating, ensure we cache 1 frame ahead
-        # Skip for streaming trajectories (n_frames is None)
-        if (
-            len(frames_to_cache) == 1
-            and n_frames is not None
-            and frames_to_cache[0] != (n_frames - 1)
-            and cache_ahead
-        ):
-            frames_to_cache = np.array(
-                (frames_to_cache[0], frames_to_cache[0] + 1), dtype=int
-            )
-
-        for name in self.attribute_caches:
+        for cache in self.attribute_caches.values():
             # Only cleanup the cache if we have more than 2 frames stored
-            if len(self.attribute_caches[name].keys()) > 2:
-                self.attribute_caches[name].remove_frames_except(frames_to_cache)
+            if len(cache.keys()) > 2:
+                cache.remove_frames_except(frames_to_cache)
 
-        # Update the attribute caches with any frames that are not yet cached
-        # For efficiency, assumes caches contain same frames since they are always handled together
-        first_cache_key = next(iter(self.attribute_caches))
-        frames_not_cached = []
+        # Update the attribute caches with any frames that are not yet cached.
+        # The caches always hold the same frames, so check just the first one
+        first_cache = next(iter(self.attribute_caches.values()))
         for f in frames_to_cache:
-            if f not in self.attribute_caches[first_cache_key]:
-                frames_not_cached.append(f)
-
-        for n in frames_not_cached:
-            attributes_at_frame = self._attributes_at_frame(n)
-            for name in self.attribute_caches:
-                self.attribute_caches[name][n] = attributes_at_frame[name]
+            if f not in first_cache:
+                attributes_at_frame = self._attributes_at_frame(f)
+                for name, cache in self.attribute_caches.items():
+                    cache[f] = attributes_at_frame[name]
 
     def attribute_cache_means(self, frame: int) -> dict[str, np.ndarray]:
         """Get mean oxDNA attributes from cached frames.
@@ -533,43 +554,17 @@ class FrameManager:
             # Just return attributes at the frame without any special handling
             return self._attributes_at_frame(frame)
 
-        n_frames = self.n_frames
-
-        # Map scene frame to universe frame
-        uframe_current = frame_mapper(
-            frame=frame,
-            subframes=self.trajectory.subframes,
-            offset=self.trajectory.offset,
-        )
-        uframe_next = uframe_current + 1
-
-        # Handle frame bounds for non-streaming trajectories
-        if n_frames is not None:
-            last_frame = n_frames - 1
-            if uframe_current >= last_frame:
-                uframe_current = last_frame
-                uframe_next = uframe_current
-
-        # Update the frame_hidden property for the UI
-        try:
-            self.trajectory._frame = uframe_current
-        except AttributeError:
-            # Silently ignore if we can't write to Blender property
-            pass
+        uframe_current, uframe_next = self._mapped_uframes(frame)
 
         if self.trajectory.subframes > 0 and self.trajectory.interpolate:
             # Interpolate between current and next frames
             attrib_current = self.attribute_cache_means(uframe_current)
             attrib_next = self.attribute_cache_means(uframe_next)
-            lerps = {}
-            for name in self.attribute_caches:
-                # Interpolate between the two sets of positions
-                array1 = attrib_current[name]
-                array2 = attrib_next[name]
-                lerps[name] = db.lerp(
-                    array1, array2, t=fraction(frame, self.trajectory.subframes + 1)
-                )
-            return lerps
+            t = fraction(frame, self.trajectory.subframes + 1)
+            return {
+                name: db.lerp(attrib_current[name], attrib_next[name], t=t)
+                for name in self.attribute_caches
+            }
         elif self.trajectory.average > 0:
             # Return mean attributes for cached frames
             return self.attribute_cache_means(uframe_current)
