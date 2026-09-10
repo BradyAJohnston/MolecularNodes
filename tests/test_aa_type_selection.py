@@ -11,15 +11,37 @@ import data
 def test_residue_type_data_consistency():
     """Verify that all standard amino acids have a res_type defined."""
     standard_aa = [
-        "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE",
-        "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL",
+        "ALA",
+        "ARG",
+        "ASN",
+        "ASP",
+        "CYS",
+        "GLU",
+        "GLN",
+        "GLY",
+        "HIS",
+        "ILE",
+        "LEU",
+        "LYS",
+        "MET",
+        "PHE",
+        "PRO",
+        "SER",
+        "THR",
+        "TRP",
+        "TYR",
+        "VAL",
     ]
 
     for aa in standard_aa:
         assert aa in data.residues, f"{aa} missing from residues dict"
         assert "res_type" in data.residues[aa], f"{aa} missing res_type"
         assert data.residues[aa]["res_type"] in [
-            "polar", "apolar", "acid", "basic", "aromatic"
+            "polar",
+            "apolar",
+            "acid",
+            "basic",
+            "aromatic",
         ], f"{aa} has invalid res_type: {data.residues[aa]['res_type']}"
 
 
@@ -50,8 +72,26 @@ def test_residue_type_classification():
 def test_residue_name_to_number_mapping():
     """Verify that res_name_num is correctly assigned and unique for standard AAs."""
     standard_aa = [
-        "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE",
-        "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL",
+        "ALA",
+        "ARG",
+        "ASN",
+        "ASP",
+        "CYS",
+        "GLU",
+        "GLN",
+        "GLY",
+        "HIS",
+        "ILE",
+        "LEU",
+        "LYS",
+        "MET",
+        "PHE",
+        "PRO",
+        "SER",
+        "THR",
+        "TRP",
+        "TYR",
+        "VAL",
     ]
 
     res_nums = set()
@@ -73,24 +113,53 @@ def test_select_aa_type_index_mapping():
 
     # Verify against actual data
     for aa, info in data.residues.items():
-        if aa not in ["ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY",
-                      "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER",
-                      "THR", "TRP", "TYR", "VAL"]:
+        if aa not in [
+            "ALA",
+            "ARG",
+            "ASN",
+            "ASP",
+            "CYS",
+            "GLU",
+            "GLN",
+            "GLY",
+            "HIS",
+            "ILE",
+            "LEU",
+            "LYS",
+            "MET",
+            "PHE",
+            "PRO",
+            "SER",
+            "THR",
+            "TRP",
+            "TYR",
+            "VAL",
+        ]:
             continue
 
         res_num = info["res_name_num"]
         res_type = info["res_type"]
 
         if res_type == "polar":
-            assert res_num in polar_indices, f"{aa} (polar) has res_num {res_num} not in polar_indices"
+            assert res_num in polar_indices, (
+                f"{aa} (polar) has res_num {res_num} not in polar_indices"
+            )
         elif res_type == "apolar":
-            assert res_num in apolar_indices, f"{aa} (apolar) has res_num {res_num} not in apolar_indices"
+            assert res_num in apolar_indices, (
+                f"{aa} (apolar) has res_num {res_num} not in apolar_indices"
+            )
         elif res_type == "acid":
-            assert res_num in acidic_indices, f"{aa} (acid) has res_num {res_num} not in acidic_indices"
+            assert res_num in acidic_indices, (
+                f"{aa} (acid) has res_num {res_num} not in acidic_indices"
+            )
         elif res_type == "basic":
-            assert res_num in basic_indices, f"{aa} (basic) has res_num {res_num} not in basic_indices"
+            assert res_num in basic_indices, (
+                f"{aa} (basic) has res_num {res_num} not in basic_indices"
+            )
         elif res_type == "aromatic":
-            assert res_num in aromatic_indices, f"{aa} (aromatic) has res_num {res_num} not in aromatic_indices"
+            assert res_num in aromatic_indices, (
+                f"{aa} (aromatic) has res_num {res_num} not in aromatic_indices"
+            )
 
 
 if __name__ == "__main__":
