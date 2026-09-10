@@ -137,6 +137,29 @@ class TestOXDNAReading:
         for att in ["res_id", "chain_id"]:
             assert snapshot == len(np.unique(traj.named_attribute(att)))
 
+    def test_load(self, file):
+        traj = oxdna.OXDNA.load(file("circ_top"), file("circ_conf"), name="circle")
+        assert traj.object.name == "circle"
+        for att in oxdna.OXDNA._att_names:
+            assert traj.named_attribute(att).shape == (84, 3)
+
+    def test_load_without_velocity_columns(self, file, tmp_path):
+        # velocity columns are optional in oxDNA configurations; loading must
+        # skip the absent attributes rather than fail
+        conf = tmp_path / "minicircle_9col.dat"
+        lines = []
+        for line in file("circ_conf").read_text().splitlines():
+            cols = line.split()
+            lines.append(" ".join(cols[:9]) if len(cols) == 15 else line)
+        conf.write_text("\n".join(lines) + "\n")
+
+        traj = oxdna.OXDNA.load(file("circ_top"), conf, name="no_velocities")
+        assert set(traj.frame_manager.attribute_caches) == {
+            "base_vector",
+            "base_normal",
+        }
+        assert traj.named_attribute("base_vector").shape == (84, 3)
+
     def test_session_register(self, file):
         session = mn.session.get_session()
         u = mda.Universe(
