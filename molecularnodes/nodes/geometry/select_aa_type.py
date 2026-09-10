@@ -105,11 +105,28 @@ class SelectAaType(AssetGeometryGroup):
         index_switch_polar = g.IndexSwitch.boolean(
             group,
             (
-                False, False, boolean, False, boolean, False,
-                boolean, False, boolean, False, False, False,
-                False, False, False, boolean, boolean, False,
-                False, False,
-            ) + (False,) * 24,  # pad to 44 for DNA/RNA
+                False,
+                False,
+                boolean,
+                False,
+                boolean,
+                False,
+                boolean,
+                False,
+                boolean,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                boolean,
+                boolean,
+                False,
+                False,
+                False,
+            )
+            + (False,) * 24,  # pad to 44 for DNA/RNA
         )
         BooleanAndOr(and_=and_, or_=or_, boolean=index_switch_polar) >> is_polar
 
@@ -117,11 +134,28 @@ class SelectAaType(AssetGeometryGroup):
         index_switch_apolar = g.IndexSwitch.boolean(
             group,
             (
-                boolean, False, False, False, False, False,
-                False, boolean, False, boolean, boolean, False,
-                boolean, False, boolean, False, False, False,
-                False, boolean,
-            ) + (False,) * 24,
+                boolean,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                boolean,
+                False,
+                boolean,
+                boolean,
+                False,
+                boolean,
+                False,
+                boolean,
+                False,
+                False,
+                False,
+                False,
+                boolean,
+            )
+            + (False,) * 24,
         )
         BooleanAndOr(and_=and_, or_=or_, boolean=index_switch_apolar) >> is_apolar
 
@@ -129,11 +163,28 @@ class SelectAaType(AssetGeometryGroup):
         index_switch_acidic = g.IndexSwitch.boolean(
             group,
             (
-                False, False, False, boolean, False, boolean,
-                False, False, False, False, False, False,
-                False, False, False, False, False, False,
-                False, False,
-            ) + (False,) * 24,
+                False,
+                False,
+                False,
+                boolean,
+                False,
+                boolean,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+            )
+            + (False,) * 24,
         )
         BooleanAndOr(and_=and_, or_=or_, boolean=index_switch_acidic) >> is_acidic
 
@@ -141,11 +192,28 @@ class SelectAaType(AssetGeometryGroup):
         index_switch_basic = g.IndexSwitch.boolean(
             group,
             (
-                False, boolean, False, False, False, False,
-                False, False, False, False, False, boolean,
-                False, False, False, False, False, False,
-                False, False,
-            ) + (False,) * 24,
+                False,
+                boolean,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                boolean,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+            )
+            + (False,) * 24,
         )
         BooleanAndOr(and_=and_, or_=or_, boolean=index_switch_basic) >> is_basic
 
@@ -153,11 +221,28 @@ class SelectAaType(AssetGeometryGroup):
         index_switch_aromatic = g.IndexSwitch.boolean(
             group,
             (
-                False, False, False, False, False, False,
-                False, False, False, False, False, False,
-                False, boolean, False, False, False, boolean,
-                boolean, False,
-            ) + (False,) * 24,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                boolean,
+                False,
+                False,
+                False,
+                boolean,
+                boolean,
+                False,
+            )
+            + (False,) * 24,
         )
         BooleanAndOr(and_=and_, or_=or_, boolean=index_switch_aromatic) >> is_aromatic
 
