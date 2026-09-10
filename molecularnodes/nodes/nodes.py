@@ -1,15 +1,15 @@
 from typing import Iterable, Literal
 import bpy
+from bpy.types import GeometryNodeTree
 from databpy.nodes import (
     append_from_blend,
     swap_tree,
 )
-from mathutils import Vector
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from .. import color
 from ..assets import MN_DATA_FILE
 from . import geometry as mng
-from .material import assign_material
 
 NODE_WIDTH = 180
 
@@ -77,43 +77,11 @@ def inputs(node):
     return items
 
 
-def set_selection(group, node, selection):
-    pos = node.location
-    pos = [pos[0] - 200, pos[1] - 200]
-    selection.location = pos
-    group.links.new(selection.outputs[0], node.inputs["Selection"])
-
-    return selection
-
-
 def create_debug_group(name="MolecularNodesDebugGroup"):
     group = new_tree(name=name, fallback=False)
     info = group.nodes.new("GeometryNodeObjectInfo")
     group.links.new(info.outputs["Geometry"], group.nodes["Group Output"].inputs[0])
     return group
-
-
-def add_selection(group, sel_name, input_list, field="chain_id"):
-    style = style_node(group)
-    sel_node = add_custom(
-        group,
-        custom_boolean_iswitch(
-            name="selection", items=input_list, attribute_name=field
-        ).name,
-    )
-
-    set_selection(group, style, sel_node)
-    return sel_node
-
-
-def get_selection(node: bpy.types.GeometryNode) -> bpy.types.GeometryNode | None:
-    sel_input = node.inputs.get("Selection")
-    if not sel_input:
-        return None
-    try:
-        return sel_input.links[0].from_socket.node
-    except (KeyError, IndexError):
-        return None
 
 
 def get_output(group) -> bpy.types.GeometryNode:
@@ -273,58 +241,6 @@ def new_tree(
     return tree
 
 
-def add_custom(
-    group: bpy.types.GeometryNodeTree,
-    name: str,
-    location: list[float, float] | Vector = [0, 0],
-    width: float = NODE_WIDTH,
-    material: str | bpy.types.Material = "default",
-    show_options: bool = False,
-    link: bool = False,
-) -> bpy.types.GeometryNodeGroup:
-    node: bpy.types.GeometryNodeGroup = group.nodes.new("GeometryNodeGroup")
-    node.node_tree = append(name, link=link)
-    # set the label to the node tree name by default
-    node.label = node.node_tree.name
-
-    # if there is an input socket called 'Material', assign it to the base MN material
-    # if another material is supplied, use that instead.
-    assign_material(node, new_material=material)
-
-    # move and format the node for arranging
-    node.location = location
-    node.width = width
-    node.show_options = show_options
-    node.name = name
-
-    return node
-
-
-def insert_join_last(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
-    """
-    Add a join last node to the tree.
-    """
-    link = tree.links.new
-    node_join: bpy.types.GeometryNode = tree.nodes.new("GeometryNodeJoinGeometry")
-    node_output = get_output(tree)
-    old_loc = node_output.location.copy()
-    node_output.location += Vector([NODE_SPACING * 2, 0])
-    node_join.location = old_loc + Vector([NODE_SPACING, 0])
-    try:
-        if len(node_output.inputs[0].links) > 0:
-            from_socket = node_output.inputs[0].links[0].from_socket
-            if from_socket.node != get_input(tree):
-                link(
-                    node_output.inputs[0].links[0].from_socket,
-                    node_join.inputs[0],
-                )
-    except IndexError:
-        link(node_join.outputs[0], node_output.inputs[0])
-
-    link(node_join.outputs[0], tree.nodes["Group Output"].inputs[0])
-    return node_join
-
-
 def last_node(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
     output = get_output(tree)
     try:
@@ -352,51 +268,6 @@ def final_join(tree: bpy.types.GeometryNodeTree) -> bpy.types.GeometryNode:
             current = node_previous(current)
     except (RuntimeError, IndexError):
         pass
-        # insert_join_last(tree)
-
-
-def loc_between(a: bpy.types.GeometryNode, b: bpy.types.GeometryNode, t=0.5) -> Vector:
-    """
-    Get the location between two nodes
-    """
-    return a.location + (b.location - a.location) * t
-
-
-def insert_before(
-    item: bpy.types.Node | bpy.types.NodeSocket,
-    new_node: str,
-    offset: Vector = Vector([-NODE_SPACING, 0]),
-) -> bpy.types.Node | bpy.types.GeometryNodeGroup:
-    """
-    Place a node before the given node in the tree. If a socket is given, link to that
-    socket otherwise e link to the first input of the node.
-    """
-    # if a socket is given, then we will link into that socket, but if a node is given
-    # we move down through the inputs and find the first one that is linked and link into
-    # that socket
-    if isinstance(item, bpy.types.NodeSocket):
-        to_socket = item
-        node = to_socket.node
-        try:
-            from_socket = to_socket.links[0].from_socket  # type: ignore
-        except IndexError:
-            from_socket = None
-    else:
-        node = item
-        to_socket = node.inputs[0]
-        from_socket = to_socket.links[0].from_socket
-
-    tree = node.id_data
-    try:
-        node_new = add_custom(tree, new_node)
-    except KeyError:
-        node_new = tree.nodes.new(new_node)
-
-    node_new.location = node.location + offset
-    tree.links.new(node_new.outputs[0], to_socket)
-    if from_socket is not None:
-        tree.links.new(from_socket, node_new.inputs[0])
-    return node_new
 
 
 def custom_boolean_iswitch(
@@ -405,8 +276,7 @@ def custom_boolean_iswitch(
     attribute_name: str = "chain_id",
     offset: int = 0,
     prefix: str = "",
-) -> bpy.types.GeometryNodeTree:
-
+) -> TreeBuilder[GeometryNodeTree]:
     with g.tree(name) as tree:
         attr = g.NamedAttribute.integer(attribute_name)
 
@@ -420,7 +290,7 @@ def custom_boolean_iswitch(
 
     tree.tree.color_tag = "INPUT"
 
-    return tree.tree
+    return tree
 
 
 def custom_color_iswitch(
@@ -428,7 +298,7 @@ def custom_color_iswitch(
     items: dict[str, tuple[float, float, float, float]] | Iterable[int | float | str],
     attribute_name: str = "chain_id",
     offset: int = 0,
-) -> bpy.types.GeometryNodeTree:
+) -> TreeBuilder[GeometryNodeTree]:
     with g.tree(name) as tree:
         attr = g.NamedAttribute.integer(attribute_name)
 
@@ -445,4 +315,4 @@ def custom_color_iswitch(
         switch >> tree.outputs.color()
 
     tree.tree.color_tag = "INPUT"
-    return tree.tree
+    return tree
