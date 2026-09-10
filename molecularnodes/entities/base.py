@@ -194,10 +194,10 @@ class MolecularEntity(
                 name=f"Select {prefix} {self.name}",
                 items=prop,
                 attribute_name=attribute,
-            ).asset_mark()
+            ).tree.asset_mark()
             custom_color_iswitch(
                 name=f"Color {prefix} {self.name}", items=prop, attribute_name=attribute
-            ).asset_mark()
+            ).tree.asset_mark()
 
     @property
     def props(self) -> "MolecularNodesObjectProperties":

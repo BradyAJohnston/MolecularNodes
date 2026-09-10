@@ -701,6 +701,10 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.GetGeometryAtoms
         children: embedded
+      - name: nodes.geometry.Group2IndexAngle
+        children: embedded
+      - name: nodes.geometry.Group3IndexAngle
+        children: embedded
       - name: nodes.geometry.IndexDistance
         children: embedded
       - name: nodes.geometry.IndexMixFloat
@@ -738,10 +742,6 @@ quartodoc:
       - name: nodes.geometry.Velocity
         children: embedded
       - name: nodes.geometry.WorldToAngstrom
-        children: embedded
-      - name: nodes.geometry._2IndexAngle
-        children: embedded
-      - name: nodes.geometry._3IndexAngle
         children: embedded
     - kind: page
       path: nodes.utilities_attribute
