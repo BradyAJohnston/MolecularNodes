@@ -43,20 +43,21 @@ class DNASequenceToID(CustomGeometryGroup):
         special_characters = g.SpecialCharacters()
         replace_string = (
             string.uppercase()
-            .replace(g.String(string=" "))
-            .replace(special_characters.o.line_break)
+            .replace(g.String(string=" "), "")
+            .replace(special_characters.o.line_break, "")
         )
-        trim_string = g.TrimString(
-            string=g.TrimString(string=replace_string.replace(special_characters.o.tab))
-        )
+        trim_string = replace_string.replace(special_characters.o.tab, "").trim().trim()
         replace_string_1 = (
-            trim_string.o.string.replace("A").replace("C").replace("G").replace("T")
+            trim_string.replace("A", "")
+            .replace("C", "")
+            .replace("G", "")
+            .replace("T", "")
         )
         format_string = g.String(
             string="Non-standard base letters detected: {s}"
         ).o.string.format({"s": replace_string_1})
-        slice_string = trim_string.o.string.slice(g.Index(), 1)
-        trim_string.o.string.length() >> length
+        slice_string = trim_string.slice(g.Index(), 1)
+        trim_string.length() >> length
         switch = g.Compare.string.equal(slice_string, "C").o.result.switch.integer(
             g.Compare.string.equal(slice_string, "A").o.result.switch.integer(-1), 1
         )
@@ -936,11 +937,7 @@ class StringToList(CustomGeometryGroup):
         separator = tree.inputs.string("Separator", ",", optional_label=True)
         list = tree.outputs.string("List")
 
-        trim_string = g.TrimString(
-            string=g.SplitString(string=string, separator=separator)
-        )
-
-        trim_string >> list
+        string.split(separator).trim() >> list
 
 
 class SetGeometryTags(CustomGeometryGroup):
@@ -2576,15 +2573,15 @@ class DNAFromCurve(AssetGeometryGroup):
         geometry = tree.outputs.geometry("Geometry")
 
         with g.Frame("Base instances"):
+            collection_info = g.CollectionInfo(
+                collection=bpy.data.collections.get("DNA Bases"), separate_children=True
+            )
             group = ColorBackbone(
                 backbone=(0.7646205, 0.6673602, 0.7553173, 1.0),
                 side_chain=ColorResName(c=(0.20380287, 0.8000075, 0.1007411, 1.0)),
             )
             separate_geometry = SetColor(
-                atoms=g.CollectionInfo(
-                    collection=bpy.data.collections["DNA Bases"], separate_children=True
-                ),
-                color=group,
+                atoms=collection_info, color=group
             ) >> g.SeparateGeometry.point(selection=IsHydrogen().o.inverted)
             group_1 = SetColor(
                 atoms=separate_geometry.o.selection,

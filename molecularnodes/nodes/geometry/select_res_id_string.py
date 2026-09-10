@@ -72,23 +72,19 @@ class SelectResIDString(AssetGeometryGroup):
         selection_2 = closure_zone_1.outputs.boolean("Selection")
         group = ResidueID()
         string_3 = g.String(string="-")
-        (
-            g.Compare.integer.equal(
-                g.StringToValue.integer(string_1).o.value, ResidueID()
-            )
-            >> selection_1
-        )
-        trim_string = g.TrimString(string=g.SplitString(string=string, separator=","))
-        repeat_zone = g.RepeatZone(trim_string.o.string.list_length())
+        g.Compare.integer.equal(string_1.to_integer(), ResidueID()) >> selection_1
+        trim_string = string.split(",").trim()
+        repeat_zone = g.RepeatZone(trim_string.list_length())
         boolean = repeat_zone.items.boolean("Boolean")
-        get_list_item = trim_string.o.string[repeat_zone.iteration]
-        trim_string_1 = g.TrimString(
-            string=g.SplitString(string=string_2, separator=string_3)
+        get_list_item = trim_string[repeat_zone.iteration]
+        trim_string_1 = string_2.split(string_3).trim()
+        (
+            (
+                (group >= trim_string_1[0].to_integer())
+                & (group <= trim_string_1[1].to_integer())
+            )
+            >> selection_2
         )
-        boolean_math = (
-            group >= g.StringToValue.integer(trim_string_1.o.string[0]).o.value
-        ) & (group <= g.StringToValue.integer(trim_string_1.o.string[1]).o.value)
-        boolean_math >> selection_2
         switch = get_list_item.contains(string_3).switch.closure(
             closure_zone.closure, closure_zone_1.closure
         )

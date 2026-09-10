@@ -180,7 +180,7 @@ class FindBondedAtom(AssetGeometryGroup):
 
         group = FindConnected(
             value=AtomName(),
-            match=MenuAtomName(atom_name=atom_name).o.socket_1,
+            match=MenuAtomName(atom_name=atom_name).o[0],
             distance=distance,
             method=method,
         )

@@ -143,7 +143,7 @@ class CurveVisualize(AssetGeometryGroup):
         group = PrimitiveArrow(
             vertices=3,
             value=(0.1056426, 0.800023, 0.7937081, 1.0),
-            material=bpy.data.materials["MN Ambient Occlusion"],
+            material=bpy.data.materials.get("MN Ambient Occlusion"),
         )
         capture = g.CaptureAttribute.point(geometry=curve)
         selection_1 = capture.items.boolean("Selection", selection)
@@ -154,7 +154,7 @@ class CurveVisualize(AssetGeometryGroup):
         group_3 = PrimitiveArrow(
             vertices=3,
             value=(0.8000315, 0.49981865, 0.01965215, 1.0),
-            material=bpy.data.materials["MN Ambient Occlusion"],
+            material=bpy.data.materials.get("MN Ambient Occlusion"),
         )
         group_4 = UnitConvert(from_=2.0)
         set_spline_type = g.SetSplineType.bezier(
@@ -170,7 +170,7 @@ class CurveVisualize(AssetGeometryGroup):
         instance_on_points = g.InstanceOnPoints(
             points=set_position,
             instance=PrimitiveGimbal(
-                vertices=3, material=bpy.data.materials["MN Ambient Occlusion"]
+                vertices=3, material=bpy.data.materials.get("MN Ambient Occlusion")
             ),
             rotation=g.NamedAttribute.quaternion("rotation").o.attribute,
             scale=MNUnits(value=arrow_size).o.angstrom,

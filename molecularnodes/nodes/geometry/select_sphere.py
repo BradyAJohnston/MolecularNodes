@@ -95,7 +95,7 @@ class SelectSphere(AssetGeometryGroup):
         )
         object = tree.inputs.object(
             "Object",
-            bpy.data.objects["select_sphere"],
+            bpy.data.objects.get("select_sphere"),
             description="The position from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle",
             optional_label=True,
         )

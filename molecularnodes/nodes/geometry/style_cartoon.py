@@ -249,7 +249,9 @@ class CAToLoops(CustomGeometryGroup):
             normalize=False,
             angstrom=2.0,
         )
-        rotate_rotation = CurveRotation().o.rotation.rotate(rotation_space="LOCAL")
+        rotate_rotation = CurveRotation().o.rotation.rotate(
+            (0.0, 0.0, 0.0), rotation_space="LOCAL"
+        )
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
         rotation = capture_1.items.rotation("Rotation", rotate_rotation)
         with g.Frame("Don't resample when directly from one SS to another"):

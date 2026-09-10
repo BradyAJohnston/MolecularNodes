@@ -66,26 +66,26 @@ class MN_chi_atom_names(CustomGeometryGroup):
         group_1 = MenuAtomName(atom_name="CG1")
         (
             SwitchResidueName(
-                ala=group.o.socket_1,
-                arg=group.o.socket_1,
-                asn=group.o.socket_1,
-                asp=group.o.socket_1,
-                cys=MenuAtomName(atom_name="SG").o.socket_1,
-                glu=group.o.socket_1,
-                gln=group.o.socket_1,
-                gly=group.o.socket_1,
-                his=group.o.socket_1,
-                ile=group_1.o.socket_1,
-                leu=group.o.socket_1,
-                lys=group.o.socket_1,
-                met=group.o.socket_1,
-                phe=group.o.socket_1,
-                pro=group.o.socket_1,
-                ser=MenuAtomName(atom_name="OG").o.socket_1,
-                thr=MenuAtomName(atom_name="CG2").o.socket_1,
-                trp=group.o.socket_1,
-                tyr=group.o.socket_1,
-                val=group_1.o.socket_1,
+                ala=group.o[0],
+                arg=group.o[0],
+                asn=group.o[0],
+                asp=group.o[0],
+                cys=MenuAtomName(atom_name="SG").o[0],
+                glu=group.o[0],
+                gln=group.o[0],
+                gly=group.o[0],
+                his=group.o[0],
+                ile=group_1.o[0],
+                leu=group.o[0],
+                lys=group.o[0],
+                met=group.o[0],
+                phe=group.o[0],
+                pro=group.o[0],
+                ser=MenuAtomName(atom_name="OG").o[0],
+                thr=MenuAtomName(atom_name="CG2").o[0],
+                trp=group.o[0],
+                tyr=group.o[0],
+                val=group_1.o[0],
             )
             >> x1
         )
@@ -94,55 +94,55 @@ class MN_chi_atom_names(CustomGeometryGroup):
         group_4 = MenuAtomName(atom_name="CD1")
         (
             SwitchResidueName(
-                ala=group_2.o.socket_1,
-                arg=group_2.o.socket_1,
-                asn=group_3.o.socket_1,
-                asp=group_3.o.socket_1,
-                cys=group_2.o.socket_1,
-                glu=group_2.o.socket_1,
-                gln=group_2.o.socket_1,
-                gly=group_2.o.socket_1,
-                his=MenuAtomName(atom_name="CD2").o.socket_1,
-                ile=group_2.o.socket_1,
-                leu=group_4.o.socket_1,
-                lys=group_2.o.socket_1,
-                met=MenuAtomName(atom_name="SD").o.socket_1,
-                phe=group_4.o.socket_1,
-                pro=group_2.o.socket_1,
-                ser=group_2.o.socket_1,
-                thr=group_2.o.socket_1,
-                trp=group_4.o.socket_1,
-                tyr=group_4.o.socket_1,
-                val=group_2.o.socket_1,
+                ala=group_2.o[0],
+                arg=group_2.o[0],
+                asn=group_3.o[0],
+                asp=group_3.o[0],
+                cys=group_2.o[0],
+                glu=group_2.o[0],
+                gln=group_2.o[0],
+                gly=group_2.o[0],
+                his=MenuAtomName(atom_name="CD2").o[0],
+                ile=group_2.o[0],
+                leu=group_4.o[0],
+                lys=group_2.o[0],
+                met=MenuAtomName(atom_name="SD").o[0],
+                phe=group_4.o[0],
+                pro=group_2.o[0],
+                ser=group_2.o[0],
+                thr=group_2.o[0],
+                trp=group_4.o[0],
+                tyr=group_4.o[0],
+                val=group_2.o[0],
             )
             >> x2
         )
         _group_5 = ResidueName()
         (
             SwitchResidueName(
-                arg=MenuAtomName(atom_name="CZ").o.socket_1,
-                lys=MenuAtomName(atom_name="NZ").o.socket_1,
+                arg=MenuAtomName(atom_name="CZ").o[0],
+                lys=MenuAtomName(atom_name="NZ").o[0],
             )
             >> x4
         )
-        SwitchResidueName(lys=MenuAtomName(atom_name="NH1").o.socket_1) >> x5
+        SwitchResidueName(lys=MenuAtomName(atom_name="NH1").o[0]) >> x5
         group_6 = MenuAtomName(atom_name="OE1")
         group_7 = MenuAtomName(atom_name="CE")
         (
             SwitchResidueName(
                 ala=0,
-                arg=MenuAtomName(atom_name="NE").o.socket_1,
+                arg=MenuAtomName(atom_name="NE").o[0],
                 asn=0,
                 asp=0,
                 cys=0,
-                glu=group_6.o.socket_1,
-                gln=group_6.o.socket_1,
+                glu=group_6.o[0],
+                gln=group_6.o[0],
                 gly=0,
                 his=0,
                 ile=0,
                 leu=0,
-                lys=group_7.o.socket_1,
-                met=group_7.o.socket_1,
+                lys=group_7.o[0],
+                met=group_7.o[0],
                 phe=0,
                 pro=0,
                 ser=0,

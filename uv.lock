@@ -1592,7 +1592,7 @@ wheels = [
 
 [[package]]
 name = "nodebpy"
-version = "520.24"
+version = "520.17.0"
 source = { directory = "../nodebpy" }
 
 [package.metadata]

@@ -96,7 +96,7 @@ class SelectCube(AssetGeometryGroup):
         )
         object = tree.inputs.object(
             "Object",
-            bpy.data.objects["select_cube"],
+            bpy.data.objects.get("select_cube"),
             description="The position, rotation and scale from this Object will be used for the distance calculation for the selection. By default an Empty object is used, but any object can be used in principle",
             optional_label=True,
         )
