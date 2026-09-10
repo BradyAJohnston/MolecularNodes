@@ -42,9 +42,9 @@ def test_get_nodes():
 
 def test_selection():
     chain_ids = [let for let in "ABCDEFG123456"]
-    node = nodes.custom_boolean_iswitch("test_node", chain_ids, prefix="Chain ")
+    tree = nodes.custom_boolean_iswitch("test_node", chain_ids, prefix="Chain ")
 
-    input_sockets = nodes.inputs(node)
+    input_sockets = nodes.inputs(tree.tree)
     for letter, socket in zip(chain_ids, input_sockets.values()):
         assert f"Chain {letter}" == socket.name
         assert socket.default_value is False
