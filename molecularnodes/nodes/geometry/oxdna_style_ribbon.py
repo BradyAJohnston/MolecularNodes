@@ -27,8 +27,8 @@ from nodebpy.types import (
     InputVector,
 )
 from ._shared.mn_units import MNUnits
+from ._shared.set_instancer import SetInstancer
 from .angstrom_to_world import AngstromToWorld
-from .chain_id import ChainID
 from .color_res_name import ColorResName
 from .oxdna_normal import OxDNANormal
 from .oxdna_offset import OxDNAOffset
@@ -72,8 +72,8 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
 
     Parameters
     ----------
-    geometry : InputGeometry
-        Geometry
+    atoms : InputGeometry
+        Atoms
     selection : InputBoolean
         Selection of atoms to apply this node to
     backbone_resolution : InputInteger
@@ -99,8 +99,8 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
 
     Inputs
     ------
-    i.geometry : GeometrySocket
-        Geometry
+    i.atoms : GeometrySocket
+        Atoms
     i.selection : BooleanSocket
         Selection of atoms to apply this node to
     i.backbone_resolution : IntegerSocket
@@ -137,8 +137,8 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
     _tree_properties = {"node_tool_idname": "geometry.mn_oxdna_style_ribbon"}
 
     class _Inputs(SocketAccessor):
-        geometry: GeometrySocket
-        """Geometry"""
+        atoms: GeometrySocket
+        """Atoms"""
         selection: BooleanSocket
         """Selection of atoms to apply this node to"""
         backbone_resolution: IntegerSocket
@@ -175,7 +175,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
 
     def __init__(
         self,
-        geometry: InputGeometry = None,
+        atoms: InputGeometry = None,
         selection: InputBoolean = True,
         backbone_resolution: InputInteger = 6,
         backbone_subdivisions: InputInteger = 1,
@@ -190,7 +190,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
     ):
         super().__init__(
             **{
-                "Geometry": geometry,
+                "Atoms": atoms,
                 "Selection": selection,
                 "Backbone Resolution": backbone_resolution,
                 "Backbone Subdivisions": backbone_subdivisions,
@@ -206,7 +206,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         )
 
     def _build_group(self, tree):
-        geometry = tree.inputs.geometry("Geometry")
+        atoms = tree.inputs.geometry("Atoms")
         selection = tree.inputs.boolean(
             "Selection",
             True,
@@ -236,17 +236,18 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
             material = tree.inputs.material(
                 "Material", description="Material to apply to the resulting geometry"
             )
-        geometry_1 = tree.outputs.geometry("Geometry")
+        geometry = tree.outputs.geometry("Geometry")
 
         capture = g.CaptureAttribute.point(
-            geometry=g.SeparateGeometry.point(geometry, selection).o.selection
+            geometry=g.SeparateGeometry.point(atoms, selection).o.selection
         )
         value = capture.items.vector("Value", OxDNAOffset())
         with g.Frame("Colored bases"):
-            instance_on_points = SetColor(
+            group = SetColor(
                 atoms=capture.o.geometry,
                 color=ColorResName(a=a, c=c_, g=g_, t=t_u, ra=a, rc=c_, rg=g_, ru=t_u),
-            ) >> g.InstanceOnPoints(
+            )
+            instance_on_points = SetInstancer(geometry=group) >> g.InstanceOnPoints(
                 instance=Utils_oxdna_base(
                     _named_links=[("Value", 4.139999), ("Value", 5.42), ("Value", 3.32)]
                 ),
@@ -256,8 +257,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         set_position = g.SetPosition(geometry=capture.o.geometry, offset=value.output)
         with g.Frame("Backbone ribbon"):
             set_spline_type = (
-                g.MeshToPoints(mesh=set_position, radius=1.0)
-                >> g.PointsToCurves(curve_group_id=ChainID())
+                g.MeshToCurve(mesh=set_position)
                 >> g.SetCurveRadius(radius=AngstromToWorld(angstrom=backbone_radius))
                 >> g.SetSplineType.bezier()
             )
@@ -271,13 +271,13 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                 )
                 >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
             )
+        group_1 = SetInstancer(geometry=set_position)
         with g.Frame("Base stem"):
-            group = Utils_oxdna_base(
+            group_2 = Utils_oxdna_base(
                 _named_links=[("Value", 1.4999993), ("Value", 6.119999), ("Value", 5.0)]
             )
-            instance_on_points_1 = g.InstanceOnPoints(
-                points=set_position,
-                instance=group,
+            instance_on_points_1 = group_1 >> g.InstanceOnPoints(
+                instance=group_2,
                 rotation=g.AxesToRotation(
                     primary_axis=value.output * -1.0, secondary_axis=OxDNANormal()
                 ),
@@ -287,9 +287,9 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                 geometry=(set_shade_smooth, instance_on_points_1, instance_on_points)
             )
             >> g.SetMaterial(material=material)
-            >> geometry_1
+            >> geometry
         )
-        _group_1 = OxDNARotation()
+        _group_3 = OxDNARotation()
 
 
 ASSET = OxDNAStyleRibbon
