@@ -1,7 +1,9 @@
-# Node-group asset 'Color pLDDT' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color pLDDT" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     ColorSocket,
@@ -80,7 +82,7 @@ class ColorPLDDT(AssetGeometryGroup):
     ):
         super().__init__(**{"<50": _50, "<70": _70, "<90": socket_3, ">90": socket_4})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         n_50 = tree.inputs.color(
             "<50",
             (1.000169, 0.20506974, 0.05950701, 1.0),

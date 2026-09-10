@@ -1,7 +1,9 @@
-# Node-group asset 'Backbone Vector List' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Backbone Vector List" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -72,7 +74,7 @@ class BackboneVectorList(AssetGeometryGroup):
     ):
         super().__init__(**{"CA Atoms": ca_atoms, "Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         ca_atoms = tree.inputs.geometry("CA Atoms")
         index = tree.inputs.integer(
             "Index",

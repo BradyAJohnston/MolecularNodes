@@ -1,7 +1,9 @@
-# Node-group asset 'Transparent Outline' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Transparent Outline" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
@@ -22,7 +24,7 @@ from .outline_mask import OutlineMask
 class MN_mask_transparent(CustomShaderGroup):
     _name = ".MN_mask_transparent"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         value = tree.inputs.float("Value", 0.0, min_value=-10_000.0, max_value=10_000.0)
         value_1 = tree.outputs.float("Value")
 
@@ -35,7 +37,7 @@ class MN_mask_transparent(CustomShaderGroup):
 class MNFresnel(CustomShaderGroup):
     _name = "MN Fresnel"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         ior = tree.inputs.float("IOR", 0.98, min_value=0.0, max_value=1000.0)
         factor = tree.inputs.float(
             "Factor",
@@ -139,7 +141,7 @@ class TransparentOutline(AssetShaderGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         alpha = tree.inputs.float(
             "Alpha",
             0.95,

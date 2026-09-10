@@ -1,7 +1,9 @@
-# Node-group asset 'Topology DSSP' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Topology DSSP" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -36,7 +38,7 @@ class RecipAngDis(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.recip_ang_dis"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.vector(
             "A", (0.0, 0.0, 0.0), min_value=-10_000.0, max_value=10_000.0
         )
@@ -53,7 +55,7 @@ class HBondEnergy(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.hbond_energy"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         o = tree.inputs.vector("O", (0.0, 0.0, 0.0))
         c_ = tree.inputs.vector("C", (0.0, 0.0, 0.0))
         n = tree.inputs.vector("N", (0.0, 0.0, 0.0))
@@ -83,7 +85,7 @@ class CheckHBond(CustomGeometryGroup):
     _name = ".Check HBond"
     _color_tag = "CONVERTER"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         co_index = tree.inputs.integer(
             "CO Index", 0, min_value=0, default_input="INDEX"
         )
@@ -117,7 +119,7 @@ class HBondBackboneCheck(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry._hbond_backbone_check"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         with tree.inputs.panel("CO (i)"):
             co_index = tree.inputs.integer(
                 "CO Index", 0, min_value=0, default_input="INDEX"
@@ -146,7 +148,7 @@ class MN_topo_calc_helix(CustomGeometryGroup):
     _name = ".MN_topo_calc_helix"
     _tree_properties = {"node_tool_idname": "geometry._mn_topo_calc_helix"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         ca_mesh = tree.inputs.geometry("CA Mesh")
         is_helix = tree.outputs.boolean("Is Helix")
         instances = tree.outputs.geometry("Instances")
@@ -238,7 +240,7 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
     _name = ".MN_topo_calc_sheet"
     _tree_properties = {"node_tool_idname": "geometry._mn_topo_calc_sheet"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         ca_mesh = tree.inputs.geometry("CA Mesh")
         is_sheet = tree.outputs.boolean("Is Sheet")
         instances = tree.outputs.geometry("Instances")
@@ -357,7 +359,7 @@ class TopologyDSSP(AssetGeometryGroup):
     ):
         super().__init__(**{"Atoms": atoms})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )

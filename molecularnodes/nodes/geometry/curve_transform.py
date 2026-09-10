@@ -1,7 +1,9 @@
-# Node-group asset 'Curve Transform' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Curve Transform" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -48,7 +50,7 @@ class CurveTransform(AssetGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         transform = tree.outputs.matrix(
             "Transform",
             description="The combine 4X4 transformation matrix for the point of the curve",

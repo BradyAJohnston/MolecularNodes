@@ -1,8 +1,10 @@
-# Node group '.MN_peptide_chi_values' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_peptide_chi_values" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     CustomGeometryGroup,
@@ -89,7 +91,7 @@ class MN_peptide_chi_values(CustomGeometryGroup):
     ):
         super().__init__(**{"X1": x1, "X2": x2, "X3": x3, "X4": x4, "X5": x5})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         x1 = tree.inputs.float("X1", 0.0)
         x2 = tree.inputs.float("X2", 0.0)
         x3 = tree.inputs.float("X3", 0.0)

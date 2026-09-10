@@ -1,7 +1,9 @@
-# Node-group asset 'Between Integer' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Between Integer" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -73,7 +75,7 @@ class BetweenInteger(AssetGeometryGroup):
     ):
         super().__init__(**{"Value": value, "Lower": lower, "Upper": upper})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         value = tree.inputs.integer(
             "Value", 0, description="The value to test if it exists within the bounds"
         )

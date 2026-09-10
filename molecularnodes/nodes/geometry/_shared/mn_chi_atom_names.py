@@ -1,8 +1,10 @@
-# Node group '.MN_chi_atom_names' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_chi_atom_names" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import CustomGeometryGroup, IntegerSocket, SocketAccessor
 from ..menu_atom_name import MenuAtomName
 from ..menu_residue_name import MenuResidueName
@@ -55,7 +57,7 @@ class MN_chi_atom_names(CustomGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         x1 = tree.outputs.integer("X1")
         x2 = tree.outputs.integer("X2")
         x3 = tree.outputs.integer("X3")

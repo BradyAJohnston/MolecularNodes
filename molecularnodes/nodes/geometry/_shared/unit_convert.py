@@ -1,8 +1,10 @@
-# Node group 'Unit Convert' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Unit Convert" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import CustomGeometryGroup, FloatSocket, MenuSocket, SocketAccessor
 from nodebpy.types import InputFloat, InputMenu
@@ -62,7 +64,7 @@ class UnitConvert(CustomGeometryGroup):
     ):
         super().__init__(**{"Distance Type": distance_type, "From": from_})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         distance_type = tree.inputs.menu(
             "Distance Type",
             description="What unit to scale the value to",

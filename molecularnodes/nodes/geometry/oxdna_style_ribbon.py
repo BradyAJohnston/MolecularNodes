@@ -1,8 +1,10 @@
-# Node-group asset 'oxDNA Style Ribbon' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "oxDNA Style Ribbon" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -40,7 +42,7 @@ class Utils_oxdna_base(CustomGeometryGroup):
     _name = ".utils_oxdna_base"
     _tree_properties = {"node_tool_idname": "geometry._utils_oxdna_base"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         value = tree.inputs.float("Value", 0.5, min_value=-10_000.0, max_value=10_000.0)
         value_1 = tree.inputs.float(
             "Value", 0.5, min_value=-10_000.0, max_value=10_000.0
@@ -205,7 +207,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         selection = tree.inputs.boolean(
             "Selection",

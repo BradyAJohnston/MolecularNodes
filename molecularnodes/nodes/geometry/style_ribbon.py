@@ -1,7 +1,9 @@
-# Node-group asset 'Style Ribbon' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Style Ribbon" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -42,7 +44,7 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry._mn_utils_style_ribbon_peptide"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -304,7 +306,7 @@ class StyleRibbon(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )

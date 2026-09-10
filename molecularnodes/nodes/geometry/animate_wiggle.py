@@ -1,8 +1,10 @@
-# Node-group asset 'Animate Wiggle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Animate Wiggle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -23,7 +25,7 @@ class MN_animate_wiggle_mask_res(CustomGeometryGroup):
     _name = ".MN_animate_wiggle_mask_res"
     _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_res"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.integer("A", 0)
         result = tree.outputs.boolean("Result")
 
@@ -102,7 +104,7 @@ class MN_animate_wiggle_mask_length(CustomGeometryGroup):
     _name = ".MN_animate_wiggle_mask_length"
     _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_length"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.integer("A", 0)
         result = tree.outputs.integer("Result")
 
@@ -114,7 +116,7 @@ class MN_animate_noise_repeat(CustomGeometryGroup):
     _color_tag = "TEXTURE"
     _tree_properties = {"node_tool_idname": "geometry.mn_animate_noise_repeat"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         amplitude = tree.inputs.float(
             "Amplitude", 1.0, min_value=-10_000.0, max_value=10_000.0
         )
@@ -173,7 +175,7 @@ class MN_utils_rotate_res(CustomGeometryGroup):
     _name = ".MN_utils_rotate_res"
     _tree_properties = {"node_tool_idname": "geometry._mn_utils_rotate_res"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         selection = tree.inputs.boolean(
             "Selection", False, description="Selection of atoms to apply this node to"
         )
@@ -368,7 +370,7 @@ class AnimateWiggle(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )

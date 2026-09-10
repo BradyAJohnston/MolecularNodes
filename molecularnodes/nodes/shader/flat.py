@@ -1,7 +1,9 @@
-# Node-group asset 'Flat' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Flat" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
@@ -79,7 +81,7 @@ class Flat(AssetShaderGroup):
             **{"Outline": outline, "Threshold": threshold, "Thickness": thickness}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         outline = tree.inputs.menu("Outline", expanded=True, optional_label=True)
         threshold = tree.inputs.float(
             "Threshold", 0.8, min_value=0.0, max_value=10_000.0

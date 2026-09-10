@@ -1,8 +1,10 @@
-# Node group 'CA Value Vector' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "CA Value Vector" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import CustomGeometryGroup, SocketAccessor, VectorSocket
 from nodebpy.types import InputVector
@@ -53,7 +55,7 @@ class CAValueVector(CustomGeometryGroup):
     ):
         super().__init__(**{"Vector": vector})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         vector = tree.inputs.vector("Vector", (0.0, 0.0, 0.0), hide_value=True)
         vector_1 = tree.outputs.vector("Vector")
 
