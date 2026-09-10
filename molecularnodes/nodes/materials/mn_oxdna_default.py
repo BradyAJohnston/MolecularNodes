@@ -1,6 +1,8 @@
-# Material 'MN oxDNA Default', dumped by nodebpy.assets.dump_library.
+# Material "MN oxDNA Default", dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # The class is a recipe for the material's shader tree — build recreates the material and runs it into material.node_tree.
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup
@@ -9,7 +11,7 @@ from nodebpy.builder import CustomShaderGroup
 class MNColorInput(CustomShaderGroup):
     _name = "MN Color Input"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         color = tree.outputs.color("Color", (0.0, 0.0, 0.0, 0.0))
         alpha = tree.outputs.float("Alpha")
 
@@ -37,7 +39,7 @@ class MNColorInput(CustomShaderGroup):
 class MNOxDNADefault(CustomShaderGroup):
     _name = "Shader Nodetree"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         group = MNColorInput()
         principled_bsdf = s.PrincipledBSDF(
             base_color=group.o.color,

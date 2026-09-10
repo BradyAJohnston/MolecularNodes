@@ -1,8 +1,10 @@
-# Node-group asset 'oxDNA Style Ball and Stick' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "oxDNA Style Ball and Stick" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 import bpy
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -270,7 +272,7 @@ class OxDNAStyleBallAndStick(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry("Atoms")
         selection = tree.inputs.boolean(
             "Selection",
@@ -300,7 +302,7 @@ class OxDNAStyleBallAndStick(AssetGeometryGroup):
             base_colors = tree.inputs.menu(
                 "Base Colors", expanded=True, optional_label=True
             )
-            bases = tree.inputs.color("Bases", (0.0, 524_941.2, 524_940.5, 1.0))
+            bases = tree.inputs.color("Bases", (0.0, 1.0, 1.0, 1.0))
             a = tree.inputs.color("A", (0.0, 0.0, 1.0, 1.0))
             c_ = tree.inputs.color("C", (0.0, 1.0, 0.0, 1.0))
             g_ = tree.inputs.color("G", (1.0, 1.0, 0.0, 1.0))

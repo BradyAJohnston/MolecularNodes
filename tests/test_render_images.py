@@ -157,17 +157,32 @@ def test_render_assembly(
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
 
 
-@pytest.mark.parametrize("topo,traj", [("minicircle.top", "minicircle.dat")])
+@pytest.mark.parametrize(
+    "files,style",
+    list(
+        product(
+            (
+                ["minicircle.top", "minicircle.dat"],
+                ["linear.top", "linear_traj.dat"],
+                ["origami_old.top", "origami_old.dat"],
+            ),
+            (mg.OxDNAStyleBallAndStick, mg.OxDNAStyleRibbon),
+        )
+    ),
+)
 def test_render_oxdna_simple_circle(
-    golden_canvas, tmp_path, assembly_image_snapshot, topo, traj
+    golden_canvas, tmp_path, assembly_image_snapshot, files, style
 ):
-    ens = mn.entities.OXDNA.load(data_dir / f"oxdna/{topo}", data_dir / f"oxdna/{traj}")
+    ens = mn.entities.OXDNA.load(
+        topology=data_dir / f"oxdna/{files[0]}",
+        coordinates=data_dir / f"oxdna/{files[1]}",
+    )
 
     with ens.tree.reset() as (atoms, join):
         (
             atoms
             >> mg.CentreOnSelection()
-            >> mg.OxDNAStyleBallAndStick(material=mn.material.Default().material)
+            >> style(material=mn.material.Default().material)
             >> mg.GeoemtryToPlanar()
             >> join
         )
