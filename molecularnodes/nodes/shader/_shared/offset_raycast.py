@@ -1,8 +1,10 @@
-# Node group 'Offset Raycast' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Offset Raycast" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor, VectorSocket
 from nodebpy.types import InputFloat
@@ -89,7 +91,7 @@ class OffsetRaycast(CustomShaderGroup):
             **{"X Offset": x_offset, "Y Offset": y_offset, "Length": length}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         x_offset = tree.inputs.float(
             "X Offset", 1.0, min_value=-10_000.0, max_value=10_000.0
         )

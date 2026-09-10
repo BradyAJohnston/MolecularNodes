@@ -1,7 +1,9 @@
-# Node-group asset 'Color Secondary Structure' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Secondary Structure" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     ColorSocket,
@@ -84,7 +86,7 @@ class ColorSecondaryStructure(AssetGeometryGroup):
             **{"Helix": helix, "Sheet": sheet, "Loop": loop, "Other": other}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         helix = tree.inputs.color(
             "Helix",
             (0.16202937, 0.6239606, 0.19461784, 1.0),

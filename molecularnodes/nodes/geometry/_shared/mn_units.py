@@ -1,8 +1,10 @@
-# Node group 'MN Units' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "MN Units" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import CustomGeometryGroup, FloatSocket, SocketAccessor
 from nodebpy.types import InputFloat
 from .mn_world_scale import MN_world_scale
@@ -57,7 +59,7 @@ class MNUnits(CustomGeometryGroup):
     ):
         super().__init__(**{"Value": value})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         value = tree.inputs.float(
             "Value",
             3.0,

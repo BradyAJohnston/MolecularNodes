@@ -1,7 +1,9 @@
-# Node-group asset 'VDW Radii' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "VDW Radii" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
@@ -61,7 +63,7 @@ class VDWRadii(AssetGeometryGroup):
     ):
         super().__init__(**{"Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
         vdw_radii = tree.outputs.float(
             "vdw_radii", description="Read the `vdw_radii` attribute from the geometry"

@@ -1,8 +1,10 @@
-# Node group '.Check End Face Corner' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".Check End Face Corner" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     BooleanSocket,
@@ -57,7 +59,7 @@ class CheckEndFaceCorner(CustomGeometryGroup):
     ):
         super().__init__(**{"Captured Index": captured_index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         captured_index = tree.inputs.integer("Captured Index", 0)
         is_end_face_corner = tree.outputs.boolean("Is End Face Corner")
 

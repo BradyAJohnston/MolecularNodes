@@ -1,8 +1,10 @@
-# Node group 'Principal Components' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Principal Components" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     CustomGeometryGroup,
@@ -89,7 +91,7 @@ class PrincipalComponents(CustomGeometryGroup):
     ):
         super().__init__(**{"Position": position, "Group ID": group_id})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         position = tree.inputs.vector(
             "Position", (0.0, 0.0, 0.0), subtype="TRANSLATION", default_input="POSITION"
         )

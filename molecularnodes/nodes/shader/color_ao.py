@@ -1,7 +1,9 @@
-# Node-group asset 'Color AO' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color AO" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
@@ -84,7 +86,7 @@ class ColorAO(AssetShaderGroup):
             **{"Color": color, "Menu": menu, "Distance": distance, "Exponent": exponent}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 0.0))
         menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
         distance = tree.inputs.float("Distance", 1.0, min_value=0.0, max_value=1000.0)

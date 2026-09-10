@@ -1,7 +1,9 @@
-# Node-group asset 'Contains Geometry' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Contains Geometry" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -63,7 +65,7 @@ class ContainsGeometry(AssetGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         not_empty = tree.outputs.boolean(
             "Not Empty", description="True when the input contains some geometry"

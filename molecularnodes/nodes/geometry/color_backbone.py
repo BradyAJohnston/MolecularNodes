@@ -1,7 +1,9 @@
-# Node-group asset 'Color Backbone' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Backbone" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     ColorSocket,
@@ -69,7 +71,7 @@ class ColorBackbone(AssetGeometryGroup):
     ):
         super().__init__(**{"Backbone": backbone, "Side Chain": side_chain})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         backbone = tree.inputs.color("Backbone", (0.469481, 0.24, 0.6, 1.0))
         side_chain = tree.inputs.color("Side Chain", (0.525519, 0.6, 0.24, 1.0))
         color = tree.outputs.color("Color", (0.0, 0.0, 0.0, 0.0))

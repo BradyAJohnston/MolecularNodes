@@ -1,7 +1,9 @@
-# Node-group asset 'Clear Instance Transforms' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Clear Instance Transforms" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -75,7 +77,7 @@ class ClearInstanceTransforms(AssetGeometryGroup):
             **{"Geometry": geometry, "Selection": selection, "Realize All": realize_all}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         selection = tree.inputs.boolean("Selection", True, hide_value=True)
         realize_all = tree.inputs.boolean(

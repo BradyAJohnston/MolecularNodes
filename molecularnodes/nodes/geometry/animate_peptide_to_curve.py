@@ -1,8 +1,10 @@
-# Node-group asset 'Animate Peptide to Curve' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Animate Peptide to Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -20,7 +22,7 @@ class MN_utils_curve_resample(CustomGeometryGroup):
     _name = ".MN_utils_curve_resample"
     _tree_properties = {"node_tool_idname": "geometry.mn_utils_curve_resample"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         offset = tree.inputs.float(
             "Offset", 2.3, min_value=-10_000.0, max_value=10_000.0
@@ -188,7 +190,7 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
