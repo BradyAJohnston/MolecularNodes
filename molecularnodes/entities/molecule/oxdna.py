@@ -18,7 +18,6 @@ from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
 from ..base import EntityType
 from .base import Molecule
-from .helpers import FrameManager
 
 DNA_SCALE = 10
 
@@ -404,7 +403,6 @@ class OXDNA(Molecule):
             world_scale=world_scale * DNA_SCALE,
             create_object=create_object,
         )
-        self.frame_manager = FrameManager(self)
 
     @classmethod
     def load(
@@ -413,7 +411,7 @@ class OXDNA(Molecule):
         coordinates: str | Path,
         name: str = "oxDNA",
         style: str | None = "ribbon",
-        world_scale: float = 0.1,
+        selection: str | None = None,
         create_object: bool = True,
     ) -> "OXDNA":
         """Load an oxDNA topology and trajectory.
@@ -428,8 +426,8 @@ class OXDNA(Molecule):
             Name for the created object, by default "oxDNA".
         style : str | None, optional
             Visual style to apply, by default "ribbon". If None, no style is added.
-        world_scale : float, optional
-            Scaling factor for world coordinates, by default 0.1.
+        selection : str | None, optional
+            Atom selection to restrict the style to.
         create_object : bool, optional
             Whether to create the Blender object immediately, by default True.
 
@@ -438,17 +436,17 @@ class OXDNA(Molecule):
         OXDNA
             The created oxDNA trajectory entity.
         """
-        universe = Universe(
+        entity = super().load(
             topology,
             coordinates,
+            name=name,
+            style=style,
+            selection=selection,
+            create_object=create_object,
             topology_format=OXDNAParser,
             format=OXDNAReader,
         )
-        entity = cls(
-            universe, name=name, world_scale=world_scale, create_object=create_object
-        )
-        if style is not None and create_object:
-            entity.add_style(style=style)
+        assert isinstance(entity, cls)
         return entity
 
     def _compute_color(self) -> np.ndarray:
@@ -468,44 +466,29 @@ class OXDNA(Molecule):
             "Color": self._compute_color,
         }
 
-    def _create_object(self, name: str = "NewUniverseObject") -> None:
-        """
-        Create a new object with the trajectory data. oxDNA attributes are initialized by calling set_frame().
+    def _store_extra_attributes(self) -> None:
+        """Seed the per-frame oxDNA vector attributes at object creation."""
+        self._update_attributes(0)
 
-        Parameters
-        ----------
-        style : str, optional
-            Style of the object representation, by default "oxdna"
-        name : str, optional
-            Name of the new object, by default "NewUniverseObject"
-        """
-        super()._create_object(name=name)
-        self.set_frame(0)
-
-    def set_frame(self, frame: int) -> None:
+    def _update_positions(self, frame: int) -> None:
         super()._update_positions(frame)
         self._update_attributes(frame)
 
     def _update_attributes(self, frame: int) -> None:
-        """Update attributes for the given frame.
+        """Store the per-frame oxDNA vector attributes for the given scene frame.
 
         Parameters
         ----------
         frame : int
             Scene frame number
         """
-
         attributes = self.frame_manager.get_attributes_at_frame(frame)
-
-        for name in self._att_names:
-            try:
-                self.store_named_attribute(
-                    data=attributes[name],
-                    name=name,
-                    atype=db.AttributeTypes.FLOAT_VECTOR,
-                )
-            except KeyError as e:
-                print(e)
+        for name, data in attributes.items():
+            self.store_named_attribute(
+                data=data,
+                name=name,
+                atype=db.AttributeTypes.FLOAT_VECTOR,
+            )
 
     def _get_annotation_entity_type(self) -> str:
         "Interna: Re-use the annotations for Molecule entity"
