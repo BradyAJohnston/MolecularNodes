@@ -155,3 +155,22 @@ def test_render_assembly(
         mol.add_style("ribbon", material=mat, assembly=(assembly == "assembly"))
     golden_canvas.look_at(mol, viewpoint="front")
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize("topo,traj", [("minicircle.top", "minicircle.dat")])
+def test_render_oxdna_simple_circle(
+    golden_canvas, tmp_path, assembly_image_snapshot, topo, traj
+):
+    ens = mn.entities.OXDNA.load(data_dir / f"oxdna/{topo}", data_dir / f"oxdna/{traj}")
+
+    with ens.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> mg.CentreOnSelection()
+            >> mg.OxDNAStyleBallAndStick(material=mn.material.Default().material)
+            >> mg.GeoemtryToPlanar()
+            >> join
+        )
+
+    golden_canvas.look_at(ens, viewpoint="top")
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
