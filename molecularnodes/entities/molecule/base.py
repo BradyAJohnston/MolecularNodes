@@ -1305,13 +1305,16 @@ class Molecule(MolecularEntity):
         selection_is_callable = callable(selection)
         attribute_name = self._resolve_style_selection(selection)
 
+        # oxDNA nucleotides get their own ribbon; override locally so the
+        # module-level mapping used by every other entity is left untouched
+        style_mapping = STYLE_NODE_MAPPING
         if isinstance(self, OXDNA):
-            STYLE_NODE_MAPPING["ribbon"] = g.OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+            style_mapping = {**STYLE_NODE_MAPPING, "ribbon": g.OxDNAStyleRibbon}
 
         if not style_is_callable and "sphere" not in kwargs:
             # spheres default to point clouds, which only Cycles can draw
             geometry = _sphere_for_engine(
-                STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
+                style_mapping[style], bpy.context.scene.render.engine
             )
             if geometry is not None:
                 kwargs["sphere"] = geometry
@@ -1331,7 +1334,7 @@ class Molecule(MolecularEntity):
                     selection_input = NamedAttribute.boolean(attribute_name)
                 else:
                     selection_input = None
-                style_node = STYLE_NODE_MAPPING[style](
+                style_node = style_mapping[style](
                     selection=selection_input,
                     material=material,
                     **kwargs,
