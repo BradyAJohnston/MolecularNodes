@@ -142,7 +142,7 @@ def test_color_lookup_supplied():
 
 
 @pytest.mark.parametrize(
-    "name", [PeptideDihedral, NucleicDihedral, PeptideChi, NucleicChi]
+    "node", [PeptideDihedral, NucleicDihedral, PeptideChi, NucleicChi]
 )
 @pytest.mark.parametrize("code", ["8H1B", "1BNA"])
 def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, node):
