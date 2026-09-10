@@ -208,7 +208,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        geometry = tree.inputs.geometry("Atoms")
+        atoms = tree.inputs.geometry("Atoms")
         selection = tree.inputs.boolean(
             "Selection",
             True,
