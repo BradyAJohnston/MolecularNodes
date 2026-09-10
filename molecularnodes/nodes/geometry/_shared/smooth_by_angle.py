@@ -1,9 +1,11 @@
-# Node group 'Smooth by Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Smooth by Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     BooleanSocket,
@@ -80,7 +82,7 @@ class SmoothByAngle(CustomGeometryGroup):
             **{"Mesh": mesh, "Angle": angle, "Ignore Sharpness": ignore_sharpness}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         mesh = tree.inputs.geometry("Mesh")
         angle = tree.inputs.float(
             "Angle",

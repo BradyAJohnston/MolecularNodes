@@ -1,8 +1,10 @@
-# Node-group asset 'Primitive Gimbal' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Primitive Gimbal" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -109,7 +111,7 @@ class PrimitiveGimbal(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         vertices = tree.inputs.integer("Vertices", 6, min_value=3, max_value=16)
         x = tree.inputs.color("X", (0.623968, 0.01033, 0.063011, 1.0))
         y = tree.inputs.color("Y", (0.076185, 0.623968, 0.084375, 1.0))

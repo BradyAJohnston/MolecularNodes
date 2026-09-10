@@ -1,8 +1,10 @@
-# Node-group asset 'Style Cartoon' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Style Cartoon" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -59,7 +61,7 @@ class Tmp_ss_attributes(CustomGeometryGroup):
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry._tmp_ss_attributes"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         tmp_ss_is_first = tree.outputs.boolean("tmp_ss_is_first")
         tmp_ss_is_last = tree.outputs.boolean("tmp_ss_is_last")
         tmp_ss_size = tree.outputs.integer("tmp_ss_size")
@@ -90,7 +92,7 @@ class SampleFromCACurve(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry._sample_from_ca_curve"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         ca_curve = tree.inputs.geometry("CA Curve")
         offset = tree.inputs.float(
             "Offset", 0.0, min_value=-10_000.0, max_value=10_000.0
@@ -139,7 +141,7 @@ class FixLoopAlignmentIntoAH(CustomGeometryGroup):
     _name = ".Fix Loop Alignment into AH"
     _tree_properties = {"node_tool_idname": "geometry._fix_loop_alignment_into_ah"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
         tangent = tree.inputs.vector("Tangent", (0.0, 0.0, 0.0), hide_value=True)
         geometry = tree.outputs.geometry("Geometry")
@@ -203,7 +205,7 @@ class CAToLoops(CustomGeometryGroup):
     _name = ".CA to loops"
     _tree_properties = {"node_tool_idname": "geometry._ca_to_loops"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         subdivisions = tree.inputs.integer("Subdivisions", 12, min_value=1)
         radius = tree.inputs.float(
@@ -318,7 +320,7 @@ class CAToLoops(CustomGeometryGroup):
 class SplitCurves(CustomGeometryGroup):
     _name = "Split Curves"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curves = tree.inputs.geometry("Curves")
         selection = tree.inputs.boolean(
             "Selection", False, description="The calculated selection"
@@ -376,7 +378,7 @@ class SplitCurves(CustomGeometryGroup):
 class NodeGroup(CustomGeometryGroup):
     _name = "NodeGroup"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curves = tree.inputs.geometry(
             "Curves",
             description="Geometry to evaluate the given fields and store the resulting attributes on. All geometry types except volumes are supported",
@@ -490,7 +492,7 @@ class TweakArrowHeads(CustomGeometryGroup):
     _name = ".Tweak Arrow Heads"
     _tree_properties = {"node_tool_idname": "geometry._tweak_arrow_heads"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         rounded = tree.inputs.boolean("Rounded", False)
         input = tree.inputs.float("Input", 0.0)
@@ -542,7 +544,7 @@ class CAToSheet(CustomGeometryGroup):
     _name = ".CA to sheet"
     _tree_properties = {"node_tool_idname": "geometry._ca_to_sheet"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
         profile_resolution = tree.inputs.integer(
             "Profile Resolution", 4, min_value=3, max_value=512
@@ -647,7 +649,7 @@ class BooleanShrink(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.boolean_shrink"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         boolean = tree.inputs.boolean("Boolean", False, hide_value=True)
         shrink = tree.inputs.integer("Shrink", 0, min_value=-2147483647)
         boolean_1 = tree.outputs.boolean("Boolean")
@@ -662,7 +664,7 @@ class CAToHelix(CustomGeometryGroup):
     _name = ".CA to helix"
     _tree_properties = {"node_tool_idname": "geometry._ca_to_helix"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
         boolean = tree.inputs.boolean("Boolean", False)
         thickness = tree.inputs.float(
@@ -787,7 +789,7 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry._mn_utils_style_cartoon"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -1190,7 +1192,7 @@ class StyleCartoon(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )

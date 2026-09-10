@@ -1,9 +1,11 @@
-# Node group 'Edge Detection' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Edge Detection" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor
@@ -62,7 +64,7 @@ class EdgeDetection(CustomShaderGroup):
     ):
         super().__init__(**{"Offset": offset})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         offset = tree.inputs.float("Offset", 1.0, min_value=0.0, max_value=1.0)
         co_planar_delta = tree.outputs.float("Co-Planar Delta")
         normal_delta = tree.outputs.float("Normal Delta")

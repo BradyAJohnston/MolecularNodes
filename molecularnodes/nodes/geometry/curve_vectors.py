@@ -1,7 +1,9 @@
-# Node-group asset 'Curve Vectors' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Curve Vectors" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -52,7 +54,7 @@ class CurveVectors(AssetGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         normal = tree.outputs.vector(
             "Normal",
             description="The normal of the control point. Used for calculating the rotation for the point and when calculating `Curve to Mesh`",

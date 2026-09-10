@@ -1,9 +1,11 @@
-# Node-group asset 'DNA From Curve' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "DNA From Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
 import bpy
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -33,7 +35,7 @@ from .transform_local_axis import TransformLocalAxis
 class DNASequenceToID(CustomGeometryGroup):
     _name = "DNA Sequence to ID"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         string = tree.inputs.string("String", "", optional_label=True)
         length = tree.outputs.integer("Length")
         res_id = tree.outputs.integer(
@@ -78,7 +80,7 @@ class CustomWorldObjectSpace(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"default_group_node_width": 200}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         space = tree.inputs.menu("Space", optional_label=True)
         custom_0_world_1_object_2 = tree.outputs.integer(
             "Custom = 0,World = 1, Object = 2"
@@ -123,7 +125,7 @@ class CustomForce(CustomGeometryGroup):
         "description": "Create a custom force field to be used in simulations."
     }
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         mode = tree.inputs.menu(
             "Mode",
             description="How the force field is defined.",
@@ -296,7 +298,7 @@ class CurveSegment(CustomGeometryGroup):
     _name = "Curve Segment"
     _color_tag = "INPUT"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         segment_length = tree.outputs.float(
             "Segment Length", description="Distance to previous point on curve"
         )
@@ -338,7 +340,7 @@ class StoreSegmentLength(CustomGeometryGroup):
     _name = "Store Segment Length"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curves = tree.inputs.geometry("Curves")
         name = tree.inputs.string("Name", "rest_length", optional_label=True)
         curves_1 = tree.outputs.geometry("Curves")
@@ -356,7 +358,7 @@ class StoreEdgeLength(CustomGeometryGroup):
     _name = "Store Edge Length"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curves = tree.inputs.geometry("Curves")
         name = tree.inputs.string("Name", "rest_length", optional_label=True)
         curves_1 = tree.outputs.geometry("Curves")
@@ -372,7 +374,7 @@ class StoreSegmentRotation(CustomGeometryGroup):
     _name = "Store Segment Rotation"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curves = tree.inputs.geometry("Curves")
         name = tree.inputs.string("Name", "rest_rotation", optional_label=True)
         curves_1 = tree.outputs.geometry("Curves")
@@ -396,7 +398,7 @@ class StoreBendRotation(CustomGeometryGroup):
     _name = "Store Bend Rotation"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curves = tree.inputs.geometry("Curves")
         bend_rotation_name = tree.inputs.string(
             "Bend Rotation Name", "rest_bend_rotation", optional_label=True
@@ -427,7 +429,7 @@ class SetupStructuralRestData(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 180}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         geometry_1 = tree.outputs.geometry("Geometry")
 
@@ -458,7 +460,7 @@ class Damping(CustomGeometryGroup):
     _name = "Damping"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         linear = tree.inputs.float("Linear", 2.0, min_value=0.0, structure_type="FIELD")
         angular = tree.inputs.float(
             "Angular", 2.0, min_value=0.0, structure_type="FIELD"
@@ -483,7 +485,7 @@ class RodBendTwistConstraint(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 200}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         compliance = tree.inputs.float(
             "Compliance", 0.0001, min_value=0.0, structure_type="FIELD"
         )
@@ -536,7 +538,7 @@ class RodStretchShearConstraint(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 200}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         compliance = tree.inputs.float(
             "Compliance", 0.0001, min_value=0.0, structure_type="FIELD"
         )
@@ -599,7 +601,7 @@ class SoftnessToCompliance(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         softness = tree.inputs.float(
             "Softness", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
         )
@@ -616,7 +618,7 @@ class SetEffector(CustomGeometryGroup):
         "default_group_node_width": 160,
     }
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry",
             description="Geometry to add the effector to.",
@@ -673,7 +675,7 @@ class Collider(CustomGeometryGroup):
         "is_modifier": True,
     }
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry",
             description="The collider geometry.",
@@ -796,7 +798,7 @@ class ObjectEffector(CustomGeometryGroup):
     _name = "Object Effector"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         object = tree.inputs.object("Object", optional_label=True)
         effector = tree.outputs.bundle("Effector")
 
@@ -814,7 +816,7 @@ class CollectionEffector(CustomGeometryGroup):
     _name = "Collection Effector"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         collection = tree.inputs.collection("Collection", optional_label=True)
         with tree.inputs.panel("Naming", default_closed=True):
             name_pattern = tree.inputs.string(
@@ -842,7 +844,7 @@ class PinPositions(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 200}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         selection = tree.inputs.boolean(
             "Selection", True, hide_value=True, structure_type="FIELD"
         )
@@ -895,7 +897,7 @@ class PinRotation(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 200}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         selection = tree.inputs.boolean("Selection", True, structure_type="FIELD")
         rotation = tree.inputs.rotation(
             "Rotation", (0.0, 0.0, 0.0), structure_type="FIELD"
@@ -932,7 +934,7 @@ class StringToList(CustomGeometryGroup):
     _name = "String to List"
     _color_tag = "CONVERTER"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         string = tree.inputs.string("String", "", optional_label=True)
         separator = tree.inputs.string("Separator", ",", optional_label=True)
         list = tree.outputs.string("List")
@@ -944,7 +946,7 @@ class SetGeometryTags(CustomGeometryGroup):
     _name = "Set Geometry Tags"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry", description="Geometry to get the bundle of"
         )
@@ -967,7 +969,7 @@ class SetFriction(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry",
             description="Geometry to store a new attribute with the given name on",
@@ -988,7 +990,7 @@ class ThinRodMomentOfInertia(CustomGeometryGroup):
     _name = "Thin Rod Moment of Inertia"
     _color_tag = "CONVERTER"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         mass = tree.inputs.float("Mass", 0.0, hide_value=True)
         moment_of_inertia = tree.outputs.vector("Moment of Inertia")
 
@@ -1011,7 +1013,7 @@ class SetMass(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         mass = tree.inputs.float(
             "Mass", 1.0, min_value=0.0, structure_type="FIELD", subtype="MASS"
@@ -1063,7 +1065,7 @@ class SimAttributes(CustomGeometryGroup):
     _name = "Sim Attributes"
     _color_tag = "CONVERTER"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         extra = tree.inputs.string("Extra", "")
         sim_attributes = tree.outputs.string("Sim Attributes")
 
@@ -1084,7 +1086,7 @@ class ApplyGeoCacheDeformOnly(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 240}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         new_geometry = tree.inputs.geometry("New Geometry")
         cache_geometry = tree.inputs.geometry("Cache Geometry")
         sim_attributes = tree.inputs.string(
@@ -1117,7 +1119,7 @@ class SetGeoUpdaterDeformOnly(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 220}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         extra_sim_attributes = tree.inputs.string(
             "Extra Sim Attributes", "", optional_label=True
@@ -1158,7 +1160,7 @@ class IsEffectorForGeometry(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"default_group_node_width": 180}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         effector = tree.inputs.bundle("Effector")
         _effector_path = tree.inputs.string(
             "Effector Path",
@@ -1193,7 +1195,7 @@ class ForEachSimGeometry(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         closure = tree.inputs.closure("Closure")
         world_1 = tree.outputs.bundle("World")
@@ -1226,7 +1228,7 @@ class EvaluateCustomEffectors(CustomGeometryGroup):
     _name = "Evaluate Custom Effectors"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle(
             "World", structure_type="SINGLE", force_non_field=True
         )
@@ -1335,7 +1337,7 @@ class RenameSimAttributes(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         mode = tree.inputs.menu("Mode", optional_label=True)
         old = tree.inputs.string("Old", "", optional_label=True)
@@ -1365,7 +1367,7 @@ class SetPreviousWorldItems(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 180}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         cache = tree.inputs.bundle("Cache")
         world_1 = tree.outputs.bundle("World")
@@ -1402,7 +1404,7 @@ class ApplyEachGeometryCache(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 200}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         cache = tree.inputs.bundle("Cache")
         post_sim = tree.inputs.boolean("Post Sim", False)
@@ -1438,7 +1440,7 @@ class EvaluateEffectorAttributes(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 180}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         world_1 = tree.outputs.bundle("World")
 
@@ -1771,7 +1773,7 @@ class EvaluateForces(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         to_world_transform = tree.inputs.matrix("To World Transform")
         name = tree.inputs.string("Name", "external_force", optional_label=True)
@@ -1827,7 +1829,7 @@ class XPBDSolver(CustomGeometryGroup):
     _name = "XPBD Solver"
     _color_tag = "GEOMETRY"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle(
             "World", description="World state that is updated by the solver"
         )
@@ -1890,7 +1892,7 @@ class XPBDSolver(CustomGeometryGroup):
 class ForEachTypedBundle(CustomGeometryGroup):
     _name = "For Each Typed Bundle"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         type = tree.inputs.string("Type", "", optional_label=True)
         closure = tree.inputs.closure("Closure")
@@ -1919,7 +1921,7 @@ class SimplifyCachedColliderInfo(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 200}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         world_1 = tree.outputs.bundle("World")
 
@@ -1957,7 +1959,7 @@ class ClearPreviousWorldItems(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 180}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         world_1 = tree.outputs.bundle("World")
 
@@ -1989,7 +1991,7 @@ class RemoveSimAttributes(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         mode = tree.inputs.menu("Mode", optional_label=True)
         name = tree.inputs.string("Name", "", optional_label=True)
@@ -2019,7 +2021,7 @@ class CopySolverData(CustomGeometryGroup):
         "default_group_node_width": 180,
     }
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         cache = tree.inputs.bundle("Cache")
         world_1 = tree.outputs.bundle("World")
@@ -2045,7 +2047,7 @@ class XPBDSimulation(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"default_group_node_width": 160}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
         substeps = tree.inputs.integer("Substeps", 10, min_value=1)
         constraint_steps = tree.inputs.integer("Constraint Steps", 1, min_value=1)
@@ -2131,7 +2133,7 @@ class ConvertSpaceTransform(CustomGeometryGroup):
     _color_tag = "CONVERTER"
     _tree_properties = {"default_group_node_width": 180}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         from_space = tree.inputs.menu("From Space", optional_label=True)
         from_object = tree.inputs.object("From Object", optional_label=True)
         to_space = tree.inputs.menu("To Space", optional_label=True)
@@ -2177,7 +2179,7 @@ class SimulateDNAGuide(CustomGeometryGroup):
         "is_modifier": True,
     }
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         dna_curve = tree.inputs.geometry(
             "DNA Curve",
             description="Input hair curves.",
@@ -2560,7 +2562,7 @@ class DNAFromCurve(AssetGeometryGroup):
             _named_links=[("Menu", socket_3), ("Menu", socket_5)],
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curves = tree.inputs.geometry("Curves")
         base_resolution = tree.inputs.integer(
             "Base Resolution", 0, min_value=0, max_value=4

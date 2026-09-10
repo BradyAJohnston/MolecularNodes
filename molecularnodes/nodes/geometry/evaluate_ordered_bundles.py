@@ -1,7 +1,9 @@
-# Node-group asset 'Evaluate Ordered Bundles' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Evaluate Ordered Bundles" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -75,7 +77,7 @@ class EvaluateOrderedBundles(AssetGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry, "Bundles": bundles, "Prefix": prefix})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         bundles = tree.inputs.bundle("Bundles")
         prefix = tree.inputs.string("Prefix", "MN*", optional_label=True)

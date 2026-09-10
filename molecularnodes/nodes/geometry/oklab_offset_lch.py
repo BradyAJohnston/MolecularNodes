@@ -1,7 +1,9 @@
-# Node-group asset 'OKLab Offset LCh' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "OKLab Offset LCh" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
@@ -73,7 +75,7 @@ class OKLabOffsetLCh(AssetGeometryGroup):
     ):
         super().__init__(**{"OKLab": oklab, "L": l, "h": h})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         oklab = tree.inputs.vector(
             "OKLab", (0.64, 0.0, 0.0001), min_value=-10_000.0, max_value=10_000.0
         )

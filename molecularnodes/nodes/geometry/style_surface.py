@@ -1,7 +1,9 @@
-# Node-group asset 'Style Surface' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Style Surface" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -45,7 +47,7 @@ class Surface_compute_density_from_points(CustomGeometryGroup):
         "node_tool_idname": "geometry._surface_compute_density_from_points"
     }
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -81,7 +83,7 @@ class Utils_bounding_box(CustomGeometryGroup):
     _name = ".utils_bounding_box"
     _tree_properties = {"node_tool_idname": "geometry._utils_bounding_box"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         subdivisions = tree.inputs.float(
             "Subdivisions", 16.7, min_value=-10_000.0, max_value=10_000.0
@@ -111,7 +113,7 @@ class MN_utils_style_surface_new(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry._mn_utils_style_surface_new"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -150,7 +152,7 @@ class MN_surface_smooth_bumps(CustomGeometryGroup):
     _name = ".MN_surface_smooth_bumps"
     _tree_properties = {"node_tool_idname": "geometry._mn_surface_smooth_bumps"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         geometry_1 = tree.outputs.geometry("Geometry")
 
@@ -178,7 +180,7 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry._mn_utils_style_surface_new"}
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -318,7 +320,7 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
 class SampleColors(CustomGeometryGroup):
     _name = ".Sample Colors"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         color_source = tree.inputs.menu("Color Source", optional_label=True)
         atoms = tree.inputs.geometry("Atoms")
         step = tree.inputs.integer("step", 1)
@@ -385,7 +387,7 @@ class SampleColors(CustomGeometryGroup):
 class SurfaceToRadius(CustomGeometryGroup):
     _name = ".Surface to Radius"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         scale_radii = tree.inputs.float(
             "Scale Radii", 1.47, min_value=0.0, max_value=10.0
         )
@@ -432,7 +434,7 @@ class SurfaceToRadius(CustomGeometryGroup):
 class RelaxSurface(CustomGeometryGroup):
     _name = ".Relax Surface"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         relaxation_steps = tree.inputs.integer("Relaxation Steps", 30, min_value=0)
         step = tree.inputs.integer("step", 3)
         bundle = tree.outputs.bundle("Bundle")
@@ -467,7 +469,7 @@ class RelaxSurface(CustomGeometryGroup):
 class TriangulateMesh(CustomGeometryGroup):
     _name = ".Triangulate Mesh"
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         step = tree.inputs.integer("step", 4)
         bundle = tree.outputs.bundle("Bundle")
 
@@ -654,7 +656,7 @@ class StyleSurface(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms",
             description="Atomic geometry that contains vertices and edges",

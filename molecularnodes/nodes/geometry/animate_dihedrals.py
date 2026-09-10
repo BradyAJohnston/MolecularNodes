@@ -1,7 +1,9 @@
-# Node-group asset 'Animate Dihedrals' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Animate Dihedrals" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -32,7 +34,7 @@ class SampleMixAngle(CustomGeometryGroup):
         "node_tool_idname": "geometry.sample_mix_angle",
     }
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.geometry("A", description="Geometry A to sample and mix from")
         b = tree.inputs.geometry("B", description="Geometry B to sample and mix to")
         angle = tree.inputs.float(
@@ -174,7 +176,7 @@ class AnimateDihedrals(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )

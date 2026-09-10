@@ -1,7 +1,9 @@
-# Node-group asset 'oxDNA Offset' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "oxDNA Offset" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     IntegerSocket,
@@ -61,7 +63,7 @@ class OxDNAOffset(AssetGeometryGroup):
     ):
         super().__init__(**{"Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer(
             "Index", 0, min_value=0, hide_value=True, default_input="INDEX"
         )
