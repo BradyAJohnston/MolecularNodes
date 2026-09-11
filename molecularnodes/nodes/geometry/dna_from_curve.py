@@ -2371,7 +2371,7 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 group_1 = RodBendTwistConstraint(
                     Compliance=0.0,
                     **{
-                        "Custom Bend Rotation": pin_rotations,
+                        "Custom Bend Rotation": True,
                         "Bend Rotation": g.AxisAngleToRotation(angle=angle),
                     },
                 )
@@ -2495,12 +2495,12 @@ class DNAFromCurve(AssetGeometryGroup):
         Curves
     base_resolution : InputInteger
         Base Resolution
-    socket_3 : InputMenu | Literal["Static", "Simulate"]
+    menu : InputMenu | Literal["Static", "Simulate"]
         Menu
     wind : InputFloat
         Wind
-    socket_5 : InputMenu | Literal["Instance", "Realize"]
-        Menu
+    base_instance : InputMenu | Literal["Instance", "Realize"]
+        Base Instance
 
     Inputs
     ------
@@ -2508,12 +2508,12 @@ class DNAFromCurve(AssetGeometryGroup):
         Curves
     i.base_resolution : IntegerSocket
         Base Resolution
-    i.socket_3 : MenuSocket
+    i.menu : MenuSocket
         Menu
     i.wind : FloatSocket
         Wind
-    i.socket_5 : MenuSocket
-        Menu
+    i.base_instance : MenuSocket
+        Base Instance
 
     Outputs
     -------
@@ -2531,12 +2531,12 @@ class DNAFromCurve(AssetGeometryGroup):
         """Curves"""
         base_resolution: IntegerSocket
         """Base Resolution"""
-        socket_3: MenuSocket
+        menu: MenuSocket
         """Menu"""
         wind: FloatSocket
         """Wind"""
-        socket_5: MenuSocket
-        """Menu"""
+        base_instance: MenuSocket
+        """Base Instance"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -2553,13 +2553,18 @@ class DNAFromCurve(AssetGeometryGroup):
         self,
         curves: InputGeometry = None,
         base_resolution: InputInteger = 0,
-        socket_3: InputMenu | Literal["Static", "Simulate"] = "Static",
+        menu: InputMenu | Literal["Static", "Simulate"] = "Static",
         wind: InputFloat = 1.0,
-        socket_5: InputMenu | Literal["Instance", "Realize"] = "Instance",
+        base_instance: InputMenu | Literal["Instance", "Realize"] = "Instance",
     ):
         super().__init__(
-            **{"Curves": curves, "Base Resolution": base_resolution, "Wind": wind},
-            _named_links=[("Menu", socket_3), ("Menu", socket_5)],
+            **{
+                "Curves": curves,
+                "Base Resolution": base_resolution,
+                "Menu": menu,
+                "Wind": wind,
+                "Base Instance": base_instance,
+            }
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
@@ -2571,7 +2576,10 @@ class DNAFromCurve(AssetGeometryGroup):
         wind = tree.inputs.float(
             "Wind", 1.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
         )
-        menu_1 = tree.inputs.menu("Menu", optional_label=True)
+        with tree.inputs.panel("Bases"):
+            base_instance = tree.inputs.menu(
+                "Base Instance", expanded=True, optional_label=True
+            )
         geometry = tree.outputs.geometry("Geometry")
 
         with g.Frame("Base instances"):
@@ -2597,18 +2605,24 @@ class DNAFromCurve(AssetGeometryGroup):
             switch = g.NamedAttribute.boolean("is_comp").o.attribute.switch.integer(
                 integer_math_1, abs(integer_math_1 - 3)
             )
-        math_1 = g.Value(math.tau).o.value / g.Value(10.5)
-        accumulate_field = g.Mix(
-            factor_float=wind, b_float=math_1 / integer_math, clamp_factor=True
-        ).o.result_float.point.trailing(g.CurveOfPoint().o.curve_index)
+        math_1 = wind * (g.Value(math.tau).o.value / g.Value(10.5) * integer_math)
+        axis_angle_to_rotation = g.AxisAngleToRotation(
+            axis=g.CurveTangent(),
+            angle=math_1.point.trailing(g.CurveOfPoint().o.curve_index),
+        )
         store_named_attribute = g.SetHandleType(
             curve=g.SetSplineType.bezier(curves)
         ) >> g.StoreNamedAttribute.point.quaternion(
-            name="rotation",
-            value=g.AxisAngleToRotation(axis=g.CurveTangent(), angle=accumulate_field),
+            name="rotation", value=axis_angle_to_rotation
         )
-        with g.Frame("Distance per unwound base"):
-            math_2 = g.Value(0.63).o.value * integer_math
+        with g.Frame("Base distances"):
+            mix = g.Mix(
+                factor_float=wind,
+                a_float=g.Value(0.63),
+                b_float=g.Value(0.34),
+                clamp_factor=True,
+            )
+            math_2 = integer_math * mix.o.result_float
         vector_math = g.VectorMath.scale(
             g.NoiseTexture(
                 w=g.SceneTime().o.seconds, scale=1.02, noise_dimensions="4D"
@@ -2616,16 +2630,9 @@ class DNAFromCurve(AssetGeometryGroup):
             4.99,
         )
         group_3 = SimulateDNAGuide(
-            **{"DNA Curve": store_named_attribute, "Pin Rotations": True},
-            Angle=g.Mix(
-                factor_float=wind, b_float=math_1 * integer_math, clamp_factor=True
-            ).o.result_float,
-            Distance=g.Mix(
-                factor_float=wind,
-                a_float=math_2,
-                b_float=g.Value(0.34),
-                clamp_factor=True,
-            ).o.result_float,
+            **{"DNA Curve": store_named_attribute},
+            Angle=math_1,
+            Distance=math_2,
             Bendiness=0.0,
             Linear=10.0,
             Angular=30.0,
@@ -2636,13 +2643,11 @@ class DNAFromCurve(AssetGeometryGroup):
         )
         with g.Frame("Handles aren't simulated, so we reset their auto positions"):
             set_handle_type = g.SetHandleType(curve=menu_switch)
+        duplicate_elements = g.DuplicateElements.spline(set_handle_type, amount=2)
         _group_4 = CurveVisualize(
             curve=g.JoinGeometry(geometry=(set_handle_type,)),
             handles=True,
             arrow_size=10.0,
-        )
-        duplicate_elements = g.DuplicateElements.spline(
-            g.SubdivideCurve(curve=set_handle_type, cuts=base_resolution), amount=2
         )
         store_named_attribute_1 = (
             duplicate_elements
@@ -2651,34 +2656,31 @@ class DNAFromCurve(AssetGeometryGroup):
             )
         )
         with g.Frame("Compute normal from rotation"):
-            axis_angle_to_rotation = g.AxisAngleToRotation(
+            axis_angle_to_rotation_1 = g.AxisAngleToRotation(
                 angle=g.NamedAttribute.boolean("is_comp").o.attribute.switch.float(
                     true=2.23
                 )
             )
             rotate_rotation = g.NamedAttribute.quaternion(
                 "rotation"
-            ).o.attribute.rotate(axis_angle_to_rotation, rotation_space="LOCAL")
+            ).o.attribute.rotate(axis_angle_to_rotation_1, rotation_space="LOCAL")
             capture = g.CaptureAttribute.point(geometry=store_named_attribute_1)
             rotation = capture.items.rotation("Rotation", rotate_rotation)
             set_curve_normal = capture.o.geometry >> g.SetCurveNormal(
                 normal=g.RotateVector(rotation=rotation.output, vector=(0.0, 1.0, 0.0)),
                 mode="Free",
             )
-        with g.Frame("Offset from guide curve using normal"):
-            capture_1 = g.CaptureAttribute.point(geometry=set_curve_normal)
-            capture_1.items.vector("Position", g.Position())
-            normal = capture_1.items.vector("Normal", g.Normal().o.normal)
-            reverse_curve = (
-                capture_1.o.geometry
-                >> g.SetPosition(offset=normal.output * AngstromToWorld(angstrom=7.5))
-                >> g.SetCurveNormal(normal=normal.output * -1.0, mode="Free")
-                >> g.ReverseCurve(
-                    selection=g.NamedAttribute.boolean("is_comp").o.attribute
-                )
-            )
-            group_5 = OffsetCurve(curve=reverse_curve)
-        capture_2 = g.CaptureAttribute.point(geometry=group_5)
+        capture_1 = g.CaptureAttribute.point(geometry=set_curve_normal)
+        capture_1.items.vector("Position", g.Position())
+        normal = capture_1.items.vector("Normal", g.Normal().o.normal)
+        reverse_curve = (
+            capture_1.o.geometry
+            >> g.SetPosition(offset=normal.output * AngstromToWorld(angstrom=7.5))
+            >> g.SetCurveNormal(normal=normal.output * -1.0, mode="Free")
+            >> g.SubdivideCurve()
+            >> g.ReverseCurve(selection=g.NamedAttribute.boolean("is_comp").o.attribute)
+        )
+        capture_2 = g.CaptureAttribute.point(geometry=OffsetCurve(curve=reverse_curve))
         normal_1 = capture_2.items.vector("Normal", g.Normal().o.normal)
         instance_on_points = capture_2.o.geometry >> g.InstanceOnPoints(
             instance=group_1,
@@ -2689,28 +2691,32 @@ class DNAFromCurve(AssetGeometryGroup):
             pick_instance=True,
         )
         with g.Frame("Rotate individual base nucleotides"):
+            group_5 = TransformLocalAxis(
+                axis=normal_1.output,
+                angle=g.Mix(
+                    factor_float=wind, a_float=math.pi / 4, clamp_factor=True
+                ).o.result_float,
+            )
             capture_3 = g.CaptureAttribute.instance(geometry=instance_on_points)
-            transform = capture_3.items.matrix(
-                "Transform", TransformLocalAxis(axis=normal_1.output, angle=1.1519172)
-            )
-            transform_point = g.Position().o.position.transform(
-                IsSideChain().o.selection.switch.matrix(true=transform.output)
-            )
+            transform = capture_3.items.matrix("Transform", group_5)
             set_position = (
                 capture_3.o.geometry
                 >> g.RealizeInstances(depth=1)
-                >> g.SetPosition(position=transform_point)
+                >> g.SetPosition(
+                    selection=IsSideChain().o.selection,
+                    position=g.Position().o.position.transform(transform.output),
+                )
             )
         (
             g.MenuSwitch.geometry(
-                menu_1, {"Instance": instance_on_points, "Realize": set_position}
+                base_instance, {"Instance": instance_on_points, "Realize": set_position}
             )
             >> g.JoinGeometry()
             >> geometry
         )
 
         menu.default_value = "Static"
-        menu_1.default_value = "Instance"
+        base_instance.default_value = "Instance"
 
 
 ASSET = DNAFromCurve
