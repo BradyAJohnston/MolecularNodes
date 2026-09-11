@@ -131,3 +131,32 @@ def test_load_small_mol(snapshot):
     mol = mn.Molecule.load(data_dir / "ASN.cif")
     assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
     assert snapshot == GeometrySet(mol.object, strict=True).summary()
+
+
+def _terminal_backbone_indices(mol) -> tuple[int, int]:
+    """Indices of the first protein residue's backbone N and the last one's C."""
+    protein = mol.universe.select_atoms("protein")
+    first_n = protein[(protein.resids == protein.resids.min()) & (protein.names == "N")]
+    last_c = protein[(protein.resids == protein.resids.max()) & (protein.names == "C")]
+    return int(first_n[0].ix), int(last_c[0].ix)
+
+
+def test_cyclic_peptide_closing_bond():
+    # 1KAL is a head-to-tail cyclic peptide. The closing C -> N bond is absent
+    # from the file's struct_conn (which lists only the disulfides), so it is
+    # detected geometrically on import and must appear in the bonds and the
+    # mesh edges (#858)
+    mol = mn.Molecule.fetch("1KAL")
+    first_n, last_c = _terminal_backbone_indices(mol)
+
+    bonds = np.sort(mol.universe.atoms.bonds.indices, axis=1)
+    assert np.any(np.all(bonds == sorted((first_n, last_c)), axis=1))
+
+    edges = np.sort(np.array([edge.vertices for edge in mol.object.data.edges]), axis=1)
+    assert np.any(np.all(edges == sorted((first_n, last_c)), axis=1))
+
+    # a linear peptide must not gain a closing bond
+    mol_linear = mn.Molecule.fetch("4ozs")
+    first_n, last_c = _terminal_backbone_indices(mol_linear)
+    bonds = np.sort(mol_linear.universe.atoms.bonds.indices, axis=1)
+    assert not np.any(np.all(bonds == sorted((first_n, last_c)), axis=1))

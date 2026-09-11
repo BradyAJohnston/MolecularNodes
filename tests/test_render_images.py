@@ -192,6 +192,18 @@ def test_render_oxdna_simple_circle(
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
 
 
+@pytest.mark.parametrize(
+    "pdb_id,style",
+    list(product(("1KAL",), ("ribbon", "ball_and_stick", "cartoon"))),
+)
+def test_render_cyclic_peptide(
+    golden_canvas, tmp_path, assembly_image_snapshot, pdb_id, style
+):
+    mol = mn.Molecule.fetch(pdb_id).add_style(style)
+    golden_canvas.look_at(mol, viewpoint="top")
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
 # ---- MolViewSpec imports -------------------------------------------------- #
 # Golden renders of the official landing-page examples (tests/data/mvs), so
 # changes to the MVS translation show up visually. The colab_* files duplicate

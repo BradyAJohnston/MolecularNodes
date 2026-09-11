@@ -249,11 +249,17 @@ class CurveSplitSplines(CustomGeometryGroup):
         capture_1 = g.CaptureAttribute.point(geometry=set_spline_resolution)
         left = capture_1.items.vector("Left", curve_handle_positions.o.left)
         right = capture_1.items.vector("Right", curve_handle_positions.o.right)
-        separate_geometry = (
-            capture_1.o.geometry
-            >> g.CurveToPoints.evaluated()
-            >> g.SeparateGeometry.point(selection=selection_1.output)
+        spline_length = g.SplineLength()
+        capture_2 = g.CaptureAttribute.curve(
+            geometry=capture_1.o.geometry, selection=g.IsSplineCyclic()
         )
+        point_count = capture_2.items.integer(
+            "Point Count", spline_length.o.point_count
+        )
+        with g.Frame("Check if we should make the cyclic peptide cyclic again"):
+            boolean_math = capture_2.o.selection & g.Compare.integer.equal(
+                spline_length.o.point_count, point_count.output
+            )
         compare = (
             AngstromToWorld(
                 angstrom=OffsetVector(offset=-1).o.value.distance(g.Position())
@@ -268,19 +274,21 @@ class CurveSplitSplines(CustomGeometryGroup):
             distance_split,
             {"Ignore Distance": trailing.output, "Split Distance": math_1},
         )
-        points_to_curves = g.PointsToCurves(
-            points=g.SetPosition(
-                geometry=separate_geometry.o.selection, position=position.output
-            ),
-            curve_group_id=menu_switch.o.output,
+        set_spline_cyclic = (
+            capture_2.o.geometry
+            >> g.CurveToPoints.evaluated()
+            >> g.SeparateGeometry.point(selection=selection_1.output)
+            >> g.SetPosition(position=position.output)
+            >> g.PointsToCurves(curve_group_id=menu_switch.o.output)
+            >> g.SetSplineCyclic(cyclic=boolean_math)
         )
         set_spline_type = (
             g.MenuSwitch.geometry(
                 curve_normal,
                 {
-                    "Minimum Twist": points_to_curves,
+                    "Minimum Twist": set_spline_cyclic,
                     "Free": g.SetCurveNormal(
-                        curve=points_to_curves, normal=normal.output, mode="Free"
+                        curve=set_spline_cyclic, normal=normal.output, mode="Free"
                     ),
                 },
             )
@@ -292,8 +300,6 @@ class CurveSplitSplines(CustomGeometryGroup):
             >> g.SetHandlePositions.right(position=right.output)
             >> curve_1
         )
-        viewer = g.Viewer()
-        separate_geometry >> viewer
 
         index_1.output >> index
         rotation_2.output >> rotation_1

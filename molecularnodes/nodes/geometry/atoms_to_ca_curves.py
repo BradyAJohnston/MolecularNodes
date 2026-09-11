@@ -17,6 +17,7 @@ from nodebpy.types import InputBoolean, InputFloat, InputGeometry
 from ._shared.mn_bs_smooth import MN_bs_smooth
 from ._shared.mn_init_tmp_attributes import MN_init_tmp_attributes
 from ._shared.mn_topo_assign_backbone import MN_topo_assign_backbone
+from .angstrom_to_world import AngstromToWorld
 from .atoms_to_curves import AtomsToCurves
 from .backbone_vectors import BackboneVectors
 from .is_alpha_carbon import IsAlphaCarbon
@@ -125,15 +126,22 @@ class AtomsToCACurves(AssetGeometryGroup):
                 selection=IsAlphaCarbon(and_=selection).o.selection,
                 cutoff=threshold,
             )
+        position = g.Position()
         set_curve_normal = MN_init_tmp_attributes(
             geometry=group
             >> g.StoreNamedAttribute.point.integer(name="tmp_idx", value=g.Index())
         ) >> g.SetCurveNormal(
             normal=BackboneVectors(method="Read").o.normal, mode="Free"
         )
+        vector_math = position.o.position.point.at(
+            g.PointsOfCurve().o.point_index
+        ).distance(
+            position.o.position.point.at(g.PointsOfCurve(sort_index=-1).o.point_index)
+        )
         (
             MN_bs_smooth(geometry=set_curve_normal, factor=bs_smoothing, iterations=1)
             >> g.SeparateGeometry.spline(selection=g.SplineLength().o.point_count > 1)
+            >> g.SetSplineCyclic(cyclic=vector_math < AngstromToWorld(angstrom=4.0))
             >> curves
         )
 
