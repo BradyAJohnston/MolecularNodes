@@ -1482,6 +1482,7 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
     { name = "nodebpy", specifier = ">=520.18.0" },
+    { name = "numpy", specifier = ">=2.3" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
     { name = "pandas", specifier = "<3.0.0" },
     { name = "pillow", marker = "extra == 'dev'" },

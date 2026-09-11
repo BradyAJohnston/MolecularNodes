@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 import bpy
 from bpy.types import UILayout
 from ..entities import Molecule, StreamingTrajectory, molecule
@@ -8,9 +8,6 @@ from ..session import get_session
 from .ops import MN_OT_add_selection_to_style
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui
-
-if TYPE_CHECKING:
-    pass
 
 
 def import_options(layout: UILayout) -> None:

@@ -1,12 +1,15 @@
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, overload
+import bpy
 import databpy as db
 import numpy as np
 from bpy.types import Object
 from cryosparc.dataset import Dataset
 from databpy.attribute import AttributeTypeNames
 from scipy.spatial.transform import Rotation
+from ... import blender as bl
+from ...nodes import geometry
 from .base import Ensemble, EntityType
 
 if TYPE_CHECKING:
@@ -164,7 +167,8 @@ class MNDataset:
 
 
 class CryoSPARCParticles(Ensemble):
-    def __init__(self, file_path: Path):
+    def __init__(self, file_path: str | Path):
+        file_path = Path(file_path)
         if file_path.suffix != ".cs":
             raise ValueError(f"{file_path.name} is not a CryoSPARC .cs file")
         super().__init__(file_path=file_path)
@@ -172,6 +176,14 @@ class CryoSPARCParticles(Ensemble):
         self.dset = MNDataset(Dataset.load(self.file_path))
         if len(self.dset) == 0:
             raise ValueError("Dataset has no rows")
+
+    @classmethod
+    def from_blender_object(
+        cls, blender_object: bpy.types.Object
+    ) -> "CryoSPARCParticles":
+        self = cls(blender_object.mn.filepath)
+        self.object = blender_object
+        return self
 
     def _construct_fields(self) -> "list[BobField]":
         """
@@ -252,15 +264,19 @@ class CryoSPARCParticles(Ensemble):
 
     def create_object(
         self,
-        name: str = "CryoSPARC Ensemble",
+        name: str = "CryoSPARC Particles",
         node_setup: bool = True,
-        world_scale: float = 0.1,
-        fraction: float = 1.0,
-        simplify=False,
     ) -> Object:
         # build positions and rotation outside _construct_fields because we want
         # them to appear first, like they would with a normal Blender object.
-        self.object = db.create_object(self.dset.position * world_scale, name=name)
+        self.object = db.create_object(
+            self.dset.position * self._world_scale,
+            collection=bl.coll.mn(),
+            name=name,
+        )
+        self.props.entity_type = self._entity_type.value
+        # the `Starfile Instances` node reads the `rotation` attribute for the
+        # instance rotations, before its RELION / cisTEM euler fallbacks
         self.store_named_attribute(
             data=self.dset.rotations,
             name="rotation",
@@ -268,7 +284,10 @@ class CryoSPARCParticles(Ensemble):
         )
         for field in self._construct_fields():
             self.store_named_attribute(**field)
+
         if node_setup:
-            # TODO: make nodes etc.
-            print(simplify, fraction)
+            with self.tree.reset() as (points, join):
+                points >> geometry.StarfileInstances() >> join
+
+        self.props.filepath = str(self.file_path)
         return self.object

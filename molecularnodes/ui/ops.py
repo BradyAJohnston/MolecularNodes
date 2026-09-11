@@ -590,7 +590,9 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
                 )
             case "cryosparc-particles":
                 ensemble.CryoSPARCParticles.load(
-                    file_path=file_path, name=self.name, node_setup=self.node_setup
+                    file_path=file_path,
+                    name=Path(self.filepath).name,
+                    node_setup=self.node_setup,
                 )
             case "starfile":
                 ensemble.StarFile.load(
@@ -600,7 +602,7 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
             case _:
                 self.report(
                     {"ERROR"},
-                    message=f"Unsupported file type: {type(self.ensemble_type)}",
+                    message=f"Unsupported ensemble type: {self.ensemble_type}",
                 )
                 return {"CANCELLED"}
 
@@ -1329,7 +1331,6 @@ CLASSES = [
     MN_OT_Reload_Trajectory,
     MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,
-    MN_OT_Import_Molecule,
     MN_OT_Import_Ensemble,
     MN_FH_Import_Molecule,
     MN_OT_Add_Style,

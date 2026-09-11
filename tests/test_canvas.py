@@ -56,15 +56,14 @@ def test_world(canvas):
 def test_load_blend():
     # Test loading a .blend file
     file = data_dir / "blendfiles/suzanne.blend"
-    suzanne_name = "MOLECULAR NODES Suzanne"
-    assert not bpy.data.objects.get(suzanne_name)
+    assert not bpy.data.objects.get("Suzanne")
     canvas = mn.Canvas(template=file)
     assert bpy.data.objects.get("Suzanne")
     canvas.load_preset(None)
     assert not bpy.data.objects.get("Suzanne")
     assert bpy.data.objects.get("Cube")
     canvas.load(file)
-    assert bpy.data.objects.get(suzanne_name)
+    assert bpy.data.objects.get("Suzanne")
     with pytest.raises(ValueError):
         mn.Canvas(template="x")
 
