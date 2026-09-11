@@ -2,7 +2,7 @@ from typing import List
 import bpy
 from bpy.types import Node
 from databpy.nodes import get_output
-from .arrange import arrange_tree
+from nodebpy.builder.arrange import arrange_tree
 from .nodes import (
     final_join,
 )
