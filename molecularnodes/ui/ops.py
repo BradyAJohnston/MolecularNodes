@@ -531,7 +531,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
 
 
 ENSEMBLE_TYPES = (
-    ("starfile", "Starfile", "Import a .star mapback file"),
+    (
+        "starfile",
+        "Starfile",
+        "Import a .star mapback file or CryoET .ndjson point annotations",
+    ),
     ("cellpack", "CellPack", "Import a CellPack .cif / .bcif model"),
 )
 
