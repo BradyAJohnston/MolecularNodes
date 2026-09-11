@@ -1,13 +1,25 @@
 import os
-import shutil
-import sys
-from os.path import dirname, join, realpath
-from pathlib import Path
-import bpy
-import numpy as np
-import pytest
-import molecularnodes as mn
-from .utils import NumpySnapshotExtension
+import tempfile
+
+# Importing bpy prepends the user's Blender extension wheels (e.g.
+# ~/.config/blender/*/extensions/.local/site-packages) to sys.path, shadowing
+# this environment's packages with whatever the enabled extensions ship -
+# including possibly incomplete copies while an extension is being rebuilt.
+# Point bpy at an empty extensions dir so tests only ever see this
+# environment's packages. Must be set before bpy is first imported.
+os.environ.setdefault(
+    "BLENDER_USER_EXTENSIONS", tempfile.mkdtemp(prefix="mn-test-extensions-")
+)
+
+import shutil  # noqa: E402
+import sys  # noqa: E402
+from os.path import dirname, join, realpath  # noqa: E402
+from pathlib import Path  # noqa: E402
+import bpy  # noqa: E402
+import numpy as np  # noqa: E402
+import pytest  # noqa: E402
+import molecularnodes as mn  # noqa: E402
+from .utils import NumpySnapshotExtension  # noqa: E402
 
 # Pin numpy print format so snapshots are consistent across numpy 1.x and 2.x
 # (numpy 2.2+ adds shape= to array_repr for truncated arrays)
