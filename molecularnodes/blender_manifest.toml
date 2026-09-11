@@ -24,8 +24,8 @@ copyright = [
 ]
 
 wheels = [
-	"./wheels/annotated_types-0.7.0-py3-none-any.whl",
-	"./wheels/anyio-4.14.2-py3-none-any.whl",
+	"./wheels/annotated_types-0.8.0-py3-none-any.whl",
+	"./wheels/anyio-4.15.1-py3-none-any.whl",
 	"./wheels/biotite-1.7.1-cp313-cp313-macosx_11_0_arm64.whl",
 	"./wheels/biotite-1.7.1-cp313-cp313-manylinux_2_28_x86_64.whl",
 	"./wheels/biotite-1.7.1-cp313-cp313-win_amd64.whl",
@@ -76,10 +76,10 @@ wheels = [
 	"./wheels/pillow-12.3.0-cp313-cp313-macosx_11_0_arm64.whl",
 	"./wheels/pillow-12.3.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
 	"./wheels/pillow-12.3.0-cp313-cp313-win_amd64.whl",
-	"./wheels/pydantic-2.13.4-py3-none-any.whl",
-	"./wheels/pydantic_core-2.46.4-cp313-cp313-macosx_11_0_arm64.whl",
-	"./wheels/pydantic_core-2.46.4-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
-	"./wheels/pydantic_core-2.46.4-cp313-cp313-win_amd64.whl",
+	"./wheels/pydantic-2.13.5-py3-none-any.whl",
+	"./wheels/pydantic_core-2.46.5-cp313-cp313-macosx_11_0_arm64.whl",
+	"./wheels/pydantic_core-2.46.5-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+	"./wheels/pydantic_core-2.46.5-cp313-cp313-win_amd64.whl",
 	"./wheels/pyparsing-3.3.2-py3-none-any.whl",
 	"./wheels/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
 	"./wheels/pytz-2026.3.post1-py2.py3-none-any.whl",
@@ -91,7 +91,7 @@ wheels = [
 	"./wheels/threadpoolctl-3.6.0-py3-none-any.whl",
 	"./wheels/tqdm-4.70.0-py3-none-any.whl",
 	"./wheels/typing_extensions-4.16.0-py3-none-any.whl",
-	"./wheels/typing_inspection-0.4.2-py3-none-any.whl",
+	"./wheels/typing_inspection-0.4.4-py3-none-any.whl",
 	"./wheels/tzdata-2026.3-py2.py3-none-any.whl",
 ]
 
