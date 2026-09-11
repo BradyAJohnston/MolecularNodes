@@ -336,10 +336,6 @@ class Molecule(MolecularEntity):
             logger.warning(f"Failed to compute elements, using placeholder 'X': {e}")
             return np.repeat("X", len(self))
 
-    def _compute_elements(self) -> np.ndarray:
-        """Return cached elements (for backwards compatibility)"""
-        return self._elements
-
     @property
     def _titled_elements(self) -> np.ndarray:
         # title-case the element symbols so lookups match the data tables (e.g. "FE" ->
