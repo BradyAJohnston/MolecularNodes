@@ -1,0 +1,194 @@
+{
+    "root": {
+        "kind": "root",
+        "children": [
+            {
+                "kind": "download",
+                "params": {
+                    "url": "https://files.wwpdb.org/download/1c0a.cif"
+                },
+                "children": [
+                    {
+                        "kind": "parse",
+                        "params": {
+                            "format": "mmcif"
+                        },
+                        "children": [
+                            {
+                                "kind": "structure",
+                                "params": {
+                                    "type": "assembly"
+                                },
+                                "children": [
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": "protein"
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "cartoon"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "#e19039"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": "nucleic"
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "cartoon"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "#4b7fcc"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": {
+                                                "label_asym_id": "E"
+                                            }
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "ball_and_stick"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "#229954"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": {
+                                                "label_asym_id": "B",
+                                                "label_seq_id": 217
+                                            }
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "ball_and_stick"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "#ff0000"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "kind": "label",
+                                                "params": {
+                                                    "text": "aaRS Class II Signature"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": {
+                                                "label_asym_id": "B",
+                                                "label_seq_id": 537
+                                            }
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "ball_and_stick"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "#ff0000"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "kind": "label",
+                                                "params": {
+                                                    "text": "aaRS Class II Signature"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": [
+                                                {
+                                                    "label_asym_id": "E"
+                                                },
+                                                {
+                                                    "label_asym_id": "B",
+                                                    "label_seq_id": 217
+                                                },
+                                                {
+                                                    "label_asym_id": "B",
+                                                    "label_seq_id": 537
+                                                }
+                                            ]
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "focus",
+                                                "params": {}
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "metadata": {
+        "version": "0.1",
+        "timestamp": "2023-11-28T22:39:04.030365+00:00"
+    }
+}

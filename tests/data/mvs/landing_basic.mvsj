@@ -1,0 +1,58 @@
+{
+    "root": {
+        "kind": "root",
+        "children": [
+            {
+                "kind": "download",
+                "params": {
+                    "url": "https://files.wwpdb.org/download/1cbs.cif"
+                },
+                "children": [
+                    {
+                        "kind": "parse",
+                        "params": {
+                            "format": "mmcif"
+                        },
+                        "children": [
+                            {
+                                "kind": "structure",
+                                "params": {
+                                    "type": "model"
+                                },
+                                "children": [
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": "all"
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "cartoon"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "blue"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "metadata": {
+        "version": "0.1",
+        "timestamp": "2023-11-27T12:05:32.145284"
+    }
+}

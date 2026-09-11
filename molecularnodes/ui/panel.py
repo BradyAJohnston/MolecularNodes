@@ -29,6 +29,7 @@ def import_options(layout: UILayout) -> None:
     op.ensemble_type = "starfile"
     op = layout.operator("mn.import_ensemble", text="CellPack", icon="IMPORT")
     op.ensemble_type = "cellpack"
+    layout.operator("mn.import_mvs", text="MolViewSpec", icon="IMPORT")
 
     layout.separator()
     # MD trajectories are loaded through the same unified import dialog

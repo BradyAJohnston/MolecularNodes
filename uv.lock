@@ -1389,6 +1389,7 @@ dependencies = [
     { name = "griddataformats" },
     { name = "imdclient" },
     { name = "mdanalysis" },
+    { name = "molviewspec" },
     { name = "mrcfile" },
     { name = "nodebpy" },
     { name = "pandas" },
@@ -1453,6 +1454,7 @@ requires-dist = [
     { name = "mdanalysisdata", marker = "extra == 'docs'", specifier = ">=0.9.0" },
     { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
+    { name = "molviewspec", specifier = ">=1.8.1" },
     { name = "mrcfile" },
     { name = "nodebpy", specifier = ">=520.18.0" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
@@ -1476,6 +1478,18 @@ requires-dist = [
     { name = "tree-clipper", marker = "extra == 'docs'" },
 ]
 provides-extras = ["bpy", "jupyter", "docs", "dev"]
+
+[[package]]
+name = "molviewspec"
+version = "1.8.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c8/88/d7e48d89f1a7c8674d683c0e7c1e9cbf5231cccc8d12125676661d8eb619/molviewspec-1.8.1.tar.gz", hash = "sha256:5d86c82c42e0a9e3cb9ec560f7fc9a59f48e98d8ed7a024cecccbabfab76e2cf", size = 47130, upload-time = "2025-12-22T12:11:58.711Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/97/19/853485997b87f52d828365cb940c77a83eec8a9b059afd04a3f8bcddd5ac/molviewspec-1.8.1-py3-none-any.whl", hash = "sha256:614586dfc654981a1d00bdd183abe1973d9adb645c88d24b5beee67602181658", size = 40411, upload-time = "2025-12-22T12:11:57.872Z" },
+]
 
 [[package]]
 name = "mrcfile"

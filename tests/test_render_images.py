@@ -190,3 +190,44 @@ def test_render_oxdna_simple_circle(
 
     golden_canvas.look_at(ens, viewpoint="top")
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+# ---- MolViewSpec imports -------------------------------------------------- #
+# Golden renders of the official landing-page examples (tests/data/mvs), so
+# changes to the MVS translation show up visually. The colab_* files duplicate
+# these scenes, so only the landing set is rendered. Examples whose file
+# carries its own focus node render with that framing - the focus clips the
+# near plane to the component, seeing into the surrounding structure the way
+# Mol* does - while the rest get a deterministic whole-scene front view. The
+# annotations example renders almost empty on purpose: its styling comes
+# entirely through component_from_uri, which phase 1 does not support - its
+# golden will change when that lands.
+
+MVS_RENDER_EXAMPLES = (
+    ("basic", True),
+    ("components", False),
+    ("label", False),
+    ("superposition", True),
+    ("symmetry", True),
+    ("volumes", True),
+    ("annotations", True),
+)
+
+
+@pytest.mark.parametrize("name,needs_framing", MVS_RENDER_EXAMPLES)
+def test_render_mvs_example(
+    name, needs_framing, golden_canvas, tmp_path, image_snapshot
+):
+    import warnings
+    from molecularnodes.entities import mvs
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", mvs.MVSImportWarning)
+        molecules = mvs.load(data_dir / "mvs" / f"landing_{name}.mvsj")
+    assert molecules
+
+    if needs_framing:
+        views = sum((mol.get_view() for mol in molecules), [])
+        golden_canvas.look_at(views, viewpoint="front")
+
+    assert image_snapshot == _render(golden_canvas, tmp_path)
