@@ -1,6 +1,6 @@
 [project]
 name = "molecularnodes"
-version = "520.0.0"
+version = "520.1.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
@@ -13,8 +13,8 @@ dependencies = [
     "pandas<3.0.0",
     "numpy>=2.3",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.15",
     "cryosparc-tools>=5.0.3",
+    "nodebpy>=520.18.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -112,6 +112,7 @@ order-by-type = true
 # # Ambiguous variable name: `l`
 "molecularnodes/color.py" = ["E741"]
 "molecularnodes/nodes/geometry.py" = ["E741"]
+"molecularnodes/nodes/*" = ["E741"]
 # "molecularnodes/nodes/shader.py" = ["E741"]
 # "molecularnodes/nodes/compositor.py" = ["E741"]
 

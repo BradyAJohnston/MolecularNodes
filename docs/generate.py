@@ -105,15 +105,24 @@ def video_markdown(urls: list[str]) -> str:
     return "\n\n".join(lines)
 
 
-def class_path(group) -> str | None:
-    "Qualified path of the generated class for a node group, or None if absent."
-    module = _codegen._TREE_MODULES.get(group.bl_idname)
-    if module is None or not hasattr(mn.nodes, module):
-        return None
-    cls_name = _codegen._class_name(group.name)
-    if not hasattr(getattr(mn.nodes, module), cls_name):
-        return None
-    return f"nodes.{module}.{cls_name}"
+def asset_class_paths() -> dict[str, str]:
+    """Map asset group name -> qualified path of its generated class.
+
+    dump_library writes one module per asset into a per-tree-type package
+    (nodes/geometry, nodes/shader, ...) whose __init__ re-exports the asset
+    classes; each class records its group name as `_asset_name`. Matching on
+    that beats re-deriving class names from naming heuristics.
+    """
+    paths: dict[str, str] = {}
+    for module in _codegen._TREE_MODULES.values():
+        pkg = getattr(mn.nodes, module, None)
+        if pkg is None:
+            continue
+        for cls_name, cls in vars(pkg).items():
+            asset_name = getattr(cls, "_asset_name", None)
+            if isinstance(cls, type) and asset_name:
+                paths[asset_name] = f"nodes.{module}.{cls_name}"
+    return paths
 
 
 def _anchor(name: str) -> str:
@@ -221,12 +230,13 @@ def generate_node_sections() -> dict[str, str]:
     for path in paths.values():
         pages.setdefault(categorise(path), [])
 
+    class_paths = asset_class_paths()
     documented = set()
     for group in bpy.data.node_groups:
         # skip non-assets and groups linked in from Blender's bundled libraries
         if group.asset_data is None or group.library is not None:
             continue
-        path = class_path(group)
+        path = class_paths.get(group.name)
         if path is None:
             print(f"no generated class for asset node group: {group.name}")
             continue

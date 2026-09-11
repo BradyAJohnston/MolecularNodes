@@ -1,9 +1,9 @@
+import io
 import json
 import os
 import sys
 from contextlib import ExitStack
 from typing import List, cast
-import addon_utils
 import bpy
 import numpy as np
 
@@ -41,18 +41,6 @@ def _increase_view_distance():
                     space = cast(bpy.types.SpaceView3D, space)
                     if space.clip_end == _DEFAULT_VIEWPORT_CLIP_END:
                         space.clip_end = _INCREASED_CLIP_END
-
-
-def load_extension_module():
-    # check enabled addons
-    for addon in bpy.context.preferences.addons.keys():
-        if addon.endswith(".molecularnodes"):
-            is_enabled, is_loaded = addon_utils.check(addon)
-            if is_enabled and is_loaded:
-                return sys.modules[addon]
-    # return this parent module
-    mn_module_name = __name__.rsplit(".", 1)[0]
-    return sys.modules[mn_module_name]
 
 
 def fraction(x, y):
@@ -200,8 +188,19 @@ class suppress_stdout(object):
             return
         sys.stdout.flush()
         self._origstdout = sys.stdout
-        self._oldstdout_fno = os.dup(sys.stdout.fileno())
-        self._devnull = os.open(os.devnull, os.O_WRONLY)
+        try:
+            stdout_fno = sys.stdout.fileno()
+        except (AttributeError, io.UnsupportedOperation, ValueError):
+            # sys.stdout has been replaced with a stream that has no real
+            # file descriptor (e.g. ipykernel in Jupyter / Colab), but the
+            # C-level stdout that Blender writes to is still fd 1
+            stdout_fno = 1
+        try:
+            self._oldstdout_fno = os.dup(stdout_fno)
+            self._devnull = os.open(os.devnull, os.O_WRONLY)
+        except OSError:
+            # no usable stdout fd at all; skip suppression rather than fail
+            self._suppress = False
 
     def __enter__(self):
         if not self._suppress:
@@ -209,14 +208,17 @@ class suppress_stdout(object):
         self._newstdout = os.dup(1)
         os.dup2(self._devnull, 1)
         os.close(self._devnull)
-        sys.stdout = os.fdopen(self._newstdout, "w")
+        self._fdopen_stdout = os.fdopen(self._newstdout, "w")
+        sys.stdout = self._fdopen_stdout
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if not self._suppress:
             return
         sys.stdout = self._origstdout
         sys.stdout.flush()
+        self._fdopen_stdout.close()
         os.dup2(self._oldstdout_fno, 1)
+        os.close(self._oldstdout_fno)
 
 
 class temp_override_property:

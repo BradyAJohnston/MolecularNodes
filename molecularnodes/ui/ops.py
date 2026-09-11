@@ -28,10 +28,7 @@ from ..entities import (
     molecule,
 )
 from ..entities.base import EntityType
-from ..nodes import nodes
-from ..nodes.node_management import (
-    remove_style_node,
-)
+from ..nodes.utils import remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from ..utils import _increase_view_distance
@@ -534,7 +531,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
 
 
 ENSEMBLE_TYPES = (
-    ("starfile", "Starfile", "Import a .star mapback file"),
+    (
+        "starfile",
+        "Starfile",
+        "Import a .star mapback file or CryoET .ndjson point annotations",
+    ),
     ("cellpack", "CellPack", "Import a CellPack .cif / .bcif model"),
     (
         "cryosparc-particles",
@@ -1088,7 +1089,7 @@ class MN_OT_Swap_Style(Operator):
         if tree is None or self.name_node not in tree.nodes:
             self.report({"ERROR"}, "Style node to swap was not found")
             return {"CANCELLED"}
-        nodes.swap(tree.nodes[self.name_node], nodes.styles_mapping[self.style])
+        swap(tree.nodes[self.name_node], styles_mapping[self.style])
         return {"FINISHED"}
 
 

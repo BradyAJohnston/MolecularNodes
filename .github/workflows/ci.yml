@@ -80,6 +80,14 @@ jobs:
         timeout-minutes: 8
         run: |
           uv run pytest -n auto
+      - name: Upload image comparison failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-failures-bpy-${{ matrix.os }}
+          retention-days: 7
+          if-no-files-found: ignore
+          path: tests/image_failures/
 
   test-blender:
     name: Test in Blender
@@ -110,6 +118,14 @@ jobs:
         shell: bash
         run: |
           blender -b -P tests/run.py -- -v
+      - name: Upload image comparison failures
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-failures-blender-${{ matrix.version }}-${{ matrix.os }}
+          retention-days: 7
+          if-no-files-found: ignore
+          path: tests/image_failures/
 
   docs:
     name: Build Documentation

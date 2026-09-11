@@ -3,7 +3,7 @@ import bpy
 from bpy.types import UILayout
 from ..entities import Molecule, StreamingTrajectory, molecule
 from ..entities.base import EntityType
-from ..nodes import nodes
+from ..nodes.utils import get_star_node
 from ..session import get_session
 from .ops import MN_OT_add_selection_to_style
 from .props import TrajectorySelectionItem
@@ -271,7 +271,7 @@ def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context):
     if mol_type == "ensemble-star":
         layout.label(text="Ensemble")
         box = layout.box()
-        ui_from_node(box, nodes.get_star_node(object), context=context)
+        ui_from_node(box, get_star_node(object), context=context)
         return None
 
 

@@ -36,22 +36,6 @@ def normalize_imd_url(url: str) -> str:
     return url_str
 
 
-def is_imd_url(path: str | Path) -> bool:
-    """Check if path is an IMD streaming URL.
-
-    Parameters
-    ----------
-    path : str | Path
-        Path or URL to check
-
-    Returns
-    -------
-    bool
-        True if path is an IMD streaming URL
-    """
-    return str(path).startswith("imd:")
-
-
 class StreamingTrajectory(Molecule):
     """Molecule subclass for IMD streaming connections.
 

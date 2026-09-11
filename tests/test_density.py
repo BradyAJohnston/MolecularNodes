@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
-from molecularnodes.nodes import nodes
+from molecularnodes.nodes.utils import get_final_style_nodes
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
@@ -53,7 +53,7 @@ def test_density_invert(density_file):
     bpy.data.objects.remove(density.object, do_unlink=True)
 
     density = mn.entities.density.Grids.load(density_file, invert=True)
-    style_node = nodes.get_style_node(density.object)
+    style_node = get_final_style_nodes(density.modifier_node_tree)[0]
     style_node.inputs["Threshold"].default_value = 0.01
 
     pos = density.named_attribute("position")
@@ -94,8 +94,8 @@ def test_density_operator(
         )
         density: mn.entities.Density = scene.MNSession.match(o.latest())
 
-    obj = mn.blender.mesh.evaluate_using_mesh(density.object)
-    assert len(obj.data.vertices) == [198862, 287422][int(invert)]
+    n_vertices = len(databpy.GeometrySet(density.object).named_attribute("position"))
+    assert n_vertices == [198862, 287422][int(invert)]
 
 
 @pytest.fixture
@@ -123,18 +123,15 @@ def test_fallback_reading(isolated_density_file):
 
 
 def test_fallback_transforms(isolated_density_file):
-    def evaluated_obj(file):
+    def evaluated_positions(file):
         density = mn.entities.density.Grids.load(file, overwrite=True)
-        return mn.blender.mesh.evaluate_using_mesh(density.object)
+        return databpy.GeometrySet(density.object).named_attribute("position")
 
-    space_group_one = evaluated_obj(
+    pos_default = evaluated_positions(
         isolated_density_file(data_dir / "62270-small_sg1.mrc")
     )
-    space_group_zero = evaluated_obj(
+    pos_chimerax = evaluated_positions(
         isolated_density_file(data_dir / "62270-small_sg0.mrc")
     )
-
-    pos_default = databpy.AttributeArray(space_group_one, "position")
-    pos_chimerax = databpy.AttributeArray(space_group_zero, "position")
 
     assert np.allclose(pos_default, pos_chimerax)

@@ -25,8 +25,10 @@ from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
-from ...nodes.material import PresetMaterial, append_material
-from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING
+from ...material import PresetMaterial, append_material
+from ...nodes import handlers as node_handlers
+from ...nodes.geometry import AssemblyInstance
+from ...nodes.utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...utils import _UNSET, count_value_changes, temp_override_property
 from ..base import EntityType, MolecularEntity, MolecularTree
 from ..utilities import (
@@ -333,10 +335,6 @@ class Molecule(MolecularEntity):
         except Exception as e:
             logger.warning(f"Failed to compute elements, using placeholder 'X': {e}")
             return np.repeat("X", len(self))
-
-    def _compute_elements(self) -> np.ndarray:
-        """Return cached elements (for backwards compatibility)"""
-        return self._elements
 
     @property
     def _titled_elements(self) -> np.ndarray:
@@ -1303,13 +1301,16 @@ class Molecule(MolecularEntity):
         selection_is_callable = callable(selection)
         attribute_name = self._resolve_style_selection(selection)
 
+        # oxDNA nucleotides get their own ribbon; override locally so the
+        # module-level mapping used by every other entity is left untouched
+        style_mapping = STYLE_NODE_MAPPING
         if isinstance(self, OXDNA):
-            STYLE_NODE_MAPPING["ribbon"] = g.OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+            style_mapping = {**STYLE_NODE_MAPPING, "ribbon": g.OxDNAStyleRibbon}
 
         if not style_is_callable and "sphere" not in kwargs:
             # spheres default to point clouds, which only Cycles can draw
             geometry = _sphere_for_engine(
-                STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
+                style_mapping[style], bpy.context.scene.render.engine
             )
             if geometry is not None:
                 kwargs["sphere"] = geometry
@@ -1329,7 +1330,7 @@ class Molecule(MolecularEntity):
                     selection_input = NamedAttribute.boolean(attribute_name)
                 else:
                     selection_input = None
-                style_node = STYLE_NODE_MAPPING[style](
+                style_node = style_mapping[style](
                     selection=selection_input,
                     material=material,
                     **kwargs,
@@ -1566,3 +1567,31 @@ class Molecule(MolecularEntity):
 
             # return the 3D bounding box vertices of the selected AtomGroup
             return self._view_points(atom_group)
+
+
+def _on_add_assembly_instance(
+    node: bpy.types.GeometryNodeGroup, obj: bpy.types.Object | None
+) -> None:
+    """
+    Setup for an ``Assembly Instance`` node added from the asset library.
+
+    Builds (or reuses) the assembly-transforms data object for the entity whose
+    modifier tree received the node and assigns it to the node's Data Object
+    input, so dropping the node onto a structure with assembly data just works.
+    A no-op when a data object is already assigned or the entity has no
+    parseable assembly data.
+    """
+    from ...session import get_session
+
+    socket = node.inputs.get("Data Object")
+    if socket is None or socket.default_value is not None or obj is None:
+        return
+    entity = get_session().match(obj)
+    if not isinstance(entity, Molecule):
+        return
+    if entity.assemblies(as_array=True) is None:
+        return
+    socket.default_value = entity.create_data_object()
+
+
+node_handlers.register_on_add(AssemblyInstance._name, _on_add_assembly_instance)

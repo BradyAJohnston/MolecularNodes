@@ -1,7 +1,6 @@
 import databpy
 import numpy as np
 import molecularnodes as mn
-from molecularnodes.blender import mesh
 from .constants import data_dir
 
 
@@ -19,4 +18,4 @@ def test_eval_mesh():
     assert len(a.data.vertices) == 3
     b = databpy.create_object(np.zeros((5, 3)))
     assert len(b.data.vertices) == 5
-    assert len(mesh.evaluate_using_mesh(b).data.vertices) == 5
+    assert len(databpy.GeometrySet(b).named_attribute("position")) == 5

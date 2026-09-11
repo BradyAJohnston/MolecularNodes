@@ -3,7 +3,8 @@ from typing import cast
 import bpy
 from nodebpy.builder import TreeBuilder
 from ... import blender as bl
-from ...nodes import geometry, material
+from ... import material
+from ...nodes import geometry
 from ..utilities import create_object
 from .base import Ensemble, EntityType
 from .reader import CellPackReader
@@ -43,8 +44,10 @@ class CellPack(Ensemble):
         if node_setup:
             with TreeBuilder.geometry(f"MN_pack_instance_{name}") as instance_tree:
                 atoms = instance_tree.inputs.geometry("Atoms")
-                style = geometry.StyleSpheres()
-                material.assign_material(style.node, "MN Ambient Occlusion")
+                style = geometry.StyleSpheres(
+                    material=material.AmbientOcclusion().material
+                )
+
                 atoms >> style >> instance_tree.outputs.geometry("Geometry")
             instance_tree.tree.is_modifier = True
 

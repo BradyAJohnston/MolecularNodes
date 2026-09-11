@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import bpy
 import databpy
@@ -9,7 +10,8 @@ from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
-from ...nodes import geometry, nodes
+from ...nodes import geometry
+from ...nodes.utils import get_star_node
 from .base import Ensemble, EntityType
 
 
@@ -141,9 +143,68 @@ class CistemDataFrame(EnsembleDataFrame):
         )
 
 
+class NDJSONDataFrame(EnsembleDataFrame):
+    """
+    Point annotations from a CZI CryoET Data Portal ``.ndjson`` file.
+
+    Each line is a JSON object with a ``location`` and, for oriented points, a
+    3x3 ``xyz_rotation_matrix`` that rotates the reference structure into the
+    tomogram frame. Coordinates are in voxels of the parent tomogram - the file
+    carries no pixel size, so no additional scaling is applied on import.
+    """
+
+    _matrix_columns = [f"rotation_{i}{j}" for i in range(3) for j in range(3)]
+
+    def __init__(self, data: DataFrame) -> None:
+        super().__init__(data)
+        self.type: str = "ndjson"
+
+    @property
+    def _has_rotation(self) -> bool:
+        return all(column in self.data for column in self._matrix_columns)
+
+    def transforms(self) -> np.ndarray:
+        """
+        The full 4x4 world-scaled transform for each point.
+
+        The rotation part is the file's ``xyz_rotation_matrix`` (identity for
+        plain points) and the translation is the world-scaled position.
+        """
+        n_points = len(self.data)
+        transforms = np.tile(np.identity(4, dtype=float), (n_points, 1, 1))
+        if self._has_rotation:
+            transforms[:, :3, :3] = (
+                self.data[self._matrix_columns].to_numpy().reshape(n_points, 3, 3)
+            )
+        transforms[:, :3, 3] = self.coordinates_scaled
+        return transforms
+
+    def store_data_on_object(self, obj: bpy.types.Object) -> None:
+        bob = BlenderObject(obj)
+
+        bob.store_named_attribute(
+            self.image_id_values(),
+            name="image_id",
+            atype=AttributeTypes.INT,
+        )
+        # Blender stores float4x4 attributes column-major, so the row-major
+        # numpy matrices must be transposed or GN sees the inverse rotation
+        bob.store_named_attribute(
+            self.transforms().transpose(0, 2, 1),
+            name="transform",
+            atype=AttributeTypes.FLOAT4X4,
+        )
+        if "instance_id" in self.data:
+            bob.store_named_attribute(
+                self.data["instance_id"].to_numpy(dtype=int),
+                name="instance_id",
+                atype=AttributeTypes.INT,
+            )
+
+
 class StarFile(Ensemble):
     data_reader: DataFrame | None
-    data_frame: RelionDataFrame | CistemDataFrame | None
+    data_frame: RelionDataFrame | CistemDataFrame | NDJSONDataFrame | None
 
     def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
@@ -161,13 +222,16 @@ class StarFile(Ensemble):
 
     @property
     def star_node(self) -> bpy.types.Node:
-        return nodes.get_star_node(self.object)
+        return get_star_node(self.object)
 
     @property
     def micrograph_material(self) -> bpy.types.Material:
-        return nodes.micrograph_material()
+        return bpy.data.materials["MN_micrograph_material"]
 
     def _read(self) -> DataFrame:
+        if self._is_ndjson():
+            return self._read_ndjson()
+
         star_dict: dict = starfile.read(self.file_path, always_dict=True)  # type: ignore
         star: DataFrame = list(star_dict.values())[0]
 
@@ -179,11 +243,49 @@ class StarFile(Ensemble):
                 star[col] = star[col].astype("category")
         return star
 
+    def _read_ndjson(self) -> DataFrame:
+        """
+        Read a CZI CryoET Data Portal ``.ndjson`` annotation file.
+
+        Handles ``point``, ``orientedPoint`` and ``instancePoint`` annotations:
+        one JSON object per line with a ``location``, and optionally a 3x3
+        ``xyz_rotation_matrix`` (stored element-wise in ``rotation_{ij}``
+        columns) and an ``instance_id``.
+        """
+        with open(self.file_path) as file:
+            records: list[dict] = [json.loads(line) for line in file if line.strip()]
+
+        data = DataFrame(
+            {axis: [record["location"][axis] for record in records] for axis in "xyz"}
+        )
+
+        matrices = [record.get("xyz_rotation_matrix") for record in records]
+        if any(matrix is not None for matrix in matrices):
+            stacked = np.array(
+                [
+                    matrix if matrix is not None else np.identity(3)
+                    for matrix in matrices
+                ],
+                dtype=float,
+            )
+            for i in range(3):
+                for j in range(3):
+                    data[f"rotation_{i}{j}"] = stacked[:, i, j]
+
+        instance_ids = [record.get("instance_id") for record in records]
+        if all(instance_id is not None for instance_id in instance_ids):
+            data["instance_id"] = np.array(instance_ids, dtype=int)
+
+        return data
+
     @property
     def n_images(self) -> int:
         if isinstance(self.data_reader, dict):
             return len(self.data_reader)
         return 1
+
+    def _is_ndjson(self) -> bool:
+        return self.file_path.suffix == ".ndjson"
 
     def _is_relion(self) -> bool:
         return (
@@ -195,10 +297,12 @@ class StarFile(Ensemble):
     def _is_cistem(self) -> bool:
         return "cisTEMAnglePsi" in self.data_reader  # type: ignore
 
-    def _assign_df(self) -> RelionDataFrame | CistemDataFrame:
+    def _assign_df(self) -> RelionDataFrame | CistemDataFrame | NDJSONDataFrame:
         if self.data_reader is None:
             raise ValueError("Data not loaded. Call StarFile.load() first.")
-        if self._is_relion():
+        if self._is_ndjson():
+            return NDJSONDataFrame(self.data_reader)
+        elif self._is_relion():
             return RelionDataFrame(self.data_reader)
         elif self._is_cistem():
             return CistemDataFrame(self.data_reader)
