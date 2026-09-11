@@ -29,6 +29,10 @@ def import_options(layout: UILayout) -> None:
     op.ensemble_type = "starfile"
     op = layout.operator("mn.import_ensemble", text="CellPack", icon="IMPORT")
     op.ensemble_type = "cellpack"
+    op = layout.operator(
+        "mn.import_ensemble", text="CryoSPARC Particles", icon="IMPORT"
+    )
+    op.ensemble_type = "cryosparc-particles"
 
     layout.separator()
     # MD trajectories are loaded through the same unified import dialog

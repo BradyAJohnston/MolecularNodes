@@ -11,7 +11,9 @@ dependencies = [
     "starfile",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
+    "numpy>=2.3",
     "griddataformats>=1.2.0",
+    "cryosparc-tools>=5.0.3",
     "nodebpy>=520.18.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]

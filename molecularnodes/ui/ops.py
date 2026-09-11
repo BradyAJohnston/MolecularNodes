@@ -537,6 +537,11 @@ ENSEMBLE_TYPES = (
         "Import a .star mapback file or CryoET .ndjson point annotations",
     ),
     ("cellpack", "CellPack", "Import a CellPack .cif / .bcif model"),
+    (
+        "cryosparc-particles",
+        "CryoSPARC Particles",
+        "Load CryoSPARC particle metadata from a .cs file",
+    ),
 )
 
 
@@ -576,17 +581,30 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
 
     def execute(self, context):
         file_path = path_resolve(self.filepath)
-        if self.ensemble_type == "cellpack":
-            ensemble.CellPack.load(
-                file_path=file_path,
-                name=Path(self.filepath).name,
-                node_setup=self.node_setup,
-            )
-        else:
-            ensemble.StarFile.load(
-                file_path=file_path,
-                node_setup=self.node_setup,
-            )
+        match self.ensemble_type:
+            case "cellpack":
+                ensemble.CellPack.load(
+                    file_path=file_path,
+                    name=Path(self.filepath).name,
+                    node_setup=self.node_setup,
+                )
+            case "cryosparc-particles":
+                ensemble.CryoSPARCParticles.load(
+                    file_path=file_path,
+                    name=Path(self.filepath).name,
+                    node_setup=self.node_setup,
+                )
+            case "starfile":
+                ensemble.StarFile.load(
+                    file_path=file_path,
+                    node_setup=self.node_setup,
+                )
+            case _:
+                self.report(
+                    {"ERROR"},
+                    message=f"Unsupported ensemble type: {self.ensemble_type}",
+                )
+                return {"CANCELLED"}
 
         _increase_view_distance()
         return {"FINISHED"}

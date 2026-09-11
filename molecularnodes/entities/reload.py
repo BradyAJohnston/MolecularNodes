@@ -17,6 +17,7 @@ from ..download import StructureDownloader
 from .base import EntityType, MolecularEntity
 from .density.grids import Grids
 from .ensemble.cellpack import CellPack
+from .ensemble.cryosparc import CryoSPARCParticles
 from .ensemble.star import StarFile
 from .molecule import OXDNA, Molecule
 from .molecule.oxdna import OXDNAParser, OXDNAReader
@@ -77,6 +78,11 @@ def _reload_ensemble_star(obj: bpy.types.Object) -> StarFile:
     return StarFile.from_blender_object(obj)
 
 
+def _reload_ensemble_cryosparc(obj: bpy.types.Object) -> CryoSPARCParticles:
+    # CryoSPARCParticles records its source path in the `mn.filepath` property
+    return CryoSPARCParticles.from_blender_object(obj)
+
+
 def _reload_ensemble_cellpack(obj: bpy.types.Object) -> CellPack:
     mn = obj.mn
     if not mn.filepath:
@@ -93,6 +99,7 @@ _RELOADERS = {
     EntityType.MD_OXDNA.value: _reload_trajectory,
     EntityType.DENSITY.value: _reload_density,
     EntityType.ENSEMBLE_STAR.value: _reload_ensemble_star,
+    EntityType.ENSEMBLE_CRYOSPARC.value: _reload_ensemble_cryosparc,
     EntityType.ENSEMBLE_CELLPACK.value: _reload_ensemble_cellpack,
 }
 

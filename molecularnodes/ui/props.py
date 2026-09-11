@@ -32,6 +32,7 @@ ENTITY_ITEMS = (
         "A streaming IMD molecular dynamics trajectory",
     ),
     ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
+    ("ensemble-cryosparc", "CryoSPARC Ensemble", "A CryoSPARC ensemble"),
     ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
 )
 
