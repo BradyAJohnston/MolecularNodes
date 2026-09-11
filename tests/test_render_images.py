@@ -158,7 +158,7 @@ def test_render_assembly(
 
 
 @pytest.mark.parametrize(
-    "files,style",
+    "files,backbone",
     list(
         product(
             (
@@ -166,12 +166,12 @@ def test_render_assembly(
                 ["linear.top", "linear_traj.dat"],
                 ["origami_old.top", "origami_old.dat"],
             ),
-            (mg.OxDNAStyleBallAndStick, mg.OxDNAStyleRibbon),
+            ("Arrows", "Curve"),
         )
     ),
 )
 def test_render_oxdna_simple_circle(
-    golden_canvas, tmp_path, assembly_image_snapshot, files, style
+    golden_canvas, tmp_path, assembly_image_snapshot, files, backbone
 ):
     ens = mn.entities.OXDNA.load(
         topology=data_dir / f"oxdna/{files[0]}",
@@ -182,8 +182,9 @@ def test_render_oxdna_simple_circle(
         (
             atoms
             >> mg.CentreOnSelection()
-            >> style(material=mn.material.Default().material)
-            >> mg.GeoemtryToPlanar()
+            >> mg.OxDNAStyleRibbon(
+                backbone_shape=backbone, material=mn.material.Default().material
+            )
             >> join
         )
 

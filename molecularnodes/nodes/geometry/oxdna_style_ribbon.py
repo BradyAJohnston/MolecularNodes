@@ -2,7 +2,7 @@
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
@@ -10,11 +10,11 @@ from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
     ColorSocket,
-    CustomGeometryGroup,
     FloatSocket,
     GeometrySocket,
     IntegerSocket,
     MaterialSocket,
+    MenuSocket,
     PackageLibrary,
     SocketAccessor,
     VectorSocket,
@@ -26,46 +26,19 @@ from nodebpy.types import (
     InputGeometry,
     InputInteger,
     InputMaterial,
+    InputMenu,
     InputVector,
 )
-from ._shared.mn_units import MNUnits
 from ._shared.set_instancer import SetInstancer
+from ._shared.smooth_by_angle import SmoothByAngle
 from .angstrom_to_world import AngstromToWorld
+from .chain_id import ChainID
+from .color import Color
 from .color_res_name import ColorResName
-from .oxdna_normal import OxDNANormal
-from .oxdna_offset import OxDNAOffset
-from .oxdna_rotation import OxDNARotation
+from .fallback_geometry import FallbackGeometry
+from .integer_distance import IntegerDistance
+from .oxdna_vectors import OxDNAVectors
 from .set_color import SetColor
-
-
-class Utils_oxdna_base(CustomGeometryGroup):
-    _name = ".utils_oxdna_base"
-    _tree_properties = {"node_tool_idname": "geometry._utils_oxdna_base"}
-
-    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        value = tree.inputs.float("Value", 0.5, min_value=-10_000.0, max_value=10_000.0)
-        value_1 = tree.inputs.float(
-            "Value", 0.5, min_value=-10_000.0, max_value=10_000.0
-        )
-        value_2 = tree.inputs.float(
-            "Value", 0.5, min_value=-10_000.0, max_value=10_000.0
-        )
-        geometry = tree.outputs.geometry("Geometry")
-
-        group = MNUnits(value=value_1)
-        (
-            g.Cylinder(
-                radius=MNUnits(value=value).o.angstrom,
-                depth=group.o.angstrom,
-                vertices=4,
-            )
-            >> g.TransformGeometry(translation=g.CombineXYZ(z=group.o.angstrom / 2.0))
-            >> g.TransformGeometry(rotation=(0.0, 0.0, math.pi / 4))
-            >> g.TransformGeometry(
-                scale=g.CombineXYZ(x=MNUnits(value=value_2).o.angstrom, y=1.0, z=1.0)
-            )
-            >> geometry
-        )
 
 
 class OxDNAStyleRibbon(AssetGeometryGroup):
@@ -78,12 +51,28 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         Atoms
     selection : InputBoolean
         Selection of atoms to apply this node to
-    backbone_resolution : InputInteger
-        Backbone Resolution
-    backbone_subdivisions : InputInteger
-        Backbone Subdivisions
+    quality : InputInteger
+        Quality
+    backbone_shape : InputMenu | Literal["Arrows", "Curve"]
+        Backbone Shape
     backbone_radius : InputFloat
         Backbone Radius
+    ball_radius : InputFloat
+        Ball Radius
+    arrow_taper : InputFloat
+        Arrow Taper
+    base_shape : InputMenu | Literal["Sphere", "Cylinder", "None"]
+        Base Shape
+    base_geometry : InputGeometry
+        Base Geometry
+    base_scale : InputVector
+        Base Scale
+    stem_scale : InputVector
+        Stem Scale
+    base_colors : InputMenu | Literal["Uniform", "Base", "Color"]
+        Base Colors
+    bases : InputColor
+        Bases
     a : InputColor
         A
     c : InputColor
@@ -92,8 +81,18 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         G
     t_u : InputColor
         T / U
-    base_scale : InputVector
-        Base Scale
+    strand_color : InputMenu | Literal["Uniform", "Strand", "Color"]
+        Strand Color
+    strands : InputColor
+        Becomes the output value if it is chosen by the menu input
+    strand_1 : InputColor
+        Strand 1
+    strand_2 : InputColor
+        Strand 2
+    strand_3 : InputColor
+        Strand 3
+    strand_4 : InputColor
+        Strand 4
     shade_smooth : InputBoolean
         Shade Smooth
     material : InputMaterial
@@ -105,12 +104,28 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         Atoms
     i.selection : BooleanSocket
         Selection of atoms to apply this node to
-    i.backbone_resolution : IntegerSocket
-        Backbone Resolution
-    i.backbone_subdivisions : IntegerSocket
-        Backbone Subdivisions
+    i.quality : IntegerSocket
+        Quality
+    i.backbone_shape : MenuSocket
+        Backbone Shape
     i.backbone_radius : FloatSocket
         Backbone Radius
+    i.ball_radius : FloatSocket
+        Ball Radius
+    i.arrow_taper : FloatSocket
+        Arrow Taper
+    i.base_shape : MenuSocket
+        Base Shape
+    i.base_geometry : GeometrySocket
+        Base Geometry
+    i.base_scale : VectorSocket
+        Base Scale
+    i.stem_scale : VectorSocket
+        Stem Scale
+    i.base_colors : MenuSocket
+        Base Colors
+    i.bases : ColorSocket
+        Bases
     i.a : ColorSocket
         A
     i.c : ColorSocket
@@ -119,8 +134,18 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         G
     i.t_u : ColorSocket
         T / U
-    i.base_scale : VectorSocket
-        Base Scale
+    i.strand_color : MenuSocket
+        Strand Color
+    i.strands : ColorSocket
+        Becomes the output value if it is chosen by the menu input
+    i.strand_1 : ColorSocket
+        Strand 1
+    i.strand_2 : ColorSocket
+        Strand 2
+    i.strand_3 : ColorSocket
+        Strand 3
+    i.strand_4 : ColorSocket
+        Strand 4
     i.shade_smooth : BooleanSocket
         Shade Smooth
     i.material : MaterialSocket
@@ -136,19 +161,38 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
     _asset_name = "oxDNA Style Ribbon"
     _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
     _color_tag = "GEOMETRY"
-    _tree_properties = {"node_tool_idname": "geometry.mn_oxdna_style_ribbon"}
+    _tree_properties = {
+        "default_group_node_width": 160,
+        "node_tool_idname": "geometry.mn_oxdna_style_ribbon",
+    }
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
         """Atoms"""
         selection: BooleanSocket
         """Selection of atoms to apply this node to"""
-        backbone_resolution: IntegerSocket
-        """Backbone Resolution"""
-        backbone_subdivisions: IntegerSocket
-        """Backbone Subdivisions"""
+        quality: IntegerSocket
+        """Quality"""
+        backbone_shape: MenuSocket
+        """Backbone Shape"""
         backbone_radius: FloatSocket
         """Backbone Radius"""
+        ball_radius: FloatSocket
+        """Ball Radius"""
+        arrow_taper: FloatSocket
+        """Arrow Taper"""
+        base_shape: MenuSocket
+        """Base Shape"""
+        base_geometry: GeometrySocket
+        """Base Geometry"""
+        base_scale: VectorSocket
+        """Base Scale"""
+        stem_scale: VectorSocket
+        """Stem Scale"""
+        base_colors: MenuSocket
+        """Base Colors"""
+        bases: ColorSocket
+        """Bases"""
         a: ColorSocket
         """A"""
         c: ColorSocket
@@ -157,8 +201,18 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         """G"""
         t_u: ColorSocket
         """T / U"""
-        base_scale: VectorSocket
-        """Base Scale"""
+        strand_color: MenuSocket
+        """Strand Color"""
+        strands: ColorSocket
+        """Becomes the output value if it is chosen by the menu input"""
+        strand_1: ColorSocket
+        """Strand 1"""
+        strand_2: ColorSocket
+        """Strand 2"""
+        strand_3: ColorSocket
+        """Strand 3"""
+        strand_4: ColorSocket
+        """Strand 4"""
         shade_smooth: BooleanSocket
         """Shade Smooth"""
         material: MaterialSocket
@@ -179,14 +233,27 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        backbone_resolution: InputInteger = 6,
-        backbone_subdivisions: InputInteger = 1,
-        backbone_radius: InputFloat = 2.0,
+        quality: InputInteger = 2,
+        backbone_shape: InputMenu | Literal["Arrows", "Curve"] = "Arrows",
+        backbone_radius: InputFloat = 0.8,
+        ball_radius: InputFloat = 2.0,
+        arrow_taper: InputFloat = 0.3,
+        base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
+        base_geometry: InputGeometry = None,
+        base_scale: InputVector = None,
+        stem_scale: InputVector = None,
+        base_colors: InputMenu | Literal["Uniform", "Base", "Color"] = "Uniform",
+        bases: InputColor = None,
         a: InputColor = None,
         c: InputColor = None,
         g: InputColor = None,
         t_u: InputColor = None,
-        base_scale: InputVector = None,
+        strand_color: InputMenu | Literal["Uniform", "Strand", "Color"] = "Color",
+        strands: InputColor = None,
+        strand_1: InputColor = None,
+        strand_2: InputColor = None,
+        strand_3: InputColor = None,
+        strand_4: InputColor = None,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
@@ -194,14 +261,27 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
-                "Backbone Resolution": backbone_resolution,
-                "Backbone Subdivisions": backbone_subdivisions,
+                "Quality": quality,
+                "Backbone Shape": backbone_shape,
                 "Backbone Radius": backbone_radius,
+                "Ball Radius": ball_radius,
+                "Arrow Taper": arrow_taper,
+                "Base Shape": base_shape,
+                "Base Geometry": base_geometry,
+                "Base Scale": base_scale,
+                "Stem Scale": stem_scale,
+                "Base Colors": base_colors,
+                "Bases": bases,
                 "A": a,
                 "C": c,
                 "G": g,
                 "T / U": t_u,
-                "Base Scale": base_scale,
+                "Strand Color": strand_color,
+                "Strands": strands,
+                "Strand 1": strand_1,
+                "Strand 2": strand_2,
+                "Strand 3": strand_3,
+                "Strand 4": strand_4,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
             }
@@ -215,83 +295,207 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
             description="Selection of atoms to apply this node to",
             hide_value=True,
         )
-        with tree.inputs.panel("Backbone", default_closed=True):
-            backbone_resolution = tree.inputs.integer(
-                "Backbone Resolution", 6, min_value=3, max_value=512
-            )
-            backbone_subdivisions = tree.inputs.integer(
-                "Backbone Subdivisions", 1, min_value=1
+        quality = tree.inputs.integer("Quality", 2, min_value=1)
+        with tree.inputs.panel("Backbone"):
+            backbone_shape = tree.inputs.menu(
+                "Backbone Shape", expanded=True, optional_label=True
             )
             backbone_radius = tree.inputs.float(
-                "Backbone Radius", 2.0, min_value=0.0, max_value=10_000.0
+                "Backbone Radius",
+                0.8,
+                min_value=0.0,
+                max_value=340_282_000_000_000_000_000_000_000_000_000_000_000.0,
             )
-        with tree.inputs.panel("Base", default_closed=True):
-            a = tree.inputs.color("A", (0.2746774, 0.5457247, 0.799103, 1.0))
-            c_ = tree.inputs.color("C", (0.294582, 0.8, 0.187789, 1.0))
-            g_ = tree.inputs.color("G", (0.8, 0.236614, 0.167417, 1.0))
-            t_u = tree.inputs.color("T / U", (0.8, 0.269803, 0.526898, 1.0))
+            ball_radius = tree.inputs.float("Ball Radius", 2.0, min_value=0.0)
+            arrow_taper = tree.inputs.float(
+                "Arrow Taper", 0.3, min_value=0.0, max_value=1.0, subtype="FACTOR"
+            )
+        with tree.inputs.panel("Bases"):
+            base_shape = tree.inputs.menu(
+                "Base Shape", expanded=True, optional_label=True
+            )
+            base_geometry = tree.inputs.geometry("Base Geometry")
             base_scale = tree.inputs.vector(
-                "Base Scale", (1.0, 1.0, 1.0), subtype="XYZ"
+                "Base Scale", (0.1, 0.3, 0.2), min_value=0.0, subtype="XYZ"
             )
-        with tree.inputs.panel("Material", default_closed=True):
+            stem_scale = tree.inputs.vector("Stem Scale", (0.7, 0.7, 0.7))
+        with tree.inputs.panel("Colors"):
+            base_colors = tree.inputs.menu(
+                "Base Colors", expanded=True, optional_label=True
+            )
+            bases = tree.inputs.color("Bases", (0.0, 1.0, 1.0, 1.0))
+            a = tree.inputs.color("A", (0.033104, 0.03310406, 1.0, 1.0))
+            c_ = tree.inputs.color("C", (0.033104, 1.0, 0.033104, 1.0))
+            g_ = tree.inputs.color("G", (1.0, 1.0, 0.033104, 1.0))
+            t_u = tree.inputs.color("T / U", (1.0, 0.033104, 0.033104, 1.0))
+            strand_color = tree.inputs.menu(
+                "Strand Color", expanded=True, optional_label=True
+            )
+            strands = tree.inputs.color(
+                "Strands",
+                (0.8, 0.8, 0.8, 1.0),
+                description="Becomes the output value if it is chosen by the menu input",
+            )
+            strand_1 = tree.inputs.color("Strand 1", (1.0, 0.0, 0.0, 1.0))
+            strand_2 = tree.inputs.color("Strand 2", (0.0, 0.0, 1.0, 1.0))
+            strand_3 = tree.inputs.color("Strand 3", (0.0, 1.0, 0.0, 1.0))
+            strand_4 = tree.inputs.color("Strand 4", (1.0, 1.0, 0.0, 1.0))
+        with tree.inputs.panel("Material"):
             shade_smooth = tree.inputs.boolean("Shade Smooth", True)
             material = tree.inputs.material(
                 "Material", description="Material to apply to the resulting geometry"
             )
         geometry = tree.outputs.geometry("Geometry")
 
-        capture = g.CaptureAttribute.point(
-            geometry=g.SeparateGeometry.point(atoms, selection).o.selection
-        )
-        value = capture.items.vector("Value", OxDNAOffset())
-        with g.Frame("Colored bases"):
+        separate_geometry = g.SeparateGeometry.point(atoms, selection)
+        with g.Frame("Color strands if Auto-color is False"):
+            integer_math = ChainID().o.chain_id.modulo(4)
+            menu_switch = g.MenuSwitch.color(
+                strand_color,
+                {
+                    "Uniform": (strands, "Single uniform color"),
+                    "Strand": (
+                        g.IndexSwitch.color(
+                            integer_math, (strand_1, strand_2, strand_3, strand_4)
+                        ),
+                        "Set custom colors for the bases",
+                    ),
+                    "Color": (Color(), "Use the existing `Color` attribute"),
+                },
+            )
             group = SetColor(
-                atoms=capture.o.geometry,
-                color=ColorResName(a=a, c=c_, g=g_, t=t_u, ra=a, rc=c_, rg=g_, ru=t_u),
+                atoms=separate_geometry.o.selection,
+                selection=integer_math,
+                color=menu_switch.o.output,
             )
-            instance_on_points = SetInstancer(geometry=group) >> g.InstanceOnPoints(
-                instance=Utils_oxdna_base(
-                    _named_links=[("Value", 4.139999), ("Value", 5.42), ("Value", 3.32)]
-                ),
-                rotation=OxDNARotation(),
-                scale=base_scale,
+        group_1 = OxDNAVectors()
+        capture = g.CaptureAttribute.point(geometry=group)
+        rotation = capture.items.rotation("Rotation", group_1.o.rotation)
+        with g.Frame("Colored bases"):
+            menu_switch_1 = g.MenuSwitch.color(
+                base_colors,
+                {
+                    "Uniform": bases,
+                    "Base": ColorResName(
+                        a=a, c=c_, g=g_, t=t_u, ra=a, rc=c_, rg=g_, ru=t_u
+                    ),
+                    "Color": Color(),
+                },
             )
-        set_position = g.SetPosition(geometry=capture.o.geometry, offset=value.output)
-        with g.Frame("Backbone ribbon"):
-            set_spline_type = (
-                g.MeshToCurve(mesh=set_position)
-                >> g.SetCurveRadius(radius=AngstromToWorld(angstrom=backbone_radius))
-                >> g.SetSplineType.bezier()
-            )
-            set_shade_smooth = (
-                g.SetHandleType(curve=set_spline_type)
-                >> g.SetSplineResolution(resolution=backbone_subdivisions)
-                >> g.CurveToMesh(
-                    profile_curve=g.CurveCircle(resolution=backbone_resolution),
-                    scale=g.Radius(),
-                    fill_caps=True,
+            instance_on_points = (
+                SetColor(
+                    atoms=SetInstancer(geometry=capture.o.geometry),
+                    color=menu_switch_1.o.output,
                 )
-                >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
+                >> g.SetPosition(offset=group_1.o.base_offset)
+                >> g.InstanceOnPoints(
+                    instance=FallbackGeometry(
+                        geometry=base_geometry,
+                        fallback=g.IcoSphere(subdivisions=quality),
+                    ),
+                    rotation=rotation.output,
+                    scale=base_scale,
+                )
             )
-        group_1 = SetInstancer(geometry=set_position)
+        group_2 = OxDNAVectors()
+        with g.Frame():
+            set_position = g.SetPosition(
+                geometry=capture.o.geometry, offset=group_2.o.backbone_offset
+            )
+            with g.Frame("Backbone Stick"):
+                with g.Frame(
+                    "Each segment is it's own mesh, flipping the circular endpoints"
+                ):
+                    edge_vertices = g.EdgeVertices()
+                    capture_1 = g.CaptureAttribute.edge(
+                        geometry=set_position,
+                        selection=IntegerDistance(
+                            a=edge_vertices.o.vertex_index_1,
+                            b=edge_vertices.o.vertex_index_2,
+                        ).o.cutoff,
+                    )
+                    reverse_curve = (
+                        capture_1.o.geometry
+                        >> g.SplitEdges()
+                        >> g.MeshToCurve()
+                        >> g.ReverseCurve(selection=capture_1.o.selection)
+                    )
+                group_3 = AngstromToWorld(angstrom=backbone_radius)
+                curve_circle = g.CurveCircle(resolution=quality * 4, radius=ball_radius)
+                switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
+                    group_3, group_3.o.world * arrow_taper
+                )
+                set_spline_resolution = (
+                    g.MeshToCurve(mesh=set_position)
+                    >> g.SetCurveNormal(normal=group_2.o.base_normal, mode="Free")
+                    >> g.SetSplineType.bezier()
+                    >> g.SetSplineResolution(resolution=quality * 2)
+                )
+                curve_to_mesh = g.SetHandleType(
+                    curve=set_spline_resolution
+                ) >> g.CurveToMesh(profile_curve=curve_circle, scale=group_3)
+                curve_to_mesh_1 = reverse_curve >> g.CurveToMesh(
+                    profile_curve=curve_circle, scale=switch
+                )
+            with g.Frame("Backbone ball"):
+                instance_on_points_1 = SetInstancer(
+                    geometry=set_position
+                ) >> g.InstanceOnPoints(
+                    instance=g.IcoSphere(
+                        radius=AngstromToWorld(angstrom=ball_radius),
+                        subdivisions=quality,
+                    )
+                )
         with g.Frame("Base stem"):
-            group_2 = Utils_oxdna_base(
-                _named_links=[("Value", 1.4999993), ("Value", 6.119999), ("Value", 5.0)]
+            cylinder = g.Cylinder(
+                vertices=quality * 5,
+                side_segments=quality,
+                radius=AngstromToWorld(angstrom=1.0),
+                depth=1.0,
             )
-            instance_on_points_1 = group_1 >> g.InstanceOnPoints(
-                instance=group_2,
-                rotation=g.AxesToRotation(
-                    primary_axis=value.output * -1.0, secondary_axis=OxDNANormal()
+            instance_on_points_2 = SetInstancer(
+                geometry=set_position
+            ) >> g.InstanceOnPoints(
+                instance=g.TransformGeometry(
+                    geometry=cylinder, translation=(0.0, 0.0, 0.5)
                 ),
+                rotation=rotation.output.rotate(
+                    (math.pi / 9, 0.0, 0.0), rotation_space="LOCAL"
+                ),
+                scale=stem_scale,
             )
-        (
-            g.JoinGeometry(
-                geometry=(set_shade_smooth, instance_on_points_1, instance_on_points)
-            )
-            >> g.SetMaterial(material=material)
-            >> geometry
+        menu_switch_2 = g.MenuSwitch.geometry(
+            base_shape,
+            {
+                "Sphere": g.JoinGeometry(
+                    geometry=(instance_on_points, instance_on_points_2)
+                ),
+                "Cylinder": instance_on_points_2,
+                "None": None,
+            },
         )
-        _group_3 = OxDNARotation()
+        menu_switch_3 = g.MenuSwitch.geometry(
+            backbone_shape,
+            {
+                "Arrows": g.JoinGeometry(
+                    geometry=(instance_on_points_1, curve_to_mesh_1)
+                ),
+                "Curve": curve_to_mesh,
+            },
+        )
+        set_shade_smooth = g.SetShadeSmooth.face(
+            g.JoinGeometry(geometry=(menu_switch_3, menu_switch_2)),
+            shade_smooth=shade_smooth,
+        )
+        set_shade_smooth.node.warning_propagation = "ERRORS"
+        group_4 = SmoothByAngle(mesh=set_shade_smooth, angle=math.pi / 3)
+        group_4.node.warning_propagation = "ERRORS"
+        group_4 >> g.SetMaterial(material=material) >> geometry
+
+        backbone_shape.default_value = "Arrows"
+        base_shape.default_value = "Sphere"
+        base_colors.default_value = "Uniform"
+        strand_color.default_value = "Color"
 
 
 ASSET = OxDNAStyleRibbon

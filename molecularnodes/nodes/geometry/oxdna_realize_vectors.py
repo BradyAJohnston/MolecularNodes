@@ -12,8 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
 )
 from nodebpy.types import InputGeometry
-from .oxdna_normal import OxDNANormal
-from .oxdna_vector import OxDNAVector
+from .oxdna_vectors import OxDNAVectors
 
 
 class OxDNARealizeVectors(AssetGeometryGroup):
@@ -69,10 +68,11 @@ class OxDNARealizeVectors(AssetGeometryGroup):
         geometry = tree.outputs.geometry("Geometry")
 
         value = g.Value(0.15)
+        group = OxDNAVectors()
         for_each = g.ForEachGeometryElementZone(geometry=atoms)
         position = for_each.inputs.vector("Position", g.Position())
-        base_vector = for_each.inputs.vector("base_vector", OxDNAVector())
-        base_normal = for_each.inputs.vector("base_normal", OxDNANormal())
+        base_vector = for_each.inputs.vector("base_vector", group.o.base_vector)
+        base_normal = for_each.inputs.vector("base_normal", group.o.base_normal)
         with g.Frame("Create edges pointing along base and normal vectors"):
             mesh_line = g.MeshLine.end_points(
                 2, position.output, position.output + base_vector.output * value
