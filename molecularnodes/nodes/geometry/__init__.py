@@ -37,6 +37,7 @@ from .boolean_run_fill import BooleanRunFill
 from .boolean_run_trim import BooleanRunTrim
 from .break_bonds import BreakBonds
 from .break_curves import BreakCurves
+from .build_elastic_network import BuildElasticNetwork
 from .centre_on_selection import CentreOnSelection
 from .centroid import Centroid
 from .chain_id import ChainID
@@ -101,6 +102,9 @@ from .fallback_vector import FallbackVector
 from .field_remap import FieldRemap
 from .find_bonded_atom import FindBondedAtom
 from .find_bonds import FindBonds
+from .force_brownian import ForceBrownian
+from .force_gravity import ForceGravity
+from .force_mesh_collide import ForceMeshCollide
 from .fractionate_float import FractionateFloat
 from .frame_id import FrameID
 from .geoemtry_to_planar import GeoemtryToPlanar
@@ -215,6 +219,9 @@ from .set_color import SetColor
 from .set_nucleic_dihedral import SetNucleicDihedral
 from .set_phi_psi_angle import SetPhiPsiAngle
 from .set_ures_id import SetUResID
+from .simulate_curve import SimulateCurve
+from .simulate_elastic_network import SimulateElasticNetwork
+from .simulate_on_faces import SimulateOnFaces
 from .slice_edge_instances import SliceEdgeInstances
 from .split_to_centred_instances import SplitToCentredInstances
 from .starfile_instances import StarfileInstances
@@ -289,6 +296,7 @@ __all__ = (
     "BooleanRunTrim",
     "BreakBonds",
     "BreakCurves",
+    "BuildElasticNetwork",
     "CentreOnSelection",
     "Centroid",
     "ChainID",
@@ -353,6 +361,9 @@ __all__ = (
     "FieldRemap",
     "FindBondedAtom",
     "FindBonds",
+    "ForceBrownian",
+    "ForceGravity",
+    "ForceMeshCollide",
     "FractionateFloat",
     "FrameID",
     "GeoemtryToPlanar",
@@ -467,6 +478,9 @@ __all__ = (
     "SetNucleicDihedral",
     "SetPhiPsiAngle",
     "SetUResID",
+    "SimulateCurve",
+    "SimulateElasticNetwork",
+    "SimulateOnFaces",
     "SliceEdgeInstances",
     "SplitToCentredInstances",
     "StarfileInstances",
