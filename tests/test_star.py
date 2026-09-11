@@ -1,3 +1,6 @@
+import json
+import databpy
+import numpy as np
 import pytest
 import starfile
 from nodebpy.nodes.geometry import StoreNamedAttribute
@@ -73,6 +76,45 @@ def test_categorical_attributes(snapshot):
     file = data_dir / "starfile/cistem.star"
     ensemble = mn.entities.ensemble.StarFile.load(file)
     assert "cisTEMOriginalImageFilename" in ensemble.props.categories
+    assert snapshot == GeometrySet(ensemble.object)
+
+
+def test_load_ndjson_oriented(snapshot):
+    file = data_dir / "cryoet/oriented_point.ndjson"
+    ensemble = mn.entities.ensemble.StarFile.load(file)
+    assert ensemble._entity_type == mn.entities.base.EntityType.ENSEMBLE_STAR
+    assert ensemble.props.entity_type == ensemble._entity_type.value
+
+    records = [json.loads(line) for line in open(file)]
+
+    # positions are the voxel coordinates from the file, at world scale
+    positions = databpy.named_attribute(ensemble.object, "position")
+    expected = np.array(
+        [[record["location"][axis] for axis in "xyz"] for record in records]
+    )
+    assert np.allclose(positions, expected * 0.1, atol=1e-4)
+
+    # the stored quaternions match scipy's conversion of the file's matrices
+    rotations = databpy.named_attribute(ensemble.object, "rotation")
+    expected_quaternions = Rotation.from_matrix(
+        np.array([record["xyz_rotation_matrix"] for record in records])
+    ).as_quat(scalar_first=True)
+    assert np.allclose(rotations, expected_quaternions, atol=1e-4)
+
+    assert snapshot == GeometrySet(ensemble.object)
+
+
+def test_load_ndjson_point(snapshot):
+    file = data_dir / "cryoet/point.ndjson"
+    ensemble = mn.entities.ensemble.StarFile.load(file)
+
+    records = [json.loads(line) for line in open(file)]
+    positions = databpy.named_attribute(ensemble.object, "position")
+    assert len(positions) == len(records)
+
+    # plain points carry no orientation, so no rotation attribute is stored and
+    # the instancing node falls back to its default rotation
+    assert "rotation" not in databpy.list_attributes(ensemble.object)
     assert snapshot == GeometrySet(ensemble.object)
 
 

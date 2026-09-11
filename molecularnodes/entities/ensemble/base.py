@@ -31,8 +31,9 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         Parameters
         ----------
         file_path : str or Path
-            The path to the ensemble file, such as a CellPack ``.cif``/``.bcif`` model
-            or a RELION/cisTEM ``.star`` file.
+            The path to the ensemble file, such as a CellPack ``.cif``/``.bcif`` model,
+            a RELION/cisTEM ``.star`` file, or a CZI CryoET Data Portal ``.ndjson``
+            point annotation file.
         name : str or None, optional
             The name to give the created object. If None, the file name is used.
         node_setup : bool, optional
