@@ -4,7 +4,7 @@ from io import BytesIO
 from pathlib import Path
 import numpy as np
 from biotite.file import File, InvalidFileError
-from biotite.structure import AtomArray, AtomArrayStack, filter
+from biotite.structure import AtomArray, AtomArrayStack, BondType, filter
 from ... import color
 from ...assets import data
 from ...utils import count_value_changes
@@ -62,6 +62,7 @@ class ReaderBase(metaclass=ABCMeta):
         self.file_path = file_path
         self.file = self.read(file_path)
         self.array: AtomArray | AtomArrayStack = self.get_structure()
+        self.array = self._connect_cyclic_peptides(self.array)
         self.array = self.set_extra_annotations(
             self._extra_annotations, self.array, self.file
         )
@@ -108,6 +109,52 @@ class ReaderBase(metaclass=ABCMeta):
 
     def get_structure(self, model: int | None = None) -> AtomArrayStack | AtomArray:
         raise NotImplementedError("Subclasses must implement this method.")
+
+    @staticmethod
+    def _connect_cyclic_peptides(
+        array: AtomArray | AtomArrayStack, cutoff: float = 1.7
+    ) -> AtomArray | AtomArrayStack:
+        """
+        Add the head-to-tail peptide bond for cyclic peptides.
+
+        Cyclic peptides have no distinct start or end to the chain, but the
+        closing C -> N bond is usually absent from both the file's
+        connectivity metadata (1KAL's ``struct_conn`` lists only its
+        disulfides, for example) and residue-template bond detection, which
+        only links consecutive residues. For each chain, if the backbone N of
+        the first amino acid lies within covalent bonding distance of the
+        backbone C of the last, add that bond.
+        """
+        if array.bonds is None:
+            return array
+        reference = array[0] if isinstance(array, AtomArrayStack) else array
+        is_amino = filter.filter_amino_acids(reference)
+        if not np.any(is_amino):
+            return array
+
+        atom_names = reference.atom_name
+        res_ids = reference.res_id
+        for chain in np.unique(reference.chain_id):
+            mask = (reference.chain_id == chain) & is_amino
+            if not np.any(mask):
+                continue
+            chain_res_ids = res_ids[mask]
+            first_res, last_res = chain_res_ids[0], chain_res_ids[-1]
+            if first_res == last_res:
+                continue
+            n_index = np.flatnonzero(
+                mask & (res_ids == first_res) & (atom_names == "N")
+            )
+            c_index = np.flatnonzero(mask & (res_ids == last_res) & (atom_names == "C"))
+            if len(n_index) == 0 or len(c_index) == 0:
+                continue
+            distance = np.linalg.norm(
+                reference.coord[c_index[0]] - reference.coord[n_index[0]]
+            )
+            if distance < cutoff:
+                array.bonds.add_bond(n_index[0], c_index[0], BondType.SINGLE)
+
+        return array
 
     def entity_ids(self) -> list[str] | None:
         return None
