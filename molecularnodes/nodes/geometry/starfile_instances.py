@@ -8,6 +8,7 @@ from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
+    FloatSocket,
     GeometrySocket,
     IntegerSocket,
     MaterialSocket,
@@ -18,6 +19,7 @@ from nodebpy.builder import (
 )
 from nodebpy.types import (
     InputBoolean,
+    InputFloat,
     InputGeometry,
     InputInteger,
     InputMaterial,
@@ -39,16 +41,20 @@ class StarfileInstances(AssetGeometryGroup):
     ----------
     points : InputGeometry
         Points
-    point_selection : InputMenu | Literal["Image", "Selection"]
-        Select points to be instanced base don their `image_id` or a boolean selection field.
     selection : InputBoolean
         Becomes the output value if it is chosen by the menu input
     image : InputInteger
         The ID of the image that should be shown
-    menu : InputMenu | Literal["Instance", "Simple"]
+    menu : InputMenu | Literal["Object", "Geometry"]
         Menu
-    instance : InputObject
+    geometry : InputGeometry
+        Becomes the output value if it is chosen by the menu input
+    object : InputObject
         The object that should be placed at each instance
+    pixel_scale : InputFloat
+        The data in .ndjson files are in pixel coordinates so require scaling to fit overall data coordinates.
+    instance_scale : InputFloat
+        Scale of the instances
     material : InputMaterial
         Material to apply to the resulting geometry
 
@@ -56,16 +62,20 @@ class StarfileInstances(AssetGeometryGroup):
     ------
     i.points : GeometrySocket
         Points
-    i.point_selection : MenuSocket
-        Select points to be instanced base don their `image_id` or a boolean selection field.
     i.selection : BooleanSocket
         Becomes the output value if it is chosen by the menu input
     i.image : IntegerSocket
         The ID of the image that should be shown
     i.menu : MenuSocket
         Menu
-    i.instance : ObjectSocket
+    i.geometry : GeometrySocket
+        Becomes the output value if it is chosen by the menu input
+    i.object : ObjectSocket
         The object that should be placed at each instance
+    i.pixel_scale : FloatSocket
+        The data in .ndjson files are in pixel coordinates so require scaling to fit overall data coordinates.
+    i.instance_scale : FloatSocket
+        Scale of the instances
     i.material : MaterialSocket
         Material to apply to the resulting geometry
 
@@ -84,16 +94,20 @@ class StarfileInstances(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         points: GeometrySocket
         """Points"""
-        point_selection: MenuSocket
-        """Select points to be instanced base don their `image_id` or a boolean selection field."""
         selection: BooleanSocket
         """Becomes the output value if it is chosen by the menu input"""
         image: IntegerSocket
         """The ID of the image that should be shown"""
         menu: MenuSocket
         """Menu"""
-        instance: ObjectSocket
+        geometry: GeometrySocket
+        """Becomes the output value if it is chosen by the menu input"""
+        object: ObjectSocket
         """The object that should be placed at each instance"""
+        pixel_scale: FloatSocket
+        """The data in .ndjson files are in pixel coordinates so require scaling to fit overall data coordinates."""
+        instance_scale: FloatSocket
+        """Scale of the instances"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
 
@@ -111,50 +125,66 @@ class StarfileInstances(AssetGeometryGroup):
     def __init__(
         self,
         points: InputGeometry = None,
-        point_selection: InputMenu | Literal["Image", "Selection"] = "Image",
         selection: InputBoolean = True,
         image: InputInteger = 0,
-        menu: InputMenu | Literal["Instance", "Simple"] = "Instance",
-        instance: InputObject = None,
+        menu: InputMenu | Literal["Object", "Geometry"] = "Object",
+        geometry: InputGeometry = None,
+        object: InputObject = None,
+        pixel_scale: InputFloat = 1.0,
+        instance_scale: InputFloat = 1.0,
         material: InputMaterial = None,
     ):
         super().__init__(
             **{
                 "Points": points,
-                "Point Selection": point_selection,
                 "Selection": selection,
                 "Image": image,
                 "Menu": menu,
-                "Instance": instance,
+                "Geometry": geometry,
+                "Object": object,
+                "Pixel Scale": pixel_scale,
+                "Instance Scale": instance_scale,
                 "Material": material,
             }
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         points = tree.inputs.geometry("Points")
-        point_selection = tree.inputs.menu(
-            "Point Selection",
-            description="Select points to be instanced base don their `image_id` or a boolean selection field.",
-            expanded=True,
-            optional_label=True,
-        )
         selection = tree.inputs.boolean(
             "Selection",
             True,
             description="Becomes the output value if it is chosen by the menu input",
             hide_value=True,
+            structure_type="FIELD",
         )
         image = tree.inputs.integer(
             "Image",
             0,
             description="The ID of the image that should be shown",
             min_value=0,
+            structure_type="SINGLE",
+            force_non_field=True,
         )
         menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
-        instance = tree.inputs.object(
-            "Instance",
+        geometry = tree.inputs.geometry(
+            "Geometry",
+            description="Becomes the output value if it is chosen by the menu input",
+        )
+        object = tree.inputs.object(
+            "Object",
             description="The object that should be placed at each instance",
             optional_label=True,
+        )
+        pixel_scale = tree.inputs.float(
+            "Pixel Scale",
+            1.0,
+            description="The data in .ndjson files are in pixel coordinates so require scaling to fit overall data coordinates.",
+            min_value=-10_000.0,
+            max_value=10_000.0,
+            structure_type="FIELD",
+        )
+        instance_scale = tree.inputs.float(
+            "Instance Scale", 1.0, description="Scale of the instances"
         )
         material = tree.inputs.material(
             "Material",
@@ -164,44 +194,49 @@ class StarfileInstances(AssetGeometryGroup):
         instances = tree.outputs.geometry("Instances")
 
         with g.Frame("Instance"):
-            transform_geometry = PrimitiveGimbal(
-                vertices=3, material=material
-            ) >> g.TransformGeometry(scale=g.Value(10.0))
-            group = FallbackGeometry(
-                geometry=g.ObjectInfo(object=instance).o.geometry,
-                fallback=transform_geometry,
-            )
             menu_switch = g.MenuSwitch.geometry(
-                menu, {"Instance": group, "Simple": transform_geometry}
-            )
-        with g.Frame("Rotation"):
-            group_1 = RotationCisTEM()
-            group_2 = FallbackRotation(
-                name="rotation",
-                fallback=group_1.o.is_valid.switch.rotation(
-                    RotationRELION().o.rotation, group_1.o.rotation
-                ),
-            )
-        with g.Frame("Selection"):
-            menu_switch_1 = g.MenuSwitch.boolean(
-                point_selection,
+                menu,
                 {
-                    "Image": g.Compare.integer.equal(
-                        image, g.NamedAttribute.integer("image_id").o.attribute
-                    ),
-                    "Selection": selection,
+                    "Object": g.ObjectInfo(object=object).o.geometry,
+                    "Geometry": geometry,
                 },
             )
-        (
-            points
-            >> g.InstanceOnPoints(
-                selection=menu_switch_1.o.output, instance=menu_switch, rotation=group_2
+            transform_geometry = PrimitiveGimbal(
+                vertices=3, material=material
+            ) >> g.TransformGeometry(scale=g.Value(2.0))
+            group = FallbackGeometry(geometry=menu_switch, fallback=transform_geometry)
+        with g.Frame("Selection"):
+            boolean_math = (
+                g.Compare.integer.equal(
+                    image, g.NamedAttribute.integer("image_id").o.attribute
+                ).o.result
+                & selection
             )
-            >> instances
-        )
+        with g.Frame("Scale Pixel Coordinates"):
+            set_position = points >> g.SetPosition(
+                position=g.Position().o.position * pixel_scale
+            )
+        with g.Frame("Instances"):
+            with g.Frame("Rotation"):
+                group_1 = RotationCisTEM()
+                group_2 = FallbackRotation(
+                    name="transform",
+                    fallback=group_1.o.is_valid.switch.rotation(
+                        RotationRELION().o.rotation, group_1.o.rotation
+                    ),
+                )
+            (
+                set_position
+                >> g.InstanceOnPoints(
+                    selection=boolean_math,
+                    instance=group,
+                    rotation=group_2,
+                    scale=instance_scale,
+                )
+                >> instances
+            )
 
-        point_selection.default_value = "Image"
-        menu.default_value = "Instance"
+        menu.default_value = "Object"
 
 
 ASSET = StarfileInstances

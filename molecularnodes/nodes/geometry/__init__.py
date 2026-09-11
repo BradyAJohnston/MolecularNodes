@@ -116,6 +116,7 @@ from .group_pick import GroupPick
 from .group_pick_first import GroupPickFirst
 from .group_pick_index import GroupPickIndex
 from .group_pick_vector import GroupPickVector
+from .image_id import ImageID
 from .index_distance import IndexDistance
 from .index_mix_color import IndexMixColor
 from .index_mix_float import IndexMixFloat
@@ -377,6 +378,7 @@ __all__ = (
     "GroupPickFirst",
     "GroupPickIndex",
     "GroupPickVector",
+    "ImageID",
     "IndexDistance",
     "IndexMixColor",
     "IndexMixFloat",

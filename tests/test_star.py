@@ -104,6 +104,18 @@ def test_load_ndjson_oriented(snapshot):
     expected_transforms[:, :3, 3] = expected * 0.1
     assert np.allclose(transforms, expected_transforms.transpose(0, 2, 1), atol=1e-4)
 
+    # the instancing node applies the stored transform: the evaluated instance
+    # rotations match the file's matrices (float4x4 attributes read back as
+    # column-major, so the raw arrays are the transposed logical matrices)
+    instance_transforms = GeometrySet(ensemble.object).named_attribute(
+        "instance_transform"
+    )
+    assert np.allclose(
+        instance_transforms[:, :3, :3].transpose(0, 2, 1),
+        expected_transforms[:, :3, :3],
+        atol=1e-3,
+    )
+
     assert snapshot == GeometrySet(ensemble.object)
 
 
