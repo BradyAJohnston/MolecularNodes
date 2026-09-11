@@ -383,15 +383,13 @@ quartodoc:
       contents:
       - name: nodes.geometry.DNAFromCurve
         children: embedded
-      - name: nodes.geometry.OxDNANormal
+      - name: nodes.geometry.OxDNARealizeVectors
         children: embedded
-      - name: nodes.geometry.OxDNAOffset
-        children: embedded
-      - name: nodes.geometry.OxDNARotation
+      - name: nodes.geometry.OxDNARecoverVectors
         children: embedded
       - name: nodes.geometry.OxDNAStyleRibbon
         children: embedded
-      - name: nodes.geometry.OxDNAVector
+      - name: nodes.geometry.OxDNAVectors
         children: embedded
     - kind: page
       path: nodes.density
