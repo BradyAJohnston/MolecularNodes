@@ -1,7 +1,7 @@
 import bpy
 import pytest
 import molecularnodes as mn
-from molecularnodes.nodes import material
+from molecularnodes import material
 from .constants import data_dir
 
 PRESETS = [
