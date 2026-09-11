@@ -23,23 +23,19 @@ STYLE_LITERALS = Literal[
 ]
 
 # style keyword -> name of the node tree that implements it, used when swapping
-# an existing style node for a different style
+# an existing style node for a different style. Keys match the enum identifiers
+# in ui.style.STYLE_ITEMS and ui.ops.DENSITY_STYLE_ITEMS
 styles_mapping = {
     "preset_1": "Style Preset 1",
     "preset_2": "Style Preset 2",
     "preset_3": "Style Preset 3",
     "preset_4": "Style Preset 4",
-    "atoms": "Style Spheres",
     "spheres": "Style Spheres",
-    "vdw": "Style Spheres",
-    "sphere": "Style Spheres",
     "cartoon": "Style Cartoon",
     "sticks": "Style Sticks",
     "ribbon": "Style Ribbon",
     "surface": "Style Surface",
     "ball_and_stick": "Style Ball and Stick",
-    "ball+stick": "Style Ball and Stick",
-    "oxdna": "MN_oxdna_style_ribbon",
     "density_surface": "Density Style Surface",
     "density_iso_surface": "Density Style ISO Surface",
     "density_wire": "Density Style Wire",
