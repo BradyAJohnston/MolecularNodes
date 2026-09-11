@@ -74,9 +74,12 @@ class OXDNAParser(TopologyReaderBase):
 
         res_name_list = []
         chain_id_list = []
+        is_circular_list = []
         for i, line in enumerate(lines[1:]):
             is_rna = "type=RNA" in line
             _is_dna = not is_rna
+            # oxDNA tooling writes both `circular=true` and `circular=True`
+            is_circular = "circular=true" in line.lower()
 
             line_split = line.split()
             bases = line_split[0]
@@ -85,14 +88,14 @@ class OXDNAParser(TopologyReaderBase):
             start = 0
             end = 0
             in_custom_base = False
-            for i, letter in enumerate(bases):
+            for j, letter in enumerate(bases):
                 if letter == "(":
-                    start = i + 1
+                    start = j + 1
                     in_custom_base = True
                     continue
                 if letter == ")":
-                    end = i
-                    base_list.append(line[start:end])
+                    end = j
+                    base_list.append(bases[start:end])
                     in_custom_base = False
                     continue
 
@@ -103,6 +106,7 @@ class OXDNAParser(TopologyReaderBase):
             chain_id_list.append(np.repeat(i, len(base_list)))
 
             res_name_list.append(np.array(base_list))
+            is_circular_list.append(is_circular)
 
         res_names = np.hstack(res_name_list)
         chain_ids = np.hstack(chain_id_list)
@@ -111,10 +115,16 @@ class OXDNAParser(TopologyReaderBase):
         bond_idx[:, :] = -1
 
         for i in atom_idx:
-            if i == 1:
-                continue
-            if chain_ids[i] == chain_ids[-1]:
+            chain = chain_ids[i]
+            is_first_in_chain = i == 0 or chain != chain_ids[i - 1]
+            if not is_first_in_chain:
                 bond_idx[i, :] = np.array((i, i - 1), dtype=int)
+            elif is_circular_list[chain]:
+                # close the ring: bond the strand's first nucleotide to its last.
+                # First nucleotides of linear strands keep the (-1, -1) sentinel
+                # and are dropped by the mask below
+                last_in_chain = i + len(chain_id_list[chain]) - 1
+                bond_idx[i, :] = np.array((i, last_in_chain), dtype=int)
 
         mask = np.logical_and(bond_idx[:, 0] != -1, bond_idx[:, 1] != -1)
         bond_idx = bond_idx[mask, :]
@@ -401,7 +411,7 @@ class OXDNA(Molecule):
         coordinates: str | Path,
         name: str = "oxDNA",
         style: str | None = "ribbon",
-        world_scale: float = 0.1,
+        selection: str | None = None,
         create_object: bool = True,
     ) -> "OXDNA":
         """Load an oxDNA topology and trajectory.
@@ -416,8 +426,8 @@ class OXDNA(Molecule):
             Name for the created object, by default "oxDNA".
         style : str | None, optional
             Visual style to apply, by default "ribbon". If None, no style is added.
-        world_scale : float, optional
-            Scaling factor for world coordinates, by default 0.1.
+        selection : str | None, optional
+            Atom selection to restrict the style to.
         create_object : bool, optional
             Whether to create the Blender object immediately, by default True.
 
@@ -426,17 +436,17 @@ class OXDNA(Molecule):
         OXDNA
             The created oxDNA trajectory entity.
         """
-        universe = Universe(
+        entity = super().load(
             topology,
             coordinates,
+            name=name,
+            style=style,
+            selection=selection,
+            create_object=create_object,
             topology_format=OXDNAParser,
             format=OXDNAReader,
         )
-        entity = cls(
-            universe, name=name, world_scale=world_scale, create_object=create_object
-        )
-        if style is not None and create_object:
-            entity.add_style(style=style)
+        assert isinstance(entity, cls)
         return entity
 
     def _compute_color(self) -> np.ndarray:
@@ -456,23 +466,29 @@ class OXDNA(Molecule):
             "Color": self._compute_color,
         }
 
-    def set_frame(self, frame: int) -> None:
-        super()._update_positions(frame)
-        self._update_timestep_values()
+    def _store_extra_attributes(self) -> None:
+        """Seed the per-frame oxDNA vector attributes at object creation."""
+        self._update_attributes(0)
 
-    def _update_timestep_values(self):
+    def _update_positions(self, frame: int) -> None:
+        super()._update_positions(frame)
+        self._update_attributes(frame)
+
+    def _update_attributes(self, frame: int) -> None:
+        """Store the per-frame oxDNA vector attributes for the given scene frame.
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
         """
-        Update the timestep values for all tracked attributes.
-        """
-        for name in self._att_names:
-            try:
-                self.store_named_attribute(
-                    data=self.universe.trajectory.ts.data[name] * self.world_scale,
-                    name=name,
-                    atype=db.AttributeTypes.FLOAT_VECTOR,
-                )
-            except KeyError as e:
-                print(e)
+        attributes = self.frame_manager.get_attributes_at_frame(frame)
+        for name, data in attributes.items():
+            self.store_named_attribute(
+                data=data,
+                name=name,
+                atype=db.AttributeTypes.FLOAT_VECTOR,
+            )
 
     def _get_annotation_entity_type(self) -> str:
         "Interna: Re-use the annotations for Molecule entity"

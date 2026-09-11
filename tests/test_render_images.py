@@ -155,3 +155,38 @@ def test_render_assembly(
         mol.add_style("ribbon", material=mat, assembly=(assembly == "assembly"))
     golden_canvas.look_at(mol, viewpoint="front")
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "files,backbone",
+    list(
+        product(
+            (
+                ["minicircle.top", "minicircle.dat"],
+                ["linear.top", "linear_traj.dat"],
+                ["origami_old.top", "origami_old.dat"],
+            ),
+            ("Arrows", "Curve"),
+        )
+    ),
+)
+def test_render_oxdna_simple_circle(
+    golden_canvas, tmp_path, assembly_image_snapshot, files, backbone
+):
+    ens = mn.entities.OXDNA.load(
+        topology=data_dir / f"oxdna/{files[0]}",
+        coordinates=data_dir / f"oxdna/{files[1]}",
+    )
+
+    with ens.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> mg.CentreOnSelection()
+            >> mg.OxDNAStyleRibbon(
+                backbone_shape=backbone, material=mn.material.Default().material
+            )
+            >> join
+        )
+
+    golden_canvas.look_at(ens, viewpoint="top")
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)

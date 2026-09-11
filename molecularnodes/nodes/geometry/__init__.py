@@ -161,11 +161,10 @@ from .offset_vector import OffsetVector
 from .oklab_offset_lch import OKLabOffsetLCh
 from .oklab_to_color import OKLabToColor
 from .oklab_to_lch import OKLabToLCh
-from .oxdna_normal import OxDNANormal
-from .oxdna_offset import OxDNAOffset
-from .oxdna_rotation import OxDNARotation
+from .oxdna_realize_vectors import OxDNARealizeVectors
+from .oxdna_recover_vectors import OxDNARecoverVectors
 from .oxdna_style_ribbon import OxDNAStyleRibbon
-from .oxdna_vector import OxDNAVector
+from .oxdna_vectors import OxDNAVectors
 from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
 from .periodic_array import PeriodicArray
@@ -414,11 +413,10 @@ __all__ = (
     "OffsetPointAlongCurve",
     "OffsetRotation",
     "OffsetVector",
-    "OxDNANormal",
-    "OxDNAOffset",
-    "OxDNARotation",
+    "OxDNARealizeVectors",
+    "OxDNARecoverVectors",
     "OxDNAStyleRibbon",
-    "OxDNAVector",
+    "OxDNAVectors",
     "PeptideChi",
     "PeptideDihedral",
     "PeriodicArray",
