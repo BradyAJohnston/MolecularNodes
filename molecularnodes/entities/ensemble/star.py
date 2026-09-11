@@ -153,18 +153,31 @@ class NDJSONDataFrame(EnsembleDataFrame):
     carries no pixel size, so no additional scaling is applied on import.
     """
 
+    _matrix_columns = [f"rotation_{i}{j}" for i in range(3) for j in range(3)]
+
     def __init__(self, data: DataFrame) -> None:
         super().__init__(data)
         self.type: str = "ndjson"
 
     @property
     def _has_rotation(self) -> bool:
-        return all(f"rotation_{axis}" in self.data for axis in "wxyz")
+        return all(column in self.data for column in self._matrix_columns)
 
-    def rotation_as_quaternion(self) -> np.ndarray:
-        if not self._has_rotation:
-            return np.tile((1.0, 0.0, 0.0, 0.0), (len(self.data), 1))
-        return self.data[[f"rotation_{axis}" for axis in "wxyz"]].to_numpy()
+    def transforms(self) -> np.ndarray:
+        """
+        The full 4x4 world-scaled transform for each point.
+
+        The rotation part is the file's ``xyz_rotation_matrix`` (identity for
+        plain points) and the translation is the world-scaled position.
+        """
+        n_points = len(self.data)
+        transforms = np.tile(np.identity(4, dtype=float), (n_points, 1, 1))
+        if self._has_rotation:
+            transforms[:, :3, :3] = (
+                self.data[self._matrix_columns].to_numpy().reshape(n_points, 3, 3)
+            )
+        transforms[:, :3, 3] = self.coordinates_scaled
+        return transforms
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
@@ -174,15 +187,13 @@ class NDJSONDataFrame(EnsembleDataFrame):
             name="image_id",
             atype=AttributeTypes.INT,
         )
-        # the `Starfile Instances` node reads a `rotation` attribute directly if
-        # it exists, before falling back to computing one from RELION / cisTEM
-        # euler angle columns
-        if self._has_rotation:
-            bob.store_named_attribute(
-                self.rotation_as_quaternion(),
-                name="rotation",
-                atype=AttributeTypes.QUATERNION,
-            )
+        # Blender stores float4x4 attributes column-major, so the row-major
+        # numpy matrices must be transposed or GN sees the inverse rotation
+        bob.store_named_attribute(
+            self.transforms().transpose(0, 2, 1),
+            name="transform",
+            atype=AttributeTypes.FLOAT4X4,
+        )
         if "instance_id" in self.data:
             bob.store_named_attribute(
                 self.data["instance_id"].to_numpy(dtype=int),
@@ -238,8 +249,8 @@ class StarFile(Ensemble):
 
         Handles ``point``, ``orientedPoint`` and ``instancePoint`` annotations:
         one JSON object per line with a ``location``, and optionally a 3x3
-        ``xyz_rotation_matrix`` (stored as a scalar-first quaternion in
-        ``rotation_{w,x,y,z}`` columns) and an ``instance_id``.
+        ``xyz_rotation_matrix`` (stored element-wise in ``rotation_{ij}``
+        columns) and an ``instance_id``.
         """
         with open(self.file_path) as file:
             records: list[dict] = [json.loads(line) for line in file if line.strip()]
@@ -257,9 +268,9 @@ class StarFile(Ensemble):
                 ],
                 dtype=float,
             )
-            quaternions = Rotation.from_matrix(stacked).as_quat(scalar_first=True)
-            for i, axis in enumerate("wxyz"):
-                data[f"rotation_{axis}"] = quaternions[:, i]
+            for i in range(3):
+                for j in range(3):
+                    data[f"rotation_{i}{j}"] = stacked[:, i, j]
 
         instance_ids = [record.get("instance_id") for record in records]
         if all(instance_id is not None for instance_id in instance_ids):

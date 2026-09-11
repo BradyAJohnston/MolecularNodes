@@ -7,12 +7,12 @@
 # name: test_load_ndjson_oriented
   GeometrySet of 'oriented_point.ndjson'
     INSTANCES: 118 points
-      attributes: image_id, instance_transform, position, rotation
+      attributes: image_id, instance_transform, position, transform
 # ---
 # name: test_load_ndjson_point
   GeometrySet of 'point.ndjson'
     INSTANCES: 83 points
-      attributes: image_id, instance_transform, position
+      attributes: image_id, instance_transform, position, transform
 # ---
 # name: test_load_starfiles
   GeometrySet of 'clathrin.star'

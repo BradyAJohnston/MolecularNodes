@@ -94,12 +94,15 @@ def test_load_ndjson_oriented(snapshot):
     )
     assert np.allclose(positions, expected * 0.1, atol=1e-4)
 
-    # the stored quaternions match scipy's conversion of the file's matrices
-    rotations = databpy.named_attribute(ensemble.object, "rotation")
-    expected_quaternions = Rotation.from_matrix(
-        np.array([record["xyz_rotation_matrix"] for record in records])
-    ).as_quat(scalar_first=True)
-    assert np.allclose(rotations, expected_quaternions, atol=1e-4)
+    # the stored transform combines the file's rotation matrix with the scaled
+    # position, transposed on storage for Blender's column-major float4x4
+    transforms = databpy.named_attribute(ensemble.object, "transform")
+    expected_transforms = np.tile(np.identity(4), (len(records), 1, 1))
+    expected_transforms[:, :3, :3] = [
+        record["xyz_rotation_matrix"] for record in records
+    ]
+    expected_transforms[:, :3, 3] = expected * 0.1
+    assert np.allclose(transforms, expected_transforms.transpose(0, 2, 1), atol=1e-4)
 
     assert snapshot == GeometrySet(ensemble.object)
 
@@ -112,9 +115,11 @@ def test_load_ndjson_point(snapshot):
     positions = databpy.named_attribute(ensemble.object, "position")
     assert len(positions) == len(records)
 
-    # plain points carry no orientation, so no rotation attribute is stored and
-    # the instancing node falls back to its default rotation
-    assert "rotation" not in databpy.list_attributes(ensemble.object)
+    # plain points carry no orientation, so the stored transforms hold an
+    # identity rotation with the scaled position
+    transforms = databpy.named_attribute(ensemble.object, "transform")
+    assert np.allclose(transforms[:, :3, :3], np.identity(3), atol=1e-4)
+    assert np.allclose(transforms[:, 3, :3], positions, atol=1e-4)
     assert snapshot == GeometrySet(ensemble.object)
 
 
