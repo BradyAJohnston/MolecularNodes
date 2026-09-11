@@ -27,6 +27,7 @@ from nodebpy.types import (
     InputObject,
 )
 from .fallback_geometry import FallbackGeometry
+from .fallback_matrix import FallbackMatrix
 from .fallback_rotation import FallbackRotation
 from .primitive_gimbal import PrimitiveGimbal
 from .rotation_cistem import RotationCisTEM
@@ -220,17 +221,18 @@ class StarfileInstances(AssetGeometryGroup):
             with g.Frame("Rotation"):
                 group_1 = RotationCisTEM()
                 group_2 = FallbackRotation(
-                    name="transform",
+                    name="rotation",
                     fallback=group_1.o.is_valid.switch.rotation(
                         RotationRELION().o.rotation, group_1.o.rotation
                     ),
                 )
+                group_3 = FallbackMatrix(name="transform", fallback=group_2)
             (
                 set_position
                 >> g.InstanceOnPoints(
                     selection=boolean_math,
                     instance=group,
-                    rotation=group_2,
+                    rotation=group_3,
                     scale=instance_scale,
                 )
                 >> instances
