@@ -67,6 +67,8 @@ website:
       text: Geometry
     - href: nodes/select.qmd
       text: Select
+    - href: nodes/simulation.qmd
+      text: Simulation
     - href: nodes/style.qmd
       text: Style
     - href: nodes/topology.qmd
@@ -383,15 +385,13 @@ quartodoc:
       contents:
       - name: nodes.geometry.DNAFromCurve
         children: embedded
-      - name: nodes.geometry.OxDNANormal
+      - name: nodes.geometry.OxDNARealizeVectors
         children: embedded
-      - name: nodes.geometry.OxDNAOffset
-        children: embedded
-      - name: nodes.geometry.OxDNARotation
+      - name: nodes.geometry.OxDNARecoverVectors
         children: embedded
       - name: nodes.geometry.OxDNAStyleRibbon
         children: embedded
-      - name: nodes.geometry.OxDNAVector
+      - name: nodes.geometry.OxDNAVectors
         children: embedded
     - kind: page
       path: nodes.density
@@ -540,6 +540,26 @@ quartodoc:
       - name: nodes.geometry.SeparateAtoms
         children: embedded
       - name: nodes.geometry.SeparatePolymers
+        children: embedded
+    - kind: page
+      path: nodes.simulation
+      summary:
+        name: Simulation
+        desc: Nodes for simulations inside of Geometry Nodes
+      contents:
+      - name: nodes.geometry.BuildElasticNetwork
+        children: embedded
+      - name: nodes.geometry.ForceBrownian
+        children: embedded
+      - name: nodes.geometry.ForceGravity
+        children: embedded
+      - name: nodes.geometry.ForceMeshCollide
+        children: embedded
+      - name: nodes.geometry.SimulateCurve
+        children: embedded
+      - name: nodes.geometry.SimulateElasticNetwork
+        children: embedded
+      - name: nodes.geometry.SimulateOnFaces
         children: embedded
     - kind: page
       path: nodes.style
