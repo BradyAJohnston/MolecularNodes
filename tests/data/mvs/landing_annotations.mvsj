@@ -1,0 +1,156 @@
+{
+  "root": {
+    "kind": "root",
+    "children": [
+      {
+        "kind": "download",
+        "params": {
+          "url": "https://files.wwpdb.org/download/1h9t.cif"
+        },
+        "children": [
+          {
+            "kind": "parse",
+            "params": {
+              "format": "mmcif"
+            },
+            "children": [
+              {
+                "kind": "structure",
+                "params": {
+                  "type": "model"
+                },
+                "children": [
+                  {
+                    "kind": "component_from_uri",
+                    "params": {
+                      "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                      "format": "cif",
+                      "category_name": "components",
+                      "field_name": "component",
+                      "block_header": "1h9t_annotations",
+                      "schema": "chain",
+                      "field_values": [
+                        "Protein"
+                      ]
+                    },
+                    "children": [
+                      {
+                        "kind": "representation",
+                        "params": {
+                          "type": "cartoon"
+                        },
+                        "children": [
+                          {
+                            "kind": "color_from_uri",
+                            "params": {
+                              "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                              "format": "cif",
+                              "category_name": "annotations",
+                              "field_name": "color",
+                              "block_header": "1h9t_annotations",
+                              "schema": "residue_range"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "component_from_uri",
+                    "params": {
+                      "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                      "format": "cif",
+                      "category_name": "components",
+                      "schema": "chain",
+                      "field_values": [
+                        "DNA"
+                      ]
+                    },
+                    "children": [
+                      {
+                        "kind": "representation",
+                        "params": {
+                          "type": "ball_and_stick"
+                        },
+                        "children": [
+                          {
+                            "kind": "color_from_uri",
+                            "params": {
+                              "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                              "format": "cif",
+                              "category_name": "annotations",
+                              "schema": "residue_range"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "component_from_uri",
+                    "params": {
+                      "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                      "format": "cif",
+                      "category_name": "components",
+                      "schema": "chain",
+                      "field_values": [
+                        "Gold",
+                        "Chloride"
+                      ]
+                    },
+                    "children": [
+                      {
+                        "kind": "representation",
+                        "params": {
+                          "type": "surface"
+                        },
+                        "children": [
+                          {
+                            "kind": "color_from_uri",
+                            "params": {
+                              "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                              "format": "cif",
+                              "category_name": "annotations",
+                              "schema": "residue_range"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "label_from_uri",
+                    "params": {
+                      "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                      "format": "cif",
+                      "category_name": "annotations",
+                      "field_name": "label",
+                      "block_header": "1h9t_annotations",
+                      "schema": "residue_range"
+                    }
+                  },
+                  {
+                    "kind": "tooltip_from_uri",
+                    "params": {
+                      "uri": "https://molstar.org/mol-view-spec/examples/annotations/annotations-1h9t.cif",
+                      "format": "cif",
+                      "category_name": "annotations",
+                      "field_name": "label",
+                      "block_header": "1h9t_annotations",
+                      "schema": "residue_range"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": {
+    "version": "0.1",
+    "title": "An example with MVS annotations",
+    "timestamp": "2024-03-05T18:40:24.870561+00:00"
+  }
+}

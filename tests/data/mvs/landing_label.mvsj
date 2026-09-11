@@ -1,0 +1,82 @@
+{
+    "root": {
+        "kind": "root",
+        "children": [
+            {
+                "kind": "download",
+                "params": {
+                    "url": "https://files.wwpdb.org/download/1lap.cif"
+                },
+                "children": [
+                    {
+                        "kind": "parse",
+                        "params": {
+                            "format": "mmcif"
+                        },
+                        "children": [
+                            {
+                                "kind": "structure",
+                                "params": {
+                                    "type": "model"
+                                },
+                                "children": [
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": "all"
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "cartoon"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": {
+                                                                "label_asym_id": "A",
+                                                                "label_seq_id": 120
+                                                            },
+                                                            "color": "red"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": {
+                                                "label_asym_id": "A",
+                                                "label_seq_id": 120
+                                            }
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "label",
+                                                "params": {
+                                                    "text": "ALA 120 A: My Label"
+                                                }
+                                            },
+                                            {
+                                                "kind": "focus",
+                                                "params": {}
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "metadata": {
+        "version": "0.1",
+        "timestamp": "2023-11-27T12:33:50.321118"
+    }
+}

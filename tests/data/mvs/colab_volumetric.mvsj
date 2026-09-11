@@ -1,0 +1,208 @@
+{
+  "kind": "multiple",
+  "metadata": {
+    "description": "1tqn + Volume Server",
+    "timestamp": "2025-04-07T06:55:52.458616+00:00",
+    "version": "1.3"
+  },
+  "snapshots": [
+    {
+      "root": {
+        "kind": "root",
+        "children": [
+          {
+            "kind": "download",
+            "params": {
+              "url": "https://files.wwpdb.org/download/1TQN.cif"
+            },
+            "children": [
+              {
+                "kind": "parse",
+                "params": {
+                  "format": "mmcif"
+                },
+                "children": [
+                  {
+                    "kind": "structure",
+                    "params": {
+                      "type": "model"
+                    },
+                    "children": [
+                      {
+                        "kind": "component",
+                        "params": {
+                          "selector": "polymer"
+                        },
+                        "children": [
+                          {
+                            "kind": "representation",
+                            "params": {
+                              "type": "cartoon"
+                            },
+                            "children": [
+                              {
+                                "kind": "color",
+                                "params": {
+                                  "color": "white"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "component",
+                        "params": {
+                          "selector": "ligand"
+                        },
+                        "children": [
+                          {
+                            "kind": "representation",
+                            "params": {
+                              "type": "ball_and_stick"
+                            },
+                            "children": [
+                              {
+                                "kind": "color",
+                                "params": {},
+                                "custom": {
+                                  "molstar_color_theme_name": "element-symbol"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "focus",
+                            "params": {
+                              "direction": [
+                                -28.47,
+                                -17.66,
+                                -16.32
+                              ],
+                              "up": [
+                                0.98,
+                                -0.19,
+                                0
+                              ],
+                              "radius": 14,
+                              "radius_extent": 5
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "download",
+            "params": {
+              "url": "https://www.ebi.ac.uk/pdbe/densities/x-ray/1tqn/box/-22.367,-33.367,-21.634/-7.106,-10.042,-0.937?detail=3"
+            },
+            "children": [
+              {
+                "kind": "parse",
+                "params": {
+                  "format": "bcif"
+                },
+                "children": [
+                  {
+                    "kind": "volume",
+                    "params": {
+                      "channel_id": "2FO-FC"
+                    },
+                    "children": [
+                      {
+                        "kind": "volume_representation",
+                        "params": {
+                          "type": "isosurface",
+                          "relative_isovalue": 1.5,
+                          "show_wireframe": true,
+                          "show_faces": false
+                        },
+                        "children": [
+                          {
+                            "kind": "color",
+                            "params": {
+                              "color": "blue"
+                            }
+                          },
+                          {
+                            "kind": "opacity",
+                            "params": {
+                              "opacity": 0.3
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "volume",
+                    "params": {
+                      "channel_id": "FO-FC"
+                    },
+                    "children": [
+                      {
+                        "kind": "volume_representation",
+                        "params": {
+                          "type": "isosurface",
+                          "relative_isovalue": 3,
+                          "show_wireframe": true
+                        },
+                        "children": [
+                          {
+                            "kind": "color",
+                            "params": {
+                              "color": "green"
+                            }
+                          },
+                          {
+                            "kind": "opacity",
+                            "params": {
+                              "opacity": 0.3
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "volume_representation",
+                        "params": {
+                          "type": "isosurface",
+                          "relative_isovalue": -3,
+                          "show_wireframe": true
+                        },
+                        "children": [
+                          {
+                            "kind": "color",
+                            "params": {
+                              "color": "red"
+                            }
+                          },
+                          {
+                            "kind": "opacity",
+                            "params": {
+                              "opacity": 0.3
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "metadata": {
+        "title": "1tqn",
+        "description": "\n### 1tqn with ligand and electron density map\n- 2FO-FC at 1.5σ, blue\n- FO-FC (positive) at 3σ, green\n- FO-FC (negative) at -3σ, red\n",
+        "key": "8e0bb47e-a081-4d39-97d9-67589bcc2c85",
+        "linger_duration_ms": 1000
+      }
+    }
+  ]
+}

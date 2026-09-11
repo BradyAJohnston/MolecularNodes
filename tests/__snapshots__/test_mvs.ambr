@@ -1,0 +1,8 @@
+# serializer version: 1
+# name: test_mvs_basic_import
+  GeometrySet of '1BNA'
+    MESH: 720 verts, 1424 edges, 708 faces
+      attributes: Color, atom_id, atom_name, atom_types, atomic_number, b_factor, chain_id, charge, entity_id, is_alpha_carbon, is_backbone, is_carb, is_hetero, is_lipid, is_nucleic, is_peptide, is_side_chain, is_solvent, lipophobicity, mass, material_index, mvs_color_2, mvs_selection_1, mvs_selection_3, occupancy, position, res_id, res_name, segid, sharp_edge, ures_id, vdw_radii
+    INSTANCES: 104 points
+      attributes: Color, atom_id, atom_name, atom_types, atomic_number, b_factor, bond_type, chain_id, charge, entity_id, instance_transform, is_alpha_carbon, is_backbone, is_carb, is_hetero, is_instanced, is_lipid, is_nucleic, is_peptide, is_side_chain, is_solvent, lipophobicity, mass, mvs_color_2, mvs_selection_1, mvs_selection_3, occupancy, position, res_id, res_name, segid, ures_id, vdw_radii, vertex_color
+# ---
