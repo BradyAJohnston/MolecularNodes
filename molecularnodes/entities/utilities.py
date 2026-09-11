@@ -20,15 +20,6 @@ from biotite.structure import AtomArray, AtomArrayStack
 __all__ = ["create_object", "atom_array_to_named_attributes"]
 
 
-def _get_gn_modifier(obj: bpy.types.Object, name: str) -> bpy.types.NodesModifier:
-    mod = obj.modifiers[name]
-    if not isinstance(mod, bpy.types.NodesModifier):
-        raise TypeError(
-            f"Modifier {name} is of type {type(mod)} not {bpy.types.NodesModifier}"
-        )
-    return mod
-
-
 def _unique_aname(obj: bpy.types.Object, prefix: str = "sel") -> str:
     attributes = db.list_attributes(obj)
     counter = 0

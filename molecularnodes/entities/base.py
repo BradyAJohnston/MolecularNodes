@@ -10,8 +10,8 @@ from databpy import (
 from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
-from ..nodes.material import add_all_materials
-from ..nodes.nodes import custom_boolean_iswitch, custom_color_iswitch
+from ..material import add_all_materials
+from ..nodes.utils import custom_boolean_iswitch, custom_color_iswitch
 from .utilities import BoolObjectMNProperty
 
 if TYPE_CHECKING:

@@ -189,7 +189,7 @@ def _style_node_material(
     linked and packed node groups too, matching what the old custom add
     operator did.
     """
-    from .material import add_all_materials
+    from ..material import add_all_materials
 
     socket = next((s for s in node.inputs if s.bl_idname == "NodeSocketMaterial"), None)
     if socket is None or socket.default_value is not None:

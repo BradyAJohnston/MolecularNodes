@@ -3,10 +3,10 @@ from typing import Any
 import bpy
 import numpy as np
 import pytest
+from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import Group, RealizeInstances, SetPosition
 import molecularnodes as mn
-from molecularnodes.nodes import nodes
 from molecularnodes.nodes.geometry import (
     BreakBonds,
     FindBonds,
@@ -18,33 +18,44 @@ from molecularnodes.nodes.geometry import (
     SetColor,
     StyleCartoon,
 )
-from molecularnodes.nodes.nodes import custom_boolean_iswitch
+from molecularnodes.nodes.utils import (
+    custom_boolean_iswitch,
+    custom_color_iswitch,
+    get_final_style_nodes,
+)
 from .constants import codes, data_dir
 from .utils import GeometrySet, NumpySnapshotExtension
 
 random.seed(6)
 
 
+def _input_sockets(tree: bpy.types.NodeTree) -> dict:
+    return {
+        item.name: item
+        for item in tree.interface.items_tree
+        if item.item_type == "SOCKET" and item.in_out == "INPUT"
+    }
+
+
 def test_get_nodes():
     mol = mn.Molecule.fetch("4ozs", cache=data_dir).add_style("spheres")
 
-    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Join Geometry"
-    nodes.realize_instances(mol.object)
-    assert nodes.get_nodes_last_output(mol.node_group)[0].name == "Realize Instances"
-    assert nodes.get_style_node(mol.object).name == "Style Spheres"
-    assert nodes.get_style_node(mol.object).node_tree.name == "Style Spheres"
+    last = get_output(mol.node_group).inputs[0].links[0].from_node
+    assert last.name == "Join Geometry"
+    style = get_final_style_nodes(mol.node_group)[0]
+    assert style.name == "Style Spheres"
+    assert style.node_tree.name == "Style Spheres"
 
     mol2 = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon")
 
-    assert nodes.get_nodes_last_output(mol2.node_group)[0].name == "Join Geometry"
-    assert nodes.get_style_node(mol2.object).node_tree.name == "Style Cartoon"
+    assert get_final_style_nodes(mol2.node_group)[0].node_tree.name == "Style Cartoon"
 
 
 def test_selection():
     chain_ids = [let for let in "ABCDEFG123456"]
-    tree = nodes.custom_boolean_iswitch("test_node", chain_ids, prefix="Chain ")
+    tree = custom_boolean_iswitch("test_node", chain_ids, prefix="Chain ")
 
-    input_sockets = nodes.inputs(tree.tree)
+    input_sockets = _input_sockets(tree.tree)
     for letter, socket in zip(chain_ids, input_sockets.values()):
         assert f"Chain {letter}" == socket.name
         assert socket.default_value is False
@@ -76,7 +87,7 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
     mol = mn.Molecule.fetch(code, cache=data_dir)
 
-    group_col = nodes.custom_color_iswitch(
+    group_col = custom_color_iswitch(
         name=f"Color Entity {mol.name}",
         items=getattr(mol.props, f"{attribute}s"),
         attribute_name=attribute,
@@ -95,7 +106,7 @@ def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
 
 def test_iswitch_creation():
     items = [str(x) for x in range(10)]
-    tree_boolean = nodes.custom_boolean_iswitch("newboolean", items).tree
+    tree_boolean = custom_boolean_iswitch("newboolean", items).tree
     # ensure there isn't an item called 'Color' in the created interface
     assert not tree_boolean.interface.items_tree.get("Color")
     assert tree_boolean.interface.items_tree["Selection"].in_out == "OUTPUT"
@@ -103,7 +114,7 @@ def test_iswitch_creation():
     for i in items:
         assert tree_boolean.interface.items_tree[str(i)].in_out == "INPUT"
 
-    tree_rgba = nodes.custom_color_iswitch("newcolor", items).tree
+    tree_rgba = custom_color_iswitch("newcolor", items).tree
     # ensure there isn't an item called 'selection'
     assert not tree_rgba.interface.items_tree.get("Selection")
     assert tree_rgba.interface.items_tree["Color"].in_out == "OUTPUT"
@@ -114,7 +125,7 @@ def test_iswitch_creation():
 def test_op_custom_color():
     mol = mn.Molecule.load(data_dir / "1cd3.cif")
     mol.object.select_set(True)
-    group = nodes.custom_color_iswitch(
+    group = custom_color_iswitch(
         name=f"Color Chain {mol.name}", items=mol.props.chain_ids
     ).tree
 
@@ -127,17 +138,17 @@ def test_op_custom_color():
 def test_color_lookup_supplied():
     col = mn.color.random_rgb(6)
     name = "test"
-    node = nodes.custom_color_iswitch(
+    node = custom_color_iswitch(
         name=name,
         items={str(x): col for x in range(10, 20)},
         offset=10,
     ).tree
     assert node.name == name
-    for item in nodes.inputs(node).values():
+    for item in _input_sockets(node).values():
         assert np.allclose(np.array(item.default_value), col)
 
-    node = nodes.custom_color_iswitch(name="test2", items=range(10, 20), offset=10).tree
-    for item in nodes.inputs(node).values():
+    node = custom_color_iswitch(name="test2", items=range(10, 20), offset=10).tree
+    for item in _input_sockets(node).values():
         assert not np.allclose(np.array(item.default_value), col)
 
 
@@ -190,8 +201,8 @@ def test_node_setup():
     mn.Molecule.fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     assert tree.interface.items_tree["Atoms"].name == "Atoms"
-    assert list(nodes.get_input(tree).outputs.keys()) == ["Atoms", ""]
-    assert list(nodes.get_output(tree).inputs.keys()) == ["Geometry", ""]
+    assert list(get_input(tree).outputs.keys()) == ["Atoms", ""]
+    assert list(get_output(tree).inputs.keys()) == ["Geometry", ""]
 
 
 def test_reuse_node_group():

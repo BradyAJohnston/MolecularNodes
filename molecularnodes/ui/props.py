@@ -35,24 +35,6 @@ ENTITY_ITEMS = (
     ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
 )
 
-SURFACE_STYLE_ITEMS = (
-    (
-        "density_surface",
-        "Surface",
-        "Density Style Surface",
-    ),
-    # (
-    #     "density_iso_surface",
-    #     "Iso Surface",
-    #     "Style Density ISO Surface",
-    # ),
-    (
-        "density_wire",
-        "Wire",
-        "Style Density Wire",
-    ),
-)
-
 
 def _get_frame(self):
     return self.get("frame", 0)

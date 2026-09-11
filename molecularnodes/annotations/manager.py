@@ -14,7 +14,7 @@ from ..blender.utils import (
     new_bmesh,
     viewport_tag_redraw,
 )
-from ..nodes.material import append_material
+from ..material import append_material
 from .base import BaseAnnotation
 from .interface import AnnotationInterface
 from .node_tree import annotations_node_tree
