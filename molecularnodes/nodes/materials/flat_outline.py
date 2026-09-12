@@ -1,4 +1,4 @@
-# Material "MN Flat Outline", dumped by nodebpy.assets.dump_library.
+# Material "Flat Outline", dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # The class is a recipe for the material's shader tree — build recreates the material and runs it into material.node_tree.
 from bpy.types import ShaderNodeTree
@@ -10,7 +10,7 @@ from ..shader._shared.mn_fresnel import MNFresnel
 from ..shader.mn_color import MNColor
 
 
-class MNFlatOutline(CustomShaderGroup):
+class FlatOutline(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
@@ -39,8 +39,8 @@ class MNFlatOutline(CustomShaderGroup):
         _material_output = s.MaterialOutput(surface=mix_shader_1, is_active_output=True)
 
 
-MATERIAL = MNFlatOutline
-MATERIAL_NAME = "MN Flat Outline"
+MATERIAL = FlatOutline
+MATERIAL_NAME = "Flat Outline"
 
 MATERIAL_ASSET_METADATA = {
     "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",

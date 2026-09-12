@@ -74,10 +74,7 @@ def _sphere_for_engine(style_node: type, engine: str) -> str | None:
 def add_style_to_tree(
     node_tree: bpy.types.GeometryNodeTree,
     style: STYLE_LITERALS = "spheres",
-    material: bpy.types.Material
-    | PresetMaterial
-    | MaterialBuilder
-    | str = "MN Default",
+    material: bpy.types.Material | PresetMaterial | MaterialBuilder | str = "Default",
     color: Sequence[float] | None = None,
     selection_attribute: str | None = None,
     name: str | None = None,
@@ -99,7 +96,7 @@ def add_style_to_tree(
         "Molecular Nodes" modifier.
     style : str, default "spheres"
         Name of a predefined style (see ``STYLE_NODE_MAPPING``).
-    material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, default "MN Default"
+    material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, default "Default"
         Material for the styled geometry; a string is appended from the asset
         file.
     color : Sequence[float] | None, optional
@@ -1214,7 +1211,7 @@ class Molecule(MolecularEntity):
             materials from `mn.material` (e.g. ``mn.material.AmbientOcclusion()``),
             a Blender Material object, a nodebpy MaterialBuilder, a string with a
             material name to append from the asset file, or None for no material.
-            Default is "MN Default".
+            Default is "Default".
 
         color : str | Sequence[float] | Callable | None, optional
             Coloring to apply upstream of the style via a ``Set Color`` node. Can be:
@@ -1296,7 +1293,7 @@ class Molecule(MolecularEntity):
                     "    mol.add_style(lambda: mg.StyleCartoon(quality=5))"
                 )
 
-        material = "MN Default" if material is _UNSET else material
+        material = "Default" if material is _UNSET else material
         # a callable selection is evaluated inside the tree context, below
         selection_is_callable = callable(selection)
         attribute_name = self._resolve_style_selection(selection)

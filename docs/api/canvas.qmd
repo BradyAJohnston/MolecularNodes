@@ -53,7 +53,7 @@ t2 = mn.Molecule.load(TPR, XTC)
     .add_style("spheres", sphere="Instance", selection="resid 1 129")
 )
 
-t2.add_style("ribbon", material="MN Ambient Occlusion")
+t2.add_style("ribbon", material="Ambient Occlusion")
 t2.add_style("ball_and_stick", selection="resid 141")
 
 t1.annotations.add_com_distance(

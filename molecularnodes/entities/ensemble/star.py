@@ -224,10 +224,6 @@ class StarFile(Ensemble):
     def star_node(self) -> bpy.types.Node:
         return get_star_node(self.object)
 
-    @property
-    def micrograph_material(self) -> bpy.types.Material:
-        return bpy.data.materials["MN_micrograph_material"]
-
     def _read(self) -> DataFrame:
         if self._is_ndjson():
             return self._read_ndjson()

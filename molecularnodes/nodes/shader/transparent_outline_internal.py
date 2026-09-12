@@ -1,4 +1,4 @@
-# Node-group asset "Transparent Outline" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Transparent Outline Internal" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -21,9 +21,9 @@ from .mn_color import MNColor
 from .outline_mask import OutlineMask
 
 
-class TransparentOutline(AssetShaderGroup):
+class TransparentOutlineInternal(AssetShaderGroup):
     """
-    Transparent Outline
+    Transparent Outline Internal
 
     Parameters
     ----------
@@ -57,8 +57,8 @@ class TransparentOutline(AssetShaderGroup):
         Shader
     """
 
-    _name = "Transparent Outline"
-    _asset_name = "Transparent Outline"
+    _name = "Transparent Outline Internal"
+    _asset_name = "Transparent Outline Internal"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
 
     class _Inputs(SocketAccessor):
@@ -143,7 +143,7 @@ class TransparentOutline(AssetShaderGroup):
         menu.default_value = "Transparent"
 
 
-ASSET = TransparentOutline
+ASSET = TransparentOutlineInternal
 
 ASSET_METADATA = {
     "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",

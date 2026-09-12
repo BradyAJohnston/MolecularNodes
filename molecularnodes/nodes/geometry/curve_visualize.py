@@ -150,12 +150,12 @@ class CurveVisualize(AssetGeometryGroup):
         group_1 = PrimitiveArrow(
             vertices=3,
             value=(0.1056426, 0.800023, 0.793708, 1.0),
-            material=bpy.data.materials.get("MN Ambient Occlusion"),
+            material=bpy.data.materials.get("Ambient Occlusion"),
         )
         group_2 = PrimitiveArrow(
             vertices=3,
             value=(0.8000315, 0.49981865, 0.01965215, 1.0),
-            material=bpy.data.materials.get("MN Ambient Occlusion"),
+            material=bpy.data.materials.get("Ambient Occlusion"),
         )
         set_spline_type = g.SetSplineType.bezier(
             g.SeparateComponents(geometry=capture.o.geometry).o.curve
@@ -170,7 +170,7 @@ class CurveVisualize(AssetGeometryGroup):
         instance_on_points = g.InstanceOnPoints(
             points=set_position,
             instance=PrimitiveGimbal(
-                vertices=3, material=bpy.data.materials.get("MN Ambient Occlusion")
+                vertices=3, material=bpy.data.materials.get("Ambient Occlusion")
             ),
             rotation=g.NamedAttribute.quaternion("rotation").o.attribute,
             scale=MNUnits(value=arrow_size).o.angstrom,
@@ -217,5 +217,5 @@ ASSET_METADATA = {
 }
 
 DATABLOCK_DEPENDENCIES = {
-    "materials": ("MN Ambient Occlusion",),
+    "materials": ("Ambient Occlusion",),
 }

@@ -1454,7 +1454,7 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodebpy", directory = "../nodebpy" },
+    { name = "nodebpy", specifier = ">=520.21.0" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
     { name = "pandas", specifier = "<3.0.0" },
     { name = "pillow", marker = "extra == 'dev'" },
@@ -1592,37 +1592,10 @@ wheels = [
 
 [[package]]
 name = "nodebpy"
-version = "520.20.0"
-source = { directory = "../nodebpy" }
-
-[package.metadata]
-requires-dist = [
-    { name = "bpy", marker = "extra == 'bpy'", specifier = "==5.2.*" },
-    { name = "matplotlib", marker = "extra == 'plot'", specifier = ">=3.8" },
-    { name = "networkx", marker = "extra == 'networkx'", specifier = ">=3.6.1" },
-    { name = "ruff", marker = "extra == 'format'", specifier = ">=0.14.11" },
-]
-provides-extras = ["networkx", "plot", "bpy", "format"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "fake-bpy-module", specifier = ">=20260501" },
-    { name = "griffe", specifier = "<2.0.0" },
-    { name = "ipykernel", specifier = ">=6.0.0" },
-    { name = "ipython", specifier = ">=8.0.0" },
-    { name = "jsondiff", specifier = ">=2.2.1" },
-    { name = "matplotlib", specifier = ">=3.11.2" },
-    { name = "networkx", specifier = ">=3.6.1" },
-    { name = "pytest", specifier = ">=9.0.2" },
-    { name = "pytest-cov", specifier = ">=7.0.0" },
-    { name = "pytest-xdist", specifier = ">=3.8.0" },
-    { name = "quarto-cli", specifier = ">=1.9" },
-    { name = "quartodoc", specifier = ">=0.11.1" },
-    { name = "ruff", specifier = ">=0.14.11" },
-    { name = "syrupy", specifier = ">=5.0.0" },
-    { name = "tree-clipper", specifier = ">=0.1.6" },
-    { name = "ty", specifier = "==0.0.74" },
-    { name = "types-networkx", specifier = ">=3.6.1.20260728" },
+version = "520.21.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cb/61/e285c7d9a2f779516329be504c34b8f607471391f4b3d14cb633d2762ae6/nodebpy-520.21.0-py3-none-any.whl", hash = "sha256:d796f135f1ddf203343b2c8b5d1fb46d0ab514096ca98629d03315f093d28898", size = 447106, upload-time = "2026-09-12T17:55:03.289Z" },
 ]
 
 [[package]]

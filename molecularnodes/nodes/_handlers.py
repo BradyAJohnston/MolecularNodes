@@ -194,7 +194,7 @@ def _style_node_material(
     socket = next((s for s in node.inputs if s.bl_idname == "NodeSocketMaterial"), None)
     if socket is None or socket.default_value is not None:
         return
-    socket.default_value = add_all_materials()["MN Default"]
+    socket.default_value = add_all_materials()["Default"]
 
 
 register_on_add(lambda name: name.startswith("Style "), _style_node_material)

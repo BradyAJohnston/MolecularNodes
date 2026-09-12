@@ -12,7 +12,7 @@ dependencies = [
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.19.0",
+    "nodebpy>=520.21.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -65,9 +65,6 @@ include-package-data = true
 [tool.uv]
 config-settings = { editable_mode = "compat" }
 
-[tool.uv.sources]
-nodebpy = { path = "../nodebpy" }
-
 [tool.setuptools.packages.find]
 where = ["."]
 exclude = ["molecularnodes.nodes._generation*"]
@@ -119,3 +116,15 @@ order-by-type = true
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
+
+# The node-asset pipeline (python -m nodebpy.assets build|dump|ensure|check):
+# molecularnodes/nodes/ is the source of truth, nodes.blend the built,
+# untracked asset library, resources.blend the data-only datablocks the
+# build pulls in. See CONTRIBUTING.md "Node assets".
+[tool.nodebpy.assets]
+source = "molecularnodes/nodes"
+blend = "molecularnodes/assets/nodes.blend"
+resources = "molecularnodes/assets/resources.blend"
+typed-api = true
+add-reroutes = true
+iterations = 100

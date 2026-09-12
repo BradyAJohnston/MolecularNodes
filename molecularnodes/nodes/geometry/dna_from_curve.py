@@ -2727,5 +2727,5 @@ ASSET_METADATA = {
 
 DATABLOCK_DEPENDENCIES = {
     "collections": ("DNA Bases",),
-    "materials": ("MN Ambient Occlusion",),
+    "materials": ("Ambient Occlusion",),
 }

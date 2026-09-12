@@ -106,22 +106,21 @@ class OffsetRaycast(CustomShaderGroup):
         hit_distance = tree.outputs.float("Hit Distance")
         ray_direction = tree.outputs.vector("Ray Direction")
 
-        group = RayTangent()
-        group_1 = RayOrigin()
-        vector_math = (
-            s.Geometry().o.position
-            + (group.o.tangent * x_offset + group.o.bitangent * y_offset)
-            - group_1
+        group = RayOrigin()
+        group_1 = RayTangent()
+        vector_math = s.Geometry().o.position + (
+            group_1.o.tangent * x_offset + group_1.o.bitangent * y_offset
         )
-        vector_math_1 = vector_math.normalize()
-        vector_math_2 = vector_math * 0.5
+        vector_math_1 = vector_math - group
+        vector_math_2 = vector_math_1.normalize()
+        vector_math_3 = vector_math_1 * 0.5
         raycast = s.Raycast(
-            position=group_1.o.vector + vector_math_2,
-            direction=vector_math_1,
+            position=group.o.vector + vector_math_3,
+            direction=vector_math_2,
             length=s.LightPath().o.ray_length + length,
         )
         (
-            raycast.o.hit_distance + vector_math_2.length() - s.LightPath().o.ray_length
+            raycast.o.hit_distance + vector_math_3.length() - s.LightPath().o.ray_length
             >> hit_distance
         )
 
@@ -129,4 +128,4 @@ class OffsetRaycast(CustomShaderGroup):
         raycast.o.self_hit >> self_hit
         raycast.o.hit_position >> hit_position
         raycast.o.hit_normal >> hit_normal
-        vector_math_1 >> ray_direction
+        vector_math_2 >> ray_direction

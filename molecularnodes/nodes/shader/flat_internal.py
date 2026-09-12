@@ -1,4 +1,4 @@
-# Node-group asset "Flat" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Flat Internal" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -19,9 +19,9 @@ from .mn_color import MNColor
 from .outline_mask import OutlineMask
 
 
-class Flat(AssetShaderGroup):
+class FlatInternal(AssetShaderGroup):
     """
-    Flat
+    Flat Internal
 
     Parameters
     ----------
@@ -47,8 +47,8 @@ class Flat(AssetShaderGroup):
         Emission
     """
 
-    _name = "Flat"
-    _asset_name = "Flat"
+    _name = "Flat Internal"
+    _asset_name = "Flat Internal"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "SHADER"
 
@@ -110,4 +110,4 @@ class Flat(AssetShaderGroup):
         outline.default_value = "Outline"
 
 
-ASSET = Flat
+ASSET = FlatInternal
