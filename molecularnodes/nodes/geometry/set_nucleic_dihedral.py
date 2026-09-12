@@ -64,7 +64,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
 
     _name = "Set Nucleic Dihedral"
     _asset_name = "Set Nucleic Dihedral"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):

@@ -53,7 +53,7 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
 
     _name = "Offset Point Along Curve"
     _asset_name = "Offset Point Along Curve"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Offset along the current point's curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between `Point Index` + 1 and `Point Index` + 2, returning the `Length` and the `Factor` for this point on the curve",
@@ -133,11 +133,11 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
                 - curve_of_point.o.index_in_curve
             )
             clamp = offset.clamp(integer_math, integer_math_1)
-        group = IndexMixed(index=point_index, offset=clamp)
         (
             BetweenFloat(value=offset, lower=integer_math, upper=integer_math_1)
             >> is_off_spline
         )
+        group = IndexMixed(index=point_index, offset=clamp)
         spline_parameter = g.SplineParameter()
         IndexMixFloat(value=spline_parameter.o.factor, index=group.o.mixed) >> factor
         IndexMixFloat(value=spline_parameter.o.length, index=group.o.mixed) >> length

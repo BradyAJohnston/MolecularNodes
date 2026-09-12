@@ -127,7 +127,7 @@ class AnimateDihedrals(AssetGeometryGroup):
 
     _name = "Animate Dihedrals"
     _asset_name = "Animate Dihedrals"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.animate_dihedrals"}
 
@@ -213,24 +213,36 @@ class AnimateDihedrals(AssetGeometryGroup):
             description="Atomic geometry with new positions based on the trajectory",
         )
 
-        group = AnimateFraction(
+        group = AnimateCollectionPick(collection=frames, item=frame)
+        group_1 = AnimateFraction(
             interpolate=interpolate, smoother_step=smoother_step, float=frame
         )
-        group_1 = AnimateCollectionPick(collection=frames, item=frame)
         object_info = g.ObjectInfo(object=g.SelfObject())
         set_position = g.SetPosition(
-            geometry=atoms, position=SamplePosition(geometry=group_1.o.current)
+            geometry=atoms, position=SamplePosition(geometry=group.o.current)
         )
         set_position_1 = g.SetPosition(
-            geometry=atoms, position=SamplePosition(geometry=group_1.o.next)
+            geometry=atoms, position=SamplePosition(geometry=group.o.next)
         )
         group_2 = SampleMixAngle(
             A=set_position,
             B=set_position_1,
             Angle=DihedralChiAngle().o.angle,
-            Factor=group,
+            Factor=group_1,
         )
-        group_3 = SetChiAngle(
+        group_3 = SampleMixAngle(
+            A=set_position,
+            B=set_position_1,
+            Angle=DihedralPhi(menu="Read").o.phi,
+            Factor=group_1,
+        )
+        group_4 = SampleMixAngle(
+            A=set_position,
+            B=set_position_1,
+            Angle=DihedralPsi(method="Read").o.psi,
+            Factor=group_1,
+        )
+        group_5 = SetChiAngle(
             geometry=atoms,
             selection=selection,
             x1=group_2,
@@ -239,19 +251,7 @@ class AnimateDihedrals(AssetGeometryGroup):
             x4=group_2,
             x5=group_2,
         )
-        group_4 = SampleMixAngle(
-            A=set_position,
-            B=set_position_1,
-            Angle=DihedralPhi(menu="Read").o.phi,
-            Factor=group,
-        )
-        group_5 = SampleMixAngle(
-            A=set_position,
-            B=set_position_1,
-            Angle=DihedralPsi(method="Read").o.psi,
-            Factor=group,
-        )
-        group_6 = SetPhiPsiAngle(geometry=group_3, phi=group_4, psi=group_5)
+        group_6 = SetPhiPsiAngle(geometry=group_5, phi=group_3, psi=group_4)
         group_6.node.mute = True
         (
             group_6

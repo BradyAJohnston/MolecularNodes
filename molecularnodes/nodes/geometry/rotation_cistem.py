@@ -28,7 +28,7 @@ class RotationCisTEM(AssetGeometryGroup):
 
     _name = "Rotation cisTEM"
     _asset_name = "Rotation cisTEM"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):

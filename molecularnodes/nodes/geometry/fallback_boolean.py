@@ -41,7 +41,7 @@ class FallbackBoolean(AssetGeometryGroup):
 
     _name = "Fallback Boolean"
     _asset_name = "Fallback Boolean"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Computes the boolean field if the given attribute doesn't exist. If it doesn't exist it just uses the attribute instead",

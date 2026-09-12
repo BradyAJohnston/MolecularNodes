@@ -61,7 +61,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         Profile Resolution
     profile_radius : InputFloat
         Profile Radius
-    input_14 : InputFloat
+    socket_11 : InputFloat
         Profile Rotation
 
     Inputs
@@ -86,7 +86,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         Profile Resolution
     i.profile_radius : FloatSocket
         Profile Radius
-    i.input_14 : FloatSocket
+    i.socket_11 : FloatSocket
         Profile Rotation
 
     Outputs
@@ -97,7 +97,7 @@ class CurveCustomProfile(AssetGeometryGroup):
 
     _name = "Curve Custom Profile"
     _asset_name = "Curve Custom Profile"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.curve_custom_profile"}
 
@@ -122,7 +122,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         """Profile Resolution"""
         profile_radius: FloatSocket
         """Profile Radius"""
-        input_14: FloatSocket
+        socket_11: FloatSocket
         """Profile Rotation"""
 
     class _Outputs(SocketAccessor):
@@ -149,7 +149,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         profile_curve: InputGeometry = None,
         profile_resolution: InputInteger = 4,
         profile_radius: InputFloat = 1.0,
-        input_14: InputFloat = math.pi / 4,
+        socket_11: InputFloat = math.pi / 4,
     ):
         super().__init__(
             **{
@@ -165,7 +165,7 @@ class CurveCustomProfile(AssetGeometryGroup):
             },
             _named_links=[
                 ("Profile Rotation", socket_6),
-                ("Profile Rotation", input_14),
+                ("Profile Rotation", socket_11),
             ],
         )
 
@@ -196,12 +196,12 @@ class CurveCustomProfile(AssetGeometryGroup):
             )
         geometry = tree.outputs.geometry("Geometry")
 
+        index_switch = g.IndexSwitch.rotation(
+            ProfileTypePicker(menu=profile_type), (CurveRotation(), profile_rotation)
+        )
         curve_circle = g.CurveCircle(
             resolution=profile_resolution,
             radius=MNUnits(value=profile_radius).o.angstrom,
-        )
-        index_switch = g.IndexSwitch.rotation(
-            ProfileTypePicker(menu=profile_type), (CurveRotation(), profile_rotation)
         )
         spline_parameter = g.SplineParameter()
         capture = g.CaptureAttribute.point(geometry=curve)

@@ -60,7 +60,7 @@ class PeptideDihedral(AssetGeometryGroup):
 
     _name = "Peptide Dihedral"
     _asset_name = "Peptide Dihedral"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -113,12 +113,12 @@ class PeptideDihedral(AssetGeometryGroup):
 
         group = AtomName()
         boolean = g.Boolean(boolean=True)
-        group_1 = OverrideIndex(
+        group_1 = IsPeptide(and_=selection)
+        group_2 = OverrideIndex(
             selection=IsSideChain(include_ca=False).o.selection,
             index=HydrogenBondingPartner(),
             override=ResidueMask(atom_name=2).o.index,
         )
-        group_2 = IsPeptide(and_=selection)
         index_switch = g.IndexSwitch.float(
             group,
             (
@@ -131,13 +131,13 @@ class PeptideDihedral(AssetGeometryGroup):
         )
         group_3 = AccumulateAxisRotation(
             position=position,
-            selection=group_2.o.selection,
+            selection=group_1.o.selection,
             pivot=g.IndexSwitch.boolean(group, (False, boolean, boolean, boolean)),
             angle=index_switch,
             group_id=ChainID(),
-            transform_index=group_1,
+            transform_index=group_2,
         )
-        group_2.o.selection.switch.vector(position, group_3.o.position) >> position_1
+        group_1.o.selection.switch.vector(position, group_3.o.position) >> position_1
 
 
 ASSET = PeptideDihedral

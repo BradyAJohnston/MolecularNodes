@@ -52,7 +52,7 @@ class SelectResIDRange(AssetGeometryGroup):
 
     _name = "Select Res ID Range"
     _asset_name = "Select Res ID Range"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_res_id_range"}
 

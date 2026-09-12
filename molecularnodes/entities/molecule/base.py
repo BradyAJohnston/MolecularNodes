@@ -27,8 +27,8 @@ from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...material import PresetMaterial, append_material
 from ...nodes import handlers as node_handlers
+from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...nodes.geometry import AssemblyInstance
-from ...nodes.utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...utils import _UNSET, count_value_changes, temp_override_property
 from ..base import EntityType, MolecularEntity, MolecularTree
 from ..utilities import (

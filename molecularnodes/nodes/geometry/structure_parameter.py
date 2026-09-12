@@ -44,7 +44,7 @@ class StructureParameter(AssetGeometryGroup):
 
     _name = "Structure Parameter"
     _asset_name = "Structure Parameter"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -107,21 +107,21 @@ class StructureParameter(AssetGeometryGroup):
         )
         residue_count = tree.outputs.integer("Residue Count")
 
-        group = SubGroupInfo(sub_group_id=UniqueResidueID())
+        group = GroupInfo()
+        index_1 = g.Index()
+        IndexToFactor(index=index_1, size=group.o.size) >> atom_factor
+        group_1 = SubGroupInfo(sub_group_id=UniqueResidueID())
         (
-            IndexToFactor(index=group.o.group_id, size=group.o.sub_group_total)
+            IndexToFactor(index=group_1.o.group_id, size=group_1.o.sub_group_total)
             >> residue_factor
         )
-        group_1 = GroupInfo()
-        index_1 = g.Index()
-        IndexToFactor(index=index_1, size=group_1.o.size) >> atom_factor
 
         index_1 >> index
-        group_1 >> atom_count
-        group_1.o.index_of_first >> index_of_first
-        group_1.o.index_of_last >> index_of_last
-        group.o.group_id >> residue_index
-        group.o.sub_group_total >> residue_count
+        group >> atom_count
+        group.o.index_of_first >> index_of_first
+        group.o.index_of_last >> index_of_last
+        group_1.o.group_id >> residue_index
+        group_1.o.sub_group_total >> residue_count
 
 
 ASSET = StructureParameter

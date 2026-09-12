@@ -67,7 +67,7 @@ class CurveOffsetDot(AssetGeometryGroup):
 
     _name = "Curve Offset Dot"
     _asset_name = "Curve Offset Dot"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.curve_offset_dot"}
 

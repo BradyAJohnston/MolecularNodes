@@ -75,7 +75,7 @@ class StyleSpheres(AssetGeometryGroup):
 
     _name = "Style Spheres"
     _asset_name = "Style Spheres"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "node_tool_idname": "geometry.style_spheres",
@@ -180,10 +180,7 @@ class StyleSpheres(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        group = MN_utils_style_spheres_points(
-            atoms=atoms_1, selection=selection, scale=scale, material=material
-        )
-        group_1 = MN_utils_style_spheres_icosphere(
+        group = MN_utils_style_spheres_icosphere(
             atoms=atoms_1,
             selection=selection,
             scale=scale,
@@ -191,13 +188,16 @@ class StyleSpheres(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
+        group_1 = MN_utils_style_spheres_points(
+            atoms=atoms_1, selection=selection, scale=scale, material=material
+        )
         menu_switch = g.MenuSwitch.geometry(
             sphere,
             {
-                "Point": group,
-                "Instance": group_1,
+                "Point": group_1,
+                "Instance": group,
                 "Mesh": g.RealizeInstances(
-                    geometry=group_1, realize_to_point_domain=True
+                    geometry=group, realize_to_point_domain=True
                 ),
             },
         )

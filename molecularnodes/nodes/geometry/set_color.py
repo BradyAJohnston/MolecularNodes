@@ -46,7 +46,7 @@ class SetColor(AssetGeometryGroup):
 
     _name = "Set Color"
     _asset_name = "Set Color"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.set_color"}
 

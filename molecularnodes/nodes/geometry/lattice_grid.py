@@ -58,7 +58,7 @@ class LatticeGrid(AssetGeometryGroup):
 
     _name = "Lattice Grid"
     _asset_name = "Lattice Grid"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):

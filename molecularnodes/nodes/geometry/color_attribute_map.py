@@ -33,11 +33,11 @@ class ColorAttributeMap(AssetGeometryGroup):
         Value for the attribute to be the minimum color
     max : InputFloat
         Value for the attribute to be the maxium color
-    input_7 : InputBoolean
+    socket_5 : InputBoolean
         Wheter to interpolate through the 'Mid' color.
     a : InputColor
         Color mapped to the minimum value of the attribute
-    input_1 : InputColor
+    socket_7 : InputColor
         Color mapped to the middle value of the attribute
     b : InputColor
         Color mapped to the maximum value of the attribute
@@ -52,11 +52,11 @@ class ColorAttributeMap(AssetGeometryGroup):
         Value for the attribute to be the minimum color
     i.max : FloatSocket
         Value for the attribute to be the maxium color
-    i.input_7 : BooleanSocket
+    i.socket_5 : BooleanSocket
         Wheter to interpolate through the 'Mid' color.
     i.a : ColorSocket
         Color mapped to the minimum value of the attribute
-    i.input_1 : ColorSocket
+    i.socket_7 : ColorSocket
         Color mapped to the middle value of the attribute
     i.b : ColorSocket
         Color mapped to the maximum value of the attribute
@@ -69,7 +69,7 @@ class ColorAttributeMap(AssetGeometryGroup):
 
     _name = "Color Attribute Map"
     _asset_name = "Color Attribute Map"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_attribute_map"}
 
@@ -82,11 +82,11 @@ class ColorAttributeMap(AssetGeometryGroup):
         """Value for the attribute to be the minimum color"""
         max: FloatSocket
         """Value for the attribute to be the maxium color"""
-        input_7: BooleanSocket
+        socket_5: BooleanSocket
         """Wheter to interpolate through the 'Mid' color."""
         a: ColorSocket
         """Color mapped to the minimum value of the attribute"""
-        input_1: ColorSocket
+        socket_7: ColorSocket
         """Color mapped to the middle value of the attribute"""
         b: ColorSocket
         """Color mapped to the maximum value of the attribute"""
@@ -108,9 +108,9 @@ class ColorAttributeMap(AssetGeometryGroup):
         name: InputString = "b_factor",
         min: InputFloat = 0.0,
         max: InputFloat = 150.0,
-        input_7: InputBoolean = True,
+        socket_5: InputBoolean = True,
         a: InputColor = None,
-        input_1: InputColor = None,
+        socket_7: InputColor = None,
         b: InputColor = None,
     ):
         super().__init__(
@@ -122,7 +122,7 @@ class ColorAttributeMap(AssetGeometryGroup):
                 "A": a,
                 "B": b,
             },
-            _named_links=[("Intermediate", input_7), ("Intermediate", input_1)],
+            _named_links=[("Intermediate", socket_5), ("Intermediate", socket_7)],
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
@@ -178,9 +178,9 @@ class ColorAttributeMap(AssetGeometryGroup):
             ColorMixIntermediate(
                 factor=g.NamedAttribute.float(name).o.attribute.map_range(min, max),
                 menu=color_space,
-                socket_1=intermediate,
+                socket_2=intermediate,
                 a=a,
-                socket_2=intermediate_1,
+                socket_4=intermediate_1,
                 b=b,
             )
             >> color

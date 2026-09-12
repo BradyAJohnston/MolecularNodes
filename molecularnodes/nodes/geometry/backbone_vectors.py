@@ -42,7 +42,7 @@ class BackboneVectors(AssetGeometryGroup):
 
     _name = "Backbone Vectors"
     _asset_name = "Backbone Vectors"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "The `Vectors` that are useful for a curve when reading from a peptide backbone",

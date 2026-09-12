@@ -46,7 +46,7 @@ class BackboneVectorList(AssetGeometryGroup):
 
     _name = "Backbone Vector List"
     _asset_name = "Backbone Vector List"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
 
     class _Inputs(SocketAccessor):
         ca_atoms: GeometrySocket

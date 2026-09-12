@@ -92,7 +92,7 @@ class StyleBallAndStick(AssetGeometryGroup):
 
     _name = "Style Ball and Stick"
     _asset_name = "Style Ball and Stick"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "node_tool_idname": "geometry.style_ball_and_stick",
@@ -285,8 +285,4 @@ ASSET = StyleBallAndStick
 
 ASSET_METADATA = {
     "catalog_id": "541e6649-2ea6-4225-b1ee-5c0da6f5f1f6",
-}
-
-DATABLOCK_DEPENDENCIES = {
-    "materials": ("MN Default.old",),
 }

@@ -116,15 +116,15 @@ class XPBDInit(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        with g.Frame("Drag Force"):
-            vector_math = Velocity().o.velocity * (1.0 - drag * deltat).clamp()
         with g.Frame("New Forces"):
-            vector_math_1 = force * deltat * InverseMass().o.w
+            vector_math = force * deltat * InverseMass().o.w
+        with g.Frame("Drag Force"):
+            vector_math_1 = Velocity().o.velocity * (1.0 - drag * deltat).clamp()
         (
             geometry
             >> g.StoreNamedAttribute.point.vector(name="p_i", value=g.Position())
             >> g.StoreNamedAttribute.point.vector(
-                name="velocity", value=vector_math + vector_math_1
+                name="velocity", value=vector_math_1 + vector_math
             )
             >> g.SetPosition(selection=selection, offset=Velocity().o.velocity * deltat)
             >> geometry_1

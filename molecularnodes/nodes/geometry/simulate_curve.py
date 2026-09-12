@@ -239,7 +239,7 @@ class SimulateCurve(AssetGeometryGroup):
 
     _name = "Simulate Curve"
     _asset_name = "Simulate Curve"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):

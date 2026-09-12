@@ -46,7 +46,7 @@ class OKLabOffsetLCh(AssetGeometryGroup):
 
     _name = "OKLab Offset LCh"
     _asset_name = "OKLab Offset LCh"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):

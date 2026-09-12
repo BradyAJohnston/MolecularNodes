@@ -97,7 +97,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
     _name = "Density Style ISO Surface"
     _asset_name = "Density Style ISO Surface"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -244,6 +244,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
         bounding_box = g.BoundingBox(geometry=volume)
         math_1 = contour_thickness * 0.001
+        switch = visible.switch.geometry(true=volume)
         group = BetweenVector(
             value=g.Position().o.position.map_range(
                 bounding_box.o.min, bounding_box.o.max
@@ -251,7 +252,6 @@ class DensityStyleISOSurface(AssetGeometryGroup):
             lower=slice_center - slice_width,
             upper=slice_center + slice_width,
         )
-        switch = visible.switch.geometry(true=volume)
         set_material = (
             g.VolumeToMesh(volume=switch, threshold=threshold * -1.0, voxel_size=0.3)
             >> g.StoreNamedAttribute.point.color(name="Color", value=negative_color)

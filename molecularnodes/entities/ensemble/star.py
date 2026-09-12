@@ -11,7 +11,7 @@ from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
 from ...nodes import geometry
-from ...nodes.utils import get_star_node
+from ...nodes._utils import get_star_node
 from .base import Ensemble, EntityType
 
 

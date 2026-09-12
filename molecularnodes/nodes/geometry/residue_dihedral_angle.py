@@ -54,7 +54,7 @@ class ResidueDihedralAngle(AssetGeometryGroup):
 
     _name = "Residue Dihedral Angle"
     _asset_name = "Residue Dihedral Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
 
     class _Inputs(SocketAccessor):
         a: IntegerSocket

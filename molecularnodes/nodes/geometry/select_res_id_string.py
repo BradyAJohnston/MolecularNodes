@@ -38,7 +38,7 @@ class SelectResIDString(AssetGeometryGroup):
 
     _name = "Select Res ID String"
     _asset_name = "Select Res ID String"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):

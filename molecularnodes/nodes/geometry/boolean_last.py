@@ -39,7 +39,7 @@ class BooleanLast(AssetGeometryGroup):
 
     _name = "Boolean Last"
     _asset_name = "Boolean Last"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Index of last time the `Boolean` is true for each `Group ID` (not including the current point). "

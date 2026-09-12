@@ -67,7 +67,7 @@ class AnimateFrames(AssetGeometryGroup):
 
     _name = "Animate Frames"
     _asset_name = "Animate Frames"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.animate_frames"}
 
@@ -160,26 +160,23 @@ class AnimateFrames(AssetGeometryGroup):
         )
 
         with g.Frame("Interpolation position based on frames from collection"):
-            group = AnimateFraction(
+            group = AnimateCollectionPick(collection=frames, item=frame)
+            group_1 = AnimateFraction(
                 interpolate=interpolate, smoother_step=smoother_step, float=frame
             )
-            group_1 = AnimateCollectionPick(collection=frames, item=frame)
             group_2 = SampleMixFloat(
-                a=group_1.o.current,
-                b=group_1.o.next,
+                a=group.o.current,
+                b=group.o.next,
                 value=g.NamedAttribute.float("b_factor").o.attribute,
-                factor=group,
+                factor=group_1,
             )
-            store_named_attribute = (
-                atoms
-                >> g.SetPosition(
-                    selection=selection,
-                    position=SampleMixVector(
-                        a=group_1.o.current, b=group_1.o.next, factor=group
-                    ),
-                )
-                >> g.StoreNamedAttribute.point.float(name="b_factor", value=group_2)
-            )
+            store_named_attribute = g.SetPosition(
+                geometry=atoms,
+                selection=selection,
+                position=SampleMixVector(
+                    a=group.o.current, b=group.o.next, factor=group_1
+                ),
+            ) >> g.StoreNamedAttribute.point.float(name="b_factor", value=group_2)
         with g.Frame("Have to copy original structure as frames only contain position"):
             collection_info = g.CollectionInfo(
                 collection=frames, separate_children=True

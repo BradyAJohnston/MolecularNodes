@@ -44,7 +44,7 @@ class SelectBonded(AssetGeometryGroup):
 
     _name = "Select Bonded"
     _asset_name = "Select Bonded"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_bonded"}
 
@@ -98,8 +98,8 @@ class SelectBonded(AssetGeometryGroup):
         shortest_edge_paths = g.ShortestEdgePaths(end_vertex=selection)
         compare = g.Compare.integer.less_equal(shortest_edge_paths.o.total_cost, depth)
         compare_1 = g.Compare.integer.greater_than(shortest_edge_paths.o.total_cost, 0)
-        (compare.o.result & compare_1) >> bonded
         BooleanAndOr(and_=compare, or_=selection, boolean=compare_1) >> selection_1
+        (compare.o.result & compare_1) >> bonded
 
 
 ASSET = SelectBonded

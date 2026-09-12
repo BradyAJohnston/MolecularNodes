@@ -223,8 +223,8 @@ class MN_utils_style_sticks(CustomGeometryGroup):
             vector = capture.items.vector("Vector", vector_math_1)
         split_edges = capture.o.geometry >> g.SplitEdges()
         with g.Frame("Rotate and offset Extra Bonds"):
-            edge_vertices_2 = g.EdgeVertices()
             group = Map_bond_type()
+            edge_vertices_2 = g.EdgeVertices()
             capture_1 = g.CaptureAttribute.point(
                 geometry=split_edges, selection=group > 1
             )

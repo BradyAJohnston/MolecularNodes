@@ -94,13 +94,13 @@ class SampleNucleicBaseValues(CustomGeometryGroup):
         with g.Frame("Sample relevant base positions for orientations"):
             group = ResidueMask(atom_name=61)
             Color(index=ResidueMask(atom_name=67).o.index) >> base_color
-            group_1 = SelectNucleicType()
             mix = g.Mix(
                 a_vector=ResidueMask(atom_name=55).o.position,
                 b_vector=ResidueMask(atom_name=57).o.position,
                 data_type="VECTOR",
                 clamp_factor=True,
             )
+            group_1 = SelectNucleicType()
             group_2 = ResidueMask(
                 atom_name=group_1.o.is_pyrimidine.switch.integer(65, 68)
             )

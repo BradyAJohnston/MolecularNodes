@@ -11,6 +11,7 @@ from .nodes.shader import TransparentOutline as TransparentOutlineShader
 
 MATERIAL_NAMES = [
     "MN Default",
+    "MN Flat",
     "MN Flat Outline",
     "MN Squishy",
     "MN Transparent Outline",

@@ -70,7 +70,7 @@ class CurveVisualize(AssetGeometryGroup):
 
     _name = "Curve Visualize"
     _asset_name = "Curve Visualize"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.curve_visualize"}
 
@@ -142,32 +142,30 @@ class CurveVisualize(AssetGeometryGroup):
         instances = tree.outputs.geometry("Instances")
 
         curve_handle_positions = g.CurveHandlePositions(relative=True)
-        group = PrimitiveArrow(
-            vertices=3,
-            value=(0.1056426, 0.800023, 0.7937081, 1.0),
-            material=bpy.data.materials.get("MN Ambient Occlusion"),
-        )
         capture = g.CaptureAttribute.point(geometry=curve)
         selection_1 = capture.items.boolean("Selection", selection)
         position_1 = capture.items.vector("Position", position)
         normal_1 = capture.items.vector("Normal", normal)
-        group_1 = UnitConvert(from_=2.0)
-        _group_2 = CurveRotation(normal=normal_1.output)
-        group_3 = PrimitiveArrow(
+        _group = CurveRotation(normal=normal_1.output)
+        group_1 = PrimitiveArrow(
+            vertices=3,
+            value=(0.1056426, 0.800023, 0.793708, 1.0),
+            material=bpy.data.materials.get("MN Ambient Occlusion"),
+        )
+        group_2 = PrimitiveArrow(
             vertices=3,
             value=(0.8000315, 0.49981865, 0.01965215, 1.0),
             material=bpy.data.materials.get("MN Ambient Occlusion"),
         )
-        group_4 = UnitConvert(from_=2.0)
         set_spline_type = g.SetSplineType.bezier(
             g.SeparateComponents(geometry=capture.o.geometry).o.curve
         )
         set_spline_type.node.mute = True
         set_handle_type = g.SetHandleType(curve=set_spline_type)
         set_handle_type.node.mute = True
-        group_5 = SetColor(atoms=set_handle_type, color=(0.0, 0.0, 0.0, 1.0))
+        group_3 = SetColor(atoms=set_handle_type, color=(0.0, 0.0, 0.0, 1.0))
         set_position = g.SetPosition(
-            geometry=group_5, selection=selection_1.output, position=position_1.output
+            geometry=group_3, selection=selection_1.output, position=position_1.output
         )
         instance_on_points = g.InstanceOnPoints(
             points=set_position,
@@ -177,20 +175,22 @@ class CurveVisualize(AssetGeometryGroup):
             rotation=g.NamedAttribute.quaternion("rotation").o.attribute,
             scale=MNUnits(value=arrow_size).o.angstrom,
         )
+        group_4 = UnitConvert(from_=2.0)
+        group_5 = UnitConvert(from_=2.0)
         instance_on_points_1 = g.InstanceOnPoints(
-            points=group_5,
-            instance=group,
+            points=group_3,
+            instance=group_1,
             rotation=g.AlignRotationToVector(vector=curve_handle_positions.o.left),
             scale=g.CombineXYZ(
-                x=group_1, y=group_1, z=curve_handle_positions.o.left.length()
+                x=group_4, y=group_4, z=curve_handle_positions.o.left.length()
             ),
         )
         instance_on_points_2 = g.InstanceOnPoints(
-            points=group_5,
-            instance=group_3,
+            points=group_3,
+            instance=group_2,
             rotation=g.AlignRotationToVector(vector=curve_handle_positions.o.right),
             scale=g.CombineXYZ(
-                x=group_4, y=group_4, z=curve_handle_positions.o.right.length()
+                x=group_5, y=group_5, z=curve_handle_positions.o.right.length()
             ),
         )
         join_geometry = g.JoinGeometry(

@@ -54,7 +54,7 @@ class SampleMixFloat(AssetGeometryGroup):
 
     _name = "Sample Mix Float"
     _asset_name = "Sample Mix Float"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "description": "Sample a float value from two different geometries and mix from A to B",

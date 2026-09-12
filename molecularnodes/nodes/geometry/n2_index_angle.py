@@ -50,7 +50,7 @@ class Group2IndexAngle(AssetGeometryGroup):
 
     _name = "2 Index Angle"
     _asset_name = "2 Index Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.2_point_angle"}
 

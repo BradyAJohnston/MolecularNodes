@@ -21,6 +21,17 @@ from ._shared.mn_utils_aa_atom_pos import MN_utils_aa_atom_pos
 from .is_peptide import IsPeptide
 
 
+class MN_animate_wiggle_mask_length(CustomGeometryGroup):
+    _name = ".MN_animate_wiggle_mask_length"
+    _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_length"}
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        a = tree.inputs.integer("A", 0)
+        result = tree.outputs.integer("Result")
+
+        g.IndexSwitch.integer(a, (2, 5, 6, 12, 20)) >> result
+
+
 class MN_animate_wiggle_mask_res(CustomGeometryGroup):
     _name = ".MN_animate_wiggle_mask_res"
     _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_res"}
@@ -98,17 +109,6 @@ class MN_animate_wiggle_mask_res(CustomGeometryGroup):
             )
             >> result
         )
-
-
-class MN_animate_wiggle_mask_length(CustomGeometryGroup):
-    _name = ".MN_animate_wiggle_mask_length"
-    _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_length"}
-
-    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        a = tree.inputs.integer("A", 0)
-        result = tree.outputs.integer("Result")
-
-        g.IndexSwitch.integer(a, (2, 5, 6, 12, 20)) >> result
 
 
 class MN_animate_noise_repeat(CustomGeometryGroup):
@@ -313,7 +313,7 @@ class AnimateWiggle(AssetGeometryGroup):
 
     _name = "Animate Wiggle"
     _asset_name = "Animate Wiggle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.animate_wiggle"}
 

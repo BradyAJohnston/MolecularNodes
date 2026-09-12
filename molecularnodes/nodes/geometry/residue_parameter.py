@@ -42,7 +42,7 @@ class ResidueParameter(AssetGeometryGroup):
 
     _name = "Residue Parameter"
     _asset_name = "Residue Parameter"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.residue_parameter"}
 
@@ -107,9 +107,9 @@ class ResidueParameter(AssetGeometryGroup):
         )
 
         group = SubGroupInfo(sub_group_id=ResidueID(), group_id=ChainID())
-        IndexToFactor(index=group.o.index_in_group_id, size=group.o.size) >> factor
         AtomName(index=group.o.index_of_first) >> first_atom_name
         AtomName(index=group.o.index_of_last) >> last_atom_name
+        IndexToFactor(index=group.o.index_in_group_id, size=group.o.size) >> factor
 
         group >> atom_count
         group.o.index_in_group_id >> atom_index

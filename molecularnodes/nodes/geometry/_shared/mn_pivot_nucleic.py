@@ -59,6 +59,7 @@ class MN_pivot_nucleic(CustomGeometryGroup):
         pivot_base = tree.outputs.boolean("Pivot Base")
 
         group = AtomName()
+        group_1 = AtomName()
         boolean_math = (
             g.Compare.integer.equal(group, 50).o.result
             | g.Compare.integer.equal(group, 53)
@@ -70,7 +71,6 @@ class MN_pivot_nucleic(CustomGeometryGroup):
             | g.Compare.integer.equal(group, 58)
         )
         (boolean_math_1 | g.Compare.integer.equal(group, 57)) >> pivot_backbone
-        group_1 = AtomName()
         g.Compare.integer.equal(group_1, 61) >> pivot_base
         (
             g.Compare.integer.equal(

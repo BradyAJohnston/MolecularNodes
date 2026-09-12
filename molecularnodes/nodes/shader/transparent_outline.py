@@ -9,7 +9,6 @@ from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
     ColorSocket,
-    CustomShaderGroup,
     FloatSocket,
     MenuSocket,
     PackageLibrary,
@@ -17,47 +16,9 @@ from nodebpy.builder import (
     SocketAccessor,
 )
 from nodebpy.types import InputColor, InputFloat, InputMenu
+from ._shared.mn_fresnel import MNFresnel
 from .mn_color import MNColor
 from .outline_mask import OutlineMask
-
-
-class MN_mask_transparent(CustomShaderGroup):
-    _name = ".MN_mask_transparent"
-
-    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        value = tree.inputs.float("Value", 0.0, min_value=-10_000.0, max_value=10_000.0)
-        value_1 = tree.outputs.float("Value")
-
-        (
-            g.Math.less_than(s.LightPath().o.transparent_depth, 1.0).o.value * value
-            >> value_1
-        )
-
-
-class MNFresnel(CustomShaderGroup):
-    _name = "MN Fresnel"
-
-    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        ior = tree.inputs.float("IOR", 0.98, min_value=0.0, max_value=1000.0)
-        factor = tree.inputs.float(
-            "Factor",
-            0.0,
-            description="Whether to show fresnel through transparent surfaces",
-            min_value=0.0,
-            max_value=1.0,
-            subtype="FACTOR",
-        )
-        value = tree.outputs.float("Value")
-
-        fresnel = s.Fresnel(ior=ior)
-        mix = g.Mix(
-            factor_float=factor,
-            a_float=MN_mask_transparent(Value=fresnel),
-            b_float=fresnel,
-            clamp_factor=True,
-        )
-
-        mix >> value
 
 
 class TransparentOutline(AssetShaderGroup):
@@ -98,7 +59,7 @@ class TransparentOutline(AssetShaderGroup):
 
     _name = "Transparent Outline"
     _asset_name = "Transparent Outline"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
 
     class _Inputs(SocketAccessor):
         alpha: FloatSocket
@@ -160,7 +121,7 @@ class TransparentOutline(AssetShaderGroup):
         )
         shader = tree.outputs.shader("Shader")
 
-        _group = MNFresnel(IOR=0.95)
+        _group = MNFresnel(ior=0.95)
         mix_shader = s.MixShader(
             fac=g.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
             + alpha,

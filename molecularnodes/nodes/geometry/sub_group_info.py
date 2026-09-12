@@ -55,7 +55,7 @@ class SubGroupInfo(AssetGeometryGroup):
 
     _name = "Sub Group Info"
     _asset_name = "Sub Group Info"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -123,11 +123,11 @@ class SubGroupInfo(AssetGeometryGroup):
         sub_group_total = tree.outputs.integer("Sub Group Total")
 
         group = IntegerRun(value=sub_group_id, group_id=group_id)
+        group_1 = GroupInfo(group_id=group.o.group_id)
         compare = g.Compare.integer.not_equal(
             group.o.group_id, OffsetInteger(integer=group.o.group_id, offset=1)
         )
         accumulate_field = g.AccumulateField.point.integer(compare, group_id)
-        group_1 = GroupInfo(group_id=group.o.group_id)
 
         group_1 >> size
         group.o.group_id >> group_id_1

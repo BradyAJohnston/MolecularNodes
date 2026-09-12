@@ -53,7 +53,7 @@ class AtomsToCurves(AssetGeometryGroup):
 
     _name = "Atoms to Curves"
     _asset_name = "Atoms to Curves"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.atoms_to_curves"}
 

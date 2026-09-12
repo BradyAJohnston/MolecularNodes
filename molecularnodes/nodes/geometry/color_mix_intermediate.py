@@ -30,11 +30,11 @@ class ColorMixIntermediate(AssetGeometryGroup):
         Factor
     menu : InputMenu | Literal["Linear", "OKLab"]
         Menu
-    socket_1 : InputBoolean
+    socket_2 : InputBoolean
         Intermediate
     a : InputColor
         A
-    socket_2 : InputColor
+    socket_4 : InputColor
         Intermediate
     b : InputColor
         B
@@ -45,11 +45,11 @@ class ColorMixIntermediate(AssetGeometryGroup):
         Factor
     i.menu : MenuSocket
         Menu
-    i.socket_1 : BooleanSocket
+    i.socket_2 : BooleanSocket
         Intermediate
     i.a : ColorSocket
         A
-    i.socket_2 : ColorSocket
+    i.socket_4 : ColorSocket
         Intermediate
     i.b : ColorSocket
         B
@@ -62,7 +62,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
 
     _name = "Color Mix Intermediate"
     _asset_name = "Color Mix Intermediate"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
 
     class _Inputs(SocketAccessor):
@@ -70,11 +70,11 @@ class ColorMixIntermediate(AssetGeometryGroup):
         """Factor"""
         menu: MenuSocket
         """Menu"""
-        socket_1: BooleanSocket
+        socket_2: BooleanSocket
         """Intermediate"""
         a: ColorSocket
         """A"""
-        socket_2: ColorSocket
+        socket_4: ColorSocket
         """Intermediate"""
         b: ColorSocket
         """B"""
@@ -94,14 +94,14 @@ class ColorMixIntermediate(AssetGeometryGroup):
         self,
         factor: InputFloat = 0.5,
         menu: InputMenu | Literal["Linear", "OKLab"] = "Linear",
-        socket_1: InputBoolean = False,
+        socket_2: InputBoolean = False,
         a: InputColor = None,
-        socket_2: InputColor = None,
+        socket_4: InputColor = None,
         b: InputColor = None,
     ):
         super().__init__(
             **{"Factor": factor, "Menu": menu, "A": a, "B": b},
-            _named_links=[("Intermediate", socket_1), ("Intermediate", socket_2)],
+            _named_links=[("Intermediate", socket_2), ("Intermediate", socket_4)],
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:

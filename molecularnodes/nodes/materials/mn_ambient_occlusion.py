@@ -27,3 +27,7 @@ MATERIAL_PROPERTIES = {
     "use_transparency_overlap": False,
     "blend_method": "BLEND",
 }
+
+MATERIAL_ASSET_METADATA = {
+    "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",
+}

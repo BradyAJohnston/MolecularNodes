@@ -48,7 +48,7 @@ class BreakBonds(AssetGeometryGroup):
 
     _name = "Break Bonds"
     _asset_name = "Break Bonds"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.topology_break_bonds"}
 
