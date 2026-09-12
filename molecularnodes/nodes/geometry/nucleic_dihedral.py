@@ -71,7 +71,7 @@ class NucleicDihedral(AssetGeometryGroup):
 
     _name = "Nucleic Dihedral"
     _asset_name = "Nucleic Dihedral"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -144,15 +144,15 @@ class NucleicDihedral(AssetGeometryGroup):
             "Position", description="Transformed vector", subtype="XYZ"
         )
 
-        group = IsNucleic(and_=selection)
-        group_1 = AtomName()
+        group = AtomName()
+        group_1 = IsNucleic(and_=selection)
         group_2 = OverrideIndex(
-            selection=(group_1 > 58) & (group_1 <= 115)
-            | g.Compare.integer.equal(group_1, 56),
+            selection=(group > 58) & (group <= 115)
+            | g.Compare.integer.equal(group, 56),
             override=ResidueMask(atom_name=55).o.index,
         )
         index_switch = g.IndexSwitch.float(
-            group_1.o.atom_name - 50,
+            group.o.atom_name - 50,
             (
                 zeta,
                 0.0,
@@ -169,13 +169,13 @@ class NucleicDihedral(AssetGeometryGroup):
         )
         group_3 = AccumulateAxisRotation(
             position=position,
-            selection=group.o.selection,
+            selection=group_1.o.selection,
             pivot=MN_pivot_nucleic().o.pivot_backbone,
             angle=(BondCount().o.bonds > 1).switch.float(true=index_switch),
             group_id=ChainID(),
             transform_index=group_2,
         )
-        group.o.selection.switch.vector(position, group_3.o.position) >> position_1
+        group_1.o.selection.switch.vector(position, group_3.o.position) >> position_1
 
 
 ASSET = NucleicDihedral

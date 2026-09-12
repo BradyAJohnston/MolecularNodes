@@ -41,7 +41,7 @@ class FallbackRotation(AssetGeometryGroup):
 
     _name = "Fallback Rotation"
     _asset_name = "Fallback Rotation"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.fallback_rotation"}
 

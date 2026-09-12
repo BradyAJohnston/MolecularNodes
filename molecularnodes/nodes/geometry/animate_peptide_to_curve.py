@@ -137,7 +137,7 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
 
     _name = "Animate Peptide to Curve"
     _asset_name = "Animate Peptide to Curve"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.animate_peptide_to_curve"}
 

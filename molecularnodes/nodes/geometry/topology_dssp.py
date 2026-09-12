@@ -246,19 +246,19 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
         instances = tree.outputs.geometry("Instances")
 
         with g.Frame("Find Residues that we might be HBonding to"):
-            group = BackboneO(method="Read")
-            group_1 = BackboneNH(menu="Read")
+            group = BackboneNH(menu="Read")
+            group_1 = BackboneO(method="Read")
             capture = g.CaptureAttribute.point(geometry=ca_mesh)
             o_nh = capture.items.integer(
                 "O -> NH",
                 g.SampleNearest.point(
-                    g.SetPosition(geometry=ca_mesh, position=group_1), group
+                    g.SetPosition(geometry=ca_mesh, position=group), group_1
                 ),
             )
             nh_o = capture.items.integer(
                 "NH -> O",
                 g.SampleNearest.point(
-                    g.SetPosition(geometry=ca_mesh, position=group), group_1
+                    g.SetPosition(geometry=ca_mesh, position=group_1), group
                 ),
             )
         with g.Frame("Check if they are actually bonded to to the relevant atom"):
@@ -331,7 +331,7 @@ class TopologyDSSP(AssetGeometryGroup):
 
     _name = "Topology DSSP"
     _asset_name = "Topology DSSP"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "description": "Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm",

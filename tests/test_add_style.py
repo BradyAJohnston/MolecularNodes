@@ -260,7 +260,7 @@ def test_add_style_callable_style():
     "kwargs",
     [
         {"selection": "protein"},
-        {"material": "MN Default"},
+        {"material": "Default"},
         {"quality": 5},
     ],
 )

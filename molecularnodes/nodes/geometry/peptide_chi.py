@@ -70,7 +70,7 @@ class PeptideChi(AssetGeometryGroup):
 
     _name = "Peptide Chi"
     _asset_name = "Peptide Chi"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -134,18 +134,18 @@ class PeptideChi(AssetGeometryGroup):
         x5 = tree.inputs.float("X5", 0.0, subtype="ANGLE")
         position_1 = tree.outputs.vector("Position", subtype="XYZ")
 
-        group = OverrideIndex(
+        group = MN_pivot_peptide()
+        group_1 = OverrideIndex(
             selection=MenuAtomName(atom_name="CG2").o.selection,
             override=MenuResidueMask(atom_name="CB").o.index,
         )
-        group_1 = MN_pivot_peptide()
         group_2 = AccumulateAxisRotation(
             position=position,
-            selection=IsPeptide(and_=selection).o.selection & group_1,
-            pivot=group_1,
+            selection=IsPeptide(and_=selection).o.selection & group,
+            pivot=group,
             angle=MN_peptide_chi_values(x1=x1, x2=x2, x3=x3, x4=x4, x5=x5).o.value,
             group_id=UResID().o.ures_id,
-            transform_index=group.o.output.point.at(HydrogenBondingPartner()),
+            transform_index=group_1.o.output.point.at(HydrogenBondingPartner()),
         )
         (
             (~MenuAtomName(atom_name="OXT").o.selection & selection).switch.vector(

@@ -44,7 +44,7 @@ class BackboneNH(AssetGeometryGroup):
 
     _name = "Backbone NH"
     _asset_name = "Backbone NH"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.backbone_nh"}
 

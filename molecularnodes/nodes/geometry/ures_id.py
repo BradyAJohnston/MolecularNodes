@@ -39,7 +39,7 @@ class UResID(AssetGeometryGroup):
 
     _name = "URes ID"
     _asset_name = "URes ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):

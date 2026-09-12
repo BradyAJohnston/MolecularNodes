@@ -45,7 +45,7 @@ class BooleanAndOr(AssetGeometryGroup):
 
     _name = "Boolean AndOr"
     _asset_name = "Boolean AndOr"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.boolean_andor"}
 

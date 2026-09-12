@@ -113,8 +113,8 @@ class XPBDSolvePoints(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = ResidueID()
-        group_1 = InverseMass()
+        group = InverseMass()
+        group_1 = ResidueID()
         vector_math = (
             g.Position().o.position
             + g.RandomValue.vector((-1.0, -1.0, -1.0), (1.0, 1.0, 1.0)).o.value * 0.001
@@ -123,16 +123,16 @@ class XPBDSolvePoints(CustomGeometryGroup):
         capture.items.vector("Vector", vector_math)
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
         index = capture_1.items.integer("Index", g.IndexOfNearest().o.index)
-        evaluate_at_index = group.o.res_id.point.at(index.output)
+        evaluate_at_index = group_1.o.res_id.point.at(index.output)
         _compare = g.Compare.integer.not_equal(
-            abs(group.o.res_id - evaluate_at_index), 1
+            abs(group_1.o.res_id - evaluate_at_index), 1
         )
         math_1 = radius.point.at(index.output) + radius
         group_2 = ConstraintDistance(
             target=g.Position().o.position.point.at(index.output),
             distance=math_1,
-            w1=group_1.o.w,
-            w2=group_1.o.w.point.at(index.output),
+            w1=group.o.w,
+            w2=group.o.w.point.at(index.output),
             alpha=alpha,
             deltat=deltat,
         )

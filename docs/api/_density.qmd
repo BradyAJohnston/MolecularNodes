@@ -162,7 +162,7 @@ ds.show_contours = False
 
 ```{python}
 # set material
-ds.material = "MN Flat Outline"
+ds.material = "Flat Outline"
 ```
 
 ```{python}

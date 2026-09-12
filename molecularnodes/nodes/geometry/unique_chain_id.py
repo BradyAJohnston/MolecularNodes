@@ -41,7 +41,7 @@ class UniqueChainID(AssetGeometryGroup):
 
     _name = "Unique Chain ID"
     _asset_name = "Unique Chain ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Compute a unique Group ID based on the `chain_id` attribute, but also incrememnting if subsequent points are over a cutoff distance from each other"

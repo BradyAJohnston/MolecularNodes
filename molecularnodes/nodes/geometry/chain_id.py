@@ -36,7 +36,7 @@ class ChainID(AssetGeometryGroup):
 
     _name = "Chain ID"
     _asset_name = "Chain ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Integer representation of the Chain IDs that were present in the structure",

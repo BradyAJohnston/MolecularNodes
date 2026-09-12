@@ -3,7 +3,7 @@ import bpy
 from bpy.types import UILayout
 from ..entities import Molecule, StreamingTrajectory, molecule
 from ..entities.base import EntityType
-from ..nodes.utils import get_star_node
+from ..nodes._utils import get_star_node
 from ..session import get_session
 from .ops import MN_OT_add_selection_to_style
 from .props import TrajectorySelectionItem

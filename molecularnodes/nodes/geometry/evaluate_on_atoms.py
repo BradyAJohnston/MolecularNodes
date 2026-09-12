@@ -54,7 +54,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
 
     _name = "Evaluate on Atoms"
     _asset_name = "Evaluate on Atoms"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):

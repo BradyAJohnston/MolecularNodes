@@ -159,7 +159,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
 
     _name = "oxDNA Style Ribbon"
     _asset_name = "oxDNA Style Ribbon"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "default_group_node_width": 160,

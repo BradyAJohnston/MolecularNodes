@@ -39,7 +39,7 @@ class EdgeGroupID(AssetGeometryGroup):
 
     _name = "Edge Group ID"
     _asset_name = "Edge Group ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):

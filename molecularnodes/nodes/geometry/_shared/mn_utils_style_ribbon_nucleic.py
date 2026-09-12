@@ -224,8 +224,8 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
         curve = tree.outputs.geometry("Curve")
 
         with g.Frame("Slightly Extend Curve Ends"):
-            endpoint_selection = g.EndpointSelection()
             group = CurveEndpointValues()
+            endpoint_selection = g.EndpointSelection()
             group_1 = VectorInAngstroms(
                 vector=OffsetVector(vector=g.CurveTangent(), offset=group.o.value),
                 normalize=False,
@@ -241,6 +241,10 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
             "Selection", IsNucleic(and_=selection).o.selection
         )
         backbone_radius_1 = capture.items.float("Backbone Radius", backbone_radius)
+        transform_geometry = g.TransformGeometry(
+            geometry=g.CurveCircle(resolution=4, radius=0.01),
+            rotation=(math.pi / 2, math.pi / 4, -math.pi / 2),
+        )
         capture_1 = g.CaptureAttribute.point(
             geometry=(
                 capture.o.geometry
@@ -288,7 +292,7 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
             )
             value = g.Value(1.0)
             cylinder = g.Cylinder(vertices=base_resolution, radius=value, depth=value)
-            transform_geometry = (
+            transform_geometry_1 = (
                 cylinder
                 >> g.TransformGeometry(
                     translation=g.CombineXYZ(z=value.o.value / 2.0),
@@ -308,7 +312,7 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
             ) >> g.InstanceOnPoints(
                 selection=base_valid.output,
                 instance=FallbackGeometry(
-                    geometry=base_geometry, fallback=transform_geometry
+                    geometry=base_geometry, fallback=transform_geometry_1
                 ),
                 rotation=axes_to_rotation,
             )
@@ -320,17 +324,6 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
             selection=endpoint_selection,
             offset=group_1,
         )
-        transform_geometry_1 = g.TransformGeometry(
-            geometry=g.CurveCircle(resolution=4, radius=0.01),
-            rotation=(math.pi / 2, math.pi / 4, -math.pi / 2),
-        )
-        remove_named_attribute_1 = (
-            SmoothByAngle(
-                mesh=instance_on_points, angle=5 * math.pi / 12, ignore_sharpness=True
-            )
-            >> g.SetMaterial(material=material)
-            >> g.RemoveNamedAttribute(pattern_mode="Wildcard", name="tmp_*")
-        )
         group_5 = CurveCustomProfile(
             curve=set_position,
             subdivisions=backbone_subdivisions,
@@ -339,15 +332,22 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
                 (0.0, 0.0, -math.pi / 4), rotation_space="LOCAL"
             ),
             profile_scale=backbone_scale / MN_world_scale(),
-            profile_curve=switch.switch.geometry(transform_geometry_1),
+            profile_curve=switch.switch.geometry(transform_geometry),
             profile_resolution=backbone_resolution,
-            input_14=58.48539,
+            socket_11=58.48539,
         )
         group_6 = Cleanup(
             geometry=SmoothByAngle(mesh=group_5, angle=math.pi / 3),
             color_source=store_named_attribute_1,
             material=material,
             shade_smooth=backbone_shade_smooth,
+        )
+        remove_named_attribute_1 = (
+            SmoothByAngle(
+                mesh=instance_on_points, angle=5 * math.pi / 12, ignore_sharpness=True
+            )
+            >> g.SetMaterial(material=material)
+            >> g.RemoveNamedAttribute(pattern_mode="Wildcard", name="tmp_*")
         )
         join_geometry = g.JoinGeometry(geometry=(group_6, remove_named_attribute_1))
 

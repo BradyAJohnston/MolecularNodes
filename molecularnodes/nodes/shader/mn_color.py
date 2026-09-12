@@ -29,7 +29,7 @@ class MNColor(AssetShaderGroup):
 
     _name = "MN Color"
     _asset_name = "MN Color"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
 
     class _Inputs(SocketAccessor):

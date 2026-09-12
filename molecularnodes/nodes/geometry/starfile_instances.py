@@ -88,7 +88,7 @@ class StarfileInstances(AssetGeometryGroup):
 
     _name = "Starfile Instances"
     _asset_name = "Starfile Instances"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.starfile_instances"}
 
@@ -194,6 +194,13 @@ class StarfileInstances(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
+        with g.Frame("Selection"):
+            boolean_math = (
+                g.Compare.integer.equal(
+                    image, g.NamedAttribute.integer("image_id").o.attribute
+                ).o.result
+                & selection
+            )
         with g.Frame("Instance"):
             menu_switch = g.MenuSwitch.geometry(
                 menu,
@@ -206,13 +213,6 @@ class StarfileInstances(AssetGeometryGroup):
                 vertices=3, material=material
             ) >> g.TransformGeometry(scale=g.Value(2.0))
             group = FallbackGeometry(geometry=menu_switch, fallback=transform_geometry)
-        with g.Frame("Selection"):
-            boolean_math = (
-                g.Compare.integer.equal(
-                    image, g.NamedAttribute.integer("image_id").o.attribute
-                ).o.result
-                & selection
-            )
         with g.Frame("Scale Pixel Coordinates"):
             set_position = points >> g.SetPosition(
                 position=g.Position().o.position * pixel_scale
@@ -245,8 +245,4 @@ ASSET = StarfileInstances
 
 ASSET_METADATA = {
     "catalog_id": "7ccb8802-a69f-483e-bf6e-4a47aaa9e940",
-}
-
-DATABLOCK_DEPENDENCIES = {
-    "materials": ("MN Default.old",),
 }

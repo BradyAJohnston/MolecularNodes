@@ -26,7 +26,7 @@ class CurveTransform(AssetGeometryGroup):
 
     _name = "Curve Transform"
     _asset_name = "Curve Transform"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Calculates the transformation matrix for the point on the curve. Position is taken from the `Position`, `Rotation` is calculated from the `Normal` and `Tangent` values, and the `Radius` drives the scale",

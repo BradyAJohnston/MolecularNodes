@@ -49,7 +49,7 @@ class SelectSphere(AssetGeometryGroup):
 
     _name = "Select Sphere"
     _asset_name = "Select Sphere"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_sphere"}
 
@@ -128,5 +128,5 @@ ASSET_METADATA = {
 }
 
 DATABLOCK_DEPENDENCIES = {
-    "objects": ("select_cube", "select_sphere"),
+    "objects": ("select_sphere",),
 }

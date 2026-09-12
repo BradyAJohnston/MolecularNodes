@@ -37,7 +37,7 @@ class BFactor(AssetGeometryGroup):
 
     _name = "B Factor"
     _asset_name = "B Factor"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.b_factor"}
 

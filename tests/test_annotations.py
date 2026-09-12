@@ -491,7 +491,7 @@ class TestAnnotations:
         # test parent
         assert bpy.data.objects[name].parent == t.object
         # verify default material appended
-        assert "MN Default" in bpy.data.materials
+        assert "Default" in bpy.data.materials
         # test annotation object creation during update (1)
         bpy.data.objects.remove(bpy.data.objects[name], do_unlink=True)
         assert name not in bpy.data.objects

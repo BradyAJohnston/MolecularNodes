@@ -24,6 +24,22 @@ jobs:
       - name: Lint code base
         run: ruff check
 
+  roundtrip:
+    name: Node asset roundtrip
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Install molecularnodes
+        run: |
+          uv sync --all-extras
+      - name: Check sources survive build -> dump
+        timeout-minutes: 15
+        run: |
+          uv run -m nodebpy.assets check
+
   build:
     name: Build Extension
     runs-on: macos-latest
@@ -46,6 +62,10 @@ jobs:
       - uses: BradyAJohnston/setup-blender@v5
         with:
           version: ${{ matrix.version }}
+      - name: Build node assets
+        run: |
+          uv sync --all-extras
+          uv run -m nodebpy.assets build
       - name: Build extension
         run: |
           blender -b -P build.py
@@ -76,6 +96,10 @@ jobs:
       - name: Install molecularnodes
         run: |
           uv sync --all-extras
+      - name: Build node assets
+        timeout-minutes: 10
+        run: |
+          uv run -m nodebpy.assets build
       - name: Run Tests
         timeout-minutes: 8
         run: |
@@ -142,6 +166,11 @@ jobs:
       - name: Install Packages
         run: |
           uv sync --all-extras
+
+      - name: Build node assets
+        timeout-minutes: 10
+        run: |
+          uv run -m nodebpy.assets build
 
       - name: Pre-render Scripts
         timeout-minutes: 3

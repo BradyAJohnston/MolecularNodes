@@ -97,7 +97,7 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
             u_component=u_component,
             socket_6=CurveRotation(),
             profile_resolution=quality * g.Integer(integer=3),
-            input_14=0.0,
+            socket_11=0.0,
         )
         (
             Cleanup(
@@ -204,7 +204,7 @@ class StyleRibbon(AssetGeometryGroup):
 
     _name = "Style Ribbon"
     _asset_name = "Style Ribbon"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "node_tool_idname": "geometry.style_ribbon",
@@ -402,18 +402,6 @@ class StyleRibbon(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        group = SeparatePolymers(atoms=CheckGeometry(geometry=atoms_1))
-        group_1 = MN_utils_style_ribbon_peptide(
-            Atoms=group.o.peptide,
-            Selection=selection,
-            Quality=quality,
-            **{"BS Smoothing": backbone_smoothing},
-            Radius=peptide_radius,
-            **{"Shade Smooth": shade_smooth},
-            Material=material,
-            **{"UV Map": uv_map, "U Component": u_component},
-            Threshold=backbone_threshold,
-        )
         menu_switch = g.MenuSwitch.integer(
             nucleic_backbone_shape, {"Cicular": 0, "Rectangular": 1}
         )
@@ -426,7 +414,8 @@ class StyleRibbon(AssetGeometryGroup):
                 ),
             ),
         )
-        group_2 = MN_utils_style_ribbon_nucleic(
+        group = SeparatePolymers(atoms=CheckGeometry(geometry=atoms_1))
+        group_1 = MN_utils_style_ribbon_nucleic(
             atoms=group.o.nucleic,
             selection=selection,
             material=material,
@@ -442,9 +431,20 @@ class StyleRibbon(AssetGeometryGroup):
             base_scale=base_scale,
             base_resolution=base_resolution,
         )
-        g.JoinGeometry(geometry=(group_1.o.geometry, group_2.o.geometry)) >> geometry_1
+        group_2 = MN_utils_style_ribbon_peptide(
+            Atoms=group.o.peptide,
+            Selection=selection,
+            Quality=quality,
+            **{"BS Smoothing": backbone_smoothing},
+            Radius=peptide_radius,
+            **{"Shade Smooth": shade_smooth},
+            Material=material,
+            **{"UV Map": uv_map, "U Component": u_component},
+            Threshold=backbone_threshold,
+        )
+        g.JoinGeometry(geometry=(group_2.o.geometry, group_1.o.geometry)) >> geometry_1
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
-        _join_geometry = g.JoinGeometry(geometry=(group_1.o.curve, group_2.o.curve))
+        _join_geometry = g.JoinGeometry(geometry=(group_2.o.curve, group_1.o.curve))
 
         u_component.default_value = "Factor"
         nucleic_backbone_shape.default_value = "Cicular"

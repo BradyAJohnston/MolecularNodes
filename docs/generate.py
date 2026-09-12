@@ -1,7 +1,8 @@
 """Generate the node documentation: GUI pages and the quartodoc API structure.
 
 The .blend asset file is the source of truth: every node group marked as an
-asset in `molecularnodes/assets/node_data_file.blend` is documented, grouped
+asset in `molecularnodes/assets/nodes.blend` (built from the sources in
+`molecularnodes/nodes/`) is documented, grouped
 by its asset catalog (the same grouping the GUI shows). Each node group is
 documented twice, with the two versions linking to each other:
 

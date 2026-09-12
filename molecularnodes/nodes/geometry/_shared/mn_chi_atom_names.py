@@ -66,6 +66,13 @@ class MN_chi_atom_names(CustomGeometryGroup):
 
         group = MenuAtomName(atom_name="CG")
         group_1 = MenuAtomName(atom_name="CG1")
+        group_2 = MenuAtomName(atom_name="CD")
+        group_3 = MenuAtomName(atom_name="OD1")
+        group_4 = MenuAtomName(atom_name="CD1")
+        group_5 = MenuAtomName(atom_name="OE1")
+        group_6 = MenuAtomName(atom_name="CE")
+        _group_7 = MenuResidueName()
+        _group_8 = ResidueName()
         (
             SwitchResidueName(
                 ala=group.o[0],
@@ -91,9 +98,6 @@ class MN_chi_atom_names(CustomGeometryGroup):
             )
             >> x1
         )
-        group_2 = MenuAtomName(atom_name="CD")
-        group_3 = MenuAtomName(atom_name="OD1")
-        group_4 = MenuAtomName(atom_name="CD1")
         (
             SwitchResidueName(
                 ala=group_2.o[0],
@@ -119,7 +123,6 @@ class MN_chi_atom_names(CustomGeometryGroup):
             )
             >> x2
         )
-        _group_5 = ResidueName()
         (
             SwitchResidueName(
                 arg=MenuAtomName(atom_name="CZ").o[0],
@@ -128,8 +131,6 @@ class MN_chi_atom_names(CustomGeometryGroup):
             >> x4
         )
         SwitchResidueName(lys=MenuAtomName(atom_name="NH1").o[0]) >> x5
-        group_6 = MenuAtomName(atom_name="OE1")
-        group_7 = MenuAtomName(atom_name="CE")
         (
             SwitchResidueName(
                 ala=0,
@@ -137,14 +138,14 @@ class MN_chi_atom_names(CustomGeometryGroup):
                 asn=0,
                 asp=0,
                 cys=0,
-                glu=group_6.o[0],
-                gln=group_6.o[0],
+                glu=group_5.o[0],
+                gln=group_5.o[0],
                 gly=0,
                 his=0,
                 ile=0,
                 leu=0,
-                lys=group_7.o[0],
-                met=group_7.o[0],
+                lys=group_6.o[0],
+                met=group_6.o[0],
                 phe=0,
                 pro=0,
                 ser=0,
@@ -155,4 +156,3 @@ class MN_chi_atom_names(CustomGeometryGroup):
             )
             >> x3
         )
-        _group_8 = MenuResidueName()

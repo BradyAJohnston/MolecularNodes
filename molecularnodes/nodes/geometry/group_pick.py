@@ -43,7 +43,7 @@ class GroupPick(AssetGeometryGroup):
 
     _name = "Group Pick"
     _asset_name = "Group Pick"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Get the item of the `True` in each `Group ID`, but only if there is a single `True` in each group",

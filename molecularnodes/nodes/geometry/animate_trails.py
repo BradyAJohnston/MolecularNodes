@@ -91,7 +91,7 @@ class AnimateTrails(AssetGeometryGroup):
 
     _name = "Animate Trails"
     _asset_name = "Animate Trails"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.animate_trails"}
 
@@ -261,8 +261,4 @@ ASSET = AnimateTrails
 
 ASSET_METADATA = {
     "catalog_id": "85730213-4c2e-469f-b333-52ac53adf274",
-}
-
-DATABLOCK_DEPENDENCIES = {
-    "materials": ("MN Ambient Occlusion",),
 }

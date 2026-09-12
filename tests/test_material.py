@@ -85,11 +85,11 @@ def test_add_style_with_preset():
 
 def test_add_style_with_material_string():
     mol = mn.Molecule.fetch("1BNA", cache=data_dir)
-    mol.add_style("cartoon", material="MN Flat")
+    mol.add_style("cartoon", material="Flat")
     socket = mol.tree.tree.nodes["Style Cartoon"].inputs["Material"]
-    assert socket.default_value.name.startswith("MN Flat")
+    assert socket.default_value.name.startswith("Flat")
 
 
 def test_append_material():
-    mat = material.append_material("MN Default")
+    mat = material.append_material("Default")
     assert isinstance(mat, bpy.types.Material)

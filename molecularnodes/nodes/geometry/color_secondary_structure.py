@@ -50,7 +50,7 @@ class ColorSecondaryStructure(AssetGeometryGroup):
 
     _name = "Color Secondary Structure"
     _asset_name = "Color Secondary Structure"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_sec_struct"}
 

@@ -44,7 +44,7 @@ class RelativeIndex(AssetGeometryGroup):
 
     _name = "Relative Index"
     _asset_name = "Relative Index"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Get information about the points in a `Group ID` such as size and the start and end Indices",
@@ -101,9 +101,9 @@ class RelativeIndex(AssetGeometryGroup):
         )
 
         group = GroupParameter(group_id=group_id)
+        _group_1 = GroupPick(pick=group.o.is_last, group_id=group_id)
         GroupPickFirst(pick=group.o.is_first, group_id=group_id).o.index >> first_index
         GroupPickFirst(pick=group.o.is_last, group_id=group_id).o.index >> last_index
-        _group_1 = GroupPick(pick=group.o.is_last, group_id=group_id)
         _group_2 = GroupPick(pick=group.o.is_first, group_id=group_id)
 
         group.o.group_size >> group_size

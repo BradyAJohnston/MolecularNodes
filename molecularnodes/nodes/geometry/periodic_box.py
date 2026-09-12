@@ -67,7 +67,7 @@ class PeriodicBox(AssetGeometryGroup):
 
     _name = "Periodic Box"
     _asset_name = "Periodic Box"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "VECTOR"
 
     class _Inputs(SocketAccessor):

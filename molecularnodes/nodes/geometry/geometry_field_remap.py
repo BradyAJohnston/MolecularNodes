@@ -49,7 +49,7 @@ class GeometryFieldRemap(AssetGeometryGroup):
 
     _name = "Geometry Field Remap"
     _asset_name = "Geometry Field Remap"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Maps the range of values of the attribute on from the target atoms, to the range from min to max",

@@ -38,7 +38,7 @@ class ColorToOKLab(AssetGeometryGroup):
 
     _name = "Color to OKLab"
     _asset_name = "Color to OKLab"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
 
     class _Inputs(SocketAccessor):

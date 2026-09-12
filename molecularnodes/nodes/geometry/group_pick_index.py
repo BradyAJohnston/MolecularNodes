@@ -45,7 +45,7 @@ class GroupPickIndex(AssetGeometryGroup):
 
     _name = "Group Pick Index"
     _asset_name = "Group Pick Index"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):

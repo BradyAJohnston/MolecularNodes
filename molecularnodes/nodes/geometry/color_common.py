@@ -59,7 +59,7 @@ class ColorCommon(AssetGeometryGroup):
 
     _name = "Color Common"
     _asset_name = "Color Common"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_common"}
 
@@ -145,33 +145,33 @@ class ColorCommon(AssetGeometryGroup):
             description="The output colors for the common elements",
         )
 
-        group = Color()
-        group_1 = AtomicNumber()
+        group = AtomicNumber()
+        group_1 = Color()
         index_switch = g.IndexSwitch.color(
-            group_1,
+            group,
             (
-                group,
+                group_1,
                 hydrogen,
-                group,
-                group,
-                group,
-                group,
+                group_1,
+                group_1,
+                group_1,
+                group_1,
                 carbon,
                 nitrogen,
                 oxygen,
-                group,
-                group,
-                group,
-                group,
-                group,
-                group,
+                group_1,
+                group_1,
+                group_1,
+                group_1,
+                group_1,
+                group_1,
                 phosphorous,
                 sulfur,
             ),
         )
         (
-            BetweenInteger(value=group_1, upper=16).o.boolean.switch.color(
-                group, index_switch
+            BetweenInteger(value=group, upper=16).o.boolean.switch.color(
+                group_1, index_switch
             )
             >> color
         )

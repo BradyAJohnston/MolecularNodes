@@ -49,7 +49,7 @@ class NucleicChi(AssetGeometryGroup):
 
     _name = "Nucleic Chi"
     _asset_name = "Nucleic Chi"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -96,16 +96,16 @@ class NucleicChi(AssetGeometryGroup):
             "Position", description="Transformed vector", subtype="XYZ"
         )
 
-        group = IsNucleic(and_=selection)
-        group_1 = MN_pivot_nucleic()
+        group = MN_pivot_nucleic()
+        group_1 = IsNucleic(and_=selection)
         group_2 = AccumulateAxisRotation(
             position=position,
-            selection=group.o.selection,
-            pivot=group_1.o.pivot_base,
-            angle=group_1.o.accumulate_base.switch.float(true=x1),
+            selection=group_1.o.selection,
+            pivot=group.o.pivot_base,
+            angle=group.o.accumulate_base.switch.float(true=x1),
             group_id=UniqueResidueID(),
         )
-        group.o.selection.switch.vector(position, group_2.o.position) >> position_1
+        group_1.o.selection.switch.vector(position, group_2.o.position) >> position_1
 
 
 ASSET = NucleicChi
