@@ -110,17 +110,17 @@ class ResidueDihedralAngle(AssetGeometryGroup):
         )
         bc = tree.outputs.vector("BC", description="The axis vector BC")
 
-        group = DihedralAngle(
+        dihedral_angle = DihedralAngle(
             a=ResidueMask(atom_name=a).o.position,
             b=g.Position(),
             c=ResidueMask(atom_name=c_).o.position,
             d=ResidueMask(atom_name=d).o.position,
         )
 
-        group >> value
-        group.o.ba_bc >> ba_bc
-        group.o.cd_bc >> cd_bc
-        group.o.bc >> bc
+        dihedral_angle >> value
+        dihedral_angle.o.ba_bc >> ba_bc
+        dihedral_angle.o.cd_bc >> cd_bc
+        dihedral_angle.o.bc >> bc
 
 
 ASSET = ResidueDihedralAngle

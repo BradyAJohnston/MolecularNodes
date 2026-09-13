@@ -121,14 +121,14 @@ class AtomsToCACurves(AssetGeometryGroup):
         curves = tree.outputs.geometry("Curves")
 
         with g.Frame("Turn backbone points to curves"):
-            group = AtomsToCurves(
+            atoms_to_curves = AtomsToCurves(
                 atoms=MN_topo_assign_backbone(atoms=atoms).o.atoms,
                 selection=IsAlphaCarbon(and_=selection).o.selection,
                 cutoff=threshold,
             )
         position = g.Position()
         set_curve_normal = MN_init_tmp_attributes(
-            geometry=group
+            geometry=atoms_to_curves
             >> g.StoreNamedAttribute.point.integer(name="tmp_idx", value=g.Index())
         ) >> g.SetCurveNormal(
             normal=BackboneVectors(method="Read").o.normal, mode="Free"

@@ -158,14 +158,14 @@ class MenuResidueMask(AssetGeometryGroup):
             description="Position of the picked point in the group, returns (0, 0, 0) if not valid",
         )
 
-        group = GroupPickVector(
+        group_pick_vector = GroupPickVector(
             pick=MenuAtomName(atom_name=atom_name).o.selection,
             group_id=UResID().o.ures_id,
         )
 
-        group >> is_valid
-        group.o.index >> index
-        group.o.vector >> position
+        group_pick_vector >> is_valid
+        group_pick_vector.o.index >> index
+        group_pick_vector.o.vector >> position
 
         atom_name.default_value = "N"
 

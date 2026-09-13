@@ -72,7 +72,7 @@ class SelectResIDString(AssetGeometryGroup):
         closure_zone_1 = g.ClosureZone()
         string_2 = closure_zone_1.inputs.string("String")
         selection_2 = closure_zone_1.outputs.boolean("Selection")
-        group = ResidueID()
+        residue_id = ResidueID()
         string_3 = g.String(string="-")
         g.Compare.integer.equal(string_1.to_integer(), ResidueID()) >> selection_1
         trim_string = string.split(",").trim()
@@ -80,13 +80,10 @@ class SelectResIDString(AssetGeometryGroup):
         boolean = repeat_zone.items.boolean("Boolean")
         get_list_item = trim_string[repeat_zone.iteration]
         trim_string_1 = string_2.split(string_3).trim()
-        (
-            (
-                (group >= trim_string_1[0].to_integer())
-                & (group <= trim_string_1[1].to_integer())
-            )
-            >> selection_2
+        boolean_math = (residue_id >= trim_string_1[0].to_integer()) & (
+            residue_id <= trim_string_1[1].to_integer()
         )
+        boolean_math >> selection_2
         switch = get_list_item.contains(string_3).switch.closure(
             closure_zone.closure, closure_zone_1.closure
         )

@@ -137,7 +137,9 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
-        group = IndexDistance(target_index=target_index, position=target_position)
+        index_distance = IndexDistance(
+            target_index=target_index, position=target_position
+        )
         (
             atoms
             >> g.SetPosition(position=position)
@@ -146,8 +148,8 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
                 instance=PrimitiveArrow(
                     vertices=3, ratio=0.5625, value=(0.0, 0.0, 0.0, 1.0)
                 ),
-                rotation=group.o.rotation,
-                scale=g.CombineXYZ(z=group.o.distance * scale, x=0.02, y=0.02),
+                rotation=index_distance.o.rotation,
+                scale=g.CombineXYZ(z=index_distance.o.distance * scale, x=0.02, y=0.02),
             )
             >> instances
         )

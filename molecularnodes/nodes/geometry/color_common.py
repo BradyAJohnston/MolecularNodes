@@ -145,33 +145,33 @@ class ColorCommon(AssetGeometryGroup):
             description="The output colors for the common elements",
         )
 
-        group = AtomicNumber()
-        group_1 = Color()
+        atomic_number = AtomicNumber()
+        color_1 = Color()
         index_switch = g.IndexSwitch.color(
-            group,
+            atomic_number,
             (
-                group_1,
+                color_1,
                 hydrogen,
-                group_1,
-                group_1,
-                group_1,
-                group_1,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
                 carbon,
                 nitrogen,
                 oxygen,
-                group_1,
-                group_1,
-                group_1,
-                group_1,
-                group_1,
-                group_1,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
                 phosphorous,
                 sulfur,
             ),
         )
         (
-            BetweenInteger(value=group, upper=16).o.boolean.switch.color(
-                group_1, index_switch
+            BetweenInteger(value=atomic_number, upper=16).o.boolean.switch.color(
+                color_1, index_switch
             )
             >> color
         )

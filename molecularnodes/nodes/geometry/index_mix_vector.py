@@ -103,18 +103,18 @@ class IndexMixVector(AssetGeometryGroup):
             description="The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`",
         )
 
-        group = FractionateFloat(value=index)
+        fractionate_float = FractionateFloat(value=index)
         mix = g.Mix(
-            factor_float=group.o.fraction,
-            a_vector=value.point.at(group.o.floor),
-            b_vector=value.point.at(group.o.ceiling),
+            factor_float=fractionate_float.o.fraction,
+            a_vector=value.point.at(fractionate_float.o.floor),
+            b_vector=value.point.at(fractionate_float.o.ceiling),
             data_type="VECTOR",
             clamp_factor=True,
         )
 
         mix.o.result_vector >> value_1
-        group.o.floor >> from_
-        group.o.ceiling >> to
+        fractionate_float.o.floor >> from_
+        fractionate_float.o.ceiling >> to
 
 
 ASSET = IndexMixVector

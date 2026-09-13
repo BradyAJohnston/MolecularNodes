@@ -241,7 +241,7 @@ class CurveCustomProfile(AssetGeometryGroup):
             rotation=rotation.output,
             scale=scale.output,
         )
-        group = SamplePosition(
+        sample_position = SamplePosition(
             geometry=g.RealizeInstances(
                 geometry=instance_on_points, realize_to_point_domain=True
             )
@@ -264,7 +264,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         (
             g.IndexSwitch.geometry(
                 ProfileTypePicker(menu=profile_type),
-                (switch_2, g.SetPosition(geometry=switch_2, position=group)),
+                (switch_2, g.SetPosition(geometry=switch_2, position=sample_position)),
             )
             >> geometry
         )

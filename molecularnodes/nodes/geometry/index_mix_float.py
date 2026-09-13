@@ -102,17 +102,17 @@ class IndexMixFloat(AssetGeometryGroup):
             description="The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`",
         )
 
-        group = FractionateFloat(value=index)
+        fractionate_float = FractionateFloat(value=index)
         mix = g.Mix(
-            factor_float=group.o.fraction,
-            a_float=value.point.at(group.o.floor),
-            b_float=value.point.at(group.o.ceiling),
+            factor_float=fractionate_float.o.fraction,
+            a_float=value.point.at(fractionate_float.o.floor),
+            b_float=value.point.at(fractionate_float.o.ceiling),
             clamp_factor=True,
         )
 
         mix >> value_1
-        group.o.floor >> from_
-        group.o.ceiling >> to
+        fractionate_float.o.floor >> from_
+        fractionate_float.o.ceiling >> to
 
 
 ASSET = IndexMixFloat

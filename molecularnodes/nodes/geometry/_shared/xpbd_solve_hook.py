@@ -115,10 +115,12 @@ class XPBDSolveHook(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = LerpPosition(b=target, deltat=deltat, decay=decay)
+        lerp_position = LerpPosition(b=target, deltat=deltat, decay=decay)
         (
             geometry
-            >> g.SetPosition(selection=selection, position=group.o.position)
+            >> g.SetPosition(selection=selection, position=lerp_position.o.position)
             >> geometry_1
         )
-        _switch = (group.o.length < 0.01).switch.vector(group.o.position, target)
+        _switch = (lerp_position.o.length < 0.01).switch.vector(
+            lerp_position.o.position, target
+        )

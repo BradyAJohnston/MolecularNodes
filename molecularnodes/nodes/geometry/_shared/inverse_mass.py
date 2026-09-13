@@ -56,10 +56,10 @@ class InverseMass(CustomGeometryGroup):
         w = tree.outputs.float("w")
         mass = tree.outputs.float("mass")
 
-        group = FallbackFloat(name="mass", fallback=1.0)
+        fallback_float = FallbackFloat(name="mass", fallback=1.0)
         string = g.String(string="inverse_mass")
-        FallbackFloat(name=string, fallback=1.0 / group) >> w
+        FallbackFloat(name=string, fallback=1.0 / fallback_float) >> w
         named_attribute = g.NamedAttribute.float(string)
 
         named_attribute.o.exists >> exists
-        group >> mass
+        fallback_float >> mass

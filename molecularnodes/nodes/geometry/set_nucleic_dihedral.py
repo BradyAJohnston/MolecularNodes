@@ -134,7 +134,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
 
         math_1 = DihedralNucleicAngle().o.angle * -1.0
-        group = NucleicDihedral(
+        nucleic_dihedral = NucleicDihedral(
             selection=selection,
             alpha=alpha + math_1,
             beta=beta + math_1,
@@ -142,7 +142,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
             epsilon=epsilon + math_1,
             zeta=zeta + math_1,
         )
-        geometry >> g.SetPosition(position=group) >> geometry_1
+        geometry >> g.SetPosition(position=nucleic_dihedral) >> geometry_1
 
 
 ASSET = SetNucleicDihedral

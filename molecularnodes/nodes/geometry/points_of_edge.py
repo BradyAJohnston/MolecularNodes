@@ -126,21 +126,21 @@ class PointsOfEdge(AssetGeometryGroup):
             min_value=0,
         )
 
-        group = EdgeInfo(vertex_index=vertex_index, edge_index=edge_index)
-        g.EdgesOfVertex().o.total.point.at(group.o.point_index) >> total
+        edge_info = EdgeInfo(vertex_index=vertex_index, edge_index=edge_index)
+        g.EdgesOfVertex().o.total.point.at(edge_info.o.point_index) >> total
         evaluate_at_index = EdgeInfo(
             vertex_index=edge_index, edge_index=3
-        ).o.point_index.point.at(group.o.point_index)
+        ).o.point_index.point.at(edge_info.o.point_index)
         index = g.Index()
         evaluate_at_index_1 = EdgeInfo(
             vertex_index=vertex_index
-        ).o.point_index.point.at(group.o.point_index)
+        ).o.point_index.point.at(edge_info.o.point_index)
         evaluate_at_index_2 = EdgeInfo(
             vertex_index=vertex_index, edge_index=1
-        ).o.point_index.point.at(group.o.point_index)
+        ).o.point_index.point.at(edge_info.o.point_index)
         evaluate_at_index_3 = EdgeInfo(
             vertex_index=vertex_index, edge_index=2
-        ).o.point_index.point.at(group.o.point_index)
+        ).o.point_index.point.at(edge_info.o.point_index)
         with g.Frame("check if selecting self, return -1 if so"):
             (
                 g.Compare.integer.equal(

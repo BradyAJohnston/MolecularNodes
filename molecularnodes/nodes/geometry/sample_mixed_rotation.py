@@ -98,12 +98,12 @@ class SampleMixedRotation(AssetGeometryGroup):
             description="The evaluated and mixed field, sampled from the sample geometry at the given `Index`",
         )
 
-        group = IndexMixRotation(rotation=rotation, index=index)
+        index_mix_rotation = IndexMixRotation(rotation=rotation, index=index)
         (
             geometry
             >> g.SampleIndex(
-                value=group.o.rotation,
-                index=group.o.from_,
+                value=index_mix_rotation.o.rotation,
+                index=index_mix_rotation.o.from_,
                 data_type="QUATERNION",
                 clamp=True,
             )

@@ -101,10 +101,10 @@ class SelectAttribute(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = MN_select_attribute(and_=and_, or_=or_, name=name)
+        mn_select_attribute = MN_select_attribute(and_=and_, or_=or_, name=name)
 
-        group >> selection
-        group.o.inverted >> inverted
+        mn_select_attribute >> selection
+        mn_select_attribute.o.inverted >> inverted
 
 
 ASSET = SelectAttribute

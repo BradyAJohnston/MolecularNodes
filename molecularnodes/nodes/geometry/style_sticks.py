@@ -182,7 +182,7 @@ class StyleSticks(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_1 >> g.SeparateGeometry.point(selection=selection)
-        group = MN_utils_style_sticks(
+        mn_utils_style_sticks = MN_utils_style_sticks(
             atoms=separate_geometry.o.selection,
             radius=scale,
             resolution=g.Math.multiply(quality, g.Integer(integer=8)),
@@ -196,7 +196,7 @@ class StyleSticks(AssetGeometryGroup):
             name="vdw_radii",
             value=MNUnits(value=1.0).o.angstrom,
         )
-        group_1 = StyleSpheres(
+        style_spheres = StyleSpheres(
             atoms=store_named_attribute,
             sphere=sphere,
             quality=quality,
@@ -204,7 +204,7 @@ class StyleSticks(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
-        g.JoinGeometry(geometry=(group_1, group)) >> geometry_1
+        g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks)) >> geometry_1
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         sphere.default_value = "Instance"

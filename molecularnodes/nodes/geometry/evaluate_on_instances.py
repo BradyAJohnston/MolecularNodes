@@ -95,7 +95,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
                     >> g.SetInstanceTransform(transform=g.CombineMatrix())
                     >> g.RealizeInstances()
                 )
-            group = EvaluatePerGroup(
+            evaluate_per_group = EvaluatePerGroup(
                 geometry=realize_instances,
                 closure=closure,
                 group="Group ID",
@@ -120,7 +120,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
             geometry
             >> g.InstancesToPoints(radius=0.05)
             >> g.InstanceOnPoints(
-                instance=group.o.instances,
+                instance=evaluate_per_group.o.instances,
                 instance_index=sample_index_1,
                 pick_instance=True,
             )

@@ -88,7 +88,7 @@ class BackbonePosition(CustomGeometryGroup):
             menu_switch.o.output,
             ("", "backbone_N", "backbone_CA", "backbone_C", "backbone_O"),
         )
-        group = FallbackVector(
+        fallback_vector = FallbackVector(
             name=index_switch,
             fallback=ResidueMask(atom_name=menu_switch.o.output).o.position,
         )
@@ -97,7 +97,7 @@ class BackbonePosition(CustomGeometryGroup):
                 method,
                 {
                     "Read": g.NamedAttribute.vector(index_switch).o.attribute,
-                    "Compute": group.o.output.point.at(
+                    "Compute": fallback_vector.o.output.point.at(
                         ResidueMask(atom_name=2).o.index
                     ),
                 },

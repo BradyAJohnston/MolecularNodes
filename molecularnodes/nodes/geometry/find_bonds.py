@@ -104,14 +104,14 @@ class FindBonds(AssetGeometryGroup):
         atoms_2 = closure_zone.inputs.geometry("Atoms")
         geometry = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_2 >> g.SeparateGeometry.point(selection=selection)
-        group = Plexus(
+        plexus = Plexus(
             points=separate_geometry.o.selection,
             distance=scale,
             radius=VDWRadii().o.vdw_radii * 0.58,
         )
         (
             SampleAtomicAttributes(
-                atoms=group, sample_atoms=separate_geometry.o.selection
+                atoms=plexus, sample_atoms=separate_geometry.o.selection
             )
             >> geometry
         )

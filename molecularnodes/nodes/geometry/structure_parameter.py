@@ -107,21 +107,23 @@ class StructureParameter(AssetGeometryGroup):
         )
         residue_count = tree.outputs.integer("Residue Count")
 
-        group = GroupInfo()
+        group_info = GroupInfo()
         index_1 = g.Index()
-        IndexToFactor(index=index_1, size=group.o.size) >> atom_factor
-        group_1 = SubGroupInfo(sub_group_id=UniqueResidueID())
+        IndexToFactor(index=index_1, size=group_info.o.size) >> atom_factor
+        sub_group_info = SubGroupInfo(sub_group_id=UniqueResidueID())
         (
-            IndexToFactor(index=group_1.o.group_id, size=group_1.o.sub_group_total)
+            IndexToFactor(
+                index=sub_group_info.o.group_id, size=sub_group_info.o.sub_group_total
+            )
             >> residue_factor
         )
 
         index_1 >> index
-        group >> atom_count
-        group.o.index_of_first >> index_of_first
-        group.o.index_of_last >> index_of_last
-        group_1.o.group_id >> residue_index
-        group_1.o.sub_group_total >> residue_count
+        group_info >> atom_count
+        group_info.o.index_of_first >> index_of_first
+        group_info.o.index_of_last >> index_of_last
+        sub_group_info.o.group_id >> residue_index
+        sub_group_info.o.sub_group_total >> residue_count
 
 
 ASSET = StructureParameter

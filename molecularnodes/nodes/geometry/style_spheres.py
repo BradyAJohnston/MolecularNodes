@@ -180,7 +180,7 @@ class StyleSpheres(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        group = MN_utils_style_spheres_icosphere(
+        mn_utils_style_spheres_icosphere = MN_utils_style_spheres_icosphere(
             atoms=atoms_1,
             selection=selection,
             scale=scale,
@@ -188,17 +188,18 @@ class StyleSpheres(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
-        group_1 = MN_utils_style_spheres_points(
+        realize_instances = g.RealizeInstances(
+            geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True
+        )
+        mn_utils_style_spheres_points = MN_utils_style_spheres_points(
             atoms=atoms_1, selection=selection, scale=scale, material=material
         )
         menu_switch = g.MenuSwitch.geometry(
             sphere,
             {
-                "Point": group_1,
-                "Instance": group,
-                "Mesh": g.RealizeInstances(
-                    geometry=group, realize_to_point_domain=True
-                ),
+                "Point": mn_utils_style_spheres_points,
+                "Instance": mn_utils_style_spheres_icosphere,
+                "Mesh": realize_instances,
             },
         )
         menu_switch >> geometry_1

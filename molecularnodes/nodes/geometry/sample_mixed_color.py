@@ -99,12 +99,12 @@ class SampleMixedColor(AssetGeometryGroup):
             description="The evaluated and mixed field, sampled from the sample geometry at the given `Index`",
         )
 
-        group = IndexMixColor(color=color, index=index)
+        index_mix_color = IndexMixColor(color=color, index=index)
         (
             geometry
             >> g.SampleIndex(
-                value=group.o.color,
-                index=group.o.from_,
+                value=index_mix_color.o.color,
+                index=index_mix_color.o.from_,
                 data_type="FLOAT_COLOR",
                 clamp=True,
             )

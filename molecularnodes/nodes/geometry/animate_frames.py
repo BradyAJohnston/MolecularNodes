@@ -186,33 +186,37 @@ class AnimateFrames(AssetGeometryGroup):
                 )
                 >> g.SetPosition(position=sample_index)
             )
-            group = SetUResID(geometry=set_position)
+            set_ures_id = SetUResID(geometry=set_position)
         with g.Frame("Interpolation position based on frames from collection"):
-            group_1 = AnimateCollectionPick(collection=frames, item=frame)
-            group_2 = AnimateFraction(
+            animate_collection_pick = AnimateCollectionPick(
+                collection=frames, item=frame
+            )
+            animate_fraction = AnimateFraction(
                 interpolate=interpolate, smoother_step=smoother_step, float=frame
             )
-            group_3 = SampleMixFloat(
-                a=group_1.o.current,
-                b=group_1.o.next,
+            sample_mix_float = SampleMixFloat(
+                a=animate_collection_pick.o.current,
+                b=animate_collection_pick.o.next,
                 value=g.NamedAttribute.float("b_factor").o.attribute,
-                factor=group_2,
+                factor=animate_fraction,
+            )
+            sample_mix_vector = SampleMixVector(
+                a=animate_collection_pick.o.current,
+                b=animate_collection_pick.o.next,
+                factor=animate_fraction,
             )
             store_named_attribute = (
                 atoms
-                >> g.SetPosition(
-                    selection=selection,
-                    position=SampleMixVector(
-                        a=group_1.o.current, b=group_1.o.next, factor=group_2
-                    ),
+                >> g.SetPosition(selection=selection, position=sample_mix_vector)
+                >> g.StoreNamedAttribute.point.float(
+                    name="b_factor", value=sample_mix_float
                 )
-                >> g.StoreNamedAttribute.point.float(name="b_factor", value=group_3)
             )
-        _group_4 = SamplePosition()
+        _sample_position = SamplePosition()
         with g.Frame("Set Transform to align with structure"):
             object_info = g.ObjectInfo(object=g.SelfObject())
             (
-                group
+                set_ures_id
                 >> g.TransformGeometry(transform=object_info.o.transform, mode="Matrix")
                 >> all_frames
             )

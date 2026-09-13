@@ -73,8 +73,8 @@ class BackboneNH(AssetGeometryGroup):
         menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
         nh = tree.outputs.vector("NH")
 
-        group = BackboneN(method="Read")
-        group_1 = BackboneN()
+        backbone_n = BackboneN(method="Read")
+        backbone_n_1 = BackboneN()
         mix = g.Mix(
             a_vector=BackboneCA(),
             b_vector=OffsetVector(vector=BackboneC(), offset=-1),
@@ -84,8 +84,8 @@ class BackboneNH(AssetGeometryGroup):
         )
         string = g.String(string="backbone_NH")
         vector_math = (
-            VectorDirection(to=group, from_=BackboneCA(method="Read")).o.direction
-            + VectorDirection(to=group, from_=BackboneC(method="Read")).o.direction
+            VectorDirection(to=backbone_n, from_=BackboneCA(method="Read")).o.direction
+            + VectorDirection(to=backbone_n, from_=BackboneC(method="Read")).o.direction
         )
         _vector_math_1 = g.VectorMath.multiply_add(
             vector_math.normalize(),
@@ -93,9 +93,9 @@ class BackboneNH(AssetGeometryGroup):
             BackboneN(method="Read"),
         )
         vector_math_2 = g.VectorMath.multiply_add(
-            VectorDirection(to=group_1, from_=mix.o.result_vector).o.direction,
+            VectorDirection(to=backbone_n_1, from_=mix.o.result_vector).o.direction,
             AngstromToWorld(angstrom=1.01),
-            group_1,
+            backbone_n_1,
         )
         (
             g.MenuSwitch.vector(

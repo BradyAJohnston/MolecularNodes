@@ -54,10 +54,10 @@ class RotationRELION(AssetGeometryGroup):
         rotation = tree.outputs.rotation("Rotation")
         is_valid = tree.outputs.boolean("Is Valid")
 
-        group = TEMRotation()
+        tem_rotation = TEMRotation()
 
-        group >> rotation
-        group.o.boolean >> is_valid
+        tem_rotation >> rotation
+        tem_rotation.o.boolean >> is_valid
 
 
 ASSET = RotationRELION

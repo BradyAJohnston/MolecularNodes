@@ -119,12 +119,12 @@ class CurveOffsetDihedral(AssetGeometryGroup):
             "Angle", description="The calculated angle in radians", subtype="ANGLE"
         )
 
-        group = OffsetVector(vector=position, index=index, offset=offset)
+        offset_vector = OffsetVector(vector=position, index=index, offset=offset)
         (
             DihedralAngle(
                 a=OffsetVector(vector=normal, index=index, offset=offset).o.value
-                + group,
-                b=group,
+                + offset_vector,
+                b=offset_vector,
                 c=position,
                 d=position + normal,
             )

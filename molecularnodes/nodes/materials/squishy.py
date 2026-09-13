@@ -12,10 +12,10 @@ class Squishy(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        group = MNColor()
+        mn_color = MNColor()
         principled_bsdf = s.PrincipledBSDF(
-            base_color=group.o.color,
-            alpha=group.o.alpha,
+            base_color=mn_color.o.color,
+            alpha=mn_color.o.alpha,
             roughness=1.0,
             ior=1.05,
             diffuse_roughness=1.0,

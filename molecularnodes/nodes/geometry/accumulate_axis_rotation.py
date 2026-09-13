@@ -156,14 +156,15 @@ class AccumulateAxisRotation(AssetGeometryGroup):
             description="The accumlated transform, not yet applied to the `Position` vector",
         )
 
-        group = TransformLocalAxis(
+        transform_local_axis = TransformLocalAxis(
             origin=position,
             axis=position.point.at(BooleanLast(boolean=pivot)) - position,
             angle=angle,
         )
-        evaluate_at_index = TransformAccumulate(
-            accumulate=selection, transform=group, group_id=group_id
-        ).o.transform.point.at(transform_index)
+        transform_accumulate = TransformAccumulate(
+            accumulate=selection, transform=transform_local_axis, group_id=group_id
+        )
+        evaluate_at_index = transform_accumulate.o.transform.point.at(transform_index)
         position.transform(evaluate_at_index) >> position_1
 
         evaluate_at_index >> trasnform

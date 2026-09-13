@@ -96,16 +96,21 @@ class NucleicChi(AssetGeometryGroup):
             "Position", description="Transformed vector", subtype="XYZ"
         )
 
-        group = MN_pivot_nucleic()
-        group_1 = IsNucleic(and_=selection)
-        group_2 = AccumulateAxisRotation(
+        mn_pivot_nucleic = MN_pivot_nucleic()
+        is_nucleic = IsNucleic(and_=selection)
+        accumulate_axis_rotation = AccumulateAxisRotation(
             position=position,
-            selection=group_1.o.selection,
-            pivot=group.o.pivot_base,
-            angle=group.o.accumulate_base.switch.float(true=x1),
+            selection=is_nucleic.o.selection,
+            pivot=mn_pivot_nucleic.o.pivot_base,
+            angle=mn_pivot_nucleic.o.accumulate_base.switch.float(true=x1),
             group_id=UniqueResidueID(),
         )
-        group_1.o.selection.switch.vector(position, group_2.o.position) >> position_1
+        (
+            is_nucleic.o.selection.switch.vector(
+                position, accumulate_axis_rotation.o.position
+            )
+            >> position_1
+        )
 
 
 ASSET = NucleicChi

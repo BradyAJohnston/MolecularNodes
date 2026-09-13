@@ -121,7 +121,7 @@ class TransparentOutlineInternal(AssetShaderGroup):
         )
         shader = tree.outputs.shader("Shader")
 
-        _group = MNFresnel(ior=0.95)
+        _mn_fresnel = MNFresnel(ior=0.95)
         mix_shader = s.MixShader(
             fac=g.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
             + alpha,

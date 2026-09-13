@@ -111,10 +111,10 @@ class SelectAtomicNumber(AssetGeometryGroup):
         compare = g.Compare.integer.equal(
             g.NamedAttribute.integer("atomic_number").o.attribute, atomic_number
         )
-        group = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectAtomicNumber

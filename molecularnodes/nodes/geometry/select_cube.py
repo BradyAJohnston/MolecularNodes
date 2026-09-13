@@ -112,15 +112,15 @@ class SelectCube(AssetGeometryGroup):
         invert_matrix = g.ObjectInfo(
             object=object, as_instance=True, transform_space="RELATIVE"
         ).o.transform.invert()
-        group = BetweenVector(
+        between_vector = BetweenVector(
             value=g.ProjectPoint(vector=g.Position(), transform=invert_matrix),
             lower=(-1.0, -1.0, -1.0),
             upper=(1.0, 1.0, 1.0),
         )
-        group_1 = BooleanAndOr(and_=and_, or_=or_, boolean=group)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=between_vector)
 
-        group_1 >> selection
-        group_1.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectCube

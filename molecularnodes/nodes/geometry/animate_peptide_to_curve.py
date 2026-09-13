@@ -210,20 +210,20 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
         twist = tree.inputs.float("Twist", 1.0, min_value=-10_000.0, max_value=10_000.0)
         atoms_1 = tree.outputs.geometry("Atoms")
 
-        group = MN_utils_curve_resample(
+        mn_utils_curve_resample = MN_utils_curve_resample(
             Geometry=g.TrimCurve(curve=curve, start=start, end=end),
             Offset=offset,
             Length=g.Math.divide(3.13, 100.0),
         )
-        domain_size = g.DomainSize(geometry=group, component="CURVE")
+        domain_size = g.DomainSize(geometry=mn_utils_curve_resample, component="CURVE")
         with g.Frame("Initial setup and alignment of amino acids"):
-            group_1 = MN_utils_aa_atom_pos(atom_name=1)
+            mn_utils_aa_atom_pos = MN_utils_aa_atom_pos(atom_name=1)
             align_rotation_to_vector = g.AlignRotationToVector(
                 vector=MN_utils_aa_atom_pos(atom_name=4).o.position, pivot_axis="X"
             )
             position = g.Position()
             align_rotation_to_vector_1 = g.AlignRotationToVector(
-                vector=group_1.o.position
+                vector=mn_utils_aa_atom_pos.o.position
                 - MN_utils_aa_atom_pos(atom_name=3).o.position,
                 axis="X",
             )
@@ -242,9 +242,10 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
             set_position = (
                 atoms
                 >> g.SeparateGeometry.point(
-                    selection=group_1.o.group_index < domain_size.o.point_count
+                    selection=mn_utils_aa_atom_pos.o.group_index
+                    < domain_size.o.point_count
                 )
-                >> g.SetPosition(offset=group_1.o.position * -1.0)
+                >> g.SetPosition(offset=mn_utils_aa_atom_pos.o.position * -1.0)
                 >> g.SetPosition(position=vector_rotate)
                 >> g.SetPosition(position=vector_rotate_1)
                 >> g.SetPosition(
@@ -257,40 +258,44 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
                 )
             )
         sample_index = g.SampleIndex(
-            geometry=group,
-            value=group.o.position,
-            index=group_1.o.group_index,
+            geometry=mn_utils_curve_resample,
+            value=mn_utils_curve_resample.o.position,
+            index=mn_utils_aa_atom_pos.o.group_index,
             data_type="FLOAT_VECTOR",
         )
         sample_index_1 = g.SampleIndex(
-            geometry=group,
-            value=group.o.tangent,
-            index=group_1.o.group_index,
+            geometry=mn_utils_curve_resample,
+            value=mn_utils_curve_resample.o.tangent,
+            index=mn_utils_aa_atom_pos.o.group_index,
             data_type="FLOAT_VECTOR",
         )
+        set_curve_tilt = g.SetCurveTilt(
+            curve=mn_utils_curve_resample,
+            tilt=(math.pi / 2 * twist).point.leading() + rotate,
+        )
         sample_index_2 = g.SampleIndex(
-            geometry=g.SetCurveTilt(
-                curve=group, tilt=(math.pi / 2 * twist).point.leading() + rotate
-            ),
+            geometry=set_curve_tilt,
             value=g.CurveTilt(),
-            index=group_1.o.group_index,
+            index=mn_utils_aa_atom_pos.o.group_index,
         )
         with g.Frame("Placing and Aligning AA Along the Curve"):
             position_1 = g.Position()
             vector_rotate_2 = g.VectorRotate.euler(
                 position_1,
-                group_1.o.position,
+                mn_utils_aa_atom_pos.o.position,
                 g.AlignRotationToVector(vector=sample_index_1.o.value * -1.0, axis="X"),
             )
             vector_rotate_3 = g.VectorRotate(
                 vector=position_1,
-                center=group_1.o.position,
+                center=mn_utils_aa_atom_pos.o.position,
                 axis=sample_index_1,
                 angle=sample_index_2,
             )
             (
                 set_position
-                >> g.SetPosition(offset=sample_index.o.value - group_1.o.position)
+                >> g.SetPosition(
+                    offset=sample_index.o.value - mn_utils_aa_atom_pos.o.position
+                )
                 >> g.SetPosition(position=vector_rotate_2)
                 >> g.SetPosition(position=vector_rotate_3)
                 >> atoms_1

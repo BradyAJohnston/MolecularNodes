@@ -159,7 +159,7 @@ class ColorAttributeRandom(AssetGeometryGroup):
             description="The randomly generated color based on the input attribute",
         )
 
-        _group = RandomColor(colorspace="OKLab")
+        _random_color = RandomColor(colorspace="OKLab")
         (
             RandomColor(
                 id=g.NamedAttribute.integer(name).o.attribute,

@@ -54,10 +54,10 @@ class UniqueResidueID(AssetGeometryGroup):
             "Group ID", description="A unique Group ID for eash residue"
         )
 
-        group = AtomName()
+        atom_name = AtomName()
         boolean_math = (
-            g.Compare.integer.equal(group, 1).o.result
-            | g.Compare.integer.equal(group, 50)
+            g.Compare.integer.equal(atom_name, 1).o.result
+            | g.Compare.integer.equal(atom_name, 50)
             | IntegerRun(value=ResidueID()).o.is_different
         )
         accumulate_field = g.AccumulateField.point.integer(boolean_math)

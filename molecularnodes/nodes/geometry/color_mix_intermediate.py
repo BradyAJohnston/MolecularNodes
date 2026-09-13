@@ -115,7 +115,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
         b = tree.inputs.color("B", (0.5, 0.1594808, 0.05802507, 1.0))
         output = tree.outputs.color("Output", (0.8, 0.8, 0.8, 1.0))
 
-        group = ColorToOKLab(color=intermediate_1)
+        color_to_oklab = ColorToOKLab(color=intermediate_1)
         mix = g.Mix(
             factor_float=factor,
             a_color=a,
@@ -133,13 +133,13 @@ class ColorMixIntermediate(AssetGeometryGroup):
         mix_2 = g.Mix(
             factor_float=factor,
             a_vector=ColorToOKLab(color=a),
-            b_vector=group,
+            b_vector=color_to_oklab,
             data_type="VECTOR",
             clamp_factor=True,
         )
         mix_3 = g.Mix(
             factor_float=factor,
-            a_vector=group,
+            a_vector=color_to_oklab,
             b_vector=ColorToOKLab(color=b),
             data_type="VECTOR",
             clamp_factor=True,

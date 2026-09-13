@@ -167,8 +167,10 @@ class AssemblyInstance(AssetGeometryGroup):
                 g.Compare.integer.equal(assembly_id, AssemblyID()).o.result & selection,
             )
         with g.Frame():
-            group = ChainID()
-            group_1 = SplitToCentredInstances(geometry=geometry, group_id=group)
+            chain_id_1 = ChainID()
+            split_to_centred_instances = SplitToCentredInstances(
+                geometry=geometry, group_id=chain_id_1
+            )
         with g.Frame("Mix Transform values"):
             attribute = g.NamedAttribute.input_4x4_matrix("transform").o.attribute
             mix = g.Mix(
@@ -191,8 +193,8 @@ class AssemblyInstance(AssetGeometryGroup):
             capture.o.geometry
             >> g.SetPosition(position=position_1.output)
             >> g.InstanceOnPoints(
-                instance=group_1,
-                instance_index=group,
+                instance=split_to_centred_instances,
+                instance_index=chain_id_1,
                 rotation=rotation_1.output,
                 pick_instance=True,
             )

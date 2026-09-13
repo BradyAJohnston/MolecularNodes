@@ -153,7 +153,7 @@ class RandomColor(AssetGeometryGroup):
         random_value = g.RandomValue.float(
             id=id, seed=color_seed + g.Integer(integer=0)
         )
-        group = LChToOKLab(
+        lch_to_oklab = LChToOKLab(
             l=oklab_luminance,
             c=oklab_chroma,
             h=random_value.o.value.map_range(to_min=-math.pi, to_max=math.pi),
@@ -165,7 +165,7 @@ class RandomColor(AssetGeometryGroup):
                     "HSL": g.CombineColor.hsl(
                         random_value, hsl_saturation, hsl_lightness
                     ),
-                    "OKLab": OKLabToColor(oklab=group),
+                    "OKLab": OKLabToColor(oklab=lch_to_oklab),
                 },
             )
             >> color

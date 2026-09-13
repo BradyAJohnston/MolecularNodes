@@ -106,15 +106,20 @@ class ResidueParameter(AssetGeometryGroup):
             description="Index (in the whole structure) for the last atom in a  residue",
         )
 
-        group = SubGroupInfo(sub_group_id=ResidueID(), group_id=ChainID())
-        AtomName(index=group.o.index_of_first) >> first_atom_name
-        AtomName(index=group.o.index_of_last) >> last_atom_name
-        IndexToFactor(index=group.o.index_in_group_id, size=group.o.size) >> factor
+        sub_group_info = SubGroupInfo(sub_group_id=ResidueID(), group_id=ChainID())
+        AtomName(index=sub_group_info.o.index_of_first) >> first_atom_name
+        AtomName(index=sub_group_info.o.index_of_last) >> last_atom_name
+        (
+            IndexToFactor(
+                index=sub_group_info.o.index_in_group_id, size=sub_group_info.o.size
+            )
+            >> factor
+        )
 
-        group >> atom_count
-        group.o.index_in_group_id >> atom_index
-        group.o.index_of_first >> index_of_first
-        group.o.index_of_last >> index_of_last
+        sub_group_info >> atom_count
+        sub_group_info.o.index_in_group_id >> atom_index
+        sub_group_info.o.index_of_first >> index_of_first
+        sub_group_info.o.index_of_last >> index_of_last
 
 
 ASSET = ResidueParameter

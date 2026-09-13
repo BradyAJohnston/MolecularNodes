@@ -70,10 +70,10 @@ class DihedralNucleicAngle(AssetGeometryGroup):
         axis = tree.outputs.vector("Axis", description="The axis vector BC")
 
         integer_math = AtomName().o.atom_name - 50
-        group = ResidueMask(atom_name=54)
-        group_1 = ResidueMask(atom_name=50)
-        group_2 = ResidueMask(atom_name=55)
-        group_3 = ResidueMask(atom_name=53)
+        residue_mask = ResidueMask(atom_name=54)
+        residue_mask_1 = ResidueMask(atom_name=50)
+        residue_mask_2 = ResidueMask(atom_name=55)
+        residue_mask_3 = ResidueMask(atom_name=53)
         index_switch = g.IndexSwitch.vector(
             integer_math,
             (
@@ -81,25 +81,25 @@ class DihedralNucleicAngle(AssetGeometryGroup):
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 FindBondedAtom(atom_name="O3'").o.position,
-                group_1.o.position,
-                group_3.o.position,
+                residue_mask_1.o.position,
+                residue_mask_3.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_2.o.position,
+                residue_mask_2.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
             ),
         )
-        group_4 = ResidueMask(atom_name=57)
+        residue_mask_4 = ResidueMask(atom_name=57)
         index_switch_1 = g.IndexSwitch.vector(
             integer_math,
             (
                 FindBondedAtom(atom_name="O5'").o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group.o.position,
-                group_2.o.position,
-                group_4.o.position,
+                residue_mask.o.position,
+                residue_mask_2.o.position,
+                residue_mask_4.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 FindBondedAtom(atom_name="P", distance=1).o.position,
@@ -113,23 +113,23 @@ class DihedralNucleicAngle(AssetGeometryGroup):
                 FindBondedAtom(atom_name="O3'", distance=1).o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_1.o.position,
-                group_3.o.position,
-                group.o.position,
+                residue_mask_1.o.position,
+                residue_mask_3.o.position,
+                residue_mask.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_4.o.position,
+                residue_mask_4.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
             ),
         )
-        group_5 = DihedralAngle(
+        dihedral_angle = DihedralAngle(
             a=index_switch_1, b=g.Position(), c=index_switch_2, d=index_switch
         )
-        group_5.o.angle * -1.0 >> angle
+        dihedral_angle.o.angle * -1.0 >> angle
 
-        group_5.o.ba_bc >> up
-        group_5.o.bc >> axis
+        dihedral_angle.o.ba_bc >> up
+        dihedral_angle.o.bc >> axis
 
 
 ASSET = DihedralNucleicAngle

@@ -103,18 +103,18 @@ class IndexMixRotation(AssetGeometryGroup):
             description="The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`",
         )
 
-        group = FractionateFloat(value=index)
+        fractionate_float = FractionateFloat(value=index)
         mix = g.Mix(
-            factor_float=group.o.fraction,
-            a_rotation=rotation.point.at(group.o.floor),
-            b_rotation=rotation.point.at(group.o.ceiling),
+            factor_float=fractionate_float.o.fraction,
+            a_rotation=rotation.point.at(fractionate_float.o.floor),
+            b_rotation=rotation.point.at(fractionate_float.o.ceiling),
             data_type="ROTATION",
             clamp_factor=True,
         )
 
         mix.o.result_rotation >> rotation_1
-        group.o.floor >> from_
-        group.o.ceiling >> to
+        fractionate_float.o.floor >> from_
+        fractionate_float.o.ceiling >> to
 
 
 ASSET = IndexMixRotation

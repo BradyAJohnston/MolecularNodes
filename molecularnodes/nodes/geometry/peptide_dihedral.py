@@ -111,16 +111,16 @@ class PeptideDihedral(AssetGeometryGroup):
             "Position", description="Transformed vector", subtype="XYZ"
         )
 
-        group = AtomName()
+        atom_name = AtomName()
         boolean = g.Boolean(boolean=True)
-        group_1 = OverrideIndex(
+        override_index = OverrideIndex(
             selection=IsSideChain(include_ca=False).o.selection,
             index=HydrogenBondingPartner(),
             override=ResidueMask(atom_name=2).o.index,
         )
-        group_2 = IsPeptide(and_=selection)
+        is_peptide = IsPeptide(and_=selection)
         index_switch = g.IndexSwitch.float(
-            group,
+            atom_name,
             (
                 0.0,
                 0.0,
@@ -129,15 +129,20 @@ class PeptideDihedral(AssetGeometryGroup):
                 0.0,
             ),
         )
-        group_3 = AccumulateAxisRotation(
+        accumulate_axis_rotation = AccumulateAxisRotation(
             position=position,
-            selection=group_2.o.selection,
-            pivot=g.IndexSwitch.boolean(group, (False, boolean, boolean, boolean)),
+            selection=is_peptide.o.selection,
+            pivot=g.IndexSwitch.boolean(atom_name, (False, boolean, boolean, boolean)),
             angle=index_switch,
             group_id=ChainID(),
-            transform_index=group_1,
+            transform_index=override_index,
         )
-        group_2.o.selection.switch.vector(position, group_3.o.position) >> position_1
+        (
+            is_peptide.o.selection.switch.vector(
+                position, accumulate_axis_rotation.o.position
+            )
+            >> position_1
+        )
 
 
 ASSET = PeptideDihedral

@@ -103,7 +103,7 @@ class SeparateAtoms(AssetGeometryGroup):
         capture = g.CaptureAttribute.point(geometry=atoms_2)
         capture.items.integer("Value")
         capture.o.geometry >> geometry
-        _group = EvaluateOnAtoms()
+        _evaluate_on_atoms = EvaluateOnAtoms()
         capture_1 = g.CaptureAttribute.point(geometry=atoms)
         value = capture_1.items.integer("Value", g.Index())
         separate_geometry = capture_1.o.geometry >> g.SeparateGeometry.point(

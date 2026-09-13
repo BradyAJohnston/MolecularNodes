@@ -100,14 +100,20 @@ class RelativeIndex(AssetGeometryGroup):
             "Last Index", description="The `Index` of the last point in each `Group ID`"
         )
 
-        group = GroupParameter(group_id=group_id)
-        _group_1 = GroupPick(pick=group.o.is_last, group_id=group_id)
-        GroupPickFirst(pick=group.o.is_first, group_id=group_id).o.index >> first_index
-        GroupPickFirst(pick=group.o.is_last, group_id=group_id).o.index >> last_index
-        _group_2 = GroupPick(pick=group.o.is_first, group_id=group_id)
+        group_parameter = GroupParameter(group_id=group_id)
+        _group_pick = GroupPick(pick=group_parameter.o.is_last, group_id=group_id)
+        (
+            GroupPickFirst(pick=group_parameter.o.is_first, group_id=group_id).o.index
+            >> first_index
+        )
+        (
+            GroupPickFirst(pick=group_parameter.o.is_last, group_id=group_id).o.index
+            >> last_index
+        )
+        _group_pick_1 = GroupPick(pick=group_parameter.o.is_first, group_id=group_id)
 
-        group.o.group_size >> group_size
-        group.o.relative_index >> relative_index
+        group_parameter.o.group_size >> group_size
+        group_parameter.o.relative_index >> relative_index
 
 
 ASSET = RelativeIndex

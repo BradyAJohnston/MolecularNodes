@@ -100,12 +100,12 @@ class AttributeRun(AssetGeometryGroup):
             description="The new `Group ID`, increasing whenever the attribute or the `Group ID` values change",
         )
 
-        group = IntegerRun(
+        integer_run = IntegerRun(
             value=g.NamedAttribute.integer(name).o.attribute, group_id=group_id
         )
 
-        group >> is_different
-        group.o.group_id >> group_id_1
+        integer_run >> is_different
+        integer_run.o.group_id >> group_id_1
 
 
 ASSET = AttributeRun

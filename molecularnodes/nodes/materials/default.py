@@ -13,10 +13,10 @@ class Default(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        group = MNColor()
+        mn_color = MNColor()
         principled_bsdf = s.PrincipledBSDF(
-            base_color=ColorAO(color=group.o.color, distance=0.5, exponent=1.0),
-            alpha=group.o.alpha,
+            base_color=ColorAO(color=mn_color.o.color, distance=0.5, exponent=1.0),
+            alpha=mn_color.o.alpha,
             roughness=0.2636364,
             ior=1.45,
             subsurface_scale=0.0,

@@ -146,10 +146,10 @@ class TransformAccumulatePoint(AssetGeometryGroup):
             "Vector", description="Transformed vector", subtype="XYZ"
         )
 
-        group = TransformAccumulate(
+        transform_accumulate = TransformAccumulate(
             domain=domain, accumulate=accumulate, transform=transform, group_id=group_id
         )
-        position.transform(group) >> vector
+        position.transform(transform_accumulate) >> vector
 
         domain.default_value = "Point"
 

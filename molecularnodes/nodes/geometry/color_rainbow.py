@@ -166,14 +166,15 @@ class ColorRainbow(AssetGeometryGroup):
         combine_color = g.CombineColor.hsv(
             (offset + menu_switch.o.output).wrap(1.0, 0.0), hsl_saturation, hsl_value
         )
-        group = LChToOKLab(
+        lch_to_oklab = LChToOKLab(
             l=oklab_luminance,
             c=oklab_chroma,
             h=menu_switch.o.output * math.tau + offset,
         )
         (
             g.MenuSwitch.color(
-                color_space, {"HSV": combine_color, "OKLab": OKLabToColor(oklab=group)}
+                color_space,
+                {"HSV": combine_color, "OKLab": OKLabToColor(oklab=lch_to_oklab)},
             )
             >> color
         )

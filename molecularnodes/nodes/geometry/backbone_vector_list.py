@@ -88,13 +88,19 @@ class BackboneVectorList(AssetGeometryGroup):
         )
         ca_atoms_1 = tree.outputs.geometry("CA Atoms")
 
-        group = BackbonePositions(method="Read")
+        backbone_positions = BackbonePositions(method="Read")
         index_switch = g.IndexSwitch.vector(
             g.Index(),
             (
-                SamplePosition(geometry=ca_atoms, position=group.o.c, index=index),
-                SamplePosition(geometry=ca_atoms, position=group.o.ca, index=index),
-                SamplePosition(geometry=ca_atoms, position=group.o.n, index=index),
+                SamplePosition(
+                    geometry=ca_atoms, position=backbone_positions.o.c, index=index
+                ),
+                SamplePosition(
+                    geometry=ca_atoms, position=backbone_positions.o.ca, index=index
+                ),
+                SamplePosition(
+                    geometry=ca_atoms, position=backbone_positions.o.n, index=index
+                ),
             ),
         )
         g.FieldToList(count=3, items={"Value": index_switch}) >> value

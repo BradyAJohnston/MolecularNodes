@@ -61,7 +61,7 @@ class MN_init_tmp_attributes(CustomGeometryGroup):
         geometry = tree.inputs.geometry("Geometry")
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = GroupParameter(
+        group_parameter = GroupParameter(
             group_id=g.NamedAttribute.integer("tmp_ss_ID").o.attribute
         )
         store_named_attribute = g.StoreNamedAttribute.point.integer(
@@ -72,9 +72,9 @@ class MN_init_tmp_attributes(CustomGeometryGroup):
             ).o.group_id,
         )
         capture = g.CaptureAttribute.point(geometry=store_named_attribute)
-        is_first = capture.items.boolean("Is First", group.o.is_first)
-        is_last = capture.items.boolean("Is Last", group.o.is_last)
-        size = capture.items.integer("Size", group.o.group_size)
+        is_first = capture.items.boolean("Is First", group_parameter.o.is_first)
+        is_last = capture.items.boolean("Is Last", group_parameter.o.is_last)
+        size = capture.items.integer("Size", group_parameter.o.group_size)
         (
             capture.o.geometry
             >> g.StoreNamedAttribute.point.integer(

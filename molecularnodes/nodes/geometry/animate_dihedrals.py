@@ -213,48 +213,52 @@ class AnimateDihedrals(AssetGeometryGroup):
             description="Atomic geometry with new positions based on the trajectory",
         )
 
-        group = AnimateCollectionPick(collection=frames, item=frame)
+        animate_collection_pick = AnimateCollectionPick(collection=frames, item=frame)
         object_info = g.ObjectInfo(object=g.SelfObject())
         set_position = g.SetPosition(
-            geometry=atoms, position=SamplePosition(geometry=group.o.current)
+            geometry=atoms,
+            position=SamplePosition(geometry=animate_collection_pick.o.current),
         )
         set_position_1 = g.SetPosition(
-            geometry=atoms, position=SamplePosition(geometry=group.o.next)
+            geometry=atoms,
+            position=SamplePosition(geometry=animate_collection_pick.o.next),
         )
-        group_1 = AnimateFraction(
+        animate_fraction = AnimateFraction(
             interpolate=interpolate, smoother_step=smoother_step, float=frame
         )
-        group_2 = SampleMixAngle(
+        sample_mix_angle = SampleMixAngle(
             A=set_position,
             B=set_position_1,
             Angle=DihedralChiAngle().o.angle,
-            Factor=group_1,
+            Factor=animate_fraction,
         )
-        group_3 = SampleMixAngle(
+        sample_mix_angle_1 = SampleMixAngle(
             A=set_position,
             B=set_position_1,
             Angle=DihedralPhi(menu="Read").o.phi,
-            Factor=group_1,
+            Factor=animate_fraction,
         )
-        group_4 = SampleMixAngle(
+        sample_mix_angle_2 = SampleMixAngle(
             A=set_position,
             B=set_position_1,
             Angle=DihedralPsi(method="Read").o.psi,
-            Factor=group_1,
+            Factor=animate_fraction,
         )
-        group_5 = SetChiAngle(
+        set_chi_angle = SetChiAngle(
             geometry=atoms,
             selection=selection,
-            x1=group_2,
-            x2=group_2,
-            x3=group_2,
-            x4=group_2,
-            x5=group_2,
+            x1=sample_mix_angle,
+            x2=sample_mix_angle,
+            x3=sample_mix_angle,
+            x4=sample_mix_angle,
+            x5=sample_mix_angle,
         )
-        group_6 = SetPhiPsiAngle(geometry=group_5, phi=group_3, psi=group_4)
-        group_6.node.mute = True
+        set_phi_psi_angle = SetPhiPsiAngle(
+            geometry=set_chi_angle, phi=sample_mix_angle_1, psi=sample_mix_angle_2
+        )
+        set_phi_psi_angle.node.mute = True
         (
-            group_6
+            set_phi_psi_angle
             >> g.TransformGeometry(
                 translation=object_info.o.location,
                 rotation=object_info.o.rotation,

@@ -117,15 +117,15 @@ class IndexDistance(AssetGeometryGroup):
         )
         rotation = tree.outputs.rotation("Rotation")
 
-        group = VectorFromPoint(
+        vector_from_point = VectorFromPoint(
             target=position.point.at(target_index.point.at(index)),
             position=g.Position().o.position.point.at(index),
         )
 
-        group >> vector
-        group.o.direction >> direction
-        group.o.length >> distance
-        group.o.rotation >> rotation
+        vector_from_point >> vector
+        vector_from_point.o.direction >> direction
+        vector_from_point.o.length >> distance
+        vector_from_point.o.rotation >> rotation
 
 
 ASSET = IndexDistance

@@ -137,13 +137,19 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
             BetweenFloat(value=offset, lower=integer_math, upper=integer_math_1)
             >> is_off_spline
         )
-        group = IndexMixed(index=point_index, offset=clamp)
+        index_mixed = IndexMixed(index=point_index, offset=clamp)
         spline_parameter = g.SplineParameter()
-        IndexMixFloat(value=spline_parameter.o.factor, index=group.o.mixed) >> factor
-        IndexMixFloat(value=spline_parameter.o.length, index=group.o.mixed) >> length
+        (
+            IndexMixFloat(value=spline_parameter.o.factor, index=index_mixed.o.mixed)
+            >> factor
+        )
+        (
+            IndexMixFloat(value=spline_parameter.o.length, index=index_mixed.o.mixed)
+            >> length
+        )
 
-        group.o.floor >> index_a
-        group.o.ceiling >> index_b
+        index_mixed.o.floor >> index_a
+        index_mixed.o.ceiling >> index_b
 
 
 ASSET = OffsetPointAlongCurve

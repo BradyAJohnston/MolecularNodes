@@ -90,13 +90,15 @@ class EvluateWhilePlanar(AssetGeometryGroup):
         closure = tree.inputs.closure("Closure")
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = GeoemtryToPlanar(geometry=geometry, selection=selection)
+        geoemtry_to_planar = GeoemtryToPlanar(geometry=geometry, selection=selection)
         evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry("Geometry", group.o.geometry)
+        evaluate_closure.inputs.geometry("Geometry", geoemtry_to_planar.o.geometry)
         geometry_2 = evaluate_closure.outputs.geometry("Geometry")
         (
             geometry_2
-            >> g.TransformGeometry(transform=group.o.transform.invert(), mode="Matrix")
+            >> g.TransformGeometry(
+                transform=geoemtry_to_planar.o.transform.invert(), mode="Matrix"
+            )
             >> geometry_1
         )
 

@@ -75,11 +75,11 @@ class ColorToLCh(AssetGeometryGroup):
         c_ = tree.outputs.float("C")
         h = tree.outputs.float("h", subtype="ANGLE")
 
-        group = OKLabToLCh(oklab=ColorToOKLab(color=color))
+        oklab_to_lch = OKLabToLCh(oklab=ColorToOKLab(color=color))
 
-        group >> l
-        group.o.c >> c_
-        group.o.h >> h
+        oklab_to_lch >> l
+        oklab_to_lch.o.c >> c_
+        oklab_to_lch.o.h >> h
 
 
 ASSET = ColorToLCh

@@ -137,10 +137,10 @@ class SelectProximity(AssetGeometryGroup):
                 g.AccumulateField.point.integer(~subset).o.total, true=subset
             ),
         )
-        group = SelectResWhole(selection=boolean_math, expand=expand)
-        ~group.o.selection >> inverted
+        select_res_whole = SelectResWhole(selection=boolean_math, expand=expand)
+        ~select_res_whole.o.selection >> inverted
 
-        group >> selection
+        select_res_whole >> selection
 
 
 ASSET = SelectProximity

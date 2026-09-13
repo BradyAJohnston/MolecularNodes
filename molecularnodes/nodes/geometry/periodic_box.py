@@ -148,20 +148,24 @@ class PeriodicBox(AssetGeometryGroup):
             math_6 = math_3.cos()
             math_7 = math_3.sin()
         with g.Frame("B Vector"):
-            group = AngstromToWorld(angstrom=b)
+            angstrom_to_world = AngstromToWorld(angstrom=b)
             with g.Frame("B Y Component"):
-                math_8 = group.o.world * math_7
+                math_8 = angstrom_to_world.o.world * math_7
             with g.Frame("B X Component"):
-                math_9 = group.o.world * math_6
+                math_9 = angstrom_to_world.o.world * math_6
             combine_xyz_1 = g.CombineXYZ(x=math_9, y=math_8)
         with g.Frame("C Vector"):
-            group_1 = AngstromToWorld(angstrom=c_)
+            angstrom_to_world_1 = AngstromToWorld(angstrom=c_)
             with g.Frame("C X Component"):
-                math_10 = group_1.o.world * math_5
+                math_10 = angstrom_to_world_1.o.world * math_5
             with g.Frame("C Y Component"):
-                math_11 = group_1.o.world * ((math_4 - math_5 * math_6) / math_7)
+                math_11 = angstrom_to_world_1.o.world * (
+                    (math_4 - math_5 * math_6) / math_7
+                )
             with g.Frame("C Z Component"):
-                math_12 = (group_1.o.world**2.0 - math_10**2.0 - math_11**2.0).sqrt()
+                math_12 = (
+                    angstrom_to_world_1.o.world**2.0 - math_10**2.0 - math_11**2.0
+                ).sqrt()
             combine_xyz_2 = g.CombineXYZ(x=math_10, y=math_11, z=math_12)
 
         combine_xyz >> a_1

@@ -244,7 +244,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
         bounding_box = g.BoundingBox(geometry=volume)
         math_1 = contour_thickness * 0.001
-        group = BetweenVector(
+        between_vector = BetweenVector(
             value=g.Position().o.position.map_range(
                 bounding_box.o.min, bounding_box.o.max
             ),
@@ -265,7 +265,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
         separate_geometry = (
             g.JoinGeometry(geometry=(set_material_1, set_material))
             >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
-            >> g.SeparateGeometry.point(selection=group)
+            >> g.SeparateGeometry.point(selection=between_vector)
         )
         set_material_2 = (
             g.MeshToCurve(mesh=separate_geometry.o.selection, selection=show_contours)

@@ -92,10 +92,10 @@ class IsSheet(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = MN_select_sec_struct_id(and_=and_, or_=or_, id=2)
+        mn_select_sec_struct_id = MN_select_sec_struct_id(and_=and_, or_=or_, id=2)
 
-        group >> selection
-        group.o.inverted >> inverted
+        mn_select_sec_struct_id >> selection
+        mn_select_sec_struct_id.o.inverted >> inverted
 
 
 ASSET = IsSheet

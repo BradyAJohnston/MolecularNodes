@@ -107,11 +107,11 @@ class ColorPLDDT(AssetGeometryGroup):
             description="Assigned color based on the pLDTT score",
         )
 
-        group = BFactor()
+        b_factor = BFactor()
         (
-            (group > 90.0).switch.color(
-                (group > 70.0).switch.color(
-                    (group > 50.0).switch.color(n_50, n_70), n_90
+            (b_factor > 90.0).switch.color(
+                (b_factor > 70.0).switch.color(
+                    (b_factor > 50.0).switch.color(n_50, n_70), n_90
                 ),
                 n_90_1,
             )

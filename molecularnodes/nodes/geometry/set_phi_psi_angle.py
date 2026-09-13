@@ -99,12 +99,12 @@ class SetPhiPsiAngle(AssetGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = PeptideDihedral(
+        peptide_dihedral = PeptideDihedral(
             selection=selection,
             phi=DihedralPhi().o.phi.mul_add(-1.0, phi),
             psi=DihedralPsi().o.psi.mul_add(-1.0, psi),
         )
-        geometry >> g.SetPosition(position=group) >> geometry_1
+        geometry >> g.SetPosition(position=peptide_dihedral) >> geometry_1
 
 
 ASSET = SetPhiPsiAngle

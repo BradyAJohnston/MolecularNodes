@@ -102,15 +102,19 @@ class ColorGoodsell(AssetGeometryGroup):
             description="The generated color based on the node inputs",
         )
 
-        group = SelectAtomicNumber()
-        mix = g.Mix(
-            factor_float=invert.switch.boolean(
-                group.o.selection, group.o.inverted
-            ).switch.float(factor),
-            b_float=-0.4,
-            clamp_factor=True,
+        select_atomic_number = SelectAtomicNumber()
+        switch = invert.switch.boolean(
+            select_atomic_number.o.selection, select_atomic_number.o.inverted
+        ).switch.float(factor)
+        (
+            ColorOKLabOffset(
+                color=color,
+                luminance=g.Mix(
+                    factor_float=switch, b_float=-0.4, clamp_factor=True
+                ).o.result_float,
+            )
+            >> color_1
         )
-        ColorOKLabOffset(color=color, luminance=mix.o.result_float) >> color_1
 
 
 ASSET = ColorGoodsell

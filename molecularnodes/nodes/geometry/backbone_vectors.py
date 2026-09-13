@@ -88,16 +88,16 @@ class BackboneVectors(AssetGeometryGroup):
             "Bitangent", description="Cross product of the Normal and Tangent"
         )
 
-        group = BackbonePositions(method=method)
+        backbone_positions = BackbonePositions(method=method)
         mix = g.Mix(
-            a_vector=group.o.c,
-            b_vector=group.o.n,
+            a_vector=backbone_positions.o.c,
+            b_vector=backbone_positions.o.n,
             factor_float=0.45,
             data_type="VECTOR",
             clamp_factor=True,
         )
-        vector_math = (group.o.c - group.o.n).normalize()
-        vector_math_1 = (mix.o.result_vector - group.o.ca).normalize()
+        vector_math = (backbone_positions.o.c - backbone_positions.o.n).normalize()
+        vector_math_1 = (mix.o.result_vector - backbone_positions.o.ca).normalize()
         vector_math.cross(vector_math_1).normalize() >> bitangent
 
         vector_math_1 >> normal

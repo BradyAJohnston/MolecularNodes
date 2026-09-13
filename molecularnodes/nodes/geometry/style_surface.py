@@ -96,11 +96,15 @@ class Utils_bounding_box(CustomGeometryGroup):
         y = tree.outputs.integer("Y")
         z = tree.outputs.integer("Z")
 
-        group = MN_world_scale()
+        mn_world_scale = MN_world_scale()
         bounding_box = g.BoundingBox(geometry=geometry)
-        math_1 = group.o.world_scale * 2.0
-        vector_math = g.VectorMath.snap(bounding_box.o.min, group).o.vector - math_1
-        vector_math_1 = g.VectorMath.snap(bounding_box.o.max, group).o.vector + math_1
+        math_1 = mn_world_scale.o.world_scale * 2.0
+        vector_math = (
+            g.VectorMath.snap(bounding_box.o.min, mn_world_scale).o.vector - math_1
+        )
+        vector_math_1 = (
+            g.VectorMath.snap(bounding_box.o.max, mn_world_scale).o.vector + math_1
+        )
         vector = (vector_math_1 - vector_math) * subdivisions
         vector.x.max(2.0) >> x
         vector.y.max(2.0) >> y
@@ -220,11 +224,11 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
             MN_constants_atom_name_nucleic().o.side_chain_joint_carbon, AtomName()
         )
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
-        group = Surface_compute_density_from_points(
+        surface_compute_density_from_points = Surface_compute_density_from_points(
             Atoms=separate_geometry.o.selection,
             **{"Scale Radius": scale_radii, "Probe Size": probe_size},
         )
-        group_1 = Utils_bounding_box(
+        utils_bounding_box = Utils_bounding_box(
             Geometry=separate_geometry.o.selection, Subdivisions=quality * 5.0
         )
         separate_geometry_1 = g.SeparateGeometry.point(
@@ -242,12 +246,12 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
         )
         with g.Frame("Generate Surface from Measurements"):
             volume_cube = g.VolumeCube(
-                density=group.o.result,
-                min=group_1.o.min,
-                max=group_1.o.max,
-                resolution_x=group_1.o.x,
-                resolution_y=group_1.o.y,
-                resolution_z=group_1.o.z,
+                density=surface_compute_density_from_points.o.result,
+                min=utils_bounding_box.o.min,
+                max=utils_bounding_box.o.max,
+                resolution_x=utils_bounding_box.o.x,
+                resolution_y=utils_bounding_box.o.y,
+                resolution_z=utils_bounding_box.o.z,
             )
             volume_to_mesh = g.VolumeToMesh(
                 volume=volume_cube, voxel_size=0.01, threshold=0.1
@@ -294,8 +298,8 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
                     )
                 )
             )
-            group_2 = MN_surface_smooth_bumps(Geometry=set_position_1)
-        triangulate = group_2 >> g.Triangulate(quad_method="Beauty")
+            mn_surface_smooth_bumps = MN_surface_smooth_bumps(Geometry=set_position_1)
+        triangulate = mn_surface_smooth_bumps >> g.Triangulate(quad_method="Beauty")
         with g.Frame("Sample colors of nearest atom"):
             sample_index_2 = g.SampleIndex(
                 geometry=menu_switch,
@@ -303,12 +307,12 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
                 index=g.SampleNearest.point(menu_switch),
                 data_type="FLOAT_COLOR",
             )
-            group_3 = SetColor(
+            set_color = SetColor(
                 atoms=triangulate,
                 color=g.BlurAttribute.color(sample_index_2, color_blur),
             )
         (
-            group_3
+            set_color
             >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
             >> g.SetMaterial(material=material)
             >> surface_geometry
@@ -327,9 +331,9 @@ class TriangulateMesh(CustomGeometryGroup):
         closure_zone = g.ClosureZone()
         geometry = closure_zone.inputs.geometry("Geometry")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        group = MN_surface_smooth_bumps(Geometry=geometry)
-        group.node.mute = True
-        triangulate = group >> g.Triangulate(quad_method="Beauty")
+        mn_surface_smooth_bumps = MN_surface_smooth_bumps(Geometry=geometry)
+        mn_surface_smooth_bumps.node.mute = True
+        triangulate = mn_surface_smooth_bumps >> g.Triangulate(quad_method="Beauty")
         triangulate.node.mute = True
         triangulate >> geometry_1
         (
@@ -418,9 +422,11 @@ class RelaxSurface(CustomGeometryGroup):
         closure_zone = g.ClosureZone()
         geometry = closure_zone.inputs.geometry("Geometry")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        group = EdgeLength()
-        field_min_max = g.FieldMinAndMax.point.float(group)
-        _map_range = group.o.length.map_range(field_min_max.o.min, field_min_max.o.max)
+        edge_length = EdgeLength()
+        field_min_max = g.FieldMinAndMax.point.float(edge_length)
+        _map_range = edge_length.o.length.map_range(
+            field_min_max.o.min, field_min_max.o.max
+        )
         blur_attribute = g.BlurAttribute.vector(
             g.Position(),
             relaxation_steps,
@@ -741,7 +747,7 @@ class StyleSurface(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
-        _group = MN_utils_style_surface_new()
+        _mn_utils_style_surface_new = MN_utils_style_surface_new()
         with g.Frame("Create grid and turn into mesh"):
             with g.Frame("Old-style 'manual SDF creation"):
                 closure_zone = g.ClosureZone()
@@ -749,15 +755,15 @@ class StyleSurface(AssetGeometryGroup):
                 geometry_1 = closure_zone.outputs.geometry(
                     "Geometry", structure_type="SINGLE"
                 )
-                group_1 = Utils_bounding_box(
+                utils_bounding_box = Utils_bounding_box(
                     Geometry=atoms_1, Subdivisions=quality * 5.0
                 )
                 cube_grid_topology = g.CubeGridTopology(
-                    bounds_min=group_1.o.min,
-                    bounds_max=group_1.o.max,
-                    resolution_x=group_1.o.x,
-                    resolution_y=group_1.o.y,
-                    resolution_z=group_1.o.z,
+                    bounds_min=utils_bounding_box.o.min,
+                    bounds_max=utils_bounding_box.o.max,
+                    resolution_x=utils_bounding_box.o.x,
+                    resolution_y=utils_bounding_box.o.y,
+                    resolution_z=utils_bounding_box.o.z,
                 )
                 field_to_grid = g.FieldToGrid.boolean(topology=cube_grid_topology)
                 density = field_to_grid.items.float(
@@ -794,7 +800,7 @@ class StyleSurface(AssetGeometryGroup):
         closure_zone_3 = g.ClosureZone()
         geometry_4 = closure_zone_3.inputs.geometry("Geometry")
         geometry_5 = closure_zone_3.outputs.geometry("Geometry")
-        group_2 = MN_utils_style_surface_sdf(
+        mn_utils_style_surface_sdf = MN_utils_style_surface_sdf(
             Atoms=geometry_4,
             Selection=selection,
             Quality=quality,
@@ -805,13 +811,13 @@ class StyleSurface(AssetGeometryGroup):
             },
             Material=material,
         )
-        group_2 >> geometry_5
+        mn_utils_style_surface_sdf >> geometry_5
         menu_switch = g.MenuSwitch.closure(
             "SDF", {"Current": closure_zone.closure, "SDF": closure_zone_1.closure}
         )
         with g.Frame("Mesh processing"):
-            group_3 = TriangulateMesh()
-            group_3.node.mute = True
+            triangulate_mesh = TriangulateMesh()
+            triangulate_mesh.node.mute = True
             closure_zone_4 = g.ClosureZone()
             geometry_6 = closure_zone_4.inputs.geometry("Geometry")
             geometry_7 = closure_zone_4.outputs.geometry("Geometry")
@@ -824,7 +830,7 @@ class StyleSurface(AssetGeometryGroup):
                         Blur=color_blur,
                     ),
                     RelaxSurface(**{"Relaxation Steps": relax}),
-                    group_3,
+                    triangulate_mesh,
                 )
             )
             evaluate_closure = g.EvaluateClosure(
@@ -852,13 +858,13 @@ class StyleSurface(AssetGeometryGroup):
                 geometry=geometry_9, closure=closure_zone_4.closure
             ) >> g.StoreNamedAttribute.point.integer(name="chain_id", value=group_id_1)
             store_named_attribute >> geometry_10
-        group_4 = EvaluatePerGroup(
+        evaluate_per_group = EvaluatePerGroup(
             geometry=atoms_3,
             closure=closure_zone_5.closure,
             group=separate_by,
             group_id=group_id,
         )
-        group_4 >> geometry_3
+        evaluate_per_group >> geometry_3
         (
             EvaluateOnAtoms(
                 geometry=atoms, selection=selection, closure=closure_zone_2.closure

@@ -138,14 +138,14 @@ class BuildElasticNetwork(AssetGeometryGroup):
         )
 
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
-        group = Plexus(
+        plexus = Plexus(
             points=g.SeparateGeometry.point(
                 separate_geometry.o.selection, IsAlphaCarbon().o.selection
             ).o.selection,
             distance=alpha_carbon,
             radius=0.0,
         )
-        group_1 = Plexus(
+        plexus_1 = Plexus(
             points=g.SeparateGeometry.point(separate_geometry.o.selection).o.selection,
             distance=all_atom,
             radius=0.0,
@@ -153,8 +153,8 @@ class BuildElasticNetwork(AssetGeometryGroup):
         merge_by_distance = g.MenuSwitch.geometry(
             menu,
             {
-                "Alpha Carbon": group,
-                "All Atom": g.JoinGeometry(geometry=(group, group_1)),
+                "Alpha Carbon": plexus,
+                "All Atom": g.JoinGeometry(geometry=(plexus, plexus_1)),
             },
         ) >> g.MergeByDistance(distance=0.0001)
         capture = g.CaptureAttribute.point(geometry=merge_by_distance)

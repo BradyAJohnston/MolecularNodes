@@ -909,10 +909,10 @@ class SelectElement(AssetGeometryGroup):
                 hg,
             ),
         )
-        group = BooleanAndOr(and_=and_, or_=or_, boolean=index_switch)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=index_switch)
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectElement

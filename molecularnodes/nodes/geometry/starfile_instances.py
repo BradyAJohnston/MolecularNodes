@@ -212,27 +212,29 @@ class StarfileInstances(AssetGeometryGroup):
             transform_geometry = PrimitiveGimbal(
                 vertices=3, material=material
             ) >> g.TransformGeometry(scale=g.Value(2.0))
-            group = FallbackGeometry(geometry=menu_switch, fallback=transform_geometry)
+            fallback_geometry = FallbackGeometry(
+                geometry=menu_switch, fallback=transform_geometry
+            )
         with g.Frame("Scale Pixel Coordinates"):
             set_position = points >> g.SetPosition(
                 position=g.Position().o.position * pixel_scale
             )
         with g.Frame("Instances"):
             with g.Frame("Rotation"):
-                group_1 = RotationCisTEM()
-                group_2 = FallbackRotation(
-                    name="rotation",
-                    fallback=group_1.o.is_valid.switch.rotation(
-                        RotationRELION().o.rotation, group_1.o.rotation
-                    ),
+                rotation_cistem = RotationCisTEM()
+                switch = rotation_cistem.o.is_valid.switch.rotation(
+                    RotationRELION().o.rotation, rotation_cistem.o.rotation
                 )
-                group_3 = FallbackMatrix(name="transform", fallback=group_2)
+                fallback_matrix = FallbackMatrix(
+                    name="transform",
+                    fallback=FallbackRotation(name="rotation", fallback=switch),
+                )
             (
                 set_position
                 >> g.InstanceOnPoints(
                     selection=boolean_math,
-                    instance=group,
-                    rotation=group_3,
+                    instance=fallback_geometry,
+                    rotation=fallback_matrix,
                     scale=instance_scale,
                 )
                 >> instances

@@ -85,13 +85,13 @@ class GeoemtryToPlanar(AssetGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
         transform = tree.outputs.matrix("Transform")
 
-        group = GeometryPrincipalComponents(
+        geometry_principal_components = GeometryPrincipalComponents(
             geometry=g.SeparateGeometry.point(geometry, selection).o.selection
         )
         with g.Frame("Transform to Planar"):
             combine_transform = g.CombineTransform(
-                translation=group.o.group_center * -1.0,
-                rotation=group.o.rotation.invert(),
+                translation=geometry_principal_components.o.group_center * -1.0,
+                rotation=geometry_principal_components.o.rotation.invert(),
             )
         (
             geometry

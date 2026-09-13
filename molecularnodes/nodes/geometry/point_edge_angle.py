@@ -153,23 +153,25 @@ class PointEdgeAngle(AssetGeometryGroup):
             description="Vector from the current point to the other point in Edge B. Returns (0, 0, 0) if not valid.",
         )
 
-        group = EdgeInfo(vertex_index=vertex_index, edge_index=edge_a)
-        group_1 = EdgeInfo(vertex_index=vertex_index, edge_index=edge_b)
+        edge_info = EdgeInfo(vertex_index=vertex_index, edge_index=edge_a)
+        edge_info_1 = EdgeInfo(vertex_index=vertex_index, edge_index=edge_b)
         boolean_math = g.Compare.integer.not_equal(edge_a, edge_b).o.result & (
-            group.o.is_valid & group_1.o.is_valid
+            edge_info.o.is_valid & edge_info_1.o.is_valid
         )
         (
             boolean_math.switch.float(
-                true=VectorAngle(a=group.o.edge_vector, b=group_1.o.edge_vector).o.angle
+                true=VectorAngle(
+                    a=edge_info.o.edge_vector, b=edge_info_1.o.edge_vector
+                ).o.angle
             )
             >> angle
         )
 
         boolean_math >> is_valid
-        group.o.edge_index >> edge_index_a
-        group_1.o.edge_index >> edge_index_b
-        group.o.edge_vector >> edge_vector_a
-        group_1.o.edge_vector >> edge_vector_b
+        edge_info.o.edge_index >> edge_index_a
+        edge_info_1.o.edge_index >> edge_index_b
+        edge_info.o.edge_vector >> edge_vector_a
+        edge_info_1.o.edge_vector >> edge_vector_b
 
 
 ASSET = PointEdgeAngle

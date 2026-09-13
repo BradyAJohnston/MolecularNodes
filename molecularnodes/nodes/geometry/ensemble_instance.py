@@ -179,17 +179,17 @@ class EnsembleInstance(AssetGeometryGroup):
             )
             join_geometry = g.JoinGeometry(geometry=(set_material, instance_on_points))
         with g.Frame("Precise Selection"):
-            group = SliceEdgeInstances(
+            slice_edge_instances = SliceEdgeInstances(
                 instances=instance_on_points, selection=selection
             )
             set_material_1 = g.SetMaterial(
                 geometry=g.JoinGeometry(
-                    geometry=(group.o.realized_points, set_material)
+                    geometry=(slice_edge_instances.o.realized_points, set_material)
                 ),
                 material=point_material,
             )
             join_geometry_1 = g.JoinGeometry(
-                geometry=(group.o.instances, set_material_1)
+                geometry=(slice_edge_instances.o.instances, set_material_1)
             )
         (
             g.IndexSwitch.geometry(

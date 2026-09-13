@@ -429,9 +429,9 @@ class ColorResName(AssetGeometryGroup):
             )
         color = tree.outputs.color("Color", (0.8, 0.8, 0.8, 1.0))
 
-        group = ResidueName()
+        residue_name = ResidueName()
         index_switch = g.IndexSwitch.color(
-            group,
+            residue_name,
             (
                 ala,
                 arg,
@@ -480,7 +480,7 @@ class ColorResName(AssetGeometryGroup):
             ),
         )
         (
-            BetweenInteger(value=group, upper=43).o.boolean.switch.color(
+            BetweenInteger(value=residue_name, upper=43).o.boolean.switch.color(
                 Color(), index_switch
             )
             >> color

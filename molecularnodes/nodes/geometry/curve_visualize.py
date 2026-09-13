@@ -146,13 +146,13 @@ class CurveVisualize(AssetGeometryGroup):
         selection_1 = capture.items.boolean("Selection", selection)
         position_1 = capture.items.vector("Position", position)
         normal_1 = capture.items.vector("Normal", normal)
-        _group = CurveRotation(normal=normal_1.output)
-        group_1 = PrimitiveArrow(
+        _curve_rotation = CurveRotation(normal=normal_1.output)
+        primitive_arrow = PrimitiveArrow(
             vertices=3,
             value=(0.1056426, 0.800023, 0.793708, 1.0),
             material=bpy.data.materials.get("Ambient Occlusion"),
         )
-        group_2 = PrimitiveArrow(
+        primitive_arrow_1 = PrimitiveArrow(
             vertices=3,
             value=(0.8000315, 0.49981865, 0.01965215, 1.0),
             material=bpy.data.materials.get("Ambient Occlusion"),
@@ -163,9 +163,9 @@ class CurveVisualize(AssetGeometryGroup):
         set_spline_type.node.mute = True
         set_handle_type = g.SetHandleType(curve=set_spline_type)
         set_handle_type.node.mute = True
-        group_3 = SetColor(atoms=set_handle_type, color=(0.0, 0.0, 0.0, 1.0))
+        set_color = SetColor(atoms=set_handle_type, color=(0.0, 0.0, 0.0, 1.0))
         set_position = g.SetPosition(
-            geometry=group_3, selection=selection_1.output, position=position_1.output
+            geometry=set_color, selection=selection_1.output, position=position_1.output
         )
         instance_on_points = g.InstanceOnPoints(
             points=set_position,
@@ -175,23 +175,26 @@ class CurveVisualize(AssetGeometryGroup):
             rotation=g.NamedAttribute.quaternion("rotation").o.attribute,
             scale=MNUnits(value=arrow_size).o.angstrom,
         )
-        group_4 = UnitConvert(from_=2.0)
-        group_5 = UnitConvert(from_=2.0)
+        unit_convert = UnitConvert(from_=2.0)
+        unit_convert_1 = UnitConvert(from_=2.0)
         instance_on_points_1 = g.InstanceOnPoints(
-            points=group_3,
-            instance=group_1,
+            points=set_color,
+            instance=primitive_arrow,
             rotation=g.AlignRotationToVector(vector=curve_handle_positions.o.left),
             scale=g.CombineXYZ(
-                x=group_4, y=group_4, z=curve_handle_positions.o.left.length()
+                x=unit_convert, y=unit_convert, z=curve_handle_positions.o.left.length()
             ),
         )
+        combine_xyz = g.CombineXYZ(
+            x=unit_convert_1,
+            y=unit_convert_1,
+            z=curve_handle_positions.o.right.length(),
+        )
         instance_on_points_2 = g.InstanceOnPoints(
-            points=group_3,
-            instance=group_2,
+            points=set_color,
+            instance=primitive_arrow_1,
             rotation=g.AlignRotationToVector(vector=curve_handle_positions.o.right),
-            scale=g.CombineXYZ(
-                x=group_5, y=group_5, z=curve_handle_positions.o.right.length()
-            ),
+            scale=combine_xyz,
         )
         join_geometry = g.JoinGeometry(
             geometry=(

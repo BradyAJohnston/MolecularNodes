@@ -89,9 +89,9 @@ class SelectNucleicType(AssetGeometryGroup):
         is_pyrimidine = tree.outputs.boolean("is_pyrimidine")
 
         boolean = g.Boolean(boolean=True)
-        group = ResidueName()
+        residue_name = ResidueName()
         index_switch = g.IndexSwitch.boolean(
-            group,
+            residue_name,
             (
                 False,
                 False,
@@ -141,7 +141,7 @@ class SelectNucleicType(AssetGeometryGroup):
         )
         BooleanAndOr(and_=and_, or_=or_, boolean=index_switch) >> is_pyrimidine
         index_switch_1 = g.IndexSwitch.boolean(
-            group,
+            residue_name,
             (
                 False,
                 False,

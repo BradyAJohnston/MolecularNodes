@@ -91,17 +91,17 @@ class FlatInternal(AssetShaderGroup):
         )
         emission = tree.outputs.shader("Emission")
 
-        group = MNColor()
+        mn_color = MNColor()
         mix = g.Mix(
             factor_float=OutlineMask(threshold=threshold, thickness=thickness),
-            a_color=group.o.color,
+            a_color=mn_color.o.color,
             b_color=(0.0, 0.0, 0.0, 1.0),
             data_type="RGBA",
             clamp_factor=True,
         )
         emission_1 = s.Emission(
             color=s.MenuSwitch.color(
-                outline, {"Outline": mix.o.result_color, "None": group.o.color}
+                outline, {"Outline": mix.o.result_color, "None": mn_color.o.color}
             ).o.output
         )
 

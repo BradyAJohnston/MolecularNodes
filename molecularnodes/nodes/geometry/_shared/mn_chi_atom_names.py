@@ -64,62 +64,62 @@ class MN_chi_atom_names(CustomGeometryGroup):
         x4 = tree.outputs.integer("X4")
         x5 = tree.outputs.integer("X5")
 
-        group = MenuAtomName(atom_name="CG")
-        group_1 = MenuAtomName(atom_name="CG1")
-        group_2 = MenuAtomName(atom_name="CD")
-        group_3 = MenuAtomName(atom_name="OD1")
-        group_4 = MenuAtomName(atom_name="CD1")
-        group_5 = MenuAtomName(atom_name="OE1")
-        group_6 = MenuAtomName(atom_name="CE")
-        _group_7 = MenuResidueName()
-        _group_8 = ResidueName()
+        menu_atom_name = MenuAtomName(atom_name="CG")
+        menu_atom_name_1 = MenuAtomName(atom_name="CG1")
+        menu_atom_name_2 = MenuAtomName(atom_name="CD")
+        menu_atom_name_3 = MenuAtomName(atom_name="OD1")
+        menu_atom_name_4 = MenuAtomName(atom_name="CD1")
+        menu_atom_name_5 = MenuAtomName(atom_name="OE1")
+        menu_atom_name_6 = MenuAtomName(atom_name="CE")
+        _menu_residue_name = MenuResidueName()
+        _residue_name = ResidueName()
         (
             SwitchResidueName(
-                ala=group.o[0],
-                arg=group.o[0],
-                asn=group.o[0],
-                asp=group.o[0],
+                ala=menu_atom_name.o[0],
+                arg=menu_atom_name.o[0],
+                asn=menu_atom_name.o[0],
+                asp=menu_atom_name.o[0],
                 cys=MenuAtomName(atom_name="SG").o[0],
-                glu=group.o[0],
-                gln=group.o[0],
-                gly=group.o[0],
-                his=group.o[0],
-                ile=group_1.o[0],
-                leu=group.o[0],
-                lys=group.o[0],
-                met=group.o[0],
-                phe=group.o[0],
-                pro=group.o[0],
+                glu=menu_atom_name.o[0],
+                gln=menu_atom_name.o[0],
+                gly=menu_atom_name.o[0],
+                his=menu_atom_name.o[0],
+                ile=menu_atom_name_1.o[0],
+                leu=menu_atom_name.o[0],
+                lys=menu_atom_name.o[0],
+                met=menu_atom_name.o[0],
+                phe=menu_atom_name.o[0],
+                pro=menu_atom_name.o[0],
                 ser=MenuAtomName(atom_name="OG").o[0],
                 thr=MenuAtomName(atom_name="CG2").o[0],
-                trp=group.o[0],
-                tyr=group.o[0],
-                val=group_1.o[0],
+                trp=menu_atom_name.o[0],
+                tyr=menu_atom_name.o[0],
+                val=menu_atom_name_1.o[0],
             )
             >> x1
         )
         (
             SwitchResidueName(
-                ala=group_2.o[0],
-                arg=group_2.o[0],
-                asn=group_3.o[0],
-                asp=group_3.o[0],
-                cys=group_2.o[0],
-                glu=group_2.o[0],
-                gln=group_2.o[0],
-                gly=group_2.o[0],
+                ala=menu_atom_name_2.o[0],
+                arg=menu_atom_name_2.o[0],
+                asn=menu_atom_name_3.o[0],
+                asp=menu_atom_name_3.o[0],
+                cys=menu_atom_name_2.o[0],
+                glu=menu_atom_name_2.o[0],
+                gln=menu_atom_name_2.o[0],
+                gly=menu_atom_name_2.o[0],
                 his=MenuAtomName(atom_name="CD2").o[0],
-                ile=group_2.o[0],
-                leu=group_4.o[0],
-                lys=group_2.o[0],
+                ile=menu_atom_name_2.o[0],
+                leu=menu_atom_name_4.o[0],
+                lys=menu_atom_name_2.o[0],
                 met=MenuAtomName(atom_name="SD").o[0],
-                phe=group_4.o[0],
-                pro=group_2.o[0],
-                ser=group_2.o[0],
-                thr=group_2.o[0],
-                trp=group_4.o[0],
-                tyr=group_4.o[0],
-                val=group_2.o[0],
+                phe=menu_atom_name_4.o[0],
+                pro=menu_atom_name_2.o[0],
+                ser=menu_atom_name_2.o[0],
+                thr=menu_atom_name_2.o[0],
+                trp=menu_atom_name_4.o[0],
+                tyr=menu_atom_name_4.o[0],
+                val=menu_atom_name_2.o[0],
             )
             >> x2
         )
@@ -138,14 +138,14 @@ class MN_chi_atom_names(CustomGeometryGroup):
                 asn=0,
                 asp=0,
                 cys=0,
-                glu=group_5.o[0],
-                gln=group_5.o[0],
+                glu=menu_atom_name_5.o[0],
+                gln=menu_atom_name_5.o[0],
                 gly=0,
                 his=0,
                 ile=0,
                 leu=0,
-                lys=group_6.o[0],
-                met=group_6.o[0],
+                lys=menu_atom_name_6.o[0],
+                met=menu_atom_name_6.o[0],
                 phe=0,
                 pro=0,
                 ser=0,

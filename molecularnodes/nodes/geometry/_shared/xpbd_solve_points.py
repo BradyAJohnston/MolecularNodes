@@ -113,8 +113,8 @@ class XPBDSolvePoints(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = InverseMass()
-        group_1 = ResidueID()
+        inverse_mass = InverseMass()
+        residue_id = ResidueID()
         vector_math = (
             g.Position().o.position
             + g.RandomValue.vector((-1.0, -1.0, -1.0), (1.0, 1.0, 1.0)).o.value * 0.001
@@ -123,9 +123,9 @@ class XPBDSolvePoints(CustomGeometryGroup):
         capture.items.vector("Vector", vector_math)
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
         index = capture_1.items.integer("Index", g.IndexOfNearest().o.index)
-        evaluate_at_index = group_1.o.res_id.point.at(index.output)
+        evaluate_at_index = residue_id.o.res_id.point.at(index.output)
         _compare = g.Compare.integer.not_equal(
-            abs(group_1.o.res_id - evaluate_at_index), 1
+            abs(residue_id.o.res_id - evaluate_at_index), 1
         )
         math_1 = radius.point.at(index.output) + radius
         compare_1 = g.Compare.integer.not_equal(
@@ -134,19 +134,20 @@ class XPBDSolvePoints(CustomGeometryGroup):
             ).o.next_vertex_index,
             index.output,
         )
-        group_2 = ConstraintDistance(
+        constraint_distance = ConstraintDistance(
             target=g.Position().o.position.point.at(index.output),
             distance=math_1,
-            w1=group.o.w,
-            w2=group.o.w.point.at(index.output),
+            w1=inverse_mass.o.w,
+            w2=inverse_mass.o.w.point.at(index.output),
             alpha=alpha,
             deltat=deltat,
         )
         (
             capture_1.o.geometry
             >> g.SetPosition(
-                selection=compare_1.o.result & (selection & (math_1 > group_2.o.value)),
-                offset=group_2.o.correction,
+                selection=compare_1.o.result
+                & (selection & (math_1 > constraint_distance.o.value)),
+                offset=constraint_distance.o.correction,
             )
             >> geometry_1
         )

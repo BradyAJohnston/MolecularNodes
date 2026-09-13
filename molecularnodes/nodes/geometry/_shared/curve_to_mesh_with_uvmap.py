@@ -104,7 +104,7 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         mesh = tree.outputs.geometry("Mesh")
         uv_map = tree.outputs.vector("uv_map")
 
-        _group = FallbackGeometry()
+        _fallback_geometry = FallbackGeometry()
         named_attribute = g.NamedAttribute.float("radius")
         _spline_length = g.SplineLength()
         spline_parameter = g.SplineParameter()
