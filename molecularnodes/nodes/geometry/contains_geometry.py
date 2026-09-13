@@ -75,24 +75,24 @@ class ContainsGeometry(AssetGeometryGroup):
         )
 
         compare = g.Compare.integer.equal(
-            g.DomainSize(geometry=geometry, component="CURVE").o.point_count, 0
-        )
-        compare_1 = g.Compare.integer.equal(
             g.DomainSize(geometry=geometry, component="INSTANCES").o.instance_count, 0
         )
-        compare_2 = g.Compare.integer.equal(
+        compare_1 = g.Compare.integer.equal(
             g.DomainSize(geometry=geometry, component="GREASEPENCIL").o.layer_count, 0
         )
-        compare_3 = g.Compare.integer.equal(
+        compare_2 = g.Compare.integer.equal(
             g.DomainSize(geometry=geometry, component="POINTCLOUD").o.point_count, 0
         )
         boolean_math = (
             g.Compare.integer.equal(
                 g.DomainSize(geometry=geometry).o.point_count, 0
             ).o.result
-            & compare_3
+            & compare_2
         )
-        boolean_math_1 = boolean_math & compare & compare_1 & compare_2
+        compare_3 = g.Compare.integer.equal(
+            g.DomainSize(geometry=geometry, component="CURVE").o.point_count, 0
+        )
+        boolean_math_1 = boolean_math & compare_3 & compare & compare_1
         ~boolean_math_1 >> not_empty
 
         boolean_math_1 >> empty

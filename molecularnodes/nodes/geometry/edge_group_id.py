@@ -71,10 +71,10 @@ class EdgeGroupID(AssetGeometryGroup):
         is_equal = tree.outputs.boolean("Is Equal", attribute_domain="EDGE")
 
         edge_vertices = g.EdgeVertices()
-        evaluate_at_index = group_id.point.at(edge_vertices.o.vertex_index_2)
-        evaluate_at_index_1 = group_id.point.at(edge_vertices.o.vertex_index_1)
-        g.Compare.integer.equal(evaluate_at_index_1, evaluate_at_index) >> is_equal
-        abs(evaluate_at_index_1 - evaluate_at_index) >> difference
+        evaluate_at_index = group_id.point.at(edge_vertices.o.vertex_index_1)
+        evaluate_at_index_1 = group_id.point.at(edge_vertices.o.vertex_index_2)
+        g.Compare.integer.equal(evaluate_at_index, evaluate_at_index_1) >> is_equal
+        abs(evaluate_at_index - evaluate_at_index_1) >> difference
 
 
 ASSET = EdgeGroupID
