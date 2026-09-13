@@ -1,7 +1,9 @@
-# Node-group asset 'Boolean Last' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Boolean Last" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -37,7 +39,7 @@ class BooleanLast(AssetGeometryGroup):
 
     _name = "Boolean Last"
     _asset_name = "Boolean Last"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Index of last time the `Boolean` is true for each `Group ID` (not including the current point). "
@@ -64,7 +66,7 @@ class BooleanLast(AssetGeometryGroup):
     ):
         super().__init__(**{"Boolean": boolean})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         boolean = tree.inputs.boolean(
             "Boolean",
             True,
@@ -83,16 +85,18 @@ class BooleanLast(AssetGeometryGroup):
             ).o.trailing,
             0,
         )
-        group = OffsetInteger(
+        offset_integer = OffsetInteger(
             integer=GroupInfo(group_id=accumulate_field.o.leading).o.index_of_first,
             offset=-1,
         )
-        _group_1 = OffsetInteger(
+        _offset_integer_1 = OffsetInteger(
             integer=compare.o.result.switch.integer(true=g.Index()).point.total(
                 accumulate_field.o.trailing
             )
         )
-        (accumulate_field.o.leading > 0).switch.integer(-1, group) >> index_of_last
+        (accumulate_field.o.leading > 0).switch.integer(
+            -1, offset_integer
+        ) >> index_of_last
 
 
 ASSET = BooleanLast

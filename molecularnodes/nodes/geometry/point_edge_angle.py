@@ -1,7 +1,9 @@
-# Node-group asset 'Point Edge Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Point Edge Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -57,7 +59,7 @@ class PointEdgeAngle(AssetGeometryGroup):
 
     _name = "Point Edge Angle"
     _asset_name = "Point Edge Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.point_edge_angle"}
 
@@ -100,7 +102,7 @@ class PointEdgeAngle(AssetGeometryGroup):
             **{"Vertex Index": vertex_index, "Edge A": edge_a, "Edge B": edge_b}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         vertex_index = tree.inputs.integer(
             "Vertex Index",
             0,
@@ -151,23 +153,25 @@ class PointEdgeAngle(AssetGeometryGroup):
             description="Vector from the current point to the other point in Edge B. Returns (0, 0, 0) if not valid.",
         )
 
-        group = EdgeInfo(vertex_index=vertex_index, edge_index=edge_a)
-        group_1 = EdgeInfo(vertex_index=vertex_index, edge_index=edge_b)
+        edge_info = EdgeInfo(vertex_index=vertex_index, edge_index=edge_a)
+        edge_info_1 = EdgeInfo(vertex_index=vertex_index, edge_index=edge_b)
         boolean_math = g.Compare.integer.not_equal(edge_a, edge_b).o.result & (
-            group.o.is_valid & group_1.o.is_valid
+            edge_info.o.is_valid & edge_info_1.o.is_valid
         )
         (
             boolean_math.switch.float(
-                true=VectorAngle(a=group.o.edge_vector, b=group_1.o.edge_vector).o.angle
+                true=VectorAngle(
+                    a=edge_info.o.edge_vector, b=edge_info_1.o.edge_vector
+                ).o.angle
             )
             >> angle
         )
 
         boolean_math >> is_valid
-        group.o.edge_index >> edge_index_a
-        group_1.o.edge_index >> edge_index_b
-        group.o.edge_vector >> edge_vector_a
-        group_1.o.edge_vector >> edge_vector_b
+        edge_info.o.edge_index >> edge_index_a
+        edge_info_1.o.edge_index >> edge_index_b
+        edge_info.o.edge_vector >> edge_vector_a
+        edge_info_1.o.edge_vector >> edge_vector_b
 
 
 ASSET = PointEdgeAngle

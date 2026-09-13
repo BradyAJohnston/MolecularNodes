@@ -1,7 +1,9 @@
-# Node-group asset 'Is Side Chain' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Is Side Chain" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -49,7 +51,7 @@ class IsSideChain(AssetGeometryGroup):
 
     _name = "Is Side Chain"
     _asset_name = "Is Side Chain"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.is_side_chain"}
 
@@ -82,7 +84,7 @@ class IsSideChain(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_, "Include CA": include_ca})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -107,18 +109,19 @@ class IsSideChain(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = FallbackBoolean(
+        fallback_boolean = FallbackBoolean(
             name="is_side_chain",
             fallback=MN_select_nucleic().o.is_side_chain
             | MN_select_peptide().o.is_side_chain,
         )
         switch = include_ca.switch.boolean(
-            g.BooleanMath.subtract(group, IsAlphaCarbon().o.selection), group
+            g.BooleanMath.subtract(fallback_boolean, IsAlphaCarbon().o.selection),
+            fallback_boolean,
         )
-        group_1 = BooleanAndOr(and_=and_, or_=or_, boolean=switch)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=switch)
 
-        group_1 >> selection
-        group_1.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = IsSideChain

@@ -1,7 +1,9 @@
-# Node-group asset 'Edge Group ID' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Edge Group ID" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -37,7 +39,7 @@ class EdgeGroupID(AssetGeometryGroup):
 
     _name = "Edge Group ID"
     _asset_name = "Edge Group ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -63,16 +65,16 @@ class EdgeGroupID(AssetGeometryGroup):
     ):
         super().__init__(**{"Group ID": group_id})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         group_id = tree.inputs.integer("Group ID", 0, hide_value=True)
         difference = tree.outputs.integer("Difference", attribute_domain="EDGE")
         is_equal = tree.outputs.boolean("Is Equal", attribute_domain="EDGE")
 
         edge_vertices = g.EdgeVertices()
-        evaluate_at_index = group_id.point.at(edge_vertices.o.vertex_index_1)
-        evaluate_at_index_1 = group_id.point.at(edge_vertices.o.vertex_index_2)
-        g.Compare.integer.equal(evaluate_at_index, evaluate_at_index_1) >> is_equal
-        abs(evaluate_at_index - evaluate_at_index_1) >> difference
+        evaluate_at_index = group_id.point.at(edge_vertices.o.vertex_index_2)
+        evaluate_at_index_1 = group_id.point.at(edge_vertices.o.vertex_index_1)
+        g.Compare.integer.equal(evaluate_at_index_1, evaluate_at_index) >> is_equal
+        abs(evaluate_at_index_1 - evaluate_at_index) >> difference
 
 
 ASSET = EdgeGroupID

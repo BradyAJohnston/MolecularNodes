@@ -1,8 +1,10 @@
-# Node-group asset 'Curve Offset Dot' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Curve Offset Dot" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -65,7 +67,7 @@ class CurveOffsetDot(AssetGeometryGroup):
 
     _name = "Curve Offset Dot"
     _asset_name = "Curve Offset Dot"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.curve_offset_dot"}
 
@@ -119,7 +121,7 @@ class CurveOffsetDot(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         normal = tree.inputs.vector("Normal", (0.0, 0.0, 0.0), default_input="NORMAL")
         offset = tree.inputs.integer("Offset", -1, min_value=-2147483647)
         with tree.inputs.panel("Threshold"):

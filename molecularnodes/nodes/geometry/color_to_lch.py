@@ -1,7 +1,9 @@
-# Node-group asset 'Color to LCh' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color to LCh" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     ColorSocket,
@@ -40,7 +42,7 @@ class ColorToLCh(AssetGeometryGroup):
 
     _name = "Color to LCh"
     _asset_name = "Color to LCh"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
 
     class _Inputs(SocketAccessor):
@@ -67,17 +69,17 @@ class ColorToLCh(AssetGeometryGroup):
     ):
         super().__init__(**{"Color": color})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 1.0))
         l = tree.outputs.float("L")
         c_ = tree.outputs.float("C")
         h = tree.outputs.float("h", subtype="ANGLE")
 
-        group = OKLabToLCh(oklab=ColorToOKLab(color=color))
+        oklab_to_lch = OKLabToLCh(oklab=ColorToOKLab(color=color))
 
-        group >> l
-        group.o.c >> c_
-        group.o.h >> h
+        oklab_to_lch >> l
+        oklab_to_lch.o.c >> c_
+        oklab_to_lch.o.h >> h
 
 
 ASSET = ColorToLCh

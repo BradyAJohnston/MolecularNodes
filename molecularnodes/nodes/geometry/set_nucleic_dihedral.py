@@ -1,7 +1,9 @@
-# Node-group asset 'Set Nucleic Dihedral' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Set Nucleic Dihedral" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -62,7 +64,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
 
     _name = "Set Nucleic Dihedral"
     _asset_name = "Set Nucleic Dihedral"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -114,7 +116,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         selection = tree.inputs.boolean(
             "Selection",
@@ -132,7 +134,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
 
         math_1 = DihedralNucleicAngle().o.angle * -1.0
-        group = NucleicDihedral(
+        nucleic_dihedral = NucleicDihedral(
             selection=selection,
             alpha=alpha + math_1,
             beta=beta + math_1,
@@ -140,7 +142,7 @@ class SetNucleicDihedral(AssetGeometryGroup):
             epsilon=epsilon + math_1,
             zeta=zeta + math_1,
         )
-        geometry >> g.SetPosition(position=group) >> geometry_1
+        geometry >> g.SetPosition(position=nucleic_dihedral) >> geometry_1
 
 
 ASSET = SetNucleicDihedral

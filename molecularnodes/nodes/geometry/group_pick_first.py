@@ -1,7 +1,9 @@
-# Node-group asset 'Group Pick First' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Group Pick First" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -42,7 +44,7 @@ class GroupPickFirst(AssetGeometryGroup):
 
     _name = "Group Pick First"
     _asset_name = "Group Pick First"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Get the `Index` of the first `True` item for each `Group ID`",
@@ -75,7 +77,7 @@ class GroupPickFirst(AssetGeometryGroup):
     ):
         super().__init__(**{"Pick": pick, "Group ID": group_id})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         pick = tree.inputs.boolean(
             "Pick",
             False,

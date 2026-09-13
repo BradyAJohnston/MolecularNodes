@@ -1,7 +1,9 @@
-# Node-group asset 'Style Sticks' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Style Sticks" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -74,7 +76,7 @@ class StyleSticks(AssetGeometryGroup):
 
     _name = "Style Sticks"
     _asset_name = "Style Sticks"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "node_tool_idname": "geometry.style_sticks",
@@ -131,7 +133,7 @@ class StyleSticks(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -180,7 +182,7 @@ class StyleSticks(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_1 >> g.SeparateGeometry.point(selection=selection)
-        group = MN_utils_style_sticks(
+        mn_utils_style_sticks = MN_utils_style_sticks(
             atoms=separate_geometry.o.selection,
             radius=scale,
             resolution=g.Math.multiply(quality, g.Integer(integer=8)),
@@ -194,7 +196,7 @@ class StyleSticks(AssetGeometryGroup):
             name="vdw_radii",
             value=MNUnits(value=1.0).o.angstrom,
         )
-        group_1 = StyleSpheres(
+        style_spheres = StyleSpheres(
             atoms=store_named_attribute,
             sphere=sphere,
             quality=quality,
@@ -202,7 +204,7 @@ class StyleSticks(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
-        g.JoinGeometry(geometry=(group_1, group)) >> geometry_1
+        g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks)) >> geometry_1
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         sphere.default_value = "Instance"

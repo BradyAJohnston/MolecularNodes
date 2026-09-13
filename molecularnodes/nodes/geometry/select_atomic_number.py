@@ -1,7 +1,9 @@
-# Node-group asset 'Select Atomic Number' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Select Atomic Number" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -46,7 +48,7 @@ class SelectAtomicNumber(AssetGeometryGroup):
 
     _name = "Select Atomic Number"
     _asset_name = "Select Atomic Number"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_atomic_number"}
 
@@ -79,7 +81,7 @@ class SelectAtomicNumber(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_, "atomic_number": atomic_number})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -109,10 +111,10 @@ class SelectAtomicNumber(AssetGeometryGroup):
         compare = g.Compare.integer.equal(
             g.NamedAttribute.integer("atomic_number").o.attribute, atomic_number
         )
-        group = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectAtomicNumber

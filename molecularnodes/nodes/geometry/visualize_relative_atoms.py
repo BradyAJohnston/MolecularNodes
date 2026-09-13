@@ -1,7 +1,9 @@
-# Node-group asset 'Visualize Relative Atoms' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Visualize Relative Atoms" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -66,7 +68,7 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
 
     _name = "Visualize Relative Atoms"
     _asset_name = "Visualize Relative Atoms"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -114,7 +116,7 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry("Atoms")
         selection = tree.inputs.boolean("Selection", True, hide_value=True)
         scale = tree.inputs.float("Scale", 1.0, min_value=-10_000.0, max_value=10_000.0)
@@ -135,7 +137,9 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
-        group = IndexDistance(target_index=target_index, position=target_position)
+        index_distance = IndexDistance(
+            target_index=target_index, position=target_position
+        )
         (
             atoms
             >> g.SetPosition(position=position)
@@ -144,8 +148,8 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
                 instance=PrimitiveArrow(
                     vertices=3, ratio=0.5625, value=(0.0, 0.0, 0.0, 1.0)
                 ),
-                rotation=group.o.rotation,
-                scale=g.CombineXYZ(z=group.o.distance * scale, x=0.02, y=0.02),
+                rotation=index_distance.o.rotation,
+                scale=g.CombineXYZ(z=index_distance.o.distance * scale, x=0.02, y=0.02),
             )
             >> instances
         )

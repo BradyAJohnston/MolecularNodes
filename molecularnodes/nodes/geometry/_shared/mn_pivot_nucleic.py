@@ -1,8 +1,10 @@
-# Node group '.MN_pivot_nucleic' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_pivot_nucleic" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import BooleanSocket, CustomGeometryGroup, SocketAccessor
 from ..atom_name import AtomName
@@ -50,29 +52,29 @@ class MN_pivot_nucleic(CustomGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         accumulate_backbone = tree.outputs.boolean("Accumulate Backbone")
         pivot_backbone = tree.outputs.boolean("Pivot Backbone")
         accumulate_base = tree.outputs.boolean("Accumulate Base")
         pivot_base = tree.outputs.boolean("Pivot Base")
 
-        group = AtomName()
+        atom_name = AtomName()
+        atom_name_1 = AtomName()
         boolean_math = (
-            g.Compare.integer.equal(group, 50).o.result
-            | g.Compare.integer.equal(group, 53)
-            | g.Compare.integer.equal(group, 54)
+            g.Compare.integer.equal(atom_name, 50).o.result
+            | g.Compare.integer.equal(atom_name, 53)
+            | g.Compare.integer.equal(atom_name, 54)
         )
         boolean_math_1 = (
             boolean_math
-            | g.Compare.integer.equal(group, 55)
-            | g.Compare.integer.equal(group, 58)
+            | g.Compare.integer.equal(atom_name, 55)
+            | g.Compare.integer.equal(atom_name, 58)
         )
-        (boolean_math_1 | g.Compare.integer.equal(group, 57)) >> pivot_backbone
-        group_1 = AtomName()
-        g.Compare.integer.equal(group_1, 61) >> pivot_base
+        (boolean_math_1 | g.Compare.integer.equal(atom_name, 57)) >> pivot_backbone
+        g.Compare.integer.equal(atom_name_1, 61) >> pivot_base
         (
             g.Compare.integer.equal(
-                SelectNucleicType().o.is_pyrimidine.switch.integer(63, 62), group_1
+                SelectNucleicType().o.is_pyrimidine.switch.integer(63, 62), atom_name_1
             )
             >> accumulate_base
         )

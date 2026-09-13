@@ -1,8 +1,10 @@
-# Node group 'Curve to Mesh with UVMap' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Curve to Mesh with UVMap" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     BooleanSocket,
@@ -92,7 +94,7 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
         u_component = tree.inputs.menu("U Component", optional_label=True)
         profile_resolution = tree.inputs.integer(
@@ -102,7 +104,7 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         mesh = tree.outputs.geometry("Mesh")
         uv_map = tree.outputs.vector("uv_map")
 
-        _group = FallbackGeometry()
+        _fallback_geometry = FallbackGeometry()
         menu_switch = g.MenuSwitch.integer(u_component, {"Factor": 0, "Length": 1})
         named_attribute = g.NamedAttribute.float("radius")
         _spline_length = g.SplineLength()
@@ -122,13 +124,6 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         switch = CheckEndFaceCorner(
             captured_index=index.output
         ).o.is_end_face_corner.switch.float(factor.output, 1.0)
-        switch_1 = CheckEndFaceCorner(
-            captured_index=index_1.output
-        ).o.is_end_face_corner.switch.float(
-            factor_1.output,
-            g.IndexSwitch.float(menu_switch.o.output, (1.0, length.output)),
-        )
-        combine_xyz = g.CombineXYZ(x=switch_1, y=switch)
         (
             capture_1.o.geometry
             >> g.CurveToMesh(
@@ -140,6 +135,13 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
             )
             >> mesh
         )
+        switch_1 = CheckEndFaceCorner(
+            captured_index=index_1.output
+        ).o.is_end_face_corner.switch.float(
+            factor_1.output,
+            g.IndexSwitch.float(menu_switch.o.output, (1.0, length.output)),
+        )
+        combine_xyz = g.CombineXYZ(x=switch_1, y=switch)
 
         combine_xyz >> uv_map
 

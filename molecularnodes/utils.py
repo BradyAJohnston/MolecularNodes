@@ -4,7 +4,6 @@ import os
 import sys
 from contextlib import ExitStack
 from typing import List, cast
-import addon_utils
 import bpy
 import numpy as np
 
@@ -42,18 +41,6 @@ def _increase_view_distance():
                     space = cast(bpy.types.SpaceView3D, space)
                     if space.clip_end == _DEFAULT_VIEWPORT_CLIP_END:
                         space.clip_end = _INCREASED_CLIP_END
-
-
-def load_extension_module():
-    # check enabled addons
-    for addon in bpy.context.preferences.addons.keys():
-        if addon.endswith(".molecularnodes"):
-            is_enabled, is_loaded = addon_utils.check(addon)
-            if is_enabled and is_loaded:
-                return sys.modules[addon]
-    # return this parent module
-    mn_module_name = __name__.rsplit(".", 1)[0]
-    return sys.modules[mn_module_name]
 
 
 def fraction(x, y):

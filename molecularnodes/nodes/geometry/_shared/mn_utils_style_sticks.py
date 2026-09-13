@@ -1,9 +1,11 @@
-# Node group '.MN_utils_style_sticks' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_utils_style_sticks" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     BooleanSocket,
@@ -150,7 +152,7 @@ class MN_utils_style_sticks(CustomGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -221,13 +223,13 @@ class MN_utils_style_sticks(CustomGeometryGroup):
             vector = capture.items.vector("Vector", vector_math_1)
         split_edges = capture.o.geometry >> g.SplitEdges()
         with g.Frame("Rotate and offset Extra Bonds"):
+            map_bond_type = Map_bond_type()
             edge_vertices_2 = g.EdgeVertices()
-            group = Map_bond_type()
             capture_1 = g.CaptureAttribute.point(
-                geometry=split_edges, selection=group > 1
+                geometry=split_edges, selection=map_bond_type > 1
             )
             duplicate_elements = capture_1.o.geometry >> g.DuplicateElements.edge(
-                amount=group
+                amount=map_bond_type
             )
             math_1 = g.Math.multiply_add(
                 duplicate_elements.o.duplicate_index,
@@ -279,14 +281,16 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 ),
                 scale=g.Radius().o.radius * radius,
             )
-            group_1 = SampleAtomicAttributesToFaceCorner(
-                geometry=curve_to_mesh,
-                sample_atoms=capture_3.o.geometry,
-                index=switch_1,
+            sample_atomic_attributes_to_face_corner = (
+                SampleAtomicAttributesToFaceCorner(
+                    geometry=curve_to_mesh,
+                    sample_atoms=capture_3.o.geometry,
+                    index=switch_1,
+                )
             )
         with g.Frame("Set up materials"):
             (
-                group_1
+                sample_atomic_attributes_to_face_corner
                 >> g.SetMaterial(material=material)
                 >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
                 >> geometry

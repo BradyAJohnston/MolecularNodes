@@ -1,7 +1,9 @@
-# Node-group asset 'Residue Dihedral Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Residue Dihedral Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -52,7 +54,7 @@ class ResidueDihedralAngle(AssetGeometryGroup):
 
     _name = "Residue Dihedral Angle"
     _asset_name = "Residue Dihedral Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
 
     class _Inputs(SocketAccessor):
         a: IntegerSocket
@@ -87,7 +89,7 @@ class ResidueDihedralAngle(AssetGeometryGroup):
     ):
         super().__init__(**{"A": a, "C": c, "D": d})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.integer(
             "A", 6, description="Atom to pick from the group", min_value=2
         )
@@ -108,17 +110,17 @@ class ResidueDihedralAngle(AssetGeometryGroup):
         )
         bc = tree.outputs.vector("BC", description="The axis vector BC")
 
-        group = DihedralAngle(
+        dihedral_angle = DihedralAngle(
             a=ResidueMask(atom_name=a).o.position,
             b=g.Position(),
             c=ResidueMask(atom_name=c_).o.position,
             d=ResidueMask(atom_name=d).o.position,
         )
 
-        group >> value
-        group.o.ba_bc >> ba_bc
-        group.o.cd_bc >> cd_bc
-        group.o.bc >> bc
+        dihedral_angle >> value
+        dihedral_angle.o.ba_bc >> ba_bc
+        dihedral_angle.o.cd_bc >> cd_bc
+        dihedral_angle.o.bc >> bc
 
 
 ASSET = ResidueDihedralAngle

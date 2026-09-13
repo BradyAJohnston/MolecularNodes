@@ -1,7 +1,9 @@
-# Node-group asset 'Residue Mask' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Residue Mask" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -43,7 +45,7 @@ class ResidueMask(AssetGeometryGroup):
 
     _name = "Residue Mask"
     _asset_name = "Residue Mask"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.residue_mask"}
 
@@ -72,7 +74,7 @@ class ResidueMask(AssetGeometryGroup):
     ):
         super().__init__(**{"atom_name": atom_name})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atom_name = tree.inputs.integer(
             "atom_name", 1, description="Atom to pick from the group", min_value=2
         )
@@ -89,14 +91,14 @@ class ResidueMask(AssetGeometryGroup):
             description="Position of the picked point in the group, returns (0, 0, 0) if not valid",
         )
 
-        group = GroupPickVector(
+        group_pick_vector = GroupPickVector(
             pick=g.Compare.integer.equal(AtomName(), atom_name),
             group_id=UResID().o.ures_id,
         )
 
-        group >> is_valid
-        group.o.index >> index
-        group.o.vector >> position
+        group_pick_vector >> is_valid
+        group_pick_vector.o.index >> index
+        group_pick_vector.o.vector >> position
 
 
 ASSET = ResidueMask

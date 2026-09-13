@@ -37,6 +37,7 @@ from .boolean_run_fill import BooleanRunFill
 from .boolean_run_trim import BooleanRunTrim
 from .break_bonds import BreakBonds
 from .break_curves import BreakCurves
+from .build_elastic_network import BuildElasticNetwork
 from .centre_on_selection import CentreOnSelection
 from .centroid import Centroid
 from .chain_id import ChainID
@@ -101,6 +102,9 @@ from .fallback_vector import FallbackVector
 from .field_remap import FieldRemap
 from .find_bonded_atom import FindBondedAtom
 from .find_bonds import FindBonds
+from .force_brownian import ForceBrownian
+from .force_gravity import ForceGravity
+from .force_mesh_collide import ForceMeshCollide
 from .fractionate_float import FractionateFloat
 from .frame_id import FrameID
 from .geoemtry_to_planar import GeoemtryToPlanar
@@ -112,6 +116,7 @@ from .group_pick import GroupPick
 from .group_pick_first import GroupPickFirst
 from .group_pick_index import GroupPickIndex
 from .group_pick_vector import GroupPickVector
+from .image_id import ImageID
 from .index_distance import IndexDistance
 from .index_mix_color import IndexMixColor
 from .index_mix_float import IndexMixFloat
@@ -161,11 +166,10 @@ from .offset_vector import OffsetVector
 from .oklab_offset_lch import OKLabOffsetLCh
 from .oklab_to_color import OKLabToColor
 from .oklab_to_lch import OKLabToLCh
-from .oxdna_normal import OxDNANormal
-from .oxdna_offset import OxDNAOffset
-from .oxdna_rotation import OxDNARotation
+from .oxdna_realize_vectors import OxDNARealizeVectors
+from .oxdna_recover_vectors import OxDNARecoverVectors
 from .oxdna_style_ribbon import OxDNAStyleRibbon
-from .oxdna_vector import OxDNAVector
+from .oxdna_vectors import OxDNAVectors
 from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
 from .periodic_array import PeriodicArray
@@ -216,6 +220,9 @@ from .set_color import SetColor
 from .set_nucleic_dihedral import SetNucleicDihedral
 from .set_phi_psi_angle import SetPhiPsiAngle
 from .set_ures_id import SetUResID
+from .simulate_curve import SimulateCurve
+from .simulate_elastic_network import SimulateElasticNetwork
+from .simulate_on_faces import SimulateOnFaces
 from .slice_edge_instances import SliceEdgeInstances
 from .split_to_centred_instances import SplitToCentredInstances
 from .starfile_instances import StarfileInstances
@@ -290,6 +297,7 @@ __all__ = (
     "BooleanRunTrim",
     "BreakBonds",
     "BreakCurves",
+    "BuildElasticNetwork",
     "CentreOnSelection",
     "Centroid",
     "ChainID",
@@ -354,6 +362,9 @@ __all__ = (
     "FieldRemap",
     "FindBondedAtom",
     "FindBonds",
+    "ForceBrownian",
+    "ForceGravity",
+    "ForceMeshCollide",
     "FractionateFloat",
     "FrameID",
     "GeoemtryToPlanar",
@@ -367,6 +378,7 @@ __all__ = (
     "GroupPickFirst",
     "GroupPickIndex",
     "GroupPickVector",
+    "ImageID",
     "IndexDistance",
     "IndexMixColor",
     "IndexMixFloat",
@@ -414,11 +426,10 @@ __all__ = (
     "OffsetPointAlongCurve",
     "OffsetRotation",
     "OffsetVector",
-    "OxDNANormal",
-    "OxDNAOffset",
-    "OxDNARotation",
+    "OxDNARealizeVectors",
+    "OxDNARecoverVectors",
     "OxDNAStyleRibbon",
-    "OxDNAVector",
+    "OxDNAVectors",
     "PeptideChi",
     "PeptideDihedral",
     "PeriodicArray",
@@ -469,6 +480,9 @@ __all__ = (
     "SetNucleicDihedral",
     "SetPhiPsiAngle",
     "SetUResID",
+    "SimulateCurve",
+    "SimulateElasticNetwork",
+    "SimulateOnFaces",
     "SliceEdgeInstances",
     "SplitToCentredInstances",
     "StarfileInstances",

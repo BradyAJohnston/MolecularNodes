@@ -1,8 +1,10 @@
-# Node group 'Geometry Principal Components' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Geometry Principal Components" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     CustomGeometryGroup,
@@ -90,7 +92,7 @@ class GeometryPrincipalComponents(CustomGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry, "Position": position})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry",
             description="Geometry to evaluate the given fields and store the resulting attributes on. All geometry types except volumes are supported",
@@ -121,33 +123,35 @@ class GeometryPrincipalComponents(CustomGeometryGroup):
 
         capture = g.CaptureAttribute.point(geometry=geometry)
         position_1 = capture.items.vector("Position", position)
-        group = PrincipalComponents(position=position_1.output)
+        principal_components_1 = PrincipalComponents(position=position_1.output)
         sample_index = g.SampleIndex(
             geometry=capture.o.geometry,
-            value=group.o.group_center,
+            value=principal_components_1.o.group_center,
             data_type="FLOAT_VECTOR",
         )
         sample_index_1 = g.SampleIndex(
-            geometry=capture.o.geometry, value=group.o.rotation, data_type="QUATERNION"
+            geometry=capture.o.geometry,
+            value=principal_components_1.o.rotation,
+            data_type="QUATERNION",
         )
         sample_index_2 = g.SampleIndex(
             geometry=capture.o.geometry,
-            value=group.o.principal_components,
+            value=principal_components_1.o.principal_components,
             data_type="FLOAT_VECTOR",
         )
         sample_index_3 = g.SampleIndex(
             geometry=capture.o.geometry,
-            value=group.o.longest_axis,
+            value=principal_components_1.o.longest_axis,
             data_type="FLOAT_VECTOR",
         )
         sample_index_4 = g.SampleIndex(
             geometry=capture.o.geometry,
-            value=group.o.intermediate_axis,
+            value=principal_components_1.o.intermediate_axis,
             data_type="FLOAT_VECTOR",
         )
         sample_index_5 = g.SampleIndex(
             geometry=capture.o.geometry,
-            value=group.o.shortest_axis,
+            value=principal_components_1.o.shortest_axis,
             data_type="FLOAT_VECTOR",
         )
 

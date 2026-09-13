@@ -1,7 +1,9 @@
-# Node-group asset 'Sample Position' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Sample Position" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -44,7 +46,7 @@ class SamplePosition(AssetGeometryGroup):
 
     _name = "Sample Position"
     _asset_name = "Sample Position"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "description": "A convenience wrapper around the `Sample Index` and `Position` nodes",
@@ -78,7 +80,7 @@ class SamplePosition(AssetGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry, "Position": position, "Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry", description="The geometry to sample the `Position` from"
         )

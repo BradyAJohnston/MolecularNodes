@@ -1,7 +1,9 @@
-# Node-group asset 'Sample Mixed Vector' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Sample Mixed Vector" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -45,7 +47,7 @@ class SampleMixedVector(AssetGeometryGroup):
 
     _name = "Sample Mixed Vector"
     _asset_name = "Sample Mixed Vector"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.sample_mixed_vector"}
 
@@ -76,7 +78,7 @@ class SampleMixedVector(AssetGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry, "Vector": vector, "Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry", description="The geometry to sample the values from"
         )
@@ -97,12 +99,12 @@ class SampleMixedVector(AssetGeometryGroup):
             description="The evaluated and mixed field, sampled from the sample geometry at the given `Index`",
         )
 
-        group = IndexMixVector(value=vector, index=index)
+        index_mix_vector = IndexMixVector(value=vector, index=index)
         (
             geometry
             >> g.SampleIndex(
-                value=group.o.value,
-                index=group.o.from_,
+                value=index_mix_vector.o.value,
+                index=index_mix_vector.o.from_,
                 data_type="FLOAT_VECTOR",
                 clamp=True,
             )

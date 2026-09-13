@@ -1,7 +1,9 @@
-# Node-group asset 'Backbone NH' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Backbone NH" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -42,7 +44,7 @@ class BackboneNH(AssetGeometryGroup):
 
     _name = "Backbone NH"
     _asset_name = "Backbone NH"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.backbone_nh"}
 
@@ -67,12 +69,12 @@ class BackboneNH(AssetGeometryGroup):
     ):
         super().__init__(**{"Menu": menu})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
         nh = tree.outputs.vector("NH")
 
-        group = BackboneN(method="Read")
-        group_1 = BackboneN()
+        backbone_n = BackboneN(method="Read")
+        backbone_n_1 = BackboneN()
         mix = g.Mix(
             a_vector=BackboneCA(),
             b_vector=OffsetVector(vector=BackboneC(), offset=-1),
@@ -82,8 +84,8 @@ class BackboneNH(AssetGeometryGroup):
         )
         string = g.String(string="backbone_NH")
         vector_math = (
-            VectorDirection(to=group, from_=BackboneCA(method="Read")).o.direction
-            + VectorDirection(to=group, from_=BackboneC(method="Read")).o.direction
+            VectorDirection(to=backbone_n, from_=BackboneCA(method="Read")).o.direction
+            + VectorDirection(to=backbone_n, from_=BackboneC(method="Read")).o.direction
         )
         _vector_math_1 = g.VectorMath.multiply_add(
             vector_math.normalize(),
@@ -91,9 +93,9 @@ class BackboneNH(AssetGeometryGroup):
             BackboneN(method="Read"),
         )
         vector_math_2 = g.VectorMath.multiply_add(
-            VectorDirection(to=group_1, from_=mix.o.result_vector).o.direction,
+            VectorDirection(to=backbone_n_1, from_=mix.o.result_vector).o.direction,
             AngstromToWorld(angstrom=1.01),
-            group_1,
+            backbone_n_1,
         )
         (
             g.MenuSwitch.vector(

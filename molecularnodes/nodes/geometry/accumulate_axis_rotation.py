@@ -1,7 +1,9 @@
-# Node-group asset 'Accumulate Axis Rotation' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Accumulate Axis Rotation" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -62,7 +64,7 @@ class AccumulateAxisRotation(AssetGeometryGroup):
 
     _name = "Accumulate Axis Rotation"
     _asset_name = "Accumulate Axis Rotation"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -112,7 +114,7 @@ class AccumulateAxisRotation(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         position = tree.inputs.vector(
             "Position",
             (0.0, 0.0, 0.0),
@@ -154,14 +156,15 @@ class AccumulateAxisRotation(AssetGeometryGroup):
             description="The accumlated transform, not yet applied to the `Position` vector",
         )
 
-        group = TransformLocalAxis(
+        transform_local_axis = TransformLocalAxis(
             origin=position,
             axis=position.point.at(BooleanLast(boolean=pivot)) - position,
             angle=angle,
         )
-        evaluate_at_index = TransformAccumulate(
-            accumulate=selection, transform=group, group_id=group_id
-        ).o.transform.point.at(transform_index)
+        transform_accumulate = TransformAccumulate(
+            accumulate=selection, transform=transform_local_axis, group_id=group_id
+        )
+        evaluate_at_index = transform_accumulate.o.transform.point.at(transform_index)
         position.transform(evaluate_at_index) >> position_1
 
         evaluate_at_index >> trasnform

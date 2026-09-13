@@ -1,13 +1,62 @@
 import os
-import shutil
-import sys
-from os.path import dirname, join, realpath
-from pathlib import Path
-import bpy
-import numpy as np
-import pytest
-import molecularnodes as mn
-from .utils import NumpySnapshotExtension
+import tempfile
+
+# Importing bpy prepends the user's Blender extension wheels (e.g.
+# ~/.config/blender/*/extensions/.local/site-packages) to sys.path, shadowing
+# this environment's packages with whatever the enabled extensions ship -
+# including possibly incomplete copies while an extension is being rebuilt.
+# Point bpy at an empty extensions dir so tests only ever see this
+# environment's packages. Must be set before bpy is first imported.
+os.environ.setdefault(
+    "BLENDER_USER_EXTENSIONS", tempfile.mkdtemp(prefix="mn-test-extensions-")
+)
+
+import shutil  # noqa: E402
+import sys  # noqa: E402
+from os.path import dirname, join, realpath  # noqa: E402
+from pathlib import Path  # noqa: E402
+import bpy  # noqa: E402
+
+# Build the gitignored node-asset library (molecularnodes/assets/nodes.blend)
+# when it is missing or the sources under molecularnodes/nodes/ have changed.
+# Paths and flags come from [tool.nodebpy.assets] in pyproject.toml; the
+# staleness check is a cheap in-process hash, and the build itself needs a
+# fresh session so it runs as a subprocess. xdist workers skip it - the
+# controller process has already built by the time they spawn.
+if os.environ.get("PYTEST_XDIST_WORKER") is None:
+    import subprocess  # noqa: E402
+    from argparse import Namespace  # noqa: E402
+    from nodebpy.assets import _pipeline as _assets  # noqa: E402
+
+    # the CLI parser pre-seeds the positional dests; mirror that here
+    _args = Namespace(command="ensure", source=None, blend=None)
+    _assets.apply_config(_args, start=Path(__file__).parent)
+    _assets.require_positionals(_args)
+    if _assets.is_stale(
+        _args.blend, _args.source, _args.resources, _assets.stamp_options(_args)
+    ):
+        _env = os.environ.copy()
+        if bpy.app.binary_path:  # inside a full Blender: spawn another
+            import nodebpy.assets.__main__ as _assets_main
+
+            # an isolated extensions dir so the spawn can't pick up stale wheels
+            _env["BLENDER_USER_EXTENSIONS"] = tempfile.mkdtemp(prefix="mn-assets-ext-")
+            _cmd = [
+                bpy.app.binary_path,
+                "-b",
+                "--factory-startup",
+                "-P",
+                _assets_main.__file__,
+                "--",
+                "ensure",
+            ]
+        else:
+            _cmd = [sys.executable, "-m", "nodebpy.assets", "ensure"]
+        subprocess.run(_cmd, check=True, env=_env, cwd=Path(__file__).parent.parent)
+import numpy as np  # noqa: E402
+import pytest  # noqa: E402
+import molecularnodes as mn  # noqa: E402
+from .utils import NumpySnapshotExtension  # noqa: E402
 
 # Pin numpy print format so snapshots are consistent across numpy 1.x and 2.x
 # (numpy 2.2+ adds shape= to array_repr for truncated arrays)

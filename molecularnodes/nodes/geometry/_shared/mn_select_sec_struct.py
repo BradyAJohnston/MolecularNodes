@@ -1,8 +1,10 @@
-# Node group '.MN_select_sec_struct' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_select_sec_struct" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import BooleanSocket, CustomGeometryGroup, SocketAccessor
 from nodebpy.types import InputBoolean
 from ..is_helix import IsHelix
@@ -66,7 +68,7 @@ class MN_select_sec_struct(CustomGeometryGroup):
     ):
         super().__init__(**{"And": and_})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -79,8 +81,8 @@ class MN_select_sec_struct(CustomGeometryGroup):
         is_loop = tree.outputs.boolean("Is Loop")
 
         IsHelix(and_=and_) >> is_helix
+        is_loop_1 = IsLoop(and_=and_)
+        ~is_loop_1.o.selection >> is_structured
         IsSheet(and_=and_) >> is_sheet
-        group = IsLoop(and_=and_)
-        ~group.o.selection >> is_structured
 
-        group >> is_loop
+        is_loop_1 >> is_loop

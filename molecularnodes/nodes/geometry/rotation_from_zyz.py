@@ -1,7 +1,9 @@
-# Node-group asset 'Rotation from ZYZ' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Rotation from ZYZ" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -43,7 +45,7 @@ class RotationFromZYZ(AssetGeometryGroup):
 
     _name = "Rotation from ZYZ"
     _asset_name = "Rotation from ZYZ"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Combine a rotation defined as ZYZ common in electron tomography",
@@ -77,7 +79,7 @@ class RotationFromZYZ(AssetGeometryGroup):
     ):
         super().__init__(**{"Phi": phi, "Theta": theta, "Psi": psi})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         phi = tree.inputs.float(
             "Phi",
             0.0,

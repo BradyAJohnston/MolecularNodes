@@ -1,7 +1,9 @@
-# Node-group asset 'Integer Run' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Integer Run" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -42,7 +44,7 @@ class IntegerRun(AssetGeometryGroup):
 
     _name = "Integer Run"
     _asset_name = "Integer Run"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes",
@@ -75,7 +77,7 @@ class IntegerRun(AssetGeometryGroup):
     ):
         super().__init__(**{"Value": value, "Group ID": group_id})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         value = tree.inputs.integer(
             "Value",
             0,

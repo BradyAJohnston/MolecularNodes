@@ -23,8 +23,9 @@ class Density(MolecularEntity, metaclass=ABCMeta):
         self.annotations = DensityAnnotationManager(self)
 
     def named_attribute(self, name: str, evaluate: bool = True) -> np.ndarray:
-        obj = bl.mesh.evaluate_using_mesh(self.object)
-        return databpy.named_attribute(obj, name, evaluate=True)
+        # volume objects can't be evaluated to a mesh data-block directly, but the
+        # evaluated geometry holds the mesh their node tree generates
+        return databpy.GeometrySet(self.object).named_attribute(name)
 
     def path_to_vdb(self, file: str, center: bool = False, invert: bool = False):
         """

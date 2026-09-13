@@ -1,3 +1,6 @@
+import json
+import databpy
+import numpy as np
 import pytest
 import starfile
 from nodebpy.nodes.geometry import StoreNamedAttribute
@@ -73,6 +76,62 @@ def test_categorical_attributes(snapshot):
     file = data_dir / "starfile/cistem.star"
     ensemble = mn.entities.ensemble.StarFile.load(file)
     assert "cisTEMOriginalImageFilename" in ensemble.props.categories
+    assert snapshot == GeometrySet(ensemble.object)
+
+
+def test_load_ndjson_oriented(snapshot):
+    file = data_dir / "cryoet/oriented_point.ndjson"
+    ensemble = mn.entities.ensemble.StarFile.load(file)
+    assert ensemble._entity_type == mn.entities.base.EntityType.ENSEMBLE_STAR
+    assert ensemble.props.entity_type == ensemble._entity_type.value
+
+    records = [json.loads(line) for line in open(file)]
+
+    # positions are the voxel coordinates from the file, at world scale
+    positions = databpy.named_attribute(ensemble.object, "position")
+    expected = np.array(
+        [[record["location"][axis] for axis in "xyz"] for record in records]
+    )
+    assert np.allclose(positions, expected * 0.1, atol=1e-4)
+
+    # the stored transform combines the file's rotation matrix with the scaled
+    # position, transposed on storage for Blender's column-major float4x4
+    transforms = databpy.named_attribute(ensemble.object, "transform")
+    expected_transforms = np.tile(np.identity(4), (len(records), 1, 1))
+    expected_transforms[:, :3, :3] = [
+        record["xyz_rotation_matrix"] for record in records
+    ]
+    expected_transforms[:, :3, 3] = expected * 0.1
+    assert np.allclose(transforms, expected_transforms.transpose(0, 2, 1), atol=1e-4)
+
+    # the instancing node applies the stored transform: the evaluated instance
+    # rotations match the file's matrices (float4x4 attributes read back as
+    # column-major, so the raw arrays are the transposed logical matrices)
+    instance_transforms = GeometrySet(ensemble.object).named_attribute(
+        "instance_transform"
+    )
+    assert np.allclose(
+        instance_transforms[:, :3, :3].transpose(0, 2, 1),
+        expected_transforms[:, :3, :3],
+        atol=1e-3,
+    )
+
+    assert snapshot == GeometrySet(ensemble.object)
+
+
+def test_load_ndjson_point(snapshot):
+    file = data_dir / "cryoet/point.ndjson"
+    ensemble = mn.entities.ensemble.StarFile.load(file)
+
+    records = [json.loads(line) for line in open(file)]
+    positions = databpy.named_attribute(ensemble.object, "position")
+    assert len(positions) == len(records)
+
+    # plain points carry no orientation, so the stored transforms hold an
+    # identity rotation with the scaled position
+    transforms = databpy.named_attribute(ensemble.object, "transform")
+    assert np.allclose(transforms[:, :3, :3], np.identity(3), atol=1e-4)
+    assert np.allclose(transforms[:, 3, :3], positions, atol=1e-4)
     assert snapshot == GeometrySet(ensemble.object)
 
 

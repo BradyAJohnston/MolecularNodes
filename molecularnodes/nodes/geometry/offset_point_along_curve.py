@@ -1,7 +1,9 @@
-# Node-group asset 'Offset Point Along Curve' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Offset Point Along Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -51,7 +53,7 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
 
     _name = "Offset Point Along Curve"
     _asset_name = "Offset Point Along Curve"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Offset along the current point's curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between `Point Index` + 1 and `Point Index` + 2, returning the `Length` and the `Factor` for this point on the curve",
@@ -90,7 +92,7 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
     ):
         super().__init__(**{"Point Index": point_index, "Offset": offset})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         point_index = tree.inputs.integer(
             "Point Index",
             0,
@@ -131,17 +133,23 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
                 - curve_of_point.o.index_in_curve
             )
             clamp = offset.clamp(integer_math, integer_math_1)
-        group = IndexMixed(index=point_index, offset=clamp)
         (
             BetweenFloat(value=offset, lower=integer_math, upper=integer_math_1)
             >> is_off_spline
         )
+        index_mixed = IndexMixed(index=point_index, offset=clamp)
         spline_parameter = g.SplineParameter()
-        IndexMixFloat(value=spline_parameter.o.factor, index=group.o.mixed) >> factor
-        IndexMixFloat(value=spline_parameter.o.length, index=group.o.mixed) >> length
+        (
+            IndexMixFloat(value=spline_parameter.o.factor, index=index_mixed.o.mixed)
+            >> factor
+        )
+        (
+            IndexMixFloat(value=spline_parameter.o.length, index=index_mixed.o.mixed)
+            >> length
+        )
 
-        group.o.floor >> index_a
-        group.o.ceiling >> index_b
+        index_mixed.o.floor >> index_a
+        index_mixed.o.ceiling >> index_b
 
 
 ASSET = OffsetPointAlongCurve

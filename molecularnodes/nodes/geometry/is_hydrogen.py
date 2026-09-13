@@ -1,7 +1,9 @@
-# Node-group asset 'Is Hydrogen' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Is Hydrogen" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -42,7 +44,7 @@ class IsHydrogen(AssetGeometryGroup):
 
     _name = "Is Hydrogen"
     _asset_name = "Is Hydrogen"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -71,7 +73,7 @@ class IsHydrogen(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -91,12 +93,12 @@ class IsHydrogen(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = BooleanAndOr(
+        boolean_andor = BooleanAndOr(
             and_=and_, or_=or_, boolean=g.Compare.integer.equal(AtomicNumber(), 1)
         )
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = IsHydrogen

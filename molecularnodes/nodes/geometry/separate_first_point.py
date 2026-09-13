@@ -1,7 +1,9 @@
-# Node-group asset 'Separate First Point' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Separate First Point" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -45,7 +47,7 @@ class SeparateFirstPoint(AssetGeometryGroup):
 
     _name = "Separate First Point"
     _asset_name = "Separate First Point"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "description": "Separate the first point for each `Group ID` and return only those points. Optionally sort by the `Group ID` as well"
@@ -78,7 +80,7 @@ class SeparateFirstPoint(AssetGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry, "Sort": sort, "Group ID": group_id})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry", hide_value=True)
         sort = tree.inputs.boolean(
             "Sort",

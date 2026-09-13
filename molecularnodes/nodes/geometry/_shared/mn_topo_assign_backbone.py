@@ -1,8 +1,10 @@
-# Node group '.MN_topo_assign_backbone' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_topo_assign_backbone" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     CustomGeometryGroup,
@@ -70,7 +72,7 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
     ):
         super().__init__(**{"Atoms": atoms})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -79,11 +81,12 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
         sample_index = tree.outputs.integer("Sample Index")
 
         with g.Frame("Compute only on backbone atoms, but capture their idx first"):
-            group = IsAlphaCarbon()
+            is_alpha_carbon = IsAlphaCarbon()
             capture = g.CaptureAttribute.point(geometry=atoms)
-            selection = capture.items.boolean("Selection", group.o.selection)
+            selection = capture.items.boolean("Selection", is_alpha_carbon.o.selection)
             index = capture.items.integer(
-                "Index", g.AccumulateField.point.integer(group.o.selection).o.trailing
+                "Index",
+                g.AccumulateField.point.integer(is_alpha_carbon.o.selection).o.trailing,
             )
             separate_geometry = g.SeparateGeometry.point(
                 capture.o.geometry, IsBackbone().o.selection
@@ -96,7 +99,7 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
         )
         repeat_zone = g.RepeatZone(4)
         geometry = repeat_zone.items.geometry("Geometry", separate_geometry.o.selection)
-        group_1 = MenuResidueMask(
+        menu_residue_mask = MenuResidueMask(
             atom_name=g.IndexSwitch.menu(repeat_zone.iteration, ("N", "CA", "C", "O"))
         )
         join_strings = g.JoinStrings(
@@ -107,7 +110,10 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
             delimiter="_",
         )
         store_named_attribute = g.StoreNamedAttribute.point.vector(
-            geometry.current, group_1.o.is_valid, join_strings, group_1.o.position
+            geometry.current,
+            menu_residue_mask.o.is_valid,
+            join_strings,
+            menu_residue_mask.o.position,
         )
         store_named_attribute >> geometry.next
         (

@@ -1,8 +1,10 @@
-# Node group '.Backbone Position' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".Backbone Position" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     CustomGeometryGroup,
@@ -70,7 +72,7 @@ class BackbonePosition(CustomGeometryGroup):
     ):
         super().__init__(**{"Method": method, "Menu": menu})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         method = tree.inputs.menu("Method", expanded=True, optional_label=True)
         menu = tree.inputs.menu(
             "Menu",
@@ -86,7 +88,7 @@ class BackbonePosition(CustomGeometryGroup):
             menu_switch.o.output,
             ("", "backbone_N", "backbone_CA", "backbone_C", "backbone_O"),
         )
-        group = FallbackVector(
+        fallback_vector = FallbackVector(
             name=index_switch,
             fallback=ResidueMask(atom_name=menu_switch.o.output).o.position,
         )
@@ -95,7 +97,7 @@ class BackbonePosition(CustomGeometryGroup):
                 method,
                 {
                     "Read": g.NamedAttribute.vector(index_switch).o.attribute,
-                    "Compute": group.o.output.point.at(
+                    "Compute": fallback_vector.o.output.point.at(
                         ResidueMask(atom_name=2).o.index
                     ),
                 },

@@ -1,7 +1,9 @@
-# Node-group asset 'Visualize Chi Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Visualize Chi Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -58,7 +60,7 @@ class VisualizeChiAngle(AssetGeometryGroup):
 
     _name = "Visualize Chi Angle"
     _asset_name = "Visualize Chi Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -104,7 +106,7 @@ class VisualizeChiAngle(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         selection = tree.inputs.boolean("Selection", True, hide_value=True)
         factor = tree.inputs.float(
@@ -121,17 +123,17 @@ class VisualizeChiAngle(AssetGeometryGroup):
         mesh = tree.outputs.geometry("Mesh")
         curve = tree.outputs.geometry("Curve")
 
-        group = DihedralChiAngle()
+        dihedral_chi_angle = DihedralChiAngle()
         capture = g.CaptureAttribute.point(geometry=geometry)
-        angle = capture.items.float("Angle", group.o.angle)
-        bc = capture.items.vector("BC", group.o.axis)
-        output = capture.items.vector("Output", group.o.up)
+        angle = capture.items.float("Angle", dihedral_chi_angle.o.angle)
+        bc = capture.items.vector("BC", dihedral_chi_angle.o.axis)
+        output = capture.items.vector("Output", dihedral_chi_angle.o.up)
         vector_math = (
             bc.output
             * g.Mix(factor_float=factor, b_float=1.0, clamp_factor=True).o.result_float
             + g.Position()
         )
-        group_1 = VisualizeAngle(
+        visualize_angle = VisualizeAngle(
             points=capture.o.geometry,
             selection=(g.EdgesOfVertex().o.total > 1)
             & (selection & MN_pivot_peptide()),
@@ -143,8 +145,8 @@ class VisualizeChiAngle(AssetGeometryGroup):
             radius=radius,
         )
 
-        group_1 >> mesh
-        group_1.o.curve >> curve
+        visualize_angle >> mesh
+        visualize_angle.o.curve >> curve
 
 
 ASSET = VisualizeChiAngle

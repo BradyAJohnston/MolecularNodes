@@ -1,7 +1,9 @@
-# Node-group asset 'Color Attribute Random' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Attribute Random" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -63,7 +65,7 @@ class ColorAttributeRandom(AssetGeometryGroup):
 
     _name = "Color Attribute Random"
     _asset_name = "Color Attribute Random"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_attribute_random"}
 
@@ -116,7 +118,7 @@ class ColorAttributeRandom(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         name = tree.inputs.string(
             "Name",
             "chain_id",
@@ -157,7 +159,7 @@ class ColorAttributeRandom(AssetGeometryGroup):
             description="The randomly generated color based on the input attribute",
         )
 
-        _group = RandomColor(colorspace="OKLab")
+        _random_color = RandomColor(colorspace="OKLab")
         (
             RandomColor(
                 id=g.NamedAttribute.integer(name).o.attribute,

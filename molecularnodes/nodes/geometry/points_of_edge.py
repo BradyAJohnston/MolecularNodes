@@ -1,7 +1,9 @@
-# Node-group asset 'Points of Edge' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Points of Edge" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -47,7 +49,7 @@ class PointsOfEdge(AssetGeometryGroup):
 
     _name = "Points of Edge"
     _asset_name = "Points of Edge"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.points_of_edge"}
 
@@ -83,7 +85,7 @@ class PointsOfEdge(AssetGeometryGroup):
     ):
         super().__init__(**{"Vertex Index": vertex_index, "Edge Index": edge_index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         vertex_index = tree.inputs.integer(
             "Vertex Index", 0, hide_value=True, default_input="INDEX"
         )
@@ -124,45 +126,45 @@ class PointsOfEdge(AssetGeometryGroup):
             min_value=0,
         )
 
-        group = EdgeInfo(vertex_index=vertex_index, edge_index=edge_index)
-        g.EdgesOfVertex().o.total.point.at(group.o.point_index) >> total
-        evaluate_at_index = EdgeInfo(vertex_index=vertex_index).o.point_index.point.at(
-            group.o.point_index
-        )
-        evaluate_at_index_1 = EdgeInfo(
-            vertex_index=vertex_index, edge_index=1
-        ).o.point_index.point.at(group.o.point_index)
-        evaluate_at_index_2 = EdgeInfo(
-            vertex_index=vertex_index, edge_index=2
-        ).o.point_index.point.at(group.o.point_index)
-        evaluate_at_index_3 = EdgeInfo(
+        edge_info = EdgeInfo(vertex_index=vertex_index, edge_index=edge_index)
+        g.EdgesOfVertex().o.total.point.at(edge_info.o.point_index) >> total
+        evaluate_at_index = EdgeInfo(
             vertex_index=edge_index, edge_index=3
-        ).o.point_index.point.at(group.o.point_index)
+        ).o.point_index.point.at(edge_info.o.point_index)
+        evaluate_at_index_1 = EdgeInfo(
+            vertex_index=vertex_index
+        ).o.point_index.point.at(edge_info.o.point_index)
+        evaluate_at_index_2 = EdgeInfo(
+            vertex_index=vertex_index, edge_index=1
+        ).o.point_index.point.at(edge_info.o.point_index)
+        evaluate_at_index_3 = EdgeInfo(
+            vertex_index=vertex_index, edge_index=2
+        ).o.point_index.point.at(edge_info.o.point_index)
         index = g.Index()
         with g.Frame("check if selecting self, return -1 if so"):
             (
                 g.Compare.integer.equal(
                     evaluate_at_index, index
                 ).o.result.switch.integer(evaluate_at_index, -1)
-                >> n_0
+                >> n_3
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_1, index
                 ).o.result.switch.integer(evaluate_at_index_1, -1)
-                >> n_1
+                >> n_0
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_2, index
                 ).o.result.switch.integer(evaluate_at_index_2, -1)
-                >> n_2
+                >> n_1
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_3, index
                 ).o.result.switch.integer(evaluate_at_index_3, -1)
-                >> n_3
+                >> n_2
             )
 
 

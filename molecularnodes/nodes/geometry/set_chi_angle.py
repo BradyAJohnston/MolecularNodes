@@ -1,7 +1,9 @@
-# Node-group asset 'Set Chi Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Set Chi Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -63,7 +65,7 @@ class SetChiAngle(AssetGeometryGroup):
 
     _name = "Set Chi Angle"
     _asset_name = "Set Chi Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -115,7 +117,7 @@ class SetChiAngle(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         selection = tree.inputs.boolean("Selection", True, hide_value=True)
         x1 = tree.inputs.float(
@@ -136,7 +138,7 @@ class SetChiAngle(AssetGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
 
         math_1 = DihedralChiAngle().o.angle * -1.0
-        group = PeptideChi(
+        peptide_chi = PeptideChi(
             selection=selection,
             x1=x1 + math_1,
             x2=x2 + math_1,
@@ -144,7 +146,11 @@ class SetChiAngle(AssetGeometryGroup):
             x4=x4 + math_1,
             x5=x5 + math_1,
         )
-        SetUResID(geometry=geometry) >> g.SetPosition(position=group) >> geometry_1
+        (
+            SetUResID(geometry=geometry)
+            >> g.SetPosition(position=peptide_chi)
+            >> geometry_1
+        )
 
 
 ASSET = SetChiAngle

@@ -1,8 +1,10 @@
-# Node group 'Animate Fraction' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Animate Fraction" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     BooleanSocket,
     CustomGeometryGroup,
@@ -80,7 +82,7 @@ class AnimateFraction(CustomGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         interpolate = tree.inputs.boolean("Interpolate", False)
         smoother_step = tree.inputs.boolean("Smoother Step", False)
         float = tree.inputs.float("Float", 0.0)

@@ -1,8 +1,10 @@
-# Node group '.Profile Type Picker' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".Profile Type Picker" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     CustomGeometryGroup,
@@ -58,7 +60,7 @@ class ProfileTypePicker(CustomGeometryGroup):
     ):
         super().__init__(**{"Menu": menu})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         menu = tree.inputs.menu("Menu", optional_label=True)
         output = tree.outputs.integer("Output")
 

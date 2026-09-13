@@ -14,7 +14,7 @@ from ..blender.utils import (
     new_bmesh,
     viewport_tag_redraw,
 )
-from ..nodes.material import append_material
+from ..material import append_material
 from .base import BaseAnnotation
 from .interface import AnnotationInterface
 from .node_tree import annotations_node_tree
@@ -449,7 +449,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             annotation_instance._update_props = True
         # material default needs to be set explicitly
         if new_prop:
-            material = "MN Default"
+            material = "Default"
             if material not in bpy.data.materials:
                 append_material(material)
             interface.mesh_material = material

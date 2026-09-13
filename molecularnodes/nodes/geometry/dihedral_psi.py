@@ -1,7 +1,9 @@
-# Node-group asset 'Dihedral Psi' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Dihedral Psi" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -49,7 +51,7 @@ class DihedralPsi(AssetGeometryGroup):
 
     _name = "Dihedral Psi"
     _asset_name = "Dihedral Psi"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.dihedral_psi"}
 
@@ -78,7 +80,7 @@ class DihedralPsi(AssetGeometryGroup):
     ):
         super().__init__(**{"Method": method})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         method = tree.inputs.menu("Method", expanded=True, optional_label=True)
         psi = tree.outputs.float(
             "Psi",
@@ -95,7 +97,7 @@ class DihedralPsi(AssetGeometryGroup):
         )
 
         menu_switch = g.MenuSwitch.integer(method, {"Read": 0, "Compute": 1})
-        group = DihedralAngle(
+        dihedral_angle = DihedralAngle(
             a=BackboneN(
                 method=g.IndexSwitch.menu(menu_switch.o.output, ("Read", "Compute"))
             ),
@@ -109,11 +111,11 @@ class DihedralPsi(AssetGeometryGroup):
                 index=MenuResidueMask(atom_name="C").o.index, distance=1
             ).o.position,
         )
-        CAValueVector(vector=group.o.ba_bc) >> up
-        CAValueVector(vector=group.o.bc) >> axis
+        CAValueVector(vector=dihedral_angle.o.ba_bc) >> up
+        CAValueVector(vector=dihedral_angle.o.bc) >> axis
         (
             CAValueFloat(
-                value=FallbackFloat(name="Psi", fallback=group.o.angle)
+                value=FallbackFloat(name="Psi", fallback=dihedral_angle.o.angle)
             ).o.value
             * -1.0
             >> psi

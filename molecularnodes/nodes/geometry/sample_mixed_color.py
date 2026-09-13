@@ -1,7 +1,9 @@
-# Node-group asset 'Sample Mixed Color' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Sample Mixed Color" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -45,7 +47,7 @@ class SampleMixedColor(AssetGeometryGroup):
 
     _name = "Sample Mixed Color"
     _asset_name = "Sample Mixed Color"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.sample_mixed_color"}
 
@@ -76,7 +78,7 @@ class SampleMixedColor(AssetGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry, "Color": color, "Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry", description="The geometry to sample the values from"
         )
@@ -97,12 +99,12 @@ class SampleMixedColor(AssetGeometryGroup):
             description="The evaluated and mixed field, sampled from the sample geometry at the given `Index`",
         )
 
-        group = IndexMixColor(color=color, index=index)
+        index_mix_color = IndexMixColor(color=color, index=index)
         (
             geometry
             >> g.SampleIndex(
-                value=group.o.color,
-                index=group.o.from_,
+                value=index_mix_color.o.color,
+                index=index_mix_color.o.from_,
                 data_type="FLOAT_COLOR",
                 clamp=True,
             )

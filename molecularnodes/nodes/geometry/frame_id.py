@@ -1,7 +1,9 @@
-# Node-group asset 'Frame ID' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Frame ID" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     IntegerSocket,
@@ -34,7 +36,7 @@ class FrameID(AssetGeometryGroup):
 
     _name = "Frame ID"
     _asset_name = "Frame ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Read the `frame_id` attribute, created when multiple frames from a trajectory are merged into a single structure",
@@ -62,7 +64,7 @@ class FrameID(AssetGeometryGroup):
     ):
         super().__init__(**{"Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer(
             "Index", 0, min_value=0, hide_value=True, default_input="INDEX"
         )

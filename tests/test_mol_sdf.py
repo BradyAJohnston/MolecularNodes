@@ -1,6 +1,5 @@
 import pytest
 import molecularnodes as mn
-from molecularnodes.nodes import nodes as nodes
 from molecularnodes.nodes.geometry import StyleBallAndStick, StyleSpheres, StyleSurface
 from .constants import data_dir
 from .utils import GeometrySet

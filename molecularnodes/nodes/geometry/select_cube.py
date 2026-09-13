@@ -1,8 +1,10 @@
-# Node-group asset 'Select Cube' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Select Cube" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 import bpy
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -48,7 +50,7 @@ class SelectCube(AssetGeometryGroup):
 
     _name = "Select Cube"
     _asset_name = "Select Cube"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_cube"}
 
@@ -81,7 +83,7 @@ class SelectCube(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_, "Object": object})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -110,15 +112,15 @@ class SelectCube(AssetGeometryGroup):
         invert_matrix = g.ObjectInfo(
             object=object, as_instance=True, transform_space="RELATIVE"
         ).o.transform.invert()
-        group = BetweenVector(
+        between_vector = BetweenVector(
             value=g.ProjectPoint(vector=g.Position(), transform=invert_matrix),
             lower=(-1.0, -1.0, -1.0),
             upper=(1.0, 1.0, 1.0),
         )
-        group_1 = BooleanAndOr(and_=and_, or_=or_, boolean=group)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=between_vector)
 
-        group_1 >> selection
-        group_1.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectCube

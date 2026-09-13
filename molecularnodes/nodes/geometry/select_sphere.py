@@ -1,8 +1,10 @@
-# Node-group asset 'Select Sphere' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Select Sphere" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 import bpy
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -47,7 +49,7 @@ class SelectSphere(AssetGeometryGroup):
 
     _name = "Select Sphere"
     _asset_name = "Select Sphere"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_sphere"}
 
@@ -80,7 +82,7 @@ class SelectSphere(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_, "Object": object})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -113,10 +115,10 @@ class SelectSphere(AssetGeometryGroup):
             g.Position().o.position.distance(object_info.o.location),
             abs(object_info.o.scale),
         )
-        group = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectSphere
@@ -126,5 +128,5 @@ ASSET_METADATA = {
 }
 
 DATABLOCK_DEPENDENCIES = {
-    "objects": ("select_cube", "select_sphere"),
+    "objects": ("select_sphere",),
 }

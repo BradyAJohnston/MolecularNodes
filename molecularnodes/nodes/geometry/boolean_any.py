@@ -1,7 +1,9 @@
-# Node-group asset 'Boolean Any' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Boolean Any" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -39,7 +41,7 @@ class BooleanAny(AssetGeometryGroup):
 
     _name = "Boolean Any"
     _asset_name = "Boolean Any"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -66,7 +68,7 @@ class BooleanAny(AssetGeometryGroup):
     ):
         super().__init__(**{"Boolean": boolean, "Group ID": group_id})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         boolean = tree.inputs.boolean("Boolean", False)
         group_id = tree.inputs.integer("Group ID", 0, hide_value=True)
         boolean_1 = tree.outputs.boolean("Boolean")

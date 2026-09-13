@@ -1,8 +1,10 @@
-# Node group '.MN_constants_atom_name_nucleic' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_constants_atom_name_nucleic" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import CustomGeometryGroup, IntegerSocket, SocketAccessor
 
@@ -53,7 +55,7 @@ class MN_constants_atom_name_nucleic(CustomGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         backbone_lower = tree.outputs.integer("Backbone Lower")
         backbone_upper = tree.outputs.integer("Backbone Upper")
         side_chain_lower = tree.outputs.integer("Side Chain Lower")

@@ -4,6 +4,16 @@
     INSTANCES: 2037 points
       attributes: cisTEMAmplitudeContrast, cisTEMAnglePhi, cisTEMAnglePsi, cisTEMAngleTheta, cisTEMBeamTiltX, cisTEMBeamTiltY, cisTEMDefocus1, cisTEMDefocus2, cisTEMDefocusAngle, cisTEMImageShiftX, cisTEMImageShiftY, cisTEMMicroscopeCsMM, cisTEMMicroscopeVoltagekV, cisTEMOriginalImageFilename, cisTEMOriginalXPosition, cisTEMOriginalYPosition, cisTEMPixelSize, cisTEMScore, cisTEMScoreChange, cisTEMZFromDefocus, image_id, instance_transform, position
 # ---
+# name: test_load_ndjson_oriented
+  GeometrySet of 'oriented_point.ndjson'
+    INSTANCES: 118 points
+      attributes: image_id, instance_transform, position, transform
+# ---
+# name: test_load_ndjson_point
+  GeometrySet of 'point.ndjson'
+    INSTANCES: 83 points
+      attributes: image_id, instance_transform, position, transform
+# ---
 # name: test_load_starfiles
   GeometrySet of 'clathrin.star'
     INSTANCES: 63 points

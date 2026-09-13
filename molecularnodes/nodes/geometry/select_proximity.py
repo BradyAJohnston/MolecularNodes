@@ -1,7 +1,9 @@
-# Node-group asset 'Select Proximity' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Select Proximity" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -52,7 +54,7 @@ class SelectProximity(AssetGeometryGroup):
 
     _name = "Select Proximity"
     _asset_name = "Select Proximity"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_proximity"}
 
@@ -95,7 +97,7 @@ class SelectProximity(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         target_atoms = tree.inputs.geometry(
             "Target Atoms", description="The atoms to measure the distance from."
         )
@@ -135,10 +137,10 @@ class SelectProximity(AssetGeometryGroup):
                 g.AccumulateField.point.integer(~subset).o.total, true=subset
             ),
         )
-        group = SelectResWhole(selection=boolean_math, expand=expand)
-        ~group.o.selection >> inverted
+        select_res_whole = SelectResWhole(selection=boolean_math, expand=expand)
+        ~select_res_whole.o.selection >> inverted
 
-        group >> selection
+        select_res_whole >> selection
 
 
 ASSET = SelectProximity

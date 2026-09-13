@@ -1,7 +1,9 @@
-# Node-group asset 'Select Res ID String' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Select Res ID String" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -36,7 +38,7 @@ class SelectResIDString(AssetGeometryGroup):
 
     _name = "Select Res ID String"
     _asset_name = "Select Res ID String"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -60,7 +62,7 @@ class SelectResIDString(AssetGeometryGroup):
     ):
         super().__init__(**{"String": string})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         string = tree.inputs.string("String", "", optional_label=True)
         selection = tree.outputs.boolean("Selection")
 
@@ -70,7 +72,7 @@ class SelectResIDString(AssetGeometryGroup):
         closure_zone_1 = g.ClosureZone()
         string_2 = closure_zone_1.inputs.string("String")
         selection_2 = closure_zone_1.outputs.boolean("Selection")
-        group = ResidueID()
+        residue_id = ResidueID()
         string_3 = g.String(string="-")
         g.Compare.integer.equal(string_1.to_integer(), ResidueID()) >> selection_1
         trim_string = string.split(",").trim()
@@ -78,13 +80,10 @@ class SelectResIDString(AssetGeometryGroup):
         boolean = repeat_zone.items.boolean("Boolean")
         get_list_item = trim_string[repeat_zone.iteration]
         trim_string_1 = string_2.split(string_3).trim()
-        (
-            (
-                (group >= trim_string_1[0].to_integer())
-                & (group <= trim_string_1[1].to_integer())
-            )
-            >> selection_2
+        boolean_math = (residue_id >= trim_string_1[0].to_integer()) & (
+            residue_id <= trim_string_1[1].to_integer()
         )
+        boolean_math >> selection_2
         switch = get_list_item.contains(string_3).switch.closure(
             closure_zone.closure, closure_zone_1.closure
         )

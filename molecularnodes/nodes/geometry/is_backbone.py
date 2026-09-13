@@ -1,7 +1,9 @@
-# Node-group asset 'Is Backbone' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Is Backbone" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -43,7 +45,7 @@ class IsBackbone(AssetGeometryGroup):
 
     _name = "Is Backbone"
     _asset_name = "Is Backbone"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.is_backbone"}
 
@@ -73,7 +75,7 @@ class IsBackbone(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -93,15 +95,15 @@ class IsBackbone(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = FallbackBoolean(
+        fallback_boolean = FallbackBoolean(
             name="is_backbone",
             fallback=MN_select_nucleic().o.is_backbone
             | MN_select_peptide().o.is_backbone,
         )
-        group_1 = BooleanAndOr(and_=and_, or_=or_, boolean=group)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=fallback_boolean)
 
-        group_1 >> selection
-        group_1.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = IsBackbone

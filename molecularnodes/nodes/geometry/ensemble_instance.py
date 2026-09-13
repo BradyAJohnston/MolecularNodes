@@ -1,7 +1,9 @@
-# Node-group asset 'Ensemble Instance' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Ensemble Instance" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -76,7 +78,7 @@ class EnsembleInstance(AssetGeometryGroup):
 
     _name = "Ensemble Instance"
     _asset_name = "Ensemble Instance"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.ensemble_instance"}
 
@@ -133,7 +135,7 @@ class EnsembleInstance(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         points = tree.inputs.geometry("Points")
         selection = tree.inputs.boolean(
             "Selection",
@@ -177,17 +179,17 @@ class EnsembleInstance(AssetGeometryGroup):
             )
             join_geometry = g.JoinGeometry(geometry=(set_material, instance_on_points))
         with g.Frame("Precise Selection"):
-            group = SliceEdgeInstances(
+            slice_edge_instances = SliceEdgeInstances(
                 instances=instance_on_points, selection=selection
             )
             set_material_1 = g.SetMaterial(
                 geometry=g.JoinGeometry(
-                    geometry=(group.o.realized_points, set_material)
+                    geometry=(slice_edge_instances.o.realized_points, set_material)
                 ),
                 material=point_material,
             )
             join_geometry_1 = g.JoinGeometry(
-                geometry=(group.o.instances, set_material_1)
+                geometry=(slice_edge_instances.o.instances, set_material_1)
             )
         (
             g.IndexSwitch.geometry(

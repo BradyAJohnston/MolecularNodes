@@ -1,7 +1,9 @@
-# Node-group asset 'Evluate While Planar' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Evluate While Planar" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -45,7 +47,7 @@ class EvluateWhilePlanar(AssetGeometryGroup):
 
     _name = "Evluate While Planar"
     _asset_name = "Evluate While Planar"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -77,7 +79,7 @@ class EvluateWhilePlanar(AssetGeometryGroup):
             **{"Geometry": geometry, "Selection": selection, "Closure": closure}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry", description="Geometry to transform")
         selection = tree.inputs.boolean(
             "Selection",
@@ -88,13 +90,15 @@ class EvluateWhilePlanar(AssetGeometryGroup):
         closure = tree.inputs.closure("Closure")
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = GeoemtryToPlanar(geometry=geometry, selection=selection)
+        geoemtry_to_planar = GeoemtryToPlanar(geometry=geometry, selection=selection)
         evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry("Geometry", group.o.geometry)
+        evaluate_closure.inputs.geometry("Geometry", geoemtry_to_planar.o.geometry)
         geometry_2 = evaluate_closure.outputs.geometry("Geometry")
         (
             geometry_2
-            >> g.TransformGeometry(transform=group.o.transform.invert(), mode="Matrix")
+            >> g.TransformGeometry(
+                transform=geoemtry_to_planar.o.transform.invert(), mode="Matrix"
+            )
             >> geometry_1
         )
 

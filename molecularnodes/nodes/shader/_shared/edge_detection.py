@@ -1,9 +1,11 @@
-# Node group 'Edge Detection' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Edge Detection" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor
@@ -62,7 +64,7 @@ class EdgeDetection(CustomShaderGroup):
     ):
         super().__init__(**{"Offset": offset})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         offset = tree.inputs.float("Offset", 1.0, min_value=0.0, max_value=1.0)
         co_planar_delta = tree.outputs.float("Co-Planar Delta")
         normal_delta = tree.outputs.float("Normal Delta")
@@ -81,13 +83,16 @@ class EdgeDetection(CustomShaderGroup):
             g.CombineXYZ(x=1.0), angle=repeat_zone.iteration * 45.0 + map_range
         )
         vector = vector_rotate.o.vector * offset
-        group = OffsetRaycast(x_offset=vector.x, y_offset=vector.y, length=10.0)
-        math_1 = g.Math.greater_than(group.o.hit_distance, 0.0)
-        _math_2 = 1.0 - group.o.self_hit
-        vector_math = geometry.o.normal.dot(
-            geometry.o.position + group.o.ray_direction * group.o.hit_distance
+        offset_raycast = OffsetRaycast(
+            x_offset=vector.x, y_offset=vector.y, length=10.0
         )
-        vector_math_1 = group.o.hit_normal.dot(
+        math_1 = g.Math.greater_than(offset_raycast.o.hit_distance, 0.0)
+        _math_2 = 1.0 - offset_raycast.o.self_hit
+        vector_math = geometry.o.normal.dot(
+            geometry.o.position
+            + offset_raycast.o.ray_direction * offset_raycast.o.hit_distance
+        )
+        vector_math_1 = offset_raycast.o.hit_normal.dot(
             geometry_1.o.normal * geometry_1.o.backfacing.mix.float(1.0, -1.0)
         )
         mix = g.Mix(

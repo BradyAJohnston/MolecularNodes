@@ -1,7 +1,9 @@
-# Node-group asset 'Select Element' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Select Element" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -362,7 +364,7 @@ class SelectElement(AssetGeometryGroup):
 
     _name = "Select Element"
     _asset_name = "Select Element"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_element"}
 
@@ -717,7 +719,7 @@ class SelectElement(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -907,10 +909,10 @@ class SelectElement(AssetGeometryGroup):
                 hg,
             ),
         )
-        group = BooleanAndOr(and_=and_, or_=or_, boolean=index_switch)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=index_switch)
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectElement

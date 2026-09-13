@@ -2,8 +2,9 @@ import gzip
 import shutil
 from pathlib import Path
 import pytest
+from nodebpy.nodes.geometry import RealizeInstances
 import molecularnodes as mn
-from molecularnodes.nodes import nodes
+from molecularnodes.nodes.geometry import EnsembleInstance
 from .constants import data_dir
 from .utils import round_significant
 
@@ -49,8 +50,9 @@ def test_load_cellpack(snapshot, format):
     obj_names = [obj.name for obj in ens.instance_collection.objects]
     assert snapshot == "\n".join(obj_names)
 
-    ens.node_group.nodes["Ensemble Instance"].inputs["As Points"].default_value = False
-    nodes.realize_instances(ens.object)
+    with ens.tree.reset() as (atoms, join):
+        instance = EnsembleInstance(instances=ens.instance_collection, as_points=False)
+        atoms >> instance >> RealizeInstances() >> join
     for attribute in ens.list_attributes():
         assert snapshot == ens[attribute]
 

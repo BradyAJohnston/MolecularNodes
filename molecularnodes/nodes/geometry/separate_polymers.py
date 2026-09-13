@@ -1,7 +1,9 @@
-# Node-group asset 'Separate Polymers' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Separate Polymers" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -40,7 +42,7 @@ class SeparatePolymers(AssetGeometryGroup):
 
     _name = "Separate Polymers"
     _asset_name = "Separate Polymers"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.separate_polymers"}
 
@@ -69,7 +71,7 @@ class SeparatePolymers(AssetGeometryGroup):
     ):
         super().__init__(**{"Atoms": atoms})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )

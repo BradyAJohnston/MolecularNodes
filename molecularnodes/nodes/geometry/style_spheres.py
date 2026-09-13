@@ -1,7 +1,9 @@
-# Node-group asset 'Style Spheres' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Style Spheres" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -73,7 +75,7 @@ class StyleSpheres(AssetGeometryGroup):
 
     _name = "Style Spheres"
     _asset_name = "Style Spheres"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "node_tool_idname": "geometry.style_spheres",
@@ -130,7 +132,7 @@ class StyleSpheres(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -178,10 +180,7 @@ class StyleSpheres(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        group = MN_utils_style_spheres_points(
-            atoms=atoms_1, selection=selection, scale=scale, material=material
-        )
-        group_1 = MN_utils_style_spheres_icosphere(
+        mn_utils_style_spheres_icosphere = MN_utils_style_spheres_icosphere(
             atoms=atoms_1,
             selection=selection,
             scale=scale,
@@ -189,14 +188,18 @@ class StyleSpheres(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
+        mn_utils_style_spheres_points = MN_utils_style_spheres_points(
+            atoms=atoms_1, selection=selection, scale=scale, material=material
+        )
+        realize_instances = g.RealizeInstances(
+            geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True
+        )
         menu_switch = g.MenuSwitch.geometry(
             sphere,
             {
-                "Point": group,
-                "Instance": group_1,
-                "Mesh": g.RealizeInstances(
-                    geometry=group_1, realize_to_point_domain=True
-                ),
+                "Point": mn_utils_style_spheres_points,
+                "Instance": mn_utils_style_spheres_icosphere,
+                "Mesh": realize_instances,
             },
         )
         menu_switch >> geometry_1

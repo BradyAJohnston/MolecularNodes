@@ -1,7 +1,9 @@
-# Node-group asset 'Color Common' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Common" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -57,7 +59,7 @@ class ColorCommon(AssetGeometryGroup):
 
     _name = "Color Common"
     _asset_name = "Color Common"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_common"}
 
@@ -106,7 +108,7 @@ class ColorCommon(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         hydrogen = tree.inputs.color(
             "Hydrogen",
             (1.0, 1.0, 1.0, 1.0),
@@ -143,33 +145,33 @@ class ColorCommon(AssetGeometryGroup):
             description="The output colors for the common elements",
         )
 
-        group = Color()
-        group_1 = AtomicNumber()
+        atomic_number = AtomicNumber()
+        color_1 = Color()
         index_switch = g.IndexSwitch.color(
-            group_1,
+            atomic_number,
             (
-                group,
+                color_1,
                 hydrogen,
-                group,
-                group,
-                group,
-                group,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
                 carbon,
                 nitrogen,
                 oxygen,
-                group,
-                group,
-                group,
-                group,
-                group,
-                group,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
+                color_1,
                 phosphorous,
                 sulfur,
             ),
         )
         (
-            BetweenInteger(value=group_1, upper=16).o.boolean.switch.color(
-                group, index_switch
+            BetweenInteger(value=atomic_number, upper=16).o.boolean.switch.color(
+                color_1, index_switch
             )
             >> color
         )

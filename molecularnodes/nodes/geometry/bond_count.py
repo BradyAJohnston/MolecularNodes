@@ -1,7 +1,9 @@
-# Node-group asset 'Bond Count' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Bond Count" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -37,7 +39,7 @@ class BondCount(AssetGeometryGroup):
 
     _name = "Bond Count"
     _asset_name = "Bond Count"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.bond_count"}
 
@@ -64,7 +66,7 @@ class BondCount(AssetGeometryGroup):
     ):
         super().__init__(**{"Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
         is_bonded = tree.outputs.boolean(
             "Is Bonded", description="If the point has an edge / bond to another point"

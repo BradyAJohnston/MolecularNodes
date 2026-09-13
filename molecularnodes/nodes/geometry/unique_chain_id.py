@@ -1,7 +1,9 @@
-# Node-group asset 'Unique Chain ID' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Unique Chain ID" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -39,7 +41,7 @@ class UniqueChainID(AssetGeometryGroup):
 
     _name = "Unique Chain ID"
     _asset_name = "Unique Chain ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Compute a unique Group ID based on the `chain_id` attribute, but also incrememnting if subsequent points are over a cutoff distance from each other"
@@ -66,7 +68,7 @@ class UniqueChainID(AssetGeometryGroup):
     ):
         super().__init__(**{"Cutoff": cutoff})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         cutoff = tree.inputs.float(
             "Cutoff",
             4.5,

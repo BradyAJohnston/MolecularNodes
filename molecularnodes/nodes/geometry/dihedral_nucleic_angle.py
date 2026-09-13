@@ -1,7 +1,9 @@
-# Node-group asset 'Dihedral Nucleic Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Dihedral Nucleic Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -32,7 +34,7 @@ class DihedralNucleicAngle(AssetGeometryGroup):
 
     _name = "Dihedral Nucleic Angle"
     _asset_name = "Dihedral Nucleic Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -56,7 +58,7 @@ class DihedralNucleicAngle(AssetGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         angle = tree.outputs.float(
             "Angle",
             description="The angle between the vectors AB and CD, when made perpendicular to BC.",
@@ -67,21 +69,37 @@ class DihedralNucleicAngle(AssetGeometryGroup):
         )
         axis = tree.outputs.vector("Axis", description="The axis vector BC")
 
-        group = ResidueMask(atom_name=54)
-        group_1 = ResidueMask(atom_name=50)
-        group_2 = ResidueMask(atom_name=55)
-        group_3 = ResidueMask(atom_name=53)
-        group_4 = ResidueMask(atom_name=57)
         integer_math = AtomName().o.atom_name - 50
+        residue_mask = ResidueMask(atom_name=54)
+        residue_mask_1 = ResidueMask(atom_name=50)
+        residue_mask_2 = ResidueMask(atom_name=55)
+        residue_mask_3 = ResidueMask(atom_name=53)
         index_switch = g.IndexSwitch.vector(
+            integer_math,
+            (
+                FindBondedAtom(atom_name="C3'", distance=1).o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                FindBondedAtom(atom_name="O3'").o.position,
+                residue_mask_1.o.position,
+                residue_mask_3.o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                residue_mask_2.o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+            ),
+        )
+        residue_mask_4 = ResidueMask(atom_name=57)
+        index_switch_1 = g.IndexSwitch.vector(
             integer_math,
             (
                 FindBondedAtom(atom_name="O5'").o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group.o.position,
-                group_2.o.position,
-                group_4.o.position,
+                residue_mask.o.position,
+                residue_mask_2.o.position,
+                residue_mask_4.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 FindBondedAtom(atom_name="P", distance=1).o.position,
@@ -89,45 +107,29 @@ class DihedralNucleicAngle(AssetGeometryGroup):
                 (0.0, 0.0, 0.0),
             ),
         )
-        index_switch_1 = g.IndexSwitch.vector(
+        index_switch_2 = g.IndexSwitch.vector(
             integer_math,
             (
                 FindBondedAtom(atom_name="O3'", distance=1).o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_1.o.position,
-                group_3.o.position,
-                group.o.position,
+                residue_mask_1.o.position,
+                residue_mask_3.o.position,
+                residue_mask.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_4.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-            ),
-        )
-        index_switch_2 = g.IndexSwitch.vector(
-            integer_math,
-            (
-                FindBondedAtom(atom_name="C3'", distance=1).o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                FindBondedAtom(atom_name="O3'").o.position,
-                group_1.o.position,
-                group_3.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_2.o.position,
+                residue_mask_4.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
             ),
         )
-        group_5 = DihedralAngle(
-            a=index_switch, b=g.Position(), c=index_switch_1, d=index_switch_2
+        dihedral_angle = DihedralAngle(
+            a=index_switch_1, b=g.Position(), c=index_switch_2, d=index_switch
         )
-        group_5.o.angle * -1.0 >> angle
+        dihedral_angle.o.angle * -1.0 >> angle
 
-        group_5.o.ba_bc >> up
-        group_5.o.bc >> axis
+        dihedral_angle.o.ba_bc >> up
+        dihedral_angle.o.bc >> axis
 
 
 ASSET = DihedralNucleicAngle

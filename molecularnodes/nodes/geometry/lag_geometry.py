@@ -1,7 +1,9 @@
-# Node-group asset 'Lag Geometry' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Lag Geometry" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -52,7 +54,7 @@ class LagGeometry(AssetGeometryGroup):
 
     _name = "Lag Geometry"
     _asset_name = "Lag Geometry"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -96,7 +98,7 @@ class LagGeometry(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         input = tree.inputs.geometry("Input")
         selection = tree.inputs.boolean(
             "Selection",

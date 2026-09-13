@@ -1,7 +1,9 @@
-# Node-group asset 'Is Loop' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Is Loop" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -40,7 +42,7 @@ class IsLoop(AssetGeometryGroup):
 
     _name = "Is Loop"
     _asset_name = "Is Loop"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.is_loop"}
 
@@ -70,7 +72,7 @@ class IsLoop(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -90,10 +92,10 @@ class IsLoop(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = MN_select_sec_struct_id(and_=and_, or_=or_, id=3)
+        mn_select_sec_struct_id = MN_select_sec_struct_id(and_=and_, or_=or_, id=3)
 
-        group >> selection
-        group.o.inverted >> inverted
+        mn_select_sec_struct_id >> selection
+        mn_select_sec_struct_id.o.inverted >> inverted
 
 
 ASSET = IsLoop

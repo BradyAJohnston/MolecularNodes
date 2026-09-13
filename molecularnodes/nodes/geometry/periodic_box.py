@@ -1,7 +1,9 @@
-# Node-group asset 'Periodic Box' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Periodic Box" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -65,7 +67,7 @@ class PeriodicBox(AssetGeometryGroup):
 
     _name = "Periodic Box"
     _asset_name = "Periodic Box"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "VECTOR"
 
     class _Inputs(SocketAccessor):
@@ -115,7 +117,7 @@ class PeriodicBox(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         _update = tree.inputs.boolean(
             "Update",
             True,
@@ -141,25 +143,29 @@ class PeriodicBox(AssetGeometryGroup):
             math_2 = beta.to_radians()
             math_3 = gamma.to_radians()
         with g.Frame("Trig Ops"):
-            math_4 = math_3.cos()
+            math_4 = math_1.cos()
             math_5 = math_2.cos()
-            math_6 = math_3.sin()
-            math_7 = math_1.cos()
+            math_6 = math_3.cos()
+            math_7 = math_3.sin()
         with g.Frame("B Vector"):
-            group = AngstromToWorld(angstrom=b)
+            angstrom_to_world = AngstromToWorld(angstrom=b)
             with g.Frame("B Y Component"):
-                math_8 = group.o.world * math_6
+                math_8 = angstrom_to_world.o.world * math_7
             with g.Frame("B X Component"):
-                math_9 = group.o.world * math_4
+                math_9 = angstrom_to_world.o.world * math_6
             combine_xyz_1 = g.CombineXYZ(x=math_9, y=math_8)
         with g.Frame("C Vector"):
-            group_1 = AngstromToWorld(angstrom=c_)
+            angstrom_to_world_1 = AngstromToWorld(angstrom=c_)
             with g.Frame("C X Component"):
-                math_10 = group_1.o.world * math_5
+                math_10 = angstrom_to_world_1.o.world * math_5
             with g.Frame("C Y Component"):
-                math_11 = group_1.o.world * ((math_7 - math_5 * math_4) / math_6)
+                math_11 = angstrom_to_world_1.o.world * (
+                    (math_4 - math_5 * math_6) / math_7
+                )
             with g.Frame("C Z Component"):
-                math_12 = (group_1.o.world**2.0 - math_10**2.0 - math_11**2.0).sqrt()
+                math_12 = (
+                    angstrom_to_world_1.o.world**2.0 - math_10**2.0 - math_11**2.0
+                ).sqrt()
             combine_xyz_2 = g.CombineXYZ(x=math_10, y=math_11, z=math_12)
 
         combine_xyz >> a_1

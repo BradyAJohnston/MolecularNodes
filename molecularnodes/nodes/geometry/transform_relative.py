@@ -1,7 +1,9 @@
-# Node-group asset 'Transform Relative' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Transform Relative" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -43,7 +45,7 @@ class TransformRelative(AssetGeometryGroup):
 
     _name = "Transform Relative"
     _asset_name = "Transform Relative"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.transform_relative"}
 
@@ -74,7 +76,7 @@ class TransformRelative(AssetGeometryGroup):
     ):
         super().__init__(**{"A": a, "B": b, "C": c})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.vector(
             "A",
             (0.0, 0.0, 0.0),

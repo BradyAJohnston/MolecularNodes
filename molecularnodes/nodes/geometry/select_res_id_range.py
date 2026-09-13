@@ -1,7 +1,9 @@
-# Node-group asset 'Select Res ID Range' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Select Res ID Range" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -50,7 +52,7 @@ class SelectResIDRange(AssetGeometryGroup):
 
     _name = "Select Res ID Range"
     _asset_name = "Select Res ID Range"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_res_id_range"}
 
@@ -86,7 +88,7 @@ class SelectResIDRange(AssetGeometryGroup):
     ):
         super().__init__(**{"And": and_, "Or": or_, "Min": min, "Max": max})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         and_ = tree.inputs.boolean(
             "And",
             True,
@@ -119,13 +121,13 @@ class SelectResIDRange(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = ResidueID()
-        group_1 = BooleanAndOr(
-            and_=and_, or_=or_, boolean=(group >= min) & (group <= max)
+        residue_id = ResidueID()
+        boolean_andor = BooleanAndOr(
+            and_=and_, or_=or_, boolean=(residue_id >= min) & (residue_id <= max)
         )
 
-        group_1 >> selection
-        group_1.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectResIDRange

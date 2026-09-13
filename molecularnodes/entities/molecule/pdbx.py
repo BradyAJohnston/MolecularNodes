@@ -88,34 +88,6 @@ class PDBXReader(ReaderBase):
         return description.as_array(str).tolist()
 
     @staticmethod
-    def _extract_matrices(category):
-        matrix_columns = [
-            "matrix[1][1]",
-            "matrix[1][2]",
-            "matrix[1][3]",
-            "vector[1]",
-            "matrix[2][1]",
-            "matrix[2][2]",
-            "matrix[2][3]",
-            "vector[2]",
-            "matrix[3][1]",
-            "matrix[3][2]",
-            "matrix[3][3]",
-            "vector[3]",
-        ]
-
-        columns = [category[name].as_array().astype(float) for name in matrix_columns]
-        matrices = np.zeros((len(columns[0]), 4, 4), float)
-        matrices[:, 3, 3] = 1.0
-
-        col_mask = np.tile((0, 1, 2, 3), 3)
-        row_mask = np.repeat((0, 1, 2), 4)
-        for column, coli, rowi in zip(columns, col_mask, row_mask):
-            matrices[:, rowi, coli] = column
-
-        return matrices
-
-    @staticmethod
     def _get_entity_id(array, file):
         """Per-atom entity index into the `entity` category, so the integers
         line up with the labels returned by `entity_ids`."""
@@ -257,27 +229,6 @@ class PDBXReader(ReaderBase):
         return secondary_structure
 
 
-def _parse_opers(oper):
-    # we want the example '1,3,(5-8)' to expand to (1, 3, 5, 6, 7, 8).
-    op_ids = list()
-
-    for group in oper.strip(")").split("("):
-        if "," in group:
-            for i in group.split(","):
-                op_ids.append()
-
-    for group in oper.split(","):
-        if "-" not in group:
-            op_ids.append(str(group))
-            continue
-
-        start, stop = [int(x) for x in group.strip("()").split("-")]
-        for i in range(start, stop + 1):
-            op_ids.append(str(i))
-
-    return op_ids
-
-
 def _ss_label_to_int(label):
     if "HELX" in label:
         return 1
@@ -305,7 +256,6 @@ class CIFAssemblyParser:
             raise KeyError(f"File has no Assembly ID '{assembly_id}'")
 
         # Extract all possible transformations indexed by operation ID
-        # transformation_dict = _get_transformations(struct_oper_category)
         transformation_dict = _extract_matrices(struct_oper_category)
 
         # Get necessary transformations and the affected chain IDs
@@ -378,50 +328,6 @@ def _extract_matrices(category, scale=True):
         matrices[:, rowi, coli] = column
 
     return dict(zip(category["id"].as_array(str), matrices))
-
-
-def _chain_transformations(rotations, translations):
-    """
-    Get a total rotation/translation transformation by combining
-    multiple rotation/translation transformations.
-    This is done by intermediately combining rotation matrices and
-    translation vectors into 4x4 matrices in the form
-
-    |r11 r12 r13 t1|
-    |r21 r22 r23 t2|
-    |r31 r32 r33 t3|
-    |0   0   0   1 |.
-    """
-    total_matrix = np.identity(4)
-    for rotation, translation in zip(rotations, translations):
-        matrix = np.zeros((4, 4))
-        matrix[:3, :3] = rotation
-        matrix[:3, 3] = translation
-        matrix[3, 3] = 1
-        total_matrix = matrix @ total_matrix
-
-    # return total_matrix[:3, :3], total_matrix[:3, 3]
-    return matrix
-
-
-def _get_transformations(struct_oper):
-    """
-    Get transformation operation in terms of rotation matrix and
-    translation for each operation ID in ``pdbx_struct_oper_list``.
-    """
-    transformation_dict = {}
-    for index, id in enumerate(struct_oper["id"].as_array()):
-        rotation_matrix = np.array(
-            [
-                [float(struct_oper[f"matrix[{i}][{j}]"][index]) for j in (1, 2, 3)]
-                for i in (1, 2, 3)
-            ]
-        )
-        translation_vector = np.array(
-            [float(struct_oper[f"vector[{i}]"][index]) for i in (1, 2, 3)]
-        )
-        transformation_dict[id] = (rotation_matrix, translation_vector)
-    return transformation_dict
 
 
 def _parse_operation_expression(expression):

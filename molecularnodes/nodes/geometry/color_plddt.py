@@ -1,7 +1,9 @@
-# Node-group asset 'Color pLDDT' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color pLDDT" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     ColorSocket,
@@ -22,9 +24,9 @@ class ColorPLDDT(AssetGeometryGroup):
         Color for pLDTT < 50
     _70 : InputColor
         Color for 50 < pLDTT < 70
-    socket_3 : InputColor
+    socket_2 : InputColor
         Color for 70 < pLDTT < 90
-    socket_4 : InputColor
+    socket_3 : InputColor
         Color for 90 < pLDTT
 
     Inputs
@@ -33,9 +35,9 @@ class ColorPLDDT(AssetGeometryGroup):
         Color for pLDTT < 50
     i._70 : ColorSocket
         Color for 50 < pLDTT < 70
-    i.socket_3 : ColorSocket
+    i.socket_2 : ColorSocket
         Color for 70 < pLDTT < 90
-    i.socket_4 : ColorSocket
+    i.socket_3 : ColorSocket
         Color for 90 < pLDTT
 
     Outputs
@@ -46,7 +48,7 @@ class ColorPLDDT(AssetGeometryGroup):
 
     _name = "Color pLDDT"
     _asset_name = "Color pLDDT"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_plddt"}
 
@@ -55,9 +57,9 @@ class ColorPLDDT(AssetGeometryGroup):
         """Color for pLDTT < 50"""
         _70: ColorSocket
         """Color for 50 < pLDTT < 70"""
-        socket_3: ColorSocket
+        socket_2: ColorSocket
         """Color for 70 < pLDTT < 90"""
-        socket_4: ColorSocket
+        socket_3: ColorSocket
         """Color for 90 < pLDTT"""
 
     class _Outputs(SocketAccessor):
@@ -75,12 +77,12 @@ class ColorPLDDT(AssetGeometryGroup):
         self,
         _50: InputColor = None,
         _70: InputColor = None,
+        socket_2: InputColor = None,
         socket_3: InputColor = None,
-        socket_4: InputColor = None,
     ):
-        super().__init__(**{"<50": _50, "<70": _70, "<90": socket_3, ">90": socket_4})
+        super().__init__(**{"<50": _50, "<70": _70, "<90": socket_2, ">90": socket_3})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         n_50 = tree.inputs.color(
             "<50",
             (1.000169, 0.20506974, 0.05950701, 1.0),
@@ -105,11 +107,11 @@ class ColorPLDDT(AssetGeometryGroup):
             description="Assigned color based on the pLDTT score",
         )
 
-        group = BFactor()
+        b_factor = BFactor()
         (
-            (group > 90.0).switch.color(
-                (group > 70.0).switch.color(
-                    (group > 50.0).switch.color(n_50, n_70), n_90
+            (b_factor > 90.0).switch.color(
+                (b_factor > 70.0).switch.color(
+                    (b_factor > 50.0).switch.color(n_50, n_70), n_90
                 ),
                 n_90_1,
             )

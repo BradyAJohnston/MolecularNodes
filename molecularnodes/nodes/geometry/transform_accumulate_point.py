@@ -1,7 +1,9 @@
-# Node-group asset 'Transform Accumulate Point' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Transform Accumulate Point" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -60,7 +62,7 @@ class TransformAccumulatePoint(AssetGeometryGroup):
 
     _name = "Transform Accumulate Point"
     _asset_name = "Transform Accumulate Point"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Accumulate transforms on the point domain",
@@ -111,7 +113,7 @@ class TransformAccumulatePoint(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         domain = tree.inputs.menu(
             "Domain",
             description="Domain on which to accumulate the transforms",
@@ -144,10 +146,10 @@ class TransformAccumulatePoint(AssetGeometryGroup):
             "Vector", description="Transformed vector", subtype="XYZ"
         )
 
-        group = TransformAccumulate(
+        transform_accumulate = TransformAccumulate(
             domain=domain, accumulate=accumulate, transform=transform, group_id=group_id
         )
-        position.transform(group) >> vector
+        position.transform(transform_accumulate) >> vector
 
         domain.default_value = "Point"
 

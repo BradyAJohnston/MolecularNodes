@@ -1,7 +1,9 @@
-# Node-group asset 'Find Bonds' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Find Bonds" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -48,7 +50,7 @@ class FindBonds(AssetGeometryGroup):
 
     _name = "Find Bonds"
     _asset_name = "Find Bonds"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.topology_find_bonds"}
 
@@ -79,7 +81,7 @@ class FindBonds(AssetGeometryGroup):
     ):
         super().__init__(**{"Atoms": atoms, "Selection": selection, "Scale": scale})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms", description="Atomic geometry that contains vertices and edges"
         )
@@ -102,14 +104,14 @@ class FindBonds(AssetGeometryGroup):
         atoms_2 = closure_zone.inputs.geometry("Atoms")
         geometry = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_2 >> g.SeparateGeometry.point(selection=selection)
-        group = Plexus(
+        plexus = Plexus(
             points=separate_geometry.o.selection,
             distance=scale,
             radius=VDWRadii().o.vdw_radii * 0.58,
         )
         (
             SampleAtomicAttributes(
-                atoms=group, sample_atoms=separate_geometry.o.selection
+                atoms=plexus, sample_atoms=separate_geometry.o.selection
             )
             >> geometry
         )

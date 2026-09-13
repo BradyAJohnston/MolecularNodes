@@ -1,7 +1,9 @@
-# Node-group asset 'Split to Centred Instances' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Split to Centred Instances" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -46,7 +48,7 @@ class SplitToCentredInstances(AssetGeometryGroup):
 
     _name = "Split to Centred Instances"
     _asset_name = "Split to Centred Instances"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.split_to_centred_instances"}
 
@@ -79,7 +81,7 @@ class SplitToCentredInstances(AssetGeometryGroup):
             **{"Geometry": geometry, "Selection": selection, "Group ID": group_id}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry",
             description="The input geometry containing points",

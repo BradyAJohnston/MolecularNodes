@@ -1,7 +1,9 @@
-# Node-group asset 'Index Mix Vector' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Index Mix Vector" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -45,7 +47,7 @@ class IndexMixVector(AssetGeometryGroup):
 
     _name = "Index Mix Vector"
     _asset_name = "Index Mix Vector"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.index_mix_vector"}
 
@@ -77,7 +79,7 @@ class IndexMixVector(AssetGeometryGroup):
     ):
         super().__init__(**{"Value": value, "Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         value = tree.inputs.vector(
             "Value",
             (0.0, 0.0, 0.0),
@@ -101,18 +103,18 @@ class IndexMixVector(AssetGeometryGroup):
             description="The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`",
         )
 
-        group = FractionateFloat(value=index)
+        fractionate_float = FractionateFloat(value=index)
         mix = g.Mix(
-            factor_float=group.o.fraction,
-            a_vector=value.point.at(group.o.floor),
-            b_vector=value.point.at(group.o.ceiling),
+            factor_float=fractionate_float.o.fraction,
+            a_vector=value.point.at(fractionate_float.o.floor),
+            b_vector=value.point.at(fractionate_float.o.ceiling),
             data_type="VECTOR",
             clamp_factor=True,
         )
 
         mix.o.result_vector >> value_1
-        group.o.floor >> from_
-        group.o.ceiling >> to
+        fractionate_float.o.floor >> from_
+        fractionate_float.o.ceiling >> to
 
 
 ASSET = IndexMixVector

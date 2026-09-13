@@ -1,8 +1,10 @@
-# Node group 'Ray Tangent' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Ray Tangent" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, SocketAccessor, VectorSocket
 
@@ -40,7 +42,7 @@ class RayTangent(CustomShaderGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         tangent = tree.outputs.vector("Tangent")
         bitangent = tree.outputs.vector("Bitangent")
 

@@ -1,7 +1,9 @@
-# Node-group asset 'Residue Parameter' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Residue Parameter" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
@@ -40,7 +42,7 @@ class ResidueParameter(AssetGeometryGroup):
 
     _name = "Residue Parameter"
     _asset_name = "Residue Parameter"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.residue_parameter"}
 
@@ -73,7 +75,7 @@ class ResidueParameter(AssetGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         factor = tree.outputs.float(
             "Factor",
             description="An atom's relative position in a residue, with the first atom being 0 and the last atom being 1",
@@ -104,15 +106,20 @@ class ResidueParameter(AssetGeometryGroup):
             description="Index (in the whole structure) for the last atom in a  residue",
         )
 
-        group = SubGroupInfo(sub_group_id=ResidueID(), group_id=ChainID())
-        IndexToFactor(index=group.o.index_in_group_id, size=group.o.size) >> factor
-        AtomName(index=group.o.index_of_first) >> first_atom_name
-        AtomName(index=group.o.index_of_last) >> last_atom_name
+        sub_group_info = SubGroupInfo(sub_group_id=ResidueID(), group_id=ChainID())
+        AtomName(index=sub_group_info.o.index_of_first) >> first_atom_name
+        AtomName(index=sub_group_info.o.index_of_last) >> last_atom_name
+        (
+            IndexToFactor(
+                index=sub_group_info.o.index_in_group_id, size=sub_group_info.o.size
+            )
+            >> factor
+        )
 
-        group >> atom_count
-        group.o.index_in_group_id >> atom_index
-        group.o.index_of_first >> index_of_first
-        group.o.index_of_last >> index_of_last
+        sub_group_info >> atom_count
+        sub_group_info.o.index_in_group_id >> atom_index
+        sub_group_info.o.index_of_first >> index_of_first
+        sub_group_info.o.index_of_last >> index_of_last
 
 
 ASSET = ResidueParameter

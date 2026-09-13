@@ -1,7 +1,9 @@
-# Node-group asset 'Index Distance' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Index Distance" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -52,7 +54,7 @@ class IndexDistance(AssetGeometryGroup):
 
     _name = "Index Distance"
     _asset_name = "Index Distance"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.point_distance"}
 
@@ -91,7 +93,7 @@ class IndexDistance(AssetGeometryGroup):
             **{"Index": index, "Target Index": target_index, "Position": position}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
         target_index = tree.inputs.integer(
             "Target Index",
@@ -115,15 +117,15 @@ class IndexDistance(AssetGeometryGroup):
         )
         rotation = tree.outputs.rotation("Rotation")
 
-        group = VectorFromPoint(
+        vector_from_point = VectorFromPoint(
             target=position.point.at(target_index.point.at(index)),
             position=g.Position().o.position.point.at(index),
         )
 
-        group >> vector
-        group.o.direction >> direction
-        group.o.length >> distance
-        group.o.rotation >> rotation
+        vector_from_point >> vector
+        vector_from_point.o.direction >> direction
+        vector_from_point.o.length >> distance
+        vector_from_point.o.rotation >> rotation
 
 
 ASSET = IndexDistance

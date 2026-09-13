@@ -1,7 +1,9 @@
-# Node-group asset 'Nucleic Dihedral' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Nucleic Dihedral" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -69,7 +71,7 @@ class NucleicDihedral(AssetGeometryGroup):
 
     _name = "Nucleic Dihedral"
     _asset_name = "Nucleic Dihedral"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -121,7 +123,7 @@ class NucleicDihedral(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         position = tree.inputs.vector(
             "Position", (0.0, 0.0, 0.0), hide_value=True, default_input="POSITION"
         )
@@ -142,15 +144,15 @@ class NucleicDihedral(AssetGeometryGroup):
             "Position", description="Transformed vector", subtype="XYZ"
         )
 
-        group = IsNucleic(and_=selection)
-        group_1 = AtomName()
-        group_2 = OverrideIndex(
-            selection=(group_1 > 58) & (group_1 <= 115)
-            | g.Compare.integer.equal(group_1, 56),
+        atom_name = AtomName()
+        is_nucleic = IsNucleic(and_=selection)
+        override_index = OverrideIndex(
+            selection=(atom_name > 58) & (atom_name <= 115)
+            | g.Compare.integer.equal(atom_name, 56),
             override=ResidueMask(atom_name=55).o.index,
         )
         index_switch = g.IndexSwitch.float(
-            group_1.o.atom_name - 50,
+            atom_name.o.atom_name - 50,
             (
                 zeta,
                 0.0,
@@ -165,15 +167,20 @@ class NucleicDihedral(AssetGeometryGroup):
                 0.0,
             ),
         )
-        group_3 = AccumulateAxisRotation(
+        accumulate_axis_rotation = AccumulateAxisRotation(
             position=position,
-            selection=group.o.selection,
+            selection=is_nucleic.o.selection,
             pivot=MN_pivot_nucleic().o.pivot_backbone,
             angle=(BondCount().o.bonds > 1).switch.float(true=index_switch),
             group_id=ChainID(),
-            transform_index=group_2,
+            transform_index=override_index,
         )
-        group.o.selection.switch.vector(position, group_3.o.position) >> position_1
+        (
+            is_nucleic.o.selection.switch.vector(
+                position, accumulate_axis_rotation.o.position
+            )
+            >> position_1
+        )
 
 
 ASSET = NucleicDihedral

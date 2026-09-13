@@ -1,7 +1,9 @@
-# Node-group asset 'Vector Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Vector Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
@@ -40,7 +42,7 @@ class VectorAngle(AssetGeometryGroup):
 
     _name = "Vector Angle"
     _asset_name = "Vector Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "VECTOR"
     _tree_properties = {
         "description": "The angle between two vectors, in radians",
@@ -73,7 +75,7 @@ class VectorAngle(AssetGeometryGroup):
     ):
         super().__init__(**{"A": a, "B": b})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.vector(
             "A",
             (0.0, 0.0, 0.0),

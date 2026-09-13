@@ -1,7 +1,9 @@
-# Node-group asset 'Periodic Array' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Periodic Array" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -79,7 +81,7 @@ class PeriodicArray(AssetGeometryGroup):
 
     _name = "Periodic Array"
     _asset_name = "Periodic Array"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -141,7 +143,7 @@ class PeriodicArray(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry")
         with tree.inputs.panel("Periodic Box", default_closed=True):
             update = tree.inputs.boolean(
@@ -182,11 +184,18 @@ class PeriodicArray(AssetGeometryGroup):
             )
         instances = tree.outputs.geometry("Instances")
 
-        group = PeriodicBox(
+        periodic_box = PeriodicBox(
             update=update, a=a, b=b, c=c_, alpha=alpha, beta=beta, gamma=gamma
         )
         (
-            LatticeGrid(a=group.o.a, b=group.o.b, c=group.o.c, x=x, y=y, z=z)
+            LatticeGrid(
+                a=periodic_box.o.a,
+                b=periodic_box.o.b,
+                c=periodic_box.o.c,
+                x=x,
+                y=y,
+                z=z,
+            )
             >> g.InstanceOnPoints(instance=geometry)
             >> instances
         )

@@ -1,7 +1,9 @@
-# Node-group asset 'Transform Mix' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Transform Mix" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -60,7 +62,7 @@ class TransformMix(AssetGeometryGroup):
 
     _name = "Transform Mix"
     _asset_name = "Transform Mix"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Mix between two transformations",
@@ -116,7 +118,7 @@ class TransformMix(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.matrix("A", description="Transform A to mix from at 0.0")
         b = tree.inputs.matrix(
             "B", description="Transform B which will be mixed to at 1.0"
@@ -162,6 +164,13 @@ class TransformMix(AssetGeometryGroup):
             clamp_factor=True,
         )
         mix_1 = g.Mix(
+            factor_float=g.IndexSwitch.float(menu_switch.o.output, (factor, scale)),
+            a_vector=a.scale,
+            b_vector=b.scale,
+            data_type="VECTOR",
+            clamp_factor=True,
+        )
+        mix_2 = g.Mix(
             factor_float=g.IndexSwitch.float(
                 menu_switch.o.output, (factor, translation)
             ),
@@ -170,17 +179,10 @@ class TransformMix(AssetGeometryGroup):
             data_type="VECTOR",
             clamp_factor=True,
         )
-        mix_2 = g.Mix(
-            factor_float=g.IndexSwitch.float(menu_switch.o.output, (factor, scale)),
-            a_vector=a.scale,
-            b_vector=b.scale,
-            data_type="VECTOR",
-            clamp_factor=True,
-        )
         combine_transform = g.CombineTransform(
-            translation=mix_1.o.result_vector,
+            translation=mix_2.o.result_vector,
             rotation=mix.o.result_rotation,
-            scale=mix_2.o.result_vector,
+            scale=mix_1.o.result_vector,
         )
 
         combine_transform >> transform

@@ -1,7 +1,9 @@
-# Node-group asset 'Relative Index' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Relative Index" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     IntegerSocket,
@@ -42,7 +44,7 @@ class RelativeIndex(AssetGeometryGroup):
 
     _name = "Relative Index"
     _asset_name = "Relative Index"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Get information about the points in a `Group ID` such as size and the start and end Indices",
@@ -76,7 +78,7 @@ class RelativeIndex(AssetGeometryGroup):
     ):
         super().__init__(**{"Group ID": group_id})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         group_id = tree.inputs.integer(
             "Group ID",
             0,
@@ -98,14 +100,20 @@ class RelativeIndex(AssetGeometryGroup):
             "Last Index", description="The `Index` of the last point in each `Group ID`"
         )
 
-        group = GroupParameter(group_id=group_id)
-        GroupPickFirst(pick=group.o.is_first, group_id=group_id).o.index >> first_index
-        GroupPickFirst(pick=group.o.is_last, group_id=group_id).o.index >> last_index
-        _group_1 = GroupPick(pick=group.o.is_last, group_id=group_id)
-        _group_2 = GroupPick(pick=group.o.is_first, group_id=group_id)
+        group_parameter = GroupParameter(group_id=group_id)
+        _group_pick = GroupPick(pick=group_parameter.o.is_last, group_id=group_id)
+        (
+            GroupPickFirst(pick=group_parameter.o.is_first, group_id=group_id).o.index
+            >> first_index
+        )
+        (
+            GroupPickFirst(pick=group_parameter.o.is_last, group_id=group_id).o.index
+            >> last_index
+        )
+        _group_pick_1 = GroupPick(pick=group_parameter.o.is_first, group_id=group_id)
 
-        group.o.group_size >> group_size
-        group.o.relative_index >> relative_index
+        group_parameter.o.group_size >> group_size
+        group_parameter.o.relative_index >> relative_index
 
 
 ASSET = RelativeIndex

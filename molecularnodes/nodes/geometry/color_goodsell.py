@@ -1,7 +1,9 @@
-# Node-group asset 'Color Goodsell' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Goodsell" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -46,7 +48,7 @@ class ColorGoodsell(AssetGeometryGroup):
 
     _name = "Color Goodsell"
     _asset_name = "Color Goodsell"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_goodsell"}
 
@@ -77,7 +79,7 @@ class ColorGoodsell(AssetGeometryGroup):
     ):
         super().__init__(**{"Color": color, "Factor": factor, "Invert": invert})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         color = tree.inputs.color(
             "Color",
             (0.5, 0.5, 0.5, 1.0),
@@ -100,15 +102,19 @@ class ColorGoodsell(AssetGeometryGroup):
             description="The generated color based on the node inputs",
         )
 
-        group = SelectAtomicNumber()
-        mix = g.Mix(
-            factor_float=invert.switch.boolean(
-                group.o.selection, group.o.inverted
-            ).switch.float(factor),
-            b_float=-0.4,
-            clamp_factor=True,
+        select_atomic_number = SelectAtomicNumber()
+        switch = invert.switch.boolean(
+            select_atomic_number.o.selection, select_atomic_number.o.inverted
+        ).switch.float(factor)
+        (
+            ColorOKLabOffset(
+                color=color,
+                luminance=g.Mix(
+                    factor_float=switch, b_float=-0.4, clamp_factor=True
+                ).o.result_float,
+            )
+            >> color_1
         )
-        ColorOKLabOffset(color=color, luminance=mix.o.result_float) >> color_1
 
 
 ASSET = ColorGoodsell

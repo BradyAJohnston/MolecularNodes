@@ -1,8 +1,10 @@
-# Node group 'Offset Raycast' (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group "Offset Raycast" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import ShaderNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor, VectorSocket
 from nodebpy.types import InputFloat
@@ -89,7 +91,7 @@ class OffsetRaycast(CustomShaderGroup):
             **{"X Offset": x_offset, "Y Offset": y_offset, "Length": length}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         x_offset = tree.inputs.float(
             "X Offset", 1.0, min_value=-10_000.0, max_value=10_000.0
         )
@@ -104,22 +106,21 @@ class OffsetRaycast(CustomShaderGroup):
         hit_distance = tree.outputs.float("Hit Distance")
         ray_direction = tree.outputs.vector("Ray Direction")
 
-        group = RayTangent()
-        group_1 = RayOrigin()
-        vector_math = (
-            s.Geometry().o.position
-            + (group.o.tangent * x_offset + group.o.bitangent * y_offset)
-            - group_1
+        ray_origin = RayOrigin()
+        ray_tangent = RayTangent()
+        vector_math = s.Geometry().o.position + (
+            ray_tangent.o.tangent * x_offset + ray_tangent.o.bitangent * y_offset
         )
-        vector_math_1 = vector_math.normalize()
-        vector_math_2 = vector_math * 0.5
+        vector_math_1 = vector_math - ray_origin
+        vector_math_2 = vector_math_1.normalize()
+        vector_math_3 = vector_math_1 * 0.5
         raycast = s.Raycast(
-            position=group_1.o.vector + vector_math_2,
-            direction=vector_math_1,
+            position=ray_origin.o.vector + vector_math_3,
+            direction=vector_math_2,
             length=s.LightPath().o.ray_length + length,
         )
         (
-            raycast.o.hit_distance + vector_math_2.length() - s.LightPath().o.ray_length
+            raycast.o.hit_distance + vector_math_3.length() - s.LightPath().o.ray_length
             >> hit_distance
         )
 
@@ -127,4 +128,4 @@ class OffsetRaycast(CustomShaderGroup):
         raycast.o.self_hit >> self_hit
         raycast.o.hit_position >> hit_position
         raycast.o.hit_normal >> hit_normal
-        vector_math_1 >> ray_direction
+        vector_math_2 >> ray_direction

@@ -1,7 +1,9 @@
-# Node-group asset 'Peptide Chi' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Peptide Chi" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -68,7 +70,7 @@ class PeptideChi(AssetGeometryGroup):
 
     _name = "Peptide Chi"
     _asset_name = "Peptide Chi"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -120,7 +122,7 @@ class PeptideChi(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         position = tree.inputs.vector(
             "Position", (0.0, 0.0, 0.0), subtype="XYZ", default_input="POSITION"
         )
@@ -132,22 +134,22 @@ class PeptideChi(AssetGeometryGroup):
         x5 = tree.inputs.float("X5", 0.0, subtype="ANGLE")
         position_1 = tree.outputs.vector("Position", subtype="XYZ")
 
-        group = OverrideIndex(
+        mn_pivot_peptide = MN_pivot_peptide()
+        override_index = OverrideIndex(
             selection=MenuAtomName(atom_name="CG2").o.selection,
             override=MenuResidueMask(atom_name="CB").o.index,
         )
-        group_1 = MN_pivot_peptide()
-        group_2 = AccumulateAxisRotation(
+        accumulate_axis_rotation = AccumulateAxisRotation(
             position=position,
-            selection=IsPeptide(and_=selection).o.selection & group_1,
-            pivot=group_1,
+            selection=IsPeptide(and_=selection).o.selection & mn_pivot_peptide,
+            pivot=mn_pivot_peptide,
             angle=MN_peptide_chi_values(x1=x1, x2=x2, x3=x3, x4=x4, x5=x5).o.value,
             group_id=UResID().o.ures_id,
-            transform_index=group.o.output.point.at(HydrogenBondingPartner()),
+            transform_index=override_index.o.output.point.at(HydrogenBondingPartner()),
         )
         (
             (~MenuAtomName(atom_name="OXT").o.selection & selection).switch.vector(
-                position, group_2.o.position
+                position, accumulate_axis_rotation.o.position
             )
             >> position_1
         )

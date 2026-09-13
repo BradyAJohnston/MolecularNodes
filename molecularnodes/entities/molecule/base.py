@@ -25,10 +25,10 @@ from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
+from ...material import PresetMaterial, append_material
 from ...nodes import handlers as node_handlers
+from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...nodes.geometry import AssemblyInstance
-from ...nodes.material import PresetMaterial, append_material
-from ...nodes.nodes import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...utils import _UNSET, count_value_changes, temp_override_property
 from ..base import EntityType, MolecularEntity, MolecularTree
 from ..utilities import (
@@ -74,10 +74,7 @@ def _sphere_for_engine(style_node: type, engine: str) -> str | None:
 def add_style_to_tree(
     node_tree: bpy.types.GeometryNodeTree,
     style: STYLE_LITERALS = "spheres",
-    material: bpy.types.Material
-    | PresetMaterial
-    | MaterialBuilder
-    | str = "MN Default",
+    material: bpy.types.Material | PresetMaterial | MaterialBuilder | str = "Default",
     color: Sequence[float] | None = None,
     selection_attribute: str | None = None,
     name: str | None = None,
@@ -99,7 +96,7 @@ def add_style_to_tree(
         "Molecular Nodes" modifier.
     style : str, default "spheres"
         Name of a predefined style (see ``STYLE_NODE_MAPPING``).
-    material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, default "MN Default"
+    material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, default "Default"
         Material for the styled geometry; a string is appended from the asset
         file.
     color : Sequence[float] | None, optional
@@ -335,10 +332,6 @@ class Molecule(MolecularEntity):
         except Exception as e:
             logger.warning(f"Failed to compute elements, using placeholder 'X': {e}")
             return np.repeat("X", len(self))
-
-    def _compute_elements(self) -> np.ndarray:
-        """Return cached elements (for backwards compatibility)"""
-        return self._elements
 
     @property
     def _titled_elements(self) -> np.ndarray:
@@ -1218,7 +1211,7 @@ class Molecule(MolecularEntity):
             materials from `mn.material` (e.g. ``mn.material.AmbientOcclusion()``),
             a Blender Material object, a nodebpy MaterialBuilder, a string with a
             material name to append from the asset file, or None for no material.
-            Default is "MN Default".
+            Default is "Default".
 
         color : str | Sequence[float] | Callable | None, optional
             Coloring to apply upstream of the style via a ``Set Color`` node. Can be:
@@ -1300,18 +1293,21 @@ class Molecule(MolecularEntity):
                     "    mol.add_style(lambda: mg.StyleCartoon(quality=5))"
                 )
 
-        material = "MN Default" if material is _UNSET else material
+        material = "Default" if material is _UNSET else material
         # a callable selection is evaluated inside the tree context, below
         selection_is_callable = callable(selection)
         attribute_name = self._resolve_style_selection(selection)
 
+        # oxDNA nucleotides get their own ribbon; override locally so the
+        # module-level mapping used by every other entity is left untouched
+        style_mapping = STYLE_NODE_MAPPING
         if isinstance(self, OXDNA):
-            STYLE_NODE_MAPPING["ribbon"] = g.OxDNAStyleRibbon  # ty: ignore[invalid-assignment]
+            style_mapping = {**STYLE_NODE_MAPPING, "ribbon": g.OxDNAStyleRibbon}
 
         if not style_is_callable and "sphere" not in kwargs:
             # spheres default to point clouds, which only Cycles can draw
             geometry = _sphere_for_engine(
-                STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
+                style_mapping[style], bpy.context.scene.render.engine
             )
             if geometry is not None:
                 kwargs["sphere"] = geometry
@@ -1331,7 +1327,7 @@ class Molecule(MolecularEntity):
                     selection_input = NamedAttribute.boolean(attribute_name)
                 else:
                     selection_input = None
-                style_node = STYLE_NODE_MAPPING[style](
+                style_node = style_mapping[style](
                     selection=selection_input,
                     material=material,
                     **kwargs,

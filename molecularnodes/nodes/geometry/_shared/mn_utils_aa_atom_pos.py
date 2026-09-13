@@ -1,8 +1,10 @@
-# Node group '.MN_utils_aa_atom_pos' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node group ".MN_utils_aa_atom_pos" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     CustomGeometryGroup,
@@ -69,7 +71,7 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
     ):
         super().__init__(**{"atom_name": atom_name})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atom_name = tree.inputs.integer("atom_name", 5)
         position = tree.outputs.vector("Position")
         group_index = tree.outputs.integer("Group Index")
@@ -80,7 +82,7 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
         accumulate_field = g.AccumulateField.point.integer(
             g.Compare.integer.equal(named_attribute.o.attribute, 1)
         )
-        group = Utils_group_field_at_selection(
+        utils_group_field_at_selection = Utils_group_field_at_selection(
             selection=g.Compare.integer.equal(named_attribute.o.attribute, atom_name),
             group_index=accumulate_field.o.leading,
             float=g.NamedAttribute.float("b_factor").o.attribute,
@@ -89,30 +91,30 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
         )
         with g.Frame("If atom_name is 0, return midpoint of backbone N and C"):
             position_1 = g.Position()
-            group_1 = Utils_group_field_at_selection(
+            utils_group_field_at_selection_1 = Utils_group_field_at_selection(
                 selection=g.Compare.integer.equal(named_attribute.o.attribute, 1),
                 group_index=accumulate_field.o.leading,
                 vector=position_1,
             )
-            group_2 = Utils_group_field_at_selection(
+            utils_group_field_at_selection_2 = Utils_group_field_at_selection(
                 selection=g.Compare.integer.equal(named_attribute.o.attribute, 3),
                 group_index=accumulate_field.o.leading,
                 vector=position_1,
             )
             mix = g.Mix(
-                a_vector=group_1.o.vector,
-                b_vector=group_2.o.vector,
+                a_vector=utils_group_field_at_selection_1.o.vector,
+                b_vector=utils_group_field_at_selection_2.o.vector,
                 factor_float=0.5,
                 data_type="VECTOR",
                 clamp_factor=True,
             )
             (
                 g.Compare.integer.not_equal(atom_name, 0).o.result.switch.vector(
-                    mix.o.result_vector, group.o.vector
+                    mix.o.result_vector, utils_group_field_at_selection.o.vector
                 )
                 >> position
             )
 
         accumulate_field >> group_index
-        group.o.float >> b_factor
-        group.o.integer >> integer
+        utils_group_field_at_selection.o.float >> b_factor
+        utils_group_field_at_selection.o.integer >> integer

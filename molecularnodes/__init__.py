@@ -1,7 +1,17 @@
-from . import assets, blender, color, converters, download, nodes, session, ui, utils
+from . import (
+    assets,
+    blender,
+    color,
+    converters,
+    download,
+    material,
+    nodes,
+    session,
+    ui,
+    utils,
+)
 from .assets import template
 from .entities import Molecule
-from .nodes import material
 from .ui.addon import register, unregister
 
 try:

@@ -1,7 +1,9 @@
-# Node-group asset 'Vector from Point' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Vector from Point" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -46,7 +48,7 @@ class VectorFromPoint(AssetGeometryGroup):
 
     _name = "Vector from Point"
     _asset_name = "Vector from Point"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "VECTOR"
     _tree_properties = {"node_tool_idname": "geometry.vector_from_point"}
 
@@ -80,7 +82,7 @@ class VectorFromPoint(AssetGeometryGroup):
     ):
         super().__init__(**{"Target": target, "Position": position})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         target = tree.inputs.vector(
             "Target",
             (0.0, 0.0, 0.0),

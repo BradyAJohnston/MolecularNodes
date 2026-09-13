@@ -1,7 +1,9 @@
-# Node-group asset 'Color Res Name' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Res Name" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -145,7 +147,7 @@ class ColorResName(AssetGeometryGroup):
 
     _name = "Color Res Name"
     _asset_name = "Color Res Name"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_res_name"}
 
@@ -282,7 +284,7 @@ class ColorResName(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         with tree.inputs.panel("Peptide", default_closed=True):
             ala = tree.inputs.color(
                 "ALA",
@@ -427,9 +429,9 @@ class ColorResName(AssetGeometryGroup):
             )
         color = tree.outputs.color("Color", (0.8, 0.8, 0.8, 1.0))
 
-        group = ResidueName()
+        residue_name = ResidueName()
         index_switch = g.IndexSwitch.color(
-            group,
+            residue_name,
             (
                 ala,
                 arg,
@@ -478,7 +480,7 @@ class ColorResName(AssetGeometryGroup):
             ),
         )
         (
-            BetweenInteger(value=group, upper=43).o.boolean.switch.color(
+            BetweenInteger(value=residue_name, upper=43).o.boolean.switch.color(
                 Color(), index_switch
             )
             >> color

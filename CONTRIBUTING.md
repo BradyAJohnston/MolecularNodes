@@ -57,6 +57,34 @@ blender -b -P build.py -- -build-only # build the .zip files
 blender -b -P build.py # download and build
 ```
 
+### Node assets
+
+The node-group assets and pre-built materials live as Python sources under
+`molecularnodes/nodes/` — these are the source of truth, and pull requests
+change them as reviewable `.py` diffs. The shipped asset library
+`molecularnodes/assets/nodes.blend` is built from them and is not tracked in
+git; the only tracked `.blend` is `molecularnodes/assets/resources.blend`,
+which holds data the build needs (meshes, collections) and no node trees.
+
+The paths and flags live in `[tool.nodebpy.assets]` in `pyproject.toml`, so
+every invocation of the `nodebpy` CLI uses the same configuration with no
+arguments:
+
+```bash
+uv run -m nodebpy.assets build   # nodes/*.py -> assets/nodes.blend
+uv run -m nodebpy.assets dump    # assets/nodes.blend -> nodes/*.py
+uv run -m nodebpy.assets ensure  # build only if missing or stale
+uv run -m nodebpy.assets check   # verify build -> dump reproduces the sources
+```
+
+To edit nodes by hand: `build`, open `nodes.blend` in Blender, edit and save,
+then `dump` and commit the resulting `.py` diff. The test suite runs `ensure`
+automatically, so a fresh clone can `uv run pytest` directly. CI runs `check`
+to guarantee the sources survive the roundtrip — if it fails after hand-editing
+`.py` files, run `build` then `dump` to normalise them. Runtime add-on modules
+in `molecularnodes/nodes/` must be `_`-prefixed (`_utils.py`, `_handlers.py`)
+so the builder does not treat them as node sources.
+
 Once installed, you can use the `Blender: Build and Start` command with VS Code open in the addon directory, to start Blender with the addon built and installed. Any changes that are then made to the underlying addon code, can be quickly previewed inside of the running Blender by using the VS Code command `Blender: Reload Addons`.
 
 ## Understanding Blender Add-ons

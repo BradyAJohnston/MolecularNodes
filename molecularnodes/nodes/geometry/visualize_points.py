@@ -1,7 +1,9 @@
-# Node-group asset 'Visualize Points' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Visualize Points" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -50,7 +52,7 @@ class VisualizePoints(AssetGeometryGroup):
 
     _name = "Visualize Points"
     _asset_name = "Visualize Points"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -90,7 +92,7 @@ class VisualizePoints(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         points = tree.inputs.geometry("Points")
         selection = tree.inputs.boolean("Selection", True, hide_value=True)
         target = tree.inputs.vector(
@@ -111,14 +113,14 @@ class VisualizePoints(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
-        group = VectorFromPoint(target=target, position=position)
+        vector_from_point = VectorFromPoint(target=target, position=position)
         (
             points
             >> g.InstanceOnPoints(
                 selection=selection,
                 instance=PrimitiveArrow(value=(0.0, 0.0, 0.0, 1.0)),
-                rotation=group.o.rotation,
-                scale=g.CombineXYZ(z=group.o.length, x=0.5, y=0.5),
+                rotation=vector_from_point.o.rotation,
+                scale=g.CombineXYZ(z=vector_from_point.o.length, x=0.5, y=0.5),
             )
             >> instances
         )

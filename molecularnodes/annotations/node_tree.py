@@ -28,10 +28,6 @@ def annotations_node_tree():
     mesh_to_curve = node_group.nodes.new("GeometryNodeMeshToCurve")
     mesh_to_curve.name = "Mesh to Curve"
 
-    # node Set Curve Radius
-    set_curve_radius = node_group.nodes.new("GeometryNodeSetCurveRadius")
-    set_curve_radius.name = "Set Curve Radius"
-
     # node Is Line Attribute
     is_line_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
     is_line_attribute.name = "Is Line Attribute"
@@ -84,7 +80,6 @@ def annotations_node_tree():
     group_input.location = (-520.0, 0.0)
     group_output.location = (920.0, 0.0)
     mesh_to_curve.location = (-160.0, 0.0)
-    set_curve_radius.location = (20.0, 0.0)
     is_line_attribute.location = (-340.0, -120.0)
     thickness_attribute.location = (-160.0, -120.0)
     curve_circle.location = (20.0, -140.0)
@@ -120,8 +115,6 @@ def annotations_node_tree():
     )
     # group_input.Geometry -> mesh_to_curve.Mesh
     node_group.links.new(group_input.outputs["Geometry"], mesh_to_curve.inputs["Mesh"])
-    # remove set_curve_radius node
-    node_group.nodes.remove(set_curve_radius)
     # mesh_to_curve.Curve -> curve_to_mesh.Curve
     node_group.links.new(mesh_to_curve.outputs["Curve"], curve_to_mesh.inputs["Curve"])
     # thickness_attribute.Attribute -> curve_to_mesh.Scale

@@ -1,7 +1,9 @@
-# Node-group asset 'Unique Residue ID' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Unique Residue ID" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -26,7 +28,7 @@ class UniqueResidueID(AssetGeometryGroup):
 
     _name = "Unique Residue ID"
     _asset_name = "Unique Residue ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.unique_residue_id"}
 
@@ -47,15 +49,15 @@ class UniqueResidueID(AssetGeometryGroup):
     def __init__(self):
         super().__init__()
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         group_id = tree.outputs.integer(
             "Group ID", description="A unique Group ID for eash residue"
         )
 
-        group = AtomName()
+        atom_name = AtomName()
         boolean_math = (
-            g.Compare.integer.equal(group, 1).o.result
-            | g.Compare.integer.equal(group, 50)
+            g.Compare.integer.equal(atom_name, 1).o.result
+            | g.Compare.integer.equal(atom_name, 50)
             | IntegerRun(value=ResidueID()).o.is_different
         )
         accumulate_field = g.AccumulateField.point.integer(boolean_math)

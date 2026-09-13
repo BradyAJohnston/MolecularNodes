@@ -1,8 +1,10 @@
-# Node-group asset 'Color Rainbow' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Rainbow" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -66,7 +68,7 @@ class ColorRainbow(AssetGeometryGroup):
 
     _name = "Color Rainbow"
     _asset_name = "Color Rainbow"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_rainbow"}
 
@@ -119,7 +121,7 @@ class ColorRainbow(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         factor = tree.inputs.menu("Factor", optional_label=True)
         color_space = tree.inputs.menu("Color Space", optional_label=True)
         offset = tree.inputs.float(
@@ -164,14 +166,15 @@ class ColorRainbow(AssetGeometryGroup):
         combine_color = g.CombineColor.hsv(
             (offset + menu_switch.o.output).wrap(1.0, 0.0), hsl_saturation, hsl_value
         )
-        group = LChToOKLab(
+        lch_to_oklab = LChToOKLab(
             l=oklab_luminance,
             c=oklab_chroma,
             h=menu_switch.o.output * math.tau + offset,
         )
         (
             g.MenuSwitch.color(
-                color_space, {"HSV": combine_color, "OKLab": OKLabToColor(oklab=group)}
+                color_space,
+                {"HSV": combine_color, "OKLab": OKLabToColor(oklab=lch_to_oklab)},
             )
             >> color
         )

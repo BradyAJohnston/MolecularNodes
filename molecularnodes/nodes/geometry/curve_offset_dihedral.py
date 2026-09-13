@@ -1,7 +1,9 @@
-# Node-group asset 'Curve Offset Dihedral' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Curve Offset Dihedral" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
@@ -49,7 +51,7 @@ class CurveOffsetDihedral(AssetGeometryGroup):
 
     _name = "Curve Offset Dihedral"
     _asset_name = "Curve Offset Dihedral"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Offset from the current point a number of points, then use their `Position` and `Normal` to calculat a dihdral angle between them",
@@ -88,7 +90,7 @@ class CurveOffsetDihedral(AssetGeometryGroup):
             **{"Position": position, "Normal": normal, "Index": index, "Offset": offset}
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         position = tree.inputs.vector(
             "Position",
             (0.0, 0.0, 0.0),
@@ -117,12 +119,12 @@ class CurveOffsetDihedral(AssetGeometryGroup):
             "Angle", description="The calculated angle in radians", subtype="ANGLE"
         )
 
-        group = OffsetVector(vector=position, index=index, offset=offset)
+        offset_vector = OffsetVector(vector=position, index=index, offset=offset)
         (
             DihedralAngle(
                 a=OffsetVector(vector=normal, index=index, offset=offset).o.value
-                + group,
-                b=group,
+                + offset_vector,
+                b=offset_vector,
                 c=position,
                 d=position + normal,
             )

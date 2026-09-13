@@ -1,7 +1,9 @@
-# Node-group asset 'Sample Mixed Rotation' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Sample Mixed Rotation" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -45,7 +47,7 @@ class SampleMixedRotation(AssetGeometryGroup):
 
     _name = "Sample Mixed Rotation"
     _asset_name = "Sample Mixed Rotation"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.sample_mixed_rotation"}
 
@@ -76,7 +78,7 @@ class SampleMixedRotation(AssetGeometryGroup):
     ):
         super().__init__(**{"Geometry": geometry, "Rotation": rotation, "Index": index})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
             "Geometry", description="The geometry to sample the values from"
         )
@@ -96,12 +98,12 @@ class SampleMixedRotation(AssetGeometryGroup):
             description="The evaluated and mixed field, sampled from the sample geometry at the given `Index`",
         )
 
-        group = IndexMixRotation(rotation=rotation, index=index)
+        index_mix_rotation = IndexMixRotation(rotation=rotation, index=index)
         (
             geometry
             >> g.SampleIndex(
-                value=group.o.rotation,
-                index=group.o.from_,
+                value=index_mix_rotation.o.rotation,
+                index=index_mix_rotation.o.from_,
                 data_type="QUATERNION",
                 clamp=True,
             )

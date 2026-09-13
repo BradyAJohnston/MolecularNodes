@@ -1,7 +1,9 @@
-# Node-group asset 'Boolean Run Fill' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Boolean Run Fill" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -39,7 +41,7 @@ class BooleanRunFill(AssetGeometryGroup):
 
     _name = "Boolean Run Fill"
     _asset_name = "Boolean Run Fill"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Moving down the points, fill in `False` values that are equal to or less than the `Fill Size`",
@@ -70,7 +72,7 @@ class BooleanRunFill(AssetGeometryGroup):
     ):
         super().__init__(**{"Boolean": boolean, "Fill Size": fill_size})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         boolean = tree.inputs.boolean(
             "Boolean",
             True,

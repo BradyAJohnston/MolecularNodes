@@ -57,7 +57,13 @@ def _remap_trajectory_paths(trajectories: Dict[str, Molecule], remap) -> None:
         if filenames is not None:
             traj.universe.load_new([remap(f) for f in filenames])
         else:
-            traj.universe.load_new(remap(traj.universe.trajectory.filename))
+            # keep the current reader class: formats that were loaded with an
+            # explicit reader (e.g. OXDNAReader for .dat files) can't be
+            # re-inferred from the file extension
+            traj.universe.load_new(
+                remap(traj.universe.trajectory.filename),
+                format=type(traj.universe.trajectory),
+            )
         # restore linked universe frame
         traj.uframe = uframe
         traj._save_filepaths_on_object()

@@ -1,7 +1,9 @@
-# Node-group asset 'Color Atomic Number' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Color Atomic Number" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -41,7 +43,7 @@ class ColorAtomicNumber(AssetGeometryGroup):
 
     _name = "Color Atomic Number"
     _asset_name = "Color Atomic Number"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_atomic_number"}
 
@@ -69,7 +71,7 @@ class ColorAtomicNumber(AssetGeometryGroup):
     ):
         super().__init__(**{"atomic_number": atomic_number, "Color": color})
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atomic_number = tree.inputs.integer(
             "atomic_number",
             6,

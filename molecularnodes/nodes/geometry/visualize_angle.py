@@ -1,7 +1,9 @@
-# Node-group asset 'Visualize Angle' (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Visualize Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
+from bpy.types import GeometryNodeTree
+from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
@@ -67,7 +69,7 @@ class VisualizeAngle(AssetGeometryGroup):
 
     _name = "Visualize Angle"
     _asset_name = "Visualize Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -125,7 +127,7 @@ class VisualizeAngle(AssetGeometryGroup):
             }
         )
 
-    def _build_group(self, tree):
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         points = tree.inputs.geometry("Points")
         selection = tree.inputs.boolean("Selection", True, hide_value=True)
         position = tree.inputs.vector(
