@@ -54,7 +54,7 @@ class SelectProximity(AssetGeometryGroup):
 
     _name = "Select Proximity"
     _asset_name = "Select Proximity"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_proximity"}
 
@@ -137,10 +137,10 @@ class SelectProximity(AssetGeometryGroup):
                 g.AccumulateField.point.integer(~subset).o.total, true=subset
             ),
         )
-        group = SelectResWhole(selection=boolean_math, expand=expand)
-        ~group.o.selection >> inverted
+        select_res_whole = SelectResWhole(selection=boolean_math, expand=expand)
+        ~select_res_whole.o.selection >> inverted
 
-        group >> selection
+        select_res_whole >> selection
 
 
 ASSET = SelectProximity

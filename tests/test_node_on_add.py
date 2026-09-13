@@ -60,7 +60,7 @@ def test_style_import_sets_node_material(link):
 
     node_handlers._process_pending()
     assert node.inputs["Material"].default_value is not None
-    assert node.inputs["Material"].default_value.name == "MN Default"
+    assert node.inputs["Material"].default_value.name == "Default"
     assert node.get(node_handlers._MARKER)
 
 

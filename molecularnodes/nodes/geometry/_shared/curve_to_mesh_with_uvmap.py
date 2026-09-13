@@ -104,7 +104,7 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         mesh = tree.outputs.geometry("Mesh")
         uv_map = tree.outputs.vector("uv_map")
 
-        _group = FallbackGeometry()
+        _fallback_geometry = FallbackGeometry()
         menu_switch = g.MenuSwitch.integer(u_component, {"Factor": 0, "Length": 1})
         named_attribute = g.NamedAttribute.float("radius")
         _spline_length = g.SplineLength()
@@ -124,13 +124,6 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         switch = CheckEndFaceCorner(
             captured_index=index.output
         ).o.is_end_face_corner.switch.float(factor.output, 1.0)
-        switch_1 = CheckEndFaceCorner(
-            captured_index=index_1.output
-        ).o.is_end_face_corner.switch.float(
-            factor_1.output,
-            g.IndexSwitch.float(menu_switch.o.output, (1.0, length.output)),
-        )
-        combine_xyz = g.CombineXYZ(x=switch_1, y=switch)
         (
             capture_1.o.geometry
             >> g.CurveToMesh(
@@ -142,6 +135,13 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
             )
             >> mesh
         )
+        switch_1 = CheckEndFaceCorner(
+            captured_index=index_1.output
+        ).o.is_end_face_corner.switch.float(
+            factor_1.output,
+            g.IndexSwitch.float(menu_switch.o.output, (1.0, length.output)),
+        )
+        combine_xyz = g.CombineXYZ(x=switch_1, y=switch)
 
         combine_xyz >> uv_map
 

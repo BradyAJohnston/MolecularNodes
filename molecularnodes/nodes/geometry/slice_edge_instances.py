@@ -44,7 +44,7 @@ class SliceEdgeInstances(AssetGeometryGroup):
 
     _name = "Slice Edge Instances"
     _asset_name = "Slice Edge Instances"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -79,18 +79,23 @@ class SliceEdgeInstances(AssetGeometryGroup):
         instances_1 = tree.outputs.geometry("Instances")
         realized_points = tree.outputs.geometry("Realized Points")
 
-        group = SelectedInstances(instances=instances, selection=selection)
-        separate_geometry = g.SeparateGeometry.instance(
-            instances, group.o.entirely_selected
+        selected_instances = SelectedInstances(instances=instances, selection=selection)
+        (
+            instances
+            >> g.SeparateGeometry.instance(
+                selection=selected_instances.o.entirely_selected
+            )
+            >> instances_1
         )
         (
-            g.SeparateGeometry.instance(instances, group.o.partially_selected)
+            instances
+            >> g.SeparateGeometry.instance(
+                selection=selected_instances.o.partially_selected
+            )
             >> g.RealizeInstances(realize_to_point_domain=True)
             >> g.SeparateGeometry.point(selection=selection)
             >> realized_points
         )
-
-        separate_geometry >> instances_1
 
 
 ASSET = SliceEdgeInstances

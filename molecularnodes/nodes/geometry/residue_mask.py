@@ -45,7 +45,7 @@ class ResidueMask(AssetGeometryGroup):
 
     _name = "Residue Mask"
     _asset_name = "Residue Mask"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.residue_mask"}
 
@@ -91,14 +91,14 @@ class ResidueMask(AssetGeometryGroup):
             description="Position of the picked point in the group, returns (0, 0, 0) if not valid",
         )
 
-        group = GroupPickVector(
+        group_pick_vector = GroupPickVector(
             pick=g.Compare.integer.equal(AtomName(), atom_name),
             group_id=UResID().o.ures_id,
         )
 
-        group >> is_valid
-        group.o.index >> index
-        group.o.vector >> position
+        group_pick_vector >> is_valid
+        group_pick_vector.o.index >> index
+        group_pick_vector.o.vector >> position
 
 
 ASSET = ResidueMask

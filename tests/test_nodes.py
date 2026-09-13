@@ -7,6 +7,11 @@ from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import Group, RealizeInstances, SetPosition
 import molecularnodes as mn
+from molecularnodes.nodes._utils import (
+    custom_boolean_iswitch,
+    custom_color_iswitch,
+    get_final_style_nodes,
+)
 from molecularnodes.nodes.geometry import (
     BreakBonds,
     FindBonds,
@@ -17,11 +22,6 @@ from molecularnodes.nodes.geometry import (
     PeriodicArray,
     SetColor,
     StyleCartoon,
-)
-from molecularnodes.nodes.utils import (
-    custom_boolean_iswitch,
-    custom_color_iswitch,
-    get_final_style_nodes,
 )
 from .constants import codes, data_dir
 from .utils import GeometrySet, NumpySnapshotExtension

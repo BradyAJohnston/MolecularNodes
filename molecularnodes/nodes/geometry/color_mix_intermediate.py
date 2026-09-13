@@ -30,11 +30,11 @@ class ColorMixIntermediate(AssetGeometryGroup):
         Factor
     menu : InputMenu | Literal["Linear", "OKLab"]
         Menu
-    socket_1 : InputBoolean
+    socket_2 : InputBoolean
         Intermediate
     a : InputColor
         A
-    socket_2 : InputColor
+    socket_4 : InputColor
         Intermediate
     b : InputColor
         B
@@ -45,11 +45,11 @@ class ColorMixIntermediate(AssetGeometryGroup):
         Factor
     i.menu : MenuSocket
         Menu
-    i.socket_1 : BooleanSocket
+    i.socket_2 : BooleanSocket
         Intermediate
     i.a : ColorSocket
         A
-    i.socket_2 : ColorSocket
+    i.socket_4 : ColorSocket
         Intermediate
     i.b : ColorSocket
         B
@@ -62,7 +62,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
 
     _name = "Color Mix Intermediate"
     _asset_name = "Color Mix Intermediate"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
 
     class _Inputs(SocketAccessor):
@@ -70,11 +70,11 @@ class ColorMixIntermediate(AssetGeometryGroup):
         """Factor"""
         menu: MenuSocket
         """Menu"""
-        socket_1: BooleanSocket
+        socket_2: BooleanSocket
         """Intermediate"""
         a: ColorSocket
         """A"""
-        socket_2: ColorSocket
+        socket_4: ColorSocket
         """Intermediate"""
         b: ColorSocket
         """B"""
@@ -94,14 +94,14 @@ class ColorMixIntermediate(AssetGeometryGroup):
         self,
         factor: InputFloat = 0.5,
         menu: InputMenu | Literal["Linear", "OKLab"] = "Linear",
-        socket_1: InputBoolean = False,
+        socket_2: InputBoolean = False,
         a: InputColor = None,
-        socket_2: InputColor = None,
+        socket_4: InputColor = None,
         b: InputColor = None,
     ):
         super().__init__(
             **{"Factor": factor, "Menu": menu, "A": a, "B": b},
-            _named_links=[("Intermediate", socket_1), ("Intermediate", socket_2)],
+            _named_links=[("Intermediate", socket_2), ("Intermediate", socket_4)],
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
@@ -115,7 +115,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
         b = tree.inputs.color("B", (0.5, 0.1594808, 0.05802507, 1.0))
         output = tree.outputs.color("Output", (0.8, 0.8, 0.8, 1.0))
 
-        group = ColorToOKLab(color=intermediate_1)
+        color_to_oklab = ColorToOKLab(color=intermediate_1)
         mix = g.Mix(
             factor_float=factor,
             a_color=a,
@@ -133,13 +133,13 @@ class ColorMixIntermediate(AssetGeometryGroup):
         mix_2 = g.Mix(
             factor_float=factor,
             a_vector=ColorToOKLab(color=a),
-            b_vector=group,
+            b_vector=color_to_oklab,
             data_type="VECTOR",
             clamp_factor=True,
         )
         mix_3 = g.Mix(
             factor_float=factor,
-            a_vector=group,
+            a_vector=color_to_oklab,
             b_vector=ColorToOKLab(color=b),
             data_type="VECTOR",
             clamp_factor=True,
@@ -161,7 +161,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
             red=mix.o.result_color.r,
             green=mix.o.result_color.g,
             blue=mix.o.result_color.b,
-            alpha=g.SeparateColor(color=a).o.alpha,
+            alpha=a.a,
         )
         mix_5 = g.Mix(
             factor_float=factor,
@@ -183,28 +183,15 @@ class ColorMixIntermediate(AssetGeometryGroup):
             data_type="RGBA",
             clamp_factor=True,
         ).o.result_color
-        combine_color_3 = g.CombineColor(
-            red=result.r,
-            green=result.g,
-            blue=result.b,
-            alpha=g.SeparateColor(color=a).o.alpha,
-        )
         switch = intermediate.switch.color(
             ColorOKLabMix(factor=factor, a=a, b=b),
             OKLabToColor(oklab=mix_4.o.result_vector),
         )
-        (
-            g.MenuSwitch.color(
-                menu,
-                {
-                    "Linear": intermediate.switch.color(
-                        combine_color_3, combine_color_2
-                    ),
-                    "OKLab": switch,
-                },
-            )
-            >> output
+        switch_1 = intermediate.switch.color(
+            g.CombineColor(red=result.r, green=result.g, blue=result.b, alpha=a.a),
+            combine_color_2,
         )
+        g.MenuSwitch.color(menu, {"Linear": switch_1, "OKLab": switch}) >> output
 
         menu.default_value = "Linear"
 

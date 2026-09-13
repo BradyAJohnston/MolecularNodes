@@ -41,7 +41,7 @@ The [](`~mn.Molecule.add_style`) API takes the following arguments:
 Molecule.add_style(
     style="spheres",
     selection=None,
-    material="MN Default",
+    material="Default",
     color=None,
     **kwargs,
 )
@@ -57,8 +57,8 @@ Molecule.add_style(
     as a named attribute and used to mask the style.
 - `material` param
   - One of the pre-built materials from `mn.material`, e.g.
-    `mn.material.AmbientOcclusion(distance=0.5)`, a Blender material, or a material
-    name to append from the asset file, e.g. `MN Default` or `MN Squishy`.
+    `mn.material.AmbientOcclusion(distance=0.5)`, a Blender material, or the name of
+    a pre-built material, e.g. `Default` or `Squishy`.
 - `color` param
   - `"common"` / `"default"`, `"plddt"`, an RGBA tuple, the name of an existing colour
     attribute, or a callable returning a colour socket. Anything else warns rather than
@@ -84,7 +84,7 @@ canvas.snapshot()
 ```
 
 ```{python}
-mol.add_style("surface", selection="resid 100:150", material="MN Flat")
+mol.add_style("surface", selection="resid 100:150", material="Flat")
 canvas.look_at(mol)
 canvas.snapshot()
 ```
@@ -207,7 +207,7 @@ styles = ["cartoon", "ribbon", "surface"]
 
 for code, style in zip(codes, styles):
     mol = mn.Molecule.fetch(code)
-    mol.add_style(style, material="MN Flat")
+    mol.add_style(style, material="Flat")
     canvas.look_at(mol, viewpoint="right")
     display(canvas.snapshot())
     canvas.clear()
@@ -219,11 +219,11 @@ selections and materials.
 ```{python}
 mol = (
     mn.Molecule.fetch("8H1B")
-    .add_style("cartoon", material="MN Ambient Occlusion")
+    .add_style("cartoon", material="Ambient Occlusion")
     .add_style(
         style="surface",
         selection="protein",
-        material="MN Default",
+        material="Default",
     )
 )
 canvas.look_at(mol)
@@ -235,8 +235,8 @@ canvas.clear()
 canvas.engine = mn.scene.Cycles(samples=32)
 mol = (
     mn.Molecule.fetch("9EYM")
-    .add_style("cartoon", selection="is_peptide", material="MN Ambient Occlusion")
-    .add_style("ball_and_stick", selection="not protein", material="MN Default", bond_find=True)
+    .add_style("cartoon", selection="is_peptide", material="Ambient Occlusion")
+    .add_style("ball_and_stick", selection="not protein", material="Default", bond_find=True)
 )
 canvas.look_at(mol)
 canvas.snapshot()

@@ -37,7 +37,7 @@ class BackboneN(AssetGeometryGroup):
 
     _name = "Backbone N"
     _asset_name = "Backbone N"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):

@@ -42,7 +42,7 @@ class IsLipid(AssetGeometryGroup):
 
     _name = "Is Lipid"
     _asset_name = "Is Lipid"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.is_lipid"}
 
@@ -92,10 +92,10 @@ class IsLipid(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = MN_select_attribute(and_=and_, or_=or_, name="is_lipid")
+        mn_select_attribute = MN_select_attribute(and_=and_, or_=or_, name="is_lipid")
 
-        group >> selection
-        group.o.inverted >> inverted
+        mn_select_attribute >> selection
+        mn_select_attribute.o.inverted >> inverted
 
 
 ASSET = IsLipid

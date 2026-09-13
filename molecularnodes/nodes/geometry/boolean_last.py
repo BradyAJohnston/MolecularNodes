@@ -39,7 +39,7 @@ class BooleanLast(AssetGeometryGroup):
 
     _name = "Boolean Last"
     _asset_name = "Boolean Last"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Index of last time the `Boolean` is true for each `Group ID` (not including the current point). "
@@ -85,16 +85,18 @@ class BooleanLast(AssetGeometryGroup):
             ).o.trailing,
             0,
         )
-        group = OffsetInteger(
+        offset_integer = OffsetInteger(
             integer=GroupInfo(group_id=accumulate_field.o.leading).o.index_of_first,
             offset=-1,
         )
-        _group_1 = OffsetInteger(
+        _offset_integer_1 = OffsetInteger(
             integer=compare.o.result.switch.integer(true=g.Index()).point.total(
                 accumulate_field.o.trailing
             )
         )
-        (accumulate_field.o.leading > 0).switch.integer(-1, group) >> index_of_last
+        (accumulate_field.o.leading > 0).switch.integer(
+            -1, offset_integer
+        ) >> index_of_last
 
 
 ASSET = BooleanLast

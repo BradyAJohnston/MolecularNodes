@@ -62,7 +62,7 @@ class TransformAccumulatePoint(AssetGeometryGroup):
 
     _name = "Transform Accumulate Point"
     _asset_name = "Transform Accumulate Point"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Accumulate transforms on the point domain",
@@ -146,10 +146,10 @@ class TransformAccumulatePoint(AssetGeometryGroup):
             "Vector", description="Transformed vector", subtype="XYZ"
         )
 
-        group = TransformAccumulate(
+        transform_accumulate = TransformAccumulate(
             domain=domain, accumulate=accumulate, transform=transform, group_id=group_id
         )
-        position.transform(group) >> vector
+        position.transform(transform_accumulate) >> vector
 
         domain.default_value = "Point"
 

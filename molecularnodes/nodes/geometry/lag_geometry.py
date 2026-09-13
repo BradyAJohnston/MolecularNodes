@@ -54,7 +54,7 @@ class LagGeometry(AssetGeometryGroup):
 
     _name = "Lag Geometry"
     _asset_name = "Lag Geometry"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):

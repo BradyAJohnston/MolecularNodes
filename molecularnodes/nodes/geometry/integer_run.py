@@ -44,7 +44,7 @@ class IntegerRun(AssetGeometryGroup):
 
     _name = "Integer Run"
     _asset_name = "Integer Run"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "A unique value for each grouping of a value. Accumulating along the field, the output Group Mask increments by 1 whenever the value or Group ID changes",

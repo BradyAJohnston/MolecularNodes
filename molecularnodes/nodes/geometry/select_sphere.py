@@ -49,7 +49,7 @@ class SelectSphere(AssetGeometryGroup):
 
     _name = "Select Sphere"
     _asset_name = "Select Sphere"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_sphere"}
 
@@ -115,10 +115,10 @@ class SelectSphere(AssetGeometryGroup):
             g.Position().o.position.distance(object_info.o.location),
             abs(object_info.o.scale),
         )
-        group = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=compare)
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectSphere
@@ -128,5 +128,5 @@ ASSET_METADATA = {
 }
 
 DATABLOCK_DEPENDENCIES = {
-    "objects": ("select_cube", "select_sphere"),
+    "objects": ("select_sphere",),
 }

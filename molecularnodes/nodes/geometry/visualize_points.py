@@ -52,7 +52,7 @@ class VisualizePoints(AssetGeometryGroup):
 
     _name = "Visualize Points"
     _asset_name = "Visualize Points"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -113,14 +113,14 @@ class VisualizePoints(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
-        group = VectorFromPoint(target=target, position=position)
+        vector_from_point = VectorFromPoint(target=target, position=position)
         (
             points
             >> g.InstanceOnPoints(
                 selection=selection,
                 instance=PrimitiveArrow(value=(0.0, 0.0, 0.0, 1.0)),
-                rotation=group.o.rotation,
-                scale=g.CombineXYZ(z=group.o.length, x=0.5, y=0.5),
+                rotation=vector_from_point.o.rotation,
+                scale=g.CombineXYZ(z=vector_from_point.o.length, x=0.5, y=0.5),
             )
             >> instances
         )

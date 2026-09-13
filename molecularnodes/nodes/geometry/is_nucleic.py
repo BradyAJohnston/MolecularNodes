@@ -44,7 +44,7 @@ class IsNucleic(AssetGeometryGroup):
 
     _name = "Is Nucleic"
     _asset_name = "Is Nucleic"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.is_nucleic"}
 
@@ -94,7 +94,7 @@ class IsNucleic(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = BooleanAndOr(
+        boolean_andor = BooleanAndOr(
             and_=and_,
             or_=or_,
             boolean=FallbackBoolean(
@@ -102,8 +102,8 @@ class IsNucleic(AssetGeometryGroup):
             ),
         )
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = IsNucleic

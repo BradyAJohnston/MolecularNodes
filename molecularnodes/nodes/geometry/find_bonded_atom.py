@@ -58,7 +58,7 @@ class FindBondedAtom(AssetGeometryGroup):
 
     _name = "Find Bonded Atom"
     _asset_name = "Find Bonded Atom"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -180,16 +180,16 @@ class FindBondedAtom(AssetGeometryGroup):
         index_1 = tree.outputs.integer("Index")
         position = tree.outputs.vector("Position")
 
-        group = FindConnected(
+        find_connected = FindConnected(
             value=AtomName(),
             match=MenuAtomName(atom_name=atom_name).o[0],
             distance=distance,
             method=method,
         )
-        evaluate_at_index = group.o.index.point.at(index)
+        evaluate_at_index = find_connected.o.index.point.at(index)
         g.Position().o.position.point.at(evaluate_at_index) >> position
 
-        group >> is_valid
+        find_connected >> is_valid
         evaluate_at_index >> index_1
 
         method.default_value = "Exact"

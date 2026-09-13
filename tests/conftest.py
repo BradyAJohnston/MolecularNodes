@@ -16,6 +16,43 @@ import sys  # noqa: E402
 from os.path import dirname, join, realpath  # noqa: E402
 from pathlib import Path  # noqa: E402
 import bpy  # noqa: E402
+
+# Build the gitignored node-asset library (molecularnodes/assets/nodes.blend)
+# when it is missing or the sources under molecularnodes/nodes/ have changed.
+# Paths and flags come from [tool.nodebpy.assets] in pyproject.toml; the
+# staleness check is a cheap in-process hash, and the build itself needs a
+# fresh session so it runs as a subprocess. xdist workers skip it - the
+# controller process has already built by the time they spawn.
+if os.environ.get("PYTEST_XDIST_WORKER") is None:
+    import subprocess  # noqa: E402
+    from argparse import Namespace  # noqa: E402
+    from nodebpy.assets import _pipeline as _assets  # noqa: E402
+
+    # the CLI parser pre-seeds the positional dests; mirror that here
+    _args = Namespace(command="ensure", source=None, blend=None)
+    _assets.apply_config(_args, start=Path(__file__).parent)
+    _assets.require_positionals(_args)
+    if _assets.is_stale(
+        _args.blend, _args.source, _args.resources, _assets.stamp_options(_args)
+    ):
+        _env = os.environ.copy()
+        if bpy.app.binary_path:  # inside a full Blender: spawn another
+            import nodebpy.assets.__main__ as _assets_main
+
+            # an isolated extensions dir so the spawn can't pick up stale wheels
+            _env["BLENDER_USER_EXTENSIONS"] = tempfile.mkdtemp(prefix="mn-assets-ext-")
+            _cmd = [
+                bpy.app.binary_path,
+                "-b",
+                "--factory-startup",
+                "-P",
+                _assets_main.__file__,
+                "--",
+                "ensure",
+            ]
+        else:
+            _cmd = [sys.executable, "-m", "nodebpy.assets", "ensure"]
+        subprocess.run(_cmd, check=True, env=_env, cwd=Path(__file__).parent.parent)
 import numpy as np  # noqa: E402
 import pytest  # noqa: E402
 import molecularnodes as mn  # noqa: E402

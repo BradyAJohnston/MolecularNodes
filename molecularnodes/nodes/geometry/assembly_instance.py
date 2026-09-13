@@ -76,7 +76,7 @@ class AssemblyInstance(AssetGeometryGroup):
 
     _name = "Assembly Instance"
     _asset_name = "Assembly Instance"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -161,13 +161,15 @@ class AssemblyInstance(AssetGeometryGroup):
         instances = tree.outputs.geometry("Instances")
         chain_id = tree.outputs.integer("chain_id")
 
-        with g.Frame():
-            group = ChainID()
-            group_1 = SplitToCentredInstances(geometry=geometry, group_id=group)
         with g.Frame("Select required assemblies"):
             separate_geometry = g.SeparateGeometry.point(
                 g.ObjectInfo(object=data_object).o.geometry,
                 g.Compare.integer.equal(assembly_id, AssemblyID()).o.result & selection,
+            )
+        with g.Frame():
+            chain_id_1 = ChainID()
+            split_to_centred_instances = SplitToCentredInstances(
+                geometry=geometry, group_id=chain_id_1
             )
         with g.Frame("Mix Transform values"):
             attribute = g.NamedAttribute.input_4x4_matrix("transform").o.attribute
@@ -191,8 +193,8 @@ class AssemblyInstance(AssetGeometryGroup):
             capture.o.geometry
             >> g.SetPosition(position=position_1.output)
             >> g.InstanceOnPoints(
-                instance=group_1,
-                instance_index=group,
+                instance=split_to_centred_instances,
+                instance_index=chain_id_1,
                 rotation=rotation_1.output,
                 pick_instance=True,
             )

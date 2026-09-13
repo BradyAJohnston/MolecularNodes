@@ -53,7 +53,7 @@ class AtomsToCurves(AssetGeometryGroup):
 
     _name = "Atoms to Curves"
     _asset_name = "Atoms to Curves"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.atoms_to_curves"}
 
@@ -114,7 +114,7 @@ class AtomsToCurves(AssetGeometryGroup):
         )
         curves = tree.outputs.geometry("Curves")
 
-        group = ChainID()
+        chain_id = ChainID()
         separate_components = g.SeparateComponents(geometry=atoms)
         join_geometry = g.JoinGeometry(
             geometry=(
@@ -126,8 +126,8 @@ class AtomsToCurves(AssetGeometryGroup):
             mesh=join_geometry, selection=selection, radius=0.05
         )
         sort_elements = g.SortElements.point(
-            g.SortElements.point(mesh_to_points, sort_weight=group),
-            group_id=group,
+            g.SortElements.point(mesh_to_points, sort_weight=chain_id),
+            group_id=chain_id,
             sort_weight=AtomID(),
         )
         (

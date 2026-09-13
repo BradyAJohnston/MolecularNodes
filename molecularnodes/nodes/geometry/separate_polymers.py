@@ -42,7 +42,7 @@ class SeparatePolymers(AssetGeometryGroup):
 
     _name = "Separate Polymers"
     _asset_name = "Separate Polymers"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.separate_polymers"}
 

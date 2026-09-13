@@ -36,7 +36,7 @@ class OxDNARecoverVectors(AssetGeometryGroup):
 
     _name = "oxDNA Recover Vectors"
     _asset_name = "oxDNA Recover Vectors"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"is_modifier": True}
 
@@ -66,40 +66,38 @@ class OxDNARecoverVectors(AssetGeometryGroup):
         atoms = tree.outputs.geometry("Atoms")
 
         with g.Frame("Isolate verts pointing toward normals, get positions"):
-            delete_geometry = g.DeleteGeometry.point(
-                geometry,
-                g.Compare.integer.not_equal(
-                    g.NamedAttribute.integer("attribute_ID").o.attribute, 2
-                ),
-            )
-            sample_index = g.SampleIndex(
-                geometry=delete_geometry,
-                value=g.Position(),
-                index=g.Index(),
-                data_type="FLOAT_VECTOR",
+            sample_index = (
+                geometry
+                >> g.DeleteGeometry.point(
+                    selection=g.Compare.integer.not_equal(
+                        g.NamedAttribute.integer("attribute_ID").o.attribute, 2
+                    )
+                )
+                >> g.SampleIndex(
+                    value=g.Position(), index=g.Index(), data_type="FLOAT_VECTOR"
+                )
             )
         with g.Frame("Isolate verts pointing toward base vecs, get positions"):
-            delete_geometry_1 = g.DeleteGeometry.point(
-                geometry,
-                g.Compare.integer.not_equal(
-                    g.NamedAttribute.integer("attribute_ID").o.attribute, 1
-                ),
-            )
-            sample_index_1 = g.SampleIndex(
-                geometry=delete_geometry_1,
-                value=g.Position(),
-                index=g.Index(),
-                data_type="FLOAT_VECTOR",
+            sample_index_1 = (
+                geometry
+                >> g.DeleteGeometry.point(
+                    selection=g.Compare.integer.not_equal(
+                        g.NamedAttribute.integer("attribute_ID").o.attribute, 1
+                    )
+                )
+                >> g.SampleIndex(
+                    value=g.Position(), index=g.Index(), data_type="FLOAT_VECTOR"
+                )
             )
         with g.Frame("Isolate verts containing bbone positions, get positions & geom"):
-            delete_geometry_2 = g.DeleteGeometry.point(
+            delete_geometry = g.DeleteGeometry.point(
                 geometry,
                 g.Compare.integer.not_equal(
                     g.NamedAttribute.integer("attribute_ID").o.attribute, 0
                 ),
             )
             sample_index_2 = g.SampleIndex(
-                geometry=delete_geometry_2,
+                geometry=delete_geometry,
                 value=g.Position(),
                 index=g.Index(),
                 data_type="FLOAT_VECTOR",
@@ -107,7 +105,7 @@ class OxDNARecoverVectors(AssetGeometryGroup):
         with g.Frame("Recover base & normal vectors from vert positions, store"):
             (
                 g.StoreNamedAttribute.point.vector(
-                    delete_geometry_2,
+                    delete_geometry,
                     name="base_vector",
                     value=(sample_index_1.o.value - sample_index_2).normalize(),
                 )

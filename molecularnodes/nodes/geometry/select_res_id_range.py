@@ -52,7 +52,7 @@ class SelectResIDRange(AssetGeometryGroup):
 
     _name = "Select Res ID Range"
     _asset_name = "Select Res ID Range"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_res_id_range"}
 
@@ -121,13 +121,13 @@ class SelectResIDRange(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = ResidueID()
-        group_1 = BooleanAndOr(
-            and_=and_, or_=or_, boolean=(group >= min) & (group <= max)
+        residue_id = ResidueID()
+        boolean_andor = BooleanAndOr(
+            and_=and_, or_=or_, boolean=(residue_id >= min) & (residue_id <= max)
         )
 
-        group_1 >> selection
-        group_1.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectResIDRange

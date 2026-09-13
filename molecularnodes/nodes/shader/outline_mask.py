@@ -42,7 +42,7 @@ class OutlineMask(AssetShaderGroup):
 
     _name = "Outline Mask"
     _asset_name = "Outline Mask"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -79,19 +79,23 @@ class OutlineMask(AssetShaderGroup):
         outline = tree.outputs.float("Outline")
 
         camera_data = s.CameraData()
-        group = EdgeDetection(offset=camera_data.o.view_distance * (thickness / 100.0))
+        edge_detection = EdgeDetection(
+            offset=camera_data.o.view_distance * (thickness / 100.0)
+        )
         math_1 = g.Math.less_than(
-            group.o.co_planar_delta, camera_data.o.view_distance * (threshold / 100.0)
+            edge_detection.o.co_planar_delta,
+            camera_data.o.view_distance * (threshold / 100.0),
         )
-        math_2 = math_1.o.value.min(g.Math.less_than(group.o.normal_delta, 0.55)).min(
-            g.Math(
-                value_001=group.o.object_edge,
-                value=1.0,
-                operation="SUBTRACT",
-                use_clamp=True,
-            )
+        math_2 = g.Math(
+            value_001=edge_detection.o.object_edge,
+            value=1.0,
+            operation="SUBTRACT",
+            use_clamp=True,
         )
-        1.0 - math_2 - s.Geometry().o.backfacing >> outline
+        math_3 = 1.0 - math_1.o.value.min(
+            g.Math.less_than(edge_detection.o.normal_delta, 0.55)
+        ).min(math_2)
+        math_3 - s.Geometry().o.backfacing >> outline
 
 
 ASSET = OutlineMask

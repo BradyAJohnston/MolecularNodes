@@ -59,27 +59,28 @@ class MN_select_peptide(CustomGeometryGroup):
         is_peptide = tree.outputs.boolean("Is Peptide")
         is_alpha_carbon = tree.outputs.boolean("Is Alpha Carbon")
 
-        group = MN_constants_atom_name_peptide()
-        group_1 = AtomName()
+        mn_constants_atom_name_peptide = MN_constants_atom_name_peptide()
+        atom_name = AtomName()
         (
-            ((group_1 >= group.o.backbone_lower) & (group_1 <= group.o.backbone_upper))
+            (
+                (atom_name >= mn_constants_atom_name_peptide.o.backbone_lower)
+                & (atom_name <= mn_constants_atom_name_peptide.o.backbone_upper)
+            )
             >> is_backbone
         )
         (
             (
-                (group_1 >= group.o.backbone_lower)
-                & (group_1 <= group.o.side_chain_upper)
+                (atom_name >= mn_constants_atom_name_peptide.o.backbone_lower)
+                & (atom_name <= mn_constants_atom_name_peptide.o.side_chain_upper)
             )
             >> is_peptide
         )
-        compare = g.Compare.integer.equal(group_1, group.o.alpha_carbon)
-        (
-            (
-                (group_1 >= group.o.side_chain_lower)
-                & (group_1 <= group.o.side_chain_upper)
-                | compare
-            )
-            >> is_side_chain
+        compare = g.Compare.integer.equal(
+            atom_name, mn_constants_atom_name_peptide.o.alpha_carbon
         )
+        boolean_math = (
+            atom_name >= mn_constants_atom_name_peptide.o.side_chain_lower
+        ) & (atom_name <= mn_constants_atom_name_peptide.o.side_chain_upper)
+        (boolean_math | compare) >> is_side_chain
 
         compare >> is_alpha_carbon

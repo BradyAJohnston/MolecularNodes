@@ -42,7 +42,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
 
     _name = "Evaluate on Instances"
     _asset_name = "Evaluate on Instances"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -78,17 +78,16 @@ class EvaluateOnInstances(AssetGeometryGroup):
 
         with g.Frame("Get unique geometry references and evaluate on them"):
             instance_reference = g.InstanceReference()
-            separate_geometry = g.SeparateGeometry.instance(
-                geometry,
-                ~g.AccumulateField.instance.integer(
-                    group_index=instance_reference
-                ).o.trailing,
-            )
-            capture = g.CaptureAttribute.instance(
-                geometry=g.SortElements.instance(
-                    separate_geometry.o.selection, sort_weight=instance_reference
+            sort_elements = (
+                geometry
+                >> g.SeparateGeometry.instance(
+                    selection=~g.AccumulateField.instance.integer(
+                        group_index=instance_reference
+                    ).o.trailing
                 )
+                >> g.SortElements.instance(sort_weight=instance_reference)
             )
+            capture = g.CaptureAttribute.instance(geometry=sort_elements)
             index = capture.items.integer("Index", g.Index())
             with g.Frame("Clear Instance Transforms"):
                 realize_instances = (
@@ -96,7 +95,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
                     >> g.SetInstanceTransform(transform=g.CombineMatrix())
                     >> g.RealizeInstances()
                 )
-            group = EvaluatePerGroup(
+            evaluate_per_group = EvaluatePerGroup(
                 geometry=realize_instances,
                 closure=closure,
                 group="Group ID",
@@ -118,9 +117,10 @@ class EvaluateOnInstances(AssetGeometryGroup):
             domain="INSTANCE",
         )
         (
-            g.InstancesToPoints(instances=geometry, radius=0.05)
+            geometry
+            >> g.InstancesToPoints(radius=0.05)
             >> g.InstanceOnPoints(
-                instance=group.o.instances,
+                instance=evaluate_per_group.o.instances,
                 instance_index=sample_index_1,
                 pick_instance=True,
             )

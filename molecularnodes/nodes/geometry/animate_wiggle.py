@@ -21,6 +21,17 @@ from ._shared.mn_utils_aa_atom_pos import MN_utils_aa_atom_pos
 from .is_peptide import IsPeptide
 
 
+class MN_animate_wiggle_mask_length(CustomGeometryGroup):
+    _name = ".MN_animate_wiggle_mask_length"
+    _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_length"}
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        a = tree.inputs.integer("A", 0)
+        result = tree.outputs.integer("Result")
+
+        g.IndexSwitch.integer(a, (2, 5, 6, 12, 20)) >> result
+
+
 class MN_animate_wiggle_mask_res(CustomGeometryGroup):
     _name = ".MN_animate_wiggle_mask_res"
     _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_res"}
@@ -29,7 +40,7 @@ class MN_animate_wiggle_mask_res(CustomGeometryGroup):
         a = tree.inputs.integer("A", 0)
         result = tree.outputs.boolean("Result")
 
-        group = MN_select_res_name_peptide(
+        mn_select_res_name_peptide = MN_select_res_name_peptide(
             ala=True,
             arg=True,
             asn=True,
@@ -43,7 +54,7 @@ class MN_animate_wiggle_mask_res(CustomGeometryGroup):
             phe=True,
             trp=True,
         )
-        group_1 = MN_select_res_name_peptide(
+        mn_select_res_name_peptide_1 = MN_select_res_name_peptide(
             ala=True,
             arg=True,
             asn=True,
@@ -63,7 +74,7 @@ class MN_animate_wiggle_mask_res(CustomGeometryGroup):
             tyr=True,
             val=True,
         )
-        group_2 = MN_select_res_name_peptide(
+        mn_select_res_name_peptide_2 = MN_select_res_name_peptide(
             ala=True,
             arg=True,
             asn=True,
@@ -87,9 +98,9 @@ class MN_animate_wiggle_mask_res(CustomGeometryGroup):
             g.IndexSwitch.boolean(
                 a,
                 (
-                    group_2.o.selection,
-                    group_1.o.selection,
-                    group.o.selection,
+                    mn_select_res_name_peptide_2.o.selection,
+                    mn_select_res_name_peptide_1.o.selection,
+                    mn_select_res_name_peptide.o.selection,
                     MN_select_res_name_peptide(
                         arg=True, gln=True, lys=True
                     ).o.selection,
@@ -98,17 +109,6 @@ class MN_animate_wiggle_mask_res(CustomGeometryGroup):
             )
             >> result
         )
-
-
-class MN_animate_wiggle_mask_length(CustomGeometryGroup):
-    _name = ".MN_animate_wiggle_mask_length"
-    _tree_properties = {"node_tool_idname": "geometry._mn_animate_wiggle_mask_length"}
-
-    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        a = tree.inputs.integer("A", 0)
-        result = tree.outputs.integer("Result")
-
-        g.IndexSwitch.integer(a, (2, 5, 6, 12, 20)) >> result
 
 
 class MN_animate_noise_repeat(CustomGeometryGroup):
@@ -200,10 +200,10 @@ class MN_utils_rotate_res(CustomGeometryGroup):
         )
         position = tree.outputs.vector("Position")
 
-        group = MN_utils_aa_atom_pos(atom_name=atom_name_rotation)
+        mn_utils_aa_atom_pos = MN_utils_aa_atom_pos(atom_name=atom_name_rotation)
         mix = g.Mix(
             factor_float=scale_b_factor,
-            b_float=group.o.b_factor.map_range(
+            b_float=mn_utils_aa_atom_pos.o.b_factor.map_range(
                 1.0, 100.0, interpolation_type="SMOOTHERSTEP"
             ),
             a_float=1.0,
@@ -225,10 +225,10 @@ class MN_utils_rotate_res(CustomGeometryGroup):
         random_value = g.RandomValue.vector(
             (-13.0, -13.0, -13.0),
             (13.9, 13.9, 13.9),
-            group.o.group_index,
+            mn_utils_aa_atom_pos.o.group_index,
             atom_name_rotation,
         )
-        group_1 = MN_animate_noise_repeat(
+        mn_animate_noise_repeat = MN_animate_noise_repeat(
             Detail=2.0,
             Roughness=1.0,
             Distortion=1.98,
@@ -236,7 +236,7 @@ class MN_utils_rotate_res(CustomGeometryGroup):
             Speed=speed,
             **{"Animate 0..1": animate_0_1},
         )
-        group_2 = MN_animate_noise_repeat(
+        mn_animate_noise_repeat_1 = MN_animate_noise_repeat(
             Amplitude=amp_euler,
             Detail=1.0,
             Roughness=1.0,
@@ -245,19 +245,23 @@ class MN_utils_rotate_res(CustomGeometryGroup):
             Speed=speed,
             **{"Animate 0..1": animate_0_1},
         )
-        vector_math = g.VectorMath.scale(
-            group_2.o.noise_vector * math_1, g.Compare.integer.equal(group.o.integer, 3)
+        vector_math = (
+            mn_utils_aa_atom_pos.o.position
+            - MN_utils_aa_atom_pos(atom_name=atom_name_axis).o.position
         )
-        vector_math.node.mute = True
+        vector_math_1 = g.VectorMath.scale(
+            mn_animate_noise_repeat_1.o.noise_vector * math_1,
+            g.Compare.integer.equal(mn_utils_aa_atom_pos.o.integer, 3),
+        )
+        vector_math_1.node.mute = True
         vector_rotate = g.VectorRotate(
             vector=g.Position(),
-            center=group.o.position,
-            axis=group.o.position
-            - MN_utils_aa_atom_pos(atom_name=atom_name_axis).o.position,
-            angle=math_1 * amp_axis * group_1.o.noise_float,
+            center=mn_utils_aa_atom_pos.o.position,
+            axis=vector_math,
+            angle=math_1 * amp_axis * mn_animate_noise_repeat.o.noise_float,
         )
         vector_rotate_1 = g.VectorRotate.euler(
-            vector_rotate, group.o.position, vector_math.o.vector
+            vector_rotate, mn_utils_aa_atom_pos.o.position, vector_math_1.o.vector
         )
 
         vector_rotate_1 >> position
@@ -313,7 +317,7 @@ class AnimateWiggle(AssetGeometryGroup):
 
     _name = "Animate Wiggle"
     _asset_name = "Animate Wiggle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.animate_wiggle"}
 
@@ -430,7 +434,7 @@ class AnimateWiggle(AssetGeometryGroup):
         repeat_zone = g.RepeatZone(5)
         geometry = repeat_zone.items.geometry("Geometry", atoms)
         integer = repeat_zone.items.integer("Integer")
-        group = MN_utils_rotate_res(
+        mn_utils_rotate_res = MN_utils_rotate_res(
             Selection=MN_animate_wiggle_mask_res(A=integer.current).o.result
             & selection,
             **{
@@ -447,8 +451,8 @@ class AnimateWiggle(AssetGeometryGroup):
         )
         set_position = g.SetPosition(
             geometry=geometry.current,
-            selection=group.o.selection,
-            position=group.o.position,
+            selection=mn_utils_rotate_res.o.selection,
+            position=mn_utils_rotate_res.o.position,
         )
         set_position >> geometry.next
         integer.current + 1.0 >> integer.next

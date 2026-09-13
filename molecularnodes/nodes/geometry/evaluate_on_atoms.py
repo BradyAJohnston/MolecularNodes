@@ -54,7 +54,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
 
     _name = "Evaluate on Atoms"
     _asset_name = "Evaluate on Atoms"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -113,31 +113,33 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = GetGeometryAtoms(geometry=geometry)
+        get_geometry_atoms = GetGeometryAtoms(geometry=geometry)
         with g.Frame("Evaluate the closure on the 'Atoms'"):
-            group_1 = CheckGeometry(
-                geometry=group.o.atoms,
+            check_geometry = CheckGeometry(
+                geometry=get_geometry_atoms.o.atoms,
                 message="'Atoms' contains no geometry, check your node connections.",
             )
             evaluate_closure = g.EvaluateClosure(closure)
             evaluate_closure.inputs.geometry(
                 "Atoms",
                 (
-                    MN_ensure_ures_id(input=group_1)
+                    MN_ensure_ures_id(input=check_geometry)
                     >> g.SeparateGeometry.point(selection=selection)
                 ).o.selection,
             )
             geometry_2 = evaluate_closure.outputs.geometry("Geometry")
         menu_switch = g.MenuSwitch.integer(result, {"Geometry": 0, "Bundle": 1})
         store_bundle_item = g.StoreBundleItem.geometry(
-            group.o.bundle,
+            get_geometry_atoms.o.bundle,
             "MN/Atoms",
-            g.IndexSwitch.geometry(menu_switch.o.output, (group.o.atoms, geometry_2)),
+            g.IndexSwitch.geometry(
+                menu_switch.o.output, (get_geometry_atoms.o.atoms, geometry_2)
+            ),
         )
         (
             g.JoinGeometry(
                 geometry=(
-                    group.o.geometry,
+                    get_geometry_atoms.o.geometry,
                     g.IndexSwitch.geometry(menu_switch.o.output, (geometry_2, None)),
                 )
             )

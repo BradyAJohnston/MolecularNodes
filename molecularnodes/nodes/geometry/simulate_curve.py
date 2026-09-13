@@ -56,7 +56,7 @@ class XPBDSolveCurve(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = InverseMass()
+        inverse_mass = InverseMass()
         separate_components = g.SeparateComponents(geometry=geometry)
         repeat_zone = g.RepeatZone(points)
         geometry_2 = repeat_zone.items.geometry("Geometry", separate_components.o.curve)
@@ -79,19 +79,19 @@ class XPBDSolveCurve(CustomGeometryGroup):
         index_switch_1 = g.IndexSwitch.integer(
             repeat_zone_1.iteration, (integer_math, -integer_math)
         )
-        group_1 = ConstraintDistance(
+        constraint_distance = ConstraintDistance(
             target=OffsetVector(offset=index_switch_1),
             distance=(repeat_zone.iteration > 0).switch.float(integer_math, math_1)
             * length,
-            w1=group.o.w,
-            w2=OffsetFloat(value=group.o.w, offset=index_switch_1),
+            w1=inverse_mass.o.w,
+            w2=OffsetFloat(value=inverse_mass.o.w, offset=index_switch_1),
             alpha=alpha,
             deltat=deltat,
         )
         set_position = g.SetPosition(
             geometry=geometry_3.current,
             selection=g.BooleanMath.subtract(selection, index_switch),
-            offset=group_1.o.correction,
+            offset=constraint_distance.o.correction,
         )
         set_position >> geometry_3.next
         geometry_3.result >> geometry_2.next
@@ -139,7 +139,7 @@ class XPBDSolvePointsForCurve(CustomGeometryGroup):
             "Index", g.IndexOfNearest(position=vector.output).o.index
         )
         math_1 = radius.point.at(index.output) + radius
-        group = ConstraintDistance(
+        constraint_distance = ConstraintDistance(
             target=g.Position().o.position.point.at(index.output),
             distance=math_1,
             w1=1.0,
@@ -150,8 +150,8 @@ class XPBDSolvePointsForCurve(CustomGeometryGroup):
         (
             capture_1.o.geometry
             >> g.SetPosition(
-                selection=selection & (math_1 > group.o.value),
-                offset=group.o.correction,
+                selection=selection & (math_1 > constraint_distance.o.value),
+                offset=constraint_distance.o.correction,
             )
             >> geometry_1
         )
@@ -239,7 +239,7 @@ class SimulateCurve(AssetGeometryGroup):
 
     _name = "Simulate Curve"
     _asset_name = "Simulate Curve"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -427,15 +427,15 @@ class SimulateCurve(AssetGeometryGroup):
         )
         repeat_zone = g.RepeatZone(substeps)
         geometry_3 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
-        group = XPBDInit(
+        xpbd_init = XPBDInit(
             geometry=geometry_3.current,
             selection=boolean_math,
             force=force,
             drag=drag,
             deltat=math_1,
         )
-        group_1 = XPBDSolveCurve(
-            Geometry=group,
+        xpbd_solve_curve = XPBDSolveCurve(
+            Geometry=xpbd_init,
             Selection=boolean_math,
             Points=curve_points,
             Straightness=curve_straightness,
@@ -443,15 +443,15 @@ class SimulateCurve(AssetGeometryGroup):
             alpha=curve_alpha,
             deltaT=math_1,
         )
-        group_2 = XPBDSolvePointsForCurve(
-            Geometry=group_1,
+        xpbd_solve_points_for_curve = XPBDSolvePointsForCurve(
+            Geometry=xpbd_solve_curve,
             Selection=boolean_math,
             Radius=point_radius,
             alpha=point_alpha,
             deltaT=math_1,
         )
         set_position = XPBDSolveHook(
-            geometry=group_2,
+            geometry=xpbd_solve_points_for_curve,
             selection=hook_selection,
             target=hook_target,
             decay=hook_decay,

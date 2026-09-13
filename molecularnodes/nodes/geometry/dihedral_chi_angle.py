@@ -35,7 +35,7 @@ class DihedralChiAngle(AssetGeometryGroup):
 
     _name = "Dihedral Chi Angle"
     _asset_name = "Dihedral Chi Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -64,83 +64,41 @@ class DihedralChiAngle(AssetGeometryGroup):
         up = tree.outputs.vector("Up")
         axis = tree.outputs.vector("Axis")
 
-        group = MN_chi_atom_names()
-        group_1 = AtomName()
-        group_2 = ResidueMask(atom_name=group.o.x3)
-        group_3 = ResidueMask(atom_name=group.o.x4)
-        group_4 = MenuResidueMask(atom_name="CA")
-        group_5 = MenuResidueMask(atom_name="CB")
-        group_6 = MenuResidueMask(atom_name="CG")
-        group_7 = MenuResidueMask(atom_name="CD")
+        mn_chi_atom_names = MN_chi_atom_names()
+        atom_name = AtomName()
+        menu_residue_mask = MenuResidueMask(atom_name="CA")
+        menu_residue_mask_1 = MenuResidueMask(atom_name="CB")
+        menu_residue_mask_2 = MenuResidueMask(atom_name="CG")
+        menu_residue_mask_3 = MenuResidueMask(atom_name="CD")
         index_switch = g.IndexSwitch.vector(
-            group_1,
+            atom_name,
             (
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                ResidueMask(atom_name=group.o.x1).o.position,
-                ResidueMask(atom_name=group.o.x2).o.position,
+                menu_residue_mask.o.position,
+                menu_residue_mask_1.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_2.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_2.o.position,
-                group_3.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_3.o.position,
+                menu_residue_mask_2.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                ResidueMask(atom_name=group.o.x5).o.position,
-            ),
-        )
-        index_switch_1 = g.IndexSwitch.vector(
-            group_1,
-            (
+                menu_residue_mask_2.o.position,
+                menu_residue_mask_3.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_4.o.position,
-                group_5.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_6.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_6.o.position,
-                group_7.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_7.o.position,
+                menu_residue_mask_3.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
@@ -152,8 +110,8 @@ class DihedralChiAngle(AssetGeometryGroup):
                 MenuResidueMask(atom_name="NE").o.position,
             ),
         )
-        index_switch_2 = g.IndexSwitch.vector(
-            group_1,
+        index_switch_1 = g.IndexSwitch.vector(
+            atom_name,
             (
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
@@ -161,46 +119,90 @@ class DihedralChiAngle(AssetGeometryGroup):
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 MenuResidueMask().o.position,
-                group_4.o.position,
+                menu_residue_mask.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_5.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_5.o.position,
-                group_6.o.position,
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                (0.0, 0.0, 0.0),
-                group_6.o.position,
+                menu_residue_mask_1.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
+                menu_residue_mask_1.o.position,
+                menu_residue_mask_2.o.position,
                 (0.0, 0.0, 0.0),
                 (0.0, 0.0, 0.0),
-                group_7.o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                menu_residue_mask_2.o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                menu_residue_mask_3.o.position,
             ),
         )
-        group_8 = DihedralAngle(
-            a=index_switch, b=g.Position(), c=index_switch_1, d=index_switch_2
+        residue_mask = ResidueMask(atom_name=mn_chi_atom_names.o.x3)
+        residue_mask_1 = ResidueMask(atom_name=mn_chi_atom_names.o.x4)
+        index_switch_2 = g.IndexSwitch.vector(
+            atom_name,
+            (
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                ResidueMask(atom_name=mn_chi_atom_names.o.x1).o.position,
+                ResidueMask(atom_name=mn_chi_atom_names.o.x2).o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                residue_mask.o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                residue_mask.o.position,
+                residue_mask_1.o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                residue_mask_1.o.position,
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                (0.0, 0.0, 0.0),
+                ResidueMask(atom_name=mn_chi_atom_names.o.x5).o.position,
+            ),
         )
-        (g.EdgesOfVertex().o.total > 1).switch.float(
-            true=group_8.o.angle
-        ) * -1.0 >> angle
+        dihedral_angle = DihedralAngle(
+            a=index_switch_2, b=g.Position(), c=index_switch, d=index_switch_1
+        )
+        (
+            (g.EdgesOfVertex().o.total > 1).switch.float(true=dihedral_angle.o.angle)
+            * -1.0
+            >> angle
+        )
 
-        group_8.o.ba_bc >> up
-        group_8.o.bc >> axis
+        dihedral_angle.o.ba_bc >> up
+        dihedral_angle.o.bc >> axis
 
 
 ASSET = DihedralChiAngle

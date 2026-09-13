@@ -57,7 +57,7 @@ class XPBDSolveEdges(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = InverseMass()
+        inverse_mass = InverseMass()
         repeat_zone = g.RepeatZone(
             g.AttributeStatistic.point.float(
                 geometry, attribute=g.EdgesOfVertex().o.total
@@ -66,22 +66,21 @@ class XPBDSolveEdges(CustomGeometryGroup):
         geometry_2 = repeat_zone.items.geometry("Geometry", geometry)
         correction = repeat_zone.items.vector("Correction")
         value = repeat_zone.items.integer("Value")
-        group_1 = EdgeInfo(edge_index=repeat_zone.iteration)
-        boolean_math = selection & group_1.o.is_valid
-        group_2 = ConstraintDistance(
-            target=group_1.o.point_position,
-            distance=distance.edge.at(group_1.o.edge_index),
-            w1=group.o.w,
-            w2=group.o.w.point.at(group_1.o.edge_index),
-            alpha=alpha.edge.at(group_1.o.edge_index),
+        edge_info = EdgeInfo(edge_index=repeat_zone.iteration)
+        boolean_math = selection & edge_info.o.is_valid
+        constraint_distance = ConstraintDistance(
+            target=edge_info.o.point_position,
+            distance=distance.edge.at(edge_info.o.edge_index),
+            w1=inverse_mass.o.w,
+            w2=inverse_mass.o.w.point.at(edge_info.o.edge_index),
+            alpha=alpha.edge.at(edge_info.o.edge_index),
             deltat=deltat,
         )
-        geometry_2.current >> geometry_2.next
-        (
-            correction.current
-            + boolean_math.switch.vector((0.0, 0.0, 0.0), group_2.o.correction)
-            >> correction.next
+        vector_math = correction.current + boolean_math.switch.vector(
+            (0.0, 0.0, 0.0), constraint_distance.o.correction
         )
+        geometry_2.current >> geometry_2.next
+        vector_math >> correction.next
         g.IntegerMath(value=value.current, value_001=boolean_math) >> value.next
         (
             geometry_2.result
@@ -168,7 +167,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
 
     _name = "Simulate Elastic Network"
     _asset_name = "Simulate Elastic Network"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -324,29 +323,29 @@ class SimulateElasticNetwork(AssetGeometryGroup):
         )
         repeat_zone = g.RepeatZone(substeps)
         geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
-        group = XPBDInit(
+        xpbd_init = XPBDInit(
             geometry=geometry_2.current,
             selection=boolean_math,
             force=force,
             drag=drag,
             deltat=math_1,
         )
-        group_1 = XPBDSolveEdges(
-            Geometry=group,
+        xpbd_solve_edges = XPBDSolveEdges(
+            Geometry=xpbd_init,
             Selection=boolean_math,
             Distance=menu_switch.o.output,
             alpha=edge_alpha,
             deltaT=math_1,
         )
-        group_2 = XPBDSolvePoints(
-            geometry=group_1,
+        xpbd_solve_points = XPBDSolvePoints(
+            geometry=xpbd_solve_edges,
             selection=boolean_math,
             radius=particle_radius,
             alpha=particle_alpha,
             deltat=math_1,
         )
         set_position = XPBDSolveHook(
-            geometry=group_2,
+            geometry=xpbd_solve_points,
             selection=hook_selection,
             target=hook_target,
             decay=hook_decay,

@@ -88,7 +88,7 @@ class StarfileInstances(AssetGeometryGroup):
 
     _name = "Starfile Instances"
     _asset_name = "Starfile Instances"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.starfile_instances"}
 
@@ -194,6 +194,13 @@ class StarfileInstances(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
+        with g.Frame("Selection"):
+            boolean_math = (
+                g.Compare.integer.equal(
+                    image, g.NamedAttribute.integer("image_id").o.attribute
+                ).o.result
+                & selection
+            )
         with g.Frame("Instance"):
             menu_switch = g.MenuSwitch.geometry(
                 menu,
@@ -205,13 +212,8 @@ class StarfileInstances(AssetGeometryGroup):
             transform_geometry = PrimitiveGimbal(
                 vertices=3, material=material
             ) >> g.TransformGeometry(scale=g.Value(2.0))
-            group = FallbackGeometry(geometry=menu_switch, fallback=transform_geometry)
-        with g.Frame("Selection"):
-            boolean_math = (
-                g.Compare.integer.equal(
-                    image, g.NamedAttribute.integer("image_id").o.attribute
-                ).o.result
-                & selection
+            fallback_geometry = FallbackGeometry(
+                geometry=menu_switch, fallback=transform_geometry
             )
         with g.Frame("Scale Pixel Coordinates"):
             set_position = points >> g.SetPosition(
@@ -219,20 +221,20 @@ class StarfileInstances(AssetGeometryGroup):
             )
         with g.Frame("Instances"):
             with g.Frame("Rotation"):
-                group_1 = RotationCisTEM()
-                group_2 = FallbackRotation(
-                    name="rotation",
-                    fallback=group_1.o.is_valid.switch.rotation(
-                        RotationRELION().o.rotation, group_1.o.rotation
-                    ),
+                rotation_cistem = RotationCisTEM()
+                switch = rotation_cistem.o.is_valid.switch.rotation(
+                    RotationRELION().o.rotation, rotation_cistem.o.rotation
                 )
-                group_3 = FallbackMatrix(name="transform", fallback=group_2)
+                fallback_matrix = FallbackMatrix(
+                    name="transform",
+                    fallback=FallbackRotation(name="rotation", fallback=switch),
+                )
             (
                 set_position
                 >> g.InstanceOnPoints(
                     selection=boolean_math,
-                    instance=group,
-                    rotation=group_3,
+                    instance=fallback_geometry,
+                    rotation=fallback_matrix,
                     scale=instance_scale,
                 )
                 >> instances
@@ -245,8 +247,4 @@ ASSET = StarfileInstances
 
 ASSET_METADATA = {
     "catalog_id": "7ccb8802-a69f-483e-bf6e-4a47aaa9e940",
-}
-
-DATABLOCK_DEPENDENCIES = {
-    "materials": ("MN Default.old",),
 }

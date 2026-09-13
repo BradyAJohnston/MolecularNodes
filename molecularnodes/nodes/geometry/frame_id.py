@@ -36,7 +36,7 @@ class FrameID(AssetGeometryGroup):
 
     _name = "Frame ID"
     _asset_name = "Frame ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Read the `frame_id` attribute, created when multiple frames from a trajectory are merged into a single structure",
