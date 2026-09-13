@@ -101,7 +101,8 @@ jobs:
         run: |
           uv run -m nodebpy.assets build
       - name: Run Tests
-        timeout-minutes: 8
+        # windows runners need ~10 minutes for the full suite
+        timeout-minutes: 15
         run: |
           uv run pytest -n auto
       - name: Upload image comparison failures
