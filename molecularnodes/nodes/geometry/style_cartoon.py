@@ -219,8 +219,10 @@ class CAToLoops(CustomGeometryGroup):
 
         tmp_ss_attributes = Tmp_ss_attributes()
         endpoint_selection = g.EndpointSelection(end_size=0)
-        sample_from_ca_curve = SampleFromCACurve(**{"CA Curve": geometry}, Offset=-0.1)
-        sample_from_ca_curve_1 = SampleFromCACurve(**{"CA Curve": geometry}, Offset=0.1)
+        sample_from_ca_curve = SampleFromCACurve(**{"CA Curve": geometry}, Offset=0.1)
+        sample_from_ca_curve_1 = SampleFromCACurve(
+            **{"CA Curve": geometry}, Offset=-0.1
+        )
         with g.Frame("Find where it transitions direction from one SS to another"):
             is_helix = IsHelix()
             is_sheet = IsSheet()
@@ -264,7 +266,7 @@ class CAToLoops(CustomGeometryGroup):
             offset_amount=switch,
         )
         switch_1 = endpoint_selection.o.selection.switch.vector(
-            sample_from_ca_curve_1.o.position, sample_from_ca_curve.o.position
+            sample_from_ca_curve.o.position, sample_from_ca_curve_1.o.position
         )
         switch_2 = endpoint_selection.o.selection.switch.vector(
             SampleFromCACurve(**{"CA Curve": geometry}, Offset=0.2).o.tangent,
@@ -274,7 +276,7 @@ class CAToLoops(CustomGeometryGroup):
         capture_2.items.vector("Position", switch_1)
         tangent = capture_2.items.vector("Tangent", switch_2)
         switch_3 = endpoint_selection.o.selection.switch.vector(
-            sample_from_ca_curve_1.o.normal, sample_from_ca_curve.o.normal
+            sample_from_ca_curve.o.normal, sample_from_ca_curve_1.o.normal
         )
         vector_in_angstroms = VectorInAngstroms(
             vector=g.Normal(legacy_corner_normals=True).o.normal,
