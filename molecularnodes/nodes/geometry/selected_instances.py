@@ -105,8 +105,8 @@ class SelectedInstances(AssetGeometryGroup):
             geometry=g.BoundingBox(geometry=instances)
         )
         index = capture.items.integer("Index", g.Index())
-        index_1 = g.Index()
         accumulate_field = g.AccumulateField.point.integer(selection, index.output)
+        index_1 = g.Index()
         capture_1 = g.CaptureAttribute.point(
             geometry=capture.o.geometry
             >> g.RealizeInstances(realize_to_point_domain=True)

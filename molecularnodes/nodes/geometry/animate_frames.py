@@ -159,6 +159,31 @@ class AnimateFrames(AssetGeometryGroup):
             description="Each frame from the collection of coordinates is output in the a single mesh. They now contain an additional attribute `frame_id` to specify which structure they are from",
         )
 
+        with g.Frame("Interpolation position based on frames from collection"):
+            animate_collection_pick = AnimateCollectionPick(
+                collection=frames, item=frame
+            )
+            animate_fraction = AnimateFraction(
+                interpolate=interpolate, smoother_step=smoother_step, float=frame
+            )
+            sample_mix_float = SampleMixFloat(
+                a=animate_collection_pick.o.current,
+                b=animate_collection_pick.o.next,
+                value=g.NamedAttribute.float("b_factor").o.attribute,
+                factor=animate_fraction,
+            )
+            sample_mix_vector = SampleMixVector(
+                a=animate_collection_pick.o.current,
+                b=animate_collection_pick.o.next,
+                factor=animate_fraction,
+            )
+            store_named_attribute = (
+                atoms
+                >> g.SetPosition(selection=selection, position=sample_mix_vector)
+                >> g.StoreNamedAttribute.point.float(
+                    name="b_factor", value=sample_mix_float
+                )
+            )
         with g.Frame("Have to copy original structure as frames only contain position"):
             collection_info = g.CollectionInfo(
                 collection=frames, separate_children=True
@@ -187,31 +212,6 @@ class AnimateFrames(AssetGeometryGroup):
                 >> g.SetPosition(position=sample_index)
             )
             set_ures_id = SetUResID(geometry=set_position)
-        with g.Frame("Interpolation position based on frames from collection"):
-            animate_collection_pick = AnimateCollectionPick(
-                collection=frames, item=frame
-            )
-            animate_fraction = AnimateFraction(
-                interpolate=interpolate, smoother_step=smoother_step, float=frame
-            )
-            sample_mix_float = SampleMixFloat(
-                a=animate_collection_pick.o.current,
-                b=animate_collection_pick.o.next,
-                value=g.NamedAttribute.float("b_factor").o.attribute,
-                factor=animate_fraction,
-            )
-            sample_mix_vector = SampleMixVector(
-                a=animate_collection_pick.o.current,
-                b=animate_collection_pick.o.next,
-                factor=animate_fraction,
-            )
-            store_named_attribute = (
-                atoms
-                >> g.SetPosition(selection=selection, position=sample_mix_vector)
-                >> g.StoreNamedAttribute.point.float(
-                    name="b_factor", value=sample_mix_float
-                )
-            )
         _sample_position = SamplePosition()
         with g.Frame("Set Transform to align with structure"):
             object_info = g.ObjectInfo(object=g.SelfObject())

@@ -113,12 +113,12 @@ class PeptideDihedral(AssetGeometryGroup):
 
         atom_name = AtomName()
         boolean = g.Boolean(boolean=True)
+        is_peptide = IsPeptide(and_=selection)
         override_index = OverrideIndex(
             selection=IsSideChain(include_ca=False).o.selection,
             index=HydrogenBondingPartner(),
             override=ResidueMask(atom_name=2).o.index,
         )
-        is_peptide = IsPeptide(and_=selection)
         index_switch = g.IndexSwitch.float(
             atom_name,
             (

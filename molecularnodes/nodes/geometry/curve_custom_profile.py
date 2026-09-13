@@ -196,12 +196,12 @@ class CurveCustomProfile(AssetGeometryGroup):
             )
         geometry = tree.outputs.geometry("Geometry")
 
+        index_switch = g.IndexSwitch.rotation(
+            ProfileTypePicker(menu=profile_type), (CurveRotation(), profile_rotation)
+        )
         curve_circle = g.CurveCircle(
             resolution=profile_resolution,
             radius=MNUnits(value=profile_radius).o.angstrom,
-        )
-        index_switch = g.IndexSwitch.rotation(
-            ProfileTypePicker(menu=profile_type), (CurveRotation(), profile_rotation)
         )
         spline_parameter = g.SplineParameter()
         capture = g.CaptureAttribute.point(geometry=curve)
@@ -210,11 +210,19 @@ class CurveCustomProfile(AssetGeometryGroup):
         factor = capture.items.float("Factor", spline_parameter.o.factor)
         length = capture.items.float("Length", spline_parameter.o.length)
         index = capture.items.integer("Index", spline_parameter.o.index)
-        spline_parameter_1 = g.SplineParameter()
         resample_curve = (
             capture.o.geometry
             >> g.SetSplineResolution(resolution=subdivisions)
             >> g.ResampleCurve(mode="Evaluated", length=0.1)
+        )
+        spline_parameter_1 = g.SplineParameter()
+        switch = CheckEndFaceCorner(
+            captured_index=index.output
+        ).o.is_end_face_corner.switch.float(
+            g.MenuSwitch.float(
+                u_component, {"Factor": factor.output, "Length": length.output}
+            ).o.output,
+            g.IndexSwitch.float(items=(1.0, 38.0)),
         )
         transform_geometry = g.TransformGeometry(
             geometry=curve_circle,
@@ -246,19 +254,11 @@ class CurveCustomProfile(AssetGeometryGroup):
                 geometry=instance_on_points, realize_to_point_domain=True
             )
         )
-        switch = CheckEndFaceCorner(
+        switch_1 = CheckEndFaceCorner(
             captured_index=index_1.output
         ).o.is_end_face_corner.switch.float(factor_1.output, 1.0)
-        switch_1 = CheckEndFaceCorner(
-            captured_index=index.output
-        ).o.is_end_face_corner.switch.float(
-            g.MenuSwitch.float(
-                u_component, {"Factor": factor.output, "Length": length.output}
-            ).o.output,
-            g.IndexSwitch.float(items=(1.0, 38.0)),
-        )
         store_named_attribute = g.StoreNamedAttribute.corner.vector_2d(
-            curve_to_mesh, name="uv_map", value=g.CombineXYZ(x=switch_1, y=switch)
+            curve_to_mesh, name="uv_map", value=g.CombineXYZ(x=switch, y=switch_1)
         )
         switch_2 = uv_map.switch.geometry(curve_to_mesh, store_named_attribute)
         (

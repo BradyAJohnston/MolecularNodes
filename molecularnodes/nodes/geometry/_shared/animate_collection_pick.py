@@ -99,13 +99,13 @@ class AnimateCollectionPick(CustomGeometryGroup):
         collection_info = g.CollectionInfo(
             collection=collection, separate_children=True, transform_space="RELATIVE"
         )
+        float_to_integer = g.FloatToInteger(float=item, rounding_mode="FLOOR")
         integer_math = (
             g.DomainSize(
                 geometry=collection_info, component="INSTANCES"
             ).o.instance_count
             - 1
         )
-        float_to_integer = g.FloatToInteger(float=item, rounding_mode="FLOOR")
         compare = g.Compare.integer.equal(
             g.Index(), g.IntegerMath.minimum(float_to_integer, integer_math)
         )

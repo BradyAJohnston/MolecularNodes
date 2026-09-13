@@ -188,11 +188,11 @@ class StyleSpheres(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
-        realize_instances = g.RealizeInstances(
-            geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True
-        )
         mn_utils_style_spheres_points = MN_utils_style_spheres_points(
             atoms=atoms_1, selection=selection, scale=scale, material=material
+        )
+        realize_instances = g.RealizeInstances(
+            geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True
         )
         menu_switch = g.MenuSwitch.geometry(
             sphere,

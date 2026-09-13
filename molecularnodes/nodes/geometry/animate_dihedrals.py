@@ -214,6 +214,9 @@ class AnimateDihedrals(AssetGeometryGroup):
         )
 
         animate_collection_pick = AnimateCollectionPick(collection=frames, item=frame)
+        animate_fraction = AnimateFraction(
+            interpolate=interpolate, smoother_step=smoother_step, float=frame
+        )
         object_info = g.ObjectInfo(object=g.SelfObject())
         set_position = g.SetPosition(
             geometry=atoms,
@@ -222,9 +225,6 @@ class AnimateDihedrals(AssetGeometryGroup):
         set_position_1 = g.SetPosition(
             geometry=atoms,
             position=SamplePosition(geometry=animate_collection_pick.o.next),
-        )
-        animate_fraction = AnimateFraction(
-            interpolate=interpolate, smoother_step=smoother_step, float=frame
         )
         sample_mix_angle = SampleMixAngle(
             A=set_position,

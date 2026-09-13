@@ -81,39 +81,6 @@ class MN_utils_style_surface_new(CustomGeometryGroup):
         _sort_list = g.SortList.float()
 
 
-class Utils_bounding_box(CustomGeometryGroup):
-    _name = ".utils_bounding_box"
-    _tree_properties = {"node_tool_idname": "geometry._utils_bounding_box"}
-
-    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        geometry = tree.inputs.geometry("Geometry")
-        subdivisions = tree.inputs.float(
-            "Subdivisions", 16.7, min_value=-10_000.0, max_value=10_000.0
-        )
-        min = tree.outputs.vector("Min")
-        max = tree.outputs.vector("Max")
-        x = tree.outputs.integer("X")
-        y = tree.outputs.integer("Y")
-        z = tree.outputs.integer("Z")
-
-        mn_world_scale = MN_world_scale()
-        bounding_box = g.BoundingBox(geometry=geometry)
-        math_1 = mn_world_scale.o.world_scale * 2.0
-        vector_math = (
-            g.VectorMath.snap(bounding_box.o.min, mn_world_scale).o.vector - math_1
-        )
-        vector_math_1 = (
-            g.VectorMath.snap(bounding_box.o.max, mn_world_scale).o.vector + math_1
-        )
-        vector = (vector_math_1 - vector_math) * subdivisions
-        vector.x.max(2.0) >> x
-        vector.y.max(2.0) >> y
-        vector.z.max(2.0) >> z
-
-        vector_math >> min
-        vector_math_1 >> max
-
-
 class Surface_compute_density_from_points(CustomGeometryGroup):
     _name = ".surface_compute_density_from_points"
     _tree_properties = {
@@ -150,6 +117,39 @@ class Surface_compute_density_from_points(CustomGeometryGroup):
         (math_1 > 0.0) >> result
 
         math_1 >> distance
+
+
+class Utils_bounding_box(CustomGeometryGroup):
+    _name = ".utils_bounding_box"
+    _tree_properties = {"node_tool_idname": "geometry._utils_bounding_box"}
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        geometry = tree.inputs.geometry("Geometry")
+        subdivisions = tree.inputs.float(
+            "Subdivisions", 16.7, min_value=-10_000.0, max_value=10_000.0
+        )
+        min = tree.outputs.vector("Min")
+        max = tree.outputs.vector("Max")
+        x = tree.outputs.integer("X")
+        y = tree.outputs.integer("Y")
+        z = tree.outputs.integer("Z")
+
+        mn_world_scale = MN_world_scale()
+        bounding_box = g.BoundingBox(geometry=geometry)
+        math_1 = mn_world_scale.o.world_scale * 2.0
+        vector_math = (
+            g.VectorMath.snap(bounding_box.o.min, mn_world_scale).o.vector - math_1
+        )
+        vector_math_1 = (
+            g.VectorMath.snap(bounding_box.o.max, mn_world_scale).o.vector + math_1
+        )
+        vector = (vector_math_1 - vector_math) * subdivisions
+        vector.x.max(2.0) >> x
+        vector.y.max(2.0) >> y
+        vector.z.max(2.0) >> z
+
+        vector_math >> min
+        vector_math_1 >> max
 
 
 class MN_surface_smooth_bumps(CustomGeometryGroup):
@@ -321,6 +321,43 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
         color_source.default_value = "Alpha Carbon"
 
 
+class RelaxSurface(CustomGeometryGroup):
+    _name = ".Relax Surface"
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        relaxation_steps = tree.inputs.integer("Relaxation Steps", 30, min_value=0)
+        step = tree.inputs.integer("step", 3)
+        bundle = tree.outputs.bundle("Bundle")
+
+        closure_zone = g.ClosureZone()
+        geometry = closure_zone.inputs.geometry("Geometry")
+        geometry_1 = closure_zone.outputs.geometry("Geometry")
+        edge_length = EdgeLength()
+        field_min_max = g.FieldMinAndMax.point.float(edge_length)
+        _map_range = edge_length.o.length.map_range(
+            field_min_max.o.min, field_min_max.o.max
+        )
+        blur_attribute = g.BlurAttribute.vector(
+            g.Position(),
+            relaxation_steps,
+            g.BlurAttribute.float(
+                g.EdgeAngle().o.signed_angle.map_range(-0.2, 0.3, 1.0, 0.0)
+            ),
+        )
+        (
+            MN_surface_smooth_bumps(
+                Geometry=geometry >> g.SetPosition(position=blur_attribute)
+            )
+            >> geometry_1
+        )
+        (
+            MNTypedBundles(
+                closure=closure_zone.closure, step=step, path="Relax Surface"
+            )
+            >> bundle
+        )
+
+
 class TriangulateMesh(CustomGeometryGroup):
     _name = ".Triangulate Mesh"
 
@@ -409,43 +446,6 @@ class SampleColors(CustomGeometryGroup):
         )
 
         color_source.default_value = "Alpha Carbon"
-
-
-class RelaxSurface(CustomGeometryGroup):
-    _name = ".Relax Surface"
-
-    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        relaxation_steps = tree.inputs.integer("Relaxation Steps", 30, min_value=0)
-        step = tree.inputs.integer("step", 3)
-        bundle = tree.outputs.bundle("Bundle")
-
-        closure_zone = g.ClosureZone()
-        geometry = closure_zone.inputs.geometry("Geometry")
-        geometry_1 = closure_zone.outputs.geometry("Geometry")
-        edge_length = EdgeLength()
-        field_min_max = g.FieldMinAndMax.point.float(edge_length)
-        _map_range = edge_length.o.length.map_range(
-            field_min_max.o.min, field_min_max.o.max
-        )
-        blur_attribute = g.BlurAttribute.vector(
-            g.Position(),
-            relaxation_steps,
-            g.BlurAttribute.float(
-                g.EdgeAngle().o.signed_angle.map_range(-0.2, 0.3, 1.0, 0.0)
-            ),
-        )
-        (
-            MN_surface_smooth_bumps(
-                Geometry=geometry >> g.SetPosition(position=blur_attribute)
-            )
-            >> geometry_1
-        )
-        (
-            MNTypedBundles(
-                closure=closure_zone.closure, step=step, path="Relax Surface"
-            )
-            >> bundle
-        )
 
 
 class SurfaceToRadius(CustomGeometryGroup):

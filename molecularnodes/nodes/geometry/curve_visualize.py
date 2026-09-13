@@ -141,11 +141,11 @@ class CurveVisualize(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
-        curve_handle_positions = g.CurveHandlePositions(relative=True)
         capture = g.CaptureAttribute.point(geometry=curve)
         selection_1 = capture.items.boolean("Selection", selection)
         position_1 = capture.items.vector("Position", position)
         normal_1 = capture.items.vector("Normal", normal)
+        curve_handle_positions = g.CurveHandlePositions(relative=True)
         _curve_rotation = CurveRotation(normal=normal_1.output)
         primitive_arrow = PrimitiveArrow(
             vertices=3,

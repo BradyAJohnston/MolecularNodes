@@ -105,25 +105,25 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         uv_map = tree.outputs.vector("uv_map")
 
         _fallback_geometry = FallbackGeometry()
+        menu_switch = g.MenuSwitch.integer(u_component, {"Factor": 0, "Length": 1})
         named_attribute = g.NamedAttribute.float("radius")
         _spline_length = g.SplineLength()
         spline_parameter = g.SplineParameter()
+        index_switch = g.IndexSwitch.float(
+            menu_switch.o.output, (spline_parameter.o.factor, spline_parameter.o.length)
+        )
         capture = g.CaptureAttribute.point(
             geometry=g.CurveCircle(resolution=profile_resolution)
         )
         factor = capture.items.float("Factor", g.SplineParameter().o.factor)
         index = capture.items.integer("Index", g.SplineParameter().o.index)
-        switch = CheckEndFaceCorner(
-            captured_index=index.output
-        ).o.is_end_face_corner.switch.float(factor.output, 1.0)
-        menu_switch = g.MenuSwitch.integer(u_component, {"Factor": 0, "Length": 1})
-        index_switch = g.IndexSwitch.float(
-            menu_switch.o.output, (spline_parameter.o.factor, spline_parameter.o.length)
-        )
         capture_1 = g.CaptureAttribute.point(geometry=curve)
         factor_1 = capture_1.items.float("Factor", index_switch)
         index_1 = capture_1.items.integer("Index", g.SplineParameter().o.index)
         length = capture_1.items.float("Length", g.SplineLength().o.length)
+        switch = CheckEndFaceCorner(
+            captured_index=index.output
+        ).o.is_end_face_corner.switch.float(factor.output, 1.0)
         (
             capture_1.o.geometry
             >> g.CurveToMesh(

@@ -200,7 +200,6 @@ class MN_utils_rotate_res(CustomGeometryGroup):
         )
         position = tree.outputs.vector("Position")
 
-        named_attribute = g.NamedAttribute.integer("atom_name")
         mn_utils_aa_atom_pos = MN_utils_aa_atom_pos(atom_name=atom_name_rotation)
         mix = g.Mix(
             factor_float=scale_b_factor,
@@ -211,10 +210,7 @@ class MN_utils_rotate_res(CustomGeometryGroup):
             clamp_factor=True,
         )
         math_1 = mix.o.result_float * amplitude
-        vector_math = (
-            mn_utils_aa_atom_pos.o.position
-            - MN_utils_aa_atom_pos(atom_name=atom_name_axis).o.position
-        )
+        named_attribute = g.NamedAttribute.integer("atom_name")
         boolean_math = (named_attribute.o.attribute > 4) & (
             (named_attribute.o.attribute > atom_name_rotation) & IsPeptide().o.selection
         )
@@ -248,6 +244,10 @@ class MN_utils_rotate_res(CustomGeometryGroup):
             Vector=random_value,
             Speed=speed,
             **{"Animate 0..1": animate_0_1},
+        )
+        vector_math = (
+            mn_utils_aa_atom_pos.o.position
+            - MN_utils_aa_atom_pos(atom_name=atom_name_axis).o.position
         )
         vector_math_1 = g.VectorMath.scale(
             mn_animate_noise_repeat_1.o.noise_vector * math_1,

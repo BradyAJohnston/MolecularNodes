@@ -274,10 +274,10 @@ class SimulateOnFaces(AssetGeometryGroup):
         )
         simulation_zone = g.SimulationZone()
         geometry_1 = simulation_zone.items.geometry("Geometry", store_named_attribute)
+        math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
             geometry_1.current, name="inverse_mass", value=1.0 / Mass()
         )
-        math_1 = simulation_zone.delta_time / substeps
         repeat_zone = g.RepeatZone(substeps)
         geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
         xpbd_init = XPBDInit(

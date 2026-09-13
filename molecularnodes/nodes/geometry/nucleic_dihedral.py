@@ -145,12 +145,12 @@ class NucleicDihedral(AssetGeometryGroup):
         )
 
         atom_name = AtomName()
+        is_nucleic = IsNucleic(and_=selection)
         override_index = OverrideIndex(
             selection=(atom_name > 58) & (atom_name <= 115)
             | g.Compare.integer.equal(atom_name, 56),
             override=ResidueMask(atom_name=55).o.index,
         )
-        is_nucleic = IsNucleic(and_=selection)
         index_switch = g.IndexSwitch.float(
             atom_name.o.atom_name - 50,
             (

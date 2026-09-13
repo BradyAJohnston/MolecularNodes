@@ -99,26 +99,9 @@ class Plexus(AssetGeometryGroup):
         radius = tree.inputs.float("Radius", 1.0)
         geometry = tree.outputs.geometry("Geometry")
 
-        with g.Frame("Create Distance Probe"):
-            ico_sphere = g.IcoSphere()
-            sample_index = g.SampleIndex(
-                geometry=ico_sphere,
-                value=g.Position().o.position * -1.0,
-                index=g.Index(),
-                data_type="FLOAT_VECTOR",
-            )
-            merge_by_distance = (
-                g.InstanceOnPoints(
-                    points=ico_sphere,
-                    instance=g.MeshLine(count=2),
-                    rotation=g.AxesToRotation(primary_axis=sample_index),
-                )
-                >> g.RealizeInstances(realize_to_point_domain=True)
-                >> g.MergeByDistance(distance=0.001)
-            )
         with g.Frame("Create a clean set of points for instancing on"):
             index = g.Index()
-            sample_index_1 = g.SampleIndex(
+            sample_index = g.SampleIndex(
                 geometry=points,
                 value=g.Position(),
                 index=index,
@@ -129,8 +112,25 @@ class Plexus(AssetGeometryGroup):
             ).o.value * g.SampleIndex(geometry=points, value=radius, index=index)
             points_1 = g.Points(
                 count=g.DomainSize(geometry=points).o.point_count,
-                position=sample_index_1,
+                position=sample_index,
                 radius=math_1,
+            )
+        with g.Frame("Create Distance Probe"):
+            ico_sphere = g.IcoSphere()
+            sample_index_1 = g.SampleIndex(
+                geometry=ico_sphere,
+                value=g.Position().o.position * -1.0,
+                index=g.Index(),
+                data_type="FLOAT_VECTOR",
+            )
+            merge_by_distance = (
+                g.InstanceOnPoints(
+                    points=ico_sphere,
+                    instance=g.MeshLine(count=2),
+                    rotation=g.AxesToRotation(primary_axis=sample_index_1),
+                )
+                >> g.RealizeInstances(realize_to_point_domain=True)
+                >> g.MergeByDistance(distance=0.001)
             )
         with g.Frame("Apply the distance probe"):
             realize_instances = g.RealizeInstances(
