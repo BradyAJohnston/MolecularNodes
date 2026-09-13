@@ -200,6 +200,7 @@ class MN_utils_rotate_res(CustomGeometryGroup):
         )
         position = tree.outputs.vector("Position")
 
+        named_attribute = g.NamedAttribute.integer("atom_name")
         group = MN_utils_aa_atom_pos(atom_name=atom_name_rotation)
         mix = g.Mix(
             factor_float=scale_b_factor,
@@ -210,7 +211,6 @@ class MN_utils_rotate_res(CustomGeometryGroup):
             clamp_factor=True,
         )
         math_1 = mix.o.result_float * amplitude
-        named_attribute = g.NamedAttribute.integer("atom_name")
         boolean_math = (named_attribute.o.attribute > 4) & (
             (named_attribute.o.attribute > atom_name_rotation) & IsPeptide().o.selection
         )

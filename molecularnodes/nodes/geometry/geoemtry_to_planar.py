@@ -93,11 +93,12 @@ class GeoemtryToPlanar(AssetGeometryGroup):
                 translation=group.o.group_center * -1.0,
                 rotation=group.o.rotation.invert(),
             )
-        transform_geometry = g.TransformGeometry(
-            geometry=geometry, transform=combine_transform, mode="Matrix"
+        (
+            geometry
+            >> g.TransformGeometry(transform=combine_transform, mode="Matrix")
+            >> geometry_1
         )
 
-        transform_geometry >> geometry_1
         combine_transform >> transform
 
 

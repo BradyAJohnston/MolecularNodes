@@ -128,43 +128,43 @@ class PointsOfEdge(AssetGeometryGroup):
 
         group = EdgeInfo(vertex_index=vertex_index, edge_index=edge_index)
         g.EdgesOfVertex().o.total.point.at(group.o.point_index) >> total
-        evaluate_at_index = EdgeInfo(vertex_index=vertex_index).o.point_index.point.at(
-            group.o.point_index
-        )
-        evaluate_at_index_1 = EdgeInfo(
-            vertex_index=vertex_index, edge_index=1
-        ).o.point_index.point.at(group.o.point_index)
-        evaluate_at_index_2 = EdgeInfo(
-            vertex_index=vertex_index, edge_index=2
-        ).o.point_index.point.at(group.o.point_index)
-        evaluate_at_index_3 = EdgeInfo(
+        evaluate_at_index = EdgeInfo(
             vertex_index=edge_index, edge_index=3
         ).o.point_index.point.at(group.o.point_index)
         index = g.Index()
+        evaluate_at_index_1 = EdgeInfo(
+            vertex_index=vertex_index
+        ).o.point_index.point.at(group.o.point_index)
+        evaluate_at_index_2 = EdgeInfo(
+            vertex_index=vertex_index, edge_index=1
+        ).o.point_index.point.at(group.o.point_index)
+        evaluate_at_index_3 = EdgeInfo(
+            vertex_index=vertex_index, edge_index=2
+        ).o.point_index.point.at(group.o.point_index)
         with g.Frame("check if selecting self, return -1 if so"):
             (
                 g.Compare.integer.equal(
                     evaluate_at_index, index
                 ).o.result.switch.integer(evaluate_at_index, -1)
-                >> n_0
+                >> n_3
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_1, index
                 ).o.result.switch.integer(evaluate_at_index_1, -1)
-                >> n_1
+                >> n_0
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_2, index
                 ).o.result.switch.integer(evaluate_at_index_2, -1)
-                >> n_2
+                >> n_1
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_3, index
                 ).o.result.switch.integer(evaluate_at_index_3, -1)
-                >> n_3
+                >> n_2
             )
 
 

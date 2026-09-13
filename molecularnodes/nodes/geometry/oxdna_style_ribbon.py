@@ -403,6 +403,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                 geometry=capture.o.geometry, offset=group_2.o.backbone_offset
             )
             with g.Frame("Backbone Stick"):
+                group_3 = AngstromToWorld(angstrom=backbone_radius)
                 with g.Frame(
                     "Each segment is it's own mesh, flipping the circular endpoints"
                 ):
@@ -420,7 +421,6 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                         >> g.MeshToCurve()
                         >> g.ReverseCurve(selection=capture_1.o.selection)
                     )
-                group_3 = AngstromToWorld(angstrom=backbone_radius)
                 curve_circle = g.CurveCircle(resolution=quality * 4, radius=ball_radius)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
                     group_3, group_3.o.world * arrow_taper

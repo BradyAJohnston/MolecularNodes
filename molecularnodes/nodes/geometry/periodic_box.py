@@ -143,23 +143,23 @@ class PeriodicBox(AssetGeometryGroup):
             math_2 = beta.to_radians()
             math_3 = gamma.to_radians()
         with g.Frame("Trig Ops"):
-            math_4 = math_3.cos()
+            math_4 = math_1.cos()
             math_5 = math_2.cos()
-            math_6 = math_3.sin()
-            math_7 = math_1.cos()
+            math_6 = math_3.cos()
+            math_7 = math_3.sin()
         with g.Frame("B Vector"):
             group = AngstromToWorld(angstrom=b)
             with g.Frame("B Y Component"):
-                math_8 = group.o.world * math_6
+                math_8 = group.o.world * math_7
             with g.Frame("B X Component"):
-                math_9 = group.o.world * math_4
+                math_9 = group.o.world * math_6
             combine_xyz_1 = g.CombineXYZ(x=math_9, y=math_8)
         with g.Frame("C Vector"):
             group_1 = AngstromToWorld(angstrom=c_)
             with g.Frame("C X Component"):
                 math_10 = group_1.o.world * math_5
             with g.Frame("C Y Component"):
-                math_11 = group_1.o.world * ((math_7 - math_5 * math_4) / math_6)
+                math_11 = group_1.o.world * ((math_4 - math_5 * math_6) / math_7)
             with g.Frame("C Z Component"):
                 math_12 = (group_1.o.world**2.0 - math_10**2.0 - math_11**2.0).sqrt()
             combine_xyz_2 = g.CombineXYZ(x=math_10, y=math_11, z=math_12)

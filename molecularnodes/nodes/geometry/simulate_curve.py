@@ -61,12 +61,6 @@ class XPBDSolveCurve(CustomGeometryGroup):
         repeat_zone = g.RepeatZone(points)
         geometry_2 = repeat_zone.items.geometry("Geometry", separate_components.o.curve)
         integer_math = repeat_zone.iteration + 1
-        math_1 = (
-            integer_math
-            * g.Mix(
-                factor_float=straightness, a_float=0.5, b_float=1.0, clamp_factor=True
-            ).o.result_float
-        )
         repeat_zone_1 = g.RepeatZone(2)
         geometry_3 = repeat_zone_1.items.geometry("Geometry", geometry_2.current)
         index_switch = g.IndexSwitch.boolean(
@@ -78,6 +72,12 @@ class XPBDSolveCurve(CustomGeometryGroup):
         )
         index_switch_1 = g.IndexSwitch.integer(
             repeat_zone_1.iteration, (integer_math, -integer_math)
+        )
+        math_1 = (
+            integer_math
+            * g.Mix(
+                factor_float=straightness, a_float=0.5, b_float=1.0, clamp_factor=True
+            ).o.result_float
         )
         group_1 = ConstraintDistance(
             target=OffsetVector(offset=index_switch_1),
@@ -421,10 +421,10 @@ class SimulateCurve(AssetGeometryGroup):
         )
         simulation_zone = g.SimulationZone()
         geometry_2 = simulation_zone.items.geometry("Geometry", store_named_attribute)
-        math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
             geometry_2.current, name="inverse_mass", value=1.0 / Mass()
         )
+        math_1 = simulation_zone.delta_time / substeps
         repeat_zone = g.RepeatZone(substeps)
         geometry_3 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
         group = XPBDInit(

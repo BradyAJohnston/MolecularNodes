@@ -158,8 +158,8 @@ class EnsembleInstance(AssetGeometryGroup):
             point_material = tree.inputs.material("Point Material", optional_label=True)
         instances_1 = tree.outputs.geometry("Instances")
 
-        menu_switch = g.MenuSwitch.integer(selection_type, {"Simple": 0, "Precise": 1})
         boolean_math = selection & g.RandomValue.boolean(fraction)
+        menu_switch = g.MenuSwitch.integer(selection_type, {"Simple": 0, "Precise": 1})
         with g.Frame("Simple Selection"):
             separate_geometry = g.IndexSwitch.geometry(
                 menu_switch.o.output,

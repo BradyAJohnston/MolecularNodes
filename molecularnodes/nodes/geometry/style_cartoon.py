@@ -372,7 +372,6 @@ class SplitCurves(CustomGeometryGroup):
         g.SetHandleType(curve=set_spline_type) >> curve
         viewer = g.Viewer()
         capture_1.o.geometry >> viewer
-        selection >> viewer
 
 
 class NodeGroup(CustomGeometryGroup):
@@ -406,13 +405,13 @@ class NodeGroup(CustomGeometryGroup):
         geometry = tree.outputs.geometry("Geometry")
 
         mix = g.Mix(b_float=1.0, clamp_factor=True)
+        capture = g.CaptureAttribute.point(geometry=curves)
+        rotation_1 = capture.items.rotation("Rotation", CurveRotation())
+        capture.items.vector("Position", g.Position())
         multiply_matrices = g.MultiplyMatrices(
             matrix=g.CombineTransform(rotation=rotation, scale=scale),
             matrix_001=g.CombineTransform(rotation=(0.0, 0.0, math.pi / 4)),
         )
-        capture = g.CaptureAttribute.point(geometry=curves)
-        rotation_1 = capture.items.rotation("Rotation", CurveRotation())
-        capture.items.vector("Position", g.Position())
         sample_curve = g.SampleCurve(
             curves=capture.o.geometry,
             value=rotation_1.output,
@@ -777,9 +776,9 @@ class CAToHelix(CustomGeometryGroup):
                 socket_11=0.0,
             )
         _evaluate_closure = g.EvaluateClosure()
-        join_geometry = g.JoinGeometry(geometry=(group_5, curve_to_mesh))
         viewer = g.Viewer()
         group_3 >> viewer
+        join_geometry = g.JoinGeometry(geometry=(group_5, curve_to_mesh))
 
         join_geometry >> geometry
 
@@ -1313,9 +1312,6 @@ class StyleCartoon(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        capture_1 = g.CaptureAttribute.point(geometry=atoms_1, selection=selection)
-        math_1 = quality * 3.0
-        math_2 = quality * 5.0
         menu_switch = g.MenuSwitch.integer(base_shape, {"Cylinder": 0, "Rectangle": 1})
         menu_switch_1 = g.MenuSwitch.integer(
             backbone_shape, {"Cylinder": 0, "Rectangle": 1}
@@ -1327,8 +1323,28 @@ class StyleCartoon(AssetGeometryGroup):
                 g.CombineXYZ(y=nucleic_width, z=nucleic_thickness, x=1.0),
             ),
         )
+        math_1 = quality * 3.0
+        math_2 = quality * 5.0
+        capture_1 = g.CaptureAttribute.point(geometry=atoms_1, selection=selection)
         group = SeparatePolymers(atoms=capture_1.o.geometry)
-        group_1 = MN_utils_style_cartoon(
+        group_1 = MN_utils_style_ribbon_nucleic(
+            atoms=group.o.nucleic,
+            selection=capture_1.o.selection,
+            material=material,
+            switch=g.IndexSwitch.boolean(menu_switch_1.o.output, (True, False)),
+            backbone_subdivisions=quality * 2.0,
+            backbone_resolution=quality * 4.0,
+            backbone_radius=g.IndexSwitch.float(
+                menu_switch_1.o.output, (nucleic_radius, 0.0)
+            ),
+            backbone_shade_smooth=shade_smooth,
+            backbone_scale=index_switch,
+            base_scale=g.IndexSwitch.vector(
+                menu_switch.o.output, (base_scale_cylinder, base_scale_rectangle)
+            ),
+            base_resolution=g.IndexSwitch.integer(menu_switch.o.output, (12, 4)),
+        )
+        group_2 = MN_utils_style_cartoon(
             Atoms=group.o.peptide,
             Selection=capture_1.o.selection,
             **{"Shade Smooth": shade_smooth, "Interpolate Color": color_blur},
@@ -1359,25 +1375,8 @@ class StyleCartoon(AssetGeometryGroup):
                 "Loop Resolution": math_2,
             },
         )
-        group_2 = MN_utils_style_ribbon_nucleic(
-            atoms=group.o.nucleic,
-            selection=capture_1.o.selection,
-            material=material,
-            switch=g.IndexSwitch.boolean(menu_switch_1.o.output, (True, False)),
-            backbone_subdivisions=quality * 2.0,
-            backbone_resolution=quality * 4.0,
-            backbone_radius=g.IndexSwitch.float(
-                menu_switch_1.o.output, (nucleic_radius, 0.0)
-            ),
-            backbone_shade_smooth=shade_smooth,
-            backbone_scale=index_switch,
-            base_scale=g.IndexSwitch.vector(
-                menu_switch.o.output, (base_scale_cylinder, base_scale_rectangle)
-            ),
-            base_resolution=g.IndexSwitch.integer(menu_switch.o.output, (12, 4)),
-        )
         (
-            g.JoinGeometry(geometry=(group_1.o.cartoon_mesh, group_2.o.geometry))
+            g.JoinGeometry(geometry=(group_2.o.cartoon_mesh, group_1.o.geometry))
             >> geometry_1
         )
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry

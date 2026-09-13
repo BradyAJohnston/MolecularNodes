@@ -128,6 +128,12 @@ class XPBDSolvePoints(CustomGeometryGroup):
             abs(group_1.o.res_id - evaluate_at_index), 1
         )
         math_1 = radius.point.at(index.output) + radius
+        compare_1 = g.Compare.integer.not_equal(
+            g.ShortestEdgePaths(
+                end_vertex=g.Compare.integer.equal(evaluate_at_index, g.Index())
+            ).o.next_vertex_index,
+            index.output,
+        )
         group_2 = ConstraintDistance(
             target=g.Position().o.position.point.at(index.output),
             distance=math_1,
@@ -135,12 +141,6 @@ class XPBDSolvePoints(CustomGeometryGroup):
             w2=group.o.w.point.at(index.output),
             alpha=alpha,
             deltat=deltat,
-        )
-        compare_1 = g.Compare.integer.not_equal(
-            g.ShortestEdgePaths(
-                end_vertex=g.Compare.integer.equal(evaluate_at_index, g.Index())
-            ).o.next_vertex_index,
-            index.output,
         )
         (
             capture_1.o.geometry

@@ -80,17 +80,18 @@ class SliceEdgeInstances(AssetGeometryGroup):
         realized_points = tree.outputs.geometry("Realized Points")
 
         group = SelectedInstances(instances=instances, selection=selection)
-        separate_geometry = g.SeparateGeometry.instance(
-            instances, group.o.entirely_selected
+        (
+            instances
+            >> g.SeparateGeometry.instance(selection=group.o.entirely_selected)
+            >> instances_1
         )
         (
-            g.SeparateGeometry.instance(instances, group.o.partially_selected)
+            instances
+            >> g.SeparateGeometry.instance(selection=group.o.partially_selected)
             >> g.RealizeInstances(realize_to_point_domain=True)
             >> g.SeparateGeometry.point(selection=selection)
             >> realized_points
         )
-
-        separate_geometry >> instances_1
 
 
 ASSET = SliceEdgeInstances

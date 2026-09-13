@@ -145,12 +145,12 @@ class NucleicDihedral(AssetGeometryGroup):
         )
 
         group = AtomName()
-        group_1 = IsNucleic(and_=selection)
-        group_2 = OverrideIndex(
+        group_1 = OverrideIndex(
             selection=(group > 58) & (group <= 115)
             | g.Compare.integer.equal(group, 56),
             override=ResidueMask(atom_name=55).o.index,
         )
+        group_2 = IsNucleic(and_=selection)
         index_switch = g.IndexSwitch.float(
             group.o.atom_name - 50,
             (
@@ -169,13 +169,13 @@ class NucleicDihedral(AssetGeometryGroup):
         )
         group_3 = AccumulateAxisRotation(
             position=position,
-            selection=group_1.o.selection,
+            selection=group_2.o.selection,
             pivot=MN_pivot_nucleic().o.pivot_backbone,
             angle=(BondCount().o.bonds > 1).switch.float(true=index_switch),
             group_id=ChainID(),
-            transform_index=group_2,
+            transform_index=group_1,
         )
-        group_1.o.selection.switch.vector(position, group_3.o.position) >> position_1
+        group_2.o.selection.switch.vector(position, group_3.o.position) >> position_1
 
 
 ASSET = NucleicDihedral

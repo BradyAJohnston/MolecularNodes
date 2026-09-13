@@ -225,29 +225,6 @@ class CustomForce(CustomGeometryGroup):
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         selection_1 = closure_zone.outputs.boolean("Selection")
         force_2 = closure_zone.outputs.vector("Force")
-        with g.Frame("World space to geometry space"):
-            index_switch = g.IndexSwitch.matrix(
-                CustomWorldObjectSpace(
-                    Space=geometry_space
-                ).o.custom_0_world_1_object_2,
-                (
-                    geometry_space_1.invert(),
-                    None,
-                    g.ObjectInfo(object=object).o.transform,
-                ),
-            )
-            invert_matrix = index_switch.o.output.invert()
-            _string = g.String(
-                string="The geometry nodes to be transformed into the space requested by the user before evaluating the fields."
-            )
-        with g.Frame("Force space to world space"):
-            index_switch_1 = g.IndexSwitch.matrix(
-                CustomWorldObjectSpace(Space=force_space).o.custom_0_world_1_object_2,
-                (force_space_1, None, g.ObjectInfo(object=object_1).o.transform),
-            )
-            _string_1 = g.String(
-                string="The computed force field needs to be transformed back into the space of the simulation."
-            )
         with g.Frame("Used for type inferencing"):
             evaluate_closure = g.EvaluateClosure(closure, define_signature=True)
             evaluate_closure.inputs.geometry("Geometry", structure_type="SINGLE")
@@ -257,8 +234,31 @@ class CustomForce(CustomGeometryGroup):
             evaluate_closure.outputs.geometry("Geometry", structure_type="SINGLE")
             evaluate_closure.outputs.boolean("Selection", structure_type="FIELD")
             evaluate_closure.outputs.vector("Force", structure_type="FIELD")
+        with g.Frame("Force space to world space"):
+            index_switch = g.IndexSwitch.matrix(
+                CustomWorldObjectSpace(Space=force_space).o.custom_0_world_1_object_2,
+                (force_space_1, None, g.ObjectInfo(object=object_1).o.transform),
+            )
+            _string = g.String(
+                string="The computed force field needs to be transformed back into the space of the simulation."
+            )
+        with g.Frame("World space to geometry space"):
+            index_switch_1 = g.IndexSwitch.matrix(
+                CustomWorldObjectSpace(
+                    Space=geometry_space
+                ).o.custom_0_world_1_object_2,
+                (
+                    geometry_space_1.invert(),
+                    None,
+                    g.ObjectInfo(object=object).o.transform,
+                ),
+            )
+            invert_matrix = index_switch_1.o.output.invert()
+            _string_1 = g.String(
+                string="The geometry nodes to be transformed into the space requested by the user before evaluating the fields."
+            )
         transform_direction = g.MultiplyMatrices(
-            matrix=to_world_transform.invert(), matrix_001=index_switch_1
+            matrix=to_world_transform.invert(), matrix_001=index_switch
         ).o.matrix.transform_direction(force)
         transform_geometry = geometry >> g.TransformGeometry(
             transform=g.MultiplyMatrices(
@@ -596,51 +596,6 @@ class RodStretchShearConstraint(CustomGeometryGroup):
         combine_bundle.o.bundle >> constraint
 
 
-class ObjectEffector(CustomGeometryGroup):
-    _name = "Object Effector"
-    _color_tag = "GEOMETRY"
-
-    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        object = tree.inputs.object("Object", optional_label=True)
-        effector = tree.outputs.bundle("Effector")
-
-        get_bundle_item = g.GetBundleItem.bundle(
-            g.GetGeometryBundle(
-                geometry=g.ObjectInfo(object=object).o.geometry
-            ).o.bundle,
-            "effectors",
-        )
-
-        get_bundle_item.o.item >> effector
-
-
-class CollectionEffector(CustomGeometryGroup):
-    _name = "Collection Effector"
-    _color_tag = "GEOMETRY"
-
-    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        collection = tree.inputs.collection("Collection", optional_label=True)
-        with tree.inputs.panel("Naming", default_closed=True):
-            name_pattern = tree.inputs.string(
-                "Name Pattern", "effector_{}", optional_label=True
-            )
-        effectors = tree.outputs.bundle("Effectors")
-
-        collection_children = g.CollectionChildren(
-            collection=collection, recursive=True
-        )
-        repeat_zone = g.RepeatZone(collection_children.o.objects.list_length())
-        bundle = repeat_zone.items.bundle("Bundle")
-        store_bundle_item = g.StoreBundleItem.bundle(
-            bundle.current,
-            name_pattern.format({"i": repeat_zone.iteration}),
-            ObjectEffector(Object=collection_children.o.objects[repeat_zone.iteration]),
-        )
-        store_bundle_item >> bundle.next
-
-        bundle.result >> effectors
-
-
 class SoftnessToCompliance(CustomGeometryGroup):
     _name = "Softness to Compliance"
     _color_tag = "CONVERTER"
@@ -837,6 +792,51 @@ class Collider(CustomGeometryGroup):
         )
 
         combine_bundle.o.bundle >> collider
+
+
+class ObjectEffector(CustomGeometryGroup):
+    _name = "Object Effector"
+    _color_tag = "GEOMETRY"
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        object = tree.inputs.object("Object", optional_label=True)
+        effector = tree.outputs.bundle("Effector")
+
+        get_bundle_item = g.GetBundleItem.bundle(
+            g.GetGeometryBundle(
+                geometry=g.ObjectInfo(object=object).o.geometry
+            ).o.bundle,
+            "effectors",
+        )
+
+        get_bundle_item.o.item >> effector
+
+
+class CollectionEffector(CustomGeometryGroup):
+    _name = "Collection Effector"
+    _color_tag = "GEOMETRY"
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        collection = tree.inputs.collection("Collection", optional_label=True)
+        with tree.inputs.panel("Naming", default_closed=True):
+            name_pattern = tree.inputs.string(
+                "Name Pattern", "effector_{}", optional_label=True
+            )
+        effectors = tree.outputs.bundle("Effectors")
+
+        collection_children = g.CollectionChildren(
+            collection=collection, recursive=True
+        )
+        repeat_zone = g.RepeatZone(collection_children.o.objects.list_length())
+        bundle = repeat_zone.items.bundle("Bundle")
+        store_bundle_item = g.StoreBundleItem.bundle(
+            bundle.current,
+            name_pattern.format({"i": repeat_zone.iteration}),
+            ObjectEffector(Object=collection_children.o.objects[repeat_zone.iteration]),
+        )
+        store_bundle_item >> bundle.next
+
+        bundle.result >> effectors
 
 
 class PinPositions(CustomGeometryGroup):
@@ -1416,8 +1416,8 @@ class ApplyEachGeometryCache(CustomGeometryGroup):
         path = closure_zone.inputs.string("Path", structure_type="SINGLE")
         world_3 = closure_zone.outputs.bundle("World", structure_type="SINGLE")
         geometry_1 = closure_zone.outputs.geometry("Geometry", structure_type="SINGLE")
-        get_geometry_bundle = g.GetGeometryBundle(geometry=geometry)
         get_bundle_item = g.GetBundleItem.geometry(cache, path)
+        get_geometry_bundle = g.GetGeometryBundle(geometry=geometry)
         evaluate_closure = g.EvaluateClosure(
             g.GetBundleItem.closure(
                 get_geometry_bundle.o.bundle, "sim_apply_cache"
@@ -1857,9 +1857,9 @@ class XPBDSolver(CustomGeometryGroup):
         world_1 = tree.outputs.bundle("World")
 
         with g.Frame("Evaluate substeps one at a time"):
-            math_1 = 1.0 / substeps
             repeat_zone = g.RepeatZone(substeps)
             world_2 = repeat_zone.items.bundle("World", world)
+            math_1 = 1.0 / substeps
             math_2 = repeat_zone.iteration * math_1
             xpbd_solver = g.XpbdSolver(
                 world=world_2.current,
@@ -2145,8 +2145,13 @@ class ConvertSpaceTransform(CustomGeometryGroup):
             description="The inverted matrix or the identity matrix if the input is not invertible",
         )
 
-        with g.Frame('World to "To" space'):
+        with g.Frame('"From" to world space'):
             index_switch = g.IndexSwitch.matrix(
+                CustomWorldObjectSpace(Space=from_space).o.custom_0_world_1_object_2,
+                (custom_to_world, None, g.ObjectInfo(object=from_object).o.transform),
+            )
+        with g.Frame('World to "To" space'):
+            index_switch_1 = g.IndexSwitch.matrix(
                 CustomWorldObjectSpace(Space=to_space).o.custom_0_world_1_object_2,
                 (
                     custom_to_world.invert(),
@@ -2154,13 +2159,8 @@ class ConvertSpaceTransform(CustomGeometryGroup):
                     g.ObjectInfo(object=to_object).o.transform.invert(),
                 ),
             )
-        with g.Frame('"From" to world space'):
-            index_switch_1 = g.IndexSwitch.matrix(
-                CustomWorldObjectSpace(Space=from_space).o.custom_0_world_1_object_2,
-                (custom_to_world, None, g.ObjectInfo(object=from_object).o.transform),
-            )
         multiply_matrices = g.MultiplyMatrices(
-            matrix=index_switch, matrix_001=index_switch_1
+            matrix=index_switch_1, matrix_001=index_switch
         )
         multiply_matrices.o.matrix.invert() >> inverted
 
@@ -2383,17 +2383,17 @@ class SimulateDNAGuide(CustomGeometryGroup):
                     ),
                 )
                 combine_bundle_1.items.bundle("Bend_Twist", group_1)
-            with g.Frame("Effector Collection"):
-                group_2 = CollectionEffector(Collection=effectors_collection)
             with g.Frame("Surface Collision"):
-                group_3 = Collider(
+                group_2 = Collider(
                     Deforming=deforming,
                     **{"Edge Contacts": edge_contacts},
                     Friction=surface_friction,
                 )
                 combine_bundle_2 = g.CombineBundle()
-                combine_bundle_2.items.bundle("Surface Collider", group_3.o.collider)
+                combine_bundle_2.items.bundle("Surface Collider", group_2.o.collider)
                 switch = surface_collision.switch.bundle(true=combine_bundle_2.o.bundle)
+            with g.Frame("Effector Collection"):
+                group_3 = CollectionEffector(Collection=effectors_collection)
             with g.Frame("Capture Animated"):
                 capture = g.CaptureAttribute.point(geometry=group)
                 position = capture.items.vector("Position", g.Position())
@@ -2403,8 +2403,8 @@ class SimulateDNAGuide(CustomGeometryGroup):
             with g.Frame("Curve Root Pinning"):
                 endpoint_selection = g.EndpointSelection()
                 endpoint_selection_1 = g.EndpointSelection(start_size=2, end_size=2)
-                _boolean_math = endpoint_selection.o.selection | pin_rotations
-                _boolean_math_1 = endpoint_selection.o.selection | pin_positions
+                _boolean_math = endpoint_selection.o.selection | pin_positions
+                _boolean_math_1 = endpoint_selection.o.selection | pin_rotations
                 combine_bundle_3 = g.CombineBundle()
                 combine_bundle_3.items.bundle(
                     "Pin Position",
@@ -2443,7 +2443,7 @@ class SimulateDNAGuide(CustomGeometryGroup):
                     combine_bundle_1.o.bundle,
                     combine_bundle.o.bundle,
                     switch,
-                    group_2,
+                    group_3,
                 )
             )
             combine_bundle_5 = g.CombineBundle()
@@ -2605,16 +2605,6 @@ class DNAFromCurve(AssetGeometryGroup):
             switch = g.NamedAttribute.boolean("is_comp").o.attribute.switch.integer(
                 integer_math_1, abs(integer_math_1 - 3)
             )
-        math_1 = wind * (g.Value(math.tau).o.value / g.Value(10.5) * integer_math)
-        axis_angle_to_rotation = g.AxisAngleToRotation(
-            axis=g.CurveTangent(),
-            angle=math_1.point.trailing(g.CurveOfPoint().o.curve_index),
-        )
-        store_named_attribute = g.SetHandleType(
-            curve=g.SetSplineType.bezier(curves)
-        ) >> g.StoreNamedAttribute.point.quaternion(
-            name="rotation", value=axis_angle_to_rotation
-        )
         with g.Frame("Base distances"):
             mix = g.Mix(
                 factor_float=wind,
@@ -2622,17 +2612,27 @@ class DNAFromCurve(AssetGeometryGroup):
                 b_float=g.Value(0.34),
                 clamp_factor=True,
             )
-            math_2 = integer_math * mix.o.result_float
+            math_1 = integer_math * mix.o.result_float
         vector_math = g.VectorMath.scale(
             g.NoiseTexture(
                 w=g.SceneTime().o.seconds, scale=1.02, noise_dimensions="4D"
             ).o.color,
             4.99,
         )
+        math_2 = wind * (g.Value(math.tau).o.value / g.Value(10.5) * integer_math)
+        axis_angle_to_rotation = g.AxisAngleToRotation(
+            axis=g.CurveTangent(),
+            angle=math_2.point.trailing(g.CurveOfPoint().o.curve_index),
+        )
+        store_named_attribute = g.SetHandleType(
+            curve=g.SetSplineType.bezier(curves)
+        ) >> g.StoreNamedAttribute.point.quaternion(
+            name="rotation", value=axis_angle_to_rotation
+        )
         group_3 = SimulateDNAGuide(
             **{"DNA Curve": store_named_attribute},
-            Angle=math_1,
-            Distance=math_2,
+            Angle=math_2,
+            Distance=math_1,
             Bendiness=0.0,
             Linear=10.0,
             Angular=30.0,

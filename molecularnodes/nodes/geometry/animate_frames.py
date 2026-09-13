@@ -159,24 +159,6 @@ class AnimateFrames(AssetGeometryGroup):
             description="Each frame from the collection of coordinates is output in the a single mesh. They now contain an additional attribute `frame_id` to specify which structure they are from",
         )
 
-        with g.Frame("Interpolation position based on frames from collection"):
-            group = AnimateCollectionPick(collection=frames, item=frame)
-            group_1 = AnimateFraction(
-                interpolate=interpolate, smoother_step=smoother_step, float=frame
-            )
-            group_2 = SampleMixFloat(
-                a=group.o.current,
-                b=group.o.next,
-                value=g.NamedAttribute.float("b_factor").o.attribute,
-                factor=group_1,
-            )
-            store_named_attribute = g.SetPosition(
-                geometry=atoms,
-                selection=selection,
-                position=SampleMixVector(
-                    a=group.o.current, b=group.o.next, factor=group_1
-                ),
-            ) >> g.StoreNamedAttribute.point.float(name="b_factor", value=group_2)
         with g.Frame("Have to copy original structure as frames only contain position"):
             collection_info = g.CollectionInfo(
                 collection=frames, separate_children=True
@@ -204,12 +186,33 @@ class AnimateFrames(AssetGeometryGroup):
                 )
                 >> g.SetPosition(position=sample_index)
             )
-            group_3 = SetUResID(geometry=set_position)
+            group = SetUResID(geometry=set_position)
+        with g.Frame("Interpolation position based on frames from collection"):
+            group_1 = AnimateCollectionPick(collection=frames, item=frame)
+            group_2 = AnimateFraction(
+                interpolate=interpolate, smoother_step=smoother_step, float=frame
+            )
+            group_3 = SampleMixFloat(
+                a=group_1.o.current,
+                b=group_1.o.next,
+                value=g.NamedAttribute.float("b_factor").o.attribute,
+                factor=group_2,
+            )
+            store_named_attribute = (
+                atoms
+                >> g.SetPosition(
+                    selection=selection,
+                    position=SampleMixVector(
+                        a=group_1.o.current, b=group_1.o.next, factor=group_2
+                    ),
+                )
+                >> g.StoreNamedAttribute.point.float(name="b_factor", value=group_3)
+            )
         _group_4 = SamplePosition()
         with g.Frame("Set Transform to align with structure"):
             object_info = g.ObjectInfo(object=g.SelfObject())
             (
-                group_3
+                group
                 >> g.TransformGeometry(transform=object_info.o.transform, mode="Matrix")
                 >> all_frames
             )

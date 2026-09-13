@@ -161,7 +161,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
             red=mix.o.result_color.r,
             green=mix.o.result_color.g,
             blue=mix.o.result_color.b,
-            alpha=g.SeparateColor(color=a).o.alpha,
+            alpha=a.a,
         )
         mix_5 = g.Mix(
             factor_float=factor,
@@ -183,28 +183,15 @@ class ColorMixIntermediate(AssetGeometryGroup):
             data_type="RGBA",
             clamp_factor=True,
         ).o.result_color
-        combine_color_3 = g.CombineColor(
-            red=result.r,
-            green=result.g,
-            blue=result.b,
-            alpha=g.SeparateColor(color=a).o.alpha,
-        )
         switch = intermediate.switch.color(
             ColorOKLabMix(factor=factor, a=a, b=b),
             OKLabToColor(oklab=mix_4.o.result_vector),
         )
-        (
-            g.MenuSwitch.color(
-                menu,
-                {
-                    "Linear": intermediate.switch.color(
-                        combine_color_3, combine_color_2
-                    ),
-                    "OKLab": switch,
-                },
-            )
-            >> output
+        switch_1 = intermediate.switch.color(
+            g.CombineColor(red=result.r, green=result.g, blue=result.b, alpha=a.a),
+            combine_color_2,
         )
+        g.MenuSwitch.color(menu, {"Linear": switch_1, "OKLab": switch}) >> output
 
         menu.default_value = "Linear"
 

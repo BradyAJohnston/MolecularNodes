@@ -299,7 +299,6 @@ class SimulateElasticNetwork(AssetGeometryGroup):
             )
         geometry = tree.outputs.geometry("Geometry")
 
-        boolean_math = g.BooleanMath.subtract(selection, pin_selection)
         menu_switch = g.MenuSwitch.float(
             edge_length_source,
             {
@@ -307,6 +306,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
                 "Custom": edge_length,
             },
         )
+        boolean_math = g.BooleanMath.subtract(selection, pin_selection)
         store_named_attribute = (
             mesh
             >> g.StoreNamedAttribute.point.float(
@@ -318,10 +318,10 @@ class SimulateElasticNetwork(AssetGeometryGroup):
         )
         simulation_zone = g.SimulationZone()
         geometry_1 = simulation_zone.items.geometry("Geometry", store_named_attribute)
-        math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
             geometry_1.current, name="inverse_mass", value=Mass().o.mass / 0.5
         )
+        math_1 = simulation_zone.delta_time / substeps
         repeat_zone = g.RepeatZone(substeps)
         geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
         group = XPBDInit(

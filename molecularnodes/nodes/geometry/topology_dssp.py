@@ -248,19 +248,19 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
         with g.Frame("Find Residues that we might be HBonding to"):
             group = BackboneNH(menu="Read")
             group_1 = BackboneO(method="Read")
+            sample_nearest = (
+                ca_mesh
+                >> g.SetPosition(position=group)
+                >> g.SampleNearest.point(sample_position=group_1)
+            )
+            sample_nearest_1 = (
+                ca_mesh
+                >> g.SetPosition(position=group_1)
+                >> g.SampleNearest.point(sample_position=group)
+            )
             capture = g.CaptureAttribute.point(geometry=ca_mesh)
-            o_nh = capture.items.integer(
-                "O -> NH",
-                g.SampleNearest.point(
-                    g.SetPosition(geometry=ca_mesh, position=group), group_1
-                ),
-            )
-            nh_o = capture.items.integer(
-                "NH -> O",
-                g.SampleNearest.point(
-                    g.SetPosition(geometry=ca_mesh, position=group_1), group
-                ),
-            )
+            o_nh = capture.items.integer("O -> NH", sample_nearest)
+            nh_o = capture.items.integer("NH -> O", sample_nearest_1)
         with g.Frame("Check if they are actually bonded to to the relevant atom"):
             capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
             co_nh = capture_1.items.boolean(
