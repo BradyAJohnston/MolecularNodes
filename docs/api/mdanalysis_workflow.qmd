@@ -13,6 +13,7 @@ MDAnalysis User Guide examples for
 [RMSD](https://userguide.mdanalysis.org/stable/examples/analysis/alignment_and_rms/rmsd.html)
 and
 [RMSF](https://userguide.mdanalysis.org/stable/examples/analysis/alignment_and_rms/rmsf.html)
+and [native contacts](https://userguide.mdanalysis.org/stable/examples/analysis/distances_and_contacts/contacts_native_fraction.html)
 and the domain-angle analysis from the classic
 [MDAnalysis tutorial](https://github.com/MDAnalysis/MDAnalysisTutorial). Those examples
 visualise their results with the browser-based
@@ -408,50 +409,133 @@ for frame in (closed_frame, open_frame):
     display(canvas.snapshot(frame=frame))
 ```
 
-## An animation of the whole simulation
+## The contacts that hold the domains together
 
-Finally, a movie of the full microsecond. At 24 frames per second, all 4187 frames would
-run for nearly three minutes, so we load a second copy of the trajectory that keeps
-every fifteenth frame. `in_memory_step` does this at load time, and the same alignment
-as before puts the CORE domain in a fixed frame of reference so that only the domain
-motion is left.
+The simulation starts from the closed crystal structure and opens within the first few
+nanoseconds, so the interesting part of the trajectory for a movie is the very
+beginning. Before rendering it, we find what actually ties the LID and NMP domains
+together in that closed starting frame. A capped distance search between the heavy atoms
+of the two domains returns every pair within 4.5 Å, and from the pairs we read off the
+residues involved.
 
 ```{python}
-#| warning: false
-u_movie = mda.Universe(adk.topology, adk.trajectory, in_memory=True, in_memory_step=15)
-align.AlignTraj(u_movie, reference, select="protein and name CA", in_memory=True).run()
-n_frames = u_movie.trajectory.n_frames
-print(f"{n_frames} frames, {n_frames / 24:.1f} s at 24 fps")
+from MDAnalysis.analysis import contacts
+from MDAnalysis.lib import distances
+
+lid_heavy = u.select_atoms(f"({DOMAINS['LID']}) and not name H*")
+nmp_heavy = u.select_atoms(f"({DOMAINS['NMP']}) and not name H*")
+
+u.trajectory[0]
+pairs, _ = distances.capped_distance(
+    lid_heavy.positions, nmp_heavy.positions, max_cutoff=4.5
+)
+contact_lid = lid_heavy[np.unique(pairs[:, 0])].residues
+contact_nmp = nmp_heavy[np.unique(pairs[:, 1])].residues
+
+residue_pairs = {
+    (f"{a.resname}{a.resid}", f"{b.resname}{b.resid}")
+    for a, b in zip(lid_heavy[pairs[:, 0]], nmp_heavy[pairs[:, 1]])
+}
+for lid_res, nmp_res in sorted(residue_pairs):
+    print(f"LID {lid_res}  <->  NMP {nmp_res}")
 ```
 
+A salt bridge between Lys157 on the LID and Asp54 on the NMP domain, flanked by two
+arginines, is the only direct contact between the two domains. Following the User
+Guide's [native contacts example](https://userguide.mdanalysis.org/stable/examples/analysis/distances_and_contacts/contacts_native_fraction.html),
+[](`~MDAnalysis.analysis.contacts.Contacts`) tracks the fraction of these starting
+contacts that survive in every later frame.
+
+```{python}
+#| label: fig-contacts
+#| fig-cap: Fraction of the initial LID–NMP contacts that remain, over the first 15 ns. The interface is gone within a few nanoseconds and never re-forms for long.
+q = contacts.Contacts(
+    u, select=(lid_heavy, nmp_heavy), refgroup=(lid_heavy, nmp_heavy), radius=4.5
+).run()
+
+MOVIE_FRAMES = 60
+time_ns = q.results.timeseries[:MOVIE_FRAMES, 0] * u.trajectory.dt / 1000
+fig, ax = plt.subplots(figsize=(8, 3))
+ax.plot(time_ns, q.results.timeseries[:MOVIE_FRAMES, 1], color="black", lw=1)
+ax.set(xlabel="Time (ns)", ylabel="Fraction of contacts", ylim=(0, 1.05))
+fig.tight_layout()
+```
+
+The residues go into one more selection string so that the animation can draw them.
+
+```{python}
+contact_resids = np.concatenate([contact_lid.resids, contact_nmp.resids])
+CONTACTS = "resid " + " ".join(str(r) for r in contact_resids) + " and not name H*"
+CONTACTS
+```
+
+## An animation of the salt bridge breaking
+
+The movie covers those first 60 frames (14 ns). The frames are 240 ps apart, which is
+far too coarse to watch a side chain swing away, so we lean on the playback controls of
+the [](`~mn.Molecule`) (see [Trajectories](trajectories.qmd)):
+
+- [](`~mn.Molecule.subframes`) inserts extra scene frames between trajectory frames, and
+  [](`~mn.Molecule.interpolate`) fills them by interpolating the positions, so four
+  subframes stretch each trajectory frame over five scene frames.
+- [](`~mn.Molecule.average`) averages a window of neighbouring frames, which takes the
+  thermal jitter out of the motion so the slower domain opening reads clearly.
+
 [](`~mn.Canvas.clear`) removes the molecules from the scene while keeping the camera,
-lights and render settings. The animation renders with EEVEE, which is many times faster
-than Cycles and looks close enough for a movie.
+lights and render settings, and the aligned `Universe` is wrapped in a fresh `Molecule`.
+The animation renders with EEVEE, which is many times faster than Cycles and looks close
+enough for a movie.
 
 ```{python}
 canvas.clear()
 canvas.engine = mn.scene.EEVEE()
 canvas.fps = 24
-canvas.frame_range = (0, n_frames - 1)
-movie = mn.Molecule(u_movie)
+
+movie = mn.Molecule(u)
+movie.subframes = 4
+movie.interpolate = True
+movie.average = 2
+
+canvas.frame_range = (0, MOVIE_FRAMES * (movie.subframes + 1) - 1)
+print(f"{canvas.frame_range[1] + 1} scene frames, "
+      f"{(canvas.frame_range[1] + 1) / canvas.fps:.1f} s at {canvas.fps} fps")
 ```
 
 The node tree is built once, but Blender re-evaluates it on every frame. A `Scene Time`
-node exposes the current frame, and a `Map Range` turns it into a rotation of one full
-turn over the length of the animation. After centring the atoms on the CORE domain, a
-`Transform Geometry` node applies that rotation, so the protein turns on the spot while
-the trajectory plays underneath it. As before, the secondary structure is computed
-last, right before the style.
+node exposes the current frame, and a `Map Range` turns it into a slow half turn over the
+length of the animation. After centring the atoms on the CORE domain, a
+`Transform Geometry` node applies that rotation, so the protein turns while the
+trajectory plays underneath it. The transformed atoms then feed two branches: the
+domain-coloured cartoon (secondary structure computed last, right before the style, as
+before), and the contact residues drawn as ball-and-stick in a highlight colour so they
+stand out as the salt bridge is pulled apart.
 
 ```{python}
 with movie.tree.reset() as (atoms, join):
-    turn = g.MapRange.float(g.SceneTime().o.frame, 0, n_frames - 1, 0, 2 * np.pi)
-    (
+    turn = g.MapRange.float(g.SceneTime().o.frame, *canvas.frame_range, 0, np.pi)
+    transformed = (
         color_domains(movie, atoms)
         >> mg.CentreOnSelection(selection=movie.selections.node(DOMAINS["CORE"]))
         >> g.TransformGeometry(rotation=g.CombineXYZ(y=turn))
-        >> mg.TopologyDSSP()
-        >> mg.StyleCartoon(quality=4, material=glossy.material)
+    )
+
+    transformed >> mg.TopologyDSSP() >> mg.StyleCartoon(
+        quality=4, material=glossy.material
+    ) >> join
+
+    (
+        transformed
+        >> mg.SetColor(
+            color=(1.0, 0.85, 0.2, 1.0),
+            selection=movie.selections.node(CONTACTS),
+        )
+        >> mg.StyleBallAndStick(
+            selection=movie.selections.node(CONTACTS),
+            sphere="Instance",
+            quality=3,
+            scale=1.3,
+            material=glossy.material,
+        )
         >> join
     )
 
@@ -460,11 +544,11 @@ movie.tree
 
 [](`~mn.Canvas.animation`) renders the scene's frame range and returns the video for
 display. Pass `path="adk.mp4"` to save it to disk as well. The camera is framed once, with
-a little extra margin so the rotating protein stays in shot.
+extra margin so the turning protein stays in shot.
 
 ```{python}
 #| label: fig-animation
-#| fig-cap: One microsecond of AdK dynamics, aligned on the CORE domain and turning once over the length of the animation.
+#| fig-cap: The first 14 ns of the simulation, smoothed and interpolated, with the Lys157–Asp54 salt bridge and its neighbouring arginines drawn in yellow as the LID and NMP domains pull apart.
 canvas.frame = 0
 canvas.look_at(movie, viewpoint="top", margin=0.35)
 canvas.animation()
@@ -475,8 +559,8 @@ canvas.animation()
 - Swap the dataset: `datasets.fetch_adk_transitions_DIMS()` holds 200 short trajectories
   of AdK closing, which make a clean open-to-closed movie, and
   `datasets.fetch_membrane_peptide()` is a small peptide in a lipid bilayer.
-- Compute something else and store it as an attribute — a distance, a contact count, a
-  PCA projection — and colour or scale the style by it as we did with the RMSF.
+- Compute something else and store it as an attribute — a distance, a hydrogen bond
+  count, a PCA projection — and colour or scale the style by it as we did with the RMSF.
 - The [Styles](styles.qmd), [Materials](materials.qmd) and [Node Trees](nodebpy.qmd)
   pages cover the full set of styles, colour nodes and materials used above, and
   [Rendering](rendering.qmd) covers frame-by-frame recording for animations where the
