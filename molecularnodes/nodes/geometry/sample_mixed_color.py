@@ -47,7 +47,7 @@ class SampleMixedColor(AssetGeometryGroup):
 
     _name = "Sample Mixed Color"
     _asset_name = "Sample Mixed Color"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.sample_mixed_color"}
 
@@ -99,12 +99,12 @@ class SampleMixedColor(AssetGeometryGroup):
             description="The evaluated and mixed field, sampled from the sample geometry at the given `Index`",
         )
 
-        group = IndexMixColor(color=color, index=index)
+        index_mix_color = IndexMixColor(color=color, index=index)
         (
             geometry
             >> g.SampleIndex(
-                value=group.o.color,
-                index=group.o.from_,
+                value=index_mix_color.o.color,
+                index=index_mix_color.o.from_,
                 data_type="FLOAT_COLOR",
                 clamp=True,
             )

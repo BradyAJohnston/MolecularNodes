@@ -47,7 +47,7 @@ class SampleMixedVector(AssetGeometryGroup):
 
     _name = "Sample Mixed Vector"
     _asset_name = "Sample Mixed Vector"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.sample_mixed_vector"}
 
@@ -99,12 +99,12 @@ class SampleMixedVector(AssetGeometryGroup):
             description="The evaluated and mixed field, sampled from the sample geometry at the given `Index`",
         )
 
-        group = IndexMixVector(value=vector, index=index)
+        index_mix_vector = IndexMixVector(value=vector, index=index)
         (
             geometry
             >> g.SampleIndex(
-                value=group.o.value,
-                index=group.o.from_,
+                value=index_mix_vector.o.value,
+                index=index_mix_vector.o.from_,
                 data_type="FLOAT_VECTOR",
                 clamp=True,
             )

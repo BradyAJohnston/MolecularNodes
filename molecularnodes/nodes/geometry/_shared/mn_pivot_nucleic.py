@@ -58,23 +58,23 @@ class MN_pivot_nucleic(CustomGeometryGroup):
         accumulate_base = tree.outputs.boolean("Accumulate Base")
         pivot_base = tree.outputs.boolean("Pivot Base")
 
-        group = AtomName()
+        atom_name = AtomName()
+        atom_name_1 = AtomName()
         boolean_math = (
-            g.Compare.integer.equal(group, 50).o.result
-            | g.Compare.integer.equal(group, 53)
-            | g.Compare.integer.equal(group, 54)
+            g.Compare.integer.equal(atom_name, 50).o.result
+            | g.Compare.integer.equal(atom_name, 53)
+            | g.Compare.integer.equal(atom_name, 54)
         )
         boolean_math_1 = (
             boolean_math
-            | g.Compare.integer.equal(group, 55)
-            | g.Compare.integer.equal(group, 58)
+            | g.Compare.integer.equal(atom_name, 55)
+            | g.Compare.integer.equal(atom_name, 58)
         )
-        (boolean_math_1 | g.Compare.integer.equal(group, 57)) >> pivot_backbone
-        group_1 = AtomName()
-        g.Compare.integer.equal(group_1, 61) >> pivot_base
+        (boolean_math_1 | g.Compare.integer.equal(atom_name, 57)) >> pivot_backbone
+        g.Compare.integer.equal(atom_name_1, 61) >> pivot_base
         (
             g.Compare.integer.equal(
-                SelectNucleicType().o.is_pyrimidine.switch.integer(63, 62), group_1
+                SelectNucleicType().o.is_pyrimidine.switch.integer(63, 62), atom_name_1
             )
             >> accumulate_base
         )

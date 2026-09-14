@@ -54,7 +54,7 @@ class SampleNearestAtoms(AssetGeometryGroup):
 
     _name = "Sample Nearest Atoms"
     _asset_name = "Sample Nearest Atoms"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.sample_nearest_atoms"}
 
@@ -96,33 +96,43 @@ class SampleNearestAtoms(AssetGeometryGroup):
         res_name = tree.outputs.integer("res_name")
 
         sample_nearest = g.SampleNearest.point(atoms)
-        sample_index = g.SampleIndex(
-            geometry=atoms,
-            value=g.NamedAttribute.float("b_factor").o.attribute,
-            index=sample_nearest,
+        (
+            atoms
+            >> g.SampleIndex(
+                value=g.NamedAttribute.float("b_factor").o.attribute,
+                index=sample_nearest,
+            )
+            >> b_factor
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=atoms, value=AtomicNumber(), index=sample_nearest, data_type="INT"
+        (
+            atoms
+            >> g.SampleIndex(
+                value=AtomicNumber(), index=sample_nearest, data_type="INT"
+            )
+            >> atomic_number
         )
-        sample_index_2 = g.SampleIndex(
-            geometry=atoms, value=ChainID(), index=sample_nearest, data_type="INT"
+        (
+            atoms
+            >> g.SampleIndex(value=ChainID(), index=sample_nearest, data_type="INT")
+            >> chain_id
         )
-        sample_index_3 = g.SampleIndex(
-            geometry=atoms, value=ResidueID(), index=sample_nearest, data_type="INT"
+        (
+            atoms
+            >> g.SampleIndex(value=ResidueID(), index=sample_nearest, data_type="INT")
+            >> res_id
         )
-        sample_index_4 = g.SampleIndex(
-            geometry=atoms, value=ResidueName(), index=sample_nearest, data_type="INT"
+        (
+            atoms
+            >> g.SampleIndex(value=ResidueName(), index=sample_nearest, data_type="INT")
+            >> res_name
         )
-        sample_index_5 = g.SampleIndex(
-            geometry=atoms, value=Color(), index=sample_nearest, data_type="FLOAT_COLOR"
+        (
+            atoms
+            >> g.SampleIndex(
+                value=Color(), index=sample_nearest, data_type="FLOAT_COLOR"
+            )
+            >> color
         )
-
-        sample_index_5 >> color
-        sample_index >> b_factor
-        sample_index_1 >> atomic_number
-        sample_index_2 >> chain_id
-        sample_index_3 >> res_id
-        sample_index_4 >> res_name
 
 
 ASSET = SampleNearestAtoms

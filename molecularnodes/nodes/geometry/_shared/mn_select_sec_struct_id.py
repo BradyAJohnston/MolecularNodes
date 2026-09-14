@@ -101,7 +101,7 @@ class MN_select_sec_struct_id(CustomGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = BooleanAndOr(
+        boolean_andor = BooleanAndOr(
             and_=and_,
             or_=or_,
             boolean=g.Compare.integer.equal(
@@ -109,5 +109,5 @@ class MN_select_sec_struct_id(CustomGeometryGroup):
             ),
         )
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted

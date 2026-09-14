@@ -36,7 +36,7 @@ class AtomName(AssetGeometryGroup):
 
     _name = "Atom Name"
     _asset_name = "Atom Name"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Geometry Nodes doesn't currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page",

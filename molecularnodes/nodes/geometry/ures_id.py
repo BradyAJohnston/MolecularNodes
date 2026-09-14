@@ -39,7 +39,7 @@ class UResID(AssetGeometryGroup):
 
     _name = "URes ID"
     _asset_name = "URes ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -74,10 +74,12 @@ class UResID(AssetGeometryGroup):
             description="The total of all of the values in the corresponding group",
         )
 
-        group = AttributeAtIndex(index=index, name="ures_id")
-        accumulate_field = g.AccumulateField.point.integer(group_index=group)
+        attribute_at_index = AttributeAtIndex(index=index, name="ures_id")
+        accumulate_field = g.AccumulateField.point.integer(
+            group_index=attribute_at_index
+        )
 
-        group >> ures_id
+        attribute_at_index >> ures_id
         accumulate_field.o.total >> size
 
 

@@ -449,7 +449,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             annotation_instance._update_props = True
         # material default needs to be set explicitly
         if new_prop:
-            material = "MN Default"
+            material = "Default"
             if material not in bpy.data.materials:
                 append_material(material)
             interface.mesh_material = material

@@ -28,7 +28,7 @@ from ..entities import (
     molecule,
 )
 from ..entities.base import EntityType
-from ..nodes.utils import remove_style_node, styles_mapping, swap
+from ..nodes._utils import remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from ..utils import _increase_view_distance

@@ -83,13 +83,16 @@ class EdgeDetection(CustomShaderGroup):
             g.CombineXYZ(x=1.0), angle=repeat_zone.iteration * 45.0 + map_range
         )
         vector = vector_rotate.o.vector * offset
-        group = OffsetRaycast(x_offset=vector.x, y_offset=vector.y, length=10.0)
-        math_1 = g.Math.greater_than(group.o.hit_distance, 0.0)
-        _math_2 = 1.0 - group.o.self_hit
-        vector_math = geometry.o.normal.dot(
-            geometry.o.position + group.o.ray_direction * group.o.hit_distance
+        offset_raycast = OffsetRaycast(
+            x_offset=vector.x, y_offset=vector.y, length=10.0
         )
-        vector_math_1 = group.o.hit_normal.dot(
+        math_1 = g.Math.greater_than(offset_raycast.o.hit_distance, 0.0)
+        _math_2 = 1.0 - offset_raycast.o.self_hit
+        vector_math = geometry.o.normal.dot(
+            geometry.o.position
+            + offset_raycast.o.ray_direction * offset_raycast.o.hit_distance
+        )
+        vector_math_1 = offset_raycast.o.hit_normal.dot(
             geometry_1.o.normal * geometry_1.o.backfacing.mix.float(1.0, -1.0)
         )
         mix = g.Mix(

@@ -29,7 +29,7 @@ class IsBackboneEdge(AssetGeometryGroup):
 
     _name = "Is Backbone Edge"
     _asset_name = "Is Backbone Edge"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):

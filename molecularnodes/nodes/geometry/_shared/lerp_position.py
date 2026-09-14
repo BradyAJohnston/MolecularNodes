@@ -106,5 +106,5 @@ class LerpPosition(CustomGeometryGroup):
         length = tree.outputs.float("Length")
 
         vector_math = a - b
-        b + vector_math * g.Math.exponent(deltat * (decay * -1.0)) >> position
         vector_math.length() >> length
+        b + vector_math * g.Math.exponent(deltat * (decay * -1.0)) >> position

@@ -48,7 +48,7 @@ class VectorFromPoint(AssetGeometryGroup):
 
     _name = "Vector from Point"
     _asset_name = "Vector from Point"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "VECTOR"
     _tree_properties = {"node_tool_idname": "geometry.vector_from_point"}
 

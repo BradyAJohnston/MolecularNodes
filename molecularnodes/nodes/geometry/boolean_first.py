@@ -41,7 +41,7 @@ class BooleanFirst(AssetGeometryGroup):
 
     _name = "Boolean First"
     _asset_name = "Boolean First"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Only the first `True` in each `Group ID` remains `True`, all others become `False`",

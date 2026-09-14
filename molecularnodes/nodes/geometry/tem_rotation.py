@@ -49,7 +49,7 @@ class TEMRotation(AssetGeometryGroup):
 
     _name = "TEM Rotation"
     _asset_name = "TEM Rotation"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -91,20 +91,20 @@ class TEMRotation(AssetGeometryGroup):
         boolean = tree.outputs.boolean("Boolean")
 
         named_attribute = g.NamedAttribute.float(phi)
-        named_attribute_1 = g.NamedAttribute.float(theta)
-        named_attribute_2 = g.NamedAttribute.float(psi)
+        named_attribute_1 = g.NamedAttribute.float(psi)
+        named_attribute_2 = g.NamedAttribute.float(theta)
         (
             (
                 named_attribute.o.exists
-                & (named_attribute_1.o.exists & named_attribute_2.o.exists)
+                & (named_attribute_2.o.exists & named_attribute_1.o.exists)
             )
             >> boolean
         )
         (
             RotationFromZYZ(
                 phi=named_attribute.o.attribute.to_radians(),
-                theta=named_attribute_1.o.attribute.to_radians(),
-                psi=named_attribute_2.o.attribute.to_radians(),
+                theta=named_attribute_2.o.attribute.to_radians(),
+                psi=named_attribute_1.o.attribute.to_radians(),
             )
             >> rotation
         )

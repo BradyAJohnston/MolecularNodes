@@ -46,7 +46,7 @@ class XPBDSolveOnFaces(CustomGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
 
         geometry_proximity = g.GeometryProximity(target=faces)
-        group = ConstraintDistance(
+        constraint_distance = ConstraintDistance(
             target=geometry_proximity.o.position,
             distance=0.0,
             alpha=alpha,
@@ -56,7 +56,7 @@ class XPBDSolveOnFaces(CustomGeometryGroup):
             geometry
             >> g.SetPosition(
                 selection=selection & geometry_proximity.o.is_valid,
-                offset=group.o.correction,
+                offset=constraint_distance.o.correction,
             )
             >> geometry_1
         )
@@ -138,7 +138,7 @@ class SimulateOnFaces(AssetGeometryGroup):
 
     _name = "Simulate on Faces"
     _asset_name = "Simulate on Faces"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -280,16 +280,16 @@ class SimulateOnFaces(AssetGeometryGroup):
         )
         repeat_zone = g.RepeatZone(substeps)
         geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
-        group = XPBDInit(
+        xpbd_init = XPBDInit(
             geometry=geometry_2.current,
             selection=boolean_math,
             force=force,
             drag=drag,
             deltat=math_1,
         )
-        group_1 = XPBDSolvePoints(
+        xpbd_solve_points = XPBDSolvePoints(
             geometry=XPBDSolveOnFaces(
-                Geometry=group, Faces=faces, alpha=alpha, deltaT=math_1
+                Geometry=xpbd_init, Faces=faces, alpha=alpha, deltaT=math_1
             ),
             selection=boolean_math,
             radius=particle_radius,
@@ -297,7 +297,7 @@ class SimulateOnFaces(AssetGeometryGroup):
             deltat=math_1,
         )
         set_position = XPBDSolveHook(
-            geometry=group_1,
+            geometry=xpbd_solve_points,
             selection=hook_selection,
             target=hook_target,
             decay=hook_decay,

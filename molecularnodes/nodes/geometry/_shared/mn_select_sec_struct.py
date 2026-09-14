@@ -81,8 +81,8 @@ class MN_select_sec_struct(CustomGeometryGroup):
         is_loop = tree.outputs.boolean("Is Loop")
 
         IsHelix(and_=and_) >> is_helix
+        is_loop_1 = IsLoop(and_=and_)
+        ~is_loop_1.o.selection >> is_structured
         IsSheet(and_=and_) >> is_sheet
-        group = IsLoop(and_=and_)
-        ~group.o.selection >> is_structured
 
-        group >> is_loop
+        is_loop_1 >> is_loop

@@ -70,7 +70,7 @@ class CurveVisualize(AssetGeometryGroup):
 
     _name = "Curve Visualize"
     _asset_name = "Curve Visualize"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.curve_visualize"}
 
@@ -141,57 +141,60 @@ class CurveVisualize(AssetGeometryGroup):
         )
         instances = tree.outputs.geometry("Instances")
 
-        curve_handle_positions = g.CurveHandlePositions(relative=True)
-        group = PrimitiveArrow(
-            vertices=3,
-            value=(0.1056426, 0.800023, 0.7937081, 1.0),
-            material=bpy.data.materials.get("MN Ambient Occlusion"),
-        )
         capture = g.CaptureAttribute.point(geometry=curve)
         selection_1 = capture.items.boolean("Selection", selection)
         position_1 = capture.items.vector("Position", position)
         normal_1 = capture.items.vector("Normal", normal)
-        group_1 = UnitConvert(from_=2.0)
-        _group_2 = CurveRotation(normal=normal_1.output)
-        group_3 = PrimitiveArrow(
+        curve_handle_positions = g.CurveHandlePositions(relative=True)
+        _curve_rotation = CurveRotation(normal=normal_1.output)
+        primitive_arrow = PrimitiveArrow(
+            vertices=3,
+            value=(0.1056426, 0.800023, 0.793708, 1.0),
+            material=bpy.data.materials.get("Ambient Occlusion"),
+        )
+        primitive_arrow_1 = PrimitiveArrow(
             vertices=3,
             value=(0.8000315, 0.49981865, 0.01965215, 1.0),
-            material=bpy.data.materials.get("MN Ambient Occlusion"),
+            material=bpy.data.materials.get("Ambient Occlusion"),
         )
-        group_4 = UnitConvert(from_=2.0)
         set_spline_type = g.SetSplineType.bezier(
             g.SeparateComponents(geometry=capture.o.geometry).o.curve
         )
         set_spline_type.node.mute = True
         set_handle_type = g.SetHandleType(curve=set_spline_type)
         set_handle_type.node.mute = True
-        group_5 = SetColor(atoms=set_handle_type, color=(0.0, 0.0, 0.0, 1.0))
+        set_color = SetColor(atoms=set_handle_type, color=(0.0, 0.0, 0.0, 1.0))
         set_position = g.SetPosition(
-            geometry=group_5, selection=selection_1.output, position=position_1.output
+            geometry=set_color, selection=selection_1.output, position=position_1.output
         )
         instance_on_points = g.InstanceOnPoints(
             points=set_position,
             instance=PrimitiveGimbal(
-                vertices=3, material=bpy.data.materials.get("MN Ambient Occlusion")
+                vertices=3, material=bpy.data.materials.get("Ambient Occlusion")
             ),
             rotation=g.NamedAttribute.quaternion("rotation").o.attribute,
             scale=MNUnits(value=arrow_size).o.angstrom,
         )
+        unit_convert = UnitConvert(from_=2.0)
+        unit_convert_1 = UnitConvert(from_=2.0)
         instance_on_points_1 = g.InstanceOnPoints(
-            points=group_5,
-            instance=group,
+            points=set_color,
+            instance=primitive_arrow,
             rotation=g.AlignRotationToVector(vector=curve_handle_positions.o.left),
             scale=g.CombineXYZ(
-                x=group_1, y=group_1, z=curve_handle_positions.o.left.length()
+                x=unit_convert, y=unit_convert, z=curve_handle_positions.o.left.length()
             ),
         )
+        combine_xyz = g.CombineXYZ(
+            x=unit_convert_1,
+            y=unit_convert_1,
+            z=curve_handle_positions.o.right.length(),
+        )
         instance_on_points_2 = g.InstanceOnPoints(
-            points=group_5,
-            instance=group_3,
+            points=set_color,
+            instance=primitive_arrow_1,
             rotation=g.AlignRotationToVector(vector=curve_handle_positions.o.right),
-            scale=g.CombineXYZ(
-                x=group_4, y=group_4, z=curve_handle_positions.o.right.length()
-            ),
+            scale=combine_xyz,
         )
         join_geometry = g.JoinGeometry(
             geometry=(
@@ -217,5 +220,5 @@ ASSET_METADATA = {
 }
 
 DATABLOCK_DEPENDENCIES = {
-    "materials": ("MN Ambient Occlusion",),
+    "materials": ("Ambient Occlusion",),
 }

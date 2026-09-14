@@ -92,24 +92,31 @@ class SampleNucleicBaseValues(CustomGeometryGroup):
         base_color = tree.outputs.color("Base Color", (0.8, 0.8, 0.8, 1.0))
 
         with g.Frame("Sample relevant base positions for orientations"):
-            group = ResidueMask(atom_name=61)
+            residue_mask = ResidueMask(atom_name=61)
             Color(index=ResidueMask(atom_name=67).o.index) >> base_color
-            group_1 = SelectNucleicType()
             mix = g.Mix(
                 a_vector=ResidueMask(atom_name=55).o.position,
                 b_vector=ResidueMask(atom_name=57).o.position,
                 data_type="VECTOR",
                 clamp_factor=True,
             )
-            group_2 = ResidueMask(
-                atom_name=group_1.o.is_pyrimidine.switch.integer(65, 68)
+            select_nucleic_type = SelectNucleicType()
+            residue_mask_1 = ResidueMask(
+                atom_name=select_nucleic_type.o.is_pyrimidine.switch.integer(65, 68)
             )
-            group_3 = ResidueMask(
-                atom_name=group_1.o.is_pyrimidine.switch.integer(62, 64)
+            residue_mask_2 = ResidueMask(
+                atom_name=select_nucleic_type.o.is_pyrimidine.switch.integer(62, 64)
             )
-            (group.o.is_valid & group_2.o.is_valid & group_3.o.is_valid) >> base_valid
-            group_3.o.position - group.o.position >> base_z
-            group_2.o.position - group_3.o.position >> base_y
+            (
+                (
+                    residue_mask.o.is_valid
+                    & residue_mask_1.o.is_valid
+                    & residue_mask_2.o.is_valid
+                )
+                >> base_valid
+            )
+            residue_mask_2.o.position - residue_mask.o.position >> base_z
+            residue_mask_1.o.position - residue_mask_2.o.position >> base_y
 
-        group.o.position >> base_pivot
+        residue_mask.o.position >> base_pivot
         mix.o.result_vector >> base_position

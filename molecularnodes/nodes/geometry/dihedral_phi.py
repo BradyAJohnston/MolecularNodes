@@ -52,7 +52,7 @@ class DihedralPhi(AssetGeometryGroup):
 
     _name = "Dihedral Phi"
     _asset_name = "Dihedral Phi"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.dihedral_phi"}
 
@@ -98,7 +98,7 @@ class DihedralPhi(AssetGeometryGroup):
         )
 
         menu_switch = g.MenuSwitch.integer(menu, {"Read": 0, "Compute": 1})
-        group = DihedralAngle(
+        dihedral_angle = DihedralAngle(
             a=BackboneC(
                 method=g.IndexSwitch.menu(menu_switch.o.output, ("Read", "Compute"))
             ),
@@ -112,11 +112,13 @@ class DihedralPhi(AssetGeometryGroup):
                 index=MenuResidueMask().o.index, atom_name="C", distance=1
             ).o.position,
         )
-        CAValueVector(vector=group.o.ba_bc) >> up
-        CAValueVector(vector=group.o.bc) >> axis
+        CAValueVector(vector=dihedral_angle.o.ba_bc) >> up
+        CAValueVector(vector=dihedral_angle.o.bc) >> axis
         switch = g.Switch.float(
             ChainParameter().o.residue_index,
-            true=CAValueFloat(value=FallbackFloat(name="Phi", fallback=group.o.angle)),
+            true=CAValueFloat(
+                value=FallbackFloat(name="Phi", fallback=dihedral_angle.o.angle)
+            ),
         )
         switch.o.output * -1.0 >> phi
 

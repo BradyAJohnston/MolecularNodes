@@ -25,7 +25,7 @@ jobs:
 
       - name: Build Extension
         run: |
-          blender -b -P build.py
+          blender -b --python-exit-code 1 -P build.py
 
       - name: Create Draft Release
         run: |

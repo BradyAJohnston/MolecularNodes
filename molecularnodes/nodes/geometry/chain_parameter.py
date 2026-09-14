@@ -42,7 +42,7 @@ class ChainParameter(AssetGeometryGroup):
 
     _name = "Chain Parameter"
     _asset_name = "Chain Parameter"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Information for each residue within the context of the chain",
@@ -109,20 +109,23 @@ class ChainParameter(AssetGeometryGroup):
             description="Index in the whole structure the last atom in the chain",
         )
 
-        group = ChainID()
-        group_1 = GroupInfo(group_id=group)
-        group_2 = SubGroupInfo(sub_group_id=ResidueID(), group_id=group)
+        chain_id = ChainID()
+        group_info = GroupInfo(group_id=chain_id)
+        sub_group_info = SubGroupInfo(sub_group_id=ResidueID(), group_id=chain_id)
         (
-            IndexToFactor(index=group_2.o.sub_group_id, size=group_2.o.sub_group_total)
+            IndexToFactor(
+                index=sub_group_info.o.sub_group_id,
+                size=sub_group_info.o.sub_group_total,
+            )
             >> factor
         )
-        ResidueID(index=group_2.o.index_of_first) >> first_res_id
-        ResidueID(index=group_2.o.index_of_last) >> last_res_id
+        ResidueID(index=sub_group_info.o.index_of_first) >> first_res_id
+        ResidueID(index=sub_group_info.o.index_of_last) >> last_res_id
 
-        group_2.o.sub_group_total >> residue_count
-        group_2.o.sub_group_id >> residue_index
-        group_1.o.index_of_first >> index_of_first
-        group_1.o.index_of_last >> index_of_last
+        sub_group_info.o.sub_group_total >> residue_count
+        sub_group_info.o.sub_group_id >> residue_index
+        group_info.o.index_of_first >> index_of_first
+        group_info.o.index_of_last >> index_of_last
 
 
 ASSET = ChainParameter

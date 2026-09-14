@@ -44,7 +44,7 @@ class IsHydrogen(AssetGeometryGroup):
 
     _name = "Is Hydrogen"
     _asset_name = "Is Hydrogen"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -93,12 +93,12 @@ class IsHydrogen(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = BooleanAndOr(
+        boolean_andor = BooleanAndOr(
             and_=and_, or_=or_, boolean=g.Compare.integer.equal(AtomicNumber(), 1)
         )
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = IsHydrogen

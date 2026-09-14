@@ -87,10 +87,12 @@ class MN_bs_smooth(CustomGeometryGroup):
         iterations = tree.inputs.integer("Iterations", 2, min_value=0)
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = MN_select_sec_struct()
+        mn_select_sec_struct = MN_select_sec_struct()
         position = g.Position()
         blur_attribute = g.BlurAttribute.vector(
-            position, iterations, ExpandBoolean(boolean=group.o.is_structured, expand=1)
+            position,
+            iterations,
+            ExpandBoolean(boolean=mn_select_sec_struct.o.is_structured, expand=1),
         )
         mix = g.Mix(
             factor_float=factor,
@@ -101,6 +103,8 @@ class MN_bs_smooth(CustomGeometryGroup):
         )
         (
             geometry
-            >> g.SetPosition(selection=group.o.is_sheet, position=mix.o.result_vector)
+            >> g.SetPosition(
+                selection=mn_select_sec_struct.o.is_sheet, position=mix.o.result_vector
+            )
             >> geometry_1
         )

@@ -65,7 +65,7 @@ class SetChiAngle(AssetGeometryGroup):
 
     _name = "Set Chi Angle"
     _asset_name = "Set Chi Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -138,7 +138,7 @@ class SetChiAngle(AssetGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
 
         math_1 = DihedralChiAngle().o.angle * -1.0
-        group = PeptideChi(
+        peptide_chi = PeptideChi(
             selection=selection,
             x1=x1 + math_1,
             x2=x2 + math_1,
@@ -146,7 +146,11 @@ class SetChiAngle(AssetGeometryGroup):
             x4=x4 + math_1,
             x5=x5 + math_1,
         )
-        SetUResID(geometry=geometry) >> g.SetPosition(position=group) >> geometry_1
+        (
+            SetUResID(geometry=geometry)
+            >> g.SetPosition(position=peptide_chi)
+            >> geometry_1
+        )
 
 
 ASSET = SetChiAngle

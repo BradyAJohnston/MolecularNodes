@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
-from molecularnodes.nodes.utils import get_final_style_nodes
+from molecularnodes.nodes._utils import get_final_style_nodes
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 

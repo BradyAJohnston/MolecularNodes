@@ -49,7 +49,7 @@ class PointsOfEdge(AssetGeometryGroup):
 
     _name = "Points of Edge"
     _asset_name = "Points of Edge"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.points_of_edge"}
 
@@ -126,45 +126,45 @@ class PointsOfEdge(AssetGeometryGroup):
             min_value=0,
         )
 
-        group = EdgeInfo(vertex_index=vertex_index, edge_index=edge_index)
-        g.EdgesOfVertex().o.total.point.at(group.o.point_index) >> total
-        evaluate_at_index = EdgeInfo(vertex_index=vertex_index).o.point_index.point.at(
-            group.o.point_index
-        )
-        evaluate_at_index_1 = EdgeInfo(
-            vertex_index=vertex_index, edge_index=1
-        ).o.point_index.point.at(group.o.point_index)
-        evaluate_at_index_2 = EdgeInfo(
-            vertex_index=vertex_index, edge_index=2
-        ).o.point_index.point.at(group.o.point_index)
-        evaluate_at_index_3 = EdgeInfo(
+        edge_info = EdgeInfo(vertex_index=vertex_index, edge_index=edge_index)
+        g.EdgesOfVertex().o.total.point.at(edge_info.o.point_index) >> total
+        evaluate_at_index = EdgeInfo(
             vertex_index=edge_index, edge_index=3
-        ).o.point_index.point.at(group.o.point_index)
+        ).o.point_index.point.at(edge_info.o.point_index)
+        evaluate_at_index_1 = EdgeInfo(
+            vertex_index=vertex_index
+        ).o.point_index.point.at(edge_info.o.point_index)
+        evaluate_at_index_2 = EdgeInfo(
+            vertex_index=vertex_index, edge_index=1
+        ).o.point_index.point.at(edge_info.o.point_index)
+        evaluate_at_index_3 = EdgeInfo(
+            vertex_index=vertex_index, edge_index=2
+        ).o.point_index.point.at(edge_info.o.point_index)
         index = g.Index()
         with g.Frame("check if selecting self, return -1 if so"):
             (
                 g.Compare.integer.equal(
                     evaluate_at_index, index
                 ).o.result.switch.integer(evaluate_at_index, -1)
-                >> n_0
+                >> n_3
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_1, index
                 ).o.result.switch.integer(evaluate_at_index_1, -1)
-                >> n_1
+                >> n_0
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_2, index
                 ).o.result.switch.integer(evaluate_at_index_2, -1)
-                >> n_2
+                >> n_1
             )
             (
                 g.Compare.integer.equal(
                     evaluate_at_index_3, index
                 ).o.result.switch.integer(evaluate_at_index_3, -1)
-                >> n_3
+                >> n_2
             )
 
 

@@ -452,7 +452,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
     offset: IntProperty(  # type: ignore
         name="Offset",
-        description="Offset the starting playback for the trajectory on the timeine. Positive starts the playback later than frame 0, negative starts it earlier than frame 0",
+        description="Offset the starting playback for the trajectory on the timeline. Positive starts the playback later than frame 0, negative starts it earlier than frame 0",
         default=0,
         update=_update_entities,
     )
@@ -465,11 +465,11 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
     average: IntProperty(  # type: ignore
         name="Average",
-        description="Average the position this number of frames either side of the current frame",
+        description="Average the positions across this number of frames on either side of the current frame",
         default=0,
         update=_update_entities,
         min=0,
-        soft_max=5,
+        soft_max=4,
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",

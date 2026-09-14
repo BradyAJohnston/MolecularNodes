@@ -28,7 +28,7 @@ class RotationRELION(AssetGeometryGroup):
 
     _name = "Rotation RELION"
     _asset_name = "Rotation RELION"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -54,10 +54,10 @@ class RotationRELION(AssetGeometryGroup):
         rotation = tree.outputs.rotation("Rotation")
         is_valid = tree.outputs.boolean("Is Valid")
 
-        group = TEMRotation()
+        tem_rotation = TEMRotation()
 
-        group >> rotation
-        group.o.boolean >> is_valid
+        tem_rotation >> rotation
+        tem_rotation.o.boolean >> is_valid
 
 
 ASSET = RotationRELION

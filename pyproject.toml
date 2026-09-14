@@ -4,7 +4,7 @@ version = "520.1.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 dependencies = [
-    "databpy>=0.8.0",
+    "databpy>=0.9.0",
     "mdanalysis>=2.10",
     "biotite>=1.7.1",
     "mrcfile",
@@ -12,7 +12,7 @@ dependencies = [
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.18.0",
+    "nodebpy>=520.24.0",
     "molviewspec>=1.8.1",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
@@ -117,3 +117,16 @@ order-by-type = true
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
+
+# The node-asset pipeline (python -m nodebpy.assets build|dump|ensure|check):
+# molecularnodes/nodes/ is the source of truth, nodes.blend the built,
+# untracked asset library, resources.blend the data-only datablocks the
+# build pulls in. See CONTRIBUTING.md "Node assets".
+[tool.nodebpy.assets]
+source = "molecularnodes/nodes"
+blend = "molecularnodes/assets/nodes.blend"
+resources = "molecularnodes/assets/resources.blend"
+typed-api = true
+add-reroutes = true
+split-inputs = true
+iterations = 100

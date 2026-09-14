@@ -45,7 +45,7 @@ class GeoemtryToPlanar(AssetGeometryGroup):
 
     _name = "Geoemtry to Planar"
     _asset_name = "Geoemtry to Planar"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -85,19 +85,20 @@ class GeoemtryToPlanar(AssetGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
         transform = tree.outputs.matrix("Transform")
 
-        group = GeometryPrincipalComponents(
+        geometry_principal_components = GeometryPrincipalComponents(
             geometry=g.SeparateGeometry.point(geometry, selection).o.selection
         )
         with g.Frame("Transform to Planar"):
             combine_transform = g.CombineTransform(
-                translation=group.o.group_center * -1.0,
-                rotation=group.o.rotation.invert(),
+                translation=geometry_principal_components.o.group_center * -1.0,
+                rotation=geometry_principal_components.o.rotation.invert(),
             )
-        transform_geometry = g.TransformGeometry(
-            geometry=geometry, transform=combine_transform, mode="Matrix"
+        (
+            geometry
+            >> g.TransformGeometry(transform=combine_transform, mode="Matrix")
+            >> geometry_1
         )
 
-        transform_geometry >> geometry_1
         combine_transform >> transform
 
 

@@ -62,7 +62,7 @@ class TransformMix(AssetGeometryGroup):
 
     _name = "Transform Mix"
     _asset_name = "Transform Mix"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {
         "description": "Mix between two transformations",
@@ -164,6 +164,13 @@ class TransformMix(AssetGeometryGroup):
             clamp_factor=True,
         )
         mix_1 = g.Mix(
+            factor_float=g.IndexSwitch.float(menu_switch.o.output, (factor, scale)),
+            a_vector=a.scale,
+            b_vector=b.scale,
+            data_type="VECTOR",
+            clamp_factor=True,
+        )
+        mix_2 = g.Mix(
             factor_float=g.IndexSwitch.float(
                 menu_switch.o.output, (factor, translation)
             ),
@@ -172,17 +179,10 @@ class TransformMix(AssetGeometryGroup):
             data_type="VECTOR",
             clamp_factor=True,
         )
-        mix_2 = g.Mix(
-            factor_float=g.IndexSwitch.float(menu_switch.o.output, (factor, scale)),
-            a_vector=a.scale,
-            b_vector=b.scale,
-            data_type="VECTOR",
-            clamp_factor=True,
-        )
         combine_transform = g.CombineTransform(
-            translation=mix_1.o.result_vector,
+            translation=mix_2.o.result_vector,
             rotation=mix.o.result_rotation,
-            scale=mix_2.o.result_vector,
+            scale=mix_1.o.result_vector,
         )
 
         combine_transform >> transform

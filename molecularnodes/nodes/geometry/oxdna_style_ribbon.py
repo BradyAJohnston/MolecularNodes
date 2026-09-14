@@ -159,7 +159,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
 
     _name = "oxDNA Style Ribbon"
     _asset_name = "oxDNA Style Ribbon"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "default_group_node_width": 160,
@@ -363,14 +363,14 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                     "Color": (Color(), "Use the existing `Color` attribute"),
                 },
             )
-            group = SetColor(
+            set_color = SetColor(
                 atoms=separate_geometry.o.selection,
                 selection=integer_math,
                 color=menu_switch.o.output,
             )
-        group_1 = OxDNAVectors()
-        capture = g.CaptureAttribute.point(geometry=group)
-        rotation = capture.items.rotation("Rotation", group_1.o.rotation)
+        oxdna_vectors = OxDNAVectors()
+        capture = g.CaptureAttribute.point(geometry=set_color)
+        rotation = capture.items.rotation("Rotation", oxdna_vectors.o.rotation)
         with g.Frame("Colored bases"):
             menu_switch_1 = g.MenuSwitch.color(
                 base_colors,
@@ -387,7 +387,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                     atoms=SetInstancer(geometry=capture.o.geometry),
                     color=menu_switch_1.o.output,
                 )
-                >> g.SetPosition(offset=group_1.o.base_offset)
+                >> g.SetPosition(offset=oxdna_vectors.o.base_offset)
                 >> g.InstanceOnPoints(
                     instance=FallbackGeometry(
                         geometry=base_geometry,
@@ -397,12 +397,13 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                     scale=base_scale,
                 )
             )
-        group_2 = OxDNAVectors()
+        oxdna_vectors_1 = OxDNAVectors()
         with g.Frame():
             set_position = g.SetPosition(
-                geometry=capture.o.geometry, offset=group_2.o.backbone_offset
+                geometry=capture.o.geometry, offset=oxdna_vectors_1.o.backbone_offset
             )
             with g.Frame("Backbone Stick"):
+                angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
                 with g.Frame(
                     "Each segment is it's own mesh, flipping the circular endpoints"
                 ):
@@ -420,20 +421,21 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
                         >> g.MeshToCurve()
                         >> g.ReverseCurve(selection=capture_1.o.selection)
                     )
-                group_3 = AngstromToWorld(angstrom=backbone_radius)
                 curve_circle = g.CurveCircle(resolution=quality * 4, radius=ball_radius)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
-                    group_3, group_3.o.world * arrow_taper
+                    angstrom_to_world, angstrom_to_world.o.world * arrow_taper
                 )
                 set_spline_resolution = (
                     g.MeshToCurve(mesh=set_position)
-                    >> g.SetCurveNormal(normal=group_2.o.base_normal, mode="Free")
+                    >> g.SetCurveNormal(
+                        normal=oxdna_vectors_1.o.base_normal, mode="Free"
+                    )
                     >> g.SetSplineType.bezier()
                     >> g.SetSplineResolution(resolution=quality * 2)
                 )
                 curve_to_mesh = g.SetHandleType(
                     curve=set_spline_resolution
-                ) >> g.CurveToMesh(profile_curve=curve_circle, scale=group_3)
+                ) >> g.CurveToMesh(profile_curve=curve_circle, scale=angstrom_to_world)
                 curve_to_mesh_1 = reverse_curve >> g.CurveToMesh(
                     profile_curve=curve_circle, scale=switch
                 )
@@ -488,9 +490,9 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
             shade_smooth=shade_smooth,
         )
         set_shade_smooth.node.warning_propagation = "ERRORS"
-        group_4 = SmoothByAngle(mesh=set_shade_smooth, angle=math.pi / 3)
-        group_4.node.warning_propagation = "ERRORS"
-        group_4 >> g.SetMaterial(material=material) >> geometry
+        smooth_by_angle = SmoothByAngle(mesh=set_shade_smooth, angle=math.pi / 3)
+        smooth_by_angle.node.warning_propagation = "ERRORS"
+        smooth_by_angle >> g.SetMaterial(material=material) >> geometry
 
         backbone_shape.default_value = "Arrows"
         base_shape.default_value = "Sphere"

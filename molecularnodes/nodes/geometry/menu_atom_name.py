@@ -44,7 +44,7 @@ class MenuAtomName(AssetGeometryGroup):
 
     _name = "Menu Atom Name"
     _asset_name = "Menu Atom Name"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):

@@ -57,7 +57,7 @@ class CurveEndpointValues(AssetGeometryGroup):
 
     _name = "Curve Endpoint Values"
     _asset_name = "Curve Endpoint Values"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "Output a different integer value for the endpoints of a curve and the middle of a curve",
@@ -149,18 +149,20 @@ class CurveEndpointValues(AssetGeometryGroup):
             description="The `n` points at the end of a spline determined by `End Size`",
         )
 
-        endpoint_selection = g.EndpointSelection(start_size=start_size, end_size=0)
-        endpoint_selection_1 = g.EndpointSelection(end_size=end_size, start_size=0)
+        endpoint_selection = g.EndpointSelection(end_size=end_size, start_size=0)
+        endpoint_selection_1 = g.EndpointSelection(start_size=start_size, end_size=0)
         (
-            endpoint_selection_1.o.selection.switch.integer(
-                endpoint_selection.o.selection.switch.integer(other_value, start_value),
+            endpoint_selection.o.selection.switch.integer(
+                endpoint_selection_1.o.selection.switch.integer(
+                    other_value, start_value
+                ),
                 end_value,
             )
             >> value
         )
 
-        endpoint_selection >> start_selection
-        endpoint_selection_1 >> end_selection
+        endpoint_selection_1 >> start_selection
+        endpoint_selection >> end_selection
 
 
 ASSET = CurveEndpointValues

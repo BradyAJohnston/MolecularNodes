@@ -46,7 +46,7 @@ class OKLabOffsetLCh(AssetGeometryGroup):
 
     _name = "OKLab Offset LCh"
     _asset_name = "OKLab Offset LCh"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -83,8 +83,13 @@ class OKLabOffsetLCh(AssetGeometryGroup):
         h = tree.inputs.float("h", 0.0, min_value=-10_000.0, max_value=10_000.0)
         oklab_1 = tree.outputs.vector("OKLab")
 
-        group = OKLabToLCh(oklab=oklab)
-        LChToOKLab(l=l + group.o.l, c=group.o.c, h=group.o.h + h) >> oklab_1
+        oklab_to_lch = OKLabToLCh(oklab=oklab)
+        (
+            LChToOKLab(
+                l=l + oklab_to_lch.o.l, c=oklab_to_lch.o.c, h=oklab_to_lch.o.h + h
+            )
+            >> oklab_1
+        )
 
 
 ASSET = OKLabOffsetLCh

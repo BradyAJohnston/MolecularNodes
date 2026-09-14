@@ -46,7 +46,7 @@ class SelectedInstances(AssetGeometryGroup):
 
     _name = "Selected Instances"
     _asset_name = "Selected Instances"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -121,23 +121,23 @@ class SelectedInstances(AssetGeometryGroup):
         no_points_selected = capture_1.items.boolean(
             "No points selected", g.Compare.integer.equal(accumulate_field.o.total, 0)
         )
-        group = SeparateFirstPoint(
+        separate_first_point = SeparateFirstPoint(
             geometry=capture_1.o.geometry, sort=False, group_id=index.output
         )
         sample_index = g.SampleIndex(
-            geometry=group,
+            geometry=separate_first_point,
             value=all_points_select.output,
             index=index_1,
             data_type="BOOLEAN",
         )
         sample_index_1 = g.SampleIndex(
-            geometry=group,
+            geometry=separate_first_point,
             value=some_points_selected.output,
             index=index_1,
             data_type="BOOLEAN",
         )
         sample_index_2 = g.SampleIndex(
-            geometry=group,
+            geometry=separate_first_point,
             value=no_points_selected.output,
             index=index_1,
             data_type="BOOLEAN",

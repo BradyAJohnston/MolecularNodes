@@ -42,7 +42,7 @@ class IsSheet(AssetGeometryGroup):
 
     _name = "Is Sheet"
     _asset_name = "Is Sheet"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.is_sheet"}
 
@@ -92,10 +92,10 @@ class IsSheet(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = MN_select_sec_struct_id(and_=and_, or_=or_, id=2)
+        mn_select_sec_struct_id = MN_select_sec_struct_id(and_=and_, or_=or_, id=2)
 
-        group >> selection
-        group.o.inverted >> inverted
+        mn_select_sec_struct_id >> selection
+        mn_select_sec_struct_id.o.inverted >> inverted
 
 
 ASSET = IsSheet

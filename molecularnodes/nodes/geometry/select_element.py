@@ -364,7 +364,7 @@ class SelectElement(AssetGeometryGroup):
 
     _name = "Select Element"
     _asset_name = "Select Element"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_element"}
 
@@ -909,10 +909,10 @@ class SelectElement(AssetGeometryGroup):
                 hg,
             ),
         )
-        group = BooleanAndOr(and_=and_, or_=or_, boolean=index_switch)
+        boolean_andor = BooleanAndOr(and_=and_, or_=or_, boolean=index_switch)
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted
 
 
 ASSET = SelectElement

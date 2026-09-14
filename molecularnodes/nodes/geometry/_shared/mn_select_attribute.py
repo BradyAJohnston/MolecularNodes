@@ -99,9 +99,9 @@ class MN_select_attribute(CustomGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = BooleanAndOr(
+        boolean_andor = BooleanAndOr(
             and_=and_, or_=or_, boolean=g.NamedAttribute.boolean(name).o.attribute
         )
 
-        group >> selection
-        group.o.inverted >> inverted
+        boolean_andor >> selection
+        boolean_andor.o.inverted >> inverted

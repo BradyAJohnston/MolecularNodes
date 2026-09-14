@@ -67,7 +67,7 @@ class AnimateFrames(AssetGeometryGroup):
 
     _name = "Animate Frames"
     _asset_name = "Animate Frames"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.animate_frames"}
 
@@ -160,25 +160,29 @@ class AnimateFrames(AssetGeometryGroup):
         )
 
         with g.Frame("Interpolation position based on frames from collection"):
-            group = AnimateFraction(
+            animate_collection_pick = AnimateCollectionPick(
+                collection=frames, item=frame
+            )
+            animate_fraction = AnimateFraction(
                 interpolate=interpolate, smoother_step=smoother_step, float=frame
             )
-            group_1 = AnimateCollectionPick(collection=frames, item=frame)
-            group_2 = SampleMixFloat(
-                a=group_1.o.current,
-                b=group_1.o.next,
+            sample_mix_float = SampleMixFloat(
+                a=animate_collection_pick.o.current,
+                b=animate_collection_pick.o.next,
                 value=g.NamedAttribute.float("b_factor").o.attribute,
-                factor=group,
+                factor=animate_fraction,
+            )
+            sample_mix_vector = SampleMixVector(
+                a=animate_collection_pick.o.current,
+                b=animate_collection_pick.o.next,
+                factor=animate_fraction,
             )
             store_named_attribute = (
                 atoms
-                >> g.SetPosition(
-                    selection=selection,
-                    position=SampleMixVector(
-                        a=group_1.o.current, b=group_1.o.next, factor=group
-                    ),
+                >> g.SetPosition(selection=selection, position=sample_mix_vector)
+                >> g.StoreNamedAttribute.point.float(
+                    name="b_factor", value=sample_mix_float
                 )
-                >> g.StoreNamedAttribute.point.float(name="b_factor", value=group_2)
             )
         with g.Frame("Have to copy original structure as frames only contain position"):
             collection_info = g.CollectionInfo(
@@ -207,12 +211,12 @@ class AnimateFrames(AssetGeometryGroup):
                 )
                 >> g.SetPosition(position=sample_index)
             )
-            group_3 = SetUResID(geometry=set_position)
-        _group_4 = SamplePosition()
+            set_ures_id = SetUResID(geometry=set_position)
+        _sample_position = SamplePosition()
         with g.Frame("Set Transform to align with structure"):
             object_info = g.ObjectInfo(object=g.SelfObject())
             (
-                group_3
+                set_ures_id
                 >> g.TransformGeometry(transform=object_info.o.transform, mode="Matrix")
                 >> all_frames
             )

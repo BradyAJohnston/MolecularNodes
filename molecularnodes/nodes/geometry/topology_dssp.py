@@ -65,14 +65,16 @@ class HBondEnergy(CustomGeometryGroup):
         bond_vector = tree.outputs.vector("Bond Vector")
 
         with g.Frame("1 / r(ON)"):
-            group = RecipAngDis(A=o, B=n)
+            recip_ang_dis = RecipAngDis(A=o, B=n)
         with g.Frame("1 / r(CH)"):
-            group_1 = RecipAngDis(A=c_, B=h)
+            recip_ang_dis_1 = RecipAngDis(A=c_, B=h)
         with g.Frame("1 / r(OH)"):
-            group_2 = RecipAngDis(A=o, B=h)
+            recip_ang_dis_2 = RecipAngDis(A=o, B=h)
         with g.Frame("1 / r(CN)"):
-            group_3 = RecipAngDis(A=c_, B=n)
-        math_1 = (group.o.value + group_1 - group_2 - group_3) * -1.0
+            recip_ang_dis_3 = RecipAngDis(A=c_, B=n)
+        math_1 = (
+            recip_ang_dis.o.value + recip_ang_dis_1 - recip_ang_dis_2 - recip_ang_dis_3
+        ) * -1.0
         math_1.node.mute = True
         math_2 = math_1 * 0.084 * 332.0
         (math_2 < -0.5) >> is_bonded
@@ -97,21 +99,21 @@ class CheckHBond(CustomGeometryGroup):
         bond_energy = tree.outputs.float("Bond Energy")
         bond_vector = tree.outputs.vector("Bond Vector")
 
-        group = HBondEnergy(
+        hbond_energy = HBondEnergy(
             O=BackboneO(method="Read").o.o.point.at(co_index),
             C=BackboneC(method="Read").o.c.point.at(co_index),
             N=BackboneN(method="Read").o.n.point.at(nh_index),
             H=BackboneNH(menu="Read").o.nh.point.at(nh_index),
         )
-        group_1 = IntegerDistance(
+        integer_distance = IntegerDistance(
             a=UResID(index=co_index).o.ures_id,
             b=UResID(index=nh_index).o.ures_id,
             distance=distance,
         )
-        (group.o.is_bonded & group_1.o.cutoff) >> is_bonded
+        (hbond_energy.o.is_bonded & integer_distance.o.cutoff) >> is_bonded
 
-        group.o.bond_energy >> bond_energy
-        group.o.bond_vector >> bond_vector
+        hbond_energy.o.bond_energy >> bond_energy
+        hbond_energy.o.bond_vector >> bond_vector
 
 
 class HBondBackboneCheck(CustomGeometryGroup):
@@ -134,14 +136,14 @@ class HBondBackboneCheck(CustomGeometryGroup):
         bond_energy = tree.outputs.float("Bond Energy")
         h_o = tree.outputs.vector("H->O")
 
-        group = CheckHBond(
+        check_hbond = CheckHBond(
             **{"CO Index": co_index + co_offset, "NH Index": nh_index + nh_offset},
             Distance=1,
         )
 
-        group >> is_bonded
-        group.o.bond_energy >> bond_energy
-        group.o.bond_vector >> h_o
+        check_hbond >> is_bonded
+        check_hbond.o.bond_energy >> bond_energy
+        check_hbond.o.bond_vector >> h_o
 
 
 class MN_topo_calc_helix(CustomGeometryGroup):
@@ -153,7 +155,7 @@ class MN_topo_calc_helix(CustomGeometryGroup):
         is_helix = tree.outputs.boolean("Is Helix")
         instances = tree.outputs.geometry("Instances")
 
-        group = BackboneNH(menu="Read")
+        backbone_nh = BackboneNH(menu="Read")
         capture = g.CaptureAttribute.point(geometry=ca_mesh)
         n_3_helix = capture.items.boolean(
             "3-helix", HBondBackboneCheck(**{"NH Offset": 3}).o.is_bonded
@@ -214,8 +216,8 @@ class MN_topo_calc_helix(CustomGeometryGroup):
                 | OffsetBoolean(boolean=boolean_math_8, offset=-3)
                 | OffsetBoolean(boolean=boolean_math_8, offset=-4)
             )
-        group_1 = OffsetIndex(offset=4)
-        _group_2 = OffsetVector(vector=group, index=group_1)
+        offset_index = OffsetIndex(offset=4)
+        _offset_vector = OffsetVector(vector=backbone_nh, index=offset_index)
         sample_index = g.SampleIndex(
             geometry=capture.o.geometry,
             value=boolean_math_10 | boolean_math_3 | boolean_math_7,
@@ -227,8 +229,8 @@ class MN_topo_calc_helix(CustomGeometryGroup):
                 atoms=capture.o.geometry,
                 selection=n_4_helix.output,
                 position=BackboneO(method="Read"),
-                target_index=group_1,
-                target_position=group,
+                target_index=offset_index,
+                target_position=backbone_nh,
             )
             >> instances
         )
@@ -246,21 +248,21 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
         instances = tree.outputs.geometry("Instances")
 
         with g.Frame("Find Residues that we might be HBonding to"):
-            group = BackboneO(method="Read")
-            group_1 = BackboneNH(menu="Read")
+            backbone_nh = BackboneNH(menu="Read")
+            backbone_o = BackboneO(method="Read")
+            sample_nearest = (
+                ca_mesh
+                >> g.SetPosition(position=backbone_nh)
+                >> g.SampleNearest.point(sample_position=backbone_o)
+            )
+            sample_nearest_1 = (
+                ca_mesh
+                >> g.SetPosition(position=backbone_o)
+                >> g.SampleNearest.point(sample_position=backbone_nh)
+            )
             capture = g.CaptureAttribute.point(geometry=ca_mesh)
-            o_nh = capture.items.integer(
-                "O -> NH",
-                g.SampleNearest.point(
-                    g.SetPosition(geometry=ca_mesh, position=group_1), group
-                ),
-            )
-            nh_o = capture.items.integer(
-                "NH -> O",
-                g.SampleNearest.point(
-                    g.SetPosition(geometry=ca_mesh, position=group), group_1
-                ),
-            )
+            o_nh = capture.items.integer("O -> NH", sample_nearest)
+            nh_o = capture.items.integer("NH -> O", sample_nearest_1)
         with g.Frame("Check if they are actually bonded to to the relevant atom"):
             capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
             co_nh = capture_1.items.boolean(
@@ -271,7 +273,7 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
             )
         with g.Frame("Debug arrows for HBonds"):
             value = g.Value(1.0)
-            group_2 = VisualizeRelativeAtoms(
+            visualize_relative_atoms = VisualizeRelativeAtoms(
                 atoms=capture_1.o.geometry,
                 selection=co_nh.output,
                 scale=value,
@@ -279,7 +281,7 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
                 target_index=o_nh.output,
                 target_position=BackboneNH(menu="Read"),
             )
-            group_3 = VisualizeRelativeAtoms(
+            visualize_relative_atoms_1 = VisualizeRelativeAtoms(
                 atoms=capture_1.o.geometry,
                 selection=nh_co.output,
                 scale=value,
@@ -287,19 +289,21 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
                 target_index=nh_o.output,
                 target_position=BackboneO(method="Read"),
             )
-            join_geometry = g.JoinGeometry(geometry=(group_2, group_3))
+            join_geometry = g.JoinGeometry(
+                geometry=(visualize_relative_atoms, visualize_relative_atoms_1)
+            )
         with g.Frame("Not 100% correct but best I can do without Lists"):
             boolean_math = OffsetBoolean(
                 boolean=co_nh.output, offset=-1
             ).o.boolean & OffsetBoolean(boolean=nh_co.output, offset=1)
-            group_4 = BooleanRunFill(
+            boolean_run_fill = BooleanRunFill(
                 boolean=co_nh.output
                 & OffsetBoolean(boolean=nh_co.output, index=o_nh.output)
                 | boolean_math,
                 fill_size=2,
             )
         capture_2 = g.CaptureAttribute.point(geometry=capture_1.o.geometry)
-        boolean = capture_2.items.boolean("Boolean", group_4)
+        boolean = capture_2.items.boolean("Boolean", boolean_run_fill)
         (
             capture_2.o.geometry
             >> g.SampleIndex(value=boolean.output, index=g.Index(), data_type="BOOLEAN")
@@ -331,7 +335,7 @@ class TopologyDSSP(AssetGeometryGroup):
 
     _name = "Topology DSSP"
     _asset_name = "Topology DSSP"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "description": "Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm",
@@ -371,20 +375,26 @@ class TopologyDSSP(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_2 = closure_zone.inputs.geometry("Atoms")
         geometry = closure_zone.outputs.geometry("Geometry")
-        group = MN_topo_assign_backbone(atoms=atoms_2)
-        capture = g.CaptureAttribute.point(geometry=group.o.ca_atoms)
+        mn_topo_assign_backbone = MN_topo_assign_backbone(atoms=atoms_2)
+        capture = g.CaptureAttribute.point(geometry=mn_topo_assign_backbone.o.ca_atoms)
         is_sheet = capture.items.boolean(
-            "Is Sheet", MN_topo_calc_sheet(**{"CA Mesh": group.o.ca_atoms}).o.is_sheet
+            "Is Sheet",
+            MN_topo_calc_sheet(
+                **{"CA Mesh": mn_topo_assign_backbone.o.ca_atoms}
+            ).o.is_sheet,
         )
         is_helix = capture.items.boolean(
-            "Is Helix", MN_topo_calc_helix(**{"CA Mesh": group.o.ca_atoms}).o.is_helix
+            "Is Helix",
+            MN_topo_calc_helix(
+                **{"CA Mesh": mn_topo_assign_backbone.o.ca_atoms}
+            ).o.is_helix,
         )
         switch = BooleanRunTrim(
             boolean=g.BooleanMath.subtract(is_sheet.output, is_helix.output), size=3
         ).o.boolean.switch.integer(3, 2)
         sample_index = capture.o.geometry >> g.SampleIndex(
             value=is_helix.output.switch.integer(switch, 1),
-            index=group.o.sample_index,
+            index=mn_topo_assign_backbone.o.sample_index,
             data_type="INT",
         )
         store_named_attribute = g.StoreNamedAttribute.point.integer(

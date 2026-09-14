@@ -61,26 +61,44 @@ class MN_select_nucleic(CustomGeometryGroup):
             "Is Nucleic", description="True if the atoms are part of a nucleic acid"
         )
 
-        group = MN_constants_atom_name_nucleic()
+        mn_constants_atom_name_nucleic = MN_constants_atom_name_nucleic()
         named_attribute = g.NamedAttribute.integer("atom_name")
         (
             (
-                (named_attribute.o.attribute >= group.o.backbone_lower)
-                & (named_attribute.o.attribute <= group.o.backbone_upper)
+                (
+                    named_attribute.o.attribute
+                    >= mn_constants_atom_name_nucleic.o.backbone_lower
+                )
+                & (
+                    named_attribute.o.attribute
+                    <= mn_constants_atom_name_nucleic.o.backbone_upper
+                )
             )
             >> is_backbone
         )
         (
             (
-                (named_attribute.o.attribute >= group.o.side_chain_lower)
-                & (named_attribute.o.attribute <= group.o.side_chain_upper)
+                (
+                    named_attribute.o.attribute
+                    >= mn_constants_atom_name_nucleic.o.side_chain_lower
+                )
+                & (
+                    named_attribute.o.attribute
+                    <= mn_constants_atom_name_nucleic.o.side_chain_upper
+                )
             )
             >> is_side_chain
         )
         (
             (
-                (named_attribute.o.attribute >= group.o.backbone_lower)
-                & (named_attribute.o.attribute <= group.o.side_chain_upper)
+                (
+                    named_attribute.o.attribute
+                    >= mn_constants_atom_name_nucleic.o.backbone_lower
+                )
+                & (
+                    named_attribute.o.attribute
+                    <= mn_constants_atom_name_nucleic.o.side_chain_upper
+                )
             )
             >> is_nucleic
         )

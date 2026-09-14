@@ -92,7 +92,7 @@ class StyleBallAndStick(AssetGeometryGroup):
 
     _name = "Style Ball and Stick"
     _asset_name = "Style Ball and Stick"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "node_tool_idname": "geometry.style_ball_and_stick",
@@ -247,7 +247,7 @@ class StyleBallAndStick(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_1 >> g.SeparateGeometry.point(selection=selection)
-        group = StyleSpheres(
+        style_spheres = StyleSpheres(
             atoms=separate_geometry.o.selection,
             sphere=sphere,
             quality=quality,
@@ -259,7 +259,7 @@ class StyleBallAndStick(AssetGeometryGroup):
             separate_geometry.o.selection,
             FindBonds(atoms=separate_geometry.o.selection, scale=bond_find_scale),
         )
-        group_1 = MN_utils_style_sticks(
+        mn_utils_style_sticks = MN_utils_style_sticks(
             atoms=switch,
             radius=bond_scale,
             resolution=quality * 6,
@@ -269,12 +269,11 @@ class StyleBallAndStick(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
-        (
-            g.SetMaterial(
-                geometry=g.JoinGeometry(geometry=(group, group_1)), material=material
-            )
-            >> geometry_1
+        set_material = g.SetMaterial(
+            geometry=g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks)),
+            material=material,
         )
+        set_material >> geometry_1
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         sphere.default_value = "Instance"
@@ -285,8 +284,4 @@ ASSET = StyleBallAndStick
 
 ASSET_METADATA = {
     "catalog_id": "541e6649-2ea6-4225-b1ee-5c0da6f5f1f6",
-}
-
-DATABLOCK_DEPENDENCIES = {
-    "materials": ("MN Default.old",),
 }

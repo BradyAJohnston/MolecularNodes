@@ -100,10 +100,10 @@ class MN_peptide_chi_values(CustomGeometryGroup):
         value = tree.outputs.float("Value")
         atom_name = tree.outputs.integer("atom_name")
 
-        group = AtomName()
+        atom_name_1 = AtomName()
         (
             g.IndexSwitch.integer(
-                group,
+                atom_name_1,
                 (
                     0,
                     0,
@@ -145,7 +145,7 @@ class MN_peptide_chi_values(CustomGeometryGroup):
             >> atom_name
         )
         index_switch = g.IndexSwitch.float(
-            group,
+            atom_name_1,
             (
                 0.0,
                 0.0,

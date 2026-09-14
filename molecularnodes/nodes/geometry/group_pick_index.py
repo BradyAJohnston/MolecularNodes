@@ -45,7 +45,7 @@ class GroupPickIndex(AssetGeometryGroup):
 
     _name = "Group Pick Index"
     _asset_name = "Group Pick Index"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
     class _Inputs(SocketAccessor):
@@ -93,10 +93,10 @@ class GroupPickIndex(AssetGeometryGroup):
         compare = g.Compare.integer.equal(
             relative_index, GroupParameter(group_id=group_id).o.relative_index
         )
-        group = GroupPick(pick=compare, group_id=group_id)
+        group_pick = GroupPick(pick=compare, group_id=group_id)
 
-        group >> is_valid
-        group.o.index >> index
+        group_pick >> is_valid
+        group_pick.o.index >> index
 
 
 ASSET = GroupPickIndex

@@ -47,7 +47,7 @@ class OxDNAVectors(AssetGeometryGroup):
 
     _name = "oxDNA Vectors"
     _asset_name = "oxDNA Vectors"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
 
     class _Inputs(SocketAccessor):
@@ -87,7 +87,7 @@ class OxDNAVectors(AssetGeometryGroup):
         base_offset = tree.outputs.vector("Base Offset")
         rotation = tree.outputs.rotation("Rotation")
 
-        group = AngstromToWorld(angstrom=3.4)
+        angstrom_to_world = AngstromToWorld(angstrom=3.4)
         evaluate_at_index = g.NamedAttribute.vector("base_vector").o.attribute.point.at(
             index
         )
@@ -97,10 +97,10 @@ class OxDNAVectors(AssetGeometryGroup):
         axes_to_rotation = g.AxesToRotation(
             primary_axis=evaluate_at_index, secondary_axis=evaluate_at_index_1
         )
-        evaluate_at_index * group >> base_offset
+        evaluate_at_index * angstrom_to_world >> base_offset
         (
-            evaluate_at_index * (group.o.world * -1.0)
-            + evaluate_at_index.cross(evaluate_at_index_1) * group
+            evaluate_at_index * (angstrom_to_world.o.world * -1.0)
+            + evaluate_at_index.cross(evaluate_at_index_1) * angstrom_to_world
             >> backbone_offset
         )
 

@@ -68,7 +68,7 @@ class ColorRainbow(AssetGeometryGroup):
 
     _name = "Color Rainbow"
     _asset_name = "Color Rainbow"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_rainbow"}
 
@@ -166,14 +166,15 @@ class ColorRainbow(AssetGeometryGroup):
         combine_color = g.CombineColor.hsv(
             (offset + menu_switch.o.output).wrap(1.0, 0.0), hsl_saturation, hsl_value
         )
-        group = LChToOKLab(
+        lch_to_oklab = LChToOKLab(
             l=oklab_luminance,
             c=oklab_chroma,
             h=menu_switch.o.output * math.tau + offset,
         )
         (
             g.MenuSwitch.color(
-                color_space, {"HSV": combine_color, "OKLab": OKLabToColor(oklab=group)}
+                color_space,
+                {"HSV": combine_color, "OKLab": OKLabToColor(oklab=lch_to_oklab)},
             )
             >> color
         )

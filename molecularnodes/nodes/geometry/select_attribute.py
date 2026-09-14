@@ -47,7 +47,7 @@ class SelectAttribute(AssetGeometryGroup):
 
     _name = "Select Attribute"
     _asset_name = "Select Attribute"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {"node_tool_idname": "geometry.select_attribute"}
 
@@ -101,10 +101,10 @@ class SelectAttribute(AssetGeometryGroup):
             "Inverted", description="The inverse of the calculated selection"
         )
 
-        group = MN_select_attribute(and_=and_, or_=or_, name=name)
+        mn_select_attribute = MN_select_attribute(and_=and_, or_=or_, name=name)
 
-        group >> selection
-        group.o.inverted >> inverted
+        mn_select_attribute >> selection
+        mn_select_attribute.o.inverted >> inverted
 
 
 ASSET = SelectAttribute

@@ -47,7 +47,7 @@ class SeparateAtoms(AssetGeometryGroup):
 
     _name = "Separate Atoms"
     _asset_name = "Separate Atoms"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {"node_tool_idname": "geometry.separate_atoms"}
 
@@ -103,7 +103,7 @@ class SeparateAtoms(AssetGeometryGroup):
         capture = g.CaptureAttribute.point(geometry=atoms_2)
         capture.items.integer("Value")
         capture.o.geometry >> geometry
-        _group = EvaluateOnAtoms()
+        _evaluate_on_atoms = EvaluateOnAtoms()
         capture_1 = g.CaptureAttribute.point(geometry=atoms)
         value = capture_1.items.integer("Value", g.Index())
         separate_geometry = capture_1.o.geometry >> g.SeparateGeometry.point(

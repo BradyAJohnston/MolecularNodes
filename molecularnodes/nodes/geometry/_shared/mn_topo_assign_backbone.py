@@ -81,11 +81,12 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
         sample_index = tree.outputs.integer("Sample Index")
 
         with g.Frame("Compute only on backbone atoms, but capture their idx first"):
-            group = IsAlphaCarbon()
+            is_alpha_carbon = IsAlphaCarbon()
             capture = g.CaptureAttribute.point(geometry=atoms)
-            selection = capture.items.boolean("Selection", group.o.selection)
+            selection = capture.items.boolean("Selection", is_alpha_carbon.o.selection)
             index = capture.items.integer(
-                "Index", g.AccumulateField.point.integer(group.o.selection).o.trailing
+                "Index",
+                g.AccumulateField.point.integer(is_alpha_carbon.o.selection).o.trailing,
             )
             separate_geometry = g.SeparateGeometry.point(
                 capture.o.geometry, IsBackbone().o.selection
@@ -98,7 +99,7 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
         )
         repeat_zone = g.RepeatZone(4)
         geometry = repeat_zone.items.geometry("Geometry", separate_geometry.o.selection)
-        group_1 = MenuResidueMask(
+        menu_residue_mask = MenuResidueMask(
             atom_name=g.IndexSwitch.menu(repeat_zone.iteration, ("N", "CA", "C", "O"))
         )
         join_strings = g.JoinStrings(
@@ -109,7 +110,10 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
             delimiter="_",
         )
         store_named_attribute = g.StoreNamedAttribute.point.vector(
-            geometry.current, group_1.o.is_valid, join_strings, group_1.o.position
+            geometry.current,
+            menu_residue_mask.o.is_valid,
+            join_strings,
+            menu_residue_mask.o.position,
         )
         store_named_attribute >> geometry.next
         (

@@ -53,7 +53,7 @@ class SetPhiPsiAngle(AssetGeometryGroup):
 
     _name = "Set Phi Psi Angle"
     _asset_name = "Set Phi Psi Angle"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -99,12 +99,12 @@ class SetPhiPsiAngle(AssetGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        group = PeptideDihedral(
+        peptide_dihedral = PeptideDihedral(
             selection=selection,
             phi=DihedralPhi().o.phi.mul_add(-1.0, phi),
             psi=DihedralPsi().o.psi.mul_add(-1.0, psi),
         )
-        geometry >> g.SetPosition(position=group) >> geometry_1
+        geometry >> g.SetPosition(position=peptide_dihedral) >> geometry_1
 
 
 ASSET = SetPhiPsiAngle

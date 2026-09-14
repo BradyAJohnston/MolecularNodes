@@ -97,7 +97,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
     _name = "Density Style ISO Surface"
     _asset_name = "Density Style ISO Surface"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
     class _Inputs(SocketAccessor):
@@ -244,14 +244,14 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
         bounding_box = g.BoundingBox(geometry=volume)
         math_1 = contour_thickness * 0.001
-        group = BetweenVector(
+        switch = visible.switch.geometry(true=volume)
+        between_vector = BetweenVector(
             value=g.Position().o.position.map_range(
                 bounding_box.o.min, bounding_box.o.max
             ),
             lower=slice_center - slice_width,
             upper=slice_center + slice_width,
         )
-        switch = visible.switch.geometry(true=volume)
         set_material = (
             g.VolumeToMesh(volume=switch, threshold=threshold * -1.0, voxel_size=0.3)
             >> g.StoreNamedAttribute.point.color(name="Color", value=negative_color)
@@ -265,7 +265,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
         separate_geometry = (
             g.JoinGeometry(geometry=(set_material_1, set_material))
             >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
-            >> g.SeparateGeometry.point(selection=group)
+            >> g.SeparateGeometry.point(selection=between_vector)
         )
         set_material_2 = (
             g.MeshToCurve(mesh=separate_geometry.o.selection, selection=show_contours)

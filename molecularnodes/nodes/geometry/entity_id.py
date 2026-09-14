@@ -36,7 +36,7 @@ class EntityID(AssetGeometryGroup):
 
     _name = "Entity ID"
     _asset_name = "Entity ID"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "INPUT"
     _tree_properties = {
         "description": "The `entity_id` attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)",

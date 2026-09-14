@@ -47,7 +47,7 @@ class IndexMixColor(AssetGeometryGroup):
 
     _name = "Index Mix Color"
     _asset_name = "Index Mix Color"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.index_mix_color"}
 
@@ -104,19 +104,19 @@ class IndexMixColor(AssetGeometryGroup):
             description="The mixed value of the field, first evaluating the field at the `From` and `To` Indices then mixing between them based on the fraction of the input `Index`",
         )
 
-        group = FractionateFloat(value=index)
+        fractionate_float = FractionateFloat(value=index)
         mix = g.Mix(
-            factor_float=group.o.fraction,
-            a_color=color.point.at(group.o.floor),
-            b_color=color.point.at(group.o.ceiling),
+            factor_float=fractionate_float.o.fraction,
+            a_color=color.point.at(fractionate_float.o.floor),
+            b_color=color.point.at(fractionate_float.o.ceiling),
             data_type="RGBA",
             clamp_factor=True,
             clamp_result=True,
         )
 
         mix.o.result_color >> color_1
-        group.o.floor >> from_
-        group.o.ceiling >> to
+        fractionate_float.o.floor >> from_
+        fractionate_float.o.ceiling >> to
 
 
 ASSET = IndexMixColor

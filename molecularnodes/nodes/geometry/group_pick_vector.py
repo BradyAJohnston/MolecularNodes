@@ -50,7 +50,7 @@ class GroupPickVector(AssetGeometryGroup):
 
     _name = "Group Pick Vector"
     _asset_name = "Group Pick Vector"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
     _tree_properties = {"node_tool_idname": "geometry.group_pick_vector"}
 
@@ -117,16 +117,16 @@ class GroupPickVector(AssetGeometryGroup):
             description="Picked vector for the group, `(0, 0, 0)` if not valid",
         )
 
-        group = GroupPick(pick=pick, group_id=group_id)
+        group_pick = GroupPick(pick=pick, group_id=group_id)
         (
-            group.o.is_valid.switch.vector(
-                (0.0, 0.0, 0.0), position.point.at(group.o.index)
+            group_pick.o.is_valid.switch.vector(
+                (0.0, 0.0, 0.0), position.point.at(group_pick.o.index)
             )
             >> vector
         )
 
-        group >> is_valid
-        group.o.index >> index
+        group_pick >> is_valid
+        group_pick.o.index >> index
 
 
 ASSET = GroupPickVector

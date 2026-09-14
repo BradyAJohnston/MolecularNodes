@@ -66,7 +66,7 @@ class RandomColor(AssetGeometryGroup):
 
     _name = "Random Color"
     _asset_name = "Random Color"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
 
     class _Inputs(SocketAccessor):
@@ -153,7 +153,7 @@ class RandomColor(AssetGeometryGroup):
         random_value = g.RandomValue.float(
             id=id, seed=color_seed + g.Integer(integer=0)
         )
-        group = LChToOKLab(
+        lch_to_oklab = LChToOKLab(
             l=oklab_luminance,
             c=oklab_chroma,
             h=random_value.o.value.map_range(to_min=-math.pi, to_max=math.pi),
@@ -165,7 +165,7 @@ class RandomColor(AssetGeometryGroup):
                     "HSL": g.CombineColor.hsl(
                         random_value, hsl_saturation, hsl_lightness
                     ),
-                    "OKLab": OKLabToColor(oklab=group),
+                    "OKLab": OKLabToColor(oklab=lch_to_oklab),
                 },
             )
             >> color

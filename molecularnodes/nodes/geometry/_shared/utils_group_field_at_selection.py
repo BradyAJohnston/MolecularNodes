@@ -161,9 +161,9 @@ class Utils_group_field_at_selection(CustomGeometryGroup):
             group_index
         )
         float.point.at(accumulate_field) >> float_1
-        vector.point.at(accumulate_field) >> vector_1
         boolean.point.at(accumulate_field) >> boolean_1
         color.point.at(accumulate_field) >> color_1
         integer.point.at(accumulate_field) >> integer_1
+        vector.point.at(accumulate_field) >> vector_1
 
         accumulate_field >> group_index_1

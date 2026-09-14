@@ -47,7 +47,7 @@ class SeparateFirstPoint(AssetGeometryGroup):
 
     _name = "Separate First Point"
     _asset_name = "Separate First Point"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "description": "Separate the first point for each `Group ID` and return only those points. Optionally sort by the `Group ID` as well"

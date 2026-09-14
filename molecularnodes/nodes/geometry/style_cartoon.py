@@ -101,13 +101,13 @@ class SampleFromCACurve(CustomGeometryGroup):
         tangent = tree.outputs.vector("Tangent")
         normal = tree.outputs.vector("Normal")
 
-        group = Tmp_ss_attributes()
+        tmp_ss_attributes = Tmp_ss_attributes()
         sample_curve = g.SampleCurve(
             curves=ca_curve,
             factor=OffsetPointAlongCurve(
-                point_index=group.o.tmp_idx, offset=offset
+                point_index=tmp_ss_attributes.o.tmp_idx, offset=offset
             ).o.factor,
-            curve_index=group.o.tmp_idx_curve,
+            curve_index=tmp_ss_attributes.o.tmp_idx_curve,
         )
         capture = g.CaptureAttribute.point(geometry=ca_curve)
         position_1 = capture.items.vector("Position", sample_curve.o.position)
@@ -116,19 +116,19 @@ class SampleFromCACurve(CustomGeometryGroup):
         sample_index = g.SampleIndex(
             geometry=capture.o.geometry,
             value=position_1.output,
-            index=group.o.tmp_idx,
+            index=tmp_ss_attributes.o.tmp_idx,
             data_type="FLOAT_VECTOR",
         )
         sample_index_1 = g.SampleIndex(
             geometry=capture.o.geometry,
             value=normal_1.output,
-            index=group.o.tmp_idx,
+            index=tmp_ss_attributes.o.tmp_idx,
             data_type="FLOAT_VECTOR",
         )
         sample_index_2 = g.SampleIndex(
             geometry=capture.o.geometry,
             value=tangent_1.output,
-            index=group.o.tmp_idx,
+            index=tmp_ss_attributes.o.tmp_idx,
             data_type="FLOAT_VECTOR",
         )
 
@@ -178,7 +178,7 @@ class FixLoopAlignmentIntoAH(CustomGeometryGroup):
                 start_size=2, start_value=-1, end_size=2, end_value=1
             ).o.value,
         )
-        group = VectorInAngstroms(
+        vector_in_angstroms = VectorInAngstroms(
             vector=OffsetVector(vector=tangent, offset=value.output),
             normalize=False,
             angstrom=value.output * -0.5,
@@ -186,7 +186,7 @@ class FixLoopAlignmentIntoAH(CustomGeometryGroup):
         set_position = capture_1.o.geometry >> g.SetPosition(
             selection=boolean_math_4,
             position=OffsetVector(vector=g.Position(), offset=value.output),
-            offset=group,
+            offset=vector_in_angstroms,
         )
         with g.Frame("Move loop ends slightly inside of SS"):
             (
@@ -217,40 +217,37 @@ class CAToLoops(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
+        sample_from_ca_curve = SampleFromCACurve(**{"CA Curve": geometry}, Offset=0.1)
+        sample_from_ca_curve_1 = SampleFromCACurve(
+            **{"CA Curve": geometry}, Offset=-0.1
+        )
+        tmp_ss_attributes = Tmp_ss_attributes()
         endpoint_selection = g.EndpointSelection(end_size=0)
-        group = IsLoop()
         with g.Frame("Find where it transitions direction from one SS to another"):
-            group_1 = IsHelix()
-            group_2 = IsSheet()
+            is_helix = IsHelix()
+            is_sheet = IsSheet()
             boolean_math = ExpandBoolean(
-                boolean=group_1.o.selection, expand=1
-            ).o.boolean & group_2.o.selection | group_1.o.selection & ExpandBoolean(
-                boolean=group_2.o.selection, expand=1
+                boolean=is_helix.o.selection, expand=1
+            ).o.boolean & is_sheet.o.selection | is_helix.o.selection & ExpandBoolean(
+                boolean=is_sheet.o.selection, expand=1
             )
-        group_3 = IsHelix(and_=g.EndpointSelection().o.selection & as_cylinders)
-        group_4 = Tmp_ss_attributes()
-        group_5 = SampleFromCACurve(**{"CA Curve": geometry}, Offset=-0.1)
-        group_6 = SampleFromCACurve(**{"CA Curve": geometry}, Offset=0.1)
-        with g.Frame("Expand selection by 1 so the ribbon stops where the SS starts"):
-            boolean_math_1 = (
-                ExpandBoolean(boolean=group.o.selection, expand=1).o.boolean
-                | boolean_math
-            )
+        is_helix_1 = IsHelix(and_=g.EndpointSelection().o.selection & as_cylinders)
         with g.Frame("catch direct change from one to another (needs improving)"):
-            _boolean_math_2 = IsHelix().o.selection & OffsetBoolean(
+            _boolean_math_1 = IsHelix().o.selection & OffsetBoolean(
                 boolean=IsSheet().o.selection, offset=1
             ) | IsSheet().o.selection & OffsetBoolean(
                 boolean=IsHelix().o.selection, offset=-1
             )
+        is_loop = IsLoop()
+        with g.Frame("Expand selection by 1 so the ribbon stops where the SS starts"):
+            boolean_math_2 = (
+                ExpandBoolean(boolean=is_loop.o.selection, expand=1).o.boolean
+                | boolean_math
+            )
         capture = g.CaptureAttribute.point(geometry=geometry)
-        boolean = capture.items.boolean("Boolean", boolean_math_1)
+        boolean = capture.items.boolean("Boolean", boolean_math_2)
         subdivisions_1 = capture.items.integer("Subdivisions", subdivisions)
         radius_1 = capture.items.float("Radius", radius)
-        group_7 = VectorInAngstroms(
-            vector=g.Normal(legacy_corner_normals=True).o.normal,
-            normalize=False,
-            angstrom=2.0,
-        )
         rotate_rotation = CurveRotation().o.rotation.rotate(
             (0.0, 0.0, 0.0), rotation_space="LOCAL"
         )
@@ -258,10 +255,10 @@ class CAToLoops(CustomGeometryGroup):
         rotation = capture_1.items.rotation("Rotation", rotate_rotation)
         with g.Frame("Don't resample when directly from one SS to another"):
             compare = g.SplineLength().o.point_count > 2
-        switch = group_4.o.tmp_ss_is_last.switch.float(
-            group_4.o.tmp_ss_is_first.switch.float(true=0.04), -0.09
+        switch = tmp_ss_attributes.o.tmp_ss_is_last.switch.float(
+            tmp_ss_attributes.o.tmp_ss_is_first.switch.float(true=0.04), -0.09
         )
-        group_8 = CurveSplitSplines(
+        curve_split_splines = CurveSplitSplines(
             curve=capture_1.o.geometry,
             selection=boolean.output,
             distance_cutoff=0.05,
@@ -269,36 +266,42 @@ class CAToLoops(CustomGeometryGroup):
             offset_amount=switch,
         )
         switch_1 = endpoint_selection.o.selection.switch.vector(
-            group_6.o.position, group_5.o.position
+            sample_from_ca_curve.o.position, sample_from_ca_curve_1.o.position
         )
         switch_2 = endpoint_selection.o.selection.switch.vector(
             SampleFromCACurve(**{"CA Curve": geometry}, Offset=0.2).o.tangent,
             SampleFromCACurve(**{"CA Curve": geometry}, Offset=-0.2).o.tangent,
         )
-        capture_2 = g.CaptureAttribute.point(geometry=group_8)
+        capture_2 = g.CaptureAttribute.point(geometry=curve_split_splines)
         capture_2.items.vector("Position", switch_1)
         tangent = capture_2.items.vector("Tangent", switch_2)
+        switch_3 = endpoint_selection.o.selection.switch.vector(
+            sample_from_ca_curve.o.normal, sample_from_ca_curve_1.o.normal
+        )
+        vector_in_angstroms = VectorInAngstroms(
+            vector=g.Normal(legacy_corner_normals=True).o.normal,
+            normalize=False,
+            angstrom=2.0,
+        )
         set_position = (
             capture_2.o.geometry
             >> g.SetCurveNormal(
-                selection=group_3.o.selection,
-                normal=endpoint_selection.o.selection.switch.vector(
-                    group_6.o.normal, group_5.o.normal
-                ),
-                mode="Free",
+                selection=is_helix_1.o.selection, normal=switch_3, mode="Free"
             )
             >> g.SetPosition(
-                selection=group_3.o.selection, position=switch_1, offset=group_7
+                selection=is_helix_1.o.selection,
+                position=switch_1,
+                offset=vector_in_angstroms,
             )
         )
-        group_9 = SetColor(
+        set_color = SetColor(
             atoms=set_position,
             selection=compare,
             color=OffsetColorAttribute(offset=CurveEndpointValues().o.value),
         )
         set_curve_radius = (
             g.SetHandleType(
-                curve=FixLoopAlignmentIntoAH(Curve=group_9, Tangent=tangent.output)
+                curve=FixLoopAlignmentIntoAH(Curve=set_color, Tangent=tangent.output)
             )
             >> g.SetCurveNormal()
             >> g.SetCurveRadius(radius=radius_1.output)
@@ -310,7 +313,7 @@ class CAToLoops(CustomGeometryGroup):
                 profile_type="Default Profile",
                 socket_6=rotate_rotation,
                 profile_resolution=profile_resolution,
-                input_14=0.0,
+                socket_11=0.0,
             )
             >> g.StoreNamedAttribute.point.integer(name="sec_struct", value=3)
             >> geometry_1
@@ -329,14 +332,14 @@ class SplitCurves(CustomGeometryGroup):
         expand = tree.inputs.integer("Expand", 1, min_value=-2147483647)
         curve = tree.outputs.geometry("Curve")
 
-        _group = DihedralPhi()
+        _dihedral_phi = DihedralPhi()
         compare = DihedralPsi().o.psi > -3.080002
         with g.Frame("Switch back and forth for beta-sheet fixing"):
             boolean_math = IsSheet().o.selection & (
                 g.Index().o.index - g.AccumulateField.point.integer(compare).o.leading
             ).modulo(2)
             _switch = boolean_math.switch.float(-1.0, 1.0)
-        _group_1 = DihedralPsi()
+        _dihedral_psi = DihedralPsi()
         accumulate_field = g.AccumulateField.point.integer(
             g.BooleanMath.subtract(
                 IsSheet().o.selection, DihedralPhi().o.phi > 2.719998
@@ -372,7 +375,6 @@ class SplitCurves(CustomGeometryGroup):
         g.SetHandleType(curve=set_spline_type) >> curve
         viewer = g.Viewer()
         capture_1.o.geometry >> viewer
-        selection >> viewer
 
 
 class NodeGroup(CustomGeometryGroup):
@@ -498,11 +500,6 @@ class TweakArrowHeads(CustomGeometryGroup):
         input = tree.inputs.float("Input", 0.0)
         output = tree.outputs.geometry("Output")
 
-        group = VectorInAngstroms(
-            vector=Tmp_ss_attributes().o.tmp_curve_tangent,
-            normalize=False,
-            angstrom=input.map_range(to_max=-0.2),
-        )
         vector_math = g.Normal(legacy_corner_normals=True).o.normal.dot(
             Tmp_ss_attributes().o.tmp_curve_normal
         )
@@ -523,7 +520,12 @@ class TweakArrowHeads(CustomGeometryGroup):
             offset_scale=input.map_range(to_max=MNUnits(value=0.8900002).o.angstrom),
             individual=False,
         )
-        group_1 = VectorInAngstroms(
+        vector_in_angstroms = VectorInAngstroms(
+            vector=Tmp_ss_attributes().o.tmp_curve_tangent,
+            normalize=False,
+            angstrom=input.map_range(to_max=-0.2),
+        )
+        vector_in_angstroms_1 = VectorInAngstroms(
             vector=normal.output,
             normalize=False,
             angstrom=(input > 0.9).switch.float(
@@ -531,13 +533,16 @@ class TweakArrowHeads(CustomGeometryGroup):
             ),
         )
         set_position = g.SetPosition(
-            geometry=g.SetPosition(
-                geometry=extrude_mesh, selection=extrude_mesh.o.top, offset=group_1
-            ),
+            geometry=extrude_mesh,
             selection=extrude_mesh.o.top,
-            offset=group,
+            offset=vector_in_angstroms_1,
         )
-        rounded.switch.geometry(set_position, extrude_mesh) >> output
+        set_position_1 = g.SetPosition(
+            geometry=set_position,
+            selection=extrude_mesh.o.top,
+            offset=vector_in_angstroms,
+        )
+        rounded.switch.geometry(set_position_1, extrude_mesh) >> output
 
 
 class CAToSheet(CustomGeometryGroup):
@@ -625,19 +630,21 @@ class CAToSheet(CustomGeometryGroup):
             x=thickness_1.output,
             y=rounded.switch.float(width_1.output + switch, width_1.output),
         )
-        group = CurveCustomProfile(
+        curve_custom_profile = CurveCustomProfile(
             curve=store_named_attribute,
             subdivisions=resolution.output,
             socket_6=CurveRotation(),
             profile_scale=combine_xyz,
             profile_resolution=profile_resolution,
-            input_14=0.0,
+            socket_11=0.0,
         )
         (
             g.BooleanMath.subtract(arrows, rounded).o.boolean.switch.geometry(
-                group,
+                curve_custom_profile,
                 TweakArrowHeads(
-                    Geometry=group, Rounded=rounded, Input=arrow_mask.output
+                    Geometry=curve_custom_profile,
+                    Rounded=rounded,
+                    Input=arrow_mask.output,
                 ),
             )
             >> geometry
@@ -679,8 +686,56 @@ class CAToHelix(CustomGeometryGroup):
         subdivisions = tree.inputs.integer("Subdivisions", 6, min_value=1)
         geometry = tree.outputs.geometry("Geometry")
 
+        with g.Frame("Creating Helix Cylinders"):
+            _curve_custom_profile = CurveCustomProfile(
+                profile_scale=(2.65, 2.65, 2.65), profile_resolution=8, socket_11=0.0
+            )
+            boolean_math = ~g.EndpointSelection().o.selection
+            _expand_boolean = ExpandBoolean()
+            is_helix = IsHelix(and_=boolean)
+            named_attribute = g.NamedAttribute.float("radius")
+            curve_split_splines = CurveSplitSplines(
+                curve=g.SetCurveRadius(curve=curve, radius=0.085),
+                selection=is_helix.o.selection,
+                distance_cutoff=0.06,
+            )
+            _switch = (Tmp_ss_attributes().o.tmp_ss_size > 6).switch.boolean(
+                is_helix.o.selection,
+                BooleanShrink(Boolean=is_helix.o.selection, Shrink=1),
+            )
+            set_curve_radius = (
+                g.SetPosition(
+                    geometry=curve_split_splines,
+                    offset=VectorInAngstroms(
+                        vector=g.Normal(legacy_corner_normals=True).o.normal,
+                        angstrom=2.4,
+                    ),
+                )
+                >> g.SetSplineType()
+                >> g.SetPosition(
+                    selection=boolean_math,
+                    position=g.BlurAttribute.vector(g.Position(), 2, boolean_math),
+                )
+                >> g.SetCurveNormal()
+                >> g.ResampleCurve(length=MNUnits(value=2.0).o.angstrom, mode="Length")
+                >> g.SetSplineType.bezier()
+                >> g.SetCurveRadius(radius=MNUnits(value=width * 4.0).o.angstrom)
+            )
+            curve_to_mesh = (
+                g.SetHandleType(curve=set_curve_radius)
+                >> g.SetSplineResolution(resolution=subdivisions / 4.0)
+                >> g.CurveToMesh(
+                    profile_curve=g.CurveCircle(
+                        resolution=profile_resolution * 2.0, radius=0.31
+                    ),
+                    scale=named_attribute.o.exists.switch.float(
+                        1.0, named_attribute.o.attribute
+                    ),
+                    fill_caps=True,
+                )
+            )
         with g.Frame("Creating Alpha-helix Geometry"):
-            _group = CurveRotation()
+            _curve_rotation = CurveRotation()
             rotate_rotation = (
                 CurveRotation()
                 .o.rotation.rotate((math.pi / 9, 0.0, 0.0), rotation_space="LOCAL")
@@ -720,66 +775,18 @@ class CAToHelix(CustomGeometryGroup):
                 )
                 >> g.SetSplineType.bezier()
             )
-            group_1 = CurveCustomProfile(
+            curve_custom_profile_1 = CurveCustomProfile(
                 curve=g.SetHandleType(curve=set_spline_type),
                 subdivisions=subdivisions,
                 socket_6=align_rotation_to_vector,
                 profile_scale=g.CombineXYZ(x=thickness, y=width),
                 profile_resolution=profile_resolution,
-                input_14=0.0,
-            )
-        with g.Frame("Creating Helix Cylinders"):
-            boolean_math = ~g.EndpointSelection().o.selection
-            _group_2 = ExpandBoolean()
-            _group_3 = CurveCustomProfile(
-                profile_scale=(2.65, 2.65, 2.65), profile_resolution=8, input_14=0.0
-            )
-            group_4 = IsHelix(and_=boolean)
-            named_attribute = g.NamedAttribute.float("radius")
-            group_5 = CurveSplitSplines(
-                curve=g.SetCurveRadius(curve=curve, radius=0.085),
-                selection=group_4.o.selection,
-                distance_cutoff=0.06,
-            )
-            set_curve_radius = (
-                g.SetPosition(
-                    geometry=group_5,
-                    offset=VectorInAngstroms(
-                        vector=g.Normal(legacy_corner_normals=True).o.normal,
-                        angstrom=2.4,
-                    ),
-                )
-                >> g.SetSplineType()
-                >> g.SetPosition(
-                    selection=boolean_math,
-                    position=g.BlurAttribute.vector(g.Position(), 2, boolean_math),
-                )
-                >> g.SetCurveNormal()
-                >> g.ResampleCurve(length=MNUnits(value=2.0).o.angstrom, mode="Length")
-                >> g.SetSplineType.bezier()
-                >> g.SetCurveRadius(radius=MNUnits(value=width * 4.0).o.angstrom)
-            )
-            _switch = (Tmp_ss_attributes().o.tmp_ss_size > 6).switch.boolean(
-                group_4.o.selection,
-                BooleanShrink(Boolean=group_4.o.selection, Shrink=1),
-            )
-            curve_to_mesh = (
-                g.SetHandleType(curve=set_curve_radius)
-                >> g.SetSplineResolution(resolution=subdivisions / 4.0)
-                >> g.CurveToMesh(
-                    profile_curve=g.CurveCircle(
-                        resolution=profile_resolution * 2.0, radius=0.31
-                    ),
-                    scale=named_attribute.o.exists.switch.float(
-                        1.0, named_attribute.o.attribute
-                    ),
-                    fill_caps=True,
-                )
+                socket_11=0.0,
             )
         _evaluate_closure = g.EvaluateClosure()
-        join_geometry = g.JoinGeometry(geometry=(group_1, curve_to_mesh))
+        join_geometry = g.JoinGeometry(geometry=(curve_custom_profile_1, curve_to_mesh))
         viewer = g.Viewer()
-        group_5 >> viewer
+        curve_split_splines >> viewer
 
         join_geometry >> geometry
 
@@ -888,42 +895,47 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
         cartoon_mesh = tree.outputs.geometry("Cartoon Mesh")
         ca_splines = tree.outputs.geometry("CA Splines")
 
-        group = AtomsToCACurves(
+        atoms_to_ca_curves = AtomsToCACurves(
             atoms=atoms,
             selection=selection,
             bs_smoothing=sheet_smoothing,
             threshold=ca_curve_threshold,
         )
-        group_1 = CAToLoops(
-            Geometry=group,
+        ca_to_loops = CAToLoops(
+            Geometry=atoms_to_ca_curves,
             Subdivisions=loop_subdivisions,
             Radius=loop_radius,
             **{"As Cylinders": as_cylinders, "Profile Resolution": loop_resolution},
         )
-        group_2 = SplitCurves(Curves=group, Selection=IsHelix().o.selection, Expand=0)
-        group_3 = NodeGroup(
-            Curves=SplitCurves(Curves=group, Selection=IsLoop().o.selection, Expand=0),
+        menu_switch = g.MenuSwitch.boolean(
+            arrows_sharp, {"Sharp": False, "Round": True}
+        )
+        split_curves = SplitCurves(
+            Curves=atoms_to_ca_curves, Selection=IsHelix().o.selection, Expand=0
+        )
+        nodegroup = NodeGroup(
+            Curves=SplitCurves(
+                Curves=atoms_to_ca_curves, Selection=IsLoop().o.selection, Expand=0
+            ),
             **{"Reset Curve Normal": True},
             Rotation=(0.0, 0.0, math.tau / 9),
             Menu="Round",
             Radius=0.05,
         )
-        _join_geometry = g.JoinGeometry(
-            geometry=(
-                NodeGroup(Curves=group_2, Scale=(0.8, 2.5, 1.0)),
-                NodeGroup(
-                    Curves=SplitCurves(
-                        Curves=group, Selection=IsSheet().o.selection, Expand=0
-                    )
-                ),
-                group_3,
+        nodegroup_1 = NodeGroup(
+            Curves=SplitCurves(
+                Curves=atoms_to_ca_curves, Selection=IsSheet().o.selection, Expand=0
             )
         )
-        menu_switch = g.MenuSwitch.boolean(
-            arrows_sharp, {"Sharp": False, "Round": True}
+        _join_geometry = g.JoinGeometry(
+            geometry=(
+                NodeGroup(Curves=split_curves, Scale=(0.8, 2.5, 1.0)),
+                nodegroup_1,
+                nodegroup,
+            )
         )
-        group_4 = CAToSheet(
-            Curve=group,
+        ca_to_sheet = CAToSheet(
+            Curve=atoms_to_ca_curves,
             **{
                 "Profile Resolution": menu_switch.o.output.switch.integer(
                     4, profile_resolution
@@ -935,8 +947,8 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
             Rounded=menu_switch.o.output,
             Arrows=as_arrows,
         )
-        group_5 = CAToHelix(
-            Curve=group,
+        ca_to_helix = CAToHelix(
+            Curve=atoms_to_ca_curves,
             Boolean=as_cylinders,
             Thickness=helix_thickness,
             Width=helix_width,
@@ -948,23 +960,23 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
             Subdivisions=helix_subdivisions,
         )
         store_named_attribute = g.StoreNamedAttribute.edge.boolean(
-            g.JoinGeometry(geometry=(group_5, group_4, group_1)),
+            g.JoinGeometry(geometry=(ca_to_helix, ca_to_sheet, ca_to_loops)),
             name="sharp_edge",
             value=~shade_smooth | (g.EdgeAngle().o.signed_angle > math.pi / 3),
         )
         (
             Cleanup(
                 geometry=store_named_attribute,
-                color_source=group,
+                color_source=atoms_to_ca_curves,
                 material=material,
                 shade_smooth=shade_smooth,
             )
             >> cartoon_mesh
         )
         viewer = g.Viewer()
-        group_2 >> viewer
+        split_curves >> viewer
 
-        group >> ca_splines
+        atoms_to_ca_curves >> ca_splines
 
         arrows_sharp.default_value = "Sharp"
 
@@ -1075,7 +1087,7 @@ class StyleCartoon(AssetGeometryGroup):
 
     _name = "Style Cartoon"
     _asset_name = "Style Cartoon"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "node_tool_idname": "geometry.style_cartoon",
@@ -1314,7 +1326,6 @@ class StyleCartoon(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         capture_1 = g.CaptureAttribute.point(geometry=atoms_1, selection=selection)
-        group = SeparatePolymers(atoms=capture_1.o.geometry)
         math_1 = quality * 3.0
         math_2 = quality * 5.0
         menu_switch = g.MenuSwitch.integer(base_shape, {"Cylinder": 0, "Rectangle": 1})
@@ -1328,25 +1339,9 @@ class StyleCartoon(AssetGeometryGroup):
                 g.CombineXYZ(y=nucleic_width, z=nucleic_thickness, x=1.0),
             ),
         )
-        group_1 = MN_utils_style_ribbon_nucleic(
-            atoms=group.o.nucleic,
-            selection=capture_1.o.selection,
-            material=material,
-            switch=g.IndexSwitch.boolean(menu_switch_1.o.output, (True, False)),
-            backbone_subdivisions=quality * 2.0,
-            backbone_resolution=quality * 4.0,
-            backbone_radius=g.IndexSwitch.float(
-                menu_switch_1.o.output, (nucleic_radius, 0.0)
-            ),
-            backbone_shade_smooth=shade_smooth,
-            backbone_scale=index_switch,
-            base_scale=g.IndexSwitch.vector(
-                menu_switch.o.output, (base_scale_cylinder, base_scale_rectangle)
-            ),
-            base_resolution=g.IndexSwitch.integer(menu_switch.o.output, (12, 4)),
-        )
-        group_2 = MN_utils_style_cartoon(
-            Atoms=group.o.peptide,
+        separate_polymers = SeparatePolymers(atoms=capture_1.o.geometry)
+        mn_utils_style_cartoon = MN_utils_style_cartoon(
+            Atoms=separate_polymers.o.peptide,
             Selection=capture_1.o.selection,
             **{"Shade Smooth": shade_smooth, "Interpolate Color": color_blur},
             Material=material,
@@ -1376,10 +1371,30 @@ class StyleCartoon(AssetGeometryGroup):
                 "Loop Resolution": math_2,
             },
         )
-        (
-            g.JoinGeometry(geometry=(group_2.o.cartoon_mesh, group_1.o.geometry))
-            >> geometry_1
+        mn_utils_style_ribbon_nucleic = MN_utils_style_ribbon_nucleic(
+            atoms=separate_polymers.o.nucleic,
+            selection=capture_1.o.selection,
+            material=material,
+            switch=g.IndexSwitch.boolean(menu_switch_1.o.output, (True, False)),
+            backbone_subdivisions=quality * 2.0,
+            backbone_resolution=quality * 4.0,
+            backbone_radius=g.IndexSwitch.float(
+                menu_switch_1.o.output, (nucleic_radius, 0.0)
+            ),
+            backbone_shade_smooth=shade_smooth,
+            backbone_scale=index_switch,
+            base_scale=g.IndexSwitch.vector(
+                menu_switch.o.output, (base_scale_cylinder, base_scale_rectangle)
+            ),
+            base_resolution=g.IndexSwitch.integer(menu_switch.o.output, (12, 4)),
         )
+        join_geometry = g.JoinGeometry(
+            geometry=(
+                mn_utils_style_cartoon.o.cartoon_mesh,
+                mn_utils_style_ribbon_nucleic.o.geometry,
+            )
+        )
+        join_geometry >> geometry_1
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         peptide_shape.default_value = "Sharp"

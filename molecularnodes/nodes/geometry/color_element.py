@@ -353,7 +353,7 @@ class ColorElement(AssetGeometryGroup):
 
     _name = "Color Element"
     _asset_name = "Color Element"
-    _library = PackageLibrary(__file__, "../../assets/node_data_file.blend")
+    _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "COLOR"
     _tree_properties = {"node_tool_idname": "geometry.color_element"}
 
@@ -785,7 +785,7 @@ class ColorElement(AssetGeometryGroup):
             )
             ar = tree.inputs.color(
                 "Ar",
-                (0.5019608, 0.8196079, 0.890196, 1.0),
+                (0.5019608, 0.819608, 0.890196, 1.0),
                 description="Set the color for the element Ar",
             )
             k = tree.inputs.color(
@@ -876,7 +876,7 @@ class ColorElement(AssetGeometryGroup):
             )
             kr = tree.inputs.color(
                 "Kr",
-                (0.3607843, 0.7215686, 0.8196079, 1.0),
+                (0.3607843, 0.7215686, 0.819608, 1.0),
                 description="Set the color for the element Kr",
             )
             rb = tree.inputs.color(
@@ -912,7 +912,7 @@ class ColorElement(AssetGeometryGroup):
             )
             tc = tree.inputs.color(
                 "Tc",
-                (0.23137255, 0.6196079, 0.6196079, 1.0),
+                (0.23137255, 0.619608, 0.619608, 1.0),
                 description="Set the color for the element Tc",
             )
             ru = tree.inputs.color(
@@ -952,7 +952,7 @@ class ColorElement(AssetGeometryGroup):
             )
             sb = tree.inputs.color(
                 "Sb",
-                (0.6196079, 0.3882353, 0.709804, 1.0),
+                (0.619608, 0.3882353, 0.709804, 1.0),
                 description="Set the color for the element Sb",
             )
             te = tree.inputs.color(
@@ -967,7 +967,7 @@ class ColorElement(AssetGeometryGroup):
             )
             xe = tree.inputs.color(
                 "Xe",
-                (0.2588235, 0.6196079, 0.6901961, 1.0),
+                (0.2588235, 0.619608, 0.6901961, 1.0),
                 description="Set the color for the element Xe",
             )
             cs = tree.inputs.color(
@@ -1093,7 +1093,7 @@ class ColorElement(AssetGeometryGroup):
             )
             au = tree.inputs.color(
                 "Au",
-                (1.0, 0.8196079, 0.1372549, 1.0),
+                (1.0, 0.819608, 0.1372549, 1.0),
                 description="Set the color for the element Au",
             )
             hg = tree.inputs.color(
