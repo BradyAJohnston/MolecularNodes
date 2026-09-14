@@ -33,6 +33,11 @@ jobs:
           with:
             enable-cache: true
 
+        - name: Build node assets
+          run: |
+            uv sync --all-extras
+            uv run -m nodebpy.assets build
+
         - name: Build package
           run: |
             uv build

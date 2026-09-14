@@ -4,3 +4,4 @@ _build/*
 objects.json
 *.dx
 **/*.quarto_ipynb
+*.mp4
