@@ -201,7 +201,6 @@ quartodoc:
     - material.AmbientOcclusion
     - material.Flat
     - material.Squishy
-    - material.TransparentOutline
     - material.PresetMaterial
     - material.append_material
     - material.add_all_materials
