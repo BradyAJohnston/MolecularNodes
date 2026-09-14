@@ -161,6 +161,7 @@ quartodoc:
       contents:
       - api/styles.qmd
       - api/trajectories.qmd
+      - api/mdanalysis_workflow.qmd
       - api/nodebpy.qmd
       - api/rendering.qmd
       - api/materials.qmd
