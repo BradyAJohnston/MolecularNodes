@@ -303,7 +303,41 @@ node-tree plot per node, in a table. Worked for PR #1210 (the symmetry nodes).
    `.py` diff, the numeric tests, the goldens and the tree plots make the tree
    reviewable regardless of who or what wrote it.
 
-## 12. Checklist for a new node
+## 12. Dumping someone else's .blend to nodebpy source
+
+Used to survey third-party libraries (T3D, RFX, beautiful-atoms, Shriinivas, Attribute
+Viewer) before borrowing ideas. Work in the scratchpad; never in the repo. A `.blend`
+can carry auto-running text blocks, so open with `use_scripts=False` and check
+`bpy.data.texts` before anything else. Downloading external files needs user approval
+in auto mode (the permission classifier blocks agents from doing it unattended).
+
+1. **Inventory first.** Open each file with `bpy.ops.wm.open_mainfile(filepath, load_ui=False, use_scripts=False)`,
+   list `bpy.data.node_groups` with `asset_data`, node counts and interface sockets, and
+   `bpy.data.texts` (name, `use_module`).
+2. **Asset-mark.** `dump_library` only dumps asset-marked groups. For each unmarked group
+   `g.asset_mark()`, then `bpy.ops.wm.save_as_mainfile(filepath=..., copy=True)` to a
+   `marked/` copy.
+3. **Dump from an emptied session.** The dumper appends every asset into the live
+   session, so groups that reference objects or scenes collide with the factory
+   Cube/Camera/Scene and abort with "Appending renamed dependency datablocks". Run
+   `bpy.ops.wm.read_homefile(use_empty=True)`, rename the remaining scene
+   (`for s in bpy.data.scenes: s.name = "_dump_session"`), then
+   `from nodebpy.assets._library import dump_library; dump_library(blend, outdir, materials=False)`.
+   One file per subprocess. The CLI `uv run -m nodebpy.assets dump <blend> <outdir>` is
+   fine for files without object references.
+4. **Legacy nodes abort the dump.** Codegen is strict: a node with no nodebpy class and no
+   emitter (`FunctionNodeAlignEulerToVector` in 3.x-era files) raises `CodegenError` and
+   nothing is written. Compute each asset's dependency closure of `bl_idname`s and pass
+   `names=` excluding the offenders (see the survey's `dump_excluding.py`), iterating on
+   the reported idname, or register an emitter with `nodebpy.export.codegen.register_emitter`.
+5. **Catalogue.** Parse the dumped modules for class name, `tree.inputs.*`/`tree.outputs.*`
+   names and the `g.<Node>` set used in `_build_group` to get a one-line-per-group index,
+   then read the build code of the shortlist. Names lie; the code does not.
+6. Record licence per source. CC0 and MIT copy freely; GPL-3.0 is compatible with MN but
+   keep attribution in the module docstring. The 2026-09-14 survey report is in the
+   session scratchpad (`node_assets_survey/REPORT.md`).
+
+## 13. Checklist for a new node
 
 1. Write the module (copy a neighbour), pick the catalog id, add to `_shared/` if internal.
 2. `build` (fixes tree errors early), then `dump`, then read the diff.
