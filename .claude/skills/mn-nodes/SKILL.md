@@ -179,12 +179,19 @@ comments. If you prefer editing in Blender: `build`, open `nodes.blend`, edit, s
 Pattern used by the symmetry tests:
 
 ```python
-mol = mn.Molecule.fetch("4ozs", cache=data_dir)      # small, cached in tests/data
-positions = mol.named_attribute("position")           # raw mesh, world units
+mol = mn.Molecule.fetch("4ozs", cache=data_dir)  # small, cached in tests/data
+positions = mol.named_attribute("position")  # raw mesh, world units
 with mol.tree.reset() as (atoms, join):
-    atoms >> SymmetryCyclic(order=5, axis=axis, centre=centre) >> RealizeInstances() >> join
+    (
+        atoms
+        >> SymmetryCyclic(order=5, axis=axis, centre=centre)
+        >> RealizeInstances()
+        >> join
+    )
 realized = mol.named_attribute("position", evaluate=True)
-sym_id = mol.named_attribute("sym_id", evaluate=True)  # instance attrs propagate on realize
+sym_id = mol.named_attribute(
+    "sym_id", evaluate=True
+)  # instance attrs propagate on realize
 assert np.allclose(realized, expected_from_numpy, atol=1e-4)
 ```
 
@@ -208,7 +215,12 @@ Golden-image tests, compared with Blender's own render tolerances.
 def test_render_symmetry(golden_canvas, tmp_path, assembly_image_snapshot, code):
     mol = mn.Molecule.fetch(code)
     with mol.tree.reset() as (atoms, join):
-        atoms >> mg.StyleRibbon(material=mn.material.Flat().material) >> SYMMETRY_EXAMPLES[code]() >> join
+        (
+            atoms
+            >> mg.StyleRibbon(material=mn.material.Flat().material)
+            >> SYMMETRY_EXAMPLES[code]()
+            >> join
+        )
     golden_canvas.look_at(mol, viewpoint="top")
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
 ```
