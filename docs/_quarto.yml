@@ -427,6 +427,12 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.RotationRELION
         children: embedded
+      - name: nodes.geometry.SymmetryCyclic
+        children: embedded
+      - name: nodes.geometry.SymmetryDihedral
+        children: embedded
+      - name: nodes.geometry.SymmetryHelical
+        children: embedded
       - name: nodes.geometry.TEMRotation
         children: embedded
     - kind: page

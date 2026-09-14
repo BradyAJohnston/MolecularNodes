@@ -634,6 +634,24 @@ Boolean Run Trim:
     which they are considered false
 Ensemble Instance:
   description: Instance the items of an ensemble onto the given points
+Symmetry Cyclic:
+  description: >-
+    Build a cyclic (Cn) assembly the file does not describe: `Order::Integer` copies of the geometry evenly spaced
+    about an `Axis::Vector` passing through `Centre::Vector`. Rings, pores and most homo-oligomers. The `Factor::Float`
+    input interpolates every copy from the original (0) to its final placement (1) for assembly animations, and
+    `Stagger::Float` delays each copy by its order. Every copy carries a `sym_id` attribute, readable with the
+    `Symmetry ID::Node` node.
+Symmetry Dihedral:
+  description: >-
+    Build a dihedral (Dn) assembly: a ring of `Order::Integer` copies about the `Axis::Vector`, plus the same ring
+    flipped by a two-fold perpendicular to it, giving 2n copies. Back-to-back rings such as GroEL. Shares the
+    `Factor::Float` and `Stagger::Float` animation inputs with `Symmetry Cyclic::Node`.
+Symmetry Helical:
+  description: >-
+    Build a helical filament: `Count::Integer` subunits, each advanced `Rise::Float` Angstrom along the `Axis::Vector`
+    and rotated `Twist::Float` about it, relative to the one before. Actin, microtubules, amyloid and pili. The defaults
+    are actin's 27.5 Angstrom rise and -166.7 degree twist. Shares the `Factor::Float` and `Stagger::Float` animation
+    inputs with `Symmetry Cyclic::Node`.
 Periodic Array:
   description: Replicate the trajectory across periodic boundaries.
 Periodic Box:

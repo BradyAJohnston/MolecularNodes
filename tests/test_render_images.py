@@ -19,6 +19,7 @@ import pytest
 import molecularnodes as mn
 import molecularnodes.nodes.geometry as mg
 from .constants import data_dir
+from .test_nodes import SYMMETRY_EXAMPLES
 from .utils import ImageSnapshotExtension
 
 
@@ -201,4 +202,20 @@ def test_render_cyclic_peptide(
 ):
     mol = mn.Molecule.fetch(pdb_id).add_style(style)
     golden_canvas.look_at(mol, viewpoint="top")
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize("code", list(SYMMETRY_EXAMPLES))
+def test_render_symmetry(golden_canvas, tmp_path, assembly_image_snapshot, code):
+    # generated symmetry reproducing the entry's deposited assembly; the rings
+    # are viewed down their axis and the helix side on
+    mol = mn.Molecule.fetch(code)
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> mg.StyleRibbon(material=mn.material.Flat().material)
+            >> SYMMETRY_EXAMPLES[code]()
+            >> join
+        )
+    golden_canvas.look_at(mol, viewpoint="front" if code == "4UDV" else "top")
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)

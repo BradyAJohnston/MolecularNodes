@@ -235,6 +235,9 @@ from .style_sticks import StyleSticks
 from .style_surface import StyleSurface
 from .sub_group_info import SubGroupInfo
 from .switch_residue_name import SwitchResidueName
+from .symmetry_cyclic import SymmetryCyclic
+from .symmetry_dihedral import SymmetryDihedral
+from .symmetry_helical import SymmetryHelical
 from .symmetry_id import SymmetryID
 from .tem_rotation import TEMRotation
 from .topology_dssp import TopologyDSSP
@@ -495,6 +498,9 @@ __all__ = (
     "StyleSurface",
     "SubGroupInfo",
     "SwitchResidueName",
+    "SymmetryCyclic",
+    "SymmetryDihedral",
+    "SymmetryHelical",
     "SymmetryID",
     "TEMRotation",
     "TopologyDSSP",
