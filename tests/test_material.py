@@ -9,7 +9,7 @@ PRESETS = [
     material.AmbientOcclusion,
     material.Flat,
     material.Squishy,
-    material.TransparentOutline,
+    material.Transparent,
 ]
 
 
@@ -50,7 +50,7 @@ def test_flat_outline_toggle():
 
 
 def test_transparent_outline():
-    mat = material.TransparentOutline(alpha=0.5, outline=False)
+    mat = material.Transparent(alpha=0.5, outline=False)
     assert mat.alpha == pytest.approx(0.5)
     assert mat.outline is False
     assert mat.node.i.menu.default_value == "Transparent"

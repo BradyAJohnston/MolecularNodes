@@ -10,7 +10,7 @@ from .nodes.materials import (
     flat,
     flat_outline,
     squishy,
-    transparent_outline,
+    transparent,
 )
 from .nodes.shader import ColorAO
 from .nodes.shader import FlatInternal as FlatShader
@@ -27,7 +27,7 @@ RECIPES: dict[str, ModuleType] = {
         flat,
         flat_outline,
         squishy,
-        transparent_outline,
+        transparent,
         ambient_occlusion,
     )
 }
@@ -356,7 +356,7 @@ class Squishy(PresetMaterial):
     roughness = SocketValue[float]("bsdf", "roughness", "Roughness of the surface.")
 
 
-class TransparentOutline(PresetMaterial):
+class Transparent(PresetMaterial):
     """
     A partially transparent material with an optional solid outline.
 
@@ -381,7 +381,7 @@ class TransparentOutline(PresetMaterial):
     """
 
     name = "Transparent Outline"
-    recipe = transparent_outline
+    recipe = transparent
 
     def __init__(
         self,

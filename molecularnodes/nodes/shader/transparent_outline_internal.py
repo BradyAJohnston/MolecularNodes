@@ -27,9 +27,9 @@ class TransparentOutlineInternal(AssetShaderGroup):
 
     Parameters
     ----------
-    alpha : InputFloat
+    transparency : InputFloat
         Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader
-    menu : InputMenu | Literal["Transparent", "Outline"]
+    menu : InputMenu | Literal["Transparent", "Fresnel"]
         Menu
     outline_color : InputColor
         Outline Color
@@ -40,7 +40,7 @@ class TransparentOutlineInternal(AssetShaderGroup):
 
     Inputs
     ------
-    i.alpha : FloatSocket
+    i.transparency : FloatSocket
         Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader
     i.menu : MenuSocket
         Menu
@@ -62,7 +62,7 @@ class TransparentOutlineInternal(AssetShaderGroup):
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
 
     class _Inputs(SocketAccessor):
-        alpha: FloatSocket
+        transparency: FloatSocket
         """Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader"""
         menu: MenuSocket
         """Menu"""
@@ -86,15 +86,15 @@ class TransparentOutlineInternal(AssetShaderGroup):
 
     def __init__(
         self,
-        alpha: InputFloat = 0.95,
-        menu: InputMenu | Literal["Transparent", "Outline"] = "Transparent",
+        transparency: InputFloat = 0.9,
+        menu: InputMenu | Literal["Transparent", "Fresnel"] = "Transparent",
         outline_color: InputColor = None,
         threshold: InputFloat = 0.2,
         thickness: InputFloat = 0.15,
     ):
         super().__init__(
             **{
-                "Alpha": alpha,
+                "Transparency": transparency,
                 "Menu": menu,
                 "Outline Color": outline_color,
                 "Threshold": threshold,
@@ -103,9 +103,9 @@ class TransparentOutlineInternal(AssetShaderGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        alpha = tree.inputs.float(
-            "Alpha",
-            0.95,
+        transparency = tree.inputs.float(
+            "Transparency",
+            0.9,
             description="Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader",
             min_value=0.0,
             max_value=1.0,
@@ -121,21 +121,24 @@ class TransparentOutlineInternal(AssetShaderGroup):
         )
         shader = tree.outputs.shader("Shader")
 
-        _mn_fresnel = MNFresnel(ior=0.95)
+        _outline_mask = OutlineMask(threshold=threshold, thickness=thickness)
         mix_shader = s.MixShader(
             fac=g.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
-            + alpha,
+            + transparency,
             shader=s.DiffuseBSDF(color=MNColor().o.color),
             shader_001=s.TransparentBSDF(),
         )
-        mix_shader_1 = s.MixShader(
-            fac=OutlineMask(threshold=threshold, thickness=thickness),
-            shader=mix_shader,
-            shader_001=outline_color,
-        )
         (
             s.MenuSwitch.shader(
-                menu, {"Transparent": mix_shader, "Outline": mix_shader_1}
+                menu,
+                {
+                    "Transparent": mix_shader,
+                    "Fresnel": s.MixShader(
+                        fac=MNFresnel(ior=0.95),
+                        shader=mix_shader,
+                        shader_001=outline_color,
+                    ),
+                },
             )
             >> shader
         )

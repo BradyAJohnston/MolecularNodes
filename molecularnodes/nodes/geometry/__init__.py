@@ -49,8 +49,10 @@ from .color_atomic_number import ColorAtomicNumber
 from .color_attribute_map import ColorAttributeMap
 from .color_attribute_random import ColorAttributeRandom
 from .color_backbone import ColorBackbone
+from .color_chain_1ze9 import ColorChain1ze9
 from .color_common import ColorCommon
 from .color_element import ColorElement
+from .color_entity_1ze9 import ColorEntity1ze9
 from .color_goodsell import ColorGoodsell
 from .color_mix_intermediate import ColorMixIntermediate
 from .color_oklab_mix import ColorOKLabMix
@@ -59,6 +61,7 @@ from .color_plddt import ColorPLDDT
 from .color_rainbow import ColorRainbow
 from .color_res_name import ColorResName
 from .color_secondary_structure import ColorSecondaryStructure
+from .color_segment_1ze9 import ColorSegment1ze9
 from .color_to_lch import ColorToLCh
 from .color_to_oklab import ColorToOKLab
 from .contains_geometry import ContainsGeometry
@@ -201,8 +204,10 @@ from .secondary_structure import SecondaryStructure
 from .select_atomic_number import SelectAtomicNumber
 from .select_attribute import SelectAttribute
 from .select_bonded import SelectBonded
+from .select_chain_1ze9 import SelectChain1ze9
 from .select_cube import SelectCube
 from .select_element import SelectElement
+from .select_entity_1ze9 import SelectEntity1ze9
 from .select_nucleic_type import SelectNucleicType
 from .select_proximity import SelectProximity
 from .select_res_id import SelectResID
@@ -210,6 +215,7 @@ from .select_res_id_range import SelectResIDRange
 from .select_res_id_string import SelectResIDString
 from .select_res_name import SelectResName
 from .select_res_whole import SelectResWhole
+from .select_segment_1ze9 import SelectSegment1ze9
 from .select_sphere import SelectSphere
 from .selected_instances import SelectedInstances
 from .separate_atoms import SeparateAtoms
@@ -309,8 +315,10 @@ __all__ = (
     "ColorAttributeMap",
     "ColorAttributeRandom",
     "ColorBackbone",
+    "ColorChain1ze9",
     "ColorCommon",
     "ColorElement",
+    "ColorEntity1ze9",
     "ColorGoodsell",
     "ColorMixIntermediate",
     "ColorOKLabMix",
@@ -319,6 +327,7 @@ __all__ = (
     "ColorRainbow",
     "ColorResName",
     "ColorSecondaryStructure",
+    "ColorSegment1ze9",
     "ColorToLCh",
     "ColorToOKLab",
     "ContainsGeometry",
@@ -461,8 +470,10 @@ __all__ = (
     "SelectAtomicNumber",
     "SelectAttribute",
     "SelectBonded",
+    "SelectChain1ze9",
     "SelectCube",
     "SelectElement",
+    "SelectEntity1ze9",
     "SelectNucleicType",
     "SelectProximity",
     "SelectResID",
@@ -470,6 +481,7 @@ __all__ = (
     "SelectResIDString",
     "SelectResName",
     "SelectResWhole",
+    "SelectSegment1ze9",
     "SelectSphere",
     "SelectedInstances",
     "SeparateAtoms",

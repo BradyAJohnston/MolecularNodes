@@ -98,7 +98,7 @@ with d.tree.reset() as (geo, join):
     (
         geo
         >> mg.DensityStyleISOSurface()
-        >> g.SetMaterial(material=mn.material.TransparentOutline().material)
+        >> g.SetMaterial(material=mn.material.Transparent().material)
         >> join
     )
 
