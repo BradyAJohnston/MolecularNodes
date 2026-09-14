@@ -86,3 +86,13 @@ wheels = [
 network = "Downloading structural data from the PDB and AFPDB"
 files = "Importing data files from disk and caching downloads"
 
+[build]
+# Setting paths_exclude_pattern replaces Blender's defaults, so they are
+# restated here ahead of the additions.
+paths_exclude_pattern = [
+	"__pycache__/",
+	".*",
+	"/*.zip",
+	"*.blend[1-9]",
+	"*.stamp",
+]
