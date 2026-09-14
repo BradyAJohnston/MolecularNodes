@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -428,12 +431,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">material.PresetMaterial</span></a>
   </div>
@@ -624,6 +621,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.select.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Select</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -901,9 +904,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">'b_factor'</span>,</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">min</span><span class="op">=</span><span class="fl">0.0</span>,</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">max</span><span class="op">=</span><span class="fl">150.0</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    input_7<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    socket_5<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    input_1<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    socket_7<span class="op">=</span><span class="va">None</span>,</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
@@ -945,7 +948,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code>150.0</code></td>
 </tr>
 <tr class="odd">
-<td>input_7</td>
+<td>socket_5</td>
 <td><code class="custom-bool">InputBoolean</code></td>
 <td>Wheter to interpolate through the ‘Mid’ color.</td>
 <td><code class="custom-bool">True</code></td>
@@ -957,7 +960,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td>input_1</td>
+<td>socket_7</td>
 <td><code class="custom-color">InputColor</code></td>
 <td>Color mapped to the middle value of the attribute</td>
 <td><code>None</code></td>
@@ -1008,7 +1011,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Value for the attribute to be the maxium color</td>
 </tr>
 <tr class="odd">
-<td>i.input_7</td>
+<td>i.socket_5</td>
 <td><code class="custom-bool">BooleanSocket</code></td>
 <td>Wheter to interpolate through the ‘Mid’ color.</td>
 </tr>
@@ -1018,7 +1021,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Color mapped to the minimum value of the attribute</td>
 </tr>
 <tr class="odd">
-<td>i.input_1</td>
+<td>i.socket_7</td>
 <td><code class="custom-color">ColorSocket</code></td>
 <td>Color mapped to the middle value of the attribute</td>
 </tr>
@@ -2481,9 +2484,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorMixIntermediate(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="fl">0.5</span>,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    menu<span class="op">=</span><span class="st">'Linear'</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    socket_1<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    socket_2<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    socket_2<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    socket_4<span class="op">=</span><span class="va">None</span>,</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
@@ -2513,7 +2516,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code class="custom-string">'Linear'</code></td>
 </tr>
 <tr class="odd">
-<td>socket_1</td>
+<td>socket_2</td>
 <td><code class="custom-bool">InputBoolean</code></td>
 <td>Intermediate</td>
 <td><code class="custom-bool">False</code></td>
@@ -2525,7 +2528,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td>socket_2</td>
+<td>socket_4</td>
 <td><code class="custom-color">InputColor</code></td>
 <td>Intermediate</td>
 <td><code>None</code></td>
@@ -2561,7 +2564,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Menu</td>
 </tr>
 <tr class="odd">
-<td>i.socket_1</td>
+<td>i.socket_2</td>
 <td><code class="custom-bool">BooleanSocket</code></td>
 <td>Intermediate</td>
 </tr>
@@ -2571,7 +2574,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>A</td>
 </tr>
 <tr class="odd">
-<td>i.socket_2</td>
+<td>i.socket_4</td>
 <td><code class="custom-color">ColorSocket</code></td>
 <td>Intermediate</td>
 </tr>
@@ -2825,7 +2828,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorPLDDT" class="level1">
 <h1>Color pLDDT</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorPLDDT(_50<span class="op">=</span><span class="va">None</span>, _70<span class="op">=</span><span class="va">None</span>, socket_3<span class="op">=</span><span class="va">None</span>, socket_4<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorPLDDT(_50<span class="op">=</span><span class="va">None</span>, _70<span class="op">=</span><span class="va">None</span>, socket_2<span class="op">=</span><span class="va">None</span>, socket_3<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-plddt">Color pLDDT</a>.</p>
 <section id="parameters-9" class="level2 doc-section doc-section-parameters">
@@ -2859,13 +2862,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td>socket_3</td>
+<td>socket_2</td>
 <td><code class="custom-color">InputColor</code></td>
 <td>Color for 70 &lt; pLDTT &lt; 90</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
-<td>socket_4</td>
+<td>socket_3</td>
 <td><code class="custom-color">InputColor</code></td>
 <td>Color for 90 &lt; pLDTT</td>
 <td><code>None</code></td>
@@ -2895,12 +2898,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Color for 50 &lt; pLDTT &lt; 70</td>
 </tr>
 <tr class="odd">
-<td>i.socket_3</td>
+<td>i.socket_2</td>
 <td><code class="custom-color">ColorSocket</code></td>
 <td>Color for 70 &lt; pLDTT &lt; 90</td>
 </tr>
 <tr class="even">
-<td>i.socket_4</td>
+<td>i.socket_3</td>
 <td><code class="custom-color">ColorSocket</code></td>
 <td>Color for 90 &lt; pLDTT</td>
 </tr>

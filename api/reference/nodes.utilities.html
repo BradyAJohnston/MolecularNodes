@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -428,12 +431,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">material.PresetMaterial</span></a>
   </div>
@@ -628,6 +625,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -785,125 +788,125 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#inputs-16" id="toc-inputs-16" class="nav-link" data-scroll-target="#inputs-16">Inputs</a></li>
   <li><a href="#outputs-16" id="toc-outputs-16" class="nav-link" data-scroll-target="#outputs-16">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.IndexDistance" id="toc-molecularnodes.nodes.geometry.IndexDistance" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexDistance">Index Distance</a>
+  <li><a href="#molecularnodes.nodes.geometry.Group2IndexAngle" id="toc-molecularnodes.nodes.geometry.Group2IndexAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.Group2IndexAngle">2 Index Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-17" id="toc-parameters-17" class="nav-link" data-scroll-target="#parameters-17">Parameters</a></li>
   <li><a href="#inputs-17" id="toc-inputs-17" class="nav-link" data-scroll-target="#inputs-17">Inputs</a></li>
   <li><a href="#outputs-17" id="toc-outputs-17" class="nav-link" data-scroll-target="#outputs-17">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.IndexMixFloat" id="toc-molecularnodes.nodes.geometry.IndexMixFloat" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexMixFloat">Index Mix Float</a>
+  <li><a href="#molecularnodes.nodes.geometry.Group3IndexAngle" id="toc-molecularnodes.nodes.geometry.Group3IndexAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.Group3IndexAngle">3 Index Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-18" id="toc-parameters-18" class="nav-link" data-scroll-target="#parameters-18">Parameters</a></li>
   <li><a href="#inputs-18" id="toc-inputs-18" class="nav-link" data-scroll-target="#inputs-18">Inputs</a></li>
   <li><a href="#outputs-18" id="toc-outputs-18" class="nav-link" data-scroll-target="#outputs-18">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.IndexMixRotation" id="toc-molecularnodes.nodes.geometry.IndexMixRotation" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexMixRotation">Index Mix Rotation</a>
+  <li><a href="#molecularnodes.nodes.geometry.IndexDistance" id="toc-molecularnodes.nodes.geometry.IndexDistance" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexDistance">Index Distance</a>
   <ul class="collapse">
   <li><a href="#parameters-19" id="toc-parameters-19" class="nav-link" data-scroll-target="#parameters-19">Parameters</a></li>
   <li><a href="#inputs-19" id="toc-inputs-19" class="nav-link" data-scroll-target="#inputs-19">Inputs</a></li>
   <li><a href="#outputs-19" id="toc-outputs-19" class="nav-link" data-scroll-target="#outputs-19">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.IndexMixVector" id="toc-molecularnodes.nodes.geometry.IndexMixVector" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexMixVector">Index Mix Vector</a>
+  <li><a href="#molecularnodes.nodes.geometry.IndexMixFloat" id="toc-molecularnodes.nodes.geometry.IndexMixFloat" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexMixFloat">Index Mix Float</a>
   <ul class="collapse">
   <li><a href="#parameters-20" id="toc-parameters-20" class="nav-link" data-scroll-target="#parameters-20">Parameters</a></li>
   <li><a href="#inputs-20" id="toc-inputs-20" class="nav-link" data-scroll-target="#inputs-20">Inputs</a></li>
   <li><a href="#outputs-20" id="toc-outputs-20" class="nav-link" data-scroll-target="#outputs-20">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.IntegerDistance" id="toc-molecularnodes.nodes.geometry.IntegerDistance" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IntegerDistance">Integer Distance</a>
+  <li><a href="#molecularnodes.nodes.geometry.IndexMixRotation" id="toc-molecularnodes.nodes.geometry.IndexMixRotation" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexMixRotation">Index Mix Rotation</a>
   <ul class="collapse">
   <li><a href="#parameters-21" id="toc-parameters-21" class="nav-link" data-scroll-target="#parameters-21">Parameters</a></li>
   <li><a href="#inputs-21" id="toc-inputs-21" class="nav-link" data-scroll-target="#inputs-21">Inputs</a></li>
   <li><a href="#outputs-21" id="toc-outputs-21" class="nav-link" data-scroll-target="#outputs-21">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.IsEven" id="toc-molecularnodes.nodes.geometry.IsEven" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IsEven">Is Even</a>
+  <li><a href="#molecularnodes.nodes.geometry.IndexMixVector" id="toc-molecularnodes.nodes.geometry.IndexMixVector" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IndexMixVector">Index Mix Vector</a>
   <ul class="collapse">
   <li><a href="#parameters-22" id="toc-parameters-22" class="nav-link" data-scroll-target="#parameters-22">Parameters</a></li>
   <li><a href="#inputs-22" id="toc-inputs-22" class="nav-link" data-scroll-target="#inputs-22">Inputs</a></li>
   <li><a href="#outputs-22" id="toc-outputs-22" class="nav-link" data-scroll-target="#outputs-22">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.MNTypedBundles" id="toc-molecularnodes.nodes.geometry.MNTypedBundles" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.MNTypedBundles">MN Typed Bundles</a>
+  <li><a href="#molecularnodes.nodes.geometry.IntegerDistance" id="toc-molecularnodes.nodes.geometry.IntegerDistance" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IntegerDistance">Integer Distance</a>
   <ul class="collapse">
   <li><a href="#parameters-23" id="toc-parameters-23" class="nav-link" data-scroll-target="#parameters-23">Parameters</a></li>
   <li><a href="#inputs-23" id="toc-inputs-23" class="nav-link" data-scroll-target="#inputs-23">Inputs</a></li>
   <li><a href="#outputs-23" id="toc-outputs-23" class="nav-link" data-scroll-target="#outputs-23">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.RotationFromZYZ" id="toc-molecularnodes.nodes.geometry.RotationFromZYZ" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.RotationFromZYZ">Rotation from ZYZ</a>
+  <li><a href="#molecularnodes.nodes.geometry.IsEven" id="toc-molecularnodes.nodes.geometry.IsEven" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.IsEven">Is Even</a>
   <ul class="collapse">
   <li><a href="#parameters-24" id="toc-parameters-24" class="nav-link" data-scroll-target="#parameters-24">Parameters</a></li>
   <li><a href="#inputs-24" id="toc-inputs-24" class="nav-link" data-scroll-target="#inputs-24">Inputs</a></li>
   <li><a href="#outputs-24" id="toc-outputs-24" class="nav-link" data-scroll-target="#outputs-24">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.TransformAccumulate" id="toc-molecularnodes.nodes.geometry.TransformAccumulate" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformAccumulate">Transform Accumulate</a>
+  <li><a href="#molecularnodes.nodes.geometry.MNTypedBundles" id="toc-molecularnodes.nodes.geometry.MNTypedBundles" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.MNTypedBundles">MN Typed Bundles</a>
   <ul class="collapse">
   <li><a href="#parameters-25" id="toc-parameters-25" class="nav-link" data-scroll-target="#parameters-25">Parameters</a></li>
   <li><a href="#inputs-25" id="toc-inputs-25" class="nav-link" data-scroll-target="#inputs-25">Inputs</a></li>
   <li><a href="#outputs-25" id="toc-outputs-25" class="nav-link" data-scroll-target="#outputs-25">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.TransformAccumulatePoint" id="toc-molecularnodes.nodes.geometry.TransformAccumulatePoint" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformAccumulatePoint">Transform Accumulate Point</a>
+  <li><a href="#molecularnodes.nodes.geometry.RotationFromZYZ" id="toc-molecularnodes.nodes.geometry.RotationFromZYZ" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.RotationFromZYZ">Rotation from ZYZ</a>
   <ul class="collapse">
   <li><a href="#parameters-26" id="toc-parameters-26" class="nav-link" data-scroll-target="#parameters-26">Parameters</a></li>
   <li><a href="#inputs-26" id="toc-inputs-26" class="nav-link" data-scroll-target="#inputs-26">Inputs</a></li>
   <li><a href="#outputs-26" id="toc-outputs-26" class="nav-link" data-scroll-target="#outputs-26">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.TransformLocal" id="toc-molecularnodes.nodes.geometry.TransformLocal" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformLocal">Transform Local</a>
+  <li><a href="#molecularnodes.nodes.geometry.TransformAccumulate" id="toc-molecularnodes.nodes.geometry.TransformAccumulate" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformAccumulate">Transform Accumulate</a>
   <ul class="collapse">
   <li><a href="#parameters-27" id="toc-parameters-27" class="nav-link" data-scroll-target="#parameters-27">Parameters</a></li>
   <li><a href="#inputs-27" id="toc-inputs-27" class="nav-link" data-scroll-target="#inputs-27">Inputs</a></li>
   <li><a href="#outputs-27" id="toc-outputs-27" class="nav-link" data-scroll-target="#outputs-27">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.TransformLocalAxis" id="toc-molecularnodes.nodes.geometry.TransformLocalAxis" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformLocalAxis">Transform Local Axis</a>
+  <li><a href="#molecularnodes.nodes.geometry.TransformAccumulatePoint" id="toc-molecularnodes.nodes.geometry.TransformAccumulatePoint" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformAccumulatePoint">Transform Accumulate Point</a>
   <ul class="collapse">
   <li><a href="#parameters-28" id="toc-parameters-28" class="nav-link" data-scroll-target="#parameters-28">Parameters</a></li>
   <li><a href="#inputs-28" id="toc-inputs-28" class="nav-link" data-scroll-target="#inputs-28">Inputs</a></li>
   <li><a href="#outputs-28" id="toc-outputs-28" class="nav-link" data-scroll-target="#outputs-28">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.TransformMix" id="toc-molecularnodes.nodes.geometry.TransformMix" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformMix">Transform Mix</a>
+  <li><a href="#molecularnodes.nodes.geometry.TransformLocal" id="toc-molecularnodes.nodes.geometry.TransformLocal" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformLocal">Transform Local</a>
   <ul class="collapse">
   <li><a href="#parameters-29" id="toc-parameters-29" class="nav-link" data-scroll-target="#parameters-29">Parameters</a></li>
   <li><a href="#inputs-29" id="toc-inputs-29" class="nav-link" data-scroll-target="#inputs-29">Inputs</a></li>
   <li><a href="#outputs-29" id="toc-outputs-29" class="nav-link" data-scroll-target="#outputs-29">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.TransformRelative" id="toc-molecularnodes.nodes.geometry.TransformRelative" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformRelative">Transform Relative</a>
+  <li><a href="#molecularnodes.nodes.geometry.TransformLocalAxis" id="toc-molecularnodes.nodes.geometry.TransformLocalAxis" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformLocalAxis">Transform Local Axis</a>
   <ul class="collapse">
   <li><a href="#parameters-30" id="toc-parameters-30" class="nav-link" data-scroll-target="#parameters-30">Parameters</a></li>
   <li><a href="#inputs-30" id="toc-inputs-30" class="nav-link" data-scroll-target="#inputs-30">Inputs</a></li>
   <li><a href="#outputs-30" id="toc-outputs-30" class="nav-link" data-scroll-target="#outputs-30">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.VectorAngle" id="toc-molecularnodes.nodes.geometry.VectorAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VectorAngle">Vector Angle</a>
+  <li><a href="#molecularnodes.nodes.geometry.TransformMix" id="toc-molecularnodes.nodes.geometry.TransformMix" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformMix">Transform Mix</a>
   <ul class="collapse">
   <li><a href="#parameters-31" id="toc-parameters-31" class="nav-link" data-scroll-target="#parameters-31">Parameters</a></li>
   <li><a href="#inputs-31" id="toc-inputs-31" class="nav-link" data-scroll-target="#inputs-31">Inputs</a></li>
   <li><a href="#outputs-31" id="toc-outputs-31" class="nav-link" data-scroll-target="#outputs-31">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.VectorDirection" id="toc-molecularnodes.nodes.geometry.VectorDirection" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VectorDirection">Vector Direction</a>
+  <li><a href="#molecularnodes.nodes.geometry.TransformRelative" id="toc-molecularnodes.nodes.geometry.TransformRelative" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TransformRelative">Transform Relative</a>
   <ul class="collapse">
   <li><a href="#parameters-32" id="toc-parameters-32" class="nav-link" data-scroll-target="#parameters-32">Parameters</a></li>
   <li><a href="#inputs-32" id="toc-inputs-32" class="nav-link" data-scroll-target="#inputs-32">Inputs</a></li>
   <li><a href="#outputs-32" id="toc-outputs-32" class="nav-link" data-scroll-target="#outputs-32">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.VectorFromPoint" id="toc-molecularnodes.nodes.geometry.VectorFromPoint" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VectorFromPoint">Vector from Point</a>
+  <li><a href="#molecularnodes.nodes.geometry.VectorAngle" id="toc-molecularnodes.nodes.geometry.VectorAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VectorAngle">Vector Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-33" id="toc-parameters-33" class="nav-link" data-scroll-target="#parameters-33">Parameters</a></li>
   <li><a href="#inputs-33" id="toc-inputs-33" class="nav-link" data-scroll-target="#inputs-33">Inputs</a></li>
   <li><a href="#outputs-33" id="toc-outputs-33" class="nav-link" data-scroll-target="#outputs-33">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.Velocity" id="toc-molecularnodes.nodes.geometry.Velocity" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.Velocity">Velocity</a>
-  <ul class="collapse">
-  <li><a href="#outputs-34" id="toc-outputs-34" class="nav-link" data-scroll-target="#outputs-34">Outputs</a></li>
-  </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.WorldToAngstrom" id="toc-molecularnodes.nodes.geometry.WorldToAngstrom" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.WorldToAngstrom">World to Angstrom</a>
+  <li><a href="#molecularnodes.nodes.geometry.VectorDirection" id="toc-molecularnodes.nodes.geometry.VectorDirection" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VectorDirection">Vector Direction</a>
   <ul class="collapse">
   <li><a href="#parameters-34" id="toc-parameters-34" class="nav-link" data-scroll-target="#parameters-34">Parameters</a></li>
   <li><a href="#inputs-34" id="toc-inputs-34" class="nav-link" data-scroll-target="#inputs-34">Inputs</a></li>
-  <li><a href="#outputs-35" id="toc-outputs-35" class="nav-link" data-scroll-target="#outputs-35">Outputs</a></li>
+  <li><a href="#outputs-34" id="toc-outputs-34" class="nav-link" data-scroll-target="#outputs-34">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry._2IndexAngle" id="toc-molecularnodes.nodes.geometry._2IndexAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry._2IndexAngle">2 Index Angle</a>
+  <li><a href="#molecularnodes.nodes.geometry.VectorFromPoint" id="toc-molecularnodes.nodes.geometry.VectorFromPoint" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VectorFromPoint">Vector from Point</a>
   <ul class="collapse">
   <li><a href="#parameters-35" id="toc-parameters-35" class="nav-link" data-scroll-target="#parameters-35">Parameters</a></li>
   <li><a href="#inputs-35" id="toc-inputs-35" class="nav-link" data-scroll-target="#inputs-35">Inputs</a></li>
+  <li><a href="#outputs-35" id="toc-outputs-35" class="nav-link" data-scroll-target="#outputs-35">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.Velocity" id="toc-molecularnodes.nodes.geometry.Velocity" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.Velocity">Velocity</a>
+  <ul class="collapse">
   <li><a href="#outputs-36" id="toc-outputs-36" class="nav-link" data-scroll-target="#outputs-36">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry._3IndexAngle" id="toc-molecularnodes.nodes.geometry._3IndexAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry._3IndexAngle">3 Index Angle</a>
+  <li><a href="#molecularnodes.nodes.geometry.WorldToAngstrom" id="toc-molecularnodes.nodes.geometry.WorldToAngstrom" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.WorldToAngstrom">World to Angstrom</a>
   <ul class="collapse">
   <li><a href="#parameters-36" id="toc-parameters-36" class="nav-link" data-scroll-target="#parameters-36">Parameters</a></li>
   <li><a href="#inputs-36" id="toc-inputs-36" class="nav-link" data-scroll-target="#inputs-36">Inputs</a></li>
@@ -2633,13 +2636,230 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="molecularnodes.nodes.geometry.IndexDistance" class="level1">
-<h1>Index Distance</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexDistance(index<span class="op">=</span><span class="dv">0</span>, target_index<span class="op">=</span><span class="dv">100</span>, position<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="molecularnodes.nodes.geometry.Group2IndexAngle" class="level1">
+<h1>2 Index Angle</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.Group2IndexAngle(position<span class="op">=</span><span class="va">None</span>, index_a<span class="op">=</span><span class="dv">0</span>, index_b<span class="op">=</span><span class="dv">0</span>, index_c<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/utilities.html#index-distance">Index Distance</a>.</p>
+<p>GUI reference: <a href="../../nodes/utilities.html#2-index-angle">2 Index Angle</a>.</p>
 <section id="parameters-17" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-17">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 28%">
+<col style="width: 57%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>position</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>The <code class="custom-attribute">Position</code> vectors to use for the angle calculation</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>index_a</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>First end point for the angle calculation around the current point</td>
+<td><code>0</code></td>
+</tr>
+<tr class="odd">
+<td>index_b</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>The <code class="custom-attribute">Index</code> for the middle point in the angle calculation, defaulting to the current point</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td>index_c</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Last end point for the angle calculation around the current point</td>
+<td><code>2</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-17" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-17">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 18%">
+<col style="width: 71%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.position</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>The <code class="custom-attribute">Position</code> vectors to use for the angle calculation</td>
+</tr>
+<tr class="even">
+<td>i.index_a</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>First end point for the angle calculation around the current point</td>
+</tr>
+<tr class="odd">
+<td>i.index_b</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>The <code class="custom-attribute">Index</code> for the middle point in the angle calculation, defaulting to the current point</td>
+</tr>
+<tr class="even">
+<td>i.index_c</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Last end point for the angle calculation around the current point</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-17" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-17">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 28%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.angle</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Angle of the line A -&gt; Self -&gt; C in radians</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.Group3IndexAngle" class="level1">
+<h1>3 Index Angle</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.Group3IndexAngle(index_a<span class="op">=</span><span class="dv">0</span>, index_b<span class="op">=</span><span class="dv">1</span>, index_c<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/utilities.html#3-index-angle">3 Index Angle</a>.</p>
+<section id="parameters-18" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-18">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 40%">
+<col style="width: 41%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>index_a</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>First of the points for the angle calculation</td>
+<td><code>0</code></td>
+</tr>
+<tr class="even">
+<td>index_b</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>The middle point for the angle calculation</td>
+<td><code>1</code></td>
+</tr>
+<tr class="odd">
+<td>index_c</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Last of the points for the angle calculation</td>
+<td><code>2</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-18" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-18">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 27%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.index_a</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>First of the points for the angle calculation</td>
+</tr>
+<tr class="even">
+<td>i.index_b</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>The middle point for the angle calculation</td>
+</tr>
+<tr class="odd">
+<td>i.index_c</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Last of the points for the angle calculation</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-18" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-18">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 26%">
+<col style="width: 62%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.angle</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Angle between the points around Index B in radians</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.IndexDistance" class="level1">
+<h1>Index Distance</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexDistance(index<span class="op">=</span><span class="dv">0</span>, target_index<span class="op">=</span><span class="dv">100</span>, position<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/utilities.html#index-distance">Index Distance</a>.</p>
+<section id="parameters-19" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-19">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -2677,8 +2897,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-17" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-17">Inputs</h2>
+<section id="inputs-19" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-19">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 19%">
@@ -2711,8 +2931,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-17" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-17">Outputs</h2>
+<section id="outputs-19" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-19">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -2753,11 +2973,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.IndexMixFloat" class="level1">
 <h1>Index Mix Float</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexMixFloat(value<span class="op">=</span><span class="fl">0.0</span>, index<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexMixFloat(value<span class="op">=</span><span class="fl">0.0</span>, index<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#index-mix-float">Index Mix Float</a>.</p>
-<section id="parameters-18" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-18">Parameters</h2>
+<section id="parameters-20" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-20">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 3%">
@@ -2789,8 +3009,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-18" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-18">Inputs</h2>
+<section id="inputs-20" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-20">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 5%">
@@ -2818,8 +3038,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-18" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-18">Outputs</h2>
+<section id="outputs-20" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-20">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
@@ -2855,11 +3075,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.IndexMixRotation" class="level1">
 <h1>Index Mix Rotation</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexMixRotation(rotation<span class="op">=</span><span class="va">None</span>, index<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexMixRotation(rotation<span class="op">=</span><span class="va">None</span>, index<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#index-mix-rotation">Index Mix Rotation</a>.</p>
-<section id="parameters-19" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-19">Parameters</h2>
+<section id="parameters-21" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-21">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
@@ -2891,8 +3111,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-19" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-19">Inputs</h2>
+<section id="inputs-21" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-21">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
@@ -2920,8 +3140,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-19" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-19">Outputs</h2>
+<section id="outputs-21" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-21">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
@@ -2957,11 +3177,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.IndexMixVector" class="level1">
 <h1>Index Mix Vector</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexMixVector(value<span class="op">=</span><span class="va">None</span>, index<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IndexMixVector(value<span class="op">=</span><span class="va">None</span>, index<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#index-mix-vector">Index Mix Vector</a>.</p>
-<section id="parameters-20" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-20">Parameters</h2>
+<section id="parameters-22" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-22">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 3%">
@@ -2993,8 +3213,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-20" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-20">Inputs</h2>
+<section id="inputs-22" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-22">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
@@ -3022,8 +3242,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-20" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-20">Outputs</h2>
+<section id="outputs-22" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-22">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
@@ -3059,11 +3279,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.IntegerDistance" class="level1">
 <h1>Integer Distance</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IntegerDistance(a<span class="op">=</span><span class="dv">0</span>, b<span class="op">=</span><span class="dv">0</span>, distance<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IntegerDistance(a<span class="op">=</span><span class="dv">0</span>, b<span class="op">=</span><span class="dv">0</span>, distance<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#integer-distance">Integer Distance</a>.</p>
-<section id="parameters-21" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-21">Parameters</h2>
+<section id="parameters-23" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-23">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -3101,8 +3321,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-21" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-21">Inputs</h2>
+<section id="inputs-23" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-23">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3130,8 +3350,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-21" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-21">Outputs</h2>
+<section id="outputs-23" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-23">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3157,11 +3377,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.IsEven" class="level1">
 <h1>Is Even</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IsEven(value<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.IsEven(value<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#is-even">Is Even</a>.</p>
-<section id="parameters-22" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-22">Parameters</h2>
+<section id="parameters-24" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-24">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -3187,8 +3407,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-22" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-22">Inputs</h2>
+<section id="inputs-24" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-24">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3206,8 +3426,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-22" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-22">Outputs</h2>
+<section id="outputs-24" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-24">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3233,16 +3453,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.MNTypedBundles" class="level1">
 <h1>MN Typed Bundles</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.MNTypedBundles(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="st">'MN.MeshProcess'</span>,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    closure<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    step<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    path<span class="op">=</span><span class="st">''</span>,</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.MNTypedBundles(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span><span class="op">=</span><span class="st">'MN.MeshProcess'</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    closure<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    step<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    path<span class="op">=</span><span class="st">''</span>,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#mn-typed-bundles">MN Typed Bundles</a>.</p>
-<section id="parameters-23" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-23">Parameters</h2>
+<section id="parameters-25" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-25">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3280,8 +3500,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-23" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-23">Inputs</h2>
+<section id="inputs-25" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-25">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3314,8 +3534,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-23" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-23">Outputs</h2>
+<section id="outputs-25" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-25">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3336,12 +3556,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.RotationFromZYZ" class="level1">
 <h1>Rotation from ZYZ</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.RotationFromZYZ(phi<span class="op">=</span><span class="fl">0.0</span>, theta<span class="op">=</span><span class="fl">0.0</span>, psi<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.RotationFromZYZ(phi<span class="op">=</span><span class="fl">0.0</span>, theta<span class="op">=</span><span class="fl">0.0</span>, psi<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Combine a rotation defined as ZYZ common in electron tomography</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#rotation-from-zyz">Rotation from ZYZ</a>.</p>
-<section id="parameters-24" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-24">Parameters</h2>
+<section id="parameters-26" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-26">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 8%">
@@ -3379,8 +3599,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-24" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-24">Inputs</h2>
+<section id="inputs-26" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-26">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3408,8 +3628,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-24" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-24">Outputs</h2>
+<section id="outputs-26" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-26">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3430,16 +3650,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.TransformAccumulate" class="level1">
 <h1>Transform Accumulate</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformAccumulate(</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span><span class="st">'Point'</span>,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    accumulate<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    group_id<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformAccumulate(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span><span class="st">'Point'</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    accumulate<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    group_id<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#transform-accumulate">Transform Accumulate</a>.</p>
-<section id="parameters-25" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-25">Parameters</h2>
+<section id="parameters-27" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-27">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3477,8 +3697,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-25" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-25">Inputs</h2>
+<section id="inputs-27" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-27">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 9%">
@@ -3516,8 +3736,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-25" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-25">Outputs</h2>
+<section id="outputs-27" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-27">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 18%">
@@ -3543,18 +3763,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.TransformAccumulatePoint" class="level1">
 <h1>Transform Accumulate Point</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformAccumulatePoint(</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span><span class="st">'Point'</span>,</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    accumulate<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    group_id<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformAccumulatePoint(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    domain<span class="op">=</span><span class="st">'Point'</span>,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    accumulate<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    transform<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    group_id<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Accumulate transforms on the point domain</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#transform-accumulate-point">Transform Accumulate Point</a>.</p>
-<section id="parameters-26" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-26">Parameters</h2>
+<section id="parameters-28" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-28">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3598,8 +3818,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-26" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-26">Inputs</h2>
+<section id="inputs-28" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-28">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -3642,8 +3862,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-26" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-26">Outputs</h2>
+<section id="outputs-28" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-28">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3664,12 +3884,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.TransformLocal" class="level1">
 <h1>Transform Local</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformLocal(origin<span class="op">=</span><span class="va">None</span>, transform<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformLocal(origin<span class="op">=</span><span class="va">None</span>, transform<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Apply the transform after first moving to world origin, then returning to original position</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#transform-local">Transform Local</a>.</p>
-<section id="parameters-27" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-27">Parameters</h2>
+<section id="parameters-29" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-29">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 8%">
@@ -3701,8 +3921,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-27" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-27">Inputs</h2>
+<section id="inputs-29" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-29">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -3730,8 +3950,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-27" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-27">Outputs</h2>
+<section id="outputs-29" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-29">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3752,12 +3972,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.TransformLocalAxis" class="level1">
 <h1>Transform Local Axis</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformLocalAxis(origin<span class="op">=</span><span class="va">None</span>, axis<span class="op">=</span><span class="va">None</span>, angle<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformLocalAxis(origin<span class="op">=</span><span class="va">None</span>, axis<span class="op">=</span><span class="va">None</span>, angle<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create a transform around an axis in local space defined by the <code>Origin</code> point</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#transform-local-axis">Transform Local Axis</a>.</p>
-<section id="parameters-28" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-28">Parameters</h2>
+<section id="parameters-30" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-30">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
@@ -3795,8 +4015,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-28" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-28">Inputs</h2>
+<section id="inputs-30" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-30">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -3829,8 +4049,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-28" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-28">Outputs</h2>
+<section id="outputs-30" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-30">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3851,20 +4071,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.TransformMix" class="level1">
 <h1>Transform Mix</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformMix(</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    menu<span class="op">=</span><span class="st">'Single'</span>,</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    translation<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    rotation<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformMix(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    menu<span class="op">=</span><span class="st">'Single'</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    translation<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    rotation<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Mix between two transformations</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#transform-mix">Transform Mix</a>.</p>
-<section id="parameters-29" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-29">Parameters</h2>
+<section id="parameters-31" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-31">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3920,8 +4140,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-29" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-29">Inputs</h2>
+<section id="inputs-31" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-31">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 17%">
@@ -3974,8 +4194,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-29" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-29">Outputs</h2>
+<section id="outputs-31" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-31">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3996,11 +4216,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.TransformRelative" class="level1">
 <h1>Transform Relative</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformRelative(a<span class="op">=</span><span class="va">None</span>, b<span class="op">=</span><span class="va">None</span>, c<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TransformRelative(a<span class="op">=</span><span class="va">None</span>, b<span class="op">=</span><span class="va">None</span>, c<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#transform-relative">Transform Relative</a>.</p>
-<section id="parameters-30" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-30">Parameters</h2>
+<section id="parameters-32" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-32">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
@@ -4038,8 +4258,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-30" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-30">Inputs</h2>
+<section id="inputs-32" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-32">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -4072,8 +4292,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-30" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-30">Outputs</h2>
+<section id="outputs-32" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-32">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -4099,12 +4319,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.VectorAngle" class="level1">
 <h1>Vector Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VectorAngle(a<span class="op">=</span><span class="va">None</span>, b<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VectorAngle(a<span class="op">=</span><span class="va">None</span>, b<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The angle between two vectors, in radians</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#vector-angle">Vector Angle</a>.</p>
-<section id="parameters-31" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-31">Parameters</h2>
+<section id="parameters-33" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-33">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
@@ -4136,8 +4356,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-31" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-31">Inputs</h2>
+<section id="inputs-33" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-33">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -4165,8 +4385,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-31" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-31">Outputs</h2>
+<section id="outputs-33" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-33">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 9%">
@@ -4197,11 +4417,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.VectorDirection" class="level1">
 <h1>Vector Direction</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VectorDirection(normalize<span class="op">=</span><span class="va">True</span>, to<span class="op">=</span><span class="va">None</span>, from_<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VectorDirection(normalize<span class="op">=</span><span class="va">True</span>, to<span class="op">=</span><span class="va">None</span>, from_<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#vector-direction">Vector Direction</a>.</p>
-<section id="parameters-32" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-32">Parameters</h2>
+<section id="parameters-34" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-34">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -4239,8 +4459,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-32" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-32">Inputs</h2>
+<section id="inputs-34" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-34">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4268,8 +4488,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-32" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-32">Outputs</h2>
+<section id="outputs-34" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-34">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 14%">
@@ -4300,11 +4520,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.VectorFromPoint" class="level1">
 <h1>Vector from Point</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VectorFromPoint(target<span class="op">=</span><span class="va">None</span>, position<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VectorFromPoint(target<span class="op">=</span><span class="va">None</span>, position<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#vector-from-point">Vector from Point</a>.</p>
-<section id="parameters-33" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-33">Parameters</h2>
+<section id="parameters-35" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-35">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -4336,8 +4556,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-33" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-33">Inputs</h2>
+<section id="inputs-35" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-35">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4360,8 +4580,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-33" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-33">Outputs</h2>
+<section id="outputs-35" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-35">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -4402,11 +4622,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.Velocity" class="level1">
 <h1>Velocity</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.Velocity()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.Velocity()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#velocity">Velocity</a>.</p>
-<section id="outputs-34" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-34">Outputs</h2>
+<section id="outputs-36" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-36">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4427,11 +4647,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.WorldToAngstrom" class="level1">
 <h1>World to Angstrom</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.WorldToAngstrom(world<span class="op">=</span><span class="fl">0.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.WorldToAngstrom(world<span class="op">=</span><span class="fl">0.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/utilities.html#world-to-angstrom">World to Angstrom</a>.</p>
-<section id="parameters-34" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-34">Parameters</h2>
+<section id="parameters-36" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-36">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -4457,8 +4677,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-34" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-34">Inputs</h2>
+<section id="inputs-36" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-36">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4476,8 +4696,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-35" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-35">Outputs</h2>
+<section id="outputs-37" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-37">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4491,223 +4711,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>o.angstrom</td>
 <td><code class="custom-float">FloatSocket</code></td>
 <td>Angstrom</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.nodes.geometry._2IndexAngle" class="level1">
-<h1>2 Index Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry._2IndexAngle(position<span class="op">=</span><span class="va">None</span>, index_a<span class="op">=</span><span class="dv">0</span>, index_b<span class="op">=</span><span class="dv">0</span>, index_c<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/utilities.html#2-index-angle">2 Index Angle</a>.</p>
-<section id="parameters-35" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-35">Parameters</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 28%">
-<col style="width: 57%">
-<col style="width: 6%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>position</td>
-<td><code class="custom-vector">InputVector</code></td>
-<td>The <code class="custom-attribute">Position</code> vectors to use for the angle calculation</td>
-<td><code>None</code></td>
-</tr>
-<tr class="even">
-<td>index_a</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>First end point for the angle calculation around the current point</td>
-<td><code>0</code></td>
-</tr>
-<tr class="odd">
-<td>index_b</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>The <code class="custom-attribute">Index</code> for the middle point in the angle calculation, defaulting to the current point</td>
-<td><code>0</code></td>
-</tr>
-<tr class="even">
-<td>index_c</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Last end point for the angle calculation around the current point</td>
-<td><code>2</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-35" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-35">Inputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 9%">
-<col style="width: 18%">
-<col style="width: 71%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>i.position</td>
-<td><code class="custom-vector">VectorSocket</code></td>
-<td>The <code class="custom-attribute">Position</code> vectors to use for the angle calculation</td>
-</tr>
-<tr class="even">
-<td>i.index_a</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>First end point for the angle calculation around the current point</td>
-</tr>
-<tr class="odd">
-<td>i.index_b</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>The <code class="custom-attribute">Index</code> for the middle point in the angle calculation, defaulting to the current point</td>
-</tr>
-<tr class="even">
-<td>i.index_c</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Last end point for the angle calculation around the current point</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-36" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-36">Outputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 28%">
-<col style="width: 59%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>o.angle</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Angle of the line A -&gt; Self -&gt; C in radians</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.nodes.geometry._3IndexAngle" class="level1">
-<h1>3 Index Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry._3IndexAngle(index_a<span class="op">=</span><span class="dv">0</span>, index_b<span class="op">=</span><span class="dv">1</span>, index_c<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/utilities.html#3-index-angle">3 Index Angle</a>.</p>
-<section id="parameters-36" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-36">Parameters</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 7%">
-<col style="width: 40%">
-<col style="width: 41%">
-<col style="width: 9%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>index_a</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>First of the points for the angle calculation</td>
-<td><code>0</code></td>
-</tr>
-<tr class="even">
-<td>index_b</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>The middle point for the angle calculation</td>
-<td><code>1</code></td>
-</tr>
-<tr class="odd">
-<td>index_c</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Last of the points for the angle calculation</td>
-<td><code>2</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-36" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-36">Inputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 27%">
-<col style="width: 58%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>i.index_a</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>First of the points for the angle calculation</td>
-</tr>
-<tr class="even">
-<td>i.index_b</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>The middle point for the angle calculation</td>
-</tr>
-<tr class="odd">
-<td>i.index_c</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Last of the points for the angle calculation</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-37" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-37">Outputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 10%">
-<col style="width: 26%">
-<col style="width: 62%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>o.angle</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Angle between the points around Index B in radians</td>
 </tr>
 </tbody>
 </table>

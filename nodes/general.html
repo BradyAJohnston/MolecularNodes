@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -41,10 +44,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -278,6 +281,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -335,9 +344,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
    
   <ul class="collapse">
   <li><a href="#assembly-id" id="toc-assembly-id" class="nav-link active" data-scroll-target="#assembly-id">Assembly ID</a></li>
+  <li><a href="#edge-length" id="toc-edge-length" class="nav-link" data-scroll-target="#edge-length">Edge Length</a></li>
+  <li><a href="#image-id" id="toc-image-id" class="nav-link" data-scroll-target="#image-id">Image ID</a></li>
   <li><a href="#symmetry-id" id="toc-symmetry-id" class="nav-link" data-scroll-target="#symmetry-id">Symmetry ID</a></li>
   <li><a href="#color-ao" id="toc-color-ao" class="nav-link" data-scroll-target="#color-ao">Color AO</a></li>
-  <li><a href="#flat" id="toc-flat" class="nav-link" data-scroll-target="#flat">Flat</a></li>
+  <li><a href="#flat-internal" id="toc-flat-internal" class="nav-link" data-scroll-target="#flat-internal">Flat Internal</a></li>
   </ul>
 </nav>
     </div>
@@ -407,6 +418,71 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.geometry.AssemblyID"><code>nodes.geometry.AssemblyID</code></a></p>
 </section>
+<section id="edge-length" class="level2">
+<h2 class="anchored" data-anchor-id="edge-length">Edge Length</h2>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Length</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.geometry.EdgeLength"><code>nodes.geometry.EdgeLength</code></a></p>
+</section>
+<section id="image-id" class="level2">
+<h2 class="anchored" data-anchor-id="image-id">Image ID</h2>
+<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">image_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Read the <code>image_id</code> attribute from the geometry</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.geometry.ImageID"><code>nodes.geometry.ImageID</code></a></p>
+</section>
 <section id="symmetry-id" class="level2">
 <h2 class="anchored" data-anchor-id="symmetry-id">Symmetry ID</h2>
 <p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
@@ -474,11 +550,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">AO Space</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">Distance</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Exponent</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;"></td>
@@ -504,8 +585,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.shader.ColorAO"><code>nodes.shader.ColorAO</code></a></p>
 </section>
-<section id="flat" class="level2">
-<h2 class="anchored" data-anchor-id="flat">Flat</h2>
+<section id="flat-internal" class="level2">
+<h2 class="anchored" data-anchor-id="flat-internal">Flat Internal</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -550,7 +631,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.shader.Flat"><code>nodes.shader.Flat</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.shader.FlatInternal"><code>nodes.shader.FlatInternal</code></a></p>
 
 
 </section>

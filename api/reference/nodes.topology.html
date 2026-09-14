@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -428,12 +431,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">material.PresetMaterial</span></a>
   </div>
@@ -628,6 +625,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -809,153 +812,149 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#inputs-18" id="toc-inputs-18" class="nav-link" data-scroll-target="#inputs-18">Inputs</a></li>
   <li><a href="#outputs-21" id="toc-outputs-21" class="nav-link" data-scroll-target="#outputs-21">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.EdgeLength" id="toc-molecularnodes.nodes.geometry.EdgeLength" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.EdgeLength">Edge Length</a>
-  <ul class="collapse">
-  <li><a href="#outputs-22" id="toc-outputs-22" class="nav-link" data-scroll-target="#outputs-22">Outputs</a></li>
-  </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.FindBondedAtom" id="toc-molecularnodes.nodes.geometry.FindBondedAtom" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.FindBondedAtom">Find Bonded Atom</a>
   <ul class="collapse">
   <li><a href="#parameters-19" id="toc-parameters-19" class="nav-link" data-scroll-target="#parameters-19">Parameters</a></li>
   <li><a href="#inputs-19" id="toc-inputs-19" class="nav-link" data-scroll-target="#inputs-19">Inputs</a></li>
-  <li><a href="#outputs-23" id="toc-outputs-23" class="nav-link" data-scroll-target="#outputs-23">Outputs</a></li>
+  <li><a href="#outputs-22" id="toc-outputs-22" class="nav-link" data-scroll-target="#outputs-22">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.FindBonds" id="toc-molecularnodes.nodes.geometry.FindBonds" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.FindBonds">Find Bonds</a>
   <ul class="collapse">
   <li><a href="#parameters-20" id="toc-parameters-20" class="nav-link" data-scroll-target="#parameters-20">Parameters</a></li>
   <li><a href="#inputs-20" id="toc-inputs-20" class="nav-link" data-scroll-target="#inputs-20">Inputs</a></li>
-  <li><a href="#outputs-24" id="toc-outputs-24" class="nav-link" data-scroll-target="#outputs-24">Outputs</a></li>
+  <li><a href="#outputs-23" id="toc-outputs-23" class="nav-link" data-scroll-target="#outputs-23">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.MenuResidueMask" id="toc-molecularnodes.nodes.geometry.MenuResidueMask" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.MenuResidueMask">Menu Residue Mask</a>
   <ul class="collapse">
   <li><a href="#parameters-21" id="toc-parameters-21" class="nav-link" data-scroll-target="#parameters-21">Parameters</a></li>
   <li><a href="#inputs-21" id="toc-inputs-21" class="nav-link" data-scroll-target="#inputs-21">Inputs</a></li>
-  <li><a href="#outputs-25" id="toc-outputs-25" class="nav-link" data-scroll-target="#outputs-25">Outputs</a></li>
+  <li><a href="#outputs-24" id="toc-outputs-24" class="nav-link" data-scroll-target="#outputs-24">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.MenuResidueName" id="toc-molecularnodes.nodes.geometry.MenuResidueName" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.MenuResidueName">Menu Residue Name</a>
   <ul class="collapse">
   <li><a href="#parameters-22" id="toc-parameters-22" class="nav-link" data-scroll-target="#parameters-22">Parameters</a></li>
   <li><a href="#inputs-22" id="toc-inputs-22" class="nav-link" data-scroll-target="#inputs-22">Inputs</a></li>
-  <li><a href="#outputs-26" id="toc-outputs-26" class="nav-link" data-scroll-target="#outputs-26">Outputs</a></li>
+  <li><a href="#outputs-25" id="toc-outputs-25" class="nav-link" data-scroll-target="#outputs-25">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.NucleicChi" id="toc-molecularnodes.nodes.geometry.NucleicChi" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.NucleicChi">Nucleic Chi</a>
   <ul class="collapse">
   <li><a href="#parameters-23" id="toc-parameters-23" class="nav-link" data-scroll-target="#parameters-23">Parameters</a></li>
   <li><a href="#inputs-23" id="toc-inputs-23" class="nav-link" data-scroll-target="#inputs-23">Inputs</a></li>
-  <li><a href="#outputs-27" id="toc-outputs-27" class="nav-link" data-scroll-target="#outputs-27">Outputs</a></li>
+  <li><a href="#outputs-26" id="toc-outputs-26" class="nav-link" data-scroll-target="#outputs-26">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.NucleicDihedral" id="toc-molecularnodes.nodes.geometry.NucleicDihedral" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.NucleicDihedral">Nucleic Dihedral</a>
   <ul class="collapse">
   <li><a href="#parameters-24" id="toc-parameters-24" class="nav-link" data-scroll-target="#parameters-24">Parameters</a></li>
   <li><a href="#inputs-24" id="toc-inputs-24" class="nav-link" data-scroll-target="#inputs-24">Inputs</a></li>
-  <li><a href="#outputs-28" id="toc-outputs-28" class="nav-link" data-scroll-target="#outputs-28">Outputs</a></li>
+  <li><a href="#outputs-27" id="toc-outputs-27" class="nav-link" data-scroll-target="#outputs-27">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.PeptideChi" id="toc-molecularnodes.nodes.geometry.PeptideChi" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.PeptideChi">Peptide Chi</a>
   <ul class="collapse">
   <li><a href="#parameters-25" id="toc-parameters-25" class="nav-link" data-scroll-target="#parameters-25">Parameters</a></li>
   <li><a href="#inputs-25" id="toc-inputs-25" class="nav-link" data-scroll-target="#inputs-25">Inputs</a></li>
-  <li><a href="#outputs-29" id="toc-outputs-29" class="nav-link" data-scroll-target="#outputs-29">Outputs</a></li>
+  <li><a href="#outputs-28" id="toc-outputs-28" class="nav-link" data-scroll-target="#outputs-28">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.PeptideDihedral" id="toc-molecularnodes.nodes.geometry.PeptideDihedral" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.PeptideDihedral">Peptide Dihedral</a>
   <ul class="collapse">
   <li><a href="#parameters-26" id="toc-parameters-26" class="nav-link" data-scroll-target="#parameters-26">Parameters</a></li>
   <li><a href="#inputs-26" id="toc-inputs-26" class="nav-link" data-scroll-target="#inputs-26">Inputs</a></li>
-  <li><a href="#outputs-30" id="toc-outputs-30" class="nav-link" data-scroll-target="#outputs-30">Outputs</a></li>
+  <li><a href="#outputs-29" id="toc-outputs-29" class="nav-link" data-scroll-target="#outputs-29">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.PointEdgeAngle" id="toc-molecularnodes.nodes.geometry.PointEdgeAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.PointEdgeAngle">Point Edge Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-27" id="toc-parameters-27" class="nav-link" data-scroll-target="#parameters-27">Parameters</a></li>
   <li><a href="#inputs-27" id="toc-inputs-27" class="nav-link" data-scroll-target="#inputs-27">Inputs</a></li>
-  <li><a href="#outputs-31" id="toc-outputs-31" class="nav-link" data-scroll-target="#outputs-31">Outputs</a></li>
+  <li><a href="#outputs-30" id="toc-outputs-30" class="nav-link" data-scroll-target="#outputs-30">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.PointsOfEdge" id="toc-molecularnodes.nodes.geometry.PointsOfEdge" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.PointsOfEdge">Points of Edge</a>
   <ul class="collapse">
   <li><a href="#parameters-28" id="toc-parameters-28" class="nav-link" data-scroll-target="#parameters-28">Parameters</a></li>
   <li><a href="#inputs-28" id="toc-inputs-28" class="nav-link" data-scroll-target="#inputs-28">Inputs</a></li>
-  <li><a href="#outputs-32" id="toc-outputs-32" class="nav-link" data-scroll-target="#outputs-32">Outputs</a></li>
+  <li><a href="#outputs-31" id="toc-outputs-31" class="nav-link" data-scroll-target="#outputs-31">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.ResidueDihedralAngle" id="toc-molecularnodes.nodes.geometry.ResidueDihedralAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ResidueDihedralAngle">Residue Dihedral Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-29" id="toc-parameters-29" class="nav-link" data-scroll-target="#parameters-29">Parameters</a></li>
   <li><a href="#inputs-29" id="toc-inputs-29" class="nav-link" data-scroll-target="#inputs-29">Inputs</a></li>
-  <li><a href="#outputs-33" id="toc-outputs-33" class="nav-link" data-scroll-target="#outputs-33">Outputs</a></li>
+  <li><a href="#outputs-32" id="toc-outputs-32" class="nav-link" data-scroll-target="#outputs-32">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.ResidueMask" id="toc-molecularnodes.nodes.geometry.ResidueMask" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ResidueMask">Residue Mask</a>
   <ul class="collapse">
   <li><a href="#parameters-30" id="toc-parameters-30" class="nav-link" data-scroll-target="#parameters-30">Parameters</a></li>
   <li><a href="#inputs-30" id="toc-inputs-30" class="nav-link" data-scroll-target="#inputs-30">Inputs</a></li>
-  <li><a href="#outputs-34" id="toc-outputs-34" class="nav-link" data-scroll-target="#outputs-34">Outputs</a></li>
+  <li><a href="#outputs-33" id="toc-outputs-33" class="nav-link" data-scroll-target="#outputs-33">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.ResidueParameter" id="toc-molecularnodes.nodes.geometry.ResidueParameter" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ResidueParameter">Residue Parameter</a>
   <ul class="collapse">
-  <li><a href="#outputs-35" id="toc-outputs-35" class="nav-link" data-scroll-target="#outputs-35">Outputs</a></li>
+  <li><a href="#outputs-34" id="toc-outputs-34" class="nav-link" data-scroll-target="#outputs-34">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.SampleNearestAtoms" id="toc-molecularnodes.nodes.geometry.SampleNearestAtoms" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SampleNearestAtoms">Sample Nearest Atoms</a>
   <ul class="collapse">
   <li><a href="#parameters-31" id="toc-parameters-31" class="nav-link" data-scroll-target="#parameters-31">Parameters</a></li>
   <li><a href="#inputs-31" id="toc-inputs-31" class="nav-link" data-scroll-target="#inputs-31">Inputs</a></li>
-  <li><a href="#outputs-36" id="toc-outputs-36" class="nav-link" data-scroll-target="#outputs-36">Outputs</a></li>
+  <li><a href="#outputs-35" id="toc-outputs-35" class="nav-link" data-scroll-target="#outputs-35">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.SetChiAngle" id="toc-molecularnodes.nodes.geometry.SetChiAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SetChiAngle">Set Chi Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-32" id="toc-parameters-32" class="nav-link" data-scroll-target="#parameters-32">Parameters</a></li>
   <li><a href="#inputs-32" id="toc-inputs-32" class="nav-link" data-scroll-target="#inputs-32">Inputs</a></li>
-  <li><a href="#outputs-37" id="toc-outputs-37" class="nav-link" data-scroll-target="#outputs-37">Outputs</a></li>
+  <li><a href="#outputs-36" id="toc-outputs-36" class="nav-link" data-scroll-target="#outputs-36">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.SetNucleicDihedral" id="toc-molecularnodes.nodes.geometry.SetNucleicDihedral" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SetNucleicDihedral">Set Nucleic Dihedral</a>
   <ul class="collapse">
   <li><a href="#parameters-33" id="toc-parameters-33" class="nav-link" data-scroll-target="#parameters-33">Parameters</a></li>
   <li><a href="#inputs-33" id="toc-inputs-33" class="nav-link" data-scroll-target="#inputs-33">Inputs</a></li>
-  <li><a href="#outputs-38" id="toc-outputs-38" class="nav-link" data-scroll-target="#outputs-38">Outputs</a></li>
+  <li><a href="#outputs-37" id="toc-outputs-37" class="nav-link" data-scroll-target="#outputs-37">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.SetPhiPsiAngle" id="toc-molecularnodes.nodes.geometry.SetPhiPsiAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SetPhiPsiAngle">Set Phi Psi Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-34" id="toc-parameters-34" class="nav-link" data-scroll-target="#parameters-34">Parameters</a></li>
   <li><a href="#inputs-34" id="toc-inputs-34" class="nav-link" data-scroll-target="#inputs-34">Inputs</a></li>
-  <li><a href="#outputs-39" id="toc-outputs-39" class="nav-link" data-scroll-target="#outputs-39">Outputs</a></li>
+  <li><a href="#outputs-38" id="toc-outputs-38" class="nav-link" data-scroll-target="#outputs-38">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.SetUResID" id="toc-molecularnodes.nodes.geometry.SetUResID" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SetUResID">Set URes ID</a>
   <ul class="collapse">
   <li><a href="#parameters-35" id="toc-parameters-35" class="nav-link" data-scroll-target="#parameters-35">Parameters</a></li>
   <li><a href="#inputs-35" id="toc-inputs-35" class="nav-link" data-scroll-target="#inputs-35">Inputs</a></li>
-  <li><a href="#outputs-40" id="toc-outputs-40" class="nav-link" data-scroll-target="#outputs-40">Outputs</a></li>
+  <li><a href="#outputs-39" id="toc-outputs-39" class="nav-link" data-scroll-target="#outputs-39">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.StructureParameter" id="toc-molecularnodes.nodes.geometry.StructureParameter" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.StructureParameter">Structure Parameter</a>
   <ul class="collapse">
-  <li><a href="#outputs-41" id="toc-outputs-41" class="nav-link" data-scroll-target="#outputs-41">Outputs</a></li>
+  <li><a href="#outputs-40" id="toc-outputs-40" class="nav-link" data-scroll-target="#outputs-40">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.SwitchResidueName" id="toc-molecularnodes.nodes.geometry.SwitchResidueName" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SwitchResidueName">Switch Residue Name</a>
   <ul class="collapse">
   <li><a href="#parameters-36" id="toc-parameters-36" class="nav-link" data-scroll-target="#parameters-36">Parameters</a></li>
   <li><a href="#inputs-36" id="toc-inputs-36" class="nav-link" data-scroll-target="#inputs-36">Inputs</a></li>
-  <li><a href="#outputs-42" id="toc-outputs-42" class="nav-link" data-scroll-target="#outputs-42">Outputs</a></li>
+  <li><a href="#outputs-41" id="toc-outputs-41" class="nav-link" data-scroll-target="#outputs-41">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.TopologyDSSP" id="toc-molecularnodes.nodes.geometry.TopologyDSSP" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.TopologyDSSP">Topology DSSP</a>
   <ul class="collapse">
   <li><a href="#parameters-37" id="toc-parameters-37" class="nav-link" data-scroll-target="#parameters-37">Parameters</a></li>
   <li><a href="#inputs-37" id="toc-inputs-37" class="nav-link" data-scroll-target="#inputs-37">Inputs</a></li>
-  <li><a href="#outputs-43" id="toc-outputs-43" class="nav-link" data-scroll-target="#outputs-43">Outputs</a></li>
+  <li><a href="#outputs-42" id="toc-outputs-42" class="nav-link" data-scroll-target="#outputs-42">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.UniqueChainID" id="toc-molecularnodes.nodes.geometry.UniqueChainID" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.UniqueChainID">Unique Chain ID</a>
   <ul class="collapse">
   <li><a href="#parameters-38" id="toc-parameters-38" class="nav-link" data-scroll-target="#parameters-38">Parameters</a></li>
   <li><a href="#inputs-38" id="toc-inputs-38" class="nav-link" data-scroll-target="#inputs-38">Inputs</a></li>
-  <li><a href="#outputs-44" id="toc-outputs-44" class="nav-link" data-scroll-target="#outputs-44">Outputs</a></li>
+  <li><a href="#outputs-43" id="toc-outputs-43" class="nav-link" data-scroll-target="#outputs-43">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.UniqueResidueID" id="toc-molecularnodes.nodes.geometry.UniqueResidueID" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.UniqueResidueID">Unique Residue ID</a>
   <ul class="collapse">
-  <li><a href="#outputs-45" id="toc-outputs-45" class="nav-link" data-scroll-target="#outputs-45">Outputs</a></li>
+  <li><a href="#outputs-44" id="toc-outputs-44" class="nav-link" data-scroll-target="#outputs-44">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.VisualizeChiAngle" id="toc-molecularnodes.nodes.geometry.VisualizeChiAngle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VisualizeChiAngle">Visualize Chi Angle</a>
   <ul class="collapse">
   <li><a href="#parameters-39" id="toc-parameters-39" class="nav-link" data-scroll-target="#parameters-39">Parameters</a></li>
   <li><a href="#inputs-39" id="toc-inputs-39" class="nav-link" data-scroll-target="#inputs-39">Inputs</a></li>
-  <li><a href="#outputs-46" id="toc-outputs-46" class="nav-link" data-scroll-target="#outputs-46">Outputs</a></li>
+  <li><a href="#outputs-45" id="toc-outputs-45" class="nav-link" data-scroll-target="#outputs-45">Outputs</a></li>
   </ul></li>
   <li><a href="#molecularnodes.nodes.geometry.VisualizeRelativeAtoms" id="toc-molecularnodes.nodes.geometry.VisualizeRelativeAtoms" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.VisualizeRelativeAtoms">Visualize Relative Atoms</a>
   <ul class="collapse">
   <li><a href="#parameters-40" id="toc-parameters-40" class="nav-link" data-scroll-target="#parameters-40">Parameters</a></li>
   <li><a href="#inputs-40" id="toc-inputs-40" class="nav-link" data-scroll-target="#inputs-40">Inputs</a></li>
-  <li><a href="#outputs-47" id="toc-outputs-47" class="nav-link" data-scroll-target="#outputs-47">Outputs</a></li>
+  <li><a href="#outputs-46" id="toc-outputs-46" class="nav-link" data-scroll-target="#outputs-46">Outputs</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -2804,39 +2803,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="molecularnodes.nodes.geometry.EdgeLength" class="level1">
-<h1>Edge Length</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.EdgeLength()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/topology.html#edge-length">Edge Length</a>.</p>
-<section id="outputs-22" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-22">Outputs</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>o.length</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Length</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
 <section id="molecularnodes.nodes.geometry.FindBondedAtom" class="level1">
 <h1>Find Bonded Atom</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.FindBondedAtom(</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'Exact'</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    atom_name<span class="op">=</span><span class="st">'N'</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    distance<span class="op">=</span><span class="dv">2</span>,</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.FindBondedAtom(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'Exact'</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    atom_name<span class="op">=</span><span class="st">'N'</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    distance<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#find-bonded-atom">Find Bonded Atom</a>.</p>
 <section id="parameters-19" class="level2 doc-section doc-section-parameters">
@@ -2912,8 +2886,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-23" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-23">Outputs</h2>
+<section id="outputs-22" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-22">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2944,7 +2918,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.FindBonds" class="level1">
 <h1>Find Bonds</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.FindBonds(atoms<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, scale<span class="op">=</span><span class="fl">1.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.FindBonds(atoms<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, scale<span class="op">=</span><span class="fl">1.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#find-bonds">Find Bonds</a>.</p>
 <section id="parameters-20" class="level2 doc-section doc-section-parameters">
@@ -3020,8 +2994,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-24" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-24">Outputs</h2>
+<section id="outputs-23" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-23">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3042,7 +3016,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.MenuResidueMask" class="level1">
 <h1>Menu Residue Mask</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.MenuResidueMask(atom_name<span class="op">=</span><span class="st">'N'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.MenuResidueMask(atom_name<span class="op">=</span><span class="st">'N'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#menu-residue-mask">Menu Residue Mask</a>.</p>
 <section id="parameters-21" class="level2 doc-section doc-section-parameters">
@@ -3085,8 +3059,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-25" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-25">Outputs</h2>
+<section id="outputs-24" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-24">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 9%">
@@ -3122,7 +3096,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.MenuResidueName" class="level1">
 <h1>Menu Residue Name</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.MenuResidueName(residue_name<span class="op">=</span><span class="st">'ALA'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.MenuResidueName(residue_name<span class="op">=</span><span class="st">'ALA'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#menu-residue-name">Menu Residue Name</a>.</p>
 <section id="parameters-22" class="level2 doc-section doc-section-parameters">
@@ -3165,8 +3139,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-26" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-26">Outputs</h2>
+<section id="outputs-25" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-25">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3192,7 +3166,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.NucleicChi" class="level1">
 <h1>Nucleic Chi</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.NucleicChi(position<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, x1<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.NucleicChi(position<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, x1<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#nucleic-chi">Nucleic Chi</a>.</p>
 <section id="parameters-23" class="level2 doc-section doc-section-parameters">
@@ -3268,8 +3242,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-27" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-27">Outputs</h2>
+<section id="outputs-26" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-26">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3290,15 +3264,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.NucleicDihedral" class="level1">
 <h1>Nucleic Dihedral</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.NucleicDihedral(</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    zeta<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.NucleicDihedral(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    zeta<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#nucleic-dihedral">Nucleic Dihedral</a>.</p>
 <section id="parameters-24" class="level2 doc-section doc-section-parameters">
@@ -3418,8 +3392,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-28" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-28">Outputs</h2>
+<section id="outputs-27" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-27">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3440,15 +3414,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.PeptideChi" class="level1">
 <h1>Peptide Chi</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PeptideChi(</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    x1<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    x2<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    x3<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    x4<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    x5<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PeptideChi(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    x1<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    x2<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    x3<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    x4<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    x5<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#peptide-chi">Peptide Chi</a>.</p>
 <section id="parameters-25" class="level2 doc-section doc-section-parameters">
@@ -3563,8 +3537,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-29" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-29">Outputs</h2>
+<section id="outputs-28" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-28">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3585,7 +3559,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.PeptideDihedral" class="level1">
 <h1>Peptide Dihedral</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PeptideDihedral(position<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, phi<span class="op">=</span><span class="fl">0.0</span>, psi<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PeptideDihedral(position<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, phi<span class="op">=</span><span class="fl">0.0</span>, psi<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#peptide-dihedral">Peptide Dihedral</a>.</p>
 <section id="parameters-26" class="level2 doc-section doc-section-parameters">
@@ -3672,8 +3646,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-30" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-30">Outputs</h2>
+<section id="outputs-29" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-29">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3694,7 +3668,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.PointEdgeAngle" class="level1">
 <h1>Point Edge Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PointEdgeAngle(vertex_index<span class="op">=</span><span class="dv">0</span>, edge_a<span class="op">=</span><span class="dv">0</span>, edge_b<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PointEdgeAngle(vertex_index<span class="op">=</span><span class="dv">0</span>, edge_a<span class="op">=</span><span class="dv">0</span>, edge_b<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#point-edge-angle">Point Edge Angle</a>.</p>
 <section id="parameters-27" class="level2 doc-section doc-section-parameters">
@@ -3770,8 +3744,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-31" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-31">Outputs</h2>
+<section id="outputs-30" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-30">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -3822,7 +3796,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.PointsOfEdge" class="level1">
 <h1>Points of Edge</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PointsOfEdge(vertex_index<span class="op">=</span><span class="dv">0</span>, edge_index<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.PointsOfEdge(vertex_index<span class="op">=</span><span class="dv">0</span>, edge_index<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#points-of-edge">Points of Edge</a>.</p>
 <section id="parameters-28" class="level2 doc-section doc-section-parameters">
@@ -3887,8 +3861,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-32" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-32">Outputs</h2>
+<section id="outputs-31" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-31">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
@@ -3934,7 +3908,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ResidueDihedralAngle" class="level1">
 <h1>Residue Dihedral Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ResidueDihedralAngle(a<span class="op">=</span><span class="dv">6</span>, c<span class="op">=</span><span class="dv">2</span>, d<span class="op">=</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ResidueDihedralAngle(a<span class="op">=</span><span class="dv">6</span>, c<span class="op">=</span><span class="dv">2</span>, d<span class="op">=</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#residue-dihedral-angle">Residue Dihedral Angle</a>.</p>
 <section id="parameters-29" class="level2 doc-section doc-section-parameters">
@@ -4005,8 +3979,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-33" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-33">Outputs</h2>
+<section id="outputs-32" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-32">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -4047,7 +4021,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ResidueMask" class="level1">
 <h1>Residue Mask</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ResidueMask(atom_name<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ResidueMask(atom_name<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#residue-mask">Residue Mask</a>.</p>
 <section id="parameters-30" class="level2 doc-section doc-section-parameters">
@@ -4096,8 +4070,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-34" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-34">Outputs</h2>
+<section id="outputs-33" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-33">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 9%">
@@ -4133,11 +4107,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ResidueParameter" class="level1">
 <h1>Residue Parameter</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ResidueParameter()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ResidueParameter()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#residue-parameter">Residue Parameter</a>.</p>
-<section id="outputs-35" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-35">Outputs</h2>
+<section id="outputs-34" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-34">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -4193,7 +4167,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SampleNearestAtoms" class="level1">
 <h1>Sample Nearest Atoms</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SampleNearestAtoms(atoms<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SampleNearestAtoms(atoms<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#sample-nearest-atoms">Sample Nearest Atoms</a>.</p>
 <section id="parameters-31" class="level2 doc-section doc-section-parameters">
@@ -4247,8 +4221,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-36" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-36">Outputs</h2>
+<section id="outputs-35" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-35">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4294,15 +4268,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SetChiAngle" class="level1">
 <h1>Set Chi Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetChiAngle(</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    x1<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    x2<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    x3<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    x4<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    x5<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetChiAngle(</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    x1<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    x2<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    x3<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    x4<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>    x5<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#set-chi-angle">Set Chi Angle</a>.</p>
 <section id="parameters-32" class="level2 doc-section doc-section-parameters">
@@ -4417,8 +4391,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-37" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-37">Outputs</h2>
+<section id="outputs-36" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-36">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4439,15 +4413,15 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SetNucleicDihedral" class="level1">
 <h1>Set Nucleic Dihedral</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetNucleicDihedral(</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    zeta<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetNucleicDihedral(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    beta<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    epsilon<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    zeta<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#set-nucleic-dihedral">Set Nucleic Dihedral</a>.</p>
 <section id="parameters-33" class="level2 doc-section doc-section-parameters">
@@ -4567,8 +4541,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-38" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-38">Outputs</h2>
+<section id="outputs-37" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-37">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4589,7 +4563,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SetPhiPsiAngle" class="level1">
 <h1>Set Phi Psi Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetPhiPsiAngle(geometry<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, phi<span class="op">=</span><span class="fl">0.0</span>, psi<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetPhiPsiAngle(geometry<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, phi<span class="op">=</span><span class="fl">0.0</span>, psi<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#set-phi-psi-angle">Set Phi Psi Angle</a>.</p>
 <section id="parameters-34" class="level2 doc-section doc-section-parameters">
@@ -4671,8 +4645,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-39" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-39">Outputs</h2>
+<section id="outputs-38" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-38">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4693,7 +4667,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SetUResID" class="level1">
 <h1>Set URes ID</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetUResID(geometry<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetUResID(geometry<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#set-ures-id">Set URes ID</a>.</p>
 <section id="parameters-35" class="level2 doc-section doc-section-parameters">
@@ -4742,8 +4716,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-40" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-40">Outputs</h2>
+<section id="outputs-39" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-39">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4764,11 +4738,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.StructureParameter" class="level1">
 <h1>Structure Parameter</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.StructureParameter()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.StructureParameter()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#structure-parameter">Structure Parameter</a>.</p>
-<section id="outputs-41" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-41">Outputs</h2>
+<section id="outputs-40" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-40">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -4829,28 +4803,28 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SwitchResidueName" class="level1">
 <h1>Switch Residue Name</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SwitchResidueName(</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    ala<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    arg<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    asn<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    asp<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    cys<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    glu<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    gln<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    gly<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    his<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    ile<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    leu<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    lys<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    met<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    phe<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>    pro<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    ser<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>    thr<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>    trp<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>    tyr<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>    val<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SwitchResidueName(</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    ala<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    arg<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    asn<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    asp<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    cys<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    glu<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    gln<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    gly<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    his<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    ile<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    leu<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    lys<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>    met<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>    phe<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>    pro<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>    ser<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>    thr<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>    trp<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>    tyr<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>    val<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#switch-residue-name">Switch Residue Name</a>.</p>
 <section id="parameters-36" class="level2 doc-section doc-section-parameters">
@@ -5108,8 +5082,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-42" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-42">Outputs</h2>
+<section id="outputs-41" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-41">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -5130,7 +5104,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.TopologyDSSP" class="level1">
 <h1>Topology DSSP</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TopologyDSSP(atoms<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.TopologyDSSP(atoms<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Calculate the secondary structure attributes for the protein chains, based on the 1983 Kabsch algorithm</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#topology-dssp">Topology DSSP</a>.</p>
@@ -5185,8 +5159,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-43" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-43">Outputs</h2>
+<section id="outputs-42" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-42">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
@@ -5212,7 +5186,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.UniqueChainID" class="level1">
 <h1>Unique Chain ID</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.UniqueChainID(cutoff<span class="op">=</span><span class="fl">4.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.UniqueChainID(cutoff<span class="op">=</span><span class="fl">4.5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Compute a unique Group ID based on the <code class="custom-attribute">chain_id</code> attribute, but also incrememnting if subsequent points are over a cutoff distance from each other</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#unique-chain-id">Unique Chain ID</a>.</p>
@@ -5267,8 +5241,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-44" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-44">Outputs</h2>
+<section id="outputs-43" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-43">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -5289,11 +5263,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.UniqueResidueID" class="level1">
 <h1>Unique Residue ID</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.UniqueResidueID()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.UniqueResidueID()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#unique-residue-id">Unique Residue ID</a>.</p>
-<section id="outputs-45" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-45">Outputs</h2>
+<section id="outputs-44" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-44">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 17%">
@@ -5319,13 +5293,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.VisualizeChiAngle" class="level1">
 <h1>Visualize Chi Angle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VisualizeChiAngle(</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    value<span class="op">=</span><span class="fl">0.61</span>,</span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">0.2</span>,</span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VisualizeChiAngle(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    value<span class="op">=</span><span class="fl">0.61</span>,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#visualize-chi-angle">Visualize Chi Angle</a>.</p>
 <section id="parameters-39" class="level2 doc-section doc-section-parameters">
@@ -5423,8 +5397,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-46" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-46">Outputs</h2>
+<section id="outputs-45" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-45">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -5450,14 +5424,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.VisualizeRelativeAtoms" class="level1">
 <h1>Visualize Relative Atoms</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VisualizeRelativeAtoms(</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    atoms<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    target_index<span class="op">=</span><span class="dv">100</span>,</span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    target_position<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.VisualizeRelativeAtoms(</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    atoms<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    scale<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    position<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    target_index<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    target_position<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/topology.html#visualize-relative-atoms">Visualize Relative Atoms</a>.</p>
 <section id="parameters-40" class="level2 doc-section doc-section-parameters">
@@ -5566,8 +5540,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-47" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-47">Outputs</h2>
+<section id="outputs-46" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-46">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">

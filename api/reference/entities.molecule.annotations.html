@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -428,12 +431,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">material.PresetMaterial</span></a>
   </div>
@@ -628,6 +625,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -770,17 +773,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>MDAnalysis selection phrase to select the atom group</td>
 </tr>
 <tr class="even">
 <td>show_resid</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the res ID along with the atom name</td>
 </tr>
 <tr class="odd">
 <td>show_segid</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the seg ID along with the atom name</td>
 </tr>
 </tbody>
@@ -995,7 +998,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1033,7 +1036,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>scale</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Scale of the image to draw</td>
 <td><code>1.0</code></td>
 </tr>
@@ -1073,13 +1076,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -1091,19 +1094,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1144,7 +1147,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
@@ -1156,7 +1159,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -1168,19 +1171,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1219,13 +1222,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cone</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cone</td>
 <td><code>1.0</code></td>
 </tr>
@@ -1237,13 +1240,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the base</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1282,13 +1285,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
@@ -1300,13 +1303,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1353,37 +1356,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1430,37 +1433,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1494,19 +1497,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>10</code></td>
 </tr>
@@ -1524,13 +1527,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1564,19 +1567,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the pyramid</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the pyramid</td>
 <td><code>10</code></td>
 </tr>
@@ -1594,13 +1597,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of pyramid</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1636,13 +1639,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the sphere</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1678,13 +1681,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1720,13 +1723,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1762,37 +1765,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector a length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>b</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector b length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td>c</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector c length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>alpha</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors bc</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="odd">
 <td>beta</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ac</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="even">
 <td>gamma</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ab</td>
 <td><code>90.0</code></td>
 </tr>
@@ -1804,13 +1807,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1847,19 +1850,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>center_to_origin</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Move the center of the cell to origin (0, 0, 0)</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1894,7 +1897,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
 <td><code class="custom-string">'PIL Image'</code></td>
 </tr>
@@ -1941,12 +1944,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>MDAnalysis selection phrase to select the atom group</td>
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text do display at the center-of-mass</td>
 </tr>
 </tbody>
@@ -2161,7 +2164,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2199,7 +2202,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>scale</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Scale of the image to draw</td>
 <td><code>1.0</code></td>
 </tr>
@@ -2239,13 +2242,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -2257,19 +2260,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2310,7 +2313,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
@@ -2322,7 +2325,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -2334,19 +2337,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2385,13 +2388,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cone</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cone</td>
 <td><code>1.0</code></td>
 </tr>
@@ -2403,13 +2406,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the base</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2448,13 +2451,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
@@ -2466,13 +2469,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2519,37 +2522,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2596,37 +2599,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2660,19 +2663,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>10</code></td>
 </tr>
@@ -2690,13 +2693,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2730,19 +2733,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the pyramid</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the pyramid</td>
 <td><code>10</code></td>
 </tr>
@@ -2760,13 +2763,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of pyramid</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2802,13 +2805,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the sphere</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2840,13 +2843,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2878,13 +2881,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2920,37 +2923,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector a length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>b</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector b length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td>c</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector c length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>alpha</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors bc</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="odd">
 <td>beta</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ac</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="even">
 <td>gamma</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ab</td>
 <td><code>90.0</code></td>
 </tr>
@@ -2962,13 +2965,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3005,19 +3008,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>center_to_origin</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Move the center of the cell to origin (0, 0, 0)</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3052,7 +3055,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
 <td><code class="custom-string">'PIL Image'</code></td>
 </tr>
@@ -3099,22 +3102,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>selection1</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>MDAnalysis selection phrase to select the first atom group</td>
 </tr>
 <tr class="even">
 <td>selection2</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>MDAnalysis selection phrase to select the second atom group</td>
 </tr>
 <tr class="odd">
 <td>text1</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text do display at the first center-of-mass</td>
 </tr>
 <tr class="even">
 <td>text2</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text do display at the second center-of-mass</td>
 </tr>
 </tbody>
@@ -3329,7 +3332,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3371,7 +3374,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>scale</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Scale of the image to draw</td>
 <td><code>1.0</code></td>
 </tr>
@@ -3411,13 +3414,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -3429,19 +3432,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3482,7 +3485,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
@@ -3494,7 +3497,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -3506,19 +3509,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3557,13 +3560,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cone</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cone</td>
 <td><code>1.0</code></td>
 </tr>
@@ -3575,13 +3578,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the base</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3620,13 +3623,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
@@ -3638,13 +3641,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3691,37 +3694,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3768,37 +3771,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3832,19 +3835,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>10</code></td>
 </tr>
@@ -3862,13 +3865,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3902,19 +3905,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the pyramid</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the pyramid</td>
 <td><code>10</code></td>
 </tr>
@@ -3932,13 +3935,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of pyramid</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3974,13 +3977,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the sphere</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4016,13 +4019,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4058,13 +4061,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4100,37 +4103,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector a length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>b</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector b length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td>c</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector c length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>alpha</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors bc</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="odd">
 <td>beta</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ac</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="even">
 <td>gamma</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ab</td>
 <td><code>90.0</code></td>
 </tr>
@@ -4142,13 +4145,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4185,19 +4188,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>center_to_origin</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Move the center of the cell to origin (0, 0, 0)</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4232,7 +4235,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
 <td><code class="custom-string">'PIL Image'</code></td>
 </tr>
@@ -4278,17 +4281,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>resid</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>The residue number</td>
 </tr>
 <tr class="even">
 <td>show_atom_names</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the individual atom names in the residue</td>
 </tr>
 <tr class="odd">
 <td>show_direction</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the arc indicating the angle direction</td>
 </tr>
 </tbody>
@@ -4505,7 +4508,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4547,7 +4550,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>scale</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Scale of the image to draw</td>
 <td><code>1.0</code></td>
 </tr>
@@ -4587,13 +4590,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -4605,19 +4608,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4658,7 +4661,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
@@ -4670,7 +4673,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -4682,19 +4685,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4733,13 +4736,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cone</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cone</td>
 <td><code>1.0</code></td>
 </tr>
@@ -4751,13 +4754,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the base</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4796,13 +4799,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
@@ -4814,13 +4817,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4867,37 +4870,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4944,37 +4947,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5008,19 +5011,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>10</code></td>
 </tr>
@@ -5038,13 +5041,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5078,19 +5081,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the pyramid</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the pyramid</td>
 <td><code>10</code></td>
 </tr>
@@ -5108,13 +5111,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of pyramid</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5150,13 +5153,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the sphere</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5192,13 +5195,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5234,13 +5237,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5276,37 +5279,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector a length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>b</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector b length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td>c</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector c length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>alpha</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors bc</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="odd">
 <td>beta</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ac</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="even">
 <td>gamma</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ab</td>
 <td><code>90.0</code></td>
 </tr>
@@ -5318,13 +5321,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5361,19 +5364,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>center_to_origin</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Move the center of the cell to origin (0, 0, 0)</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5408,7 +5411,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
 <td><code class="custom-string">'PIL Image'</code></td>
 </tr>
@@ -5697,7 +5700,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5739,7 +5742,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>scale</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Scale of the image to draw</td>
 <td><code>1.0</code></td>
 </tr>
@@ -5779,13 +5782,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -5797,19 +5800,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5850,7 +5853,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
@@ -5862,7 +5865,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -5874,19 +5877,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5925,13 +5928,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cone</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cone</td>
 <td><code>1.0</code></td>
 </tr>
@@ -5943,13 +5946,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the base</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5988,13 +5991,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
@@ -6006,13 +6009,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6059,37 +6062,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6136,37 +6139,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6200,19 +6203,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>10</code></td>
 </tr>
@@ -6230,13 +6233,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6270,19 +6273,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the pyramid</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the pyramid</td>
 <td><code>10</code></td>
 </tr>
@@ -6300,13 +6303,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of pyramid</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6342,13 +6345,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the sphere</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6384,13 +6387,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6426,13 +6429,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6468,37 +6471,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector a length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>b</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector b length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td>c</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector c length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>alpha</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors bc</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="odd">
 <td>beta</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ac</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="even">
 <td>gamma</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ab</td>
 <td><code>90.0</code></td>
 </tr>
@@ -6510,13 +6513,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6553,19 +6556,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>center_to_origin</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Move the center of the cell to origin (0, 0, 0)</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -6600,7 +6603,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
 <td><code class="custom-string">'PIL Image'</code></td>
 </tr>
@@ -6646,7 +6649,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>input_name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>The input name update that trigged this validation callback. When no specific input name is available, None is passed.</td>
 <td><code>None</code></td>
 </tr>
@@ -6762,22 +6765,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a href="https://docs.python.org/3/library/functions.html#float">float</a>, <a href="https://docs.python.org/3/library/functions.html#float">float</a>]</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a>[<a href="https://docs.python.org/3/builtins/functions.html#float">float</a>, <a href="https://docs.python.org/3/builtins/functions.html#float">float</a>]</td>
 <td>Normalized coordinates (0.0 - 1.0) of the position in viewport / render</td>
 </tr>
 <tr class="even">
 <td>show_models</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show the number of models (frames) in the molecule</td>
 </tr>
 <tr class="odd">
 <td>show_atoms</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show the number of atoms in the molecule</td>
 </tr>
 <tr class="even">
 <td>custom_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Any custom text to add at the end of the annotation</td>
 </tr>
 </tbody>
@@ -6992,7 +6995,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7034,7 +7037,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>scale</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Scale of the image to draw</td>
 <td><code>1.0</code></td>
 </tr>
@@ -7074,13 +7077,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -7092,19 +7095,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7145,7 +7148,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
@@ -7157,7 +7160,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -7169,19 +7172,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7220,13 +7223,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cone</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cone</td>
 <td><code>1.0</code></td>
 </tr>
@@ -7238,13 +7241,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the base</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7283,13 +7286,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
@@ -7301,13 +7304,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7354,37 +7357,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7431,37 +7434,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7495,19 +7498,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>10</code></td>
 </tr>
@@ -7525,13 +7528,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7565,19 +7568,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the pyramid</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the pyramid</td>
 <td><code>10</code></td>
 </tr>
@@ -7595,13 +7598,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of pyramid</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7637,13 +7640,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the sphere</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7679,13 +7682,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7721,13 +7724,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7763,37 +7766,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector a length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>b</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector b length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td>c</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector c length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>alpha</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors bc</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="odd">
 <td>beta</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ac</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="even">
 <td>gamma</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ab</td>
 <td><code>90.0</code></td>
 </tr>
@@ -7805,13 +7808,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7848,19 +7851,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>center_to_origin</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Move the center of the cell to origin (0, 0, 0)</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -7895,7 +7898,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
 <td><code class="custom-string">'PIL Image'</code></td>
 </tr>
@@ -7941,42 +7944,42 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a href="https://docs.python.org/3/library/functions.html#float">float</a>, <a href="https://docs.python.org/3/library/functions.html#float">float</a>]</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#tuple">tuple</a>[<a href="https://docs.python.org/3/builtins/functions.html#float">float</a>, <a href="https://docs.python.org/3/builtins/functions.html#float">float</a>]</td>
 <td>Normalized coordinates (0.0 - 1.0) of the postion in viewport / render</td>
 </tr>
 <tr class="even">
 <td>show_frame</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the frame number</td>
 </tr>
 <tr class="odd">
 <td>show_time</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the timestep time</td>
 </tr>
 <tr class="even">
 <td>show_step</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the timestep step</td>
 </tr>
 <tr class="odd">
 <td>show_topology</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the topology filename</td>
 </tr>
 <tr class="even">
 <td>show_trajectory</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the trajectory filename</td>
 </tr>
 <tr class="odd">
 <td>show_atoms</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether or not to show the number of atoms</td>
 </tr>
 <tr class="even">
 <td>custom_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Any custom text to add at the end of the annotation</td>
 </tr>
 </tbody>
@@ -8191,7 +8194,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8233,7 +8236,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>scale</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Scale of the image to draw</td>
 <td><code>1.0</code></td>
 </tr>
@@ -8273,13 +8276,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -8291,19 +8294,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8344,7 +8347,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>The radius of the circle</td>
 <td><em>required</em></td>
 </tr>
@@ -8356,7 +8359,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>angle</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>An angle less than 360 for partial circle (arc) - in degrees Default is 360 degrees</td>
 <td><code>360.0</code></td>
 </tr>
@@ -8368,19 +8371,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>c_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>cc_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display counter clockwise arrow. Default is False</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8419,13 +8422,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cone</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cone</td>
 <td><code>1.0</code></td>
 </tr>
@@ -8437,13 +8440,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the base</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8482,13 +8485,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>1.0</code></td>
 </tr>
@@ -8500,13 +8503,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8553,37 +8556,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8630,37 +8633,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v1_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v1</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>v2_arrow</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to display an arrow at v2</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8694,19 +8697,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the cylinder</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the cylinder</td>
 <td><code>10</code></td>
 </tr>
@@ -8724,13 +8727,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of cylinder</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8764,19 +8767,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>n</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Number of sides</td>
 <td><code>6</code></td>
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the pyramid</td>
 <td><code>10</code></td>
 </tr>
 <tr class="odd">
 <td>height</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Height of the pyramid</td>
 <td><code>10</code></td>
 </tr>
@@ -8794,13 +8797,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>cap_ends</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to cap the ends of pyramid</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8836,13 +8839,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>radius</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Radius of the sphere</td>
 <td><code>1.0</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8878,13 +8881,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8920,13 +8923,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>text</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Text to display. ‘|’ as multi-line separator</td>
 <td><em>required</em></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -8962,37 +8965,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>a</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector a length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>b</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector b length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="odd">
 <td>c</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Box vector c length</td>
 <td><code>10.0</code></td>
 </tr>
 <tr class="even">
 <td>alpha</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors bc</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="odd">
 <td>beta</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ac</td>
 <td><code>90.0</code></td>
 </tr>
 <tr class="even">
 <td>gamma</td>
-<td><a href="https://docs.python.org/3/library/functions.html#float">float</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
 <td>Angle between box vectors ab</td>
 <td><code>90.0</code></td>
 </tr>
@@ -9004,13 +9007,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -9047,19 +9050,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>center_to_origin</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Move the center of the cell to origin (0, 0, 0)</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="odd">
 <td>show_lattice</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Whether to show a 3x3x3 lattice</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -9094,7 +9097,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the bpy.data.images data block. Using an exisiting name will re-use the data block, whereas using a new name will create a new image data block.</td>
 <td><code class="custom-string">'PIL Image'</code></td>
 </tr>

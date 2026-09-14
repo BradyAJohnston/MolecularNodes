@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -428,12 +431,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">material.PresetMaterial</span></a>
   </div>
@@ -628,6 +625,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -739,7 +742,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name for the trajectory object, by default “StreamingTrajectory”</td>
 <td><code class="custom-string">'StreamingTrajectory'</code></td>
 </tr>
@@ -864,37 +867,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>style</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a></td>
 <td>The style to apply. Either a string naming a predefined style (“spheres”, “cartoon”, “ribbon”, “surface”, “sticks”, “ball_and_stick”), or a zero-argument callable returning a style node, evaluated inside the node tree context:: mol.add_style(lambda: mg.StyleCartoon(quality=5, loop_radius=0.6)) A callable defines the style node itself, so <code>selection</code>, <code>material</code> and extra keyword arguments cannot be combined with it - set them inside the callable. Default is “spheres”.</td>
 <td><code class="custom-string">'spheres'</code></td>
 </tr>
 <tr class="even">
 <td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a> | None</td>
 <td>Apply the style only to atoms matching this selection. Can be: - A string naming an existing boolean attribute on the molecule (used directly) - A string MDAnalysis selection phrase (evaluated and stored as a new managed selection attribute) - A AtomGroup object defining a selection criteria - A zero-argument callable returning a boolean socket, evaluated inside the node tree context, e.g.&nbsp;<code>lambda: mg.IsPeptide() &amp; mg.IsSideChain()</code> - None to apply to all atoms (default) A string is treated as an existing attribute name first; only if no such attribute exists is it interpreted as an MDAnalysis selection phrase.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>material</td>
-<td><code>bpy</code>.<a href="file://objects_inv/bpy/bpy.types.html#module-bpy.types">types</a>.<a href="file://objects_inv/bpy/bpy.types.Material.html#bpy.types.Material">Material</a> | <a href="../../api/reference/material.PresetMaterial.html#molecularnodes.material.PresetMaterial">PresetMaterial</a> | <code>MaterialBuilder</code> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
-<td>The material to apply to the styled atoms. Can be one of the preset materials from <code>mn.material</code> (e.g.&nbsp;<code>mn.material.AmbientOcclusion()</code>), a Blender Material object, a nodebpy MaterialBuilder, a string with a material name to append from the asset file, or None for no material. Default is “MN Default”.</td>
+<td><code>bpy</code>.<a href="file://objects_inv/bpy/bpy.types.html#module-bpy.types">types</a>.<a href="file://objects_inv/bpy/bpy.types.Material.html#bpy.types.Material">Material</a> | <a href="../../api/reference/material.PresetMaterial.html#molecularnodes.material.PresetMaterial">PresetMaterial</a> | <code>MaterialBuilder</code> | <a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
+<td>The material to apply to the styled atoms. Can be one of the preset materials from <code>mn.material</code> (e.g.&nbsp;<code>mn.material.AmbientOcclusion()</code>), a Blender Material object, a nodebpy MaterialBuilder, a string with a material name to append from the asset file, or None for no material. Default is “Default”.</td>
 <td><code>_UNSET</code></td>
 </tr>
 <tr class="even">
 <td>color</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a href="https://docs.python.org/3/library/functions.html#float">float</a>] | <a href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a href="https://docs.python.org/3/builtins/functions.html#float">float</a>] | <a href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a> | None</td>
 <td>Coloring to apply upstream of the style via a <code>Set Color</code> node. Can be: - <code>"common"</code> / <code>"default"</code> for standard element colors with carbons colored randomly per chain - <code>"plddt"</code> to color by pLDDT (B-factor) confidence - the name of an existing <em>color</em> attribute on the geometry - an RGBA sequence of floats for a single uniform color - a zero-argument callable returning a color socket, evaluated inside the node tree context, e.g.&nbsp;<code>lambda: mg.ColorRainbow()</code>. This is the way to reach the full set of <code>Color*</code> nodes without writing out a whole node tree. - None (default) to add no color node, leaving the baked <code class="custom-attribute">Color</code> attribute in use. A string that is neither a keyword nor an existing color attribute raises a <code>UserWarning</code> and no color is applied.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>assembly</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Instance the style over the biological assembly transforms parsed from the source file, via an <code>Assembly Instance</code> node. Default is False.</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional label for the added style node, shown in the node editor and style lists. Default is None.</td>
 <td><code>None</code></td>
 </tr>
@@ -939,12 +942,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td><a href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></td>
+<td><a href="https://docs.python.org/3/builtins/exceptions.html#ValueError">ValueError</a></td>
 <td>If an unsupported style string is passed</td>
 </tr>
 <tr class="even">
 <td></td>
-<td><a href="https://docs.python.org/3/library/exceptions.html#TypeError">TypeError</a></td>
+<td><a href="https://docs.python.org/3/builtins/exceptions.html#TypeError">TypeError</a></td>
 <td>If a callable <code>style</code> is combined with <code>selection</code>, <code>material</code> or extra keyword arguments, or if a keyword argument does not match an input on the style node</td>
 </tr>
 </tbody>
@@ -973,7 +976,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>as_array</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Return the assemblies as a structured array of per-chain 4x4 transforms rather than a dict.</td>
 <td><code class="custom-bool">False</code></td>
 </tr>
@@ -993,7 +996,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a> | <a href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | <a href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> | None</td>
 <td>The biological assemblies as transformation matrices, or <code>None</code> when the structure has no assembly data.</td>
 </tr>
 </tbody>
@@ -1030,7 +1033,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name for the Blender object</td>
 <td><code>"NewUniverseObject"</code></td>
 </tr>
@@ -1080,25 +1083,25 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>code</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>The database accession code (e.g.&nbsp;a PDB id).</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>format</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>File format to download, by default <code>".bcif"</code>.</td>
 <td><code class="custom-string">'.bcif'</code></td>
 </tr>
 <tr class="odd">
 <td>cache</td>
-<td><a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
+<td><a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Directory to cache downloads in.</td>
 <td><code>download.CACHE_DIR</code></td>
 </tr>
 <tr class="even">
 <td>database</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>The database to fetch from, by default <code>"rcsb"</code>.</td>
 <td><code class="custom-string">'rcsb'</code></td>
 </tr>
@@ -1150,25 +1153,25 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>start</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>First trajectory frame to bake (inclusive).</td>
 <td><code>0</code></td>
 </tr>
 <tr class="even">
 <td>stop</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a> | None</td>
 <td>One past the last frame to bake. Defaults to the number of frames in the trajectory (i.e.&nbsp;bake through the final frame).</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>step</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Stride between baked frames.</td>
 <td><code>1</code></td>
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Name for the frames collection. Defaults to this molecule’s name.</td>
 <td><code>None</code></td>
 </tr>
@@ -1207,7 +1210,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td><a href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></td>
+<td><a href="https://docs.python.org/3/builtins/exceptions.html#ValueError">ValueError</a></td>
 <td>If <code>step</code> is not a positive integer.</td>
 </tr>
 </tbody>
@@ -1234,13 +1237,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>file_path</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/library/io.html#module-io">io</a>.<a href="https://docs.python.org/3/library/io.html#io.BytesIO">BytesIO</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/library/io.html#module-io">io</a>.<a href="https://docs.python.org/3/library/io.html#io.BytesIO">BytesIO</a></td>
 <td>Path to the structure file (or an in-memory <code>bcif</code> buffer).</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Name for the Blender object. Defaults to the file name (extension included).</td>
 <td><code>None</code></td>
 </tr>
@@ -1286,13 +1289,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a></td>
 <td>A selection phrase or AtomGroup When not specified, the whole entity is considered</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>frame</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a> | None</td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a> | None</td>
 <td>Frame number of trajectory to use for calculating bounds. When not specified, current trajectory frame is used</td>
 <td><code>None</code></td>
 </tr>
@@ -1324,7 +1327,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>frame</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
 <td>Scene frame number (mapping applied to get Universe frame)</td>
 <td><em>required</em></td>
 </tr>

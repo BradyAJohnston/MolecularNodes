@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Geometry – Molecular Nodes</title>
+<title>Simulation – Molecular Nodes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -36,8 +36,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/select.html" rel="next">
-<link href="../nodes/ensemble.html" rel="prev">
+<link href="../nodes/style.html" rel="next">
+<link href="../nodes/select.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -48,9 +48,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
-<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -198,7 +195,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/geometry.html">Geometry</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/simulation.html">Simulation</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -272,7 +269,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link active">
+  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
   </div>
 </li>
@@ -284,7 +281,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Simulation</span></a>
   </div>
 </li>
@@ -346,26 +343,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#centre-on-selection" id="toc-centre-on-selection" class="nav-link active" data-scroll-target="#centre-on-selection">Centre on Selection</a></li>
-  <li><a href="#check-geometry" id="toc-check-geometry" class="nav-link" data-scroll-target="#check-geometry">Check Geometry</a></li>
-  <li><a href="#clear-instance-transforms" id="toc-clear-instance-transforms" class="nav-link" data-scroll-target="#clear-instance-transforms">Clear Instance Transforms</a></li>
-  <li><a href="#contains-geometry" id="toc-contains-geometry" class="nav-link" data-scroll-target="#contains-geometry">Contains Geometry</a></li>
-  <li><a href="#curve-visualize" id="toc-curve-visualize" class="nav-link" data-scroll-target="#curve-visualize">Curve Visualize</a></li>
-  <li><a href="#evaluate-on-instances" id="toc-evaluate-on-instances" class="nav-link" data-scroll-target="#evaluate-on-instances">Evaluate on Instances</a></li>
-  <li><a href="#evaluate-ordered-bundles" id="toc-evaluate-ordered-bundles" class="nav-link" data-scroll-target="#evaluate-ordered-bundles">Evaluate Ordered Bundles</a></li>
-  <li><a href="#evluate-while-planar" id="toc-evluate-while-planar" class="nav-link" data-scroll-target="#evluate-while-planar">Evluate While Planar</a></li>
-  <li><a href="#fallback-geometry" id="toc-fallback-geometry" class="nav-link" data-scroll-target="#fallback-geometry">Fallback Geometry</a></li>
-  <li><a href="#geoemtry-to-planar" id="toc-geoemtry-to-planar" class="nav-link" data-scroll-target="#geoemtry-to-planar">Geoemtry to Planar</a></li>
-  <li><a href="#lag-geometry" id="toc-lag-geometry" class="nav-link" data-scroll-target="#lag-geometry">Lag Geometry</a></li>
-  <li><a href="#offset-curve" id="toc-offset-curve" class="nav-link" data-scroll-target="#offset-curve">Offset Curve</a></li>
-  <li><a href="#plexus" id="toc-plexus" class="nav-link" data-scroll-target="#plexus">Plexus</a></li>
-  <li><a href="#primitive-arrow" id="toc-primitive-arrow" class="nav-link" data-scroll-target="#primitive-arrow">Primitive Arrow</a></li>
-  <li><a href="#primitive-gimbal" id="toc-primitive-gimbal" class="nav-link" data-scroll-target="#primitive-gimbal">Primitive Gimbal</a></li>
-  <li><a href="#separate-first-point" id="toc-separate-first-point" class="nav-link" data-scroll-target="#separate-first-point">Separate First Point</a></li>
-  <li><a href="#slice-edge-instances" id="toc-slice-edge-instances" class="nav-link" data-scroll-target="#slice-edge-instances">Slice Edge Instances</a></li>
-  <li><a href="#split-to-centred-instances" id="toc-split-to-centred-instances" class="nav-link" data-scroll-target="#split-to-centred-instances">Split to Centred Instances</a></li>
-  <li><a href="#visualize-angle" id="toc-visualize-angle" class="nav-link" data-scroll-target="#visualize-angle">Visualize Angle</a></li>
-  <li><a href="#visualize-points" id="toc-visualize-points" class="nav-link" data-scroll-target="#visualize-points">Visualize Points</a></li>
+  <li><a href="#build-elastic-network" id="toc-build-elastic-network" class="nav-link active" data-scroll-target="#build-elastic-network">Build Elastic Network</a></li>
+  <li><a href="#force-brownian" id="toc-force-brownian" class="nav-link" data-scroll-target="#force-brownian">Force Brownian</a></li>
+  <li><a href="#force-gravity" id="toc-force-gravity" class="nav-link" data-scroll-target="#force-gravity">Force Gravity</a></li>
+  <li><a href="#force-mesh-collide" id="toc-force-mesh-collide" class="nav-link" data-scroll-target="#force-mesh-collide">Force Mesh Collide</a></li>
+  <li><a href="#simulate-curve" id="toc-simulate-curve" class="nav-link" data-scroll-target="#simulate-curve">Simulate Curve</a></li>
+  <li><a href="#simulate-elastic-network" id="toc-simulate-elastic-network" class="nav-link" data-scroll-target="#simulate-elastic-network">Simulate Elastic Network</a></li>
+  <li><a href="#simulate-on-faces" id="toc-simulate-on-faces" class="nav-link" data-scroll-target="#simulate-on-faces">Simulate on Faces</a></li>
   </ul>
 </nav>
     </div>
@@ -374,7 +358,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Geometry</h1>
+<h1 class="title">Simulation</h1>
 </div>
 
 
@@ -391,11 +375,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </header>
 
 
-<p>General geometry processing utilities</p>
-<section id="centre-on-selection" class="level2">
-<h2 class="anchored" data-anchor-id="centre-on-selection">Centre on Selection</h2>
-<p><a href="https://imgur.com/xSOH4Tr.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><video src="https://imgur.com/xSOH4Tr.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/xSOH4Tr.mp4">Video</a></p>
-<p>Offsets the input points so that their calculated <code>Centroid</code> is on the world origin. If the <code>Group ID</code> input is used this offset is applied on a per-group basis. If the selection is used, only the selected points contribute towards the calculation of the centroid, but all points are still moved</p>
+<p>Nodes for simulations inside of Geometry Nodes</p>
+<section id="build-elastic-network" class="level2">
+<h2 class="anchored" data-anchor-id="build-elastic-network">Build Elastic Network</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -414,17 +396,27 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Atoms</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">Atomic geometry that contains vertices and edges</td>
+<td style="text-align: left;">Atomic mesh which inculdes vertices and edges to generate an elastic network on</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Selection</td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Selection within the groups to calculate the centroid for, which then affects all other points in the group</td>
+<td style="text-align: left;">Atoms which aren’t selected will not be included in the final output mesh</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Group ID</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Optionally centre the points separately for each group based on the <code>Group ID</code> input</td>
+<td style="text-align: left;">Menu</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Output a network between just alpha carbons, or one that includes all atoms</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Alpha Carbon</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Scale the distance for edge creation between just alpha carbon atoms, ignoring all other atoms.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">All Atom</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Scale the distance for edge creation, looking for all selected atoms</td>
 </tr>
 </tbody>
 </table>
@@ -444,21 +436,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;">Mesh</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">Atoms that have been moved to object origin based on their group’s calculated centroid</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Offset</td>
-<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;">The calculated vector offset that was applied to the points</td>
+<td style="text-align: left;">The generated elastic network. Edges are formed between atoms within the cutoff distance for use as constraints in a simulation</td>
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.CentreOnSelection"><code>nodes.geometry.CentreOnSelection</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.simulation.html#molecularnodes.nodes.geometry.BuildElasticNetwork"><code>nodes.geometry.BuildElasticNetwork</code></a></p>
 </section>
-<section id="check-geometry" class="level2">
-<h2 class="anchored" data-anchor-id="check-geometry">Check Geometry</h2>
+<section id="force-brownian" class="level2">
+<h2 class="anchored" data-anchor-id="force-brownian">Force Brownian</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -470,210 +457,43 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Message</td>
-<td style="text-align: left;"><code class="custom-string">String</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.CheckGeometry"><code>nodes.geometry.CheckGeometry</code></a></p>
-</section>
-<section id="clear-instance-transforms" class="level2">
-<h2 class="anchored" data-anchor-id="clear-instance-transforms">Clear Instance Transforms</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Realize All</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.ClearInstanceTransforms"><code>nodes.geometry.ClearInstanceTransforms</code></a></p>
-</section>
-<section id="contains-geometry" class="level2">
-<h2 class="anchored" data-anchor-id="contains-geometry">Contains Geometry</h2>
-<p>Check if a geometry contains geometry in any of the domains</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Not Empty</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">True when the input contains some geometry</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Empty</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">True when the input contains no geometry</td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.ContainsGeometry"><code>nodes.geometry.ContainsGeometry</code></a></p>
-</section>
-<section id="curve-visualize" class="level2">
-<h2 class="anchored" data-anchor-id="curve-visualize">Curve Visualize</h2>
-<p><a href="https://imgur.com/KKY7v12.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><video src="https://imgur.com/KKY7v12.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/KKY7v12.mp4">Video</a></p>
-<p>Visualize curves, instancing Gimbals with the resulting curve rotation and positions</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Curve</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Position</td>
+<td style="text-align: left;">Add</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Normal</td>
+<td style="text-align: left;">Small</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Large</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Force</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Handles</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Value</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Arrow Size</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
 </tbody>
 </table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Instances</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.CurveVisualize"><code>nodes.geometry.CurveVisualize</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.simulation.html#molecularnodes.nodes.geometry.ForceBrownian"><code>nodes.geometry.ForceBrownian</code></a></p>
 </section>
-<section id="evaluate-on-instances" class="level2">
-<h2 class="anchored" data-anchor-id="evaluate-on-instances">Evaluate on Instances</h2>
+<section id="force-gravity" class="level2">
+<h2 class="anchored" data-anchor-id="force-gravity">Force Gravity</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -685,766 +505,210 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">Geometry to split into two parts</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Closure</td>
-<td style="text-align: left;"><code class="custom-closure">Closure</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.EvaluateOnInstances"><code>nodes.geometry.EvaluateOnInstances</code></a></p>
-</section>
-<section id="evaluate-ordered-bundles" class="level2">
-<h2 class="anchored" data-anchor-id="evaluate-ordered-bundles">Evaluate Ordered Bundles</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Bundles</td>
-<td style="text-align: left;"><code class="custom-bundle">Bundle</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Prefix</td>
-<td style="text-align: left;"><code class="custom-string">String</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.EvaluateOrderedBundles"><code>nodes.geometry.EvaluateOrderedBundles</code></a></p>
-</section>
-<section id="evluate-while-planar" class="level2">
-<h2 class="anchored" data-anchor-id="evluate-while-planar">Evluate While Planar</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">Geometry to transform</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">The parts of the geometry that contibute to the planar calculation</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Closure</td>
-<td style="text-align: left;"><code class="custom-closure">Closure</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.EvluateWhilePlanar"><code>nodes.geometry.EvluateWhilePlanar</code></a></p>
-</section>
-<section id="fallback-geometry" class="level2">
-<h2 class="anchored" data-anchor-id="fallback-geometry">Fallback Geometry</h2>
-<p>Fallback geometry for when the input geometry is empty in all domains</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Fallback</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.FallbackGeometry"><code>nodes.geometry.FallbackGeometry</code></a></p>
-</section>
-<section id="geoemtry-to-planar" class="level2">
-<h2 class="anchored" data-anchor-id="geoemtry-to-planar">Geoemtry to Planar</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">Geometry to transform</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">The parts of the geometry that contibute to the planar calculation</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Transform</td>
-<td style="text-align: left;"><code class="custom-matrix">Matrix</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.GeoemtryToPlanar"><code>nodes.geometry.GeoemtryToPlanar</code></a></p>
-</section>
-<section id="lag-geometry" class="level2">
-<h2 class="anchored" data-anchor-id="lag-geometry">Lag Geometry</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Input</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">The parts of the geometry that go into the first output</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Count</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of frames to lag.</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Realize All</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Realize all levels of nested instances for a top-level instances. Overrides the value of the Depth input</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Lag Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.LagGeometry"><code>nodes.geometry.LagGeometry</code></a></p>
-</section>
-<section id="offset-curve" class="level2">
-<h2 class="anchored" data-anchor-id="offset-curve">Offset Curve</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Curve</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Points</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">Number of points to offset and sample position and normal by. Fractions sample between the points along the curve.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Curve</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Factor</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">The pre-offset factor for the curve’s point</td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.OffsetCurve"><code>nodes.geometry.OffsetCurve</code></a></p>
-</section>
-<section id="plexus" class="level2">
-<h2 class="anchored" data-anchor-id="plexus">Plexus</h2>
-<p>Find points that are within a given distance of each other and create an edge between them</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Points</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Sort</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Sort the resulting points so their <code class="custom-attribute">Index</code> matches the input geometry</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Distance</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Radius</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.Plexus"><code>nodes.geometry.Plexus</code></a></p>
-</section>
-<section id="primitive-arrow" class="level2">
-<h2 class="anchored" data-anchor-id="primitive-arrow">Primitive Arrow</h2>
-<p>A simple arrow geometry</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Vertices</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Height</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Ratio</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Value</td>
-<td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Material</td>
-<td style="text-align: left;"><code class="custom-material">Material</code></td>
-<td style="text-align: left;">Material to apply to the resulting geometry</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.PrimitiveArrow"><code>nodes.geometry.PrimitiveArrow</code></a></p>
-</section>
-<section id="primitive-gimbal" class="level2">
-<h2 class="anchored" data-anchor-id="primitive-gimbal">Primitive Gimbal</h2>
-<p>A 3-axis gimbal made of <code>Primitive Arrow</code>s, useful for visualisation and debugging</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Vertices</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">X</td>
-<td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Y</td>
-<td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Z</td>
-<td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Material</td>
-<td style="text-align: left;"><code class="custom-material">Material</code></td>
-<td style="text-align: left;">Material to apply to the resulting geometry</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Height</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.PrimitiveGimbal"><code>nodes.geometry.PrimitiveGimbal</code></a></p>
-</section>
-<section id="separate-first-point" class="level2">
-<h2 class="anchored" data-anchor-id="separate-first-point">Separate First Point</h2>
-<p>Separate the first point for each <code>Group ID</code> and return only those points. Optionally sort by the <code>Group ID</code> as well</p>
-<p>Separate out the first point for each group in the <code>Group ID</code></p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Sort</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Sort by <code>Group ID</code> after separating</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Group ID</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.SeparateFirstPoint"><code>nodes.geometry.SeparateFirstPoint</code></a></p>
-</section>
-<section id="slice-edge-instances" class="level2">
-<h2 class="anchored" data-anchor-id="slice-edge-instances">Slice Edge Instances</h2>
-<p>For position based selections, realise the instances that cross the selection and then separate the selected points from within the selection</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Instances</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Instances</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Realized Points</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.SliceEdgeInstances"><code>nodes.geometry.SliceEdgeInstances</code></a></p>
-</section>
-<section id="split-to-centred-instances" class="level2">
-<h2 class="anchored" data-anchor-id="split-to-centred-instances">Split to Centred Instances</h2>
-<p><a href="https://imgur.com/NcHuxsz.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><video src="https://imgur.com/NcHuxsz.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/NcHuxsz.mp4">Video</a></p>
-<p>Same as <code>Split to Instances</code>, but with the origin point of the instance being the calculated <code>Centroid</code> for each <code>Group ID</code>. The <code>Selection</code> determines the points which contribute to the <code>Centroid</code> calculation, but all points are still offset and split into their instances</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">The input geometry containing points</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Selected points will be used to calculate centre point for Instance</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Group ID</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">The <code>Group ID</code> which will determine how the points are split into their different instances</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Instances</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">The points that have been split into their instances</td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.SplitToCentredInstances"><code>nodes.geometry.SplitToCentredInstances</code></a></p>
-</section>
-<section id="visualize-angle" class="level2">
-<h2 class="anchored" data-anchor-id="visualize-angle">Visualize Angle</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Points</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Selection</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Position</td>
+<td style="text-align: left;">Add</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Angle</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Length</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Up</td>
+<td style="text-align: left;">Gravity</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
 <td style="text-align: left;"></td>
 </tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
 <tr class="odd">
-<td style="text-align: left;">Axis</td>
+<td style="text-align: left;">Force</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.simulation.html#molecularnodes.nodes.geometry.ForceGravity"><code>nodes.geometry.ForceGravity</code></a></p>
+</section>
+<section id="force-mesh-collide" class="level2">
+<h2 class="anchored" data-anchor-id="force-mesh-collide">Force Mesh Collide</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Add</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Radius</td>
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Geometry Bounds</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Collision Distance</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Force</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.simulation.html#molecularnodes.nodes.geometry.ForceMeshCollide"><code>nodes.geometry.ForceMeshCollide</code></a></p>
+</section>
+<section id="simulate-curve" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-curve">Simulate Curve</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry containing curve to simulate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Which points to simulate on the curve</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Substeps</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of substeps to simulate for each frame of the animation (higher is slower but more accurate)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Force</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Additional forces to be applied to the simulation</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Drag</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Drag force for how quickly velocity should dissipate in the simulation. 0 is no drag and higher values dissipate quicker.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Point Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Radius for each point which is used for calculating collisions between points</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Point alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Curve Points</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of points to check in each direction to maintain straightness of curve</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Curve Straightness</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Curve Segment Length</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Curve alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hook Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hook Target</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hook Decay</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pin Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pin Target</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.simulation.html#molecularnodes.nodes.geometry.SimulateCurve"><code>nodes.geometry.SimulateCurve</code></a></p>
+</section>
+<section id="simulate-elastic-network" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-elastic-network">Simulate Elastic Network</h2>
+<p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1460,16 +724,98 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Curve</td>
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Substeps</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Force</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Drag</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edge Length Source</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Edge Length</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edge alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Particle Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Particle alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hook Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hook Target</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hook Decay</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pin Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pin Target</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.VisualizeAngle"><code>nodes.geometry.VisualizeAngle</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.simulation.html#molecularnodes.nodes.geometry.SimulateElasticNetwork"><code>nodes.geometry.SimulateElasticNetwork</code></a></p>
 </section>
-<section id="visualize-points" class="level2">
-<h2 class="anchored" data-anchor-id="visualize-points">Visualize Points</h2>
+<section id="simulate-on-faces" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-on-faces">Simulate on Faces</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -1491,19 +837,74 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Target</td>
-<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;">Vector that is the target</td>
+<td style="text-align: left;">Substeps</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Position</td>
+<td style="text-align: left;">Force</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;">Position of the current point</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Drag</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Faces</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Particle Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Particle alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hook Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hook Target</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hook Decay</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pin Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pin Target</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -1513,13 +914,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Instances</td>
+<td style="text-align: left;">Geometry</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: left;"></td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Normal of the face the current point is nearest</td>
+</tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.VisualizePoints"><code>nodes.geometry.VisualizePoints</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.simulation.html#molecularnodes.nodes.geometry.SimulateOnFaces"><code>nodes.geometry.SimulateOnFaces</code></a></p>
 
 
 </section>
@@ -1927,13 +1333,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/ensemble.html" class="pagination-link" aria-label="Ensemble">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Ensemble</span>
+      <a href="../nodes/select.html" class="pagination-link" aria-label="Select">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Select</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/select.html" class="pagination-link" aria-label="Select">
-        <span class="nav-page-text">Select</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/style.html" class="pagination-link" aria-label="Style">
+        <span class="nav-page-text">Style</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -1951,38 +1357,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 

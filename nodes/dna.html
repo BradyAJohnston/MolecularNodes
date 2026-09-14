@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -41,10 +44,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -278,6 +281,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -335,11 +344,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
    
   <ul class="collapse">
   <li><a href="#dna-from-curve" id="toc-dna-from-curve" class="nav-link active" data-scroll-target="#dna-from-curve">DNA From Curve</a></li>
-  <li><a href="#oxdna-normal" id="toc-oxdna-normal" class="nav-link" data-scroll-target="#oxdna-normal">oxDNA Normal</a></li>
-  <li><a href="#oxdna-offset" id="toc-oxdna-offset" class="nav-link" data-scroll-target="#oxdna-offset">oxDNA Offset</a></li>
-  <li><a href="#oxdna-rotation" id="toc-oxdna-rotation" class="nav-link" data-scroll-target="#oxdna-rotation">oxDNA Rotation</a></li>
+  <li><a href="#oxdna-realize-vectors" id="toc-oxdna-realize-vectors" class="nav-link" data-scroll-target="#oxdna-realize-vectors">oxDNA Realize Vectors</a></li>
+  <li><a href="#oxdna-recover-vectors" id="toc-oxdna-recover-vectors" class="nav-link" data-scroll-target="#oxdna-recover-vectors">oxDNA Recover Vectors</a></li>
   <li><a href="#oxdna-style-ribbon" id="toc-oxdna-style-ribbon" class="nav-link" data-scroll-target="#oxdna-style-ribbon">oxDNA Style Ribbon</a></li>
-  <li><a href="#oxdna-vector" id="toc-oxdna-vector" class="nav-link" data-scroll-target="#oxdna-vector">oxDNA Vector</a></li>
+  <li><a href="#oxdna-vectors" id="toc-oxdna-vectors" class="nav-link" data-scroll-target="#oxdna-vectors">oxDNA Vectors</a></li>
   </ul>
 </nav>
     </div>
@@ -399,7 +407,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Menu</td>
+<td style="text-align: left;">Base Instance</td>
 <td style="text-align: left;"><code class="custom-menu">Menu</code></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -424,8 +432,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.DNAFromCurve"><code>nodes.geometry.DNAFromCurve</code></a></p>
 </section>
-<section id="oxdna-normal" class="level2">
-<h2 class="anchored" data-anchor-id="oxdna-normal">oxDNA Normal</h2>
+<section id="oxdna-realize-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="oxdna-realize-vectors">oxDNA Realize Vectors</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -437,9 +445,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to duplicate elements of</td>
 </tr>
 </tbody>
 </table>
@@ -454,16 +462,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">base_normal</td>
-<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNANormal"><code>nodes.geometry.OxDNANormal</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNARealizeVectors"><code>nodes.geometry.OxDNARealizeVectors</code></a></p>
 </section>
-<section id="oxdna-offset" class="level2">
-<h2 class="anchored" data-anchor-id="oxdna-offset">oxDNA Offset</h2>
+<section id="oxdna-recover-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="oxdna-recover-vectors">oxDNA Recover Vectors</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -475,8 +483,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
@@ -492,51 +500,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Offset</td>
-<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNAOffset"><code>nodes.geometry.OxDNAOffset</code></a></p>
-</section>
-<section id="oxdna-rotation" class="level2">
-<h2 class="anchored" data-anchor-id="oxdna-rotation">oxDNA Rotation</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Rotation</td>
-<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNARotation"><code>nodes.geometry.OxDNARotation</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNARecoverVectors"><code>nodes.geometry.OxDNARecoverVectors</code></a></p>
 </section>
 <section id="oxdna-style-ribbon" class="level2">
 <h2 class="anchored" data-anchor-id="oxdna-style-ribbon">oxDNA Style Ribbon</h2>
@@ -556,7 +526,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;">Atoms</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -566,18 +536,58 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;">Selection of atoms to apply this node to</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Backbone Resolution</td>
+<td style="text-align: left;">Quality</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Backbone Subdivisions</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Backbone Shape</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Backbone Radius</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ball Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Arrow Taper</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Base Shape</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Base Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Base Scale</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Stem Scale</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Base Colors</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Bases</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
@@ -601,16 +611,41 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Base Scale</td>
-<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Strand Color</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">Strands</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Becomes the output value if it is chosen by the menu input</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Strand 1</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Strand 2</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Strand 3</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Strand 4</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">Shade Smooth</td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Material</td>
 <td style="text-align: left;"><code class="custom-material">Material</code></td>
 <td style="text-align: left;">Material to apply to the resulting geometry</td>
@@ -636,8 +671,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNAStyleRibbon"><code>nodes.geometry.OxDNAStyleRibbon</code></a></p>
 </section>
-<section id="oxdna-vector" class="level2">
-<h2 class="anchored" data-anchor-id="oxdna-vector">oxDNA Vector</h2>
+<section id="oxdna-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="oxdna-vectors">oxDNA Vectors</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -670,9 +705,29 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
 <td style="text-align: left;"></td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">base_normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Backbone Offset</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Base Offset</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;"></td>
+</tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNAVector"><code>nodes.geometry.OxDNAVector</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNAVectors"><code>nodes.geometry.OxDNAVectors</code></a></p>
 
 
 </section>

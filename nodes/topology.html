@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -41,10 +44,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -281,6 +284,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -359,7 +368,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#dihedral-psi" id="toc-dihedral-psi" class="nav-link" data-scroll-target="#dihedral-psi">Dihedral Psi</a></li>
   <li><a href="#edge-group-id" id="toc-edge-group-id" class="nav-link" data-scroll-target="#edge-group-id">Edge Group ID</a></li>
   <li><a href="#edge-info" id="toc-edge-info" class="nav-link" data-scroll-target="#edge-info">Edge Info</a></li>
-  <li><a href="#edge-length" id="toc-edge-length" class="nav-link" data-scroll-target="#edge-length">Edge Length</a></li>
   <li><a href="#find-bonded-atom" id="toc-find-bonded-atom" class="nav-link" data-scroll-target="#find-bonded-atom">Find Bonded Atom</a></li>
   <li><a href="#find-bonds" id="toc-find-bonds" class="nav-link" data-scroll-target="#find-bonds">Find Bonds</a></li>
   <li><a href="#menu-residue-mask" id="toc-menu-residue-mask" class="nav-link" data-scroll-target="#menu-residue-mask">Menu Residue Mask</a></li>
@@ -1529,27 +1537,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.EdgeInfo"><code>nodes.geometry.EdgeInfo</code></a></p>
-</section>
-<section id="edge-length" class="level2">
-<h2 class="anchored" data-anchor-id="edge-length">Edge Length</h2>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Length</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.EdgeLength"><code>nodes.geometry.EdgeLength</code></a></p>
 </section>
 <section id="find-bonded-atom" class="level2">
 <h2 class="anchored" data-anchor-id="find-bonded-atom">Find Bonded Atom</h2>

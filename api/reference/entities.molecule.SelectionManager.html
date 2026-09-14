@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-283a8f3b5442a1e3d88061069e7bba76.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -431,12 +434,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/material.TransparentOutline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">material.TransparentOutline</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/material.PresetMaterial.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">material.PresetMaterial</span></a>
   </div>
@@ -631,6 +628,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.style.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Style</span></a>
   </div>
@@ -767,7 +770,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>atomgroups</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <code>AtomGroup</code>]</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a>[<a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a>, <code>AtomGroup</code>]</td>
 <td>Cached <code>AtomGroup</code> objects keyed by selection name.</td>
 </tr>
 <tr class="even">
@@ -875,7 +878,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td></td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td><code class="custom-bool">True</code> if the <code>AtomGroup</code> updates dynamically, <code class="custom-bool">False</code> if static.</td>
 </tr>
 </tbody>
@@ -911,7 +914,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name for the attribute.</td>
 <td><em>required</em></td>
 </tr>
@@ -948,19 +951,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>MDAnalysis selection string to search for, e.g.&nbsp;<code>"protein"</code>.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>updating</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Only match selections with this <code>updating</code> flag.</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>periodic</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Only match selections with this <code>periodic</code> flag.</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
@@ -993,7 +996,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="examples" class="level4 doc-section doc-section-examples">
 <h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples">Examples</h4>
-<div id="09ba3cd7" class="cell" data-execution_count="1">
+<div id="5cad8324" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas()</span>
@@ -1008,7 +1011,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>Selections made in the Blender UI are found too, and the flags are part of the match:</p>
-<div id="8dd1a8d3" class="cell" data-execution_count="2">
+<div id="48102966" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol.selections.find(<span class="st">"protein"</span>, updating<span class="op">=</span><span class="va">False</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>None</code></pre>
@@ -1045,7 +1048,7 @@ selection_0</code></pre>
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name for the selection. Auto-generated if not provided via :meth:<code>_unique_selection_name</code>.</td>
 <td><code>None</code></td>
 </tr>
@@ -1110,25 +1113,25 @@ selection_0</code></pre>
 <tbody>
 <tr class="odd">
 <td>string</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>MDAnalysis selection string (e.g., <code>"protein"</code>, <code>"resid 1-10"</code>).</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>updating</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>If <code class="custom-bool">True</code>, selection potentially updates each frame if required (e.g., distance-based selections). If <code class="custom-bool">False</code>, creates a static selection.</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>periodic</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Consider periodic boundary conditions for geometric selections (e.g., <code>"around"</code>).</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name for the selection, used as the attribute name when storing on the mesh. Auto-generated if not provided via :meth:<code>_unique_selection_name</code>.</td>
 <td><code>None</code></td>
 </tr>
@@ -1182,7 +1185,7 @@ selection_0</code></pre>
 <tbody>
 <tr class="odd">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name of the UI item to retrieve.</td>
 <td><em>required</em></td>
 </tr>
@@ -1240,25 +1243,25 @@ selection_0</code></pre>
 <tbody>
 <tr class="odd">
 <td>selection</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <code>AtomGroup</code></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <code>AtomGroup</code></td>
 <td>An MDAnalysis selection string, or an <code>AtomGroup</code>.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>updating</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>If <code class="custom-bool">True</code>, the selection is re-evaluated each frame where required, for example for distance-based selections. Ignored when <code>selection</code> is an <code>AtomGroup</code>, where updating is a property of the group itself.</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
 <td>periodic</td>
-<td><a href="https://docs.python.org/3/library/functions.html#bool">bool</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
 <td>Consider periodic boundary conditions for geometric selections. Ignored when <code>selection</code> is an <code>AtomGroup</code>.</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="even">
 <td>name</td>
-<td><a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Name for the selection, used as the mesh attribute name. When given, an existing selection with this name is reused. Auto-generated otherwise.</td>
 <td><code>None</code></td>
 </tr>
@@ -1296,7 +1299,7 @@ selection_0</code></pre>
 <section id="examples-1" class="level4 doc-section doc-section-examples">
 <h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples-1">Examples</h4>
 <p>The main use is inside a callable passed to <a href="../../api/reference/Molecule.html#molecularnodes.Molecule.add_style"><code>add_style</code></a>, which is evaluated inside the tree context:</p>
-<div id="8f7abd6f" class="cell" data-execution_count="3">
+<div id="8904f400" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1320,7 +1323,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>It works the same inside an explicit tree context:</p>
-<div id="d3a13fda" class="cell" data-execution_count="4">
+<div id="72d332c1" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree.reset() <span class="im">as</span> (atoms, join):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleCartoon(selection<span class="op">=</span>mol.selections.node(<span class="st">"protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleSticks(selection<span class="op">=</span>mol.selections.node(<span class="st">"not protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
@@ -1336,7 +1339,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>Selections are reused rather than duplicated, so calling it in a loop is safe:</p>
-<div id="15e9f14c" class="cell" data-execution_count="5">
+<div id="5dbf77fa" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(mol.selections)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
@@ -1347,7 +1350,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>A static selection is a different selection to an updating one, and gets its own attribute:</p>
-<div id="604f240a" class="cell" data-execution_count="6">
+<div id="f5b38f8b" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>, updating<span class="op">=</span><span class="va">False</span>)</span>
@@ -1357,7 +1360,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>An <code>AtomGroup</code> can be used instead of a selection string:</p>
-<div id="4343a830" class="cell" data-execution_count="7">
+<div id="1dd50412" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    node <span class="op">=</span> mol.selections.node(mol.universe.select_atoms(<span class="st">"resid 1:20"</span>))</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(node.node.inputs[<span class="st">"Name"</span>].default_value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1390,7 +1393,7 @@ selection_0</code></pre>
 <tbody>
 <tr class="odd">
 <td>value</td>
-<td><a href="https://docs.python.org/3/library/functions.html#int">int</a> or <a href="https://docs.python.org/3/library/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a> or <a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
 <td>Selection name (str) or index (int) in <code>ui_items</code> collection.</td>
 <td><em>required</em></td>
 </tr>
@@ -1410,7 +1413,7 @@ selection_0</code></pre>
 <tbody>
 <tr class="odd">
 <td></td>
-<td><a href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></td>
+<td><a href="https://docs.python.org/3/builtins/exceptions.html#ValueError">ValueError</a></td>
 <td>If name not found in <code>ui_items</code> or value is neither int nor str.</td>
 </tr>
 </tbody>

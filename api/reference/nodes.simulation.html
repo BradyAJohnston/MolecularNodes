@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>nodes.animate – Molecular Nodes</title>
+<title>nodes.simulation – Molecular Nodes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -71,8 +71,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../api/reference/nodes.attributes.html" rel="next">
-<link href="../../api/reference/nodes.general.html" rel="prev">
+<link href="../../api/reference/nodes.style.html" rel="next">
+<link href="../../api/reference/nodes.select.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -230,7 +230,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.animate.html">Animate</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.simulation.html">Simulation</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -571,7 +571,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.animate.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../api/reference/nodes.animate.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Animate</span></a>
   </div>
 </li>
@@ -625,7 +625,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link">
+  <a href="../../api/reference/nodes.simulation.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Simulation</span></a>
   </div>
 </li>
@@ -685,67 +685,291 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#animate" id="toc-animate" class="nav-link active" data-scroll-target="#animate">Animate</a></li>
-  <li><a href="#molecularnodes.nodes.geometry.AnimateAction" id="toc-molecularnodes.nodes.geometry.AnimateAction" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.AnimateAction">Animate Action</a>
+  <li><a href="#simulation" id="toc-simulation" class="nav-link active" data-scroll-target="#simulation">Simulation</a></li>
+  <li><a href="#molecularnodes.nodes.geometry.BuildElasticNetwork" id="toc-molecularnodes.nodes.geometry.BuildElasticNetwork" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.BuildElasticNetwork">Build Elastic Network</a>
   <ul class="collapse">
   <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
   <li><a href="#inputs" id="toc-inputs" class="nav-link" data-scroll-target="#inputs">Inputs</a></li>
   <li><a href="#outputs" id="toc-outputs" class="nav-link" data-scroll-target="#outputs">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.AnimateFrames" id="toc-molecularnodes.nodes.geometry.AnimateFrames" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.AnimateFrames">Animate Frames</a>
+  <li><a href="#molecularnodes.nodes.geometry.ForceBrownian" id="toc-molecularnodes.nodes.geometry.ForceBrownian" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ForceBrownian">Force Brownian</a>
   <ul class="collapse">
   <li><a href="#parameters-1" id="toc-parameters-1" class="nav-link" data-scroll-target="#parameters-1">Parameters</a></li>
   <li><a href="#inputs-1" id="toc-inputs-1" class="nav-link" data-scroll-target="#inputs-1">Inputs</a></li>
   <li><a href="#outputs-1" id="toc-outputs-1" class="nav-link" data-scroll-target="#outputs-1">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.AnimatePeptideToCurve" id="toc-molecularnodes.nodes.geometry.AnimatePeptideToCurve" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.AnimatePeptideToCurve">Animate Peptide to Curve</a>
+  <li><a href="#molecularnodes.nodes.geometry.ForceGravity" id="toc-molecularnodes.nodes.geometry.ForceGravity" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ForceGravity">Force Gravity</a>
   <ul class="collapse">
   <li><a href="#parameters-2" id="toc-parameters-2" class="nav-link" data-scroll-target="#parameters-2">Parameters</a></li>
   <li><a href="#inputs-2" id="toc-inputs-2" class="nav-link" data-scroll-target="#inputs-2">Inputs</a></li>
   <li><a href="#outputs-2" id="toc-outputs-2" class="nav-link" data-scroll-target="#outputs-2">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.AnimateTrails" id="toc-molecularnodes.nodes.geometry.AnimateTrails" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.AnimateTrails">Animate Trails</a>
+  <li><a href="#molecularnodes.nodes.geometry.ForceMeshCollide" id="toc-molecularnodes.nodes.geometry.ForceMeshCollide" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ForceMeshCollide">Force Mesh Collide</a>
   <ul class="collapse">
   <li><a href="#parameters-3" id="toc-parameters-3" class="nav-link" data-scroll-target="#parameters-3">Parameters</a></li>
   <li><a href="#inputs-3" id="toc-inputs-3" class="nav-link" data-scroll-target="#inputs-3">Inputs</a></li>
   <li><a href="#outputs-3" id="toc-outputs-3" class="nav-link" data-scroll-target="#outputs-3">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.AnimateValue" id="toc-molecularnodes.nodes.geometry.AnimateValue" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.AnimateValue">Animate Value</a>
+  <li><a href="#molecularnodes.nodes.geometry.SimulateCurve" id="toc-molecularnodes.nodes.geometry.SimulateCurve" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SimulateCurve">Simulate Curve</a>
   <ul class="collapse">
   <li><a href="#parameters-4" id="toc-parameters-4" class="nav-link" data-scroll-target="#parameters-4">Parameters</a></li>
   <li><a href="#inputs-4" id="toc-inputs-4" class="nav-link" data-scroll-target="#inputs-4">Inputs</a></li>
   <li><a href="#outputs-4" id="toc-outputs-4" class="nav-link" data-scroll-target="#outputs-4">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.AnimateWiggle" id="toc-molecularnodes.nodes.geometry.AnimateWiggle" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.AnimateWiggle">Animate Wiggle</a>
+  <li><a href="#molecularnodes.nodes.geometry.SimulateElasticNetwork" id="toc-molecularnodes.nodes.geometry.SimulateElasticNetwork" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SimulateElasticNetwork">Simulate Elastic Network</a>
   <ul class="collapse">
   <li><a href="#parameters-5" id="toc-parameters-5" class="nav-link" data-scroll-target="#parameters-5">Parameters</a></li>
   <li><a href="#inputs-5" id="toc-inputs-5" class="nav-link" data-scroll-target="#inputs-5">Inputs</a></li>
   <li><a href="#outputs-5" id="toc-outputs-5" class="nav-link" data-scroll-target="#outputs-5">Outputs</a></li>
   </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.SimulateOnFaces" id="toc-molecularnodes.nodes.geometry.SimulateOnFaces" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SimulateOnFaces">Simulate on Faces</a>
+  <ul class="collapse">
+  <li><a href="#parameters-6" id="toc-parameters-6" class="nav-link" data-scroll-target="#parameters-6">Parameters</a></li>
+  <li><a href="#inputs-6" id="toc-inputs-6" class="nav-link" data-scroll-target="#inputs-6">Inputs</a></li>
+  <li><a href="#outputs-6" id="toc-outputs-6" class="nav-link" data-scroll-target="#outputs-6">Outputs</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.animate.html">Animate</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.simulation.html">Simulation</a></li></ol></nav></header>
 
 
 
 
-<section id="animate" class="level1">
-<h1>Animate</h1>
-<p>Animate values and geometry over frames</p>
+<section id="simulation" class="level1">
+<h1>Simulation</h1>
+<p>Nodes for simulations inside of Geometry Nodes</p>
 </section>
-<section id="molecularnodes.nodes.geometry.AnimateAction" class="level1">
-<h1>Animate Action</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.AnimateAction(start<span class="op">=</span><span class="dv">1</span>, length<span class="op">=</span><span class="dv">100</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="molecularnodes.nodes.geometry.BuildElasticNetwork" class="level1">
+<h1>Build Elastic Network</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.BuildElasticNetwork(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    atoms<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    menu<span class="op">=</span><span class="st">'Alpha Carbon'</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    alpha_carbon<span class="op">=</span><span class="fl">4.0</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    all_atom<span class="op">=</span><span class="fl">2.0</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/animate.html#animate-action">Animate Action</a>.</p>
+<p>GUI reference: <a href="../../nodes/simulation.html#build-elastic-network">Build Elastic Network</a>.</p>
 <section id="parameters" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h2>
 <table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>atoms</td>
+<td><code class="custom-geometry">InputGeometry</code></td>
+<td>Atomic mesh which inculdes vertices and edges to generate an elastic network on</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Atoms which aren’t selected will not be included in the final output mesh</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>menu</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Alpha Carbon', 'All Atom']</td>
+<td>Output a network between just alpha carbons, or one that includes all atoms</td>
+<td><code class="custom-string">'Alpha Carbon'</code></td>
+</tr>
+<tr class="even">
+<td>alpha_carbon</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Scale the distance for edge creation between just alpha carbon atoms, ignoring all other atoms.</td>
+<td><code>4.0</code></td>
+</tr>
+<tr class="odd">
+<td>all_atom</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Scale the distance for edge creation, looking for all selected atoms</td>
+<td><code>2.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 19%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.atoms</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Atomic mesh which inculdes vertices and edges to generate an elastic network on</td>
+</tr>
+<tr class="even">
+<td>i.selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Atoms which aren’t selected will not be included in the final output mesh</td>
+</tr>
+<tr class="odd">
+<td>i.menu</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Output a network between just alpha carbons, or one that includes all atoms</td>
+</tr>
+<tr class="even">
+<td>i.alpha_carbon</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Scale the distance for edge creation between just alpha carbon atoms, ignoring all other atoms.</td>
+</tr>
+<tr class="odd">
+<td>i.all_atom</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Scale the distance for edge creation, looking for all selected atoms</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 16%">
+<col style="width: 78%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.mesh</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>The generated elastic network. Edges are formed between atoms within the cutoff distance for use as constraints in a simulation</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.ForceBrownian" class="level1">
+<h1>Force Brownian</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ForceBrownian(add<span class="op">=</span><span class="va">None</span>, small<span class="op">=</span><span class="fl">0.1</span>, large<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/simulation.html#force-brownian">Force Brownian</a>.</p>
+<section id="parameters-1" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h2>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
-<col style="width: 57%">
+<col style="width: 56%">
+<col style="width: 19%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>add</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Add</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>small</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Small</td>
+<td><code>0.1</code></td>
+</tr>
+<tr class="odd">
+<td>large</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Large</td>
+<td><code>0.0</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-1" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-1">Inputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.add</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Add</td>
+</tr>
+<tr class="even">
+<td>i.small</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Small</td>
+</tr>
+<tr class="odd">
+<td>i.large</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Large</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-1" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-1">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.force</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Force</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.ForceGravity" class="level1">
+<h1>Force Gravity</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ForceGravity(add<span class="op">=</span><span class="va">None</span>, gravity<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/simulation.html#force-gravity">Force Gravity</a>.</p>
+<section id="parameters-2" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 55%">
 <col style="width: 18%">
 <col style="width: 13%">
 </colgroup>
@@ -759,299 +983,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>start</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Start</td>
-<td><code>1</code></td>
-</tr>
-<tr class="even">
-<td>length</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Length</td>
-<td><code>100</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs">Inputs</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>i.start</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Start</td>
-</tr>
-<tr class="even">
-<td>i.length</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Length</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs">Outputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 8%">
-<col style="width: 20%">
-<col style="width: 71%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>o.factor</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Factor</td>
-</tr>
-<tr class="even">
-<td>o.active</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
-</tr>
-<tr class="odd">
-<td>o.stop</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Stop</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.nodes.geometry.AnimateFrames" class="level1">
-<h1>Animate Frames</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.AnimateFrames(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    atoms<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    frames<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    smoother_step<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    interpolate<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    frame<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/animate.html#animate-frames">Animate Frames</a>.</p>
-<section id="parameters-1" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 23%">
-<col style="width: 64%">
-<col style="width: 5%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>atoms</td>
-<td><code class="custom-geometry">InputGeometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
+<td>add</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Add</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
-<td>selection</td>
-<td><code class="custom-bool">InputBoolean</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td><code class="custom-bool">True</code></td>
-</tr>
-<tr class="odd">
-<td>frames</td>
-<td><code class="custom-collection">InputCollection</code></td>
-<td>Collection which holds the frames of the trajectory</td>
+<td>gravity</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Gravity</td>
 <td><code>None</code></td>
-</tr>
-<tr class="even">
-<td>smoother_step</td>
-<td><code class="custom-bool">InputBoolean</code></td>
-<td>Ease in and out of the individual frames if interpolating</td>
-<td><code class="custom-bool">False</code></td>
-</tr>
-<tr class="odd">
-<td>interpolate</td>
-<td><code class="custom-bool">InputBoolean</code></td>
-<td>Whether to interpolate between frames of a trajectory or snap</td>
-<td><code class="custom-bool">True</code></td>
-</tr>
-<tr class="even">
-<td>frame</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame</td>
-<td><code>0.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-1" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-1">Inputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 8%">
-<col style="width: 16%">
-<col style="width: 74%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>i.atoms</td>
-<td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-</tr>
-<tr class="even">
-<td>i.selection</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Selection of atoms to apply this node to</td>
-</tr>
-<tr class="odd">
-<td>i.frames</td>
-<td><code class="custom-collection">CollectionSocket</code></td>
-<td>Collection which holds the frames of the trajectory</td>
-</tr>
-<tr class="even">
-<td>i.smoother_step</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Ease in and out of the individual frames if interpolating</td>
-</tr>
-<tr class="odd">
-<td>i.interpolate</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Whether to interpolate between frames of a trajectory or snap</td>
-</tr>
-<tr class="even">
-<td>i.frame</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Which frame to select from the collection. The fraction component of the float is how much to interpolate between the current and next frame</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-1" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-1">Outputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 13%">
-<col style="width: 80%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>o.atoms</td>
-<td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Atomic geometry with new positions based on the trajectory</td>
-</tr>
-<tr class="even">
-<td>o.all_frames</td>
-<td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Each frame from the collection of coordinates is output in the a single mesh. They now contain an additional attribute <code>frame_id</code> to specify which structure they are from</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.nodes.geometry.AnimatePeptideToCurve" class="level1">
-<h1>Animate Peptide to Curve</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.AnimatePeptideToCurve(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    atoms<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    curve<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    offset<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    start<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    end<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    rotate<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    twist<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/animate.html#animate-peptide-to-curve">Animate Peptide to Curve</a>.</p>
-<section id="parameters-2" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 6%">
-<col style="width: 41%">
-<col style="width: 42%">
-<col style="width: 9%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>atoms</td>
-<td><code class="custom-geometry">InputGeometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-<td><code>None</code></td>
-</tr>
-<tr class="even">
-<td>curve</td>
-<td><code class="custom-geometry">InputGeometry</code></td>
-<td>Curve</td>
-<td><code>None</code></td>
-</tr>
-<tr class="odd">
-<td>offset</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Offset</td>
-<td><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>start</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Start</td>
-<td><code>0.0</code></td>
-</tr>
-<tr class="odd">
-<td>end</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>End</td>
-<td><code>1.0</code></td>
-</tr>
-<tr class="even">
-<td>rotate</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Rotate</td>
-<td><code>0.5</code></td>
-</tr>
-<tr class="odd">
-<td>twist</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Twist</td>
-<td><code>1.0</code></td>
 </tr>
 </tbody>
 </table>
@@ -1059,11 +1000,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="inputs-2" class="level2 doc-section doc-section-inputs">
 <h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-2">Inputs</h2>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 31%">
-<col style="width: 56%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -1073,39 +1009,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>i.atoms</td>
-<td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
+<td>i.add</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Add</td>
 </tr>
 <tr class="even">
-<td>i.curve</td>
-<td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Curve</td>
-</tr>
-<tr class="odd">
-<td>i.offset</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Offset</td>
-</tr>
-<tr class="even">
-<td>i.start</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Start</td>
-</tr>
-<tr class="odd">
-<td>i.end</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>End</td>
-</tr>
-<tr class="even">
-<td>i.rotate</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Rotate</td>
-</tr>
-<tr class="odd">
-<td>i.twist</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Twist</td>
+<td>i.gravity</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Gravity</td>
 </tr>
 </tbody>
 </table>
@@ -1122,31 +1033,24 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>o.atoms</td>
-<td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Atoms</td>
+<td>o.force</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Force</td>
 </tr>
 </tbody>
 </table>
 </section>
 </section>
-<section id="molecularnodes.nodes.geometry.AnimateTrails" class="level1">
-<h1>Animate Trails</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.AnimateTrails(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    atoms<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    trail_threshold<span class="op">=</span><span class="st">'Unlimited'</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    trail_curve_type<span class="op">=</span><span class="st">'Poly'</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    trail_frames<span class="op">=</span><span class="dv">5</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    trail_radius<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    trail_resolution<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    trail_subdivisions<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    trail_cutoff<span class="op">=</span><span class="fl">10.0</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    shade_smooth<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    material<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="molecularnodes.nodes.geometry.ForceMeshCollide" class="level1">
+<h1>Force Mesh Collide</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ForceMeshCollide(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    add<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    geometry_bounds<span class="op">=</span><span class="st">'Original'</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    collision_distance<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/animate.html#animate-trails">Animate Trails</a>.</p>
+<p>GUI reference: <a href="../../nodes/simulation.html#force-mesh-collide">Force Mesh Collide</a>.</p>
 <section id="parameters-3" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h2>
 <table class="caption-top table">
@@ -1160,70 +1064,28 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>atoms</td>
+<td>add</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Add</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>geometry</td>
 <td><code class="custom-geometry">InputGeometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
+<td>Geometry</td>
 <td><code>None</code></td>
 </tr>
-<tr class="even">
-<td>selection</td>
-<td><code class="custom-bool">InputBoolean</code></td>
-<td>Selection of atoms to apply this node to</td>
-<td><code class="custom-bool">True</code></td>
-</tr>
 <tr class="odd">
-<td>trail_threshold</td>
-<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Unlimited', 'Threshold']</td>
-<td>Trail Threshold</td>
-<td><code class="custom-string">'Unlimited'</code></td>
+<td>geometry_bounds</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Original', 'Convex Hull']</td>
+<td>Geometry Bounds</td>
+<td><code class="custom-string">'Original'</code></td>
 </tr>
 <tr class="even">
-<td>trail_curve_type</td>
-<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Poly', 'Bezier']</td>
-<td>Trail Curve Type</td>
-<td><code class="custom-string">'Poly'</code></td>
-</tr>
-<tr class="odd">
-<td>trail_frames</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Number of previous frames from the trajectory to display</td>
-<td><code>5</code></td>
-</tr>
-<tr class="even">
-<td>trail_radius</td>
+<td>collision_distance</td>
 <td><code class="custom-float">InputFloat</code></td>
-<td>Trail Radius</td>
-<td><code>1.0</code></td>
-</tr>
-<tr class="odd">
-<td>trail_resolution</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Tail radial resolution</td>
-<td><code>6</code></td>
-</tr>
-<tr class="even">
-<td>trail_subdivisions</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Trail Subdivisions</td>
-<td><code>6</code></td>
-</tr>
-<tr class="odd">
-<td>trail_cutoff</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Threshold over which the spline is broken up</td>
-<td><code>10.0</code></td>
-</tr>
-<tr class="even">
-<td>shade_smooth</td>
-<td><code class="custom-bool">InputBoolean</code></td>
-<td>Apply smooth shading to the created geometry</td>
-<td><code class="custom-bool">True</code></td>
-</tr>
-<tr class="odd">
-<td>material</td>
-<td><code class="custom-material">InputMaterial</code></td>
-<td>Material to apply to the resulting geometry</td>
-<td><code>None</code></td>
+<td>Collision Distance</td>
+<td><code>0.1</code></td>
 </tr>
 </tbody>
 </table>
@@ -1232,9 +1094,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-3">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 25%">
-<col style="width: 53%">
+<col style="width: 31%">
+<col style="width: 40%">
+<col style="width: 28%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1245,65 +1107,288 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>i.atoms</td>
+<td>i.add</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Add</td>
+</tr>
+<tr class="even">
+<td>i.geometry</td>
 <td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
-</tr>
-<tr class="even">
-<td>i.selection</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Selection of atoms to apply this node to</td>
+<td>Geometry</td>
 </tr>
 <tr class="odd">
-<td>i.trail_threshold</td>
+<td>i.geometry_bounds</td>
 <td><code class="custom-menu">MenuSocket</code></td>
-<td>Trail Threshold</td>
+<td>Geometry Bounds</td>
 </tr>
 <tr class="even">
-<td>i.trail_curve_type</td>
-<td><code class="custom-menu">MenuSocket</code></td>
-<td>Trail Curve Type</td>
-</tr>
-<tr class="odd">
-<td>i.trail_frames</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Number of previous frames from the trajectory to display</td>
-</tr>
-<tr class="even">
-<td>i.trail_radius</td>
+<td>i.collision_distance</td>
 <td><code class="custom-float">FloatSocket</code></td>
-<td>Trail Radius</td>
-</tr>
-<tr class="odd">
-<td>i.trail_resolution</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Tail radial resolution</td>
-</tr>
-<tr class="even">
-<td>i.trail_subdivisions</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Trail Subdivisions</td>
-</tr>
-<tr class="odd">
-<td>i.trail_cutoff</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Threshold over which the spline is broken up</td>
-</tr>
-<tr class="even">
-<td>i.shade_smooth</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Apply smooth shading to the created geometry</td>
-</tr>
-<tr class="odd">
-<td>i.material</td>
-<td><code class="custom-material">MaterialSocket</code></td>
-<td>Material to apply to the resulting geometry</td>
+<td>Collision Distance</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="outputs-3" class="level2 doc-section doc-section-outputs">
 <h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-3">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.force</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Force</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.SimulateCurve" class="level1">
+<h1>Simulate Curve</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SimulateCurve(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    geometry<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    substeps<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    force<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    drag<span class="op">=</span><span class="fl">1.0</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    point_radius<span class="op">=</span><span class="fl">0.04</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    point_alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    curve_points<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    curve_straightness<span class="op">=</span><span class="fl">0.9</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    curve_segment_length<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    curve_alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    hook_selection<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    hook_target<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    hook_decay<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    pin_selection<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    pin_target<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/simulation.html#simulate-curve">Simulate Curve</a>.</p>
+<section id="parameters-4" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 23%">
+<col style="width: 60%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>geometry</td>
+<td><code class="custom-geometry">InputGeometry</code></td>
+<td>Geometry containing curve to simulate</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Which points to simulate on the curve</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>substeps</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of substeps to simulate for each frame of the animation (higher is slower but more accurate)</td>
+<td><code>5</code></td>
+</tr>
+<tr class="even">
+<td>force</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Additional forces to be applied to the simulation</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>drag</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Drag force for how quickly velocity should dissipate in the simulation. 0 is no drag and higher values dissipate quicker.</td>
+<td><code>1.0</code></td>
+</tr>
+<tr class="even">
+<td>point_radius</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Radius for each point which is used for calculating collisions between points</td>
+<td><code>0.04</code></td>
+</tr>
+<tr class="odd">
+<td>point_alpha</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Point alpha</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>curve_points</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Number of points to check in each direction to maintain straightness of curve</td>
+<td><code>1</code></td>
+</tr>
+<tr class="odd">
+<td>curve_straightness</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Curve Straightness</td>
+<td><code>0.9</code></td>
+</tr>
+<tr class="even">
+<td>curve_segment_length</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Curve Segment Length</td>
+<td><code>0.1</code></td>
+</tr>
+<tr class="odd">
+<td>curve_alpha</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Curve alpha</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>hook_selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Hook Selection</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="odd">
+<td>hook_target</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Hook Target</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>hook_decay</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Hook Decay</td>
+<td><code>0.5</code></td>
+</tr>
+<tr class="odd">
+<td>pin_selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Pin Selection</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>pin_target</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Pin Target</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-4" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-4">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 16%">
+<col style="width: 70%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.geometry</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Geometry containing curve to simulate</td>
+</tr>
+<tr class="even">
+<td>i.selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Which points to simulate on the curve</td>
+</tr>
+<tr class="odd">
+<td>i.substeps</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of substeps to simulate for each frame of the animation (higher is slower but more accurate)</td>
+</tr>
+<tr class="even">
+<td>i.force</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Additional forces to be applied to the simulation</td>
+</tr>
+<tr class="odd">
+<td>i.drag</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Drag force for how quickly velocity should dissipate in the simulation. 0 is no drag and higher values dissipate quicker.</td>
+</tr>
+<tr class="even">
+<td>i.point_radius</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Radius for each point which is used for calculating collisions between points</td>
+</tr>
+<tr class="odd">
+<td>i.point_alpha</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Point alpha</td>
+</tr>
+<tr class="even">
+<td>i.curve_points</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Number of points to check in each direction to maintain straightness of curve</td>
+</tr>
+<tr class="odd">
+<td>i.curve_straightness</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Curve Straightness</td>
+</tr>
+<tr class="even">
+<td>i.curve_segment_length</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Curve Segment Length</td>
+</tr>
+<tr class="odd">
+<td>i.curve_alpha</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Curve alpha</td>
+</tr>
+<tr class="even">
+<td>i.hook_selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Hook Selection</td>
+</tr>
+<tr class="odd">
+<td>i.hook_target</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Hook Target</td>
+</tr>
+<tr class="even">
+<td>i.hook_decay</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Hook Decay</td>
+</tr>
+<tr class="odd">
+<td>i.pin_selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Pin Selection</td>
+</tr>
+<tr class="even">
+<td>i.pin_target</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Pin Target</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-4" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-4">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1322,172 +1407,30 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="molecularnodes.nodes.geometry.AnimateValue" class="level1">
-<h1>Animate Value</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.AnimateValue(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    smoother_step<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    clamped<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    frame_start<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    frame_end<span class="op">=</span><span class="dv">250</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    value_min<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    value_max<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/animate.html#animate-value">Animate Value</a>.</p>
-<section id="parameters-4" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 12%">
-<col style="width: 37%">
-<col style="width: 41%">
-<col style="width: 8%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>smoother_step</td>
-<td><code class="custom-bool">InputBoolean</code></td>
-<td>Ease out and in from the min and max values</td>
-<td><code class="custom-bool">False</code></td>
-</tr>
-<tr class="even">
-<td>clamped</td>
-<td><code class="custom-bool">InputBoolean</code></td>
-<td>Whether to clamp the interpolated value to the max</td>
-<td><code class="custom-bool">False</code></td>
-</tr>
-<tr class="odd">
-<td>frame_start</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Frame to start the animation on</td>
-<td><code>1</code></td>
-</tr>
-<tr class="even">
-<td>frame_end</td>
-<td><code class="custom-int">InputInteger</code></td>
-<td>Frame to finish the animation on</td>
-<td><code>250</code></td>
-</tr>
-<tr class="odd">
-<td>value_min</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Value to start animation from</td>
-<td><code>0.0</code></td>
-</tr>
-<tr class="even">
-<td>value_max</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Value to end animation at</td>
-<td><code>1.0</code></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="inputs-4" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-4">Inputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 18%">
-<col style="width: 25%">
-<col style="width: 56%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>i.smoother_step</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Ease out and in from the min and max values</td>
-</tr>
-<tr class="even">
-<td>i.clamped</td>
-<td><code class="custom-bool">BooleanSocket</code></td>
-<td>Whether to clamp the interpolated value to the max</td>
-</tr>
-<tr class="odd">
-<td>i.frame_start</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Frame to start the animation on</td>
-</tr>
-<tr class="even">
-<td>i.frame_end</td>
-<td><code class="custom-int">IntegerSocket</code></td>
-<td>Frame to finish the animation on</td>
-</tr>
-<tr class="odd">
-<td>i.value_min</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Value to start animation from</td>
-</tr>
-<tr class="even">
-<td>i.value_max</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Value to end animation at</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="outputs-4" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-4">Outputs</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 9%">
-<col style="width: 23%">
-<col style="width: 66%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>o.value</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Animated value that interpolates from min to max over frames</td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="molecularnodes.nodes.geometry.AnimateWiggle" class="level1">
-<h1>Animate Wiggle</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.AnimateWiggle(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    atoms<span class="op">=</span><span class="va">None</span>,</span>
+<section id="molecularnodes.nodes.geometry.SimulateElasticNetwork" class="level1">
+<h1>Simulate Elastic Network</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SimulateElasticNetwork(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    mesh<span class="op">=</span><span class="va">None</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    b_factor<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    amplitude<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    amp_axis<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    amp_euler<span class="op">=</span><span class="fl">0.4</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    speed<span class="op">=</span><span class="fl">3.0</span>,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    animate<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    substeps<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    force<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    drag<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    edge_length_source<span class="op">=</span><span class="st">'Original'</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    edge_length<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    edge_alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    particle_radius<span class="op">=</span><span class="fl">0.005</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    particle_alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    hook_selection<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    hook_target<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    hook_decay<span class="op">=</span><span class="fl">2.0</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    pin_selection<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    pin_target<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/animate.html#animate-wiggle">Animate Wiggle</a>.</p>
+<p>GUI reference: <a href="../../nodes/simulation.html#simulate-elastic-network">Simulate Elastic Network</a>.</p>
 <section id="parameters-5" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h2>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 8%">
-<col style="width: 36%">
-<col style="width: 46%">
-<col style="width: 8%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -1498,52 +1441,94 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>atoms</td>
+<td>mesh</td>
 <td><code class="custom-geometry">InputGeometry</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
+<td>Mesh</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>selection</td>
 <td><code class="custom-bool">InputBoolean</code></td>
-<td>Selection of atoms to apply this node to</td>
+<td>Selection</td>
 <td><code class="custom-bool">True</code></td>
 </tr>
 <tr class="odd">
-<td>b_factor</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Amount that <code class="custom-attribute">b_factor</code> changeds the amplitude of wiggling</td>
-<td><code>1.0</code></td>
+<td>substeps</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Substeps</td>
+<td><code>5</code></td>
 </tr>
 <tr class="even">
-<td>amplitude</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Overall amplitude of the wiggling</td>
-<td><code>1.0</code></td>
+<td>force</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Force</td>
+<td><code>None</code></td>
 </tr>
 <tr class="odd">
-<td>amp_axis</td>
+<td>drag</td>
 <td><code class="custom-float">InputFloat</code></td>
-<td>Aplitude for the rotation around the bond axes</td>
-<td><code>1.0</code></td>
+<td>Drag</td>
+<td><code>0.1</code></td>
 </tr>
 <tr class="even">
-<td>amp_euler</td>
-<td><code class="custom-float">InputFloat</code></td>
-<td>Amplitude for applying euler rotations separate to the axis</td>
-<td><code>0.4</code></td>
+<td>edge_length_source</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Original', 'Custom']</td>
+<td>Edge Length Source</td>
+<td><code class="custom-string">'Original'</code></td>
 </tr>
 <tr class="odd">
-<td>speed</td>
+<td>edge_length</td>
 <td><code class="custom-float">InputFloat</code></td>
-<td>Speed at which the wiggle is applied, 3 will repeat 3 times</td>
-<td><code>3.0</code></td>
+<td>Edge Length</td>
+<td><code>0.1</code></td>
 </tr>
 <tr class="even">
-<td>animate</td>
+<td>edge_alpha</td>
 <td><code class="custom-float">InputFloat</code></td>
-<td>Controls the animation of the wiggle, repeating every <code>1.00</code></td>
+<td>Edge alpha</td>
 <td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>particle_radius</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Particle Radius</td>
+<td><code>0.005</code></td>
+</tr>
+<tr class="even">
+<td>particle_alpha</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Particle alpha</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>hook_selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Hook Selection</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>hook_target</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Hook Target</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>hook_decay</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Hook Decay</td>
+<td><code>2.0</code></td>
+</tr>
+<tr class="even">
+<td>pin_selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Pin Selection</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="odd">
+<td>pin_target</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Pin Target</td>
+<td><code>None</code></td>
 </tr>
 </tbody>
 </table>
@@ -1552,9 +1537,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-5">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 12%">
-<col style="width: 27%">
-<col style="width: 60%">
+<col style="width: 31%">
+<col style="width: 40%">
+<col style="width: 28%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1565,44 +1550,79 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>i.atoms</td>
+<td>i.mesh</td>
 <td><code class="custom-geometry">GeometrySocket</code></td>
-<td>Atomic geometry that contains vertices and edges</td>
+<td>Mesh</td>
 </tr>
 <tr class="even">
 <td>i.selection</td>
 <td><code class="custom-bool">BooleanSocket</code></td>
-<td>Selection of atoms to apply this node to</td>
+<td>Selection</td>
 </tr>
 <tr class="odd">
-<td>i.b_factor</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Amount that <code class="custom-attribute">b_factor</code> changeds the amplitude of wiggling</td>
+<td>i.substeps</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Substeps</td>
 </tr>
 <tr class="even">
-<td>i.amplitude</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Overall amplitude of the wiggling</td>
+<td>i.force</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Force</td>
 </tr>
 <tr class="odd">
-<td>i.amp_axis</td>
+<td>i.drag</td>
 <td><code class="custom-float">FloatSocket</code></td>
-<td>Aplitude for the rotation around the bond axes</td>
+<td>Drag</td>
 </tr>
 <tr class="even">
-<td>i.amp_euler</td>
-<td><code class="custom-float">FloatSocket</code></td>
-<td>Amplitude for applying euler rotations separate to the axis</td>
+<td>i.edge_length_source</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Edge Length Source</td>
 </tr>
 <tr class="odd">
-<td>i.speed</td>
+<td>i.edge_length</td>
 <td><code class="custom-float">FloatSocket</code></td>
-<td>Speed at which the wiggle is applied, 3 will repeat 3 times</td>
+<td>Edge Length</td>
 </tr>
 <tr class="even">
-<td>i.animate</td>
+<td>i.edge_alpha</td>
 <td><code class="custom-float">FloatSocket</code></td>
-<td>Controls the animation of the wiggle, repeating every <code>1.00</code></td>
+<td>Edge alpha</td>
+</tr>
+<tr class="odd">
+<td>i.particle_radius</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Particle Radius</td>
+</tr>
+<tr class="even">
+<td>i.particle_alpha</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Particle alpha</td>
+</tr>
+<tr class="odd">
+<td>i.hook_selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Hook Selection</td>
+</tr>
+<tr class="even">
+<td>i.hook_target</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Hook Target</td>
+</tr>
+<tr class="odd">
+<td>i.hook_decay</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Hook Decay</td>
+</tr>
+<tr class="even">
+<td>i.pin_selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Pin Selection</td>
+</tr>
+<tr class="odd">
+<td>i.pin_target</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Pin Target</td>
 </tr>
 </tbody>
 </table>
@@ -1619,9 +1639,248 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td>o.atoms</td>
+<td>o.geometry</td>
 <td><code class="custom-geometry">GeometrySocket</code></td>
-<td>The animated atomic geometry</td>
+<td>Geometry</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.SimulateOnFaces" class="level1">
+<h1>Simulate on Faces</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SimulateOnFaces(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    points<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    substeps<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    force<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    drag<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    faces<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    particle_radius<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    particle_alpha<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    hook_selection<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    hook_target<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    hook_decay<span class="op">=</span><span class="fl">2.0</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    pin_selection<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    pin_target<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/simulation.html#simulate-on-faces">Simulate on Faces</a>.</p>
+<section id="parameters-6" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 51%">
+<col style="width: 18%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>points</td>
+<td><code class="custom-geometry">InputGeometry</code></td>
+<td>Points</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Selection</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>substeps</td>
+<td><code class="custom-int">InputInteger</code></td>
+<td>Substeps</td>
+<td><code>5</code></td>
+</tr>
+<tr class="even">
+<td>force</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Force</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>drag</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Drag</td>
+<td><code>0.1</code></td>
+</tr>
+<tr class="even">
+<td>faces</td>
+<td><code class="custom-geometry">InputGeometry</code></td>
+<td>Faces</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>alpha</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>alpha</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>particle_radius</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Particle Radius</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="odd">
+<td>particle_alpha</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Particle alpha</td>
+<td><code>0.0</code></td>
+</tr>
+<tr class="even">
+<td>hook_selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Hook Selection</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="odd">
+<td>hook_target</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Hook Target</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>hook_decay</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Hook Decay</td>
+<td><code>2.0</code></td>
+</tr>
+<tr class="odd">
+<td>pin_selection</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Pin Selection</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>pin_target</td>
+<td><code class="custom-vector">InputVector</code></td>
+<td>Pin Target</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-6" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-6">Inputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.points</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Points</td>
+</tr>
+<tr class="even">
+<td>i.selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Selection</td>
+</tr>
+<tr class="odd">
+<td>i.substeps</td>
+<td><code class="custom-int">IntegerSocket</code></td>
+<td>Substeps</td>
+</tr>
+<tr class="even">
+<td>i.force</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Force</td>
+</tr>
+<tr class="odd">
+<td>i.drag</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Drag</td>
+</tr>
+<tr class="even">
+<td>i.faces</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Faces</td>
+</tr>
+<tr class="odd">
+<td>i.alpha</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>alpha</td>
+</tr>
+<tr class="even">
+<td>i.particle_radius</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Particle Radius</td>
+</tr>
+<tr class="odd">
+<td>i.particle_alpha</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Particle alpha</td>
+</tr>
+<tr class="even">
+<td>i.hook_selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Hook Selection</td>
+</tr>
+<tr class="odd">
+<td>i.hook_target</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Hook Target</td>
+</tr>
+<tr class="even">
+<td>i.hook_decay</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Hook Decay</td>
+</tr>
+<tr class="odd">
+<td>i.pin_selection</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Pin Selection</td>
+</tr>
+<tr class="even">
+<td>i.pin_target</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Pin Target</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-6" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-6">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 31%">
+<col style="width: 55%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.geometry</td>
+<td><code class="custom-geometry">GeometrySocket</code></td>
+<td>Geometry</td>
+</tr>
+<tr class="even">
+<td>o.normal</td>
+<td><code class="custom-vector">VectorSocket</code></td>
+<td>Normal of the face the current point is nearest</td>
 </tr>
 </tbody>
 </table>
@@ -2033,13 +2292,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../api/reference/nodes.general.html" class="pagination-link" aria-label="General">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">General</span>
+      <a href="../../api/reference/nodes.select.html" class="pagination-link" aria-label="Select">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Select</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../api/reference/nodes.attributes.html" class="pagination-link" aria-label="Attributes">
-        <span class="nav-page-text">Attributes</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../api/reference/nodes.style.html" class="pagination-link" aria-label="Style">
+        <span class="nav-page-text">Style</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
