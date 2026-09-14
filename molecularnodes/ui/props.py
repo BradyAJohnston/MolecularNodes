@@ -469,7 +469,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=0,
         update=_update_entities,
         min=0,
-        soft_max=5,
+        soft_max=4,
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
