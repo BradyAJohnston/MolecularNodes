@@ -276,8 +276,15 @@ node-tree plot per node, in a table. Worked for PR #1210 (the symmetry nodes).
    uv run -m nodebpy.assets plot molecularnodes/assets/nodes.blend <outdir> "Symmetry *" "Symmetry Instance"
    ```
    Names are exact or fnmatch; default draws the stored layout, `--arrange` re-lays it
-   out. Needs matplotlib (present in the venv). Frames, their labels and the String
-   comment nodes are drawn, which is why the comments are worth adding first.
+   out. Needs matplotlib (present in the venv). Since nodebpy 520.25.0 each group
+   yields two Blender-styled images: `<Name>.png` (internals, with socket names,
+   values, frames and the String comment nodes) and `<Name>_node.png` (the group as
+   a node seen from another tree, panels collapsed; `--open-panels` expands them).
+   `--tree-only` / `--node-only` pick one. Put the `_node` image in the PR table's
+   first column so reviewers see the interface next to the tree. Internals PNGs are
+   large (~0.3 to 0.7 MB at default dpi); `--dpi` lowers that if needed.
+   After changing nodebpy in `pyproject.toml`, `uv lock --refresh-package nodebpy`
+   then `uv sync --all-extras`; a plain `uv sync` drops the `bpy` extra.
 4. **Body file** in a scratch directory next to the images. Reference each image with
    markdown `![alt](./file.png)` using paths relative to that directory; markdown
    images inside a table work. Write real alt text: it becomes the alt on GitHub.
