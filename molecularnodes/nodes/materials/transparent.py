@@ -13,10 +13,7 @@ class Transparent(CustomShaderGroup):
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         _material_output = TransparentOutlineInternal(
-            transparency=0.8083333,
-            menu="Fresnel",
-            outline_color=(0.0, 0.0, 0.0, 1.0),
-            threshold=6.2,
+            transparency=0.8083333, menu="Fresnel", outline_color=(0.0, 0.0, 0.0, 1.0)
         ) >> s.MaterialOutput(is_active_output=True)
 
 

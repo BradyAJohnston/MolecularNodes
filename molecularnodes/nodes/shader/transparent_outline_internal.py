@@ -18,7 +18,6 @@ from nodebpy.builder import (
 from nodebpy.types import InputColor, InputFloat, InputMenu
 from ._shared.mn_fresnel import MNFresnel
 from .mn_color import MNColor
-from .outline_mask import OutlineMask
 
 
 class TransparentOutlineInternal(AssetShaderGroup):
@@ -33,10 +32,6 @@ class TransparentOutlineInternal(AssetShaderGroup):
         Menu
     outline_color : InputColor
         Outline Color
-    threshold : InputFloat
-        Threshold
-    thickness : InputFloat
-        Thickness
 
     Inputs
     ------
@@ -46,10 +41,6 @@ class TransparentOutlineInternal(AssetShaderGroup):
         Menu
     i.outline_color : ColorSocket
         Outline Color
-    i.threshold : FloatSocket
-        Threshold
-    i.thickness : FloatSocket
-        Thickness
 
     Outputs
     -------
@@ -68,10 +59,6 @@ class TransparentOutlineInternal(AssetShaderGroup):
         """Menu"""
         outline_color: ColorSocket
         """Outline Color"""
-        threshold: FloatSocket
-        """Threshold"""
-        thickness: FloatSocket
-        """Thickness"""
 
     class _Outputs(SocketAccessor):
         shader: ShaderSocket
@@ -89,16 +76,12 @@ class TransparentOutlineInternal(AssetShaderGroup):
         transparency: InputFloat = 0.9,
         menu: InputMenu | Literal["Transparent", "Fresnel"] = "Transparent",
         outline_color: InputColor = None,
-        threshold: InputFloat = 0.2,
-        thickness: InputFloat = 0.15,
     ):
         super().__init__(
             **{
                 "Transparency": transparency,
                 "Menu": menu,
                 "Outline Color": outline_color,
-                "Threshold": threshold,
-                "Thickness": thickness,
             }
         )
 
@@ -113,15 +96,8 @@ class TransparentOutlineInternal(AssetShaderGroup):
         )
         menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
         outline_color = tree.inputs.color("Outline Color", (1.0, 1.0, 1.0, 1.0))
-        threshold = tree.inputs.float(
-            "Threshold", 0.2, min_value=0.0, max_value=10_000.0
-        )
-        thickness = tree.inputs.float(
-            "Thickness", 0.15, min_value=0.0, max_value=10_000.0
-        )
         shader = tree.outputs.shader("Shader")
 
-        _outline_mask = OutlineMask(threshold=threshold, thickness=thickness)
         mix_shader = s.MixShader(
             fac=g.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
             + transparency,
