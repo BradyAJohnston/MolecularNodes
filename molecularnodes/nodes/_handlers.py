@@ -198,3 +198,27 @@ def _style_node_material(
 
 
 register_on_add(lambda name: name.startswith("Style "), _style_node_material)
+
+
+def _select_string_chain_ids(
+    node: bpy.types.GeometryNodeGroup, obj: bpy.types.Object | None
+) -> None:
+    """
+    Fill a newly added ``Select String`` node's Chain IDs from its entity.
+
+    Chain IDs are stored on the geometry as integers, numbered in the order of
+    the labels kept on the entity object (see ``Molecule._compute_chain_id_int``),
+    so the node needs that list to resolve a chain name typed into its
+    selection. Residue names have a fixed numbering and ship as the node's
+    default. A no-op when the list is already filled in or the object carries
+    no chain IDs.
+    """
+    socket = node.inputs.get("Chain IDs")
+    if socket is None or socket.default_value or obj is None:
+        return
+    chain_ids = getattr(getattr(obj, "mn", None), "chain_ids", None)
+    if chain_ids:
+        socket.default_value = ",".join(chain_ids)
+
+
+register_on_add("Select String", _select_string_chain_ids)

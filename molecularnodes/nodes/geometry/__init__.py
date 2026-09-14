@@ -211,6 +211,7 @@ from .select_res_id_string import SelectResIDString
 from .select_res_name import SelectResName
 from .select_res_whole import SelectResWhole
 from .select_sphere import SelectSphere
+from .select_string import SelectString
 from .selected_instances import SelectedInstances
 from .separate_atoms import SeparateAtoms
 from .separate_first_point import SeparateFirstPoint
@@ -471,6 +472,7 @@ __all__ = (
     "SelectResName",
     "SelectResWhole",
     "SelectSphere",
+    "SelectString",
     "SelectedInstances",
     "SeparateAtoms",
     "SeparateFirstPoint",
