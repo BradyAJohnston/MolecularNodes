@@ -161,7 +161,7 @@ quartodoc:
       contents:
       - api/styles.qmd
       - api/trajectories.qmd
-      - api/mdanalysis_workflow.qmd
+      - api/mdanalysis.qmd
       - api/nodebpy.qmd
       - api/rendering.qmd
       - api/materials.qmd
@@ -231,9 +231,7 @@ quartodoc:
 
   # -- begin generated node sections (docs/generate.py) --
   - title: Nodes
-    desc: The node groups included with Molecular Nodes, grouped by the same categories as the
-      add menu inside of Geometry Nodes. Each node group is also available as a typed Python
-      class for scripting.
+    desc: The node groups included with Molecular Nodes, grouped by the same categories as the add menu inside of Geometry Nodes. Each node group is also available as a typed Python class for scripting.
     contents:
     - kind: page
       path: nodes.materials

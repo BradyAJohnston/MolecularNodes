@@ -1,9 +1,12 @@
 ---
-title: "Example: Analysing a Trajectory"
-description: "A complete MDAnalysis workflow on the AdK equilibrium dataset, rendered with Molecular Nodes"
+title: "MDanalysis"
+description: "A complete MDAnalysis workflow on the AdK equilibrium dataset, rendering with Molecular Nodes along the way."
 jupyter: python3
 execute:
   daemon: false
+format:
+  html: default
+  ipynb: default
 ---
 
 This page walks through a full analysis of a molecular dynamics trajectory with
@@ -28,6 +31,8 @@ and close around the active site: the rigid **CORE**, the **NMP** binding domain
 from `MDAnalysisData` is a 1 µs simulation of the apo protein, saved every 240 ps (4187
 frames) with the solvent stripped, so it is small enough (161 MB) to download during a
 workshop.
+
+![Final video produced at the end of this tutorial.](adk.mp4)
 
 ## Setup
 
@@ -190,7 +195,7 @@ with traj.tree.reset() as (atoms, join):
         >> join
     )
 
-canvas.look_at(traj, viewpoint="top")
+canvas.look_at(traj, viewpoint="top", margin=0.15)
 canvas.snapshot()
 ```
 
@@ -298,21 +303,13 @@ with traj.tree.reset() as (atoms, join):
         a=(0.10, 0.20, 0.85, 1.0),
         b=(0.95, 0.15, 0.05, 1.0),
     )
-    colored = atoms >> mg.SetColor(color=rmsf_color) >> mg.TopologyDSSP()
-
-    colored >> mg.StyleCartoon(quality=4, material=glossy.material) >> join
-
-    sphere_scale = g.MapRange.float(
-        g.NamedAttribute.float("rmsf"), *RMSF_RANGE, 0.3, 1.6
+    scale = g.MapRange.float(
+        g.NamedAttribute.float("rmsf"), *RMSF_RANGE, 0.3, 2.5
     )
     (
-        colored
-        >> mg.StyleSpheres(
-            selection=mg.IsAlphaCarbon(),
-            sphere="Instance",
-            scale=sphere_scale,
-            material=glossy.material,
-        )
+        atoms
+        >> mg.SetColor(color=rmsf_color)
+        >> mg.StyleRibbon(peptide_radius=scale, material=glossy.material)
         >> join
     )
 
@@ -453,7 +450,7 @@ q = contacts.Contacts(
     u, select=(lid_heavy, nmp_heavy), refgroup=(lid_heavy, nmp_heavy), radius=4.5
 ).run()
 
-MOVIE_FRAMES = 60
+MOVIE_FRAMES = 120
 time_ns = q.results.timeseries[:MOVIE_FRAMES, 0] * u.trajectory.dt / 1000
 fig, ax = plt.subplots(figsize=(8, 3))
 ax.plot(time_ns, q.results.timeseries[:MOVIE_FRAMES, 1], color="black", lw=1)
@@ -490,11 +487,13 @@ enough for a movie.
 canvas.clear()
 canvas.engine = mn.scene.EEVEE()
 canvas.fps = 24
+canvas.resolution = (800, 600)
 
 movie = mn.Molecule(u)
-movie.subframes = 4
+movie.dssp.init() # compute secondary structure for the movie
+movie.subframes = 1
 movie.interpolate = True
-movie.average = 2
+movie.average = 1
 
 canvas.frame_range = (0, MOVIE_FRAMES * (movie.subframes + 1) - 1)
 print(f"{canvas.frame_range[1] + 1} scene frames, "
@@ -511,15 +510,16 @@ before), and the contact residues drawn as ball-and-stick in a highlight colour 
 stand out as the salt bridge is pulled apart.
 
 ```{python}
+
 with movie.tree.reset() as (atoms, join):
     turn = g.MapRange.float(g.SceneTime().o.frame, *canvas.frame_range, 0, np.pi)
     transformed = (
         color_domains(movie, atoms)
         >> mg.CentreOnSelection(selection=movie.selections.node(DOMAINS["CORE"]))
-        >> g.TransformGeometry(rotation=g.CombineXYZ(y=turn))
+        >> g.TransformGeometry(rotation=g.CombineXYZ(y=turn + np.pi / 2))
     )
 
-    transformed >> mg.TopologyDSSP() >> mg.StyleCartoon(
+    transformed  >> mg.StyleCartoon(
         quality=4, material=glossy.material
     ) >> join
 
@@ -533,11 +533,12 @@ with movie.tree.reset() as (atoms, join):
             selection=movie.selections.node(CONTACTS),
             sphere="Instance",
             quality=3,
-            scale=1.3,
+            scale=0.3,
             material=glossy.material,
         )
         >> join
     )
+
 
 movie.tree
 ```
@@ -551,7 +552,7 @@ extra margin so the turning protein stays in shot.
 #| fig-cap: The first 14 ns of the simulation, smoothed and interpolated, with the Lys157–Asp54 salt bridge and its neighbouring arginines drawn in yellow as the LID and NMP domains pull apart.
 canvas.frame = 0
 canvas.look_at(movie, viewpoint="top", margin=0.35)
-canvas.animation()
+canvas.animation(path="adk.mp4")
 ```
 
 ## Where to go next
