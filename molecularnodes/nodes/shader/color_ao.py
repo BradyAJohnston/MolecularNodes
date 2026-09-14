@@ -27,6 +27,8 @@ class ColorAO(AssetShaderGroup):
         Color
     menu : InputMenu | Literal["AO", "None"]
         Menu
+    ao_space : InputMenu | Literal["Global", "Local"]
+        AO Space
     distance : InputFloat
         Distance
     exponent : InputFloat
@@ -38,6 +40,8 @@ class ColorAO(AssetShaderGroup):
         Color
     i.menu : MenuSocket
         Menu
+    i.ao_space : MenuSocket
+        AO Space
     i.distance : FloatSocket
         Distance
     i.exponent : FloatSocket
@@ -59,6 +63,8 @@ class ColorAO(AssetShaderGroup):
         """Color"""
         menu: MenuSocket
         """Menu"""
+        ao_space: MenuSocket
+        """AO Space"""
         distance: FloatSocket
         """Distance"""
         exponent: FloatSocket
@@ -79,25 +85,41 @@ class ColorAO(AssetShaderGroup):
         self,
         color: InputColor = None,
         menu: InputMenu | Literal["AO", "None"] = "AO",
+        ao_space: InputMenu | Literal["Global", "Local"] = "Local",
         distance: InputFloat = 1.0,
-        exponent: InputFloat = 2.0,
+        exponent: InputFloat = 0.5,
     ):
         super().__init__(
-            **{"Color": color, "Menu": menu, "Distance": distance, "Exponent": exponent}
+            **{
+                "Color": color,
+                "Menu": menu,
+                "AO Space": ao_space,
+                "Distance": distance,
+                "Exponent": exponent,
+            }
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 0.0))
         menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        ao_space = tree.inputs.menu("AO Space", expanded=True, optional_label=True)
         distance = tree.inputs.float("Distance", 1.0, min_value=0.0, max_value=1000.0)
-        exponent = tree.inputs.float("Exponent", 2.0, min_value=0.0, max_value=10_000.0)
+        exponent = tree.inputs.float("Exponent", 0.5, min_value=0.0, max_value=10_000.0)
         result = tree.outputs.color("Result", (0.8, 0.8, 0.8, 1.0))
 
+        menu_switch = s.MenuSwitch.float(
+            ao_space,
+            {
+                "Global": s.AmbientOcclusion(
+                    color=color, distance=distance, samples=16
+                ).o.ao,
+                "Local": s.AmbientOcclusion(
+                    color=color, distance=distance, samples=16, only_local=True
+                ).o.ao,
+            },
+        )
         math_1 = g.Math(
-            value_001=s.AmbientOcclusion(
-                color=color, distance=distance, samples=16
-            ).o.ao
-            ** exponent,
+            value_001=menu_switch.o.output**exponent,
             value=1.0,
             operation="SUBTRACT",
             use_clamp=True,
@@ -114,6 +136,7 @@ class ColorAO(AssetShaderGroup):
         mix.o.result_color >> result
 
         menu.default_value = "AO"
+        ao_space.default_value = "Local"
 
 
 ASSET = ColorAO

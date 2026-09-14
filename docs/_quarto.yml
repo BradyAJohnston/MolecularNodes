@@ -201,7 +201,6 @@ quartodoc:
     - material.AmbientOcclusion
     - material.Flat
     - material.Squishy
-    - material.TransparentOutline
     - material.PresetMaterial
     - material.append_material
     - material.add_all_materials
@@ -243,7 +242,7 @@ quartodoc:
       contents:
       - name: nodes.shader.OutlineMask
         children: embedded
-      - name: nodes.shader.TransparentOutline
+      - name: nodes.shader.TransparentOutlineInternal
         children: embedded
     - kind: page
       path: nodes.general
@@ -253,11 +252,15 @@ quartodoc:
       contents:
       - name: nodes.geometry.AssemblyID
         children: embedded
+      - name: nodes.geometry.EdgeLength
+        children: embedded
+      - name: nodes.geometry.ImageID
+        children: embedded
       - name: nodes.geometry.SymmetryID
         children: embedded
       - name: nodes.shader.ColorAO
         children: embedded
-      - name: nodes.shader.Flat
+      - name: nodes.shader.FlatInternal
         children: embedded
     - kind: page
       path: nodes.animate
@@ -628,8 +631,6 @@ quartodoc:
       - name: nodes.geometry.EdgeGroupID
         children: embedded
       - name: nodes.geometry.EdgeInfo
-        children: embedded
-      - name: nodes.geometry.EdgeLength
         children: embedded
       - name: nodes.geometry.FindBondedAtom
         children: embedded
