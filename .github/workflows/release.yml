@@ -22,6 +22,13 @@ jobs:
       - uses: BradyAJohnston/setup-blender@v5
         with:
           version: 5.1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build node assets
+        run: |
+          uv sync --all-extras
+          uv run -m nodebpy.assets build
 
       - name: Build Extension
         run: |
