@@ -245,7 +245,46 @@ def test_render_symmetry(golden_canvas, tmp_path, assembly_image_snapshot, code)
   Find more with the RCSB search API on `rcsb_struct_symmetry.symbol` plus
   `rcsb_entry_info.deposited_polymer_entity_instance_count = 1`.
 
-## 11. Checklist for a new node
+## 11. Branch, images and the pull request
+
+Node PRs should show the node, not just describe it: one use-case render and one
+node-tree plot per node, in a table. Worked for PR #1210 (the symmetry nodes).
+
+1. **Branch and commit** with the usual `git checkout -b <name>` and the attribution
+   trailer lines from the session reminder. Keep the skill file in the same PR when
+   the workflow changed.
+2. **Use-case renders.** Write a short script in the scratchpad (see section 9 for
+   the environment gotchas): `mn.Canvas(engine="EEVEE", resolution=(1200, 900))`,
+   style first, then the node, `RealizeInstances()` and
+   `SetColor(color=ColorAttributeRandom(name="sym_id"))` if per-copy colour helps,
+   `canvas.look_at(mol, viewpoint=...)`, `canvas.snapshot(path)`. The 128 px test
+   goldens are too small for a PR.
+3. **Node-tree plots.** After `build`:
+   ```bash
+   uv run -m nodebpy.assets plot molecularnodes/assets/nodes.blend <outdir> "Symmetry *" "Symmetry Instance"
+   ```
+   Names are exact or fnmatch; default draws the stored layout, `--arrange` re-lays it
+   out. Needs matplotlib (present in the venv). Frames, their labels and the String
+   comment nodes are drawn, which is why the comments are worth adding first.
+4. **Body file** in a scratch directory next to the images. Reference each image with
+   markdown `![alt](./file.png)` using paths relative to that directory; markdown
+   images inside a table work. Write real alt text: it becomes the alt on GitHub.
+5. **Create the PR from that directory** so the relative paths resolve, pointing gh at
+   the repo and branch explicitly:
+   ```bash
+   cd <scratch>/pr && gh pr create -R BradyAJohnston/MolecularNodes --head <branch> --base main \
+     --title "..." --body-file body.md \
+     --attach './render_x.png#Alt text' --attach './tree_x.png#Alt text'
+   ```
+   gh (2.100+) uploads each attachment and rewrites the matching `![...](./file.png)`
+   reference in the body to a `github.com/user-attachments/assets/...` URL in place;
+   attachments the body does not reference are appended at the end. Up to 50 files.
+   Verify with `gh pr view <n> --json body -q .body | grep user-attachments`.
+6. **Say it was agent-authored** when it was. The point of this workflow is that the
+   `.py` diff, the numeric tests, the goldens and the tree plots make the tree
+   reviewable regardless of who or what wrote it.
+
+## 12. Checklist for a new node
 
 1. Write the module (copy a neighbour), pick the catalog id, add to `_shared/` if internal.
 2. `build` (fixes tree errors early), then `dump`, then read the diff.
