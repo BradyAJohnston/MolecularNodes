@@ -51,10 +51,10 @@ For writing code, I highly recommend using VSCode and the [Blender VS Code](http
 Packages are sourced from the `uv.lock` file. To properly install inside of Blender we have to download the `.whl` files to `molecularnodes/wheels/` and ensure the `blender_manifest.toml` is up to date. This is all handled inside of the `build.py` script. There are options to just download (`--download-only`) or just build the `.zip` files (`--build-only`).
 
 ```py
-blender -b -P build.py -- -help # show help for build.py
-blender -b -P build.py -- -download-only # download required packages
-blender -b -P build.py -- -build-only # build the .zip files
-blender -b -P build.py # download and build
+blender -b --python-exit-code 1 -P build.py -- --help # show help for build.py
+blender -b --python-exit-code 1 -P build.py -- --download-only # download required packages
+blender -b --python-exit-code 1 -P build.py -- --build-only # build the .zip files
+blender -b --python-exit-code 1 -P build.py # download and build
 ```
 
 ### Node assets

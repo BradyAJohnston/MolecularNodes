@@ -1,41 +1,29 @@
 import argparse
-import glob
-import os
 import re
 import subprocess
 import sys
 import tomllib
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from typing import List, Union
+from pathlib import Path
 
+TOML_PATH = Path("molecularnodes/blender_manifest.toml")
+WHL_PATH = Path("molecularnodes/wheels")
+UVLOCK_PATH = Path("uv.lock")
+NODES_BLEND_PATH = Path("molecularnodes/assets/nodes.blend")
 
-def run_python(args: str | List[str]):
-    # When running in Blender, use Blender's Python executable
-    try:
-        import bpy
-
-        python = bpy.app.binary_path_python
-    except (ImportError, AttributeError):
-        # Fallback to regular Python executable
-        python = os.path.realpath(sys.executable)
-
-    if isinstance(args, str):
-        args = [python] + args.split(" ")
-    elif isinstance(args, list):
-        args = [python] + args
-    else:
-        raise ValueError(
-            "Arguments must be a string to split into individual arguments by space"
-            "or a list of individual arguments already split"
-        )
-
-    subprocess.run(args)
-
-
-TOML_PATH = "molecularnodes/blender_manifest.toml"
-WHL_PATH = "./molecularnodes/wheels"
-PYPROJ_PATH = "./pyproject.toml"
-UVLOCK_PATH = "./uv.lock"
+# Packages that Blender already provides, so their wheels must not be bundled.
+# Canonical (hyphenated) package names; compare via normalize_package_name().
+PACKAGES_TO_EXCLUDE = {
+    "pyarrow",
+    "certifi",
+    "charset-normalizer",
+    "idna",
+    "numpy",
+    "requests",
+    "urllib3",
+}
 
 
 @dataclass
@@ -61,214 +49,104 @@ build_platforms = [
 ]
 
 
-with open(PYPROJ_PATH, "rb") as file:
-    pyproj = tomllib.load(file)
-    required_packages = pyproj["project"]["dependencies"]
+def normalize_package_name(name: str) -> str:
+    """Normalize a package name for comparison (lowercase, hyphenated)."""
+    return name.lower().replace("_", "-")
 
 
-def remove_whls():
-    for whl_file in glob.glob(os.path.join(WHL_PATH, "*.whl")):
-        os.remove(whl_file)
+def package_name_from_wheel(filename: str) -> str:
+    """Extract the normalized package name from a wheel filename."""
+    return normalize_package_name(filename.split("-")[0])
 
 
-def download_whls(
-    platforms: Union[Platform, List[Platform]],
-    required_packages: List[str] = required_packages,
-    python_version="3.11",
-    clean: bool = True,
-):
+def remove_whls() -> None:
+    for whl_file in WHL_PATH.glob("*.whl"):
+        whl_file.unlink()
+
+
+def replace_toml_array(text: str, key: str, values: list[str]) -> str:
+    """Replace or insert a top-level ``key = [...]`` array in TOML text.
+
+    Only the array itself is touched; every other byte of the manifest
+    (comments, ordering, other sections) is left as-is.
+    """
+    block = f"{key} = [\n" + "".join(f'\t"{value}",\n' for value in values) + "]"
+    pattern = re.compile(rf"^{re.escape(key)}[ \t]*=[ \t]*\[[^\]]*\]", re.MULTILINE)
+    if pattern.search(text):
+        return pattern.sub(lambda _match: block, text, count=1)
+    # Key not present: insert before the first table header, or append at the end.
+    section = re.search(r"^\[", text, re.MULTILINE)
+    insert_at = section.start() if section else len(text)
+    return text[:insert_at] + block + "\n\n" + text[insert_at:]
+
+
+def update_toml_whls(platforms: Platform | list[Platform]) -> None:
+    """Point the manifest's wheels/platforms arrays at the downloaded wheels.
+
+    Wheels for packages Blender already provides are deleted from disk and
+    left out of the manifest.
+    """
     if isinstance(platforms, Platform):
         platforms = [platforms]
 
-    if clean:
-        remove_whls()
-
-    for platform in platforms:
-        run_python(
-            f"-m pip download {' '.join(required_packages)} --dest ./molecularnodes/wheels --only-binary=:all: --python-version={python_version} --platform={platform.pypi_suffix}"
-        )
-
-
-def update_toml_whls(platforms):
-    # Define the path for wheel files
-    wheels_dir = "molecularnodes/wheels"
-    wheel_files = glob.glob(f"{wheels_dir}/*.whl")
-    wheel_files.sort()
-
-    # Packages to remove
-    packages_to_remove = {
-        "pyarrow",
-        "certifi",
-        "charset_normalizer",
-        "idna",
-        "numpy",
-        "requests",
-        "urllib3",
-    }
-
-    # Filter out unwanted wheel files
-    to_remove = []
     to_keep = []
-    for whl in wheel_files:
-        if any(pkg in whl for pkg in packages_to_remove):
-            to_remove.append(whl)
+    for whl in sorted(WHL_PATH.glob("*.whl")):
+        if package_name_from_wheel(whl.name) in PACKAGES_TO_EXCLUDE:
+            whl.unlink()
         else:
             to_keep.append(whl)
 
-    # Remove the unwanted wheel files from the filesystem
-    for whl in to_remove:
-        os.remove(whl)
-
-    # Load the TOML file
-    with open(TOML_PATH, "rb") as file:
-        manifest = tomllib.load(file)
-
-    # Update the wheels list with the remaining wheel files
-    manifest["wheels"] = [f"./wheels/{os.path.basename(whl)}" for whl in to_keep]
-
-    # Simplify platform handling
-    if not isinstance(platforms, list):
-        platforms = [platforms]
-    manifest["platforms"] = [p.metadata for p in platforms]
-
-    # Write the updated TOML file
-    def write_toml_manifest(manifest, file_path):
-        """Write manifest dict as TOML with proper formatting."""
-        with open(file_path, "w") as f:
-            # Define array fields and section fields
-            array_fields = ["wheels", "platforms", "license", "tags", "copyright"]
-            section_fields = ["permissions"]
-
-            # Write basic fields first
-            for key, value in manifest.items():
-                if key in array_fields + section_fields:
-                    continue
-                if isinstance(value, str):
-                    f.write(f'{key} = "{value}"\n')
-                elif isinstance(value, bool):
-                    f.write(f"{key} = {str(value).lower()}\n")
-                elif isinstance(value, (int, float)):
-                    f.write(f"{key} = {value}\n")
-
-            # Write array fields
-            for array_field in ["platforms", "tags", "license", "copyright"]:
-                if array_field in manifest:
-                    f.write(f"{array_field} = [\n")
-                    for item in manifest[array_field]:
-                        f.write(f'\t"{item}",\n')
-                    f.write("]\n")
-
-            # Write wheels array separately (longer, goes at end)
-            if "wheels" in manifest:
-                f.write("\nwheels = [\n")
-                for wheel in manifest["wheels"]:
-                    wheel_path = wheel.replace("\\\\", "/")
-                    f.write(f'\t"{wheel_path}",\n')
-                f.write("]\n")
-
-            # Write section fields (like [permissions])
-            for section_name in section_fields:
-                if section_name in manifest:
-                    f.write(f"\n[{section_name}]\n")
-                    section_data = manifest[section_name]
-                    if isinstance(section_data, dict):
-                        for key, value in section_data.items():
-                            f.write(f'{key} = "{value}"\n')
-                    f.write("\n")
-
-    write_toml_manifest(manifest, TOML_PATH)
+    text = TOML_PATH.read_text()
+    text = replace_toml_array(text, "platforms", [p.metadata for p in platforms])
+    text = replace_toml_array(
+        text, "wheels", [f"./wheels/{whl.name}" for whl in to_keep]
+    )
+    TOML_PATH.write_text(text)
 
 
 def clean_files(suffix: str = ".blend1") -> None:
-    pattern_to_remove = f"molecularnodes/**/*{suffix}"
-    for blend1_file in glob.glob(pattern_to_remove, recursive=True):
-        os.remove(blend1_file)
+    for file in Path("molecularnodes").rglob(f"*{suffix}"):
+        file.unlink()
 
 
-def build_extension(split: bool = True, blender_path: str = None) -> None:
+def build_extension(
+    split: bool = True, blender_path: str | None = None, clean: bool = True
+) -> None:
     """Build the Blender extension.
 
     Args:
         split: Whether to build separate packages for each platform
-        blender_path: Path to Blender executable. If None, uses current Blender instance.
+        blender_path: Path to the Blender executable to use when this script is
+            not already running inside Blender. Defaults to "blender" on PATH.
+        clean: Whether to remove stray .blend1/.MNSession files before building.
     """
-    # Clean up files before building
-    for suffix in [".blend1", ".MNSession"]:
-        clean_files(suffix=suffix)
+    if not NODES_BLEND_PATH.exists():
+        raise FileNotFoundError(
+            f"{NODES_BLEND_PATH} is missing. It is a built asset library and is "
+            "required in the packaged extension. Build it first with: "
+            "uv run -m nodebpy.assets build"
+        )
 
-    # When running inside Blender, use subprocess with current Blender executable
+    if clean:
+        for suffix in (".blend1", ".MNSession"):
+            clean_files(suffix=suffix)
+
     try:
         import bpy
 
-        blender_path = bpy.app.binary_path
-        print(f"\nBuilding extension using current Blender instance: {blender_path}")
+        executable = bpy.app.binary_path
+        print(f"\nBuilding extension using current Blender instance: {executable}")
+    except ImportError:
+        executable = blender_path or "blender"
+        print(f"\nBuilding extension using Blender at: {executable}")
 
-        # Use subprocess to call Blender's extension build command
-        if split:
-            subprocess.run(
-                [
-                    blender_path,
-                    "--command",
-                    "extension",
-                    "build",
-                    "--split-platforms",
-                    "--source-dir",
-                    "molecularnodes",
-                    "--output-dir",
-                    ".",
-                ]
-            )
-        else:
-            subprocess.run(
-                [
-                    blender_path,
-                    "--command",
-                    "extension",
-                    "build",
-                    "--source-dir",
-                    "molecularnodes",
-                    "--output-dir",
-                    ".",
-                ]
-            )
-        print("Extension built successfully")
-        return
-
-    except (ImportError, AttributeError):
-        # Fallback to subprocess if not in Blender
-        pass
-
-    # Fallback: try to find Blender executable for subprocess
-    if not blender_path:
-        try:
-            import bpy
-
-            blender_path = bpy.app.binary_path
-        except (ImportError, AttributeError):
-            pass
-
-    if not blender_path:
-        print("\nWarning: Blender executable path not available")
-        print("The extension files have been prepared but not built.")
-        print("To build the extension, either:")
-        print(
-            "  1. Run: blender --command extension build --split-platforms --source-dir molecularnodes --output-dir ."
-        )
-        print("  2. Re-run with blender -b -P build.py")
-        return
-
-    print(f"\nBuilding extension using Blender at: {blender_path}")
-
+    args = [executable, "--command", "extension", "build"]
     if split:
-        subprocess.run(
-            f"{blender_path} --command extension build"
-            " --split-platforms --source-dir molecularnodes --output-dir .".split(" ")
-        )
-    else:
-        subprocess.run(
-            f"{blender_path} --command extension build "
-            "--source-dir molecularnodes --output-dir .".split(" ")
-        )
+        args.append("--split-platforms")
+    args += ["--source-dir", "molecularnodes", "--output-dir", "."]
+
+    subprocess.run(args, check=True)
+    print("Extension built successfully")
 
 
 def get_all_dependencies_from_lock(package_name: str = "molecularnodes") -> set:
@@ -311,7 +189,7 @@ def get_all_dependencies_from_lock(package_name: str = "molecularnodes") -> set:
     return all_deps
 
 
-def parse_uv_lock_for_packages(package_names: set = None) -> dict:
+def parse_uv_lock_for_packages(package_names: set | None = None) -> dict:
     """Parse uv.lock and extract wheel info for specific packages.
 
     Args:
@@ -335,7 +213,7 @@ def parse_uv_lock_for_packages(package_names: set = None) -> dict:
         wheels = package.get("wheels", [])
 
         if wheels:
-            normalized_name = name.lower().replace("_", "-")
+            normalized_name = normalize_package_name(name)
             package_info_map[normalized_name] = {
                 "version": version,
                 "name": name,  # Keep original name
@@ -351,48 +229,30 @@ def parse_uv_lock_for_packages(package_names: set = None) -> dict:
     return package_info_map
 
 
-def download_wheels_from_lock(
-    platforms: Union[Platform, List[Platform]],
-    clean: bool = True,
-    max_workers: int = 8,
-    packages_to_exclude: set = None,
-) -> None:
-    """Download wheels from uv.lock for specified platforms.
+def select_best_wheels(
+    package_info: dict, platforms: list[Platform]
+) -> dict[tuple[str, str], tuple[str, str, int]]:
+    """Select the best wheel per package per platform.
+
+    Skips PyPy wheels, prefers platform-specific wheels over universal ones,
+    and uses Blender's platform matching logic from bl_extension_ops.py.
 
     Args:
-        platforms: Platform or list of platforms to download wheels for
-        clean: Whether to remove existing wheel files before downloading
-        max_workers: Maximum number of parallel download threads
-        packages_to_exclude: Set of package names to exclude from download
+        package_info: Output of parse_uv_lock_for_packages()
+        platforms: Platforms to match wheels against
+
+    Returns:
+        Dict mapping (package_name, platform_metadata) to (filename, url, priority)
     """
-    import urllib.request
-    from concurrent.futures import ThreadPoolExecutor, as_completed
+    best_wheels: dict[tuple[str, str], tuple[str, str, int]] = {}
 
-    if isinstance(platforms, Platform):
-        platforms = [platforms]
-
-    if clean:
-        remove_whls()
-
-    # Ensure wheels directory exists
-    os.makedirs(WHL_PATH, exist_ok=True)
-
-    # Get all dependencies for molecularnodes
-    print("Resolving dependencies from uv.lock...")
-    all_deps = get_all_dependencies_from_lock("molecularnodes")
-    print(f"Found {len(all_deps)} dependencies")
-
-    # Filter out excluded packages
-    if packages_to_exclude:
-        all_deps = all_deps - packages_to_exclude
-        print(f"After exclusions: {len(all_deps)} packages to download")
-
-    # Parse uv.lock for these packages
-    package_info = parse_uv_lock_for_packages(all_deps)
-
-    # Collect wheels per package per platform, selecting only the best match
-    # Key: (package_name, platform_metadata), Value: (filename, url, priority)
-    best_wheels = {}
+    def consider(
+        pkg_name: str, platform: Platform, filename: str, url: str, priority: int
+    ):
+        key = (pkg_name, platform.metadata)
+        # Only update if this wheel has higher priority
+        if key not in best_wheels or best_wheels[key][2] < priority:
+            best_wheels[key] = (filename, url, priority)
 
     for pkg_name, pkg_data in package_info.items():
         for filename, url in pkg_data["wheels"].items():
@@ -400,18 +260,14 @@ def download_wheels_from_lock(
             if "-pp3" in filename or "pypy" in filename:
                 continue
 
-            # Universal wheels work for all platforms - add once with high priority
+            # Universal wheels work for all platforms, but prefer
+            # platform-specific wheels (lower priority)
             if "py3-none-any" in filename or "py2.py3-none-any" in filename:
-                # Universal wheels work for all platforms, but prefer platform-specific wheels
                 for platform in platforms:
-                    key = (pkg_name, platform.metadata)
-                    priority = 0  # Lower priority than platform-specific wheels
-                    if key not in best_wheels or best_wheels[key][2] < priority:
-                        best_wheels[key] = (filename, url, priority)
+                    consider(pkg_name, platform, filename, url, priority=0)
                 continue
 
             # Check if this wheel matches any of our target platforms
-            # Uses Blender's platform matching logic from bl_extension_ops.py
             for platform in platforms:
                 matched = False
                 priority = 1  # Default priority for platform-specific wheels
@@ -435,10 +291,9 @@ def download_wheels_from_lock(
                 # For Linux, match any manylinux wheel with the correct architecture
                 # Blender accepts manylinux1, manylinux2010, manylinux2014, manylinux_2_XX, etc.
                 elif "linux" in platform.metadata:
-                    # Extract architecture from pypi_suffix (e.g., "manylinux2014_x86_64" -> "x86_64")
-                    arch = platform.pypi_suffix.split("_", 1)[
-                        -1
-                    ]  # Get everything after first underscore
+                    # Extract architecture from pypi_suffix
+                    # (e.g., "manylinux2014_x86_64" -> "x86_64")
+                    arch = platform.pypi_suffix.split("_", 1)[-1]
                     if "manylinux" in filename and ("_" + arch in filename):
                         matched = True
                         priority = 5
@@ -450,10 +305,56 @@ def download_wheels_from_lock(
                     priority = 5
 
                 if matched:
-                    key = (pkg_name, platform.metadata)
-                    # Only update if this wheel has higher priority
-                    if key not in best_wheels or best_wheels[key][2] < priority:
-                        best_wheels[key] = (filename, url, priority)
+                    consider(pkg_name, platform, filename, url, priority)
+
+    return best_wheels
+
+
+def required_wheels_from_lock(
+    platforms: Platform | list[Platform], packages_to_exclude: set | None = None
+) -> dict[tuple[str, str], tuple[str, str, int]]:
+    """Resolve the set of wheels required for the given platforms from uv.lock."""
+    if isinstance(platforms, Platform):
+        platforms = [platforms]
+
+    # Get all dependencies for molecularnodes
+    all_deps = get_all_dependencies_from_lock("molecularnodes")
+
+    # Filter out excluded packages
+    if packages_to_exclude:
+        excluded = {normalize_package_name(pkg) for pkg in packages_to_exclude}
+        all_deps = {
+            dep for dep in all_deps if normalize_package_name(dep) not in excluded
+        }
+
+    # Parse uv.lock for these packages
+    package_info = parse_uv_lock_for_packages(all_deps)
+
+    return select_best_wheels(package_info, platforms)
+
+
+def download_wheels_from_lock(
+    platforms: Platform | list[Platform],
+    clean: bool = True,
+    max_workers: int = 8,
+    packages_to_exclude: set | None = None,
+) -> None:
+    """Download wheels from uv.lock for specified platforms.
+
+    Args:
+        platforms: Platform or list of platforms to download wheels for
+        clean: Whether to remove existing wheel files before downloading
+        max_workers: Maximum number of parallel download threads
+        packages_to_exclude: Set of package names to exclude from download
+    """
+    if clean:
+        remove_whls()
+
+    # Ensure wheels directory exists
+    WHL_PATH.mkdir(parents=True, exist_ok=True)
+
+    print("Resolving dependencies from uv.lock...")
+    best_wheels = required_wheels_from_lock(platforms, packages_to_exclude)
 
     # Convert to set of (filename, url) tuples, removing duplicates and priorities
     wheels_to_download = list(
@@ -465,10 +366,8 @@ def download_wheels_from_lock(
 
     def download_wheel(filename: str, url: str) -> tuple[str, bool, str]:
         """Download a single wheel file. Returns (filename, success, message)."""
-        dest_path = os.path.join(WHL_PATH, filename)
-
         try:
-            urllib.request.urlretrieve(url, dest_path)
+            urllib.request.urlretrieve(url, WHL_PATH / filename)
             return (filename, True, "Downloaded successfully")
         except Exception as e:
             return (filename, False, str(e))
@@ -495,146 +394,12 @@ def download_wheels_from_lock(
                 failed_count += 1
 
     print(f"\nDownload complete: {success_count} succeeded, {failed_count} failed")
-
-
-def download_wheels_from_manifest(clean: bool = True, max_workers: int = 8) -> None:
-    """Download wheels listed in blender_manifest.toml using URLs from uv.lock.
-
-    Args:
-        clean: Whether to remove existing wheel files before downloading
-        max_workers: Maximum number of parallel download threads
-    """
-    import urllib.request
-    from concurrent.futures import ThreadPoolExecutor, as_completed
-
-    if clean:
-        remove_whls()
-
-    # Ensure wheels directory exists
-    os.makedirs(WHL_PATH, exist_ok=True)
-
-    # Load the manifest to get the list of wheels
-    with open(TOML_PATH, "rb") as file:
-        manifest = tomllib.load(file)
-
-    wheels_in_manifest = manifest.get("wheels", [])
-
-    # Parse uv.lock to get download URLs for all packages
-    package_info_map = parse_uv_lock_for_packages()
-
-    # Build exact match map from all packages
-    exact_match_map = {}
-    for pkg_data in package_info_map.values():
-        exact_match_map.update(pkg_data["wheels"])
-
-    print(f"Found {len(exact_match_map)} wheel URLs in uv.lock")
-    print(f"Need to download {len(wheels_in_manifest)} wheels from manifest")
-    print(f"Using {max_workers} parallel download threads\n")
-
-    def parse_wheel_filename(filename: str) -> tuple[str, str, str]:
-        """Parse wheel filename to extract package name, version, and platform tags.
-
-        Returns (package_name, version, platform_tags)
-        """
-        # Pattern: package-version-pythontag-abitag-platformtag.whl
-        match = re.match(r"^(.+?)-([\d\.]+.*?)-(py\d+|cp\d+).*\.whl$", filename)
-        if match:
-            pkg_name = match.group(1).lower().replace("_", "-")
-            version = match.group(2)
-            # Everything after version
-            platform_tags = filename[
-                len(match.group(1)) + 1 + len(match.group(2)) + 1 : -4
-            ]
-            return pkg_name, version, platform_tags
-        return "", "", ""
-
-    def find_matching_wheel(filename: str) -> tuple[str, str, str]:
-        """Find matching wheel URL from uv.lock, handling version mismatches.
-
-        Returns (url, actual_filename, message)
-        """
-        # Try exact match first
-        if filename in exact_match_map:
-            return (exact_match_map[filename], filename, "exact match")
-
-        # Parse the wheel filename
-        pkg_name, requested_version, platform_tags = parse_wheel_filename(filename)
-
-        if not pkg_name:
-            return ("", "", "Could not parse wheel filename")
-
-        # Look up package in uv.lock
-        if pkg_name not in package_info_map:
-            return ("", "", f"Package '{pkg_name}' not found in uv.lock")
-
-        lock_version = package_info_map[pkg_name]["version"]
-        lock_wheels = package_info_map[pkg_name]["wheels"]
-
-        # Try to find a wheel with matching platform tags
-        for lock_filename, url in lock_wheels.items():
-            _, _, lock_platform_tags = parse_wheel_filename(lock_filename)
-            if lock_platform_tags == platform_tags:
-                if requested_version != lock_version:
-                    return (
-                        url,
-                        lock_filename,
-                        f"version mismatch: requested {requested_version}, using {lock_version}",
-                    )
-                else:
-                    return (url, lock_filename, "platform match")
-
-        return ("", "", f"No matching platform found in uv.lock version {lock_version}")
-
-    def download_wheel(wheel_path: str) -> tuple[str, str, bool, str]:
-        """Download a single wheel file. Returns (requested_filename, actual_filename, success, message)."""
-        requested_filename = os.path.basename(wheel_path)
-
-        url, actual_filename, match_message = find_matching_wheel(requested_filename)
-
-        if not url:
-            return (requested_filename, "", False, match_message)
-
-        dest_path = os.path.join(WHL_PATH, actual_filename)
-
-        try:
-            urllib.request.urlretrieve(url, dest_path)
-            return (requested_filename, actual_filename, True, match_message)
-        except Exception as e:
-            return (requested_filename, actual_filename, False, str(e))
-
-    # Download wheels in parallel
-    success_count = 0
-    failed_count = 0
-    version_mismatch_count = 0
-
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        # Submit all download tasks
-        future_to_wheel = {
-            executor.submit(download_wheel, wheel_path): wheel_path
-            for wheel_path in wheels_in_manifest
-        }
-
-        # Process completed downloads
-        for future in as_completed(future_to_wheel):
-            requested_filename, actual_filename, success, message = future.result()
-            if success:
-                if "version mismatch" in message:
-                    print(f"✓ {actual_filename} (substituted for {requested_filename})")
-                    version_mismatch_count += 1
-                else:
-                    print(f"✓ {actual_filename}")
-                success_count += 1
-            else:
-                print(f"✗ {requested_filename}: {message}")
-                failed_count += 1
-
-    print(f"\nDownload complete: {success_count} succeeded, {failed_count} failed")
-    if version_mismatch_count > 0:
-        print(f"  ({version_mismatch_count} version substitutions made)")
+    if failed_count:
+        raise RuntimeError(f"{failed_count} wheel download(s) failed")
 
 
 def verify_wheels_exist(
-    platforms: Union[Platform, List[Platform]], packages_to_exclude: set = None
+    platforms: Platform | list[Platform], packages_to_exclude: set | None = None
 ) -> tuple[bool, list, list]:
     """Verify that all required wheels exist in the wheels directory.
 
@@ -645,126 +410,37 @@ def verify_wheels_exist(
     Returns:
         A tuple of (all_exist, missing_packages, existing_files)
     """
-    if isinstance(platforms, Platform):
-        platforms = [platforms]
-
-    # Get all dependencies for molecularnodes
-    all_deps = get_all_dependencies_from_lock("molecularnodes")
-
-    # Filter out excluded packages
-    if packages_to_exclude:
-        all_deps = all_deps - packages_to_exclude
-
-    # Parse uv.lock for these packages
-    package_info = parse_uv_lock_for_packages(all_deps)
-
-    # Collect wheels per package per platform, selecting only the best match
-    # Key: (package_name, platform_metadata), Value: (filename, priority)
-    best_wheels = {}
-
-    for pkg_name, pkg_data in package_info.items():
-        for filename, url in pkg_data["wheels"].items():
-            # Skip PyPy wheels - Blender doesn't support them
-            if "-pp3" in filename or "pypy" in filename:
-                continue
-
-            # Universal wheels work for all platforms - add once with low priority
-            if "py3-none-any" in filename or "py2.py3-none-any" in filename:
-                # Universal wheels work for all platforms, but prefer platform-specific wheels
-                for platform in platforms:
-                    key = (pkg_name, platform.metadata)
-                    priority = 0  # Lower priority than platform-specific wheels
-                    if key not in best_wheels or best_wheels[key][1] < priority:
-                        best_wheels[key] = (filename, priority)
-                continue
-
-            # Check if this wheel matches any of our target platforms
-            # Uses Blender's platform matching logic from bl_extension_ops.py
-            for platform in platforms:
-                matched = False
-                priority = 1  # Default priority for platform-specific wheels
-
-                # For macOS, match any compatible macOS version with the same architecture
-                if "macos" in platform.metadata:
-                    if "universal2" in filename and "macosx" in filename:
-                        # Universal2 wheels work for both arm64 and x64 on macOS
-                        matched = True
-                        priority = 10  # High priority - works for both architectures
-                    elif "arm64" in platform.metadata and (
-                        "macosx" in filename and "arm64" in filename
-                    ):
-                        matched = True
-                        priority = 5  # Architecture-specific wheel
-                    elif "x64" in platform.metadata and (
-                        "macosx" in filename and "x86_64" in filename
-                    ):
-                        matched = True
-                        priority = 5  # Architecture-specific wheel
-                # For Linux, match any manylinux wheel with the correct architecture
-                # Blender accepts manylinux1, manylinux2010, manylinux2014, manylinux_2_XX, etc.
-                elif "linux" in platform.metadata:
-                    # Extract architecture from pypi_suffix (e.g., "manylinux2014_x86_64" -> "x86_64")
-                    arch = platform.pypi_suffix.split("_", 1)[
-                        -1
-                    ]  # Get everything after first underscore
-                    if "manylinux" in filename and ("_" + arch in filename):
-                        matched = True
-                        priority = 5
-                # For Windows, use exact suffix matching
-                elif (
-                    "windows" in platform.metadata and platform.pypi_suffix in filename
-                ):
-                    matched = True
-                    priority = 5
-
-                if matched:
-                    key = (pkg_name, platform.metadata)
-                    # Only update if this wheel has higher priority
-                    if key not in best_wheels or best_wheels[key][1] < priority:
-                        best_wheels[key] = (filename, priority)
+    best_wheels = required_wheels_from_lock(platforms, packages_to_exclude)
 
     # Convert to set of filenames, removing duplicates and priorities
-    expected_wheels = set(filename for filename, _ in best_wheels.values())
+    expected_wheels = set(filename for filename, _, _ in best_wheels.values())
 
-    # Check which wheels actually exist
-    existing_wheels = set()
-    if os.path.exists(WHL_PATH):
-        for whl_file in glob.glob(os.path.join(WHL_PATH, "*.whl")):
-            existing_wheels.add(os.path.basename(whl_file))
+    existing_wheels = {whl.name for whl in WHL_PATH.glob("*.whl")}
 
-    # Find missing wheels
     missing_wheels = expected_wheels - existing_wheels
 
     return (len(missing_wheels) == 0, sorted(missing_wheels), sorted(existing_wheels))
 
 
 def build(
-    platform,
-    use_lock: bool = True,
+    platforms: Platform | list[Platform],
     skip_download: bool = False,
+    clean: bool = True,
+    max_workers: int = 8,
 ) -> None:
-    """Build the extension.
+    """Download (or verify) the wheels, update the manifest and build the extension.
 
     Args:
-        platform: Platform or list of platforms to build for
-        use_lock: If True, use uv.lock as source of truth. If False, use pip download.
+        platforms: Platform or list of platforms to build for
         skip_download: If True, skip download and verify wheels exist before building.
+        clean: Whether to remove existing wheels before downloading and stray
+            files before building.
+        max_workers: Maximum number of parallel download threads.
     """
-    # Packages that Blender already provides
-    packages_to_exclude = {
-        "pyarrow",
-        "certifi",
-        "charset-normalizer",
-        "idna",
-        "numpy",
-        "requests",
-        "urllib3",
-    }
-
     if skip_download:
         print("Verifying all required packages exist...")
         all_exist, missing, existing = verify_wheels_exist(
-            platform, packages_to_exclude
+            platforms, PACKAGES_TO_EXCLUDE
         )
 
         if not all_exist:
@@ -774,21 +450,22 @@ def build(
             if len(missing) > 10:
                 print(f"  ... and {len(missing) - 10} more")
             print("\nRun without --build-only to download missing packages")
-            return
-        else:
-            print(f"✓ All {len(existing)} required wheels are present")
+            sys.exit(1)
+        print(f"✓ All {len(existing)} required wheels are present")
     else:
-        if use_lock:
-            download_wheels_from_lock(platform, packages_to_exclude=packages_to_exclude)
-        else:
-            download_whls(platform)
+        download_wheels_from_lock(
+            platforms,
+            clean=clean,
+            max_workers=max_workers,
+            packages_to_exclude=PACKAGES_TO_EXCLUDE,
+        )
 
-    update_toml_whls(platform)
-    build_extension()
+    update_toml_whls(platforms)
+    build_extension(clean=clean)
 
 
 def parse_blender_args():
-    """Parse arguments when run through Blender -P script.
+    """Parse arguments when run through Blender -P script or plain Python.
 
     Blender's sys.argv format: [blender_executable, -b, -P, script_name, -- script_args...]
     """
@@ -797,16 +474,17 @@ def parse_blender_args():
         separator_index = sys.argv.index("--")
         script_args = sys.argv[separator_index + 1 :]
     except ValueError:
-        # No -- found, no script arguments
-        script_args = []
+        # No -- separator. Inside Blender the remaining arguments are
+        # Blender's own; under plain Python they belong to this script.
+        try:
+            import bpy  # noqa: F401
+
+            script_args = []
+        except ImportError:
+            script_args = sys.argv[1:]
 
     parser = argparse.ArgumentParser(
         description="Build Molecular Nodes Blender extension"
-    )
-    parser.add_argument(
-        "--use-pip",
-        action="store_true",
-        help="Use pip download instead of uv.lock (legacy behavior)",
     )
     parser.add_argument(
         "--no-clean",
@@ -838,32 +516,22 @@ def main():
 
     if args.download_only:
         print("Mode: Download wheels from uv.lock (download only)")
-        packages_to_exclude = {
-            "pyarrow",
-            "certifi",
-            "charset-normalizer",
-            "idna",
-            "numpy",
-            "requests",
-            "urllib3",
-        }
         download_wheels_from_lock(
             build_platforms,
             clean=not args.no_clean,
             max_workers=args.workers,
-            packages_to_exclude=packages_to_exclude,
+            packages_to_exclude=PACKAGES_TO_EXCLUDE,
         )
     else:
-        use_lock = not args.use_pip
-        mode_str = "pip download" if args.use_pip else "uv.lock"
         if args.build_only:
             print("Mode: Build extension only (verifying packages first)")
         else:
-            print(f"Mode: Build extension using {mode_str}")
+            print("Mode: Build extension using uv.lock")
         build(
             build_platforms,
-            use_lock=use_lock,
             skip_download=args.build_only,
+            clean=not args.no_clean,
+            max_workers=args.workers,
         )
 
 

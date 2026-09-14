@@ -28,7 +28,7 @@ jobs:
           version: 5.1
       - name: Build extension
         run: |
-          blender -b -P build.py
+          blender -b --python-exit-code 1 -P build.py
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
       - name: Upload extension artifact
