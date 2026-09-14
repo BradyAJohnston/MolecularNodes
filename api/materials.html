@@ -283,6 +283,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../api/mdanalysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MDanalysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../api/nodebpy.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Node Trees</span></a>
   </div>
@@ -717,7 +723,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>MolecularNodes ships a small set of pre-built materials, available as classes in <code>mn.material</code>. Instantiating one creates a new, independent Blender material — starting values are set through the constructor, and every parameter remains tweakable on the instance afterwards.</p>
-<div id="e5bac22f" class="cell" data-execution_count="1">
+<div id="bde35b4c" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nodebpy <span class="im">import</span> shader <span class="im">as</span> s</span>
@@ -826,7 +832,7 @@ Figure&nbsp;3: A custom material built with nodebpy’s shader nodes.
 <section id="render-engines-and-materials" class="level2">
 <h2 class="anchored" data-anchor-id="render-engines-and-materials">Render Engines and Materials</h2>
 <p>The different render engines handle materials diferently.</p>
-<div id="82b6ac61" class="cell" data-execution_count="5">
+<div id="2787e22d" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> PSF, DCD</span>

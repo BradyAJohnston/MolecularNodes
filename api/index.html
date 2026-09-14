@@ -282,6 +282,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../api/mdanalysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MDanalysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../api/nodebpy.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Node Trees</span></a>
   </div>
@@ -810,19 +816,19 @@ Important
 <p>You <em>must</em> a new canvas first, before loading any structures.</p>
 </div>
 </div>
-<div id="bd3c9625" class="cell" data-execution_count="1">
+<div id="ffe6b41f" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>), resolution<span class="op">=</span>(<span class="dv">720</span>, <span class="dv">480</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>00:00.462  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library</code></pre>
+<pre><code>00:00.467  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library</code></pre>
 </div>
 </div>
 <section id="add-a-molecule" class="level3">
 <h3 class="anchored" data-anchor-id="add-a-molecule">Add a <code>Molecule</code></h3>
 <p>The <a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>mn.Molecule</code></a> can take a <code>AtomArray</code> from the <code>biotite</code> package directly, or it has the <a href="../api/reference/Molecule.html#molecularnodes.Molecule.fetch"><code>mn.Molecule.fetch</code></a> and <a href="../api/reference/Molecule.html#molecularnodes.Molecule.load"><code>mn.Molecule.load</code></a> class methods to download directly from the PDB or load a local file.</p>
 <p>After loading the molecule, to be able to see anything we must first add a style. Then we can frame the camera on the object and take a snapshot.</p>
-<div id="900ec943" class="cell" data-execution_count="2">
+<div id="981d3017" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"4ozs"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
@@ -835,7 +841,7 @@ Important
 </div>
 </div>
 </div>
-<div id="9727df34" class="cell" data-execution_count="3">
+<div id="f60751f1" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>canvas.background <span class="op">=</span> (<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>, <span class="fl">1.0</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>canvas.camera.lens <span class="op">=</span> <span class="dv">130</span></span>
@@ -855,7 +861,7 @@ Important
 </div>
 </div>
 </div>
-<div id="0273d21b" class="cell" data-execution_count="4">
+<div id="82c1d451" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol, (<span class="op">-</span><span class="dv">180</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -866,7 +872,7 @@ Important
 </div>
 </div>
 </div>
-<div id="896e96ae" class="cell" data-execution_count="5">
+<div id="8ff96e3c" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>canvas.engine <span class="op">=</span> <span class="st">"eevee"</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>canvas.resolution <span class="op">=</span> (<span class="dv">800</span>, <span class="dv">800</span>)</span>

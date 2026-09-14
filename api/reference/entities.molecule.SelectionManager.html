@@ -283,6 +283,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/mdanalysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MDanalysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/nodebpy.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Node Trees</span></a>
   </div>
@@ -996,7 +1002,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="examples" class="level4 doc-section doc-section-examples">
 <h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples">Examples</h4>
-<div id="5cad8324" class="cell" data-execution_count="1">
+<div id="8b3b3cb4" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas()</span>
@@ -1011,7 +1017,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>Selections made in the Blender UI are found too, and the flags are part of the match:</p>
-<div id="48102966" class="cell" data-execution_count="2">
+<div id="9992fb90" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol.selections.find(<span class="st">"protein"</span>, updating<span class="op">=</span><span class="va">False</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>None</code></pre>
@@ -1299,7 +1305,7 @@ selection_0</code></pre>
 <section id="examples-1" class="level4 doc-section doc-section-examples">
 <h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples-1">Examples</h4>
 <p>The main use is inside a callable passed to <a href="../../api/reference/Molecule.html#molecularnodes.Molecule.add_style"><code>add_style</code></a>, which is evaluated inside the tree context:</p>
-<div id="8904f400" class="cell" data-execution_count="3">
+<div id="364d6469" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1323,7 +1329,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>It works the same inside an explicit tree context:</p>
-<div id="72d332c1" class="cell" data-execution_count="4">
+<div id="2cdd4e69" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree.reset() <span class="im">as</span> (atoms, join):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleCartoon(selection<span class="op">=</span>mol.selections.node(<span class="st">"protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleSticks(selection<span class="op">=</span>mol.selections.node(<span class="st">"not protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
@@ -1339,7 +1345,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>Selections are reused rather than duplicated, so calling it in a loop is safe:</p>
-<div id="5dbf77fa" class="cell" data-execution_count="5">
+<div id="e16d1e27" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(mol.selections)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
@@ -1350,7 +1356,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>A static selection is a different selection to an updating one, and gets its own attribute:</p>
-<div id="f5b38f8b" class="cell" data-execution_count="6">
+<div id="0e77d00c" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>, updating<span class="op">=</span><span class="va">False</span>)</span>
@@ -1360,7 +1366,7 @@ selection_0</code></pre>
 </div>
 </div>
 <p>An <code>AtomGroup</code> can be used instead of a selection string:</p>
-<div id="1dd50412" class="cell" data-execution_count="7">
+<div id="5d71609e" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    node <span class="op">=</span> mol.selections.node(mol.universe.select_atoms(<span class="st">"resid 1:20"</span>))</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(node.node.inputs[<span class="st">"Name"</span>].default_value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
