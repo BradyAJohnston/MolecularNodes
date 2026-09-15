@@ -1302,7 +1302,7 @@ class Molecule(MolecularEntity):
         # module-level mapping used by every other entity is left untouched
         style_mapping = STYLE_NODE_MAPPING
         if isinstance(self, OXDNA):
-            style_mapping = {**STYLE_NODE_MAPPING, "ribbon": g.OxDNAStyleRibbon}
+            style_mapping = {**STYLE_NODE_MAPPING, "ribbon": g.OxDNAStyleClassic}
 
         if not style_is_callable and "sphere" not in kwargs:
             # spheres default to point clouds, which only Cycles can draw

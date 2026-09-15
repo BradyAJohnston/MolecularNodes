@@ -182,7 +182,7 @@ def test_render_oxdna_simple_circle(
         (
             atoms
             >> mg.CentreOnSelection()
-            >> mg.OxDNAStyleRibbon(
+            >> mg.OxDNAStyleClassic(
                 backbone_shape=backbone, material=mn.material.Default().material
             )
             >> join
