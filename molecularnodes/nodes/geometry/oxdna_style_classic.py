@@ -349,24 +349,19 @@ class OxDNAStyleClassic(AssetGeometryGroup):
 
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
         with g.Frame("Color strands if Auto-color is False"):
-            integer_math = ChainID().o.chain_id.modulo(4)
+            index_switch = g.IndexSwitch.color(
+                ChainID().o.chain_id.modulo(4), (strand_1, strand_2, strand_3, strand_4)
+            )
             menu_switch = g.MenuSwitch.color(
                 strand_color,
                 {
                     "Uniform": (strands, "Single uniform color"),
-                    "Strand": (
-                        g.IndexSwitch.color(
-                            integer_math, (strand_1, strand_2, strand_3, strand_4)
-                        ),
-                        "Set custom colors for the bases",
-                    ),
+                    "Strand": (index_switch, "Set custom colors for the bases"),
                     "Color": (Color(), "Use the existing `Color` attribute"),
                 },
             )
             set_color = SetColor(
-                atoms=separate_geometry.o.selection,
-                selection=integer_math,
-                color=menu_switch.o.output,
+                atoms=separate_geometry.o.selection, color=menu_switch.o.output
             )
         oxdna_vectors = OxDNAVectors()
         capture = g.CaptureAttribute.point(geometry=set_color)
