@@ -1,0 +1,193 @@
+{
+  "kind": "single",
+  "root": {
+    "kind": "root",
+    "children": [
+      {
+        "kind": "primitives",
+        "params": {
+          "opacity": 0.66
+        },
+        "children": [
+          {
+            "kind": "primitive",
+            "params": {
+              "kind": "ellipse",
+              "center": [
+                1,
+                1,
+                1
+              ],
+              "major_axis": [
+                1.5,
+                0,
+                0
+              ],
+              "minor_axis": [
+                0,
+                2,
+                0
+              ],
+              "theta_start": 0,
+              "theta_end": 1.5707963267948966,
+              "color": "red",
+              "tooltip": "XY"
+            }
+          },
+          {
+            "kind": "primitive",
+            "params": {
+              "kind": "ellipse",
+              "center": [
+                1,
+                1,
+                1
+              ],
+              "major_axis_endpoint": [
+                2.5,
+                1,
+                1
+              ],
+              "minor_axis_endpoint": [
+                1,
+                1,
+                2
+              ],
+              "theta_start": 0,
+              "theta_end": 1.5707963267948966,
+              "color": "green",
+              "tooltip": "XZ"
+            }
+          },
+          {
+            "kind": "primitive",
+            "params": {
+              "kind": "ellipse",
+              "center": [
+                1,
+                1,
+                1
+              ],
+              "major_axis": [
+                0,
+                10,
+                0
+              ],
+              "minor_axis": [
+                0,
+                0,
+                1
+              ],
+              "radius_major": 2,
+              "radius_minor": 1,
+              "theta_start": 0,
+              "theta_end": 1.5707963267948966,
+              "color": "blue",
+              "tooltip": "YZ"
+            }
+          },
+          {
+            "kind": "primitive",
+            "params": {
+              "kind": "arrow",
+              "start": [
+                1,
+                1,
+                1
+              ],
+              "end": [
+                2.5,
+                1,
+                1
+              ],
+              "length": 1.7,
+              "show_end_cap": true,
+              "tube_radius": 0.05,
+              "color": "#ffff00",
+              "tooltip": "X"
+            }
+          },
+          {
+            "kind": "primitive",
+            "params": {
+              "kind": "arrow",
+              "start": [
+                1,
+                1,
+                1
+              ],
+              "direction": [
+                0,
+                2.2,
+                0
+              ],
+              "show_end_cap": true,
+              "tube_radius": 0.05,
+              "color": "#ff00ff",
+              "tooltip": "Y"
+            }
+          },
+          {
+            "kind": "primitive",
+            "params": {
+              "kind": "arrow",
+              "start": [
+                1,
+                1,
+                2.2
+              ],
+              "end": [
+                1,
+                1,
+                1
+              ],
+              "show_start_cap": true,
+              "tube_radius": 0.05,
+              "color": "#00ffff",
+              "tooltip": "Z"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "primitives",
+        "params": {
+          "opacity": 0.33
+        },
+        "children": [
+          {
+            "kind": "primitive",
+            "params": {
+              "kind": "ellipsoid",
+              "center": [
+                1,
+                1,
+                1
+              ],
+              "major_axis": [
+                1,
+                0,
+                0
+              ],
+              "minor_axis": [
+                0,
+                1,
+                0
+              ],
+              "radius": [
+                1.5,
+                2,
+                1
+              ],
+              "color": "#cccccc"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "metadata": {
+    "timestamp": "2025-04-07T06:55:52.442727+00:00",
+    "version": "1.3"
+  }
+}

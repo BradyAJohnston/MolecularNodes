@@ -831,6 +831,57 @@ class MN_OT_Import_OxDNA(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class MN_FH_Import_MVS(bpy.types.FileHandler):
+    bl_idname = "MN_FH_import_mvs"
+    bl_label = "File handler for MolViewSpec files."
+    bl_import_operator = "mn.import_mvs"
+    bl_file_extensions = ".mvsj"
+
+    @classmethod
+    def poll_drop(cls, context):
+        return context.area and context.area.type == "VIEW_3D"
+
+
+class MN_OT_Import_MVS(bpy.types.Operator):
+    bl_idname = "mn.import_mvs"
+    bl_label = "Import MolViewSpec"
+    bl_description = (
+        "Import a MolViewSpec .mvsj state, translating its structures, "
+        "components, representations and colors into Molecular Nodes entities"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    filepath: StringProperty(  # type: ignore
+        name="File",
+        description="Path of the .mvsj file to import",
+        subtype="FILE_PATH",
+        options={"SKIP_SAVE"},
+    )
+
+    def invoke(self, context, event):
+        if self.filepath:
+            return self.execute(context)
+        return context.window_manager.invoke_props_dialog(self)
+
+    def execute(self, context):
+        import warnings as _warnings
+        from ..entities import mvs
+
+        with _warnings.catch_warnings(record=True) as caught:
+            _warnings.simplefilter("always", mvs.MVSImportWarning)
+            molecules = mvs.load(path_resolve(self.filepath))
+
+        for warning in caught:
+            if issubclass(warning.category, mvs.MVSImportWarning):
+                self.report({"WARNING"}, str(warning.message))
+        if not molecules:
+            self.report({"ERROR"}, "No structures could be imported from the file")
+            return {"CANCELLED"}
+        self.report({"INFO"}, f"Imported {len(molecules)} structures")
+        _increase_view_distance()
+        return {"FINISHED"}
+
+
 class MN_OT_add_selection_to_style(Operator):
     """
     Create a new selection and add the corresponding `Named Attribute` node to the node tree's style
@@ -1314,7 +1365,9 @@ CLASSES = [
     MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,
     MN_OT_Import_Ensemble,
+    MN_OT_Import_MVS,
     MN_FH_Import_Molecule,
+    MN_FH_Import_MVS,
     MN_OT_Add_Style,
     MN_OT_Remove_Style,
     MN_OT_Swap_Style,
