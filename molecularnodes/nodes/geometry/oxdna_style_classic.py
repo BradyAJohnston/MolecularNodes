@@ -1,4 +1,4 @@
-# Node-group asset "oxDNA Style Ribbon" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "oxDNA Style Classic" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
@@ -41,9 +41,9 @@ from .oxdna_vectors import OxDNAVectors
 from .set_color import SetColor
 
 
-class OxDNAStyleRibbon(AssetGeometryGroup):
+class OxDNAStyleClassic(AssetGeometryGroup):
     """
-    oxDNA Style Ribbon
+    oxDNA Style Classic
 
     Parameters
     ----------
@@ -157,8 +157,8 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         Geometry
     """
 
-    _name = "oxDNA Style Ribbon"
-    _asset_name = "oxDNA Style Ribbon"
+    _name = "oxDNA Style Classic"
+    _asset_name = "oxDNA Style Classic"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
     _tree_properties = {
@@ -500,7 +500,7 @@ class OxDNAStyleRibbon(AssetGeometryGroup):
         strand_color.default_value = "Color"
 
 
-ASSET = OxDNAStyleRibbon
+ASSET = OxDNAStyleClassic
 
 ASSET_METADATA = {
     "catalog_id": "0094c3e0-7885-427b-81b4-187a84dcff18",
