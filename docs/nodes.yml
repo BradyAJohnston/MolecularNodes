@@ -115,6 +115,17 @@ Select Res ID Range:
     on the `res_id` number.
   videos:
     - https://imgur.com/NdoQcdE
+Select String:
+  description: >-
+    Type a comma-separated list of terms into `Selection::String` and every atom matching any of them is selected.
+    A term is a chain ID (`A`), a residue ID (`42`), an inclusive residue range (`10-20`), a residue name (`LYS`),
+    or a chain followed by a colon and residues within that chain (`A:10-20`, `A:LYS`), so `A, B:1-10, LYS`
+    selects all of chain A, residues 1 to 10 of chain B and every lysine. A term that is a number is always a
+    residue ID; write `1:` to select a chain called `1`, and `:A` for the residue name `A` when a chain `A` exists.
+    Chain IDs and residue names are stored on the geometry as integers, so the collapsed `Context` panel holds the
+    lookup tables that turn the typed names back into those numbers. `Chain IDs::String` is filled in from the
+    structure when the node is added to an entity's node tree, and `Residue Names::String` lists the names
+    Molecular Nodes numbers, with aliases such as `MET/MSE` sharing an entry.
 Select Nucleic Type:
   description: Select either purines or pyrimidines
 Select Attribute:

@@ -1,3 +1,4 @@
+import inspect
 import random
 from typing import Any
 import bpy
@@ -5,8 +6,14 @@ import numpy as np
 import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
-from nodebpy.nodes.geometry import Group, RealizeInstances, SetPosition
+from nodebpy.nodes.geometry import (
+    Group,
+    RealizeInstances,
+    SetPosition,
+    StoreNamedAttribute,
+)
 import molecularnodes as mn
+from molecularnodes.assets import data
 from molecularnodes.nodes._utils import (
     custom_boolean_iswitch,
     custom_color_iswitch,
@@ -20,6 +27,7 @@ from molecularnodes.nodes.geometry import (
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
+    SelectString,
     SetColor,
     StyleCartoon,
 )
@@ -80,6 +88,72 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
         assert snapshot_custom == pos.shape
         assert snapshot_custom == pos
         inp.default_value = False
+
+
+def test_select_string():
+    # 1cd3 has chains named like numbers ("1".."4") as well as letters, which
+    # exercises the numeric-term ambiguity rules
+    mol = mn.Molecule.load(data_dir / "1cd3.cif")
+    chains = mol.props.chain_ids
+    chain_id = mol.named_attribute("chain_id")
+    res_id = mol.named_attribute("res_id")
+    res_name = mol.named_attribute("res_name")
+    nothing = np.zeros_like(res_id, dtype=bool)
+
+    def chain(name):
+        return chain_id == chains.index(name)
+
+    cases = {
+        "B": chain("B"),
+        " F ,G": chain("F") | chain("G"),
+        "1": res_id == 1,
+        "1:": chain("1"),
+        "42": res_id == 42,
+        "10-20": (res_id >= 10) & (res_id <= 20),
+        "-5": res_id == -5,
+        "LYS": res_name == data.residues["LYS"]["res_name_num"],
+        "MSE": res_name == data.residues["MSE"]["res_name_num"],
+        "MET, ALA": np.isin(res_name, [12, 0]),
+        "B:10-20": chain("B") & (res_id >= 10) & (res_id <= 20),
+        "B:LYS, F:5": (chain("B") & (res_name == 11)) | (chain("F") & (res_id == 5)),
+        "2:LYS": chain("2") & (res_name == 11),
+        "B:": chain("B"),
+        "B,": chain("B"),
+        ":B": nothing,
+        "": nothing,
+        "ZZZ": nothing,
+        "Q:10": nothing,
+    }
+    for text, expected in cases.items():
+        with mol.tree.reset() as (atoms, join):
+            select = SelectString(selection=text, chain_ids=",".join(chains))
+            (
+                atoms
+                >> StoreNamedAttribute.point.boolean(name="sel", value=select)
+                >> StoreNamedAttribute.point.boolean(
+                    name="inv", value=select.o.inverted
+                )
+                >> join
+            )
+        selected = mol.named_attribute("sel", evaluate=True).astype(bool)
+        inverted = mol.named_attribute("inv", evaluate=True).astype(bool)
+        assert np.array_equal(selected, expected), text
+        assert np.array_equal(inverted, ~expected), text
+
+
+def test_select_string_residue_names_match_data():
+    # the node's default residue-name table must track the `res_name` numbering
+    # in assets/data.py: list position is the number, aliases share an entry
+    by_number: dict[int, list[str]] = {}
+    for name, info in data.residues.items():
+        number = info["res_name_num"]
+        if number >= 0:
+            by_number.setdefault(number, []).append(name)
+    expected = ",".join(
+        "/".join(by_number.get(i, [])) for i in range(max(by_number) + 1)
+    )
+    default = inspect.signature(SelectString.__init__).parameters["residue_names"]
+    assert default.default == expected
 
 
 @pytest.mark.parametrize("code", codes)

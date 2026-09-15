@@ -537,6 +537,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.SelectSphere
         children: embedded
+      - name: nodes.geometry.SelectString
+        children: embedded
       - name: nodes.geometry.SelectedInstances
         children: embedded
       - name: nodes.geometry.SeparateAtoms

@@ -113,3 +113,40 @@ def test_assembly_instance_without_entity_is_untouched():
     node_handlers._process_pending()
     assert node.inputs["Data Object"].default_value is None
     assert not node_handlers._pending
+
+
+@pytest.mark.parametrize("link", [False, True], ids=["appended", "linked"])
+def test_select_string_add_fills_chain_ids(link):
+    node_handlers._pending.clear()
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    assert mol.props.chain_ids
+
+    tree = _import_asset("Select String", link=link)
+    assert node_handlers._pending
+
+    node = _new_group_node(tree, host=mol.modifier_node_tree)
+    assert node.inputs["Chain IDs"].default_value == ""
+
+    node_handlers._process_pending()
+    assert node.inputs["Chain IDs"].default_value == ",".join(mol.props.chain_ids)
+    assert node.get(node_handlers._MARKER)
+
+
+def test_select_string_keeps_existing_chain_ids():
+    node_handlers._pending.clear()
+    mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
+    tree = _import_asset("Select String")
+    node = _new_group_node(tree, host=mol.modifier_node_tree)
+    node.inputs["Chain IDs"].default_value = "X,Y"
+
+    node_handlers._process_pending()
+    assert node.inputs["Chain IDs"].default_value == "X,Y"
+
+
+def test_select_string_without_entity_is_untouched():
+    node_handlers._pending.clear()
+    tree = _import_asset("Select String")
+    node = _new_group_node(tree)
+
+    node_handlers._process_pending()
+    assert node.inputs["Chain IDs"].default_value == ""
