@@ -163,7 +163,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
     _color_tag = "GEOMETRY"
     _tree_properties = {
         "default_group_node_width": 160,
-        "node_tool_idname": "geometry.mn_oxdna_style_ribbon",
+        "node_tool_idname": "geometry.mn_oxdna_style_classic",
     }
 
     class _Inputs(SocketAccessor):
