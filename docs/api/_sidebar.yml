@@ -8,6 +8,7 @@ website:
     - contents:
       - api/styles.qmd
       - api/trajectories.qmd
+      - api/mdanalysis.qmd
       - api/nodebpy.qmd
       - api/rendering.qmd
       - api/materials.qmd
@@ -34,7 +35,6 @@ website:
         - api/reference/material.AmbientOcclusion.qmd
         - api/reference/material.Flat.qmd
         - api/reference/material.Squishy.qmd
-        - api/reference/material.TransparentOutline.qmd
         - api/reference/material.PresetMaterial.qmd
         - api/reference/material.append_material.qmd
         - api/reference/material.add_all_materials.qmd
@@ -68,6 +68,7 @@ website:
         - api/reference/nodes.ensemble.qmd
         - api/reference/nodes.geometry.qmd
         - api/reference/nodes.select.qmd
+        - api/reference/nodes.simulation.qmd
         - api/reference/nodes.style.qmd
         - api/reference/nodes.topology.qmd
         - api/reference/nodes.utilities.qmd

@@ -21,11 +21,18 @@ jobs:
       - uses: actions/checkout@v5
       - uses: BradyAJohnston/setup-blender@v5
         with:
-          version: 5.1
+          version: 5.2
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build node assets
+        run: |
+          uv sync --all-extras
+          uv run -m nodebpy.assets build
 
       - name: Build Extension
         run: |
-          blender -b -P build.py
+          blender -b --python-exit-code 1 -P build.py
 
       - name: Create Draft Release
         run: |

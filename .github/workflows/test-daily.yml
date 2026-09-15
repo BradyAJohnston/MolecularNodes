@@ -25,10 +25,10 @@ jobs:
           field: "version"
       - uses: BradyAJohnston/setup-blender@v5
         with:
-          version: 5.1
+          version: 5.2
       - name: Build extension
         run: |
-          blender -b -P build.py
+          blender -b --python-exit-code 1 -P build.py
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
       - name: Upload extension artifact

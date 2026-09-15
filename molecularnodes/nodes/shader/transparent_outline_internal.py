@@ -18,7 +18,6 @@ from nodebpy.builder import (
 from nodebpy.types import InputColor, InputFloat, InputMenu
 from ._shared.mn_fresnel import MNFresnel
 from .mn_color import MNColor
-from .outline_mask import OutlineMask
 
 
 class TransparentOutlineInternal(AssetShaderGroup):
@@ -27,29 +26,21 @@ class TransparentOutlineInternal(AssetShaderGroup):
 
     Parameters
     ----------
-    alpha : InputFloat
+    transparency : InputFloat
         Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader
-    menu : InputMenu | Literal["Transparent", "Outline"]
+    menu : InputMenu | Literal["Transparent", "Fresnel"]
         Menu
     outline_color : InputColor
         Outline Color
-    threshold : InputFloat
-        Threshold
-    thickness : InputFloat
-        Thickness
 
     Inputs
     ------
-    i.alpha : FloatSocket
+    i.transparency : FloatSocket
         Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader
     i.menu : MenuSocket
         Menu
     i.outline_color : ColorSocket
         Outline Color
-    i.threshold : FloatSocket
-        Threshold
-    i.thickness : FloatSocket
-        Thickness
 
     Outputs
     -------
@@ -62,16 +53,12 @@ class TransparentOutlineInternal(AssetShaderGroup):
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
 
     class _Inputs(SocketAccessor):
-        alpha: FloatSocket
+        transparency: FloatSocket
         """Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader"""
         menu: MenuSocket
         """Menu"""
         outline_color: ColorSocket
         """Outline Color"""
-        threshold: FloatSocket
-        """Threshold"""
-        thickness: FloatSocket
-        """Thickness"""
 
     class _Outputs(SocketAccessor):
         shader: ShaderSocket
@@ -86,26 +73,22 @@ class TransparentOutlineInternal(AssetShaderGroup):
 
     def __init__(
         self,
-        alpha: InputFloat = 0.95,
-        menu: InputMenu | Literal["Transparent", "Outline"] = "Transparent",
+        transparency: InputFloat = 0.9,
+        menu: InputMenu | Literal["Transparent", "Fresnel"] = "Transparent",
         outline_color: InputColor = None,
-        threshold: InputFloat = 0.2,
-        thickness: InputFloat = 0.15,
     ):
         super().__init__(
             **{
-                "Alpha": alpha,
+                "Transparency": transparency,
                 "Menu": menu,
                 "Outline Color": outline_color,
-                "Threshold": threshold,
-                "Thickness": thickness,
             }
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        alpha = tree.inputs.float(
-            "Alpha",
-            0.95,
+        transparency = tree.inputs.float(
+            "Transparency",
+            0.9,
             description="Blend weight to use for mixing two shaders. At zero it uses the first shader entirely and at one the second shader",
             min_value=0.0,
             max_value=1.0,
@@ -113,29 +96,25 @@ class TransparentOutlineInternal(AssetShaderGroup):
         )
         menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
         outline_color = tree.inputs.color("Outline Color", (1.0, 1.0, 1.0, 1.0))
-        threshold = tree.inputs.float(
-            "Threshold", 0.2, min_value=0.0, max_value=10_000.0
-        )
-        thickness = tree.inputs.float(
-            "Thickness", 0.15, min_value=0.0, max_value=10_000.0
-        )
         shader = tree.outputs.shader("Shader")
 
-        _mn_fresnel = MNFresnel(ior=0.95)
         mix_shader = s.MixShader(
             fac=g.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
-            + alpha,
+            + transparency,
             shader=s.DiffuseBSDF(color=MNColor().o.color),
             shader_001=s.TransparentBSDF(),
         )
-        mix_shader_1 = s.MixShader(
-            fac=OutlineMask(threshold=threshold, thickness=thickness),
-            shader=mix_shader,
-            shader_001=outline_color,
-        )
         (
             s.MenuSwitch.shader(
-                menu, {"Transparent": mix_shader, "Outline": mix_shader_1}
+                menu,
+                {
+                    "Transparent": mix_shader,
+                    "Fresnel": s.MixShader(
+                        fac=MNFresnel(ior=0.95),
+                        shader=mix_shader,
+                        shader_001=outline_color,
+                    ),
+                },
             )
             >> shader
         )
