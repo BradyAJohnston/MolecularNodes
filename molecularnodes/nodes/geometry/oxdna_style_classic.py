@@ -413,7 +413,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             with g.Frame("Backbone Stick"):
                 angstrom_to_world_1 = AngstromToWorld(angstrom=backbone_radius)
                 with g.Frame(
-                    "Each segment is it's own mesh, flipping the circular endpoints"
+                    "Each segment is its own mesh, flipping the circular endpoints"
                 ):
                     edge_vertices = g.EdgeVertices()
                     capture = g.CaptureAttribute.edge(
@@ -444,10 +444,19 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 curve_to_mesh = g.SetHandleType(
                     curve=set_spline_resolution
                 ) >> g.CurveToMesh(
-                    profile_curve=curve_circle, scale=angstrom_to_world_1
+                    profile_curve=curve_circle,
+                    scale=angstrom_to_world_1,
+                    fill_caps=True,
                 )
-                curve_to_mesh_1 = reverse_curve >> g.CurveToMesh(
-                    profile_curve=curve_circle, scale=switch
+                menu_switch_2 = g.MenuSwitch.geometry(
+                    backbone_shape,
+                    {
+                        "Arrows": reverse_curve
+                        >> g.CurveToMesh(
+                            profile_curve=curve_circle, scale=switch, fill_caps=True
+                        ),
+                        "Curve": curve_to_mesh,
+                    },
                 )
             with g.Frame("Backbone ball"):
                 instance_on_points_1 = SetInstancer(
@@ -458,6 +467,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         subdivisions=quality,
                     )
                 )
+            join_geometry = g.JoinGeometry(
+                geometry=(menu_switch_2, instance_on_points_1)
+            )
         with g.Frame("Base stem"):
             angstrom_to_world_2 = AngstromToWorld(angstrom=1.0)
             transform_geometry = FallbackGeometry(
@@ -476,7 +488,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             ) >> g.InstanceOnPoints(
                 instance=transform_geometry, rotation=axes_to_rotation, scale=stem_scale
             )
-        menu_switch_2 = g.MenuSwitch.geometry(
+        menu_switch_3 = g.MenuSwitch.geometry(
             base_shape,
             {
                 "Sphere": g.JoinGeometry(
@@ -486,17 +498,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "None": None,
             },
         )
-        menu_switch_3 = g.MenuSwitch.geometry(
-            backbone_shape,
-            {
-                "Arrows": g.JoinGeometry(
-                    geometry=(instance_on_points_1, curve_to_mesh_1)
-                ),
-                "Curve": curve_to_mesh,
-            },
-        )
         set_shade_smooth = g.SetShadeSmooth.face(
-            g.JoinGeometry(geometry=(menu_switch_3, menu_switch_2)),
+            g.JoinGeometry(geometry=(menu_switch_3, join_geometry)),
             shade_smooth=shade_smooth,
         )
         set_shade_smooth.node.warning_propagation = "ERRORS"
