@@ -416,7 +416,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         >> g.MeshToCurve()
                         >> g.ReverseCurve(selection=capture_1.o.selection)
                     )
-                curve_circle = g.CurveCircle(resolution=quality * 4, radius=ball_radius)
+                curve_circle = g.CurveCircle(resolution=quality * 4, radius=1.9)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
                     angstrom_to_world, angstrom_to_world.o.world * arrow_taper
                 )
