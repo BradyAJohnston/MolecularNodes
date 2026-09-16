@@ -431,7 +431,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     )
                 curve_circle = g.CurveCircle(resolution=quality * 4, radius=1.9)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
-                    angstrom_to_world_1, angstrom_to_world_1.o.world * arrow_taper
+                    angstrom_to_world_1,
+                    angstrom_to_world_1.o.world - arrow_taper * angstrom_to_world_1,
                 )
                 set_spline_resolution = (
                     g.MeshToCurve(mesh=set_position)
