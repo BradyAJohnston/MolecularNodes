@@ -318,7 +318,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             base_scale = tree.inputs.vector(
                 "Base Scale", (0.1, 0.3, 0.2), min_value=0.0, subtype="XYZ"
             )
-            stem_scale = tree.inputs.vector("Stem Scale", (0.7, 0.7, 0.7))
+            stem_scale = tree.inputs.vector("Stem Scale", (0.7, 0.7, 1.0))
         with tree.inputs.panel("Colors"):
             base_colors = tree.inputs.menu(
                 "Base Colors", expanded=True, optional_label=True
@@ -363,11 +363,11 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             set_color = SetColor(
                 atoms=separate_geometry.o.selection, color=menu_switch.o.output
             )
+        value = g.Value(0.7)
         oxdna_vectors = OxDNAVectors()
+        vector_math = oxdna_vectors.o.stacking_offset - oxdna_vectors.o.backbone_offset
         axes_to_rotation = g.AxesToRotation(
-            primary_axis=oxdna_vectors.o.stacking_offset
-            - oxdna_vectors.o.backbone_offset,
-            secondary_axis=oxdna_vectors.o.base_normal,
+            primary_axis=vector_math, secondary_axis=oxdna_vectors.o.base_normal
         )
         with g.Frame("Colored bases"):
             menu_switch_1 = g.MenuSwitch.color(
@@ -380,19 +380,21 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     "Color": Color(),
                 },
             )
-            instance_on_points = (
-                SetColor(
-                    atoms=SetInstancer(geometry=set_color), color=menu_switch_1.o.output
-                )
-                >> g.SetPosition(offset=oxdna_vectors.o.stacking_offset)
-                >> g.InstanceOnPoints(
-                    instance=FallbackGeometry(
-                        geometry=base_geometry,
-                        fallback=g.IcoSphere(subdivisions=quality),
-                    ),
-                    rotation=axes_to_rotation,
-                    scale=base_scale,
-                )
+            vector_math_1 = (
+                oxdna_vectors.o.stacking_offset
+                + vector_math.normalize() * ((stem_scale.z - 1.0) * value)
+            )
+            instance_on_points = SetColor(
+                atoms=SetInstancer(
+                    geometry=g.SetPosition(geometry=set_color, offset=vector_math_1)
+                ),
+                color=menu_switch_1.o.output,
+            ) >> g.InstanceOnPoints(
+                instance=FallbackGeometry(
+                    geometry=base_geometry, fallback=g.IcoSphere(subdivisions=quality)
+                ),
+                rotation=axes_to_rotation,
+                scale=base_scale,
             )
         oxdna_vectors_1 = OxDNAVectors()
         with g.Frame():
@@ -452,14 +454,15 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 radius=AngstromToWorld(angstrom=1.0),
                 depth=1.0,
             )
+            transform_geometry = g.TransformGeometry(
+                geometry=cylinder,
+                scale=g.CombineXYZ(z=value, x=1.0, y=1.0),
+                translation=(0.0, 0.0, 0.35),
+            )
             instance_on_points_2 = SetInstancer(
                 geometry=set_position
             ) >> g.InstanceOnPoints(
-                instance=g.TransformGeometry(
-                    geometry=cylinder, translation=(0.0, 0.0, 0.5)
-                ),
-                rotation=axes_to_rotation,
-                scale=stem_scale,
+                instance=transform_geometry, rotation=axes_to_rotation, scale=stem_scale
             )
         menu_switch_2 = g.MenuSwitch.geometry(
             base_shape,
