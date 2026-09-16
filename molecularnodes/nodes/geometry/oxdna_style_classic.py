@@ -35,6 +35,7 @@ from .angstrom_to_world import AngstromToWorld
 from .chain_id import ChainID
 from .color import Color
 from .color_res_name import ColorResName
+from .edge_info import EdgeInfo
 from .fallback_geometry import FallbackGeometry
 from .integer_distance import IntegerDistance
 from .oxdna_vectors import OxDNAVectors
@@ -61,6 +62,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Ball Radius
     arrow_taper : InputFloat
         Arrow Taper
+    end_overhang : InputFloat
+        End Overhang
     base_shape : InputMenu | Literal["Sphere", "Cylinder", "None"]
         Base Shape
     base_geometry : InputGeometry
@@ -116,6 +119,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Ball Radius
     i.arrow_taper : FloatSocket
         Arrow Taper
+    i.end_overhang : FloatSocket
+        End Overhang
     i.base_shape : MenuSocket
         Base Shape
     i.base_geometry : GeometrySocket
@@ -185,6 +190,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Ball Radius"""
         arrow_taper: FloatSocket
         """Arrow Taper"""
+        end_overhang: FloatSocket
+        """End Overhang"""
         base_shape: MenuSocket
         """Base Shape"""
         base_geometry: GeometrySocket
@@ -244,6 +251,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         backbone_radius: InputFloat = 0.8,
         ball_radius: InputFloat = 2.0,
         arrow_taper: InputFloat = 0.3,
+        end_overhang: InputFloat = 0.0,
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
@@ -273,6 +281,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "Backbone Radius": backbone_radius,
                 "Ball Radius": ball_radius,
                 "Arrow Taper": arrow_taper,
+                "End Overhang": end_overhang,
                 "Base Shape": base_shape,
                 "Base Geometry": base_geometry,
                 "Base Scale": base_scale,
@@ -318,6 +327,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             arrow_taper = tree.inputs.float(
                 "Arrow Taper", 0.3, min_value=0.0, max_value=1.0, subtype="FACTOR"
             )
+            end_overhang = tree.inputs.float("End Overhang", 0.0)
         with tree.inputs.panel("Bases"):
             base_shape = tree.inputs.menu(
                 "Base Shape", expanded=True, optional_label=True
@@ -373,94 +383,19 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             set_color = SetColor(
                 atoms=separate_geometry.o.selection, color=menu_switch.o.output
             )
-        oxdna_vectors = OxDNAVectors()
-        vector_math = oxdna_vectors.o.stacking_offset - oxdna_vectors.o.backbone_offset
-        axes_to_rotation = g.AxesToRotation(
-            primary_axis=vector_math, secondary_axis=oxdna_vectors.o.base_normal
-        )
-        with g.Frame("Colored bases"):
-            menu_switch_1 = g.MenuSwitch.color(
-                base_colors,
-                {
-                    "Uniform": bases,
-                    "Base": ColorResName(
-                        a=a, c=c_, g=g_, t=t_u, ra=a, rc=c_, rg=g_, ru=t_u
-                    ),
-                    "Color": Color(),
-                },
-            )
-            vector_math_1 = (
-                oxdna_vectors.o.stacking_offset
-                + vector_math.normalize() * ((stem_scale.z - 1.0) * angstrom_to_world)
-            )
-            instance_on_points = SetColor(
-                atoms=SetInstancer(
-                    geometry=g.SetPosition(geometry=set_color, offset=vector_math_1)
-                ),
-                color=menu_switch_1.o.output,
-            ) >> g.InstanceOnPoints(
-                instance=FallbackGeometry(
-                    geometry=base_geometry, fallback=g.IcoSphere(subdivisions=quality)
-                ),
-                rotation=axes_to_rotation,
-                scale=base_scale,
-            )
-        oxdna_vectors_1 = OxDNAVectors()
         with g.Frame():
-            set_position = g.SetPosition(
-                geometry=set_color, offset=oxdna_vectors_1.o.backbone_offset
+            angstrom_to_world_1 = AngstromToWorld(angstrom=backbone_radius)
+            curve_circle = g.CurveCircle(resolution=quality * 4, radius=1.9)
+            switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
+                angstrom_to_world_1,
+                angstrom_to_world_1.o.world - arrow_taper * angstrom_to_world_1,
             )
-            with g.Frame("Backbone Stick"):
-                angstrom_to_world_1 = AngstromToWorld(angstrom=backbone_radius)
-                with g.Frame(
-                    "Each segment is its own mesh, flipping the circular endpoints"
-                ):
-                    edge_vertices = g.EdgeVertices()
-                    capture = g.CaptureAttribute.edge(
-                        geometry=set_position,
-                        selection=IntegerDistance(
-                            a=edge_vertices.o.vertex_index_1,
-                            b=edge_vertices.o.vertex_index_2,
-                        ).o.cutoff,
-                    )
-                    reverse_curve = (
-                        capture.o.geometry
-                        >> g.SplitEdges()
-                        >> g.MeshToCurve()
-                        >> g.ReverseCurve(selection=capture.o.selection)
-                    )
-                curve_circle = g.CurveCircle(resolution=quality * 4, radius=1.9)
-                switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
-                    angstrom_to_world_1,
-                    angstrom_to_world_1.o.world - arrow_taper * angstrom_to_world_1,
-                )
-                set_spline_resolution = (
-                    g.MeshToCurve(mesh=set_position)
-                    >> g.SetCurveNormal(
-                        normal=oxdna_vectors_1.o.base_normal, mode="Free"
-                    )
-                    >> g.SetSplineType.bezier()
-                    >> g.SetSplineResolution(resolution=quality * 2)
-                )
-                curve_to_mesh = g.SetHandleType(
-                    curve=set_spline_resolution
-                ) >> g.CurveToMesh(
-                    profile_curve=curve_circle,
-                    scale=angstrom_to_world_1,
-                    fill_caps=True,
-                )
-                menu_switch_2 = g.MenuSwitch.geometry(
-                    backbone_shape,
-                    {
-                        "Arrows": reverse_curve
-                        >> g.CurveToMesh(
-                            profile_curve=curve_circle, scale=switch, fill_caps=True
-                        ),
-                        "Curve": curve_to_mesh,
-                    },
-                )
+            oxdna_vectors = OxDNAVectors()
+            set_position = g.SetPosition(
+                geometry=set_color, offset=oxdna_vectors.o.backbone_offset
+            )
             with g.Frame("Backbone ball"):
-                instance_on_points_1 = SetInstancer(
+                instance_on_points = SetInstancer(
                     geometry=set_position
                 ) >> g.InstanceOnPoints(
                     instance=g.IcoSphere(
@@ -468,9 +403,66 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         subdivisions=quality,
                     )
                 )
-            join_geometry = g.JoinGeometry(
-                geometry=(menu_switch_2, instance_on_points_1)
+            with g.Frame("Add overhang to strand ends"):
+                vector_math = (
+                    EdgeInfo(vertex_index=g.Index()).o.edge_vector.normalize()
+                    * -1.0
+                    * AngstromToWorld(angstrom=end_overhang)
+                )
+                set_position_1 = g.SetPosition(
+                    geometry=set_position,
+                    selection=g.Compare.integer.equal(
+                        g.EdgesOfVertex(vertex_index=g.Index()).o.total, 1
+                    ),
+                    offset=vector_math,
+                )
+            with g.Frame(
+                "Each segment is its own mesh, flipping the circular endpoints"
+            ):
+                edge_vertices = g.EdgeVertices()
+                capture = g.CaptureAttribute.edge(
+                    geometry=set_position,
+                    selection=IntegerDistance(
+                        a=edge_vertices.o.vertex_index_1,
+                        b=edge_vertices.o.vertex_index_2,
+                    ).o.cutoff,
+                )
+                reverse_curve = (
+                    capture.o.geometry
+                    >> g.SplitEdges()
+                    >> g.MeshToCurve()
+                    >> g.ReverseCurve(selection=capture.o.selection)
+                )
+            set_spline_resolution = (
+                set_position_1
+                >> g.MeshToCurve()
+                >> g.SetCurveNormal(normal=oxdna_vectors.o.base_normal, mode="Free")
+                >> g.SetSplineType.bezier()
+                >> g.SetSplineResolution(resolution=quality * 2)
             )
+            curve_to_mesh = g.SetHandleType(
+                curve=set_spline_resolution
+            ) >> g.CurveToMesh(
+                profile_curve=curve_circle, scale=angstrom_to_world_1, fill_caps=True
+            )
+            menu_switch_1 = g.MenuSwitch.geometry(
+                backbone_shape,
+                {
+                    "Arrows": reverse_curve
+                    >> g.CurveToMesh(
+                        profile_curve=curve_circle, scale=switch, fill_caps=True
+                    ),
+                    "Curve": curve_to_mesh,
+                },
+            )
+            join_geometry = g.JoinGeometry(geometry=(menu_switch_1, instance_on_points))
+        oxdna_vectors_1 = OxDNAVectors()
+        vector_math_1 = (
+            oxdna_vectors_1.o.stacking_offset - oxdna_vectors_1.o.backbone_offset
+        )
+        axes_to_rotation = g.AxesToRotation(
+            primary_axis=vector_math_1, secondary_axis=oxdna_vectors_1.o.base_normal
+        )
         with g.Frame("Base stem"):
             angstrom_to_world_2 = AngstromToWorld(angstrom=1.0)
             transform_geometry = FallbackGeometry(
@@ -484,18 +476,45 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 ),
                 translation=(0.0, 0.0, 0.35),
             )
-            instance_on_points_2 = SetInstancer(
+            instance_on_points_1 = SetInstancer(
                 geometry=set_position
             ) >> g.InstanceOnPoints(
                 instance=transform_geometry, rotation=axes_to_rotation, scale=stem_scale
+            )
+        with g.Frame("Colored bases"):
+            menu_switch_2 = g.MenuSwitch.color(
+                base_colors,
+                {
+                    "Uniform": bases,
+                    "Base": ColorResName(
+                        a=a, c=c_, g=g_, t=t_u, ra=a, rc=c_, rg=g_, ru=t_u
+                    ),
+                    "Color": Color(),
+                },
+            )
+            vector_math_2 = (
+                oxdna_vectors_1.o.stacking_offset
+                + vector_math_1.normalize() * ((stem_scale.z - 1.0) * angstrom_to_world)
+            )
+            instance_on_points_2 = SetColor(
+                atoms=SetInstancer(
+                    geometry=g.SetPosition(geometry=set_color, offset=vector_math_2)
+                ),
+                color=menu_switch_2.o.output,
+            ) >> g.InstanceOnPoints(
+                instance=FallbackGeometry(
+                    geometry=base_geometry, fallback=g.IcoSphere(subdivisions=quality)
+                ),
+                rotation=axes_to_rotation,
+                scale=base_scale,
             )
         menu_switch_3 = g.MenuSwitch.geometry(
             base_shape,
             {
                 "Sphere": g.JoinGeometry(
-                    geometry=(instance_on_points, instance_on_points_2)
+                    geometry=(instance_on_points_2, instance_on_points_1)
                 ),
-                "Cylinder": instance_on_points_2,
+                "Cylinder": instance_on_points_1,
                 "None": None,
             },
         )
