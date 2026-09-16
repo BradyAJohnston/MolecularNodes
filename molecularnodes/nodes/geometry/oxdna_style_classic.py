@@ -392,6 +392,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     scale=base_scale,
                 )
             )
+        vector_math = oxdna_vectors.o.stacking_offset - oxdna_vectors.o.backbone_offset
         oxdna_vectors_1 = OxDNAVectors()
         with g.Frame():
             set_position = g.SetPosition(
@@ -456,9 +457,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 instance=g.TransformGeometry(
                     geometry=cylinder, translation=(0.0, 0.0, 0.5)
                 ),
-                rotation=rotation.output.rotate(
-                    (math.pi / 9, 0.0, 0.0), rotation_space="LOCAL"
-                ),
+                rotation=g.AlignRotationToVector(vector=vector_math),
                 scale=stem_scale,
             )
         menu_switch_2 = g.MenuSwitch.geometry(
