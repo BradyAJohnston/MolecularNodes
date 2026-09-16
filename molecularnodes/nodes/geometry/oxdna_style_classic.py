@@ -382,7 +382,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     atoms=SetInstancer(geometry=capture.o.geometry),
                     color=menu_switch_1.o.output,
                 )
-                >> g.SetPosition(offset=oxdna_vectors.o.base_offset)
+                >> g.SetPosition(offset=oxdna_vectors.o.stacking_offset)
                 >> g.InstanceOnPoints(
                     instance=FallbackGeometry(
                         geometry=base_geometry,
