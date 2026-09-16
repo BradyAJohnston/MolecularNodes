@@ -364,8 +364,11 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 atoms=separate_geometry.o.selection, color=menu_switch.o.output
             )
         oxdna_vectors = OxDNAVectors()
-        capture = g.CaptureAttribute.point(geometry=set_color)
-        rotation = capture.items.rotation("Rotation", oxdna_vectors.o.rotation)
+        axes_to_rotation = g.AxesToRotation(
+            primary_axis=oxdna_vectors.o.stacking_offset
+            - oxdna_vectors.o.backbone_offset,
+            secondary_axis=oxdna_vectors.o.base_normal,
+        )
         with g.Frame("Colored bases"):
             menu_switch_1 = g.MenuSwitch.color(
                 base_colors,
@@ -379,8 +382,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             instance_on_points = (
                 SetColor(
-                    atoms=SetInstancer(geometry=capture.o.geometry),
-                    color=menu_switch_1.o.output,
+                    atoms=SetInstancer(geometry=set_color), color=menu_switch_1.o.output
                 )
                 >> g.SetPosition(offset=oxdna_vectors.o.stacking_offset)
                 >> g.InstanceOnPoints(
@@ -388,15 +390,14 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         geometry=base_geometry,
                         fallback=g.IcoSphere(subdivisions=quality),
                     ),
-                    rotation=rotation.output,
+                    rotation=axes_to_rotation,
                     scale=base_scale,
                 )
             )
-        vector_math = oxdna_vectors.o.stacking_offset - oxdna_vectors.o.backbone_offset
         oxdna_vectors_1 = OxDNAVectors()
         with g.Frame():
             set_position = g.SetPosition(
-                geometry=capture.o.geometry, offset=oxdna_vectors_1.o.backbone_offset
+                geometry=set_color, offset=oxdna_vectors_1.o.backbone_offset
             )
             with g.Frame("Backbone Stick"):
                 angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
@@ -404,7 +405,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     "Each segment is it's own mesh, flipping the circular endpoints"
                 ):
                     edge_vertices = g.EdgeVertices()
-                    capture_1 = g.CaptureAttribute.edge(
+                    capture = g.CaptureAttribute.edge(
                         geometry=set_position,
                         selection=IntegerDistance(
                             a=edge_vertices.o.vertex_index_1,
@@ -412,10 +413,10 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         ).o.cutoff,
                     )
                     reverse_curve = (
-                        capture_1.o.geometry
+                        capture.o.geometry
                         >> g.SplitEdges()
                         >> g.MeshToCurve()
-                        >> g.ReverseCurve(selection=capture_1.o.selection)
+                        >> g.ReverseCurve(selection=capture.o.selection)
                     )
                 curve_circle = g.CurveCircle(resolution=quality * 4, radius=1.9)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
@@ -457,7 +458,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 instance=g.TransformGeometry(
                     geometry=cylinder, translation=(0.0, 0.0, 0.5)
                 ),
-                rotation=g.AlignRotationToVector(vector=vector_math),
+                rotation=axes_to_rotation,
                 scale=stem_scale,
             )
         menu_switch_2 = g.MenuSwitch.geometry(
