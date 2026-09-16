@@ -248,9 +248,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         selection: InputBoolean = True,
         quality: InputInteger = 2,
         backbone_shape: InputMenu | Literal["Arrows", "Curve"] = "Arrows",
-        backbone_radius: InputFloat = 0.8,
+        backbone_radius: InputFloat = 0.6,
         ball_radius: InputFloat = 2.0,
-        arrow_taper: InputFloat = 0.3,
+        arrow_taper: InputFloat = 0.0,
         end_overhang: InputFloat = 0.0,
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
         base_geometry: InputGeometry = None,
@@ -319,13 +319,13 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             backbone_radius = tree.inputs.float(
                 "Backbone Radius",
-                0.8,
+                0.6,
                 min_value=0.0,
                 max_value=340_282_000_000_000_000_000_000_000_000_000_000_000.0,
             )
             ball_radius = tree.inputs.float("Ball Radius", 2.0, min_value=0.0)
             arrow_taper = tree.inputs.float(
-                "Arrow Taper", 0.3, min_value=0.0, max_value=1.0, subtype="FACTOR"
+                "Arrow Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
             )
             end_overhang = tree.inputs.float("End Overhang", 0.0)
         with tree.inputs.panel("Bases"):
@@ -334,10 +334,12 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             base_geometry = tree.inputs.geometry("Base Geometry")
             base_scale = tree.inputs.vector(
-                "Base Scale", (0.1, 0.3, 0.2), min_value=0.0, subtype="XYZ"
+                "Base Scale", (0.1, 0.2, 0.2), min_value=0.0, subtype="XYZ"
             )
             stem_geometry = tree.inputs.geometry("Stem Geometry")
-            stem_scale = tree.inputs.vector("Stem Scale", (0.7, 0.7, 1.0))
+            stem_scale = tree.inputs.vector(
+                "Stem Scale", (1.0, 1.0, 1.0), min_value=0.0
+            )
         with tree.inputs.panel("Colors"):
             base_colors = tree.inputs.menu(
                 "Base Colors", expanded=True, optional_label=True
