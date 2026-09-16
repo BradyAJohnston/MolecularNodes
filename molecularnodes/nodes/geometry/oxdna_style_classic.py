@@ -67,6 +67,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Base Geometry
     base_scale : InputVector
         Base Scale
+    stem_geometry : InputGeometry
+        Stem Geometry
     stem_scale : InputVector
         Stem Scale
     base_colors : InputMenu | Literal["Uniform", "Base", "Color"]
@@ -120,6 +122,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Base Geometry
     i.base_scale : VectorSocket
         Base Scale
+    i.stem_geometry : GeometrySocket
+        Stem Geometry
     i.stem_scale : VectorSocket
         Stem Scale
     i.base_colors : MenuSocket
@@ -187,6 +191,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Base Geometry"""
         base_scale: VectorSocket
         """Base Scale"""
+        stem_geometry: GeometrySocket
+        """Stem Geometry"""
         stem_scale: VectorSocket
         """Stem Scale"""
         base_colors: MenuSocket
@@ -241,6 +247,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
+        stem_geometry: InputGeometry = None,
         stem_scale: InputVector = None,
         base_colors: InputMenu | Literal["Uniform", "Base", "Color"] = "Uniform",
         bases: InputColor = None,
@@ -269,6 +276,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "Base Shape": base_shape,
                 "Base Geometry": base_geometry,
                 "Base Scale": base_scale,
+                "Stem Geometry": stem_geometry,
                 "Stem Scale": stem_scale,
                 "Base Colors": base_colors,
                 "Bases": bases,
@@ -318,6 +326,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             base_scale = tree.inputs.vector(
                 "Base Scale", (0.1, 0.3, 0.2), min_value=0.0, subtype="XYZ"
             )
+            stem_geometry = tree.inputs.geometry("Stem Geometry")
             stem_scale = tree.inputs.vector("Stem Scale", (0.7, 0.7, 1.0))
         with tree.inputs.panel("Colors"):
             base_colors = tree.inputs.menu(
@@ -347,6 +356,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
         geometry = tree.outputs.geometry("Geometry")
 
+        angstrom_to_world = AngstromToWorld(angstrom=7.0)
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
@@ -363,7 +373,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             set_color = SetColor(
                 atoms=separate_geometry.o.selection, color=menu_switch.o.output
             )
-        value = g.Value(0.7)
         oxdna_vectors = OxDNAVectors()
         vector_math = oxdna_vectors.o.stacking_offset - oxdna_vectors.o.backbone_offset
         axes_to_rotation = g.AxesToRotation(
@@ -382,7 +391,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             vector_math_1 = (
                 oxdna_vectors.o.stacking_offset
-                + vector_math.normalize() * ((stem_scale.z - 1.0) * value)
+                + vector_math.normalize() * ((stem_scale.z - 1.0) * angstrom_to_world)
             )
             instance_on_points = SetColor(
                 atoms=SetInstancer(
@@ -402,7 +411,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 geometry=set_color, offset=oxdna_vectors_1.o.backbone_offset
             )
             with g.Frame("Backbone Stick"):
-                angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
+                angstrom_to_world_1 = AngstromToWorld(angstrom=backbone_radius)
                 with g.Frame(
                     "Each segment is it's own mesh, flipping the circular endpoints"
                 ):
@@ -422,7 +431,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     )
                 curve_circle = g.CurveCircle(resolution=quality * 4, radius=1.9)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
-                    angstrom_to_world, angstrom_to_world.o.world * arrow_taper
+                    angstrom_to_world_1, angstrom_to_world_1.o.world * arrow_taper
                 )
                 set_spline_resolution = (
                     g.MeshToCurve(mesh=set_position)
@@ -434,7 +443,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 )
                 curve_to_mesh = g.SetHandleType(
                     curve=set_spline_resolution
-                ) >> g.CurveToMesh(profile_curve=curve_circle, scale=angstrom_to_world)
+                ) >> g.CurveToMesh(
+                    profile_curve=curve_circle, scale=angstrom_to_world_1
+                )
                 curve_to_mesh_1 = reverse_curve >> g.CurveToMesh(
                     profile_curve=curve_circle, scale=switch
                 )
@@ -448,15 +459,16 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     )
                 )
         with g.Frame("Base stem"):
-            cylinder = g.Cylinder(
-                vertices=quality * 5,
-                side_segments=quality,
-                radius=AngstromToWorld(angstrom=1.0),
-                depth=1.0,
-            )
-            transform_geometry = g.TransformGeometry(
-                geometry=cylinder,
-                scale=g.CombineXYZ(z=value, x=1.0, y=1.0),
+            angstrom_to_world_2 = AngstromToWorld(angstrom=1.0)
+            transform_geometry = FallbackGeometry(
+                geometry=stem_geometry,
+                fallback=g.Cylinder(
+                    vertices=quality * 5, side_segments=quality, depth=1.0
+                ),
+            ) >> g.TransformGeometry(
+                scale=g.CombineXYZ(
+                    x=angstrom_to_world_2, y=angstrom_to_world_2, z=angstrom_to_world
+                ),
                 translation=(0.0, 0.0, 0.35),
             )
             instance_on_points_2 = SetInstancer(
