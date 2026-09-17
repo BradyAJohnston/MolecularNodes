@@ -23,9 +23,17 @@ jobs:
         with:
           file: "${{ env.ADDON_NAME }}/blender_manifest.toml"
           field: "version"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
       - uses: BradyAJohnston/setup-blender@v5
         with:
           version: 5.2
+      - name: Build node assets
+        run: |
+          uv sync --all-extras
+          uv run -m nodebpy.assets build
       - name: Build extension
         run: |
           blender -b --python-exit-code 1 -P build.py
