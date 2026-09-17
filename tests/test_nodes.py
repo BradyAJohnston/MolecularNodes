@@ -5,7 +5,12 @@ import numpy as np
 import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
-from nodebpy.nodes.geometry import Group, RealizeInstances, SetPosition
+from nodebpy.nodes.geometry import (
+    Group,
+    RealizeInstances,
+    SetPosition,
+    StoreNamedAttribute,
+)
 import molecularnodes as mn
 from molecularnodes.nodes._utils import (
     custom_boolean_iswitch,
@@ -14,6 +19,7 @@ from molecularnodes.nodes._utils import (
 )
 from molecularnodes.nodes.geometry import (
     BreakBonds,
+    Charge,
     FindBonds,
     NucleicChi,
     NucleicDihedral,
@@ -269,3 +275,26 @@ def test_periodic_array_no_dimensions():
 
     assert defaults_0 == defaults_10
     assert defaults_0[1:7] == [0] * 6
+
+
+def _store_charge_node(mol):
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StoreNamedAttribute.point.float(name="charge_node", value=Charge())
+            >> join
+        )
+    return mol.named_attribute("charge_node", evaluate=True)
+
+
+def test_charge_node():
+    # 4ozs provides no charges, so there is no `charge` attribute and the node reads 0.0
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    assert "charge" not in mol.list_attributes()
+    assert np.all(_store_charge_node(mol) == 0)
+
+    # 8U8W carries formal charges on its ions, which the node reads back verbatim
+    mol = mn.Molecule.fetch("8U8W", cache=data_dir)
+    expected = mol.named_attribute("charge")
+    assert np.any(expected != 0)
+    assert np.allclose(_store_charge_node(mol), expected)

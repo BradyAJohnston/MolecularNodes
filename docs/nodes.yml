@@ -353,6 +353,11 @@ Mass:
   description: The `mass` attribute of the point, used for centre of mass calculations
 B Factor:
   description: The `b_factor` attribute of the point, how well resolved the individual atoms are
+Charge:
+  description: >-
+    The `charge` attribute of the point, which is only present when the file or topology provided charges (partial
+    charges from a simulation topology, formal charges from a PDB charge column or mmCIF `pdbx_formal_charge`).
+    `0.0` if the geometry has no `charge` attribute
 Color:
   description: >-
     The `Color` attribute of the point, used for coloring the final generated geometry inside of the materials

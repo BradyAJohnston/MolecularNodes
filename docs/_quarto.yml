@@ -295,6 +295,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ChainID
         children: embedded
+      - name: nodes.geometry.Charge
+        children: embedded
       - name: nodes.geometry.Color
         children: embedded
       - name: nodes.geometry.EntityID
