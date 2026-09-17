@@ -10,6 +10,7 @@ from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
     ColorSocket,
+    CustomGeometryGroup,
     FloatSocket,
     GeometrySocket,
     IntegerSocket,
@@ -40,6 +41,32 @@ from .fallback_geometry import FallbackGeometry
 from .integer_distance import IntegerDistance
 from .oxdna_vectors import OxDNAVectors
 from .set_color import SetColor
+
+
+class OxDNAAreIDs53(CustomGeometryGroup):
+    _name = "oxDNA Are IDs 5'→3'"
+    _color_tag = "INPUT"
+    _tree_properties = {
+        "description": "Extrapolate whether indices are assigned in 5'→3' order. Only works for relaxed DNA."
+    }
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        atoms = tree.inputs.geometry("Atoms")
+        result = tree.outputs.boolean("Result")
+
+        chain_id = ChainID()
+        index = g.Index()
+        compare = g.Compare.integer.equal(
+            chain_id.o.chain_id.point.at(index),
+            chain_id.o.chain_id.point.at(index.o.index + 1),
+        )
+        vector_math = (
+            g.Position().o.position.point.at(g.Index().o.index + 1) - g.Position()
+        ).dot(OxDNAVectors().o.base_normal)
+        (
+            (g.AttributeStatistic.point.float(atoms, compare, vector_math).o.mean < 0.0)
+            >> result
+        )
 
 
 class OxDNAStyleClassic(AssetGeometryGroup):
@@ -419,7 +446,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     offset=vector_math,
                 )
             with g.Frame(
-                "Each segment is its own mesh, flipping the circular endpoints"
+                "Each edge to a curve pointing 5'->3'. Flip circular endpoints."
             ):
                 edge_vertices = g.EdgeVertices()
                 capture = g.CaptureAttribute.edge(
@@ -435,6 +462,10 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     >> g.MeshToCurve()
                     >> g.ReverseCurve(selection=capture.o.selection)
                 )
+                reverse_curve_1 = g.ReverseCurve(
+                    curve=reverse_curve,
+                    selection=~OxDNAAreIDs53(Atoms=reverse_curve).o.result,
+                )
             set_spline_resolution = (
                 set_position_1
                 >> g.MeshToCurve()
@@ -447,15 +478,14 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             ) >> g.CurveToMesh(
                 profile_curve=curve_circle, scale=angstrom_to_world_1, fill_caps=True
             )
+            curve_to_mesh_1 = g.CurveToMesh(
+                curve=reverse_curve_1,
+                profile_curve=curve_circle,
+                scale=switch,
+                fill_caps=True,
+            )
             menu_switch_1 = g.MenuSwitch.geometry(
-                backbone_shape,
-                {
-                    "Arrows": reverse_curve
-                    >> g.CurveToMesh(
-                        profile_curve=curve_circle, scale=switch, fill_caps=True
-                    ),
-                    "Curve": curve_to_mesh,
-                },
+                backbone_shape, {"Arrows": curve_to_mesh_1, "Curve": curve_to_mesh}
             )
             join_geometry = g.JoinGeometry(geometry=(menu_switch_1, instance_on_points))
         oxdna_vectors_1 = OxDNAVectors()
