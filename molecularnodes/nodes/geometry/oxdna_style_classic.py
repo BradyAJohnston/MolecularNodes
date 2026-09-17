@@ -84,7 +84,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Selection of atoms to apply this node to
     quality : InputInteger
         Quality
-    backbone_shape : InputMenu | Literal["Ball & Stick", "Ribbon"]
+    backbone_shape : InputMenu | Literal["Sticks", "Ribbon"]
         Backbone Shape
     backbone_radius : InputFloat
         Backbone Radius
@@ -277,7 +277,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 2,
-        backbone_shape: InputMenu | Literal["Ball & Stick", "Ribbon"] = "Ball & Stick",
+        backbone_shape: InputMenu | Literal["Sticks", "Ribbon"] = "Sticks",
         backbone_radius: InputFloat = 1.0,
         ball_radius: InputFloat = 2.0,
         _5_3_taper: InputFloat = 0.0,
@@ -534,7 +534,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 menu_switch_2 = g.MenuSwitch.geometry(
                     backbone_shape,
                     {
-                        "Ball & Stick": g.JoinGeometry(
+                        "Sticks": g.JoinGeometry(
                             geometry=(curve_to_mesh_1, instance_on_points_1)
                         ),
                         "Ribbon": curve_to_mesh,
@@ -579,7 +579,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         smooth_by_angle.node.warning_propagation = "ERRORS"
         smooth_by_angle >> g.SetMaterial(material=material) >> geometry
 
-        backbone_shape.default_value = "Ball & Stick"
+        backbone_shape.default_value = "Sticks"
         base_shape.default_value = "Sphere"
         base_colors.default_value = "Uniform"
         strand_colors.default_value = "Auto"
