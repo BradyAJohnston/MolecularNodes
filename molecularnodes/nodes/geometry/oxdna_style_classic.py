@@ -84,14 +84,14 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Selection of atoms to apply this node to
     quality : InputInteger
         Quality
-    backbone_shape : InputMenu | Literal["Arrows", "Curve"]
+    backbone_shape : InputMenu | Literal["Ball & Stick", "Ribbon"]
         Backbone Shape
     backbone_radius : InputFloat
         Backbone Radius
     ball_radius : InputFloat
         Ball Radius
-    arrow_taper : InputFloat
-        Arrow Taper
+    _5_3_taper : InputFloat
+        5'→3' Taper
     end_overhang : InputFloat
         End Overhang
     base_shape : InputMenu | Literal["Sphere", "Cylinder", "None"]
@@ -104,7 +104,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Stem Geometry
     stem_scale : InputVector
         Stem Scale
-    base_colors : InputMenu | Literal["Uniform", "Base", "Color"]
+    base_colors : InputMenu | Literal["Uniform", "Specific", "Strand"]
         Base Colors
     bases : InputColor
         Bases
@@ -116,8 +116,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         G
     t_u : InputColor
         T / U
-    strand_color : InputMenu | Literal["Uniform", "Strand", "Color"]
-        Strand Color
+    strand_colors : InputMenu | Literal["Uniform", "Specific", "Auto"]
+        Strand Colors
     strands : InputColor
         Becomes the output value if it is chosen by the menu input
     strand_1 : InputColor
@@ -147,8 +147,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Backbone Radius
     i.ball_radius : FloatSocket
         Ball Radius
-    i.arrow_taper : FloatSocket
-        Arrow Taper
+    i._5_3_taper : FloatSocket
+        5'→3' Taper
     i.end_overhang : FloatSocket
         End Overhang
     i.base_shape : MenuSocket
@@ -173,8 +173,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         G
     i.t_u : ColorSocket
         T / U
-    i.strand_color : MenuSocket
-        Strand Color
+    i.strand_colors : MenuSocket
+        Strand Colors
     i.strands : ColorSocket
         Becomes the output value if it is chosen by the menu input
     i.strand_1 : ColorSocket
@@ -218,8 +218,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Backbone Radius"""
         ball_radius: FloatSocket
         """Ball Radius"""
-        arrow_taper: FloatSocket
-        """Arrow Taper"""
+        _5_3_taper: FloatSocket
+        """5'→3' Taper"""
         end_overhang: FloatSocket
         """End Overhang"""
         base_shape: MenuSocket
@@ -244,8 +244,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """G"""
         t_u: ColorSocket
         """T / U"""
-        strand_color: MenuSocket
-        """Strand Color"""
+        strand_colors: MenuSocket
+        """Strand Colors"""
         strands: ColorSocket
         """Becomes the output value if it is chosen by the menu input"""
         strand_1: ColorSocket
@@ -277,23 +277,23 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         quality: InputInteger = 2,
-        backbone_shape: InputMenu | Literal["Arrows", "Curve"] = "Arrows",
+        backbone_shape: InputMenu | Literal["Ball & Stick", "Ribbon"] = "Ball & Stick",
         backbone_radius: InputFloat = 1.0,
         ball_radius: InputFloat = 2.0,
-        arrow_taper: InputFloat = 0.0,
+        _5_3_taper: InputFloat = 0.0,
         end_overhang: InputFloat = 1.0,
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
         stem_geometry: InputGeometry = None,
         stem_scale: InputVector = None,
-        base_colors: InputMenu | Literal["Uniform", "Base", "Color"] = "Uniform",
+        base_colors: InputMenu | Literal["Uniform", "Specific", "Strand"] = "Uniform",
         bases: InputColor = None,
         a: InputColor = None,
         c: InputColor = None,
         g: InputColor = None,
         t_u: InputColor = None,
-        strand_color: InputMenu | Literal["Uniform", "Strand", "Color"] = "Color",
+        strand_colors: InputMenu | Literal["Uniform", "Specific", "Auto"] = "Auto",
         strands: InputColor = None,
         strand_1: InputColor = None,
         strand_2: InputColor = None,
@@ -310,7 +310,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "Backbone Shape": backbone_shape,
                 "Backbone Radius": backbone_radius,
                 "Ball Radius": ball_radius,
-                "Arrow Taper": arrow_taper,
+                "5'→3' Taper": _5_3_taper,
                 "End Overhang": end_overhang,
                 "Base Shape": base_shape,
                 "Base Geometry": base_geometry,
@@ -323,7 +323,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "C": c,
                 "G": g,
                 "T / U": t_u,
-                "Strand Color": strand_color,
+                "Strand Colors": strand_colors,
                 "Strands": strands,
                 "Strand 1": strand_1,
                 "Strand 2": strand_2,
@@ -354,8 +354,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 max_value=340_282_000_000_000_000_000_000_000_000_000_000_000.0,
             )
             ball_radius = tree.inputs.float("Ball Radius", 2.0, min_value=0.0)
-            arrow_taper = tree.inputs.float(
-                "Arrow Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
+            n_5_3_taper = tree.inputs.float(
+                "5'→3' Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
             )
             end_overhang = tree.inputs.float("End Overhang", 1.0)
         with tree.inputs.panel("Bases"):
@@ -370,7 +370,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             stem_scale = tree.inputs.vector(
                 "Stem Scale", (1.0, 1.0, 1.0), min_value=0.0, subtype="XYZ"
             )
-        with tree.inputs.panel("Colors"):
+        with tree.inputs.panel("Base colors"):
             base_colors = tree.inputs.menu(
                 "Base Colors", expanded=True, optional_label=True
             )
@@ -379,8 +379,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             c_ = tree.inputs.color("C", (0.033104, 1.0, 0.033104, 1.0))
             g_ = tree.inputs.color("G", (1.0, 1.0, 0.033104, 1.0))
             t_u = tree.inputs.color("T / U", (1.0, 0.033104, 0.033104, 1.0))
-            strand_color = tree.inputs.menu(
-                "Strand Color", expanded=True, optional_label=True
+        with tree.inputs.panel("Strand colors"):
+            strand_colors = tree.inputs.menu(
+                "Strand Colors", expanded=True, optional_label=True
             )
             strands = tree.inputs.color(
                 "Strands",
@@ -406,11 +407,11 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 ChainID().o.chain_id.modulo(4), (strand_1, strand_2, strand_3, strand_4)
             )
             menu_switch = g.MenuSwitch.color(
-                strand_color,
+                strand_colors,
                 {
                     "Uniform": (strands, "Single uniform color"),
-                    "Strand": (index_switch, "Set custom colors for the bases"),
-                    "Color": (Color(), "Use the existing `Color` attribute"),
+                    "Specific": (index_switch, "Set custom colors for the bases"),
+                    "Auto": (Color(), "Use the existing `Color` attribute"),
                 },
             )
             set_color = SetColor(
@@ -429,10 +430,10 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 base_colors,
                 {
                     "Uniform": bases,
-                    "Base": ColorResName(
+                    "Specific": ColorResName(
                         a=a, c=c_, g=g_, t=t_u, ra=a, rc=c_, rg=g_, ru=t_u
                     ),
-                    "Color": Color(),
+                    "Strand": Color(),
                 },
             )
             vector_math_2 = (
@@ -458,6 +459,13 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             geometry=set_color, offset=oxdna_vectors_1.o.backbone_offset
         )
         with g.Frame():
+            with g.Frame("Backbone ball"):
+                instance_on_points_1 = SetInstancer(
+                    geometry=set_position
+                ) >> g.InstanceOnPoints(
+                    instance=g.IcoSphere(subdivisions=quality),
+                    scale=AngstromToWorld(angstrom=ball_radius),
+                )
             with g.Frame("Backbone Stick"):
                 angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
                 with g.Frame("Add overhang to strand ends"):
@@ -497,7 +505,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 curve_circle = g.CurveCircle(resolution=quality * 4)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
                     angstrom_to_world,
-                    angstrom_to_world.o.world - arrow_taper * angstrom_to_world,
+                    angstrom_to_world.o.world - n_5_3_taper * angstrom_to_world,
                 )
                 set_spline_resolution = (
                     set_position_1
@@ -520,18 +528,14 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     fill_caps=True,
                 )
                 menu_switch_2 = g.MenuSwitch.geometry(
-                    backbone_shape, {"Arrows": curve_to_mesh_1, "Curve": curve_to_mesh}
+                    backbone_shape,
+                    {
+                        "Ball & Stick": g.JoinGeometry(
+                            geometry=(curve_to_mesh_1, instance_on_points_1)
+                        ),
+                        "Ribbon": curve_to_mesh,
+                    },
                 )
-            with g.Frame("Backbone ball"):
-                instance_on_points_1 = SetInstancer(
-                    geometry=set_position
-                ) >> g.InstanceOnPoints(
-                    instance=g.IcoSphere(subdivisions=quality),
-                    scale=AngstromToWorld(angstrom=ball_radius),
-                )
-            join_geometry = g.JoinGeometry(
-                geometry=(menu_switch_2, instance_on_points_1)
-            )
         with g.Frame("Base stem"):
             world_to_angstrom = WorldToAngstrom(world=vector_math_1)
             transform_geometry = FallbackGeometry(
@@ -563,7 +567,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             },
         )
         set_shade_smooth = g.SetShadeSmooth.face(
-            g.JoinGeometry(geometry=(menu_switch_3, join_geometry)),
+            g.JoinGeometry(geometry=(menu_switch_3, menu_switch_2)),
             shade_smooth=shade_smooth,
         )
         set_shade_smooth.node.warning_propagation = "ERRORS"
@@ -571,10 +575,10 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         smooth_by_angle.node.warning_propagation = "ERRORS"
         smooth_by_angle >> g.SetMaterial(material=material) >> geometry
 
-        backbone_shape.default_value = "Arrows"
+        backbone_shape.default_value = "Ball & Stick"
         base_shape.default_value = "Sphere"
         base_colors.default_value = "Uniform"
-        strand_color.default_value = "Color"
+        strand_colors.default_value = "Auto"
 
 
 ASSET = OxDNAStyleClassic
