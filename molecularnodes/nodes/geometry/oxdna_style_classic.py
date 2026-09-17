@@ -281,7 +281,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         backbone_radius: InputFloat = 1.0,
         ball_radius: InputFloat = 2.0,
         _5_3_taper: InputFloat = 0.0,
-        end_overhang: InputFloat = 1.2,
+        end_overhang: InputFloat = 1.8,
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
@@ -357,7 +357,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             n_5_3_taper = tree.inputs.float(
                 "5'→3' Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
             )
-            end_overhang = tree.inputs.float("End Overhang", 1.2)
+            end_overhang = tree.inputs.float("End Overhang", 1.8)
         with tree.inputs.panel("Bases"):
             base_shape = tree.inputs.menu(
                 "Base Shape", expanded=True, optional_label=True
@@ -516,10 +516,14 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     >> g.SetSplineType.bezier()
                     >> g.SetSplineResolution(resolution=quality * 2)
                 )
-                curve_to_mesh = g.SetHandleType(
-                    curve=set_spline_resolution
-                ) >> g.CurveToMesh(
-                    profile_curve=curve_circle, scale=angstrom_to_world, fill_caps=True
+                curve_to_mesh = (
+                    g.SetHandleType(curve=set_spline_resolution)
+                    >> g.SetCurveNormal()
+                    >> g.CurveToMesh(
+                        profile_curve=curve_circle,
+                        scale=angstrom_to_world,
+                        fill_caps=True,
+                    )
                 )
                 curve_to_mesh_1 = g.CurveToMesh(
                     curve=reverse_curve_1,
