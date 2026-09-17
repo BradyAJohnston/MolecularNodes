@@ -166,7 +166,7 @@ def test_render_assembly(
                 ["linear.top", "linear_traj.dat"],
                 ["origami_old.top", "origami_old.dat"],
             ),
-            ("Arrows", "Curve"),
+            ("ball_and_stick", "ribbon"),
         )
     ),
 )
