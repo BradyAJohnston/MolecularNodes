@@ -3,6 +3,7 @@
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
+import bpy
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
@@ -391,7 +392,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Material"):
             shade_smooth = tree.inputs.boolean("Shade Smooth", True)
             material = tree.inputs.material(
-                "Material", description="Material to apply to the resulting geometry"
+                "Material",
+                bpy.data.materials.get("Default"),
+                description="Material to apply to the resulting geometry",
             )
         geometry = tree.outputs.geometry("Geometry")
 
@@ -569,4 +572,8 @@ ASSET = OxDNAStyleClassic
 
 ASSET_METADATA = {
     "catalog_id": "0094c3e0-7885-427b-81b4-187a84dcff18",
+}
+
+DATABLOCK_DEPENDENCIES = {
+    "materials": ("Default",),
 }
