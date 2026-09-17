@@ -33,6 +33,7 @@ from nodebpy.types import (
 )
 from ._shared.set_instancer import SetInstancer
 from ._shared.smooth_by_angle import SmoothByAngle
+from ._shared.vector_in_angstroms import VectorInAngstroms
 from .angstrom_to_world import AngstromToWorld
 from .chain_id import ChainID
 from .color import Color
@@ -276,10 +277,10 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         selection: InputBoolean = True,
         quality: InputInteger = 2,
         backbone_shape: InputMenu | Literal["Arrows", "Curve"] = "Arrows",
-        backbone_radius: InputFloat = 0.6,
+        backbone_radius: InputFloat = 1.0,
         ball_radius: InputFloat = 2.0,
         arrow_taper: InputFloat = 0.0,
-        end_overhang: InputFloat = 0.0,
+        end_overhang: InputFloat = 1.0,
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
         base_geometry: InputGeometry = None,
         base_scale: InputVector = None,
@@ -347,7 +348,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             backbone_radius = tree.inputs.float(
                 "Backbone Radius",
-                0.6,
+                1.0,
                 min_value=0.0,
                 max_value=340_282_000_000_000_000_000_000_000_000_000_000_000.0,
             )
@@ -355,18 +356,18 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             arrow_taper = tree.inputs.float(
                 "Arrow Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
             )
-            end_overhang = tree.inputs.float("End Overhang", 0.0)
+            end_overhang = tree.inputs.float("End Overhang", 1.0)
         with tree.inputs.panel("Bases"):
             base_shape = tree.inputs.menu(
                 "Base Shape", expanded=True, optional_label=True
             )
             base_geometry = tree.inputs.geometry("Base Geometry")
             base_scale = tree.inputs.vector(
-                "Base Scale", (0.1, 0.2, 0.2), min_value=0.0, subtype="XYZ"
+                "Base Scale", (1.0, 2.0, 2.0), min_value=0.0, subtype="XYZ"
             )
             stem_geometry = tree.inputs.geometry("Stem Geometry")
             stem_scale = tree.inputs.vector(
-                "Stem Scale", (1.0, 1.0, 1.0), min_value=0.0
+                "Stem Scale", (1.0, 1.0, 1.0), min_value=0.0, subtype="XYZ"
             )
         with tree.inputs.panel("Colors"):
             base_colors = tree.inputs.menu(
@@ -398,7 +399,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
         geometry = tree.outputs.geometry("Geometry")
 
-        angstrom_to_world = AngstromToWorld(angstrom=7.0)
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
@@ -416,11 +416,11 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 atoms=separate_geometry.o.selection, color=menu_switch.o.output
             )
         with g.Frame():
-            angstrom_to_world_1 = AngstromToWorld(angstrom=backbone_radius)
-            curve_circle = g.CurveCircle(resolution=quality * 4, radius=1.9)
+            angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
+            curve_circle = g.CurveCircle(resolution=quality * 4)
             switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
-                angstrom_to_world_1,
-                angstrom_to_world_1.o.world - arrow_taper * angstrom_to_world_1,
+                angstrom_to_world,
+                angstrom_to_world.o.world - arrow_taper * angstrom_to_world,
             )
             oxdna_vectors = OxDNAVectors()
             set_position = g.SetPosition(
@@ -430,10 +430,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 instance_on_points = SetInstancer(
                     geometry=set_position
                 ) >> g.InstanceOnPoints(
-                    instance=g.IcoSphere(
-                        radius=AngstromToWorld(angstrom=ball_radius),
-                        subdivisions=quality,
-                    )
+                    instance=g.IcoSphere(subdivisions=quality),
+                    scale=AngstromToWorld(angstrom=ball_radius),
                 )
             with g.Frame("Add overhang to strand ends"):
                 vector_math = (
@@ -479,7 +477,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             curve_to_mesh = g.SetHandleType(
                 curve=set_spline_resolution
             ) >> g.CurveToMesh(
-                profile_curve=curve_circle, scale=angstrom_to_world_1, fill_caps=True
+                profile_curve=curve_circle, scale=angstrom_to_world, fill_caps=True
             )
             curve_to_mesh_1 = g.CurveToMesh(
                 curve=reverse_curve_1,
@@ -491,6 +489,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 backbone_shape, {"Arrows": curve_to_mesh_1, "Curve": curve_to_mesh}
             )
             join_geometry = g.JoinGeometry(geometry=(menu_switch_1, instance_on_points))
+        value = g.Value(7.0)
         oxdna_vectors_1 = OxDNAVectors()
         vector_math_1 = (
             oxdna_vectors_1.o.stacking_offset - oxdna_vectors_1.o.backbone_offset
@@ -498,24 +497,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         axes_to_rotation = g.AxesToRotation(
             primary_axis=vector_math_1, secondary_axis=oxdna_vectors_1.o.base_normal
         )
-        with g.Frame("Base stem"):
-            angstrom_to_world_2 = AngstromToWorld(angstrom=1.0)
-            transform_geometry = FallbackGeometry(
-                geometry=stem_geometry,
-                fallback=g.Cylinder(
-                    vertices=quality * 5, side_segments=quality, depth=1.0
-                ),
-            ) >> g.TransformGeometry(
-                scale=g.CombineXYZ(
-                    x=angstrom_to_world_2, y=angstrom_to_world_2, z=angstrom_to_world
-                ),
-                translation=(0.0, 0.0, 0.35),
-            )
-            instance_on_points_1 = SetInstancer(
-                geometry=set_position
-            ) >> g.InstanceOnPoints(
-                instance=transform_geometry, rotation=axes_to_rotation, scale=stem_scale
-            )
         with g.Frame("Colored bases"):
             menu_switch_2 = g.MenuSwitch.color(
                 base_colors,
@@ -529,9 +510,10 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             vector_math_2 = (
                 oxdna_vectors_1.o.stacking_offset
-                + vector_math_1.normalize() * ((stem_scale.z - 1.0) * angstrom_to_world)
+                + vector_math_1.normalize()
+                * ((stem_scale.z - 1.0) * AngstromToWorld(angstrom=value))
             )
-            instance_on_points_2 = SetColor(
+            instance_on_points_1 = SetColor(
                 atoms=SetInstancer(
                     geometry=g.SetPosition(geometry=set_color, offset=vector_math_2)
                 ),
@@ -541,15 +523,36 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     geometry=base_geometry, fallback=g.IcoSphere(subdivisions=quality)
                 ),
                 rotation=axes_to_rotation,
-                scale=base_scale,
+                scale=VectorInAngstroms(
+                    vector=base_scale, normalize=False, angstrom=1.0
+                ),
+            )
+        with g.Frame("Base stem"):
+            transform_geometry = FallbackGeometry(
+                geometry=stem_geometry,
+                fallback=g.Cylinder(
+                    vertices=quality * 5, side_segments=quality, depth=1.0
+                ),
+            ) >> g.TransformGeometry(
+                translation=g.CombineXYZ(z=value.o.value * 0.5),
+                scale=g.CombineXYZ(z=value, x=1.0, y=1.0),
+            )
+            instance_on_points_2 = SetInstancer(
+                geometry=set_position
+            ) >> g.InstanceOnPoints(
+                instance=transform_geometry,
+                rotation=axes_to_rotation,
+                scale=VectorInAngstroms(
+                    vector=stem_scale, normalize=False, angstrom=1.0
+                ),
             )
         menu_switch_3 = g.MenuSwitch.geometry(
             base_shape,
             {
                 "Sphere": g.JoinGeometry(
-                    geometry=(instance_on_points_2, instance_on_points_1)
+                    geometry=(instance_on_points_1, instance_on_points_2)
                 ),
-                "Cylinder": instance_on_points_1,
+                "Cylinder": instance_on_points_2,
                 "None": None,
             },
         )
