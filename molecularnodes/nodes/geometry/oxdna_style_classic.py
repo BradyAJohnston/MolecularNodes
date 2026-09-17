@@ -364,7 +364,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             base_geometry = tree.inputs.geometry("Base Geometry")
             base_scale = tree.inputs.vector(
-                "Base Scale", (0.9, 2.0, 2.0), min_value=0.0, subtype="XYZ"
+                "Base Scale", (0.9, 2.1, 2.1), min_value=0.0, subtype="XYZ"
             )
             stem_geometry = tree.inputs.geometry("Stem Geometry")
             stem_scale = tree.inputs.vector(
