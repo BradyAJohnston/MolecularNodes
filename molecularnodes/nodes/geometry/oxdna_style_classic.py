@@ -43,6 +43,7 @@ from .fallback_geometry import FallbackGeometry
 from .integer_distance import IntegerDistance
 from .oxdna_vectors import OxDNAVectors
 from .set_color import SetColor
+from .world_to_angstrom import WorldToAngstrom
 
 
 class OxDNAAreIDs53(CustomGeometryGroup):
@@ -363,7 +364,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             base_geometry = tree.inputs.geometry("Base Geometry")
             base_scale = tree.inputs.vector(
-                "Base Scale", (1.0, 2.0, 2.0), min_value=0.0, subtype="XYZ"
+                "Base Scale", (0.9, 2.0, 2.0), min_value=0.0, subtype="XYZ"
             )
             stem_geometry = tree.inputs.geometry("Stem Geometry")
             stem_scale = tree.inputs.vector(
@@ -415,90 +416,16 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             set_color = SetColor(
                 atoms=separate_geometry.o.selection, color=menu_switch.o.output
             )
-        with g.Frame():
-            angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
-            curve_circle = g.CurveCircle(resolution=quality * 4)
-            switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
-                angstrom_to_world,
-                angstrom_to_world.o.world - arrow_taper * angstrom_to_world,
-            )
-            oxdna_vectors = OxDNAVectors()
-            set_position = g.SetPosition(
-                geometry=set_color, offset=oxdna_vectors.o.backbone_offset
-            )
-            with g.Frame("Backbone ball"):
-                instance_on_points = SetInstancer(
-                    geometry=set_position
-                ) >> g.InstanceOnPoints(
-                    instance=g.IcoSphere(subdivisions=quality),
-                    scale=AngstromToWorld(angstrom=ball_radius),
-                )
-            with g.Frame("Add overhang to strand ends"):
-                vector_math = (
-                    EdgeInfo(vertex_index=g.Index()).o.edge_vector.normalize()
-                    * -1.0
-                    * AngstromToWorld(angstrom=end_overhang)
-                )
-                set_position_1 = g.SetPosition(
-                    geometry=set_position,
-                    selection=g.Compare.integer.equal(
-                        g.EdgesOfVertex(vertex_index=g.Index()).o.total, 1
-                    ),
-                    offset=vector_math,
-                )
-            with g.Frame(
-                "Each edge to a curve pointing 5'->3'. Flip circular endpoints."
-            ):
-                edge_vertices = g.EdgeVertices()
-                capture = g.CaptureAttribute.edge(
-                    geometry=set_position,
-                    selection=IntegerDistance(
-                        a=edge_vertices.o.vertex_index_1,
-                        b=edge_vertices.o.vertex_index_2,
-                    ).o.cutoff,
-                )
-                reverse_curve = (
-                    capture.o.geometry
-                    >> g.SplitEdges()
-                    >> g.MeshToCurve()
-                    >> g.ReverseCurve(selection=capture.o.selection)
-                )
-                reverse_curve_1 = g.ReverseCurve(
-                    curve=reverse_curve,
-                    selection=~OxDNAAreIDs53(Atoms=reverse_curve).o.result,
-                )
-            set_spline_resolution = (
-                set_position_1
-                >> g.MeshToCurve()
-                >> g.SetCurveNormal(normal=oxdna_vectors.o.base_normal, mode="Free")
-                >> g.SetSplineType.bezier()
-                >> g.SetSplineResolution(resolution=quality * 2)
-            )
-            curve_to_mesh = g.SetHandleType(
-                curve=set_spline_resolution
-            ) >> g.CurveToMesh(
-                profile_curve=curve_circle, scale=angstrom_to_world, fill_caps=True
-            )
-            curve_to_mesh_1 = g.CurveToMesh(
-                curve=reverse_curve_1,
-                profile_curve=curve_circle,
-                scale=switch,
-                fill_caps=True,
-            )
-            menu_switch_1 = g.MenuSwitch.geometry(
-                backbone_shape, {"Arrows": curve_to_mesh_1, "Curve": curve_to_mesh}
-            )
-            join_geometry = g.JoinGeometry(geometry=(menu_switch_1, instance_on_points))
-        value = g.Value(7.0)
-        oxdna_vectors_1 = OxDNAVectors()
-        vector_math_1 = (
-            oxdna_vectors_1.o.stacking_offset - oxdna_vectors_1.o.backbone_offset
-        )
+        oxdna_vectors = OxDNAVectors()
+        vector_math = oxdna_vectors.o.stacking_offset - oxdna_vectors.o.backbone_offset
         axes_to_rotation = g.AxesToRotation(
-            primary_axis=vector_math_1, secondary_axis=oxdna_vectors_1.o.base_normal
+            primary_axis=vector_math, secondary_axis=oxdna_vectors.o.base_normal
         )
+        vector_math_1 = g.SampleIndex(
+            geometry=atoms, value=vector_math, data_type="FLOAT_VECTOR"
+        ).o.value.length()
         with g.Frame("Colored bases"):
-            menu_switch_2 = g.MenuSwitch.color(
+            menu_switch_1 = g.MenuSwitch.color(
                 base_colors,
                 {
                     "Uniform": bases,
@@ -509,15 +436,14 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 },
             )
             vector_math_2 = (
-                oxdna_vectors_1.o.stacking_offset
-                + vector_math_1.normalize()
-                * ((stem_scale.z - 1.0) * AngstromToWorld(angstrom=value))
+                oxdna_vectors.o.stacking_offset
+                + vector_math.normalize() * ((stem_scale.z - 1.0) * vector_math_1)
             )
-            instance_on_points_1 = SetColor(
+            instance_on_points = SetColor(
                 atoms=SetInstancer(
                     geometry=g.SetPosition(geometry=set_color, offset=vector_math_2)
                 ),
-                color=menu_switch_2.o.output,
+                color=menu_switch_1.o.output,
             ) >> g.InstanceOnPoints(
                 instance=FallbackGeometry(
                     geometry=base_geometry, fallback=g.IcoSphere(subdivisions=quality)
@@ -527,15 +453,95 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     vector=base_scale, normalize=False, angstrom=1.0
                 ),
             )
+        oxdna_vectors_1 = OxDNAVectors()
+        set_position = g.SetPosition(
+            geometry=set_color, offset=oxdna_vectors_1.o.backbone_offset
+        )
+        with g.Frame():
+            with g.Frame("Backbone Stick"):
+                angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
+                with g.Frame("Add overhang to strand ends"):
+                    vector_math_3 = (
+                        EdgeInfo(vertex_index=g.Index()).o.edge_vector.normalize()
+                        * -1.0
+                        * AngstromToWorld(angstrom=end_overhang)
+                    )
+                    set_position_1 = g.SetPosition(
+                        geometry=set_position,
+                        selection=g.Compare.integer.equal(
+                            g.EdgesOfVertex(vertex_index=g.Index()).o.total, 1
+                        ),
+                        offset=vector_math_3,
+                    )
+                with g.Frame(
+                    "Each edge to a curve pointing 5'->3'. Flip circular endpoints."
+                ):
+                    edge_vertices = g.EdgeVertices()
+                    capture = g.CaptureAttribute.edge(
+                        geometry=set_position,
+                        selection=IntegerDistance(
+                            a=edge_vertices.o.vertex_index_1,
+                            b=edge_vertices.o.vertex_index_2,
+                        ).o.cutoff,
+                    )
+                    reverse_curve = (
+                        capture.o.geometry
+                        >> g.SplitEdges()
+                        >> g.MeshToCurve()
+                        >> g.ReverseCurve(selection=capture.o.selection)
+                    )
+                    reverse_curve_1 = g.ReverseCurve(
+                        curve=reverse_curve,
+                        selection=~OxDNAAreIDs53(Atoms=reverse_curve).o.result,
+                    )
+                curve_circle = g.CurveCircle(resolution=quality * 4)
+                switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
+                    angstrom_to_world,
+                    angstrom_to_world.o.world - arrow_taper * angstrom_to_world,
+                )
+                set_spline_resolution = (
+                    set_position_1
+                    >> g.MeshToCurve()
+                    >> g.SetCurveNormal(
+                        normal=oxdna_vectors_1.o.base_normal, mode="Free"
+                    )
+                    >> g.SetSplineType.bezier()
+                    >> g.SetSplineResolution(resolution=quality * 2)
+                )
+                curve_to_mesh = g.SetHandleType(
+                    curve=set_spline_resolution
+                ) >> g.CurveToMesh(
+                    profile_curve=curve_circle, scale=angstrom_to_world, fill_caps=True
+                )
+                curve_to_mesh_1 = g.CurveToMesh(
+                    curve=reverse_curve_1,
+                    profile_curve=curve_circle,
+                    scale=switch,
+                    fill_caps=True,
+                )
+                menu_switch_2 = g.MenuSwitch.geometry(
+                    backbone_shape, {"Arrows": curve_to_mesh_1, "Curve": curve_to_mesh}
+                )
+            with g.Frame("Backbone ball"):
+                instance_on_points_1 = SetInstancer(
+                    geometry=set_position
+                ) >> g.InstanceOnPoints(
+                    instance=g.IcoSphere(subdivisions=quality),
+                    scale=AngstromToWorld(angstrom=ball_radius),
+                )
+            join_geometry = g.JoinGeometry(
+                geometry=(menu_switch_2, instance_on_points_1)
+            )
         with g.Frame("Base stem"):
+            world_to_angstrom = WorldToAngstrom(world=vector_math_1)
             transform_geometry = FallbackGeometry(
                 geometry=stem_geometry,
                 fallback=g.Cylinder(
                     vertices=quality * 5, side_segments=quality, depth=1.0
                 ),
             ) >> g.TransformGeometry(
-                translation=g.CombineXYZ(z=value.o.value * 0.5),
-                scale=g.CombineXYZ(z=value, x=1.0, y=1.0),
+                translation=g.CombineXYZ(z=world_to_angstrom.o.angstrom * 0.5),
+                scale=g.CombineXYZ(z=world_to_angstrom, x=1.0, y=1.0),
             )
             instance_on_points_2 = SetInstancer(
                 geometry=set_position
@@ -550,7 +556,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             base_shape,
             {
                 "Sphere": g.JoinGeometry(
-                    geometry=(instance_on_points_1, instance_on_points_2)
+                    geometry=(instance_on_points, instance_on_points_2)
                 ),
                 "Cylinder": instance_on_points_2,
                 "None": None,
