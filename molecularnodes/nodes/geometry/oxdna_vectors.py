@@ -105,7 +105,8 @@ class OxDNAVectors(AssetGeometryGroup):
         evaluate_at_index * angstrom_to_world >> stacking_offset
         (
             evaluate_at_index * (angstrom_to_world.o.world * -1.0)
-            + evaluate_at_index.cross(evaluate_at_index_1) * angstrom_to_world
+            + evaluate_at_index_1.cross(evaluate_at_index)
+            * AngstromToWorld(angstrom=3.408)
             >> backbone_offset
         )
         evaluate_at_index * AngstromToWorld(angstrom=4.0) >> h_bond_offset
