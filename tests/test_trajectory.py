@@ -524,15 +524,18 @@ class TestTrajectory:
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
     def test_dssp(self, snapshot, universe):
+        initial_frame = universe.trajectory.frame
         t = mn.Molecule(universe).add_style("cartoon")
-        # test no sec_struct attribute without initializing dssp
-        with pytest.raises(
-            KeyError,
-            match='key "sec_struct" not found',
-        ):
-            t["sec_struct"]
+        # sec_struct is computed once from the current frame on import, so the
+        # cartoon has structure to show before the dssp module is initialized
+        initial_sec_struct = t["sec_struct"]
+        assert np.any(initial_sec_struct == 1)
+        assert "sec_struct" not in t.calculations
         # initialize dssp
         t.dssp.init()
+        # per-frame dssp on the import frame matches the import-time result
+        t.set_frame(initial_frame)
+        assert np.array_equal(t["sec_struct"], initial_sec_struct)
         # default dssp is per-frame
         t.set_frame(1)
         frame_sec_struct = t["sec_struct"]

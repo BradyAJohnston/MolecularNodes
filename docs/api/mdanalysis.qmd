@@ -490,7 +490,7 @@ canvas.fps = 24
 canvas.resolution = (800, 600)
 
 movie = mn.Molecule(u)
-movie.dssp.init() # compute secondary structure for the movie
+movie.dssp.init() # recompute secondary structure every frame for the movie
 # if DSSP fails on termini or non-standard residues, limit it with a selection:
 # movie.dssp.init(selection="protein and not resid 1")
 # the selection can be changed later with movie.dssp.set_selection("...")

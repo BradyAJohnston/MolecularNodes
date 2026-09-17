@@ -174,6 +174,33 @@ class DSSPManager:
         self._set_display_option("per-frame")
         self._props.applied = True
 
+    def compute_frame(self, selection: str = "protein") -> np.ndarray:
+        """
+        Run DSSP on the current frame only and return the `sec_struct` attribute
+
+        This does not enable per-frame updates, use `init()` for that.
+
+        Parameters
+        ----------
+        selection: str, optional
+            MDAnalysis selection string limiting the atoms DSSP is run on,
+            default is "protein"
+
+        Returns
+        -------
+        np.ndarray
+            Per-atom secondary structure: 0 not protein, 1 helix, 2 sheet, 3 loop
+        """
+        universe = self._entity.universe
+        atoms = universe.select_atoms(selection)
+        results = DSSP(atoms).run(frames=[universe.trajectory.frame]).results
+        mask = np.isin(atoms.residues.resids, results.resids)
+        resindices = atoms.residues.resindices[mask]
+        attribute_data = np.zeros(len(universe.atoms), dtype=int)
+        attribute_data[universe.select_atoms("protein").residues.resindices] = 3
+        attribute_data[resindices] = self._dssp_vmap(results.dssp[0])
+        return attribute_data[universe.atoms.resindices]
+
     def set_selection(self, selection: str) -> None:
         """
         Change the selection DSSP is run on, keeping the current display option
