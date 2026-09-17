@@ -633,12 +633,18 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
         obj = get_active_entity_object(context)
         uuid = obj.uuid
         traj = context.scene.MNSession.get(uuid)
+        props = traj.props.dssp
+        row = layout.row()
+        row.prop(props, "selection")
+        row = layout.row()
         if traj.dssp._DSSP is None:
-            row = layout.row()
             op = row.operator("mn.dssp_init")
             op.uuid = uuid
+            op.selection = props.selection
             return
-        props = traj.props.dssp
+        op = row.operator("mn.dssp_init", text="Update Selection")
+        op.uuid = uuid
+        op.selection = props.selection
         # display options
         if traj._entity_type == EntityType.MOLECULE:
             row = layout.row()

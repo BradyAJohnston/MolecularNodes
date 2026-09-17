@@ -524,15 +524,18 @@ class TestTrajectory:
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
     def test_dssp(self, snapshot, universe):
+        initial_frame = universe.trajectory.frame
         t = mn.Molecule(universe).add_style("cartoon")
-        # test no sec_struct attribute without initializing dssp
-        with pytest.raises(
-            KeyError,
-            match='key "sec_struct" not found',
-        ):
-            t["sec_struct"]
+        # sec_struct is computed once from the current frame on import, so the
+        # cartoon has structure to show before the dssp module is initialized
+        initial_sec_struct = t["sec_struct"]
+        assert np.any(initial_sec_struct == 1)
+        assert "sec_struct" not in t.calculations
         # initialize dssp
         t.dssp.init()
+        # per-frame dssp on the import frame matches the import-time result
+        t.set_frame(initial_frame)
+        assert np.array_equal(t["sec_struct"], initial_sec_struct)
         # default dssp is per-frame
         t.set_frame(1)
         frame_sec_struct = t["sec_struct"]
@@ -558,6 +561,58 @@ class TestTrajectory:
         assert not np.allclose(no_sec_struct, frame_sec_struct)
         assert not np.allclose(no_sec_struct, sw_sec_struct)
         assert not np.allclose(no_sec_struct, avg_sec_struct)
+
+    def test_dssp_selection(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        t.dssp.init(selection="protein and resid 1-100")
+        t.set_frame(1)
+        sec_struct = t["sec_struct"]
+        resids = universe.atoms.resids
+        is_protein = np.isin(
+            universe.atoms.indices, universe.select_atoms("protein").indices
+        )
+        selected = is_protein & (resids <= 100)
+        # selected residues are assigned helix / sheet / loop
+        assert np.all(np.isin(sec_struct[selected], [1, 2, 3]))
+        assert np.any(sec_struct[selected] < 3)
+        # protein residues outside the selection fall back to loop
+        assert np.all(sec_struct[is_protein & ~selected] == 3)
+        # non-protein atoms get no secondary structure
+        assert np.all(sec_struct[~is_protein] == 0)
+        # a default run assigns structure beyond the selection
+        t_full = mn.Molecule(universe).add_style("cartoon")
+        t_full.dssp.init()
+        t_full.set_frame(1)
+        assert np.any(t_full["sec_struct"][is_protein & ~selected] < 3)
+
+    def test_dssp_set_selection(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        t.dssp.init(selection="protein and resid 1-100")
+        assert t.props.dssp.selection == "protein and resid 1-100"
+        t.set_frame(1)
+        resids = universe.atoms.resids
+        is_protein = np.isin(
+            universe.atoms.indices, universe.select_atoms("protein").indices
+        )
+        excluded = is_protein & (resids > 100)
+        assert np.all(t["sec_struct"][excluded] == 3)
+        # widening the selection part way through assigns structure to the rest
+        t.dssp.set_selection("protein")
+        assert t.props.dssp.selection == "protein"
+        t.set_frame(1)
+        assert np.any(t["sec_struct"][excluded] < 3)
+        # a bad selection raises and leaves the previous selection working
+        with pytest.raises(Exception):
+            t.dssp.set_selection("protein and bogus")
+        t.set_frame(2)
+        assert np.any(t["sec_struct"][excluded] < 3)
+        # the display option survives changing the selection
+        t.dssp.show_trajectory_average(threshold=0.5)
+        t.dssp.set_selection("protein and resid 1-100")
+        assert t.dssp._display_option == "trajectory-average"
+        t.set_frame(1)
+        assert np.all(t["sec_struct"][excluded] == 3)
+        assert np.any(t["sec_struct"][is_protein & ~excluded] < 3)
 
     def test_reload_operator(self, universe):
         traj = mn.entities.Molecule(universe)

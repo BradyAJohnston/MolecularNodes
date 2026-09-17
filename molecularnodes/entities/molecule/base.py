@@ -554,8 +554,16 @@ class Molecule(MolecularEntity):
         return self.atoms.entity_ids
 
     def _compute_sec_struct(self) -> np.ndarray:
-        # carried across from the structure file by the converter
-        return self.atoms.sec_structs
+        try:
+            # carried across from the structure file by the converter
+            return self.atoms.sec_structs
+        except (mda.NoDataError, AttributeError):
+            pass
+        # otherwise compute it once from the current frame so the cartoon has
+        # something to show, per-frame updates require enabling the DSSP module
+        if len(self.universe.select_atoms("protein")) == 0:
+            raise mda.NoDataError("No protein atoms to compute secondary structure")
+        return self.dssp.compute_frame()
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
