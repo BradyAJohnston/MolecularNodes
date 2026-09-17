@@ -278,8 +278,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         selection: InputBoolean = True,
         quality: InputInteger = 2,
         backbone_shape: InputMenu | Literal["Sticks", "Ribbon"] = "Sticks",
-        backbone_radius: InputFloat = 1.0,
-        ball_radius: InputFloat = 2.0,
+        backbone_radius: InputFloat = 1.1,
+        ball_radius: InputFloat = 2.3,
         _5_3_taper: InputFloat = 0.0,
         end_overhang: InputFloat = 1.8,
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
@@ -349,11 +349,11 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             backbone_radius = tree.inputs.float(
                 "Backbone Radius",
-                1.0,
+                1.1,
                 min_value=0.0,
                 max_value=340_282_000_000_000_000_000_000_000_000_000_000_000.0,
             )
-            ball_radius = tree.inputs.float("Ball Radius", 2.0, min_value=0.0)
+            ball_radius = tree.inputs.float("Ball Radius", 2.3, min_value=0.0)
             n_5_3_taper = tree.inputs.float(
                 "5'→3' Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
             )
@@ -364,11 +364,11 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             )
             base_geometry = tree.inputs.geometry("Base Geometry")
             base_scale = tree.inputs.vector(
-                "Base Scale", (0.9, 2.1, 2.1), min_value=0.0, subtype="XYZ"
+                "Base Scale", (1.0, 2.3, 2.3), min_value=0.0, subtype="XYZ"
             )
             stem_geometry = tree.inputs.geometry("Stem Geometry")
             stem_scale = tree.inputs.vector(
-                "Stem Scale", (1.0, 1.0, 1.0), min_value=0.0, subtype="XYZ"
+                "Stem Scale", (1.1, 1.1, 1.0), min_value=0.0, subtype="XYZ"
             )
         with tree.inputs.panel("Base colors"):
             base_colors = tree.inputs.menu(
