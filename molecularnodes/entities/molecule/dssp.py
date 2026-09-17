@@ -18,6 +18,7 @@ class DSSPManager:
         self._entity = entity
         self._DSSP = None
         self._protein_residues = None
+        self._dssp_residues = None
         self._dssp_results = None
         self._trajectory_average = None
         self._dssp_resindices = None
@@ -32,8 +33,8 @@ class DSSPManager:
     def _set_dssp_resindices(self, resids: list) -> None:
         """Internal: Set resindices for DSSP resids"""
         if self._dssp_resindices is None:
-            mask = np.isin(self._protein_residues.resids, resids)
-            self._dssp_resindices = self._protein_residues.resindices[mask]
+            mask = np.isin(self._dssp_residues.resids, resids)
+            self._dssp_resindices = self._dssp_residues.resindices[mask]
 
     def _get_sliding_window_indices(self, index: int) -> None:
         """Internal: Get sliding window indices based on current index"""
@@ -90,7 +91,10 @@ class DSSPManager:
             index = 0 if self._trajectory_average is None else frame
             dssp_chars = dssp_results.dssp[index]
         dssp_ints = self._dssp_vmap(dssp_chars)
+        # start from protein - 3 (loop), rest - 0 (none) so that protein
+        # residues outside the DSSP selection are still drawn as loops
         attribute_data = np.zeros(len(universe.atoms), dtype=int)
+        attribute_data[self._protein_residues.resindices] = 3
         attribute_data[self._dssp_resindices] = dssp_ints
         return attribute_data[universe.atoms.resindices]
 
@@ -131,16 +135,35 @@ class DSSPManager:
         if self._display_option_prop != option:
             self._display_option_prop = option
 
-    def init(self) -> None:
+    def _setup_dssp(self, selection: str) -> None:
+        """Internal: Create the DSSP object for a selection and reset cached results"""
+        atoms = self._entity.universe.select_atoms(selection)
+        # create before assigning so a failing selection leaves the old state intact
+        dssp = DSSP(atoms)
+        self._DSSP = dssp
+        self._dssp_residues = atoms.residues
+        self._dssp_resindices = None
+        self._dssp_results = None
+        self._trajectory_average = None
+
+    def init(self, selection: str = "protein") -> None:
         """
         Initialize DSSP
+
+        Parameters
+        ----------
+        selection: str, optional
+            MDAnalysis selection string limiting the atoms DSSP is run on,
+            default is "protein". Use this to exclude termini or non-standard
+            residues that lack the required (N, CA, C, O) atoms.
         """
         if self._DSSP is not None:
             raise ValueError("DSSP already initialized")
         universe = self._entity.universe
-        self._DSSP = DSSP(universe)
+        self._setup_dssp(selection)
         self._entity.calculations["sec_struct"] = self._calculate_sec_struct
         self._props = self._entity.props.dssp
+        self._set_prop("selection", selection)
         # calculate no secondary structs attribute
         # protein - 3 (loop), rest - 0 (none)
         self._protein_residues = universe.select_atoms("protein").residues
@@ -150,6 +173,21 @@ class DSSPManager:
         # set and apply default
         self._set_display_option("per-frame")
         self._props.applied = True
+
+    def set_selection(self, selection: str) -> None:
+        """
+        Change the selection DSSP is run on, keeping the current display option
+
+        Parameters
+        ----------
+        selection: str
+            MDAnalysis selection string limiting the atoms DSSP is run on
+        """
+        self._ensure_init()
+        self._setup_dssp(selection)
+        self._set_prop("selection", selection)
+        if self._display_option == "trajectory-average":
+            self.show_trajectory_average(threshold=self._ta_threshold)
 
     def show_none(self) -> None:
         """

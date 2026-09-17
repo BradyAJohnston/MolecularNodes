@@ -125,6 +125,15 @@ def _update_dssp_applied(self, context):
 
 
 class DSSPProperties(bpy.types.PropertyGroup):
+    selection: StringProperty(  # type: ignore
+        name="Selection",
+        description=(
+            "MDAnalysis selection string limiting the atoms DSSP is run on. "
+            "Use this to exclude termini or non-standard residues that lack "
+            "the required (N, CA, C, O) atoms"
+        ),
+        default="protein",
+    )
     display_option: EnumProperty(  # type: ignore
         name="Display",
         description="Options to display secondary structures",
