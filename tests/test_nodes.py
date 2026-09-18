@@ -329,7 +329,7 @@ def test_segment_id(topology, trajectory, n_segments):
 
     assert np.array_equal(traj.named_attribute("node_segid", evaluate=True), expected)
 
-    
+
 def test_build_elastic_network():
     mol = mn.Molecule.fetch("4ozs")
 
@@ -340,7 +340,7 @@ def test_build_elastic_network():
     assert gs.mesh
     assert len(gs.mesh.edges) == 1049
     assert len(gs.mesh.vertices) == sum(mol["is_alpha_carbon"])
- 
+
 
 def test_evaluate_on_atoms_bundle():
     """
