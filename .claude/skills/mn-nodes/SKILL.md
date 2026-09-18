@@ -44,7 +44,10 @@ Copy an existing neighbour rather than starting blank. Good templates:
 `symmetry_cyclic.py` (asset with a panel and a shared helper),
 `_shared/symmetry_instance.py` (internal group with field inputs),
 `assembly_instance.py` (capture attributes, instancing, realize),
-`_shared/unit_convert.py` (menu input and `MenuSwitch`).
+`_shared/unit_convert.py` (menu input and `MenuSwitch`),
+`select_string.py` (string parsing, repeat zone, inlined helper).
+`symmetry_*.py` land with #1210 and `select_string.py` with #1212; until those merge,
+read them on the `symmetry-nodes` and `select-string-node` branches.
 
 ```python
 class SymmetryCyclic(AssetGeometryGroup):          # CustomGeometryGroup for _shared/ helpers
@@ -263,8 +266,9 @@ Node PRs should show the node, not just describe it: one use-case render and one
 node-tree plot per node, in a table. Worked for PR #1210 (the symmetry nodes).
 
 1. **Branch and commit** with the usual `git checkout -b <name>` and the attribution
-   trailer lines from the session reminder. Keep the skill file in the same PR when
-   the workflow changed.
+   trailer lines from the session reminder. Do not commit this skill file into a node
+   PR: it lives on the `skills` branch (#1226), the single reference point. If the
+   workflow changed, propose the edit there and mention it in the node PR.
 2. **Use-case renders.** Write a short script in the scratchpad (see section 9 for
    the environment gotchas): `mn.Canvas(engine="EEVEE", resolution=(1200, 900))`,
    style first, then the node, `RealizeInstances()` and
@@ -277,7 +281,8 @@ node-tree plot per node, in a table. Worked for PR #1210 (the symmetry nodes).
    ```
    Names are exact or fnmatch; default draws the stored layout, `--arrange` re-lays it
    out. Needs matplotlib (present in the venv). Since nodebpy 520.25.0 each group
-   yields two Blender-styled images: `<Name>.png` (internals, with socket names,
+   yields two Blender-styled images (main pins `nodebpy>=520.27.0`; `uv sync --all-extras`
+   if your venv is older): `<Name>.png` (internals, with socket names,
    values, frames and the String comment nodes) and `<Name>_node.png` (the group as
    a node seen from another tree, panels collapsed; `--open-panels` expands them).
    `--tree-only` / `--node-only` pick one. Put the `_node` image in the PR table's
@@ -343,6 +348,7 @@ in auto mode (the permission classifier blocks agents from doing it unattended).
 2. `build` (fixes tree errors early), then `dump`, then read the diff.
 3. Numeric test in `tests/test_nodes.py`; render test if the output is visual.
 4. `docs/nodes.yml` entry; `docs/generate.py`, keep only your hunk in `_quarto.yml`.
+   Add a line to `docs/changelog.qmd`.
 5. `uv run ruff format` and `ruff check` on touched files; `uv run -m nodebpy.assets check`.
 6. Run the touched test modules; generate and eyeball goldens.
 
