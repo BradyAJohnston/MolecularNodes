@@ -1366,7 +1366,6 @@ wheels = [
 
 [[package]]
 name = "molecularnodes"
-version = "520.2.0"
 version = "520.2.1"
 source = { editable = "." }
 dependencies = [
