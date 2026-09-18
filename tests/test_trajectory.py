@@ -290,6 +290,76 @@ class TestTrajectory:
             pos_1,
         )
 
+    def test_manual_frame_raw(self, universe):
+        # with no subframes or averaging, the manual frame is the universe frame
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 3
+        assert np.allclose(traj.position, traj.frame_manager._position_at_frame(3))
+
+    @pytest.mark.parametrize("interpolate", [True, False])
+    def test_manual_frame_subframes(self, universe, interpolate: bool):
+        # the manual frame steps through subframes like the scene frame does
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.subframes = 0
+        traj.interpolate = interpolate
+        traj.frame = 0
+        verts_a = traj.position
+        traj.frame = 1
+        verts_b = traj.position
+        assert not np.allclose(verts_a, verts_b)
+
+        for subframes in [1, 2, 3, 4]:
+            frame = 1
+            fraction = frame % (subframes + 1) / (subframes + 1)
+            traj.subframes = subframes
+            traj.frame = frame
+            verts_c = traj.position
+
+            if interpolate:
+                assert not np.allclose(verts_b, verts_c)
+                assert np.allclose(verts_c, databpy.lerp(verts_a, verts_b, t=fraction))
+            else:
+                assert np.allclose(verts_a, verts_c)
+
+    def test_manual_frame_average(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 1
+        pos_1 = traj.position
+        traj.average = 1
+        expected = np.mean(
+            [traj.frame_manager._position_at_frame(f) for f in [0, 1, 2]], axis=0
+        )
+        assert not np.allclose(traj.position, pos_1)
+        assert np.allclose(traj.position, expected)
+
+    def test_manual_frame_offset_ignored(self, universe):
+        # the offset shifts where playback starts on the timeline, which has no
+        # meaning for a manually chosen frame
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 2
+        pos_2 = traj.position
+        traj.offset = 1
+        assert np.allclose(traj.position, pos_2)
+
+    def test_manual_frame_clamp(self, universe):
+        # the manual frame clamps to the last frame that maps onto the
+        # trajectory, which is expanded by the subframes
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        n_frames = universe.trajectory.n_frames
+        traj.frame = 100
+        assert traj.frame == n_frames - 1
+        traj.subframes = 2
+        traj.frame = 100
+        assert traj.frame == (n_frames - 1) * 3
+        assert np.allclose(
+            traj.position, traj.frame_manager._position_at_frame(n_frames - 1)
+        )
+
     def test_gui_selection_add_remove(self, universe):
         traj = mn.Molecule(universe)
         assert "selection_0" not in traj.list_attributes()

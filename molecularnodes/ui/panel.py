@@ -162,16 +162,24 @@ def layout_trajectory_playback(
         col.prop(obj.mn, "frame_hidden")
     else:
         col.prop(obj.mn, "frame")
+        # with subframes the manual frame is stepped through them, so show the
+        # trajectory frame it resolved to
+        if obj.mn.subframes > 0:
+            subrow = col.row()
+            subrow.prop(obj.mn, "frame_hidden", text="Trajectory Frame")
+            subrow.enabled = False
     col.enabled = not obj.mn.update_with_scene
     row.prop(obj.mn, "update_with_scene")
     row = playback.row()
     col = row.column()
-    col.enabled = obj.mn.update_with_scene
     col.prop(obj.mn, "average")
     col.prop(obj.mn, "subframes")
-    col.prop(obj.mn, "offset")
+    # the offset shifts where playback starts on the timeline, so it only
+    # applies when updating with the scene
+    subrow = col.row()
+    subrow.prop(obj.mn, "offset")
+    subrow.enabled = obj.mn.update_with_scene
     col = row.column()
-    col.enabled = obj.mn.update_with_scene
 
     # only enable this as an option if the universe is orthothombic
     row = col.row()
