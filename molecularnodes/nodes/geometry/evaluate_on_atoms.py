@@ -136,6 +136,9 @@ class EvaluateOnAtoms(AssetGeometryGroup):
                 menu_switch.o.output, (get_geometry_atoms.o.atoms, geometry_2)
             ),
         )
+        index_switch = g.IndexSwitch.bundle(
+            menu_switch.o.output, (get_geometry_atoms.o.bundle, store_bundle_item, None)
+        )
         (
             g.JoinGeometry(
                 geometry=(
@@ -143,7 +146,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
                     g.IndexSwitch.geometry(menu_switch.o.output, (geometry_2, None)),
                 )
             )
-            >> g.SetGeometryBundle(bundle=store_bundle_item)
+            >> g.SetGeometryBundle(bundle=index_switch)
             >> geometry_1
         )
         _string = g.String(
