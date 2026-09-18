@@ -138,8 +138,8 @@ class BuildElasticNetwork(AssetGeometryGroup):
             description="The generated elastic network. Edges are formed between atoms within the cutoff distance for use as constraints in a simulation",
         )
 
-        vdw_radii = VDWRadii()
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
+        vdw_radii = VDWRadii()
         plexus = Plexus(
             points=g.SeparateGeometry.point(
                 separate_geometry.o.selection, IsAlphaCarbon().o.selection
