@@ -7,13 +7,13 @@ import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import (
+    GetBundleItem,
+    GetGeometryBundle,
     Group,
+    Points,
     RealizeInstances,
     SetPosition,
     StoreNamedAttribute,
-    GetGeometryBundle,
-    GetBundleItem,
-    Points,
 )
 import molecularnodes as mn
 from molecularnodes.nodes._utils import (
