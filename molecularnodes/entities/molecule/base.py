@@ -399,11 +399,15 @@ class Molecule(MolecularEntity):
             return np.zeros(len(self))
 
     def _compute_charge(self) -> np.ndarray:
-        # corresponds to Charges topology attr
-        if hasattr(self.atoms, "charges"):
-            return self.atoms.charges
-        else:
-            return np.zeros(len(self))
+        # corresponds to Charges topology attr. Only stored when the topology (or
+        # the file, carried across by the biotite converter) provides charges; an
+        # all-zero array carries no information. Skipped like any other missing
+        # topology attribute; no residue / atom-name lookup is done, that will
+        # return as a node instead (#1228).
+        charges = self.atoms.charges  # raises mda.NoDataError when absent
+        if not np.any(charges != 0):
+            raise mda.NoDataError("topology provides no charges")
+        return charges
 
     def _compute_res_id(self) -> np.ndarray:
         return self.atoms.resids
@@ -516,15 +520,6 @@ class Molecule(MolecularEntity):
         )
         return np.logical_and(np.logical_or(~backbone, is_alpha_carbon), is_polymer)
 
-    def _compute_lipophobicity(self) -> np.ndarray:
-        return np.array(
-            [
-                data.lipophobicity.get(res, {}).get(atom, 0)
-                for res, atom in zip(self.atoms.resnames, self.atoms.names)
-            ],
-            dtype=float,
-        )
-
     def _compute_color(self) -> np.ndarray:
         from ... import color
 
@@ -609,7 +604,6 @@ class Molecule(MolecularEntity):
             "chain_id": self._compute_chain_id_int,
             "atom_types": self._compute_atom_type_int,
             "atom_name": self._compute_atom_name_int,
-            "lipophobicity": self._compute_lipophobicity,
             "Color": self._compute_color,
             "is_alpha_carbon": "name CA or name BB",
             "is_backbone": self._compute_is_backbone,

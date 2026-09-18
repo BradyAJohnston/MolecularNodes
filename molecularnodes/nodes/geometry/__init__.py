@@ -42,6 +42,7 @@ from .centre_on_selection import CentreOnSelection
 from .centroid import Centroid
 from .chain_id import ChainID
 from .chain_parameter import ChainParameter
+from .charge import Charge
 from .check_geometry import CheckGeometry
 from .clear_instance_transforms import ClearInstanceTransforms
 from .color import Color
@@ -303,6 +304,7 @@ __all__ = (
     "Centroid",
     "ChainID",
     "ChainParameter",
+    "Charge",
     "CheckGeometry",
     "ClearInstanceTransforms",
     "Color",

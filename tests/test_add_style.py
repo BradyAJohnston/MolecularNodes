@@ -198,11 +198,11 @@ def test_add_style_invalid_style_raises():
             mol.add_style(style)
 
 
-@pytest.mark.parametrize("color", ["chain", "lipophobicity", "b_factor", "nonsense"])
+@pytest.mark.parametrize("color", ["chain", "occupancy", "b_factor", "nonsense"])
 def test_add_style_unknown_color_warns(color):
     """Unknown colors, and non-color attributes, must warn rather than render black.
 
-    `lipophobicity` and `b_factor` exist but are FLOAT attributes - reading them as a
+    `occupancy` and `b_factor` exist but are FLOAT attributes - reading them as a
     color silently produced black geometry.
     """
     mol = mn.Molecule.fetch("4ozs")
