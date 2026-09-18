@@ -324,4 +324,3 @@ def test_segment_id(topology, trajectory, n_segments):
         )
 
     assert np.array_equal(traj.named_attribute("node_segid", evaluate=True), expected)
-
