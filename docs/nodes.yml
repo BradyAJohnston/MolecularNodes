@@ -325,6 +325,10 @@ Chain ID:
   description: >-
     The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically
     then assigned an ID startin at `0` and increasing.
+Segment ID:
+  description: >-
+    The `segid` attribute, an integer representation of the segment IDs present in the structure (the MDAnalysis
+    `segid`). Segments are assigned an ID starting at `0` in the order they were read from the topology.
 Atom ID:
   description: >-
     The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom

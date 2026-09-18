@@ -1,11 +1,17 @@
 import random
 from typing import Any
 import bpy
+import MDAnalysis as mda
 import numpy as np
 import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
-from nodebpy.nodes.geometry import Group, RealizeInstances, SetPosition
+from nodebpy.nodes.geometry import (
+    Group,
+    RealizeInstances,
+    SetPosition,
+    StoreNamedAttribute,
+)
 import molecularnodes as mn
 from molecularnodes.nodes._utils import (
     custom_boolean_iswitch,
@@ -20,6 +26,7 @@ from molecularnodes.nodes.geometry import (
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
+    SegmentID,
     SetColor,
     StyleCartoon,
 )
@@ -269,3 +276,27 @@ def test_periodic_array_no_dimensions():
 
     assert defaults_0 == defaults_10
     assert defaults_0[1:7] == [0] * 6
+
+
+@pytest.mark.parametrize(
+    "topology, trajectory, n_segments",
+    [
+        ("md_ppr/md.tpr", "md_ppr/md.gro", 3),
+        ("md_ppr/box.gro", "md_ppr/first_5_frames.xtc", 1),
+    ],
+)
+def test_segment_id(topology, trajectory, n_segments):
+    universe = mda.Universe(data_dir / topology, data_dir / trajectory)
+    traj = mn.Molecule(universe)
+    expected = traj.named_attribute("segid")
+    assert len(np.unique(expected)) == n_segments
+    assert np.array_equal(np.unique(expected), np.arange(n_segments))
+
+    with traj.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StoreNamedAttribute.point.integer(name="node_segid", value=SegmentID())
+            >> join
+        )
+
+    assert np.array_equal(traj.named_attribute("node_segid", evaluate=True), expected)
