@@ -18,6 +18,7 @@ from nodebpy.types import InputBoolean, InputFloat, InputGeometry, InputMenu
 from ._shared.sample_atomic_attributes import SampleAtomicAttributes
 from .is_alpha_carbon import IsAlphaCarbon
 from .plexus import Plexus
+from .vdw_radii import VDWRadii
 
 
 class BuildElasticNetwork(AssetGeometryGroup):
@@ -137,27 +138,28 @@ class BuildElasticNetwork(AssetGeometryGroup):
             description="The generated elastic network. Edges are formed between atoms within the cutoff distance for use as constraints in a simulation",
         )
 
+        vdw_radii = VDWRadii()
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
         plexus = Plexus(
             points=g.SeparateGeometry.point(
                 separate_geometry.o.selection, IsAlphaCarbon().o.selection
             ).o.selection,
             distance=alpha_carbon,
-            radius=0.0,
+            radius=vdw_radii,
         )
         plexus_1 = Plexus(
             points=g.SeparateGeometry.point(separate_geometry.o.selection).o.selection,
             distance=all_atom,
-            radius=0.0,
+            radius=vdw_radii,
         )
-        merge_by_distance = g.MenuSwitch.geometry(
+        merge_points = g.MenuSwitch.geometry(
             menu,
             {
                 "Alpha Carbon": plexus,
                 "All Atom": g.JoinGeometry(geometry=(plexus, plexus_1)),
             },
-        ) >> g.MergeByDistance(distance=0.0001)
-        capture = g.CaptureAttribute.point(geometry=merge_by_distance)
+        ) >> g.MergePoints(merge_id=g.ClusterByDistance(distance=0.001))
+        capture = g.CaptureAttribute.point(geometry=merge_points)
         index = capture.items.integer(
             "Index", g.SampleNearest.point(separate_geometry.o.selection)
         )

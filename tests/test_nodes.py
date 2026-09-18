@@ -20,6 +20,7 @@ from molecularnodes.nodes._utils import (
 )
 from molecularnodes.nodes.geometry import (
     BreakBonds,
+    BuildElasticNetwork,
     Charge,
     FindBonds,
     NucleicChi,
@@ -324,3 +325,15 @@ def test_segment_id(topology, trajectory, n_segments):
         )
 
     assert np.array_equal(traj.named_attribute("node_segid", evaluate=True), expected)
+
+
+def test_build_elastic_network():
+    mol = mn.Molecule.fetch("4ozs")
+
+    with mol.tree.reset() as (atoms, join):
+        BuildElasticNetwork(atoms) >> join
+
+    gs = GeometrySet(mol.object)
+    assert gs.mesh
+    assert len(gs.mesh.edges) == 1049
+    assert len(gs.mesh.vertices) == sum(mol["is_alpha_carbon"])
