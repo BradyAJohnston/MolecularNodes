@@ -39,8 +39,10 @@ class OxDNAVectors(AssetGeometryGroup):
         base_normal
     o.backbone_offset : VectorSocket
         Backbone Offset
-    o.base_offset : VectorSocket
-        Base Offset
+    o.stacking_offset : VectorSocket
+        Stacking Offset
+    o.h_bond_offset : VectorSocket
+        H-Bond Offset
     o.rotation : RotationSocket
         Rotation
     """
@@ -59,8 +61,10 @@ class OxDNAVectors(AssetGeometryGroup):
         base_normal: VectorSocket
         backbone_offset: VectorSocket
         """Backbone Offset"""
-        base_offset: VectorSocket
-        """Base Offset"""
+        stacking_offset: VectorSocket
+        """Stacking Offset"""
+        h_bond_offset: VectorSocket
+        """H-Bond Offset"""
         rotation: RotationSocket
         """Rotation"""
 
@@ -84,7 +88,8 @@ class OxDNAVectors(AssetGeometryGroup):
         base_vector = tree.outputs.vector("base_vector")
         base_normal = tree.outputs.vector("base_normal")
         backbone_offset = tree.outputs.vector("Backbone Offset")
-        base_offset = tree.outputs.vector("Base Offset")
+        stacking_offset = tree.outputs.vector("Stacking Offset")
+        h_bond_offset = tree.outputs.vector("H-Bond Offset")
         rotation = tree.outputs.rotation("Rotation")
 
         angstrom_to_world = AngstromToWorld(angstrom=3.4)
@@ -97,12 +102,14 @@ class OxDNAVectors(AssetGeometryGroup):
         axes_to_rotation = g.AxesToRotation(
             primary_axis=evaluate_at_index, secondary_axis=evaluate_at_index_1
         )
-        evaluate_at_index * angstrom_to_world >> base_offset
+        evaluate_at_index * angstrom_to_world >> stacking_offset
         (
             evaluate_at_index * (angstrom_to_world.o.world * -1.0)
-            + evaluate_at_index.cross(evaluate_at_index_1) * angstrom_to_world
+            + evaluate_at_index_1.cross(evaluate_at_index)
+            * AngstromToWorld(angstrom=3.408)
             >> backbone_offset
         )
+        evaluate_at_index * AngstromToWorld(angstrom=4.0) >> h_bond_offset
 
         evaluate_at_index >> base_vector
         evaluate_at_index_1 >> base_normal
