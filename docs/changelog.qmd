@@ -5,6 +5,7 @@ title: "Changelog"
 # v520.1.0 - UNRELEASED
 
 ## Added
+- Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 
@@ -13,6 +14,8 @@ title: "Changelog"
 
 ## Fixed
 - The `charge` attribute is now the charge read from the file or topology (the PDB charge column, mmCIF `pdbx_formal_charge`, which mmCIF and BinaryCIF files now read, or a simulation topology's charges) instead of a partial charge looked up from the residue and atom name that masked it. It is only stored when the file or topology provides charges; the `Charge` node reads `0.0` otherwise. [#1221](https://github.com/BradyAJohnston/MolecularNodes/issues/1221)
+- Manual frame management (`Update with Scene` off) now uses the same subframes, interpolation, averaging and periodic correction as scene playback, so the manual frame can be keyframed with interpolation between trajectory frames. The offset still only applies to scene playback. [#1218](https://github.com/BradyAJohnston/MolecularNodes/issues/1218)
+- Importing with the Spheres style through the GUI always uses a `Point` cloud again, regardless of the render engine, so large systems stay interactive on import. The engine-dependent `Instance` default from #1172 still applies to `Molecule.add_style()` from the Python API. [#1220](https://github.com/BradyAJohnston/MolecularNodes/issues/1220)
 
 # v520.0.1 - 2026-09-06
 

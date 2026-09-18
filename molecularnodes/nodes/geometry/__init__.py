@@ -199,6 +199,7 @@ from .sample_mixed_vector import SampleMixedVector
 from .sample_nearest_atoms import SampleNearestAtoms
 from .sample_position import SamplePosition
 from .secondary_structure import SecondaryStructure
+from .segment_id import SegmentID
 from .select_atomic_number import SelectAtomicNumber
 from .select_attribute import SelectAttribute
 from .select_bonded import SelectBonded
@@ -460,6 +461,7 @@ __all__ = (
     "SampleNearestAtoms",
     "SamplePosition",
     "SecondaryStructure",
+    "SegmentID",
     "SelectAtomicNumber",
     "SelectAttribute",
     "SelectBonded",

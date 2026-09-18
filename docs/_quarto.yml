@@ -311,6 +311,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.SecondaryStructure
         children: embedded
+      - name: nodes.geometry.SegmentID
+        children: embedded
       - name: nodes.geometry.UResID
         children: embedded
       - name: nodes.geometry.VDWRadii

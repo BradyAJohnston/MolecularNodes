@@ -6,7 +6,7 @@ import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
 from .constants import codes, data_dir
-from .utils import NumpySnapshotExtension
+from .utils import NumpySnapshotExtension, sphere_value
 
 
 @pytest.mark.parametrize("code", codes)
@@ -288,3 +288,30 @@ def test_op_fetch_comma_separated_codes():
     mols = [session.match(obj) for obj in objects]
     trees = [mol.modifier_node_tree for mol in mols]
     assert trees[0] != trees[1]
+
+
+def test_op_import_spheres_stay_points_under_eevee():
+    """GUI imports keep spheres as a point cloud whatever the engine (#1220).
+
+    The API swaps to instanced spheres under EEVEE so renders look right, but
+    an import from the dialog has to stay interactive on large systems, so it
+    keeps the point cloud regardless.
+    """
+    scene = bpy.context.scene
+    engine = scene.render.engine
+    scene.render.engine = "BLENDER_EEVEE"
+    try:
+        with ObjectTracker() as o:
+            bpy.ops.mn.import_molecule(
+                code=codes[0],
+                file_format="cif",
+                style="spheres",
+                cache_dir=str(data_dir),
+            )
+            imported = scene.MNSession.match(o.latest())
+        assert sphere_value(imported) == "Point"
+
+        api = mn.Molecule.fetch(codes[0], cache=data_dir).add_style("spheres")
+        assert sphere_value(api) == "Instance"
+    finally:
+        scene.render.engine = engine
