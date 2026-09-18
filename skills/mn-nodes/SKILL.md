@@ -240,6 +240,9 @@ def test_render_symmetry(golden_canvas, tmp_path, assembly_image_snapshot, code)
 
 ## 9. Ad-hoc scripts outside pytest
 
+The `mn-render` skill (`skills/mn-render/`) covers Canvas, framing, materials and
+animation in full; the points below are the minimum for a node-testing script.
+
 - Set `os.environ.setdefault("BLENDER_USER_EXTENSIONS", tempfile.mkdtemp())` before
   importing `bpy`, or the installed MN extension's bundled wheels shadow the venv.
 - Create `mn.Canvas()` before loading molecules so the scene preset loads.
