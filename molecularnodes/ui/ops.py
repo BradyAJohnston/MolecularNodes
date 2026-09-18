@@ -205,7 +205,15 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         if not self.node_setup:
             return
         mol.create_asset_nodes()
-        mol.add_style(style=self.style, color="common", assembly=self.assembly)
+        kwargs = {}
+        if self.style == "spheres":
+            # the API picks instanced spheres for non-Cycles engines so renders
+            # look right, but a GUI import has to stay interactive on large
+            # systems, so it always keeps the point cloud (#1220)
+            kwargs["sphere"] = "Point"
+        mol.add_style(
+            style=self.style, color="common", assembly=self.assembly, **kwargs
+        )
 
     def draw(self, context):
         layout = self.layout

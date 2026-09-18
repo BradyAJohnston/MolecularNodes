@@ -7,6 +7,9 @@ title: "Changelog"
 ## Added
 - Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 
+## Fixed
+- Importing with the Spheres style through the GUI always uses a `Point` cloud again, regardless of the render engine, so large systems stay interactive on import. The engine-dependent `Instance` default from #1172 still applies to `Molecule.add_style()` from the Python API. [#1220](https://github.com/BradyAJohnston/MolecularNodes/issues/1220)
+
 # v520.0.1 - 2026-09-06
 
 ## Fixed
