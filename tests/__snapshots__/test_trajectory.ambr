@@ -129,14 +129,6 @@
   AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
   array([0.192, 0.18 , 0.192, ..., 0.155, 0.155, 0.155], dtype=float32)
 # ---
-# name: test_martini[pent/TOPOL2.pdb].24
-  AttributeArray(name='ures_id', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
-  array([   0,    0,    1, ..., 5407, 5408, 5409], dtype=int32)
-# ---
-# name: test_martini[pent/TOPOL2.pdb].25
-  AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
-  array([0.192, 0.18 , 0.192, ..., 0.155, 0.155, 0.155], dtype=float32)
-# ---
 # name: test_martini[pent/TOPOL2.pdb].3
   AttributeArray(name='atom_name', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=INT, shape=(11350,), dtype=int32)
   array([-1, -1, -1, ..., -1, -1, -1], dtype=int32)
@@ -254,10 +246,6 @@
   array([   0,    0,    1, ..., 5407, 5408, 5409], dtype=int32)
 # ---
 # name: test_martini[pent/prot_ion.tpr].26
-  AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
-  array([0.192, 0.18 , 0.192, ..., 0.227, 0.227, 0.227], dtype=float32)
-# ---
-# name: test_martini[pent/prot_ion.tpr].27
   AttributeArray(name='vdw_radii', object='NewUniverseObject', mesh='NewUniverseObject', domain=POINT, type=FLOAT, shape=(11350,), dtype=float32)
   array([0.192, 0.18 , 0.192, ..., 0.227, 0.227, 0.227], dtype=float32)
 # ---
