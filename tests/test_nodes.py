@@ -7,7 +7,10 @@ import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import (
+    GetBundleItem,
+    GetGeometryBundle,
     Group,
+    Points,
     RealizeInstances,
     SetPosition,
     StoreNamedAttribute,
@@ -326,7 +329,7 @@ def test_segment_id(topology, trajectory, n_segments):
 
     assert np.array_equal(traj.named_attribute("node_segid", evaluate=True), expected)
 
-
+    
 def test_build_elastic_network():
     mol = mn.Molecule.fetch("4ozs")
 
@@ -337,3 +340,30 @@ def test_build_elastic_network():
     assert gs.mesh
     assert len(gs.mesh.edges) == 1049
     assert len(gs.mesh.vertices) == sum(mol["is_alpha_carbon"])
+ 
+
+def test_evaluate_on_atoms_bundle():
+    """
+    The `Evaluate on Atoms` node was previously still storing the 'MN/Atoms' bundle,
+    even when the output was set to geometry. It was just filling it with emptry geometry.
+    This was leading to the style nodes failing to work properly if we were finding bonds,
+    as the resulting bonded geoemtry was output as the `Geometry` but the 'MN/Atoms'
+    bundle was populated with the original pre-bonded geometry, meaning the style used
+    this old / outdated information instead of the results of the bond calculation.
+
+    For the test we want to check that the bundle isn't being created fromt he `FindBonds()`
+    and we check if it exists and create a point if so which we can test for with pytest.
+    """
+
+    mol = mn.Molecule.fetch("4ozs")
+
+    with mol.tree.reset() as (atoms, join):
+        bundle = (atoms >> FindBonds() >> GetGeometryBundle()).o.bundle
+
+        # importantly we have to use the typed "GetBundleItem" becuase
+        # if the item we are requesting doesn't have the same type the "exists"
+        # returns false, even if it exists but is of a different type
+        Points(GetBundleItem.bundle(bundle, "MN").o.exists) >> join
+
+    gs = GeometrySet(mol.object)
+    assert gs.pointcloud is None or len(gs.pointcloud.points) == 0
