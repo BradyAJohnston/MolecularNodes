@@ -16,7 +16,7 @@ from ..session import get_session
 from ..ui import addon
 from ..utils import _UNSET, Unset, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
-from .compositor import CompositorTree, setup_compositor
+from .compositor import CompositorTree, add_view_layer_aov, setup_compositor
 from .engines import EEVEE, Cycles
 from .recorder import _ANIMATION_FORMATS, FrameRecorder, _resolve_format, _write_gif
 from .world import WorldTree
@@ -797,13 +797,7 @@ class Canvas:
         bpy.types.AOV
             The view-layer pass.
         """
-        view_layer = self.scene.view_layers[0]
-        aov = view_layer.aovs.get(name)
-        if aov is None:
-            aov = view_layer.aovs.add()
-            aov.name = name
-        aov.type = type  # ty: ignore[invalid-assignment]
-        return aov
+        return add_view_layer_aov(self.scene.view_layers[0], name, type)
 
     @property
     def view_transform(self) -> ViewTransform:
