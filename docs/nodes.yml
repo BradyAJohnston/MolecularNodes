@@ -780,3 +780,35 @@ Mask Pixels:
   description: >-
     Splits an `Image::Color` by a `Mask::Float` into the pixels inside it (`Masked::Color`) and outside it (`Inverse::Color`),
     each with the rest made transparent, so the two can be filtered separately and recombined with an Alpha Over node.
+Composite Illustrate:
+  description: >-
+    David Goodsell's *Illustrate* composition (see `docs/dev/illustrate-pipeline.md`), with no lighting model at all:
+    the flat `Diffuse Color::Color` pass (or the `Image::Color`) is multiplied by the conical soft shadow from
+    `Composite Cone Shadow::Node`, blended with `Composite Depth Fog::Node`, darkened by the contour and residue outlines
+    (their maximum) and again by the chain outline, and the outlines extend the alpha so they survive on the background.
+    Each stage is a panel with a toggle. Use it with the `Flat` material; from Python, `canvas.compositor.illustrate()`
+    enables the passes, sets `Pixel Size::Float` from the camera, `Near::Float`/`Far::Float` from the scene bounds and adds the
+    `chain_id`/`res_id` AOVs the outlines need.
+Composite Cone Shadow:
+  description: >-
+    Illustrate's screen-space ambient occlusion from the `Depth::Float` pass alone. 32 samples (8 directions on 4 rings up to
+    `Radius::Float` pixels) each cast shadow on the pixel when they are closer to the camera by more than the larger of
+    `Min Gap::Float` (Å) and their screen distance times `Cone Angle::Float` (with `Pixel Size::Float` relating pixels to Å);
+    the shadow factor loses `Strength::Float` / 32 per occluding sample and never drops below `Max Darkening::Float`.
+Composite Contour Outline:
+  description: >-
+    Illustrate's contour outlines: a 3x3 Laplacian of the `Depth::Float` pass with each neighbour's depth step clamped
+    to [`Min Diff::Float`, `Max Diff::Float`] Å, ramped from `Low::Float` to `High::Float` into an opacity, optionally
+    averaged over the 3x3 neighbourhood where most pixels carry signal (`Smooth::Bool`). Lines land on the nearer side of a
+    depth step and their weight follows the size of the step, unlike the binary Sobel lines of `Composite Outline Mask::Node`.
+Composite ID Outline:
+  description: >-
+    Illustrate's chain and residue outlines: counts, over the 5x5 neighbourhood, the pixels whose `ID::Float` differs from
+    the centre by more than `Min Difference::Float` and ramps the count from `Low::Float` to `High::Float` into an opacity.
+    Feed it a float AOV such as `chain_id` or `res_id` (`canvas.add_aov("chain_id")`,
+    `mn.material.add_aov(material, "chain_id", offset=1.0)`).
+Composite Depth Fog:
+  description: >-
+    Illustrate's atmospheric perspective: the `Image::Color` is blended towards `Fog Color::Color` by a factor that runs from
+    `Front Fog::Float` at `Near::Float` to `Back Fog::Float` at `Far::Float` (1 keeps the colour, 0 is fully fogged). Expects
+    straight alpha and keeps the image alpha.

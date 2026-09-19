@@ -215,30 +215,65 @@ canvas.passes = ["combined", "z", "mist"]
 canvas.passes
 ```
 
-### Illustrative compositing
+## Illustrative Compositing
 
 The [Compositor](/nodes/compositor.qmd) node groups build flat, illustrative
-renders from the passes: `Composite Illustrative` shades the image (or the flat
-`Diffuse Color` pass) by the ambient occlusion or shadow pass and draws outlines
-where the depth changes. [](`~molecularnodes.scene.compositor.CompositorTree.illustrative`)
-enables the passes it needs and inserts it after the Render Layers node; the
-returned node handle exposes every input for tweaking afterwards.
+renders from the render passes, inserted between the Render Layers node and the
+output. Each helper below enables the passes its node needs and returns the node
+handle, whose inputs can be tweaked afterwards through `node.i`.
 
-```python
-node = canvas.compositor.illustrative(outline=True, shading="ao", flat=True)
-node.i.outline_size.default_value = 3
-node.i.background.default_value = True
+`Composite Illustrative` shades the rendered image (or the flat `Diffuse Color`
+pass with `flat=True`) by the ambient occlusion or shadow pass and draws outlines
+where the depth changes, through
+[](`~molecularnodes.scene.compositor.CompositorTree.illustrative`).
+
+```{python}
+canvas.compositor.device = "CPU"
+canvas.transparent = True
+canvas.look_at(t1, viewpoint="front")
+node = canvas.compositor.illustrative(outline=True, shading="ao")
+node.i.outline_size.default_value = 2
+canvas.snapshot()
+```
+
+[](`~molecularnodes.scene.compositor.CompositorTree.illustrate`) is David
+Goodsell's *Illustrate* renderer as a compositor: no lighting at all, with form
+from a conical soft shadow computed from the depth pass, contour outlines from a
+depth Laplacian, and chain or residue outlines from `chain_id` / `res_id` AOV
+passes that the helper adds to the Molecular Nodes materials. It is meant for the
+`Flat` material, which renders the atom colours unlit.
+
+```{python}
+canvas.clear()
+flat = mn.material.Flat()
+t3 = mn.Molecule.load(PSF, DCD)
+t3.add_style("cartoon", material=flat)
+canvas.look_at(t3, viewpoint="front")
+node = canvas.compositor.illustrate(shadow=True, contour=True, chain_outline=True)
 canvas.snapshot()
 ```
 
 Custom passes come from AOVs (arbitrary output variables): declare one on the
 canvas with [](`~mn.Canvas.add_aov`) and have a material write an attribute into
-it with [](`~molecularnodes.material.add_aov`). It then appears as an output of the
-Render Layers node, where `Value to Mask` selects, for example, a single chain.
+it with [](`~molecularnodes.material.add_aov`). The pass is then an output of the
+Render Layers node, where `Value to Mask` turns it into a mask and `Mask Pixels`
+splits the image by it: here the first chain is kept in colour and the rest is
+desaturated.
 
-```python
+```{python}
+from nodebpy import compositor as c
+from molecularnodes.nodes import compositor as mc
+
 canvas.add_aov("chain_id")
-mn.material.add_aov(t1.styles[0].material, "chain_id")
+if not mn.material.has_aov(flat.material, "chain_id"):  # illustrate() added it above
+    flat.add_aov("chain_id", offset=1.0)
+with canvas.compositor.reset() as (image, output):
+    render = c.RenderLayers()
+    mask = mc.ValueToMask(value=render.o.chain_id, target=1.0)
+    parts = mc.MaskPixels(image=image, mask=mask)
+    grey = c.HueSaturationValue(image=parts.o.inverse, saturation=0.1)
+    c.AlphaOver(background=grey, foreground=parts.o.masked) >> output
+canvas.snapshot()
 ```
 
 ## World & Lighting

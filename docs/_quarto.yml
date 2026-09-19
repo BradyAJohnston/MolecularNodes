@@ -242,6 +242,16 @@ quartodoc:
         desc: 'Compositor node groups for post-processing renders: outlines, illustrative shading
           and masks from AOV passes'
       contents:
+      - name: nodes.compositor.CompositeConeShadow
+        children: embedded
+      - name: nodes.compositor.CompositeContourOutline
+        children: embedded
+      - name: nodes.compositor.CompositeDepthFog
+        children: embedded
+      - name: nodes.compositor.CompositeIDOutline
+        children: embedded
+      - name: nodes.compositor.CompositeIllustrate
+        children: embedded
       - name: nodes.compositor.CompositeIllustrative
         children: embedded
       - name: nodes.compositor.CompositeOutline
