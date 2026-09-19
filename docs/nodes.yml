@@ -678,6 +678,40 @@ Animate Value:
     to linearly interpolate the value beyond the min and max values.
   videos:
     - https://imgur.com/2oOnwRm
+Animate Ease:
+  description: >-
+    Reshape a linear `Value::Float` between 0 and 1 with one of Robert Penner's easing curves
+    (`Linear`, `Sinusoidal`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Exponential`, `Circular`,
+    `Back`, `Bounce` or `Elastic`, as listed on easings.net) applied at the start (`In`), the end
+    (`Out`) or both ends (`In Out`) of the transition, then map the result to `From::Float`..`To::Float`.
+    Works per point, so it can ease a field as well as a single value. Chain it after
+    `Animate Value::Node` to ease a frame-driven value, or set the same menus on `Animate Stagger::Node`
+    which calls it for each point. `Overshoot::Float` shapes `Back`, and `Period::Float` and
+    `Amplitude::Float` shape `Elastic`. With `Clamp::Boolean` off the curve is evaluated outside 0..1
+    and the output can leave the `From`..`To` range.
+Animate Stagger:
+  description: >-
+    A per-point 0..1 `Factor::Float` that starts later for each residue, chain, atom or attribute value,
+    so a structure can fade, grow or colour in along its sequence. Each point starts on
+    `Frame Start::Integer` plus its `Order` rank times `Delay::Float` and takes `Length::Float` frames to
+    reach 1, eased with the same `Interpolation` and `Ease` menus as `Animate Ease::Node`. `Order`
+    defaults to the residue (`URes ID::Node`); choose `Attribute` and link `res_id`, `b_factor` or any
+    other field to rank the points yourself, or link a stored start frame with `Frame Start` 0 and `Delay`
+    1. `Reverse::Boolean` runs the stagger from the last rank to the first. `Frame::Float` defaults to
+    the scene frame and can be linked to drive the stagger from something else. Feed `Factor` to
+    `Set Color::Node` through a `Mix` node's factor, to `Animate Reveal::Node`, or to the `Factor` input
+    of the symmetry nodes. `Start::Float` is the frame each point starts on, for debugging or for
+    timing other nodes.
+Animate Reveal:
+  description: >-
+    Reveal or hide atoms with a per-point `Factor::Float` between 0 and 1, typically from
+    `Animate Value::Node` or `Animate Stagger::Node`. `Alpha` multiplies the alpha channel of the
+    `Color` attribute, which the `Default` and `Squishy` materials read through `MN Color`, so atoms fade
+    in without changing their colour and a second `Animate Reveal` multiplies into the first. `Scale`
+    multiplies the `vdw_radii` attribute so `Style Spheres::Node` and the spheres of
+    `Style Ball and Stick::Node` grow in; bonds, ribbons and cartoons ignore it. `Cull` deletes the
+    selected atoms whose factor is 0. `Invert::Boolean` hides instead of revealing. The `Flat`,
+    `Ambient Occlusion` and `Transparent` materials do not read the per-point alpha.
 Animate Trails:
   description: >-
     Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms
