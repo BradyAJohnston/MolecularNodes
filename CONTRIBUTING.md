@@ -44,18 +44,19 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
 > [!IMPORTANT]
-> For the first time building, run the `build.py` to download and setup required packages for the first time.
+> Before the first build, create the node asset library with `uv run -m nodebpy.assets build` (see "Node assets" below).
 
-`blender` is shorthand for the Blender executable. Depending on your OS and installation method, you may need to provide the full path to the Blender executable such as `/path/to/blender` or `C:\Path\To\blender.exe`.
+The extension is built with [extbpy](https://github.com/bradyajohnston/extbpy). Everything Blender needs to know lives in `pyproject.toml`: `[project]` supplies the version, description, license and maintainer, and `[tool.extbpy]` supplies the Blender version, platforms, tags and permissions. `blender_manifest.toml` is generated at build time, so it is not committed. Dependencies are resolved from `uv.lock`, downloaded into `.extbpy/wheels/` (cached between builds) and packed into one `.zip` per platform. If a `blender` executable is on your `PATH` the zips are also validated with `blender --command extension validate`.
 
-Packages are sourced from the `uv.lock` file. To properly install inside of Blender we have to download the `.whl` files to `molecularnodes/wheels/` and ensure the `blender_manifest.toml` is up to date. This is all handled inside of the `build.py` script. There are options to just download (`--download-only`) or just build the `.zip` files (`--build-only`).
-
-```py
-blender -b --python-exit-code 1 -P build.py -- --help # show help for build.py
-blender -b --python-exit-code 1 -P build.py -- --download-only # download required packages
-blender -b --python-exit-code 1 -P build.py -- --build-only # build the .zip files
-blender -b --python-exit-code 1 -P build.py # download and build
+```sh
+uvx extbpy sync                       # set up molecularnodes/ so Blender can load it from source
+uvx extbpy build                      # build zips for all configured platforms (also runs sync)
+uvx extbpy build -p current           # only this machine's platform
+uvx extbpy manifest -p linux-x64      # show the generated manifest
+uvx extbpy download                   # only fill the wheel cache
 ```
+
+For local development, `uvx extbpy sync` writes `molecularnodes/blender_manifest.toml` and `molecularnodes/wheels/` for your platform (both gitignored), which is what Blender and the Blender VS Code extension need to load the add-on directly from this directory. Re-run it after `uv lock` changes the dependencies.
 
 ### Node assets
 
