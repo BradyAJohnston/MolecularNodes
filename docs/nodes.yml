@@ -751,3 +751,32 @@ Sample Nearest Atoms:
     mesh.
   videos:
     - https://imgur.com/UzNwLv2
+Composite Illustrative:
+  description: >-
+    Flat, illustrative composite of the render passes, wired straight from the Render Layers node. The `Base Color::Menu`
+    picks the rendered `Image::Color` or the `Diffuse Color::Color` pass, which ignores lighting and materials entirely;
+    the *Shading* panel darkens it by the smoothed `Ambient Occlusion::Color` or `Shadow::Color` pass (Kuwahara for a painterly
+    look, Blur for a soft one); the *Outline* panel draws lines from `Composite Outline Mask::Node` and `Composite Outline::Node`;
+    the *Background* panel composites over a flat colour and *Depth Fade* fades the alpha with distance from the camera.
+    Distances are in Angstrom, converted with `World Scale::Float`. From Python, `canvas.compositor.illustrative()` enables
+    the passes and inserts the node in one call.
+Composite Outline Mask:
+  description: >-
+    Line mask from the `Depth::Float` pass: a Sobel edge detector thresholded at `Depth Threshold::Float` (Angstrom, converted
+    with `World Scale::Float`), optionally combined with a Sobel on the `Normal::Vector` pass when `Use Normals::Bool` is on to
+    catch creases between surfaces at the same depth, then anti-aliased and dilated to `Size::Int` pixels. Unlike the shader
+    `Outline Mask::Node`, lines are drawn between separate objects and over transparent backgrounds.
+Composite Outline:
+  description: >-
+    Draws a `Mask::Float` over an `Image::Color` in `Line Color::Color`. The alpha is set once, deliberately, to the larger of the
+    line coverage and the image alpha, so lines survive on transparent backgrounds.
+Value to Mask:
+  description: >-
+    Compares a float pass against `Target::Float` within `Epsilon::Float` and outputs the matching pixels as `Mask::Float` and
+    the rest as `Inverse::Float`. Meant for AOV passes written by a material from an attribute such as `chain_id`
+    (`canvas.add_aov("chain_id")` and `mn.material.add_aov(material, "chain_id")`), so one chain can be recoloured, outlined
+    or left untouched in the compositor.
+Mask Pixels:
+  description: >-
+    Splits an `Image::Color` by a `Mask::Float` into the pixels inside it (`Masked::Color`) and outside it (`Inverse::Color`),
+    each with the rest made transparent, so the two can be filtered separately and recombined with an Alpha Over node.

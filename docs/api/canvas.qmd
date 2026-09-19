@@ -215,6 +215,32 @@ canvas.passes = ["combined", "z", "mist"]
 canvas.passes
 ```
 
+### Illustrative compositing
+
+The [Compositor](/nodes/compositor.qmd) node groups build flat, illustrative
+renders from the passes: `Composite Illustrative` shades the image (or the flat
+`Diffuse Color` pass) by the ambient occlusion or shadow pass and draws outlines
+where the depth changes. [](`~molecularnodes.scene.compositor.CompositorTree.illustrative`)
+enables the passes it needs and inserts it after the Render Layers node; the
+returned node handle exposes every input for tweaking afterwards.
+
+```python
+node = canvas.compositor.illustrative(outline=True, shading="ao", flat=True)
+node.i.outline_size.default_value = 3
+node.i.background.default_value = True
+canvas.snapshot()
+```
+
+Custom passes come from AOVs (arbitrary output variables): declare one on the
+canvas with [](`~mn.Canvas.add_aov`) and have a material write an attribute into
+it with [](`~molecularnodes.material.add_aov`). It then appears as an output of the
+Render Layers node, where `Value to Mask` selects, for example, a single chain.
+
+```python
+canvas.add_aov("chain_id")
+mn.material.add_aov(t1.styles[0].material, "chain_id")
+```
+
 ## World & Lighting
 
 The world shader — the scene lighting and background — is controlled through

@@ -5,6 +5,7 @@ title: "Changelog"
 # v520.1.0 - UNRELEASED
 
 ## Added
+- Compositor node groups under a new `Compositor` catalog: `Composite Illustrative` (flat, illustrative shading from the AO or Shadow pass with outlines, a flat background and a depth fade), `Composite Outline Mask` and `Composite Outline` (Sobel outlines from the Depth and Normal passes that survive transparent backgrounds), and `Value to Mask` and `Mask Pixels` for masking by an AOV pass. `canvas.compositor.illustrative()` enables the passes and inserts the composite in one call; `canvas.add_aov()` and `mn.material.add_aov()` set up AOV passes; `shadow` joins the render passes.
 - Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
