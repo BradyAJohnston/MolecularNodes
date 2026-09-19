@@ -10,10 +10,12 @@ from nodebpy.nodes.geometry import (
     GetBundleItem,
     GetGeometryBundle,
     Group,
+    NamedAttribute,
     Points,
     RealizeInstances,
     SetPosition,
     StoreNamedAttribute,
+    Value,
 )
 import molecularnodes as mn
 from molecularnodes.nodes._utils import (
@@ -22,6 +24,9 @@ from molecularnodes.nodes._utils import (
     get_final_style_nodes,
 )
 from molecularnodes.nodes.geometry import (
+    AnimateEase,
+    AnimateReveal,
+    AnimateStagger,
     BreakBonds,
     BuildElasticNetwork,
     Charge,
@@ -367,3 +372,321 @@ def test_evaluate_on_atoms_bundle():
 
     gs = GeometrySet(mol.object)
     assert gs.pointcloud is None or len(gs.pointcloud.points) == 0
+
+
+# Robert Penner's easing functions as listed on https://easings.net, ported
+# separately for In, Out and In Out so the node's shared-curve construction
+# (Out = 1 - f(1 - t), In Out from f(2t) and f(2 - 2t)) is checked against the
+# reference rather than against itself.
+def _penner(curve: str, ease: str, x: np.ndarray) -> np.ndarray:
+    x = np.asarray(x, dtype=float)
+    pi = np.pi
+    c1 = 1.70158
+    c2 = c1 * 1.525
+    c3 = c1 + 1
+    c4 = 2 * pi / 3
+    c5 = 2 * pi / 4.5
+
+    def bounce_out(u):
+        n1, d1 = 7.5625, 2.75
+        return np.where(
+            u < 1 / d1,
+            n1 * u * u,
+            np.where(
+                u < 2 / d1,
+                n1 * (u - 1.5 / d1) ** 2 + 0.75,
+                np.where(
+                    u < 2.5 / d1,
+                    n1 * (u - 2.25 / d1) ** 2 + 0.9375,
+                    n1 * (u - 2.625 / d1) ** 2 + 0.984375,
+                ),
+            ),
+        )
+
+    def poly(n):
+        return {
+            "In": x**n,
+            "Out": 1 - (1 - x) ** n,
+            "In Out": np.where(x < 0.5, 2 ** (n - 1) * x**n, 1 - (-2 * x + 2) ** n / 2),
+        }
+
+    def pinned(inner, x0=0.0, x1=1.0):
+        return np.where(x == 0, x0, np.where(x == 1, x1, inner))
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        table = {
+            "Linear": {"In": x, "Out": x, "In Out": x},
+            "Sinusoidal": {
+                "In": 1 - np.cos(x * pi / 2),
+                "Out": np.sin(x * pi / 2),
+                "In Out": -(np.cos(pi * x) - 1) / 2,
+            },
+            "Quadratic": poly(2),
+            "Cubic": poly(3),
+            "Quartic": poly(4),
+            "Quintic": poly(5),
+            "Exponential": {
+                "In": np.where(x == 0, 0.0, 2 ** (10 * x - 10)),
+                "Out": np.where(x == 1, 1.0, 1 - 2 ** (-10 * x)),
+                "In Out": pinned(
+                    np.where(
+                        x < 0.5,
+                        2 ** (20 * x - 10) / 2,
+                        (2 - 2 ** (-20 * x + 10)) / 2,
+                    )
+                ),
+            },
+            "Circular": {
+                "In": 1 - np.sqrt(1 - x**2),
+                "Out": np.sqrt(1 - (x - 1) ** 2),
+                "In Out": np.where(
+                    x < 0.5,
+                    (1 - np.sqrt(1 - (2 * x) ** 2)) / 2,
+                    (np.sqrt(1 - (-2 * x + 2) ** 2) + 1) / 2,
+                ),
+            },
+            "Back": {
+                "In": c3 * x**3 - c1 * x**2,
+                "Out": 1 + c3 * (x - 1) ** 3 + c1 * (x - 1) ** 2,
+                "In Out": np.where(
+                    x < 0.5,
+                    ((2 * x) ** 2 * ((c2 + 1) * 2 * x - c2)) / 2,
+                    ((2 * x - 2) ** 2 * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2,
+                ),
+            },
+            "Bounce": {
+                "In": 1 - bounce_out(1 - x),
+                "Out": bounce_out(x),
+                "In Out": np.where(
+                    x < 0.5,
+                    (1 - bounce_out(1 - 2 * x)) / 2,
+                    (1 + bounce_out(2 * x - 1)) / 2,
+                ),
+            },
+            "Elastic": {
+                "In": pinned(-(2 ** (10 * x - 10)) * np.sin((x * 10 - 10.75) * c4)),
+                "Out": pinned(2 ** (-10 * x) * np.sin((x * 10 - 0.75) * c4) + 1),
+                "In Out": pinned(
+                    np.where(
+                        x < 0.5,
+                        -(2 ** (20 * x - 10) * np.sin((20 * x - 11.125) * c5)) / 2,
+                        (2 ** (-20 * x + 10) * np.sin((20 * x - 11.125) * c5)) / 2 + 1,
+                    )
+                ),
+            },
+        }
+    return table[curve][ease]
+
+
+EASE_CURVES = [
+    "Linear",
+    "Sinusoidal",
+    "Quadratic",
+    "Cubic",
+    "Quartic",
+    "Quintic",
+    "Exponential",
+    "Circular",
+    "Back",
+    "Bounce",
+    "Elastic",
+]
+EASE_TYPES = ["In", "Out", "In Out"]
+
+
+def test_animate_ease_penner():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    grid = np.linspace(0.0, 1.0, 9)
+    t = grid[np.arange(len(mol)) % len(grid)]
+    mol.store_named_attribute(t, "t")
+    combos = [(curve, ease) for curve in EASE_CURVES for ease in EASE_TYPES]
+
+    with mol.tree.reset() as (atoms, join):
+        geometry = atoms
+        for curve, ease in combos:
+            geometry = geometry >> StoreNamedAttribute.point.float(
+                name=f"{curve}|{ease}",
+                value=AnimateEase(
+                    value=NamedAttribute.float("t"), interpolation=curve, ease=ease
+                ),
+            )
+        geometry >> join
+
+    for curve, ease in combos:
+        got = mol.named_attribute(f"{curve}|{ease}", evaluate=True)
+        assert np.allclose(got, _penner(curve, ease, t), atol=1e-4), (curve, ease)
+
+    # Out is the point reflection of In about (0.5, 0.5); the grid is symmetric
+    # so both t and 1 - t are sampled.
+    for curve in EASE_CURVES:
+        ease_in = mol.named_attribute(f"{curve}|In", evaluate=True)
+        ease_out = mol.named_attribute(f"{curve}|Out", evaluate=True)
+        mirrored = np.array(
+            [1 - ease_in[np.argmax(np.isclose(t, 1 - value))] for value in t]
+        )
+        assert np.allclose(ease_out, mirrored, atol=1e-4), curve
+
+
+def test_animate_ease_range_and_clamp():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    raw = np.linspace(-1.0, 2.0, 7)[np.arange(len(mol)) % 7]
+    mol.store_named_attribute(raw, "raw")
+
+    def ease(clamp: bool):
+        return AnimateEase(
+            value=NamedAttribute.float("raw"),
+            interpolation="Linear",
+            ease="In",
+            clamp=clamp,
+            from_=2.0,
+            to=-3.0,
+        )
+
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StoreNamedAttribute.point.float(name="clamped", value=ease(True))
+            >> StoreNamedAttribute.point.float(name="free", value=ease(False))
+            >> join
+        )
+
+    clamped = mol.named_attribute("clamped", evaluate=True)
+    free = mol.named_attribute("free", evaluate=True)
+    assert np.allclose(clamped, 2.0 - 5.0 * np.clip(raw, 0, 1), atol=1e-5)
+    assert np.allclose(free, 2.0 - 5.0 * raw, atol=1e-5)
+
+
+def test_animate_stagger():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    rank = (np.arange(len(mol)) % 4).astype(float)
+    mol.store_named_attribute(rank, "rank")
+    frames = [5.0, 12.0, 20.0, 27.5, 40.0]
+
+    def stagger(frame: float, **kwargs):
+        # Frame defaults to the scene frame, so a constant has to be linked in
+        options = dict(
+            order="Attribute",
+            attribute=NamedAttribute.float("rank"),
+            frame_start=10,
+            delay=5.0,
+            length=10.0,
+            interpolation="Linear",
+            ease="In",
+        )
+        options.update(kwargs)
+        return AnimateStagger(frame=Value(frame), **options)
+
+    with mol.tree.reset() as (atoms, join):
+        geometry = atoms
+        for frame in frames:
+            geometry = geometry >> StoreNamedAttribute.point.float(
+                name=f"stagger_{frame}", value=stagger(frame)
+            )
+        (
+            geometry
+            >> StoreNamedAttribute.point.float(
+                name="start", value=stagger(20.0).o.start
+            )
+            >> StoreNamedAttribute.point.float(
+                name="reverse", value=stagger(20.0, reverse=True)
+            )
+            >> StoreNamedAttribute.point.float(
+                name="snap", value=stagger(20.0, length=0.0)
+            )
+            >> StoreNamedAttribute.point.float(
+                name="cubic", value=stagger(17.0, interpolation="Cubic")
+            )
+            >> StoreNamedAttribute.point.float(
+                name="residue",
+                value=AnimateStagger(
+                    frame=Value(100.0),
+                    frame_start=0,
+                    delay=1.0,
+                    length=50.0,
+                    interpolation="Linear",
+                    ease="In",
+                ),
+            )
+            >> join
+        )
+
+    start = 10.0 + rank * 5.0
+    assert np.allclose(mol.named_attribute("start", evaluate=True), start)
+    for frame in frames:
+        expected = np.clip((frame - start) / 10.0, 0.0, 1.0)
+        got = mol.named_attribute(f"stagger_{frame}", evaluate=True)
+        assert np.allclose(got, expected, atol=1e-5), frame
+
+    start_reversed = 10.0 + (rank.max() - rank) * 5.0
+    expected = np.clip((20.0 - start_reversed) / 10.0, 0.0, 1.0)
+    assert np.allclose(mol.named_attribute("reverse", evaluate=True), expected)
+
+    snap = mol.named_attribute("snap", evaluate=True)
+    assert np.array_equal(snap, (20.0 >= start).astype(float))
+
+    linear = np.clip((17.0 - start) / 10.0, 0.0, 1.0)
+    cubic = mol.named_attribute("cubic", evaluate=True)
+    assert np.allclose(cubic, linear**3, atol=1e-5)
+
+    # the default Order staggers by residue through the `ures_id` attribute
+    ures_id = mol.named_attribute("ures_id")
+    expected = np.clip((100.0 - ures_id) / 50.0, 0.0, 1.0)
+    assert np.allclose(mol.named_attribute("residue", evaluate=True), expected)
+
+
+def test_animate_reveal():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    n = len(mol)
+    factor = (np.arange(n) % 3) / 2.0
+    first_half = np.arange(n) < n // 2
+    mol.store_named_attribute(factor, "f")
+    mol.store_named_attribute(first_half, "first_half")
+    color = mol.named_attribute("Color")
+    vdw_radii = mol.named_attribute("vdw_radii")
+    position = mol.named_attribute("position")
+    assert np.all(color[:, 3] == 1.0)
+
+    def reveal(selection=None, **kwargs):
+        # nodes must be built inside the tree context, so the selection is a factory
+        with mol.tree.reset() as (atoms, join):
+            if selection is not None:
+                kwargs["selection"] = selection()
+            (atoms >> AnimateReveal(factor=NamedAttribute.float("f"), **kwargs) >> join)
+        return {
+            name: mol.named_attribute(name, evaluate=True)
+            for name in ("Color", "vdw_radii", "position")
+        }
+
+    alpha = reveal(mode="Alpha")
+    assert np.allclose(alpha["Color"][:, :3], color[:, :3])
+    assert np.allclose(alpha["Color"][:, 3], factor)
+    assert np.allclose(alpha["vdw_radii"], vdw_radii)
+    assert np.allclose(alpha["position"], position)
+
+    inverted = reveal(mode="Alpha", invert=True)
+    assert np.allclose(inverted["Color"][:, 3], 1.0 - factor)
+
+    # the selection limits the change; unselected points keep their alpha
+    selected = reveal(
+        mode="Alpha", selection=lambda: NamedAttribute.boolean("first_half")
+    )
+    assert np.allclose(selected["Color"][first_half, 3], factor[first_half])
+    assert np.all(selected["Color"][~first_half, 3] == 1.0)
+
+    # a second reveal multiplies into the alpha the first one wrote
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> AnimateReveal(factor=NamedAttribute.float("f"))
+            >> AnimateReveal(factor=0.5)
+            >> join
+        )
+    assert np.allclose(mol.named_attribute("Color", evaluate=True)[:, 3], factor / 2)
+
+    scale = reveal(mode="Scale")
+    assert np.allclose(scale["vdw_radii"], vdw_radii * factor)
+    assert np.allclose(scale["Color"], color)
+
+    cull = reveal(mode="Cull")
+    assert len(cull["position"]) == int((factor > 0).sum())
+    assert np.allclose(cull["position"], position[factor > 0])
