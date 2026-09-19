@@ -193,6 +193,164 @@ class Camera:
         if furthest > self.clip_end:
             self.clip_end = furthest * 1.05
 
+    # -- timeline clips -----------------------------------------------------
+    # each returns a clip describing a camera move for `Canvas.timeline`; the
+    # camera is not touched until the clip is played
+
+    def look_at(
+        self,
+        target,
+        viewpoint: Viewpoint | str | Sequence[float] | None = None,
+        margin: float = 0.05,
+        run_time: float | None = None,
+        easing: str | None = None,
+    ):
+        """
+        A clip easing the camera to the framing [](`~mn.Canvas.look_at`) would
+        jump to. The pose is solved when the clip is played, against the
+        geometry as it is at that frame.
+
+        Parameters
+        ----------
+        target : MolecularEntity | bpy.types.Object | array_like
+            What to frame, as for [](`~mn.Canvas.look_at`).
+        viewpoint : Viewpoint | str | Sequence[float], optional
+            Viewing direction to move to; the current one when left out.
+        margin : float, default 0.05
+            Fraction of the frame to leave empty around the target.
+        run_time : float, optional
+            Length of the move in seconds (default 1).
+        easing : str, optional
+            Rate function, one of ``"smooth"`` (default), ``"linear"``,
+            ``"sine"``, ``"ease_in"``, ``"ease_out"``.
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.LookAt
+        """
+        from .timeline import LookAt
+
+        return LookAt(self, target, viewpoint, margin, run_time, easing)
+
+    def orbit(
+        self,
+        angle: float,
+        axis: str | Sequence[float] = "z",
+        about=None,
+        run_time: float | None = None,
+        easing: str | None = None,
+    ):
+        """
+        A clip swinging the camera around a pivot by ``angle`` degrees.
+
+        The camera keeps its distance from the pivot and its orientation
+        relative to it, so a framed subject stays framed. A full turntable is
+        ``orbit(360, easing="linear")``.
+
+        Parameters
+        ----------
+        angle : float
+            Degrees to rotate through; negative reverses the direction.
+        axis : str | Sequence[float], default "z"
+            World axis ``"x"``, ``"y"`` or ``"z"``, the camera's own ``"up"`` or
+            ``"right"``, or any vector.
+        about : MolecularEntity | bpy.types.Object | array_like, optional
+            The pivot, framed as for [](`~mn.Canvas.look_at`); its enclosing
+            sphere's centre is used. Every entity in the scene when left out.
+        run_time : float, optional
+            Length in seconds (default 2).
+        easing : str, optional
+            Rate function (default ``"smooth"``).
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.Orbit
+        """
+        from .timeline import Orbit
+
+        return Orbit(self, angle, axis, about, run_time, easing)
+
+    def dolly(
+        self, distance: float, run_time: float | None = None, easing: str | None = None
+    ):
+        """
+        A clip moving the camera along its view axis by ``distance`` world
+        units; positive moves towards the subject.
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.Dolly
+        """
+        from .timeline import Dolly
+
+        return Dolly(self, distance, run_time, easing)
+
+    def zoom(
+        self, lens: float, run_time: float | None = None, easing: str | None = None
+    ):
+        """
+        A clip easing the focal length to ``lens`` millimetres.
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.Tween
+        """
+        from .timeline import Tween
+
+        return Tween((self.camera_data, "lens"), lens, run_time, easing)
+
+    def move_to(
+        self,
+        location: Sequence[float] | None = None,
+        rotation: Sequence[float] | None = None,
+        run_time: float | None = None,
+        easing: str | None = None,
+    ):
+        """
+        A clip easing the camera to an explicit ``location`` and/or XYZ Euler
+        ``rotation`` in degrees.
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.MoveTo
+        """
+        from .timeline import MoveTo
+
+        return MoveTo(self, location, rotation, run_time, easing)
+
+    def focus(
+        self,
+        target,
+        fstop: float = 2.8,
+        run_time: float | None = None,
+        easing: str | None = None,
+    ):
+        """
+        A clip pulling focus onto ``target`` with depth of field.
+
+        Enables depth of field on the camera with an empty at the target's
+        centre as the focus object, so later camera moves keep the subject in
+        focus. Playing it again on another target pulls focus across.
+
+        Parameters
+        ----------
+        target : MolecularEntity | bpy.types.Object | array_like
+            What to focus on, e.g. ``mol.get_view("resid 40-60")``.
+        fstop : float, default 2.8
+            Aperture; smaller is shallower.
+        run_time : float, optional
+            Length in seconds (default 1).
+        easing : str, optional
+            Rate function (default ``"smooth"``).
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.Focus
+        """
+        from .timeline import Focus
+
+        return Focus(self, target, fstop, run_time, easing)
+
     def set_viewpoint(self, viewpoint: Viewpoint | str | Sequence[float]) -> None:
         """
         Set viewpoint to a preset or a custom Euler rotation.
