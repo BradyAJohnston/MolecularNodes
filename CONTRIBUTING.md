@@ -49,11 +49,14 @@ For writing code, I highly recommend using VSCode and the [Blender VS Code](http
 The extension is built with [extbpy](https://github.com/bradyajohnston/extbpy). Everything Blender needs to know lives in `pyproject.toml`: `[project]` supplies the version, description, license and maintainer, and `[tool.extbpy]` supplies the Blender version, platforms, tags and permissions. `blender_manifest.toml` is generated at build time, so it is not committed. Dependencies are resolved from `uv.lock`, downloaded into `.extbpy/wheels/` (cached between builds) and packed into one `.zip` per platform. If a `blender` executable is on your `PATH` the zips are also validated with `blender --command extension validate`.
 
 ```sh
-uvx extbpy build                      # build zips for all configured platforms
+uvx extbpy sync                       # set up molecularnodes/ so Blender can load it from source
+uvx extbpy build                      # build zips for all configured platforms (also runs sync)
 uvx extbpy build -p current           # only this machine's platform
 uvx extbpy manifest -p linux-x64      # show the generated manifest
 uvx extbpy download                   # only fill the wheel cache
 ```
+
+For local development, `uvx extbpy sync` writes `molecularnodes/blender_manifest.toml` and `molecularnodes/wheels/` for your platform (both gitignored), which is what Blender and the Blender VS Code extension need to load the add-on directly from this directory. Re-run it after `uv lock` changes the dependencies.
 
 ### Node assets
 

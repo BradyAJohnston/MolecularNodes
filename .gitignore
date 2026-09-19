@@ -12,8 +12,10 @@ tests/image_failures/
 __pycache__/*
 .vscode/*
 molecularnodes*.zip
-# extbpy wheel cache
+# extbpy: wheel cache, and the manifest + wheels it writes into the package for local development
 .extbpy/
+molecularnodes/blender_manifest.toml
+molecularnodes/wheels/
 *.pyc
 .Rproj.user
 /.quarto/
