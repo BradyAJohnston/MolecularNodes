@@ -16,7 +16,7 @@ from ..session import get_session
 from ..ui import addon
 from ..utils import _UNSET, Unset, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
-from .compositor import CompositorTree, setup_compositor
+from .compositor import CompositorTree, add_view_layer_aov, setup_compositor
 from .engines import EEVEE, Cycles
 from .recorder import _ANIMATION_FORMATS, FrameRecorder, _resolve_format, _write_gif
 from .world import WorldTree
@@ -88,6 +88,7 @@ RENDER_PASSES = {
     "emit": "use_pass_emit",
     "environment": "use_pass_environment",
     "ambient_occlusion": "use_pass_ambient_occlusion",
+    "shadow": "use_pass_shadow",
 }
 
 # still-image formats that IPython can embed inline, mapped to the format
@@ -753,6 +754,50 @@ class Canvas:
             )
         for name, attr in RENDER_PASSES.items():
             setattr(view_layer, attr, name in requested)
+
+    @property
+    def aovs(self) -> list[str]:
+        """
+        Names of the AOV (arbitrary output variable) passes on the view layer.
+
+        Returns
+        -------
+        list[str]
+            The AOV names, in view-layer order.
+        """
+        return [aov.name for aov in self.scene.view_layers[0].aovs]
+
+    def add_aov(
+        self, name: str, type: Literal["VALUE", "COLOR"] = "VALUE"
+    ) -> bpy.types.AOV:
+        """
+        Add a named AOV (arbitrary output variable) pass to the view layer.
+
+        An AOV is a custom render pass that materials write to with an
+        ``AOV Output`` shader node (see
+        :func:`molecularnodes.material.add_aov`). Once added it appears as an
+        output socket of that name on the compositor's Render Layers node,
+        where ``Value to Mask`` turns a float AOV such as ``chain_id`` into a
+        mask. Adding a name that already exists returns the existing pass.
+
+        ```python
+        canvas.add_aov("chain_id")
+        mn.material.add_aov(mol.styles[0].material, "chain_id")
+        ```
+
+        Parameters
+        ----------
+        name : str
+            Name of the pass, matched by the ``AOV Output`` node's name.
+        type : {"VALUE", "COLOR"}, default "VALUE"
+            Whether the pass carries a float or a colour per pixel.
+
+        Returns
+        -------
+        bpy.types.AOV
+            The view-layer pass.
+        """
+        return add_view_layer_aov(self.scene.view_layers[0], name, type)
 
     @property
     def view_transform(self) -> ViewTransform:

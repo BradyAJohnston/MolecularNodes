@@ -4,11 +4,13 @@
 from . import _handlers as handlers
 from . import _utils as utils
 from . import (
+    compositor,
     geometry,
     shader,
 )
 
 __all__ = [
+    "compositor",
     "geometry",
     "handlers",
     "shader",
