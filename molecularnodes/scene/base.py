@@ -786,6 +786,7 @@ class Canvas:
         target: MolecularEntity | bpy.types.Object | npt.ArrayLike,
         viewpoint: Viewpoint | str | Sequence[float] | None = None,
         margin: float = 0.05,
+        clip_near: bool = False,
     ) -> None:
         """
         Position the camera to look at and contain a target.
@@ -813,6 +814,12 @@ class Canvas:
             Fraction of the frame to leave empty around the target. ``0`` fits
             the target exactly to the frame, ``0.1`` leaves a ten percent
             border, and a negative value crops in past its edges.
+        clip_near : bool, default False
+            Move the near clipping plane up to the front of the target, so
+            geometry between the camera and the target is clipped away instead
+            of hiding it - how focusing on a buried ligand sees into the
+            cavity that holds it. See
+            [](`molecularnodes.scene.camera.Camera.clip_to_sphere`).
 
         Examples
         --------
@@ -845,7 +852,9 @@ class Canvas:
             points = blender_utils.evaluated_points(target)
         else:
             points = target
-        self.camera.frame_points(points, margin=margin, scene=self.scene)
+        self.camera.frame_points(
+            points, margin=margin, scene=self.scene, clip_near=clip_near
+        )
 
     def clear(self) -> None:
         """

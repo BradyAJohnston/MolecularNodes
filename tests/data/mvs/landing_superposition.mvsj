@@ -1,0 +1,126 @@
+{
+    "root": {
+        "kind": "root",
+        "children": [
+            {
+                "kind": "download",
+                "params": {
+                    "url": "https://files.wwpdb.org/download/4hhb.cif"
+                },
+                "children": [
+                    {
+                        "kind": "parse",
+                        "params": {
+                            "format": "mmcif"
+                        },
+                        "children": [
+                            {
+                                "kind": "structure",
+                                "params": {
+                                    "type": "model"
+                                },
+                                "children": [
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": "all"
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "cartoon"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "red"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "kind": "download",
+                "params": {
+                    "url": "https://files.wwpdb.org/download/1oj6.cif"
+                },
+                "children": [
+                    {
+                        "kind": "parse",
+                        "params": {
+                            "format": "mmcif"
+                        },
+                        "children": [
+                            {
+                                "kind": "structure",
+                                "params": {
+                                    "type": "model"
+                                },
+                                "children": [
+                                    {
+                                        "kind": "transform",
+                                        "params": {
+                                            "rotation": [
+                                                -0.7202161,
+                                                -0.33009904,
+                                                -0.61018308,
+                                                0.36257631,
+                                                0.57075962,
+                                                -0.73673053,
+                                                0.59146191,
+                                                -0.75184312,
+                                                -0.29138417
+                                            ],
+                                            "translation": [
+                                                -12.54,
+                                                46.79,
+                                                94.5
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "kind": "component",
+                                        "params": {
+                                            "selector": "all"
+                                        },
+                                        "children": [
+                                            {
+                                                "kind": "representation",
+                                                "params": {
+                                                    "type": "cartoon"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "kind": "color",
+                                                        "params": {
+                                                            "selector": "all",
+                                                            "color": "blue"
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "metadata": {
+        "version": "0.1",
+        "timestamp": "2023-11-27T12:42:34.671240"
+    }
+}
