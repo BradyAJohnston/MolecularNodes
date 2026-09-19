@@ -19,7 +19,7 @@ import pytest
 import molecularnodes as mn
 import molecularnodes.nodes.geometry as mg
 from .constants import data_dir
-from .utils import ImageSnapshotExtension
+from .utils import IMAGE_FAIL_THRESHOLD, ImageSnapshotExtension
 
 
 @pytest.fixture
@@ -225,13 +225,28 @@ MVS_RENDER_EXAMPLES = (
     ("annotations", True),
 )
 
+# The components example focuses on a ligand buried in the protein, so the
+# clipped camera sits inside a cavity lit almost entirely by bounced light. At
+# the golden sample count every surface keeps speckle of up to ~10/255 (adaptive
+# sampling stops long before it converges, and converging it would take
+# thousands of samples), and cross-platform drift reshuffles that speckle over
+# 3-20% of pixels. Raise the per-channel threshold for that case only: the
+# drift then stays around 0.1% of pixels, while a real change still fails - a
+# shading tweak of the kind main makes moves ~3% of pixels past this threshold,
+# and wrong styling, colouring or framing far more.
+MVS_RENDER_THRESHOLDS = {"components": 16 / 255}
+
 
 @pytest.mark.parametrize("name,needs_framing", MVS_RENDER_EXAMPLES)
-def test_render_mvs_example(
-    name, needs_framing, golden_canvas, tmp_path, image_snapshot
-):
+def test_render_mvs_example(name, needs_framing, golden_canvas, tmp_path, snapshot):
     import warnings
     from molecularnodes.entities import mvs
+
+    image_snapshot = snapshot.use_extension(
+        ImageSnapshotExtension.with_tolerance(
+            fail_threshold=MVS_RENDER_THRESHOLDS.get(name, IMAGE_FAIL_THRESHOLD)
+        )
+    )
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", mvs.MVSImportWarning)
