@@ -12,6 +12,8 @@ tests/image_failures/
 __pycache__/*
 .vscode/*
 molecularnodes*.zip
+# extbpy wheel cache
+.extbpy/
 *.pyc
 .Rproj.user
 /.quarto/
