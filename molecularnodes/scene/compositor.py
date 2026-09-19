@@ -1,11 +1,19 @@
 from contextlib import contextmanager
-from typing import Iterator, NamedTuple
+from typing import Iterator, Literal, NamedTuple
 import bpy
 from bpy.types import CompositorNodeTree
 from nodebpy import compositor as c
 from nodebpy.builder import ColorSocket, TreeBuilder
+from ..nodes.compositor import CompositeIllustrative
 
 annotations_image = "mn_annotations"
+
+# shading source for `CompositorTree.illustrative()` -> (view layer pass
+# attribute, Render Layers output accessor, group menu item)
+_SHADING_SOURCES = {
+    "ao": ("use_pass_ambient_occlusion", "ambient_occlusion", "Ambient Occlusion"),
+    "shadow": ("use_pass_shadow", "shadow", "Shadow"),
+}
 
 
 class ResetCompositorSockets(NamedTuple):
@@ -205,6 +213,90 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             )
             annotations = c.Image(image=_annotations_image())
             c.AlphaOver(self._wrap(source), annotations, 1.0) >> output
+
+    def illustrative(
+        self,
+        *,
+        outline: bool = True,
+        shading: Literal["ao", "shadow"] | None = "ao",
+        flat: bool = False,
+        **inputs,
+    ) -> CompositeIllustrative:
+        """Insert a ``Composite Illustrative`` node between Render Layers and
+        whatever currently consumes the rendered image.
+
+        Enables the render passes the node reads (depth, normal, diffuse
+        colour and the chosen shading pass) on the view layer, adds the node
+        group with its inputs linked to the Render Layers node, and re-routes
+        every existing consumer of the rendered image (the annotation overlay,
+        or the output itself) to read from it instead. Call it once; calling
+        again stacks a second node behind the first.
+
+        ```python
+        node = canvas.compositor.illustrative(outline=True, shading="ao")
+        node.i.outline_size.default_value = 3
+        node.i.outline_color.default_value = (0.1, 0.1, 0.2, 1.0)
+        ```
+
+        Parameters
+        ----------
+        outline : bool, default True
+            Draw lines where the depth (and optionally the normal) changes
+            sharply, from the ``Composite Outline Mask`` node inside the group.
+        shading : {"ao", "shadow"} or None, default "ao"
+            Which pass darkens the base colour: the ambient occlusion pass, the
+            shadow pass, or ``None`` for no shading at all.
+        flat : bool, default False
+            Shade the flat ``Diffuse Color`` pass, which ignores lighting and
+            materials, instead of the rendered image.
+        **inputs
+            Any other input of the node by its Python name, for example
+            ``outline_size=3`` or ``depth_threshold=4.0`` (Angstrom).
+
+        Returns
+        -------
+        CompositeIllustrative
+            The node handle; tweak its inputs afterwards through ``node.i``.
+        """
+        if shading is not None and shading not in _SHADING_SOURCES:
+            raise ValueError(
+                f"Unknown shading source {shading!r}; "
+                f"expected one of {sorted(_SHADING_SOURCES)} or None."
+            )
+        view_layer = self._scene.view_layers[0]
+        view_layer.use_pass_z = True
+        view_layer.use_pass_normal = True
+        view_layer.use_pass_diffuse_color = True
+        links: dict[str, object] = {}
+        if shading is not None:
+            pass_attr, accessor, menu_item = _SHADING_SOURCES[shading]
+            setattr(view_layer, pass_attr, True)
+            inputs.setdefault("shading_source", menu_item)
+
+        with self:
+            rl_node = self._render_layers_node()
+            render = c.RenderLayers._from_node(rl_node)
+            consumers = [link.to_socket for link in rl_node.outputs["Image"].links]
+            if shading is not None:
+                links[accessor] = getattr(render.o, accessor)
+            node = CompositeIllustrative(
+                image=render.o.image,
+                alpha=render.o.alpha,
+                depth=render.o.depth,
+                normal=render.o.normal,
+                diffuse_color=render.o.diffuse_color,
+                base_color="Diffuse Color" if flat else "Image",
+                shading=shading is not None,
+                outline=outline,
+                **links,
+                **inputs,
+            )
+            if consumers:
+                for to_socket in consumers:
+                    self.tree.links.new(node.node.outputs[0], to_socket)
+            else:
+                node >> self.output
+        return node
 
 
 def setup_compositor(scene: bpy.types.Scene) -> CompositorTree:

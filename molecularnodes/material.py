@@ -1,5 +1,5 @@
 from types import ModuleType
-from typing import Generic, TypeVar, overload
+from typing import Generic, Literal, TypeVar, overload
 import bpy
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
@@ -75,6 +75,53 @@ def add_all_materials() -> dict[str, bpy.types.Material]:
     for mat in materials.values():
         mat.use_fake_user = True
     return materials
+
+
+def add_aov(
+    material: bpy.types.Material,
+    name: str,
+    attribute: str | None = None,
+    type: Literal["VALUE", "COLOR"] = "VALUE",
+) -> sh.AovOutput:
+    """
+    Write a named attribute of the geometry to an AOV render pass.
+
+    Appends an ``Attribute`` node reading ``attribute`` and an ``AOV Output``
+    node named ``name`` to the material's shader tree, leaving the rest of the
+    tree untouched. The pass itself is declared on the view layer with
+    :meth:`molecularnodes.Canvas.add_aov`; it then appears as an output of the
+    compositor's Render Layers node, where the ``Value to Mask`` node turns a
+    float AOV such as ``chain_id`` into a mask.
+
+    ```python
+    canvas.add_aov("chain_id")
+    mn.material.add_aov(mol.styles[0].material, "chain_id")
+    ```
+
+    Parameters
+    ----------
+    material : bpy.types.Material
+        The material whose shader tree gets the nodes.
+    name : str
+        Name of the AOV pass, matching the one added to the view layer.
+    attribute : str, optional
+        Name of the geometry attribute to read. Defaults to ``name``.
+    type : {"VALUE", "COLOR"}, default "VALUE"
+        Write the attribute as a float (the Attribute node's ``Fac``) or as a
+        colour, matching the type of the view-layer pass.
+
+    Returns
+    -------
+    nodebpy.shader.AovOutput
+        The added ``AOV Output`` node.
+    """
+    tree = material.node_tree
+    assert tree is not None
+    with TreeBuilder(tree):
+        source = sh.Attribute(attribute_name=attribute or name)
+        if type == "COLOR":
+            return sh.AovOutput(color=source.o.color, aov_name=name)
+        return sh.AovOutput(value=source.o.fac, aov_name=name)
 
 
 T = TypeVar("T")
@@ -164,6 +211,15 @@ class PresetMaterial:
     def node(self) -> g.Material:
         "Add a `Material` node to the active GeometryNodeTree and set it to this material."
         return g.Material(material=self.material)
+
+    def add_aov(
+        self,
+        name: str,
+        attribute: str | None = None,
+        type: Literal["VALUE", "COLOR"] = "VALUE",
+    ) -> sh.AovOutput:
+        "Write a named attribute to an AOV render pass; see :func:`add_aov`."
+        return add_aov(self.material, name, attribute=attribute, type=type)
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}(material={self.material.name!r})"
