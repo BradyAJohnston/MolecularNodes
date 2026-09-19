@@ -1,11 +1,20 @@
 import random
 from typing import Any
 import bpy
+import MDAnalysis as mda
 import numpy as np
 import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
-from nodebpy.nodes.geometry import Group, RealizeInstances, SetPosition
+from nodebpy.nodes.geometry import (
+    GetBundleItem,
+    GetGeometryBundle,
+    Group,
+    Points,
+    RealizeInstances,
+    SetPosition,
+    StoreNamedAttribute,
+)
 import molecularnodes as mn
 from molecularnodes.nodes._utils import (
     custom_boolean_iswitch,
@@ -14,12 +23,15 @@ from molecularnodes.nodes._utils import (
 )
 from molecularnodes.nodes.geometry import (
     BreakBonds,
+    BuildElasticNetwork,
+    Charge,
     FindBonds,
     NucleicChi,
     NucleicDihedral,
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
+    SegmentID,
     SetColor,
     StyleCartoon,
 )
@@ -269,3 +281,89 @@ def test_periodic_array_no_dimensions():
 
     assert defaults_0 == defaults_10
     assert defaults_0[1:7] == [0] * 6
+
+
+def _store_charge_node(mol):
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StoreNamedAttribute.point.float(name="charge_node", value=Charge())
+            >> join
+        )
+    return mol.named_attribute("charge_node", evaluate=True)
+
+
+def test_charge_node():
+    # 4ozs provides no charges, so there is no `charge` attribute and the node reads 0.0
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    assert "charge" not in mol.list_attributes()
+    assert np.all(_store_charge_node(mol) == 0)
+
+    # 8U8W carries formal charges on its ions, which the node reads back verbatim
+    mol = mn.Molecule.fetch("8U8W", cache=data_dir)
+    expected = mol.named_attribute("charge")
+    assert np.any(expected != 0)
+    assert np.allclose(_store_charge_node(mol), expected)
+
+
+@pytest.mark.parametrize(
+    "topology, trajectory, n_segments",
+    [
+        ("md_ppr/md.tpr", "md_ppr/md.gro", 3),
+        ("md_ppr/box.gro", "md_ppr/first_5_frames.xtc", 1),
+    ],
+)
+def test_segment_id(topology, trajectory, n_segments):
+    universe = mda.Universe(data_dir / topology, data_dir / trajectory)
+    traj = mn.Molecule(universe)
+    expected = traj.named_attribute("segid")
+    assert len(np.unique(expected)) == n_segments
+    assert np.array_equal(np.unique(expected), np.arange(n_segments))
+
+    with traj.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StoreNamedAttribute.point.integer(name="node_segid", value=SegmentID())
+            >> join
+        )
+
+    assert np.array_equal(traj.named_attribute("node_segid", evaluate=True), expected)
+
+
+def test_build_elastic_network():
+    mol = mn.Molecule.fetch("4ozs")
+
+    with mol.tree.reset() as (atoms, join):
+        BuildElasticNetwork(atoms) >> join
+
+    gs = GeometrySet(mol.object)
+    assert gs.mesh
+    assert len(gs.mesh.edges) == 1049
+    assert len(gs.mesh.vertices) == sum(mol["is_alpha_carbon"])
+
+
+def test_evaluate_on_atoms_bundle():
+    """
+    The `Evaluate on Atoms` node was previously still storing the 'MN/Atoms' bundle,
+    even when the output was set to geometry. It was just filling it with emptry geometry.
+    This was leading to the style nodes failing to work properly if we were finding bonds,
+    as the resulting bonded geoemtry was output as the `Geometry` but the 'MN/Atoms'
+    bundle was populated with the original pre-bonded geometry, meaning the style used
+    this old / outdated information instead of the results of the bond calculation.
+
+    For the test we want to check that the bundle isn't being created fromt he `FindBonds()`
+    and we check if it exists and create a point if so which we can test for with pytest.
+    """
+
+    mol = mn.Molecule.fetch("4ozs")
+
+    with mol.tree.reset() as (atoms, join):
+        bundle = (atoms >> FindBonds() >> GetGeometryBundle()).o.bundle
+
+        # importantly we have to use the typed "GetBundleItem" becuase
+        # if the item we are requesting doesn't have the same type the "exists"
+        # returns false, even if it exists but is of a different type
+        Points(GetBundleItem.bundle(bundle, "MN").o.exists) >> join
+
+    gs = GeometrySet(mol.object)
+    assert gs.pointcloud is None or len(gs.pointcloud.points) == 0

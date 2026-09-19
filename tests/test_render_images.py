@@ -85,7 +85,7 @@ def test_render_style(style, golden_canvas, tmp_path, image_snapshot):
 
 @pytest.mark.parametrize(
     "material",
-    ["Default", "AmbientOcclusion", "Flat", "Squishy", "TransparentOutline"],
+    ["Default", "AmbientOcclusion", "Flat", "Squishy", "Transparent"],
 )
 def test_render_material(material, golden_canvas, tmp_path, image_snapshot):
     mol = _fetch_molecule()

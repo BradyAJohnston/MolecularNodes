@@ -36,7 +36,7 @@ You can also install and use inside of your own python projects.
 
 Blender is very particular about python versions (and especially `numpy` versions). Blender adheres to the [VFX Reference platform](https://vfxplatform.com/) which determines python and common package versions to be used across multiple VFX software for consistency.
 
-Because of this, the `bpy` package upon which `molecularnodes` is build is locked to `python==3.13` and in particular `numpy>=2.3`. Going outside of these very particular versions is recipe for distaster.
+Because of this, the `bpy` package upon which `molecularnodes` is build is locked to `python==3.13` and in particular `numpy>=2.3`. Going outside of these very particular versions is recipe for disaster.
 
 :::
 

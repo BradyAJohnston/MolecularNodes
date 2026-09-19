@@ -14,7 +14,9 @@ class AmbientOcclusion(CustomShaderGroup):
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         _material_output = s.MaterialOutput(
-            surface=s.Emission(color=ColorAO(color=MNColor().o.color)),
+            surface=s.Emission(
+                color=ColorAO(color=MNColor().o.color, ao_space="Global", exponent=2.0)
+            ),
             is_active_output=True,
         )
 

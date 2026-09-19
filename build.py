@@ -1,5 +1,6 @@
 import argparse
 import re
+import shutil
 import subprocess
 import sys
 import tomllib
@@ -134,10 +135,20 @@ def build_extension(
     try:
         import bpy
 
-        executable = bpy.app.binary_path
-        print(f"\nBuilding extension using current Blender instance: {executable}")
+        # The pip-installed `bpy` module imports fine but has no binary.
+        executable = bpy.app.binary_path or None
     except ImportError:
-        executable = blender_path or "blender"
+        executable = None
+
+    if executable:
+        print(f"\nBuilding extension using current Blender instance: {executable}")
+    else:
+        executable = blender_path or shutil.which("blender")
+        if not executable:
+            raise FileNotFoundError(
+                "No Blender executable found. Run this script through Blender "
+                "(blender -b -P build.py) or put `blender` on PATH."
+            )
         print(f"\nBuilding extension using Blender at: {executable}")
 
     args = [executable, "--command", "extension", "build"]

@@ -10,7 +10,7 @@ from .nodes.materials import (
     flat,
     flat_outline,
     squishy,
-    transparent_outline,
+    transparent,
 )
 from .nodes.shader import ColorAO
 from .nodes.shader import FlatInternal as FlatShader
@@ -27,7 +27,7 @@ RECIPES: dict[str, ModuleType] = {
         flat,
         flat_outline,
         squishy,
-        transparent_outline,
+        transparent,
         ambient_occlusion,
     )
 }
@@ -356,70 +356,62 @@ class Squishy(PresetMaterial):
     roughness = SocketValue[float]("bsdf", "roughness", "Roughness of the surface.")
 
 
-class TransparentOutline(PresetMaterial):
+class Transparent(PresetMaterial):
     """
-    A partially transparent material with an optional solid outline.
+    A partially transparent material with an optional Fresnel rim.
+
+    In ``Fresnel`` mode a solid color is blended in at grazing angles, which
+    gives the transparent surface a visible silhouette; in ``Transparent``
+    mode the surface is a plain diffuse / transparent mix.
 
     Parameters
     ----------
-    alpha : float, optional
-        Opacity of the surface; ``0`` is fully transparent, ``1`` fully
-        opaque. Defaults to the recipe's value.
-    outline : bool, optional
-        Whether to render the solid outline around the object. Defaults to
-        the recipe's value.
+    transparency : float, optional
+        How see-through the surface is; ``0`` is fully opaque, ``1`` fully
+        transparent. Defaults to the recipe's value.
+    fresnel : bool, optional
+        Whether to blend the rim color in at grazing angles. Defaults to the
+        recipe's value.
     outline_color : tuple[float, float, float, float], optional
-        Color of the outline. Defaults to the recipe's value.
-    threshold : float, optional
-        Threshold for the edge detection that forms the outline. Defaults to
-        the recipe's value.
-    thickness : float, optional
-        Thickness of the outline. Defaults to the recipe's value.
+        Color blended in at grazing angles when ``fresnel`` is enabled.
+        Defaults to the recipe's value.
     name : str, optional
         Name for the created material datablock. Defaults to
-        ``"Transparent Outline"``.
+        ``"Transparent"``.
     """
 
-    name = "Transparent Outline"
-    recipe = transparent_outline
+    name = "Transparent"
+    recipe = transparent
 
     def __init__(
         self,
-        alpha: float | None = None,
-        outline: bool | None = None,
+        transparency: float | None = None,
+        fresnel: bool | None = None,
         outline_color: tuple[float, float, float, float] | None = None,
-        threshold: float | None = None,
-        thickness: float | None = None,
         *,
         name: str | None = None,
     ):
         self._build(name)
         self.node = self._handle(TransparentOutlineShader)
-        if alpha is not None:
-            self.alpha = alpha
-        if outline is not None:
-            self.outline = outline
+        if transparency is not None:
+            self.transparency = transparency
+        if fresnel is not None:
+            self.fresnel = fresnel
         if outline_color is not None:
             self.outline_color = outline_color
-        if threshold is not None:
-            self.threshold = threshold
-        if thickness is not None:
-            self.thickness = thickness
 
-    alpha = SocketValue[float]("node", "alpha", "Opacity of the surface.")
+    transparency = SocketValue[float](
+        "node", "transparency", "How see-through the surface is (0 opaque, 1 clear)."
+    )
     outline_color = SocketValue[tuple[float, float, float, float]](
-        "node", "outline_color", "Color of the outline."
+        "node", "outline_color", "Color blended in at grazing angles in Fresnel mode."
     )
-    threshold = SocketValue[float](
-        "node", "threshold", "Threshold for the outline edge detection."
-    )
-    thickness = SocketValue[float]("node", "thickness", "Thickness of the outline.")
 
     @property
-    def outline(self) -> bool:
-        "Whether the solid outline is rendered."
-        return self.node.i.menu.default_value == "Outline"
+    def fresnel(self) -> bool:
+        "Whether the rim color is blended in at grazing angles."
+        return self.node.i.menu.default_value == "Fresnel"
 
-    @outline.setter
-    def outline(self, value: bool) -> None:
-        self.node.i.menu.default_value = "Outline" if value else "Transparent"
+    @fresnel.setter
+    def fresnel(self, value: bool) -> None:
+        self.node.i.menu.default_value = "Fresnel" if value else "Transparent"
