@@ -7,9 +7,12 @@ import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import (
+    Compare,
     GetBundleItem,
     GetGeometryBundle,
     Group,
+    Index,
+    MeshLine,
     Points,
     RealizeInstances,
     SetPosition,
@@ -25,14 +28,17 @@ from molecularnodes.nodes.geometry import (
     BreakBonds,
     BuildElasticNetwork,
     Charge,
+    ColorToOKLab,
     FindBonds,
     NucleicChi,
     NucleicDihedral,
+    OKLabToColor,
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
     SegmentID,
     SetColor,
+    SimulateElasticNetwork,
     StyleCartoon,
 )
 from .constants import codes, data_dir
@@ -367,3 +373,86 @@ def test_evaluate_on_atoms_bundle():
 
     gs = GeometrySet(mol.object)
     assert gs.pointcloud is None or len(gs.pointcloud.points) == 0
+
+
+# Reference values from Ottosson, "A perceptual color space for image processing"
+# (https://bottosson.github.io/posts/oklab/), linear sRGB in, OKLab out.
+OKLAB_REFERENCE = {
+    (1.0, 0.0, 0.0): (0.62796, 0.22486, 0.12585),
+    (0.0, 1.0, 0.0): (0.86644, -0.23389, 0.17950),
+    (0.0, 0.0, 1.0): (0.45201, -0.03246, -0.31153),
+    (1.0, 1.0, 1.0): (1.0, 0.0, 0.0),
+}
+
+
+@pytest.mark.parametrize("rgb", list(OKLAB_REFERENCE))
+def test_color_to_oklab(rgb):
+    """Color to OKLab matches Ottosson's reference values and round-trips."""
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    with mol.tree.reset() as (atoms, join):
+        oklab = ColorToOKLab(color=(*rgb, 1.0))
+        (
+            atoms
+            >> StoreNamedAttribute.point.vector(name="oklab", value=oklab)
+            >> StoreNamedAttribute.point.color(
+                name="rgb", value=OKLabToColor(oklab=oklab)
+            )
+            >> join
+        )
+    lab = mol.named_attribute("oklab", evaluate=True)[0]
+    back = mol.named_attribute("rgb", evaluate=True)[0, :3]
+    assert np.allclose(lab, OKLAB_REFERENCE[rgb], atol=1e-3), lab
+    assert np.allclose(back, rgb, atol=1e-4), back
+
+
+def _simulate_two_point_network(mol, frames: int):
+    """Two points 1.0 apart with masses 1 and 3, joined by one edge whose rest
+    length is set to 0.5, simulated with no external forces."""
+    with mol.tree.reset() as (atoms, join):
+        mass = Compare.integer.equal(Index().o.index, 0).o.result.switch.float(3.0, 1.0)
+        (
+            MeshLine(count=2, start_location=(0.0, 0.0, 0.0), offset=(1.0, 0.0, 0.0))
+            >> StoreNamedAttribute.point.float(name="mass", value=mass)
+            >> SimulateElasticNetwork(
+                substeps=1,
+                force=(0.0, 0.0, 0.0),
+                drag=0.0,
+                edge_length_source="Custom",
+                edge_length=0.5,
+            )
+            >> join
+        )
+    scene = bpy.context.scene
+    start = scene.frame_current
+    try:
+        for f in range(start, start + frames + 1):
+            scene.frame_set(f)
+        return (
+            mol.named_attribute("position", evaluate=True),
+            mol.named_attribute("inverse_mass", evaluate=True),
+        )
+    finally:
+        scene.frame_set(start)
+
+
+def test_simulate_elastic_network_inverse_mass():
+    """The stored inverse mass is 1 / mass."""
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    _, inverse_mass = _simulate_two_point_network(mol, frames=0)
+    assert np.allclose(inverse_mass, [1.0, 1.0 / 3.0], atol=1e-6), inverse_mass
+
+
+def test_simulate_elastic_network_two_points():
+    """One XPBD step of a single distance constraint: each point moves in
+    proportion to its inverse mass, the mass-weighted centre stays put and the
+    edge reaches its rest length."""
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    positions, _ = _simulate_two_point_network(mol, frames=1)
+    # C = 1.0 - 0.5, point 0 (w=1) moves C * 1 / (1 + 1/3), point 1 (w=1/3) moves
+    # C * (1/3) / (1 + 1/3), both toward each other along x
+    expected = np.array([[0.375, 0.0, 0.0], [0.875, 0.0, 0.0]])
+    assert np.allclose(positions, expected, atol=1e-4), positions
+    masses = np.array([1.0, 3.0])
+    centre = (positions * masses[:, None]).sum(axis=0) / masses.sum()
+    assert np.allclose(centre, [0.75, 0.0, 0.0], atol=1e-4), centre
+    assert np.isclose(np.linalg.norm(positions[1] - positions[0]), 0.5, atol=1e-4)

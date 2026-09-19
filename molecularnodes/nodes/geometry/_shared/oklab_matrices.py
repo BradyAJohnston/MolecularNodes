@@ -11,7 +11,7 @@ from nodebpy.builder import CustomGeometryGroup, MatrixSocket, SocketAccessor
 
 class OKLabMatrices(CustomGeometryGroup):
     """
-    .OKLab Matrices
+    The OKLab transform matrices for linear sRGB input: M1 is linear sRGB to LMS, M2 is cube-rooted LMS to OKLab (Ottosson 2020).
 
     Outputs
     -------
@@ -23,6 +23,9 @@ class OKLabMatrices(CustomGeometryGroup):
 
     _name = ".OKLab Matrices"
     _color_tag = "INPUT"
+    _tree_properties = {
+        "description": "The OKLab transform matrices for linear sRGB input: M1 is linear sRGB to LMS, M2 is cube-rooted LMS to OKLab (Ottosson 2020)."
+    }
 
     class _Inputs(SocketAccessor):
         pass
@@ -47,17 +50,21 @@ class OKLabMatrices(CustomGeometryGroup):
         m1 = tree.outputs.matrix("M1")
         m2 = tree.outputs.matrix("M2")
 
-        combine_matrix = g.CombineMatrix(
-            column_1_row_1=0.818933,
-            column_1_row_2=0.032985,
-            column_1_row_3=0.0482,
-            column_2_row_1=0.3618667,
-            column_2_row_2=0.9293119,
-            column_2_row_3=0.264366,
-            column_3_row_1=-0.1288597,
-            column_3_row_2=0.03614564,
-            column_3_row_3=0.633852,
-        )
+        with g.Frame("Linear sRGB to LMS"):
+            combine_matrix = g.CombineMatrix(
+                column_1_row_1=0.4122215,
+                column_1_row_2=0.2119035,
+                column_1_row_3=0.08830246,
+                column_2_row_1=0.5363325,
+                column_2_row_2=0.6806995,
+                column_2_row_3=0.28171885,
+                column_3_row_1=0.051446,
+                column_3_row_2=0.10739696,
+                column_3_row_3=0.6299787,
+            )
+            _string = g.String(
+                string="M1 maps linear sRGB (Rec.709 primaries, Blender's colour sockets) to LMS cone response and M2 maps cube-rooted LMS to OKLab. Constants from Ottosson, A perceptual color space for image processing (2020), https://bottosson.github.io/posts/oklab/. Column c, row r holds M[r][c]."
+            )
         combine_matrix_1 = g.CombineMatrix(
             column_1_row_1=0.21045426,
             column_1_row_2=1.9779985,
