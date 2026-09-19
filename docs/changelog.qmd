@@ -8,6 +8,7 @@ title: "Changelog"
 - Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
+- `Animate Ease`, `Animate Stagger` and `Animate Reveal` nodes under Animate: Penner easing curves (In / Out / In Out) for any 0..1 value or field, a per-point stagger factor that starts later for each residue, chain, atom or attribute value, and a node that fades (`Color` alpha), grows (`vdw_radii`) or culls atoms by a factor.
 
 ## Changed
 - The `lipophobicity` attribute is no longer stored on import, and partial charges are no longer looked up from the residue and atom name. Both lookups will return as nodes instead. [#1228](https://github.com/BradyAJohnston/MolecularNodes/issues/1228)

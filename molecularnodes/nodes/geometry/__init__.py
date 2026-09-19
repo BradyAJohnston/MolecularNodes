@@ -3,8 +3,11 @@ from .accumulate_axis_rotation import AccumulateAxisRotation
 from .angstrom_to_world import AngstromToWorld
 from .animate_action import AnimateAction
 from .animate_dihedrals import AnimateDihedrals
+from .animate_ease import AnimateEase
 from .animate_frames import AnimateFrames
 from .animate_peptide_to_curve import AnimatePeptideToCurve
+from .animate_reveal import AnimateReveal
+from .animate_stagger import AnimateStagger
 from .animate_trails import AnimateTrails
 from .animate_value import AnimateValue
 from .animate_wiggle import AnimateWiggle
@@ -265,8 +268,11 @@ __all__ = (
     "AngstromToWorld",
     "AnimateAction",
     "AnimateDihedrals",
+    "AnimateEase",
     "AnimateFrames",
     "AnimatePeptideToCurve",
+    "AnimateReveal",
+    "AnimateStagger",
     "AnimateTrails",
     "AnimateValue",
     "AnimateWiggle",
