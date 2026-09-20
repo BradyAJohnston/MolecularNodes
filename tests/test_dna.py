@@ -198,7 +198,7 @@ class TestOXDNAReading:
         del traj
 
         bpy.data.objects[obj_name].select_set(True)
-        bpy.ops.mn.reload_trajectory()
+        bpy.ops.mn.session_reload_item()
 
         # when reloading the object, a brand new traj had to be created, which updates
         # the uuid on the object, so the old traj will not longer be able to find any
