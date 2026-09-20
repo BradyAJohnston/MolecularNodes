@@ -356,12 +356,14 @@ The long-form written documentation is all inside of `docs/`. Documentation is w
 
 ### Node Documentation
 
-The `.blend` asset file (`molecularnodes/assets/node_data_file.blend`) is the source of truth for the nodes: their descriptions, socket names, tooltips, defaults and asset catalogs. To update the descriptions of inputs, outputs and data types, the nodes themselves need to be updated inside the `.blend` file. Two things are generated from it:
+The nodes are ultimatley defined inside of `molecularnodes/nodes/*/*.py` files. These are the ultimate source of truth for the project. The command `uv run -m nodebpy.assets build` turns these `.py` files into a `.blend` asset file (`molecularnodes/assets/nodes.blend`).
 
-- The typed node classes in `molecularnodes/nodes/` (`geometry.py`, `shader.py`), including full docstrings. Regenerate them after changing the `.blend` file with `uv run generate_node_classes.py`, and commit the result.
-- The node documentation pages, generated twice from the same sources so each audience gets a page tailored to them, with the two versions linking to each other:
-  - **GUI pages** (`docs/nodes/<category>.qmd`, written directly by `docs/generate.py`): node name, demo video, description and the input/output socket tables read from the node group interface, listed under the **Nodes** navbar entry.
-  - **API pages** (`docs/api/reference/nodes.*`): `docs/generate.py` writes one quartodoc page per category into the marked block of `docs/_quarto.yml`, which `quartodoc build` renders from the generated node classes via the custom renderer (`docs/_renderer.py`).
+Changes can be made to nodes inside of the `.blend` - to keep these changes you must `uv run -m nodebpy.assets dump` to write those changes back out to the `.py` files. Changes can also be made directly to the `.py` files.
+
+To generate node documentation pages, run `uv run docs/generate.py`.
+
+- **GUI pages** (`docs/nodes/<category>.qmd`): node name, demo video, description and the input/output socket tables read from the node group interface, listed under the **Nodes** navbar entry. They get additional long-form prose and demo videos of the nodes in use from `docs/nodes.yml`.
+- **API pages** (`docs/api/reference/nodes.*`): `docs/generate.py` writes one quartodoc page per category into the marked block of `docs/_quarto.yml`, which `quartodoc build` renders from the generated node classes via the custom renderer (`docs/_renderer.py`).
 
 Extra information that can't live on the nodes themselves — long-form prose and demo videos of the nodes in use — lives in `docs/nodes.yml`, keyed by node group name, and is included on the GUI pages. Entries marked `custom: true` describe the node groups generated per imported structure (which have no class), documented on `docs/nodes/generated_nodes.qmd`. Relevant example videos should be updated in `docs/nodes.yml` when nodes are changed.
 
