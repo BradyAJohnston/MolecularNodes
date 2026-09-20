@@ -27,12 +27,17 @@ Always via `uv run` (never bare `python`). In a script that imports `bpy` direct
 
 ```python
 import os, tempfile
-os.environ.setdefault("BLENDER_USER_EXTENSIONS", tempfile.mkdtemp())  # before import bpy
-import bpy                        # mathutils is importable only after this
+
+os.environ.setdefault(
+    "BLENDER_USER_EXTENSIONS", tempfile.mkdtemp()
+)  # before import bpy
+import bpy  # mathutils is importable only after this
 import molecularnodes as mn
 
 canvas = mn.Canvas(mn.scene.Cycles(samples=64, device="CPU"), resolution=(1200, 900))
-canvas.compositor.device = "CPU"  # Blender 5 defaults the compositor to GPU; aborts without one
+canvas.compositor.device = (
+    "CPU"  # Blender 5 defaults the compositor to GPU; aborts without one
+)
 ```
 
 Without the `BLENDER_USER_EXTENSIONS` line, an installed MN extension's bundled wheels
@@ -42,10 +47,10 @@ the repo.
 ## 3. Minimal still
 
 ```python
-mol = mn.Molecule.fetch("4ozs")                 # .bcif from RCSB, cached
+mol = mn.Molecule.fetch("4ozs")  # .bcif from RCSB, cached
 mol.add_style("cartoon", material=mn.material.AmbientOcclusion())
 canvas.look_at(mol, viewpoint="front")
-canvas.snapshot("4ozs.png")                     # returns an IPython Image for PNG/JPEG
+canvas.snapshot("4ozs.png")  # returns an IPython Image for PNG/JPEG
 ```
 
 `snapshot(path=None, frame=None, file_format="PNG", render_scale=100)`. With no path
@@ -83,11 +88,11 @@ return `None`. The canonical docs versions are in `docs/api/index.qmd` and
 ## 5. Loading entities
 
 ```python
-mol = mn.Molecule.fetch("9MD2")                                   # format=".bcif", database="rcsb"
-af  = mn.Molecule.fetch("Q8W3K0", database="alphafold")
-pdb = mn.Molecule.load("path/protein.pdb", style="cartoon")       # single structure
-traj = mn.Molecule.load("topol.tpr", "traj.xtc", name="md")       # MD topology + coordinates
-u_mol = mn.Molecule(u)                                            # from an MDAnalysis Universe
+mol = mn.Molecule.fetch("9MD2")  # format=".bcif", database="rcsb"
+af = mn.Molecule.fetch("Q8W3K0", database="alphafold")
+pdb = mn.Molecule.load("path/protein.pdb", style="cartoon")  # single structure
+traj = mn.Molecule.load("topol.tpr", "traj.xtc", name="md")  # MD topology + coordinates
+u_mol = mn.Molecule(u)  # from an MDAnalysis Universe
 ```
 
 `fetch(code, format=".bcif", cache=download.CACHE_DIR, database="rcsb")`. `load` routes
@@ -98,9 +103,13 @@ is optional and defaults to no style, leaving the tree empty. In tests use
 ## 6. Styles, materials, colour
 
 ```python
-mol.add_style("surface", selection="protein", material=mn.material.Flat(), color="common")
+mol.add_style(
+    "surface", selection="protein", material=mn.material.Flat(), color="common"
+)
 mol.add_style("ball_and_stick", selection="not protein", color=(1.0, 0.5, 0.0, 1.0))
-mol.add_style(lambda: mg.StyleCartoon(quality=5, loop_radius=0.6), color=lambda: mg.ColorRainbow())
+mol.add_style(
+    lambda: mg.StyleCartoon(quality=5, loop_radius=0.6), color=lambda: mg.ColorRainbow()
+)
 ```
 
 - **Style names:** `spheres`, `cartoon`, `ribbon`, `surface`, `sticks`, `ball_and_stick`.
@@ -135,11 +144,13 @@ mol.add_style(lambda: mg.StyleCartoon(quality=5, loop_radius=0.6), color=lambda:
 ## 7. Framing
 
 ```python
-canvas.look_at(mol)                                    # keep current direction, fit the subject
-canvas.look_at(mol, viewpoint="top", margin=0.15)      # front, back, top, bottom, left, right, default
-canvas.look_at(mol, viewpoint=(90, 0, 45))             # XYZ Euler degrees
+canvas.look_at(mol)  # keep current direction, fit the subject
+canvas.look_at(
+    mol, viewpoint="top", margin=0.15
+)  # front, back, top, bottom, left, right, default
+canvas.look_at(mol, viewpoint=(90, 0, 45))  # XYZ Euler degrees
 canvas.look_at(mol.get_view("chainID A and resid 1-40"))
-canvas.look_at(points_xyz)                             # any (N, 3) array in world units
+canvas.look_at(points_xyz)  # any (N, 3) array in world units
 ```
 
 - `look_at(target, viewpoint=None, margin=0.05)` fits the camera to the evaluated
@@ -166,7 +177,7 @@ Per-molecule playback properties, all stored on the Blender object: `frame`,
 
 ```python
 traj = mn.Molecule(u)
-traj.dssp.init()                     # secondary structure per frame, if cartoon/ribbon needs it
+traj.dssp.init()  # secondary structure per frame, if cartoon/ribbon needs it
 traj.subframes, traj.interpolate, traj.average = 1, True, 1
 traj.add_style("cartoon", color="common")
 canvas.fps = 24
