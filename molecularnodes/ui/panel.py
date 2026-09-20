@@ -237,7 +237,7 @@ def panel_md_properties(layout, context):
         col.label(text="Object not linked to a trajectory, please reload one")
         col.prop(obj.mn, "filepath_topology")
         col.prop(obj.mn, "filepath_trajectory")
-        col.operator("mn.reload_trajectory")
+        col.operator("mn.session_reload_item", text="Reload Trajectory")
         return None
 
     layout_trajectory_playback(layout, traj)
