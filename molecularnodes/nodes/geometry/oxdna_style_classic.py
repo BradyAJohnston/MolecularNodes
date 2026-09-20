@@ -50,12 +50,18 @@ class OxDNADirection(CustomGeometryGroup):
     _name = ".oxDNA Direction"
     _color_tag = "INPUT"
     _tree_properties = {
-        "description": "Infer whether indices are assigned in 3'→5' order (True) or 5'→3' order (False). Only works for relaxed DNA."
+        "description": "Infer whether indices are assigned in 3'→5' order (True) or 5'→3' order (False) using base normals. Only accurate for relaxed systems."
     }
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        atoms = tree.inputs.geometry("Atoms")
-        result = tree.outputs.boolean("Result")
+        atoms = tree.inputs.geometry(
+            "Atoms",
+            description="Vertices and edges representing nucleotides and phosphodiester bonds, respectively",
+        )
+        result = tree.outputs.boolean(
+            "Result",
+            description="True if nucleotides are indexed in 3'→5' order, False if 5'→3' order",
+        )
 
         chain_id = ChainID()
         index = g.Index()
@@ -79,121 +85,121 @@ class OxDNAStyleClassic(AssetGeometryGroup):
     Parameters
     ----------
     atoms : InputGeometry
-        Atoms
+        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
     selection : InputBoolean
         Selection of atoms to apply this node to
     quality : InputInteger
-        Quality
+        A lower value results in less geometry, while a higher value means better-looking but more dense geometry
     backbone_shape : InputMenu | Literal["Sticks", "Ribbon"]
-        Backbone Shape
+        The visual style of the backbone
     backbone_radius : InputFloat
-        Backbone Radius
+        Radius of the backbone sticks or ribbons
     ball_radius : InputFloat
-        Ball Radius
+        Radius of the backbone spheres
     backbone_taper : InputFloat
-        Backbone Taper
+        Taper the backbone sticks so they point in the 5'→3' direction
     end_overhang : InputFloat
-        End Overhang
+        Extend the backbone ribbon past the final nucleotides on each strand
     base_shape : InputMenu | Literal["Sphere", "Cylinder", "None"]
-        Base Shape
+        Visual style of the bases
     base_geometry : InputGeometry
-        Base Geometry
+        Render the bases using custom geometry
     base_scale : InputVector
-        Base Scale
+        Scale the bases along each axis
     stem_geometry : InputGeometry
-        Stem Geometry
+        Render the base stems using custom geometry
     stem_scale : InputVector
-        Stem Scale
+        Scale the base stems along each axis
     base_colors : InputMenu | Literal["Uniform", "Specific", "Strand"]
-        Base Colors
+        Method used to determine base colors
     bases : InputColor
-        Bases
+        Color all bases uniformly
     a : InputColor
-        A
+        Color adenines
     c : InputColor
-        C
+        Color cytosines
     g : InputColor
-        G
+        Color guanines
     t_u : InputColor
-        T / U
+        Color thymines/uracils
     strand_colors : InputMenu | Literal["Uniform", "Specific", "Auto"]
-        Strand Colors
+        Method used to determine strand colors. `Auto` will color strands using a finite palette of distinct pastel hues.
     strands : InputColor
-        Becomes the output value if it is chosen by the menu input
+        Color all strands uniformly
     strand_1 : InputColor
-        Strand 1
+        Color the first strand, and every 4th strand after that
     strand_2 : InputColor
-        Strand 2
+        Color the second strand, and every 4th strand after that
     strand_3 : InputColor
-        Strand 3
+        Color the third strand, and every 4th strand after that
     strand_4 : InputColor
-        Strand 4
+        Color the fourth strand, and every 4th strand after that
     shade_smooth : InputBoolean
-        Shade Smooth
+        Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
 
     Inputs
     ------
     i.atoms : GeometrySocket
-        Atoms
+        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
     i.selection : BooleanSocket
         Selection of atoms to apply this node to
     i.quality : IntegerSocket
-        Quality
+        A lower value results in less geometry, while a higher value means better-looking but more dense geometry
     i.backbone_shape : MenuSocket
-        Backbone Shape
+        The visual style of the backbone
     i.backbone_radius : FloatSocket
-        Backbone Radius
+        Radius of the backbone sticks or ribbons
     i.ball_radius : FloatSocket
-        Ball Radius
+        Radius of the backbone spheres
     i.backbone_taper : FloatSocket
-        Backbone Taper
+        Taper the backbone sticks so they point in the 5'→3' direction
     i.end_overhang : FloatSocket
-        End Overhang
+        Extend the backbone ribbon past the final nucleotides on each strand
     i.base_shape : MenuSocket
-        Base Shape
+        Visual style of the bases
     i.base_geometry : GeometrySocket
-        Base Geometry
+        Render the bases using custom geometry
     i.base_scale : VectorSocket
-        Base Scale
+        Scale the bases along each axis
     i.stem_geometry : GeometrySocket
-        Stem Geometry
+        Render the base stems using custom geometry
     i.stem_scale : VectorSocket
-        Stem Scale
+        Scale the base stems along each axis
     i.base_colors : MenuSocket
-        Base Colors
+        Method used to determine base colors
     i.bases : ColorSocket
-        Bases
+        Color all bases uniformly
     i.a : ColorSocket
-        A
+        Color adenines
     i.c : ColorSocket
-        C
+        Color cytosines
     i.g : ColorSocket
-        G
+        Color guanines
     i.t_u : ColorSocket
-        T / U
+        Color thymines/uracils
     i.strand_colors : MenuSocket
-        Strand Colors
+        Method used to determine strand colors. `Auto` will color strands using a finite palette of distinct pastel hues.
     i.strands : ColorSocket
-        Becomes the output value if it is chosen by the menu input
+        Color all strands uniformly
     i.strand_1 : ColorSocket
-        Strand 1
+        Color the first strand, and every 4th strand after that
     i.strand_2 : ColorSocket
-        Strand 2
+        Color the second strand, and every 4th strand after that
     i.strand_3 : ColorSocket
-        Strand 3
+        Color the third strand, and every 4th strand after that
     i.strand_4 : ColorSocket
-        Strand 4
+        Color the fourth strand, and every 4th strand after that
     i.shade_smooth : BooleanSocket
-        Shade Smooth
+        Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
 
     Outputs
     -------
     o.geometry : GeometrySocket
-        Geometry
+        The generated geometry for the style node group
     """
 
     _name = "oxDNA Style Classic"
@@ -207,63 +213,63 @@ class OxDNAStyleClassic(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Atoms"""
+        """Vertices and edges representing nucleotides and phosphodiester bonds, respectively"""
         selection: BooleanSocket
         """Selection of atoms to apply this node to"""
         quality: IntegerSocket
-        """Quality"""
+        """A lower value results in less geometry, while a higher value means better-looking but more dense geometry"""
         backbone_shape: MenuSocket
-        """Backbone Shape"""
+        """The visual style of the backbone"""
         backbone_radius: FloatSocket
-        """Backbone Radius"""
+        """Radius of the backbone sticks or ribbons"""
         ball_radius: FloatSocket
-        """Ball Radius"""
+        """Radius of the backbone spheres"""
         backbone_taper: FloatSocket
-        """Backbone Taper"""
+        """Taper the backbone sticks so they point in the 5'→3' direction"""
         end_overhang: FloatSocket
-        """End Overhang"""
+        """Extend the backbone ribbon past the final nucleotides on each strand"""
         base_shape: MenuSocket
-        """Base Shape"""
+        """Visual style of the bases"""
         base_geometry: GeometrySocket
-        """Base Geometry"""
+        """Render the bases using custom geometry"""
         base_scale: VectorSocket
-        """Base Scale"""
+        """Scale the bases along each axis"""
         stem_geometry: GeometrySocket
-        """Stem Geometry"""
+        """Render the base stems using custom geometry"""
         stem_scale: VectorSocket
-        """Stem Scale"""
+        """Scale the base stems along each axis"""
         base_colors: MenuSocket
-        """Base Colors"""
+        """Method used to determine base colors"""
         bases: ColorSocket
-        """Bases"""
+        """Color all bases uniformly"""
         a: ColorSocket
-        """A"""
+        """Color adenines"""
         c: ColorSocket
-        """C"""
+        """Color cytosines"""
         g: ColorSocket
-        """G"""
+        """Color guanines"""
         t_u: ColorSocket
-        """T / U"""
+        """Color thymines/uracils"""
         strand_colors: MenuSocket
-        """Strand Colors"""
+        """Method used to determine strand colors. `Auto` will color strands using a finite palette of distinct pastel hues."""
         strands: ColorSocket
-        """Becomes the output value if it is chosen by the menu input"""
+        """Color all strands uniformly"""
         strand_1: ColorSocket
-        """Strand 1"""
+        """Color the first strand, and every 4th strand after that"""
         strand_2: ColorSocket
-        """Strand 2"""
+        """Color the second strand, and every 4th strand after that"""
         strand_3: ColorSocket
-        """Strand 3"""
+        """Color the third strand, and every 4th strand after that"""
         strand_4: ColorSocket
-        """Strand 4"""
+        """Color the fourth strand, and every 4th strand after that"""
         shade_smooth: BooleanSocket
-        """Shade Smooth"""
+        """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """The generated geometry for the style node group"""
 
     if TYPE_CHECKING:
 
@@ -335,71 +341,153 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        atoms = tree.inputs.geometry("Atoms")
+        atoms = tree.inputs.geometry(
+            "Atoms",
+            description="Vertices and edges representing nucleotides and phosphodiester bonds, respectively",
+        )
         selection = tree.inputs.boolean(
             "Selection",
             True,
             description="Selection of atoms to apply this node to",
             hide_value=True,
         )
-        quality = tree.inputs.integer("Quality", 2, min_value=1)
+        quality = tree.inputs.integer(
+            "Quality",
+            2,
+            description="A lower value results in less geometry, while a higher value means better-looking but more dense geometry",
+            min_value=1,
+        )
         with tree.inputs.panel("Backbone"):
             backbone_shape = tree.inputs.menu(
-                "Backbone Shape", expanded=True, optional_label=True
+                "Backbone Shape",
+                description="The visual style of the backbone",
+                expanded=True,
+                optional_label=True,
             )
             backbone_radius = tree.inputs.float(
                 "Backbone Radius",
                 1.1,
+                description="Radius of the backbone sticks or ribbons",
                 min_value=0.0,
                 max_value=340_282_000_000_000_000_000_000_000_000_000_000_000.0,
             )
-            ball_radius = tree.inputs.float("Ball Radius", 2.3, min_value=0.0)
-            backbone_taper = tree.inputs.float(
-                "Backbone Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
+            ball_radius = tree.inputs.float(
+                "Ball Radius",
+                2.3,
+                description="Radius of the backbone spheres",
+                min_value=0.0,
             )
-            end_overhang = tree.inputs.float("End Overhang", 1.8)
+            backbone_taper = tree.inputs.float(
+                "Backbone Taper",
+                0.0,
+                description="Taper the backbone sticks so they point in the 5'→3' direction",
+                min_value=0.0,
+                max_value=1.0,
+                subtype="FACTOR",
+            )
+            end_overhang = tree.inputs.float(
+                "End Overhang",
+                1.8,
+                description="Extend the backbone ribbon past the final nucleotides on each strand",
+            )
         with tree.inputs.panel("Bases"):
             base_shape = tree.inputs.menu(
-                "Base Shape", expanded=True, optional_label=True
+                "Base Shape",
+                description="Visual style of the bases",
+                expanded=True,
+                optional_label=True,
             )
-            base_geometry = tree.inputs.geometry("Base Geometry")
+            base_geometry = tree.inputs.geometry(
+                "Base Geometry", description="Render the bases using custom geometry"
+            )
             base_scale = tree.inputs.vector(
-                "Base Scale", (1.0, 2.3, 2.3), min_value=0.0, subtype="XYZ"
+                "Base Scale",
+                (1.0, 2.3, 2.3),
+                description="Scale the bases along each axis",
+                min_value=0.0,
+                subtype="XYZ",
             )
-            stem_geometry = tree.inputs.geometry("Stem Geometry")
+            stem_geometry = tree.inputs.geometry(
+                "Stem Geometry",
+                description="Render the base stems using custom geometry",
+            )
             stem_scale = tree.inputs.vector(
-                "Stem Scale", (1.1, 1.1, 1.0), min_value=0.0, subtype="XYZ"
+                "Stem Scale",
+                (1.1, 1.1, 1.0),
+                description="Scale the base stems along each axis",
+                min_value=0.0,
+                subtype="XYZ",
             )
         with tree.inputs.panel("Base colors"):
             base_colors = tree.inputs.menu(
-                "Base Colors", expanded=True, optional_label=True
+                "Base Colors",
+                description="Method used to determine base colors",
+                expanded=True,
+                optional_label=True,
             )
-            bases = tree.inputs.color("Bases", (0.0, 1.0, 1.0, 1.0))
-            a = tree.inputs.color("A", (0.033104, 0.03310406, 1.0, 1.0))
-            c_ = tree.inputs.color("C", (0.033104, 1.0, 0.033104, 1.0))
-            g_ = tree.inputs.color("G", (1.0, 1.0, 0.033104, 1.0))
-            t_u = tree.inputs.color("T / U", (1.0, 0.033104, 0.033104, 1.0))
+            bases = tree.inputs.color(
+                "Bases", (0.0, 1.0, 1.0, 1.0), description="Color all bases uniformly"
+            )
+            a = tree.inputs.color(
+                "A", (0.033104, 0.03310406, 1.0, 1.0), description="Color adenines"
+            )
+            c_ = tree.inputs.color(
+                "C", (0.033104, 1.0, 0.033104, 1.0), description="Color cytosines"
+            )
+            g_ = tree.inputs.color(
+                "G", (1.0, 1.0, 0.033104, 1.0), description="Color guanines"
+            )
+            t_u = tree.inputs.color(
+                "T / U",
+                (1.0, 0.033104, 0.033104, 1.0),
+                description="Color thymines/uracils",
+            )
         with tree.inputs.panel("Strand colors"):
             strand_colors = tree.inputs.menu(
-                "Strand Colors", expanded=True, optional_label=True
+                "Strand Colors",
+                description="Method used to determine strand colors. `Auto` will color strands using a finite palette of distinct pastel hues.",
+                expanded=True,
+                optional_label=True,
             )
             strands = tree.inputs.color(
                 "Strands",
                 (0.8, 0.8, 0.8, 1.0),
-                description="Becomes the output value if it is chosen by the menu input",
+                description="Color all strands uniformly",
             )
-            strand_1 = tree.inputs.color("Strand 1", (1.0, 0.0, 0.0, 1.0))
-            strand_2 = tree.inputs.color("Strand 2", (0.0, 0.0, 1.0, 1.0))
-            strand_3 = tree.inputs.color("Strand 3", (0.0, 1.0, 0.0, 1.0))
-            strand_4 = tree.inputs.color("Strand 4", (1.0, 1.0, 0.0, 1.0))
+            strand_1 = tree.inputs.color(
+                "Strand 1",
+                (1.0, 0.0, 0.0, 1.0),
+                description="Color the first strand, and every 4th strand after that",
+            )
+            strand_2 = tree.inputs.color(
+                "Strand 2",
+                (0.0, 0.0, 1.0, 1.0),
+                description="Color the second strand, and every 4th strand after that",
+            )
+            strand_3 = tree.inputs.color(
+                "Strand 3",
+                (0.0, 1.0, 0.0, 1.0),
+                description="Color the third strand, and every 4th strand after that",
+            )
+            strand_4 = tree.inputs.color(
+                "Strand 4",
+                (1.0, 1.0, 0.0, 1.0),
+                description="Color the fourth strand, and every 4th strand after that",
+            )
         with tree.inputs.panel("Material"):
-            shade_smooth = tree.inputs.boolean("Shade Smooth", True)
+            shade_smooth = tree.inputs.boolean(
+                "Shade Smooth",
+                True,
+                description="Apply smooth shading to the created geometry",
+            )
             material = tree.inputs.material(
                 "Material",
                 bpy.data.materials.get("Default"),
                 description="Material to apply to the resulting geometry",
             )
-        geometry = tree.outputs.geometry("Geometry")
+        geometry = tree.outputs.geometry(
+            "Geometry", description="The generated geometry for the style node group"
+        )
 
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
         with g.Frame("Color strands if Auto-color is False"):
@@ -583,6 +671,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
 ASSET = OxDNAStyleClassic
 
 ASSET_METADATA = {
+    "description": "Render oxDNA nucleotides with a ball-and-stick or ribbon style backbone",
     "catalog_id": "0094c3e0-7885-427b-81b4-187a84dcff18",
 }
 

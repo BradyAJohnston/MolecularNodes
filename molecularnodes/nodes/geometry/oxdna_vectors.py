@@ -24,27 +24,27 @@ class OxDNAVectors(AssetGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        Index
+        Index of nucleotide at which to evaluate vectors
 
     Inputs
     ------
     i.index : IntegerSocket
-        Index
+        Index of nucleotide at which to evaluate vectors
 
     Outputs
     -------
     o.base_vector : VectorSocket
-        base_vector
+        Also known as `a1`, the vector which points through the stacking and H-bond interaction sites
     o.base_normal : VectorSocket
-        base_normal
+        Also known as `a3`, the vector which is orthogonal to base_vector and captures tilt
     o.backbone_offset : VectorSocket
-        Backbone Offset
+        The backbone repulsion site relative to the nucleotide center of mass
     o.stacking_offset : VectorSocket
-        Stacking Offset
+        The stacking interaction site relative to the nucleotide center of mass
     o.h_bond_offset : VectorSocket
-        H-Bond Offset
+        The hydrogen bonding site relative to the nucleotide center of mass
     o.rotation : RotationSocket
-        Rotation
+        A rotation of the frame created by base_vector and base_normal
     """
 
     _name = "oxDNA Vectors"
@@ -54,19 +54,21 @@ class OxDNAVectors(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         index: IntegerSocket
-        """Index"""
+        """Index of nucleotide at which to evaluate vectors"""
 
     class _Outputs(SocketAccessor):
         base_vector: VectorSocket
+        """Also known as `a1`, the vector which points through the stacking and H-bond interaction sites"""
         base_normal: VectorSocket
+        """Also known as `a3`, the vector which is orthogonal to base_vector and captures tilt"""
         backbone_offset: VectorSocket
-        """Backbone Offset"""
+        """The backbone repulsion site relative to the nucleotide center of mass"""
         stacking_offset: VectorSocket
-        """Stacking Offset"""
+        """The stacking interaction site relative to the nucleotide center of mass"""
         h_bond_offset: VectorSocket
-        """H-Bond Offset"""
+        """The hydrogen bonding site relative to the nucleotide center of mass"""
         rotation: RotationSocket
-        """Rotation"""
+        """A rotation of the frame created by base_vector and base_normal"""
 
     if TYPE_CHECKING:
 
@@ -83,14 +85,37 @@ class OxDNAVectors(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer(
-            "Index", 0, min_value=0, hide_value=True, default_input="INDEX"
+            "Index",
+            0,
+            description="Index of nucleotide at which to evaluate vectors",
+            min_value=0,
+            hide_value=True,
+            default_input="INDEX",
         )
-        base_vector = tree.outputs.vector("base_vector")
-        base_normal = tree.outputs.vector("base_normal")
-        backbone_offset = tree.outputs.vector("Backbone Offset")
-        stacking_offset = tree.outputs.vector("Stacking Offset")
-        h_bond_offset = tree.outputs.vector("H-Bond Offset")
-        rotation = tree.outputs.rotation("Rotation")
+        base_vector = tree.outputs.vector(
+            "base_vector",
+            description="Also known as `a1`, the vector which points through the stacking and H-bond interaction sites",
+        )
+        base_normal = tree.outputs.vector(
+            "base_normal",
+            description="Also known as `a3`, the vector which is orthogonal to base_vector and captures tilt",
+        )
+        backbone_offset = tree.outputs.vector(
+            "Backbone Offset",
+            description="The backbone repulsion site relative to the nucleotide center of mass",
+        )
+        stacking_offset = tree.outputs.vector(
+            "Stacking Offset",
+            description="The stacking interaction site relative to the nucleotide center of mass",
+        )
+        h_bond_offset = tree.outputs.vector(
+            "H-Bond Offset",
+            description="The hydrogen bonding site relative to the nucleotide center of mass",
+        )
+        rotation = tree.outputs.rotation(
+            "Rotation",
+            description="A rotation of the frame created by base_vector and base_normal",
+        )
 
         angstrom_to_world = AngstromToWorld(angstrom=3.4)
         evaluate_at_index = g.NamedAttribute.vector("base_vector").o.attribute.point.at(
