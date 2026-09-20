@@ -469,17 +469,12 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             with g.Frame("Backbone Stick"):
                 angstrom_to_world = AngstromToWorld(angstrom=backbone_radius)
                 with g.Frame("Add overhang to strand ends"):
-                    vector_math_3 = (
-                        EdgeInfo(vertex_index=g.Index()).o.edge_vector.normalize()
-                        * -1.0
-                        * AngstromToWorld(angstrom=end_overhang)
-                    )
                     set_position_1 = g.SetPosition(
                         geometry=set_position,
-                        selection=g.Compare.integer.equal(
-                            g.EdgesOfVertex(vertex_index=g.Index()).o.total, 1
-                        ),
-                        offset=vector_math_3,
+                        selection=g.Compare.integer.equal(g.EdgesOfVertex().o.total, 1),
+                        offset=EdgeInfo().o.edge_vector.normalize()
+                        * -1.0
+                        * AngstromToWorld(angstrom=end_overhang),
                     )
                 with g.Frame(
                     "Each edge to a curve pointing 5'->3'. Flip circular endpoints."
