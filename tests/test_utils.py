@@ -84,3 +84,20 @@ def test_frame_mapper_with_mapping():
 def test_frame_mapper_with_mapping_and_subframes():
     mapping = np.array([0, 0, 0, 1, 2])
     assert frame_mapper(5, subframes=1, mapping=mapping) == 0
+
+
+def test_resolve_file_path(tmp_path):
+    from molecularnodes.blender.utils import resolve_file_path
+
+    existing = tmp_path / "structure.pdb"
+    existing.write_text("")
+    assert resolve_file_path(str(existing)) == existing
+    assert resolve_file_path(existing, "Topology") == existing
+
+    with pytest.raises(ValueError, match="Topology path is empty"):
+        resolve_file_path("   ", "Topology")
+    with pytest.raises(ValueError, match="File not found"):
+        resolve_file_path(str(tmp_path / "missing.pdb"))
+    # a directory is not an acceptable file
+    with pytest.raises(ValueError, match="Map file not found"):
+        resolve_file_path(str(tmp_path), "Map file")

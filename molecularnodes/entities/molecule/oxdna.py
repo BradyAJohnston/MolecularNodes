@@ -161,7 +161,14 @@ class OXDNAParser(TopologyReaderBase):
             first_line = f.readline()
 
         dimensions = np.array(first_line.split())
-        n_atoms = int(dimensions[0])
+        try:
+            n_atoms = int(dimensions[0])
+        except (ValueError, IndexError):
+            raise ValueError(
+                f"'{filename}' does not look like an oxDNA topology file: expected "
+                f"the first line to start with the number of nucleotides, got "
+                f"{first_line.strip()!r}"
+            ) from None
         array = np.loadtxt(filename, skiprows=1, max_rows=n_atoms, dtype=str)
 
         # each topology item has two bond columns, which say what the base is bonded
@@ -278,6 +285,11 @@ class OXDNAReader(ReaderBase):
         self._start_offsets = starts
         self._stop_offsets = stops[1:]  # drop the first
         self.n_frames = len(self._start_offsets)
+        if self.n_frames == 0:
+            raise ValueError(
+                f"No frames found in '{filename}': expected an oxDNA configuration "
+                "or trajectory file with 't = ', 'b = ' and 'E = ' header lines"
+            )
 
         self._read_frame(0)
 

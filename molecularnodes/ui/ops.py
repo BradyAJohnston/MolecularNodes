@@ -17,7 +17,7 @@ from bpy.props import (
 from bpy.types import Context, Operator
 from ..annotations.props import create_annotation_type_inputs
 from ..blender import coll
-from ..blender.utils import path_resolve
+from ..blender.utils import path_resolve, resolve_file_path
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import (
     OXDNA,
@@ -362,7 +362,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         mols = []
         try:
             if self.method == "local":
-                topology = path_resolve(self.filepath)
+                topology = resolve_file_path(self.filepath, "Structure file")
                 if self.trajectory.startswith("imd://"):
                     mol = StreamingTrajectory.load(
                         topology=topology,
@@ -376,7 +376,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 elif self.trajectory:
                     mol = Molecule.load(
                         topology,
-                        path_resolve(self.trajectory),
+                        resolve_file_path(self.trajectory, "Trajectory file"),
                         **self._universe_kwargs(),
                     )
                     message = (
@@ -414,9 +414,10 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                     "There may not be a `.pdb` formatted file available - try a different download format.",
                 )
             return {"CANCELLED"}
-        except (InvalidFileError, ValueError) as e:
-            # unreadable file contents (e.g. a structure factor file with no
-            # coordinates); show the message instead of a console traceback
+        except (InvalidFileError, ValueError, OSError) as e:
+            # a missing file, or unreadable file contents (e.g. a structure
+            # factor file with no coordinates); show the message instead of a
+            # console traceback
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
 
@@ -584,18 +585,22 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        file_path = path_resolve(self.filepath)
-        if self.ensemble_type == "cellpack":
-            ensemble.CellPack.load(
-                file_path=file_path,
-                name=Path(self.filepath).name,
-                node_setup=self.node_setup,
-            )
-        else:
-            ensemble.StarFile.load(
-                file_path=file_path,
-                node_setup=self.node_setup,
-            )
+        try:
+            file_path = resolve_file_path(self.filepath, "Ensemble file")
+            if self.ensemble_type == "cellpack":
+                ensemble.CellPack.load(
+                    file_path=file_path,
+                    name=file_path.name,
+                    node_setup=self.node_setup,
+                )
+            else:
+                ensemble.StarFile.load(
+                    file_path=file_path,
+                    node_setup=self.node_setup,
+                )
+        except (ValueError, OSError) as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
 
         _increase_view_distance()
         return {"FINISHED"}
@@ -677,13 +682,17 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        density.Grids.load(
-            file_path=path_resolve(self.filepath),
-            invert=self.invert,
-            style=self.style if self.setup_nodes else None,
-            center=self.center,
-            overwrite=self.overwrite,
-        )
+        try:
+            density.Grids.load(
+                file_path=resolve_file_path(self.filepath, "Map file"),
+                invert=self.invert,
+                style=self.style if self.setup_nodes else None,
+                center=self.center,
+                overwrite=self.overwrite,
+            )
+        except (ValueError, OSError) as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
         _increase_view_distance()
         return {"FINISHED"}
 
@@ -709,8 +718,12 @@ class MN_OT_Reload_Trajectory(bpy.types.Operator):
 
     def execute(self, context):
         obj = context.active_object
-        path_topo = path_resolve(obj.mn.filepath_topology)
-        path_traj = path_resolve(obj.mn.filepath_trajectory)
+        try:
+            path_topo = resolve_file_path(obj.mn.filepath_topology, "Topology file")
+            path_traj = resolve_file_path(obj.mn.filepath_trajectory, "Trajectory file")
+        except ValueError as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
 
         if "oxdna" in obj.mn.entity_type:
             uni = mda.Universe(
@@ -831,11 +844,16 @@ class MN_OT_Import_OxDNA(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        OXDNA.load(
-            topology=path_resolve(self.topology),
-            coordinates=path_resolve(self.trajectory),
-            name=self.name,
-        )
+        try:
+            OXDNA.load(
+                topology=resolve_file_path(self.topology, "Topology file"),
+                coordinates=resolve_file_path(self.trajectory, "Trajectory file"),
+                name=self.name,
+            )
+        except (ValueError, OSError) as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
+
         _increase_view_distance()
         return {"FINISHED"}
 
