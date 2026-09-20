@@ -8,12 +8,45 @@ from nodebpy import compositor as c
 from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
+    CustomCompositorGroup,
     FloatSocket,
     PackageLibrary,
     SocketAccessor,
 )
 from nodebpy.types import InputFloat
-from ._shared.id_difference_sample import IDDifferenceSample
+
+
+class IDDifferenceSample(CustomCompositorGroup):
+    _name = "ID Difference Sample"
+    _color_tag = "FILTER"
+    _tree_properties = {
+        "description": "Whether the ID at a pixel offset differs from the centre pixel's ID by more than Min Difference"
+    }
+
+    def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
+        id = tree.inputs.float("ID", 0.0, description="ID pass", hide_value=True)
+        x = tree.inputs.float("X", 0.0, description="Offset of the sample in pixels")
+        y = tree.inputs.float("Y", 0.0, description="Offset of the sample in pixels")
+        min_difference = tree.inputs.float(
+            "Min Difference",
+            0.5,
+            description="Difference in ID above which the sample counts as another region",
+        )
+        differs = tree.outputs.float("Differs")
+
+        translate = c.Translate(
+            image=id,
+            x=x,
+            y=y,
+            interpolation="Nearest",
+            extension_x="Extend",
+            extension_y="Extend",
+        )
+        math_1 = g.Math.greater_than(
+            abs(g.Math.subtract(translate, id).o.value), min_difference
+        )
+
+        math_1 >> differs
 
 
 class CompositeIDOutline(AssetCompositorGroup):
@@ -120,84 +153,100 @@ class CompositeIDOutline(AssetCompositorGroup):
 
         with c.Frame("Count differing neighbours"):
             math_1 = IDDifferenceSample(
-                id=id, x=-2.0, y=-2.0, min_difference=min_difference
+                ID=id, X=-2.0, Y=-2.0, **{"Min Difference": min_difference}
             ).o.differs + IDDifferenceSample(
-                id=id, x=-1.0, y=-2.0, min_difference=min_difference
+                ID=id, X=-1.0, Y=-2.0, **{"Min Difference": min_difference}
             )
             math_2 = (
                 math_1
-                + IDDifferenceSample(id=id, y=-2.0, min_difference=min_difference)
                 + IDDifferenceSample(
-                    id=id, x=1.0, y=-2.0, min_difference=min_difference
+                    ID=id, Y=-2.0, **{"Min Difference": min_difference}
+                )
+                + IDDifferenceSample(
+                    ID=id, X=1.0, Y=-2.0, **{"Min Difference": min_difference}
                 )
             )
             math_3 = (
                 math_2
                 + IDDifferenceSample(
-                    id=id, x=2.0, y=-2.0, min_difference=min_difference
+                    ID=id, X=2.0, Y=-2.0, **{"Min Difference": min_difference}
                 )
                 + IDDifferenceSample(
-                    id=id, x=-2.0, y=-1.0, min_difference=min_difference
+                    ID=id, X=-2.0, Y=-1.0, **{"Min Difference": min_difference}
                 )
             )
             math_4 = (
                 math_3
                 + IDDifferenceSample(
-                    id=id, x=-1.0, y=-1.0, min_difference=min_difference
+                    ID=id, X=-1.0, Y=-1.0, **{"Min Difference": min_difference}
                 )
-                + IDDifferenceSample(id=id, y=-1.0, min_difference=min_difference)
+                + IDDifferenceSample(
+                    ID=id, Y=-1.0, **{"Min Difference": min_difference}
+                )
             )
             math_5 = (
                 math_4
                 + IDDifferenceSample(
-                    id=id, x=1.0, y=-1.0, min_difference=min_difference
+                    ID=id, X=1.0, Y=-1.0, **{"Min Difference": min_difference}
                 )
                 + IDDifferenceSample(
-                    id=id, x=2.0, y=-1.0, min_difference=min_difference
+                    ID=id, X=2.0, Y=-1.0, **{"Min Difference": min_difference}
                 )
             )
             math_6 = (
                 math_5
-                + IDDifferenceSample(id=id, x=-2.0, min_difference=min_difference)
-                + IDDifferenceSample(id=id, x=-1.0, min_difference=min_difference)
+                + IDDifferenceSample(
+                    ID=id, X=-2.0, **{"Min Difference": min_difference}
+                )
+                + IDDifferenceSample(
+                    ID=id, X=-1.0, **{"Min Difference": min_difference}
+                )
             )
             math_7 = (
                 math_6
-                + IDDifferenceSample(id=id, x=1.0, min_difference=min_difference)
-                + IDDifferenceSample(id=id, x=2.0, min_difference=min_difference)
+                + IDDifferenceSample(ID=id, X=1.0, **{"Min Difference": min_difference})
+                + IDDifferenceSample(ID=id, X=2.0, **{"Min Difference": min_difference})
             )
             math_8 = (
                 math_7
                 + IDDifferenceSample(
-                    id=id, x=-2.0, y=1.0, min_difference=min_difference
+                    ID=id, X=-2.0, Y=1.0, **{"Min Difference": min_difference}
                 )
                 + IDDifferenceSample(
-                    id=id, x=-1.0, y=1.0, min_difference=min_difference
+                    ID=id, X=-1.0, Y=1.0, **{"Min Difference": min_difference}
                 )
             )
             math_9 = (
                 math_8
-                + IDDifferenceSample(id=id, y=1.0, min_difference=min_difference)
-                + IDDifferenceSample(id=id, x=1.0, y=1.0, min_difference=min_difference)
+                + IDDifferenceSample(ID=id, Y=1.0, **{"Min Difference": min_difference})
+                + IDDifferenceSample(
+                    ID=id, X=1.0, Y=1.0, **{"Min Difference": min_difference}
+                )
             )
             math_10 = (
                 math_9
-                + IDDifferenceSample(id=id, x=2.0, y=1.0, min_difference=min_difference)
                 + IDDifferenceSample(
-                    id=id, x=-2.0, y=2.0, min_difference=min_difference
+                    ID=id, X=2.0, Y=1.0, **{"Min Difference": min_difference}
+                )
+                + IDDifferenceSample(
+                    ID=id, X=-2.0, Y=2.0, **{"Min Difference": min_difference}
                 )
             )
             math_11 = (
                 math_10
                 + IDDifferenceSample(
-                    id=id, x=-1.0, y=2.0, min_difference=min_difference
+                    ID=id, X=-1.0, Y=2.0, **{"Min Difference": min_difference}
                 )
-                + IDDifferenceSample(id=id, y=2.0, min_difference=min_difference)
+                + IDDifferenceSample(ID=id, Y=2.0, **{"Min Difference": min_difference})
             )
             math_12 = (
                 math_11
-                + IDDifferenceSample(id=id, x=1.0, y=2.0, min_difference=min_difference)
-                + IDDifferenceSample(id=id, x=2.0, y=2.0, min_difference=min_difference)
+                + IDDifferenceSample(
+                    ID=id, X=1.0, Y=2.0, **{"Min Difference": min_difference}
+                )
+                + IDDifferenceSample(
+                    ID=id, X=2.0, Y=2.0, **{"Min Difference": min_difference}
+                )
             )
             _string = g.String(
                 string="The 24 pixels of the 5x5 window around each pixel are compared with its ID; the number of pixels in another region is the line strength."

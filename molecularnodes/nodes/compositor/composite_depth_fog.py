@@ -160,7 +160,7 @@ class CompositeDepthFog(AssetCompositorGroup):
             max_value=1.0,
             subtype="FACTOR",
         )
-        fog_color = tree.inputs.color(
+        _fog_color = tree.inputs.color(
             "Fog Color",
             (1.0, 1.0, 1.0, 1.0),
             description="Colour the image fades towards",
@@ -168,13 +168,10 @@ class CompositeDepthFog(AssetCompositorGroup):
         image_1 = tree.outputs.color("Image", (1.0, 1.0, 1.0, 1.0))
 
         with c.Frame("Fog factor"):
-            mix = (
-                1.0 - (front_fog - depth.map_range(near, far) * (front_fog - back_fog))
-            ).mix.color(image, fog_color)
             set_alpha = c.SetAlpha(
-                image=mix,
-                alpha=c.SeparateColor(image=image).o.alpha,
-                type="Replace Alpha",
+                image=image,
+                alpha=1.0
+                - (front_fog - depth.map_range(near, far) * (front_fog - back_fog)),
             )
             _string = g.String(
                 string="The fog factor is Front Fog at Near and Back Fog at Far, linear in depth between them and clamped outside. The colour is mixed towards Fog Color by one minus that factor, and the image alpha is kept."

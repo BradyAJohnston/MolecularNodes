@@ -10,6 +10,7 @@ from nodebpy.builder import (
     AssetCompositorGroup,
     BooleanSocket,
     ColorSocket,
+    CustomCompositorGroup,
     FloatSocket,
     MenuSocket,
     PackageLibrary,
@@ -19,7 +20,45 @@ from nodebpy.types import InputBoolean, InputColor, InputFloat, InputMenu
 from .composite_cone_shadow import CompositeConeShadow
 from .composite_contour_outline import CompositeContourOutline
 from .composite_depth_fog import CompositeDepthFog
-from .composite_id_outline import CompositeIDOutline
+
+
+class WorldToAngstrom2(CustomCompositorGroup):
+    _name = "WorldToAngstrom"
+
+    def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
+        angstrom = tree.inputs.float(
+            "Angstrom", 0.5, min_value=-10_000.0, max_value=10_000.0
+        )
+        world = tree.outputs.float("World")
+
+        angstrom / g.Value(0.1) >> world
+
+
+class IDMask(CustomCompositorGroup):
+    _name = "ID Mask"
+    _color_tag = "CONVERTER"
+
+    def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
+        id = tree.inputs.float(
+            "ID",
+            0.0,
+            description="res_id AOV pass from the Render Layers node",
+            hide_value=True,
+        )
+        type = tree.inputs.menu("Type", optional_label=True)
+        threshold = tree.inputs.float(
+            "Threshold", 6.0, min_value=-10_000.0, max_value=10_000.0
+        )
+        outline = tree.outputs.float("Outline")
+
+        anti_aliasing = c.AntiAliasing(
+            image=g.Math.greater_than(c.Filter(image=id, type=type), threshold),
+            threshold=0.2,
+        )
+
+        anti_aliasing >> outline
+
+        type.default_value = "Sobel"
 
 
 class CompositeIllustrate(AssetCompositorGroup):
@@ -40,6 +79,8 @@ class CompositeIllustrate(AssetCompositorGroup):
         Diffuse Color pass from the Render Layers node
     world_scale : InputFloat
         World units per Angstrom, used to convert the Angstrom inputs. Molecular Nodes imports structures at 0.1 (1 nm per world unit)
+    outline_color : InputColor
+        Value of the second color input
     shadow : InputBoolean
         Darken each pixel by the surrounding pixels that are closer to the camera (Composite Cone Shadow)
     radius : InputFloat
@@ -68,26 +109,20 @@ class CompositeIllustrate(AssetCompositorGroup):
         Colour the structure fades towards
     contour_outline : InputBoolean
         Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)
-    contour_high : InputFloat
-        Laplacian value, in Angstrom, at which the line is fully opaque
+    outline_depth : InputFloat
+        Outline Depth
     smooth : InputBoolean
         Average the line opacity where most of the 3x3 neighbourhood carries signal
     chain_outline : InputBoolean
         Lines between chains from a chain_id AOV pass (Composite ID Outline)
     chain_id : InputFloat
         chain_id AOV pass from the Render Layers node
-    chain_low : InputFloat
-        Number of neighbours in another chain, of 24, at which the line starts to appear
-    chain_high : InputFloat
-        Number of neighbours in another chain, of 24, at which the line is fully opaque
+    chain_difference : InputFloat
+        Chain Difference
     residue_outline : InputBoolean
         Lines between residues from a res_id AOV pass (Composite ID Outline)
     residue_id : InputFloat
         res_id AOV pass from the Render Layers node
-    residue_low : InputFloat
-        Number of neighbours in another residue, of 24, at which the line starts to appear
-    residue_high : InputFloat
-        Number of neighbours in another residue, of 24, at which the line is fully opaque
     residue_difference : InputFloat
         Difference in residue number above which two pixels are in different residues; raise it to outline groups of residues
 
@@ -105,6 +140,8 @@ class CompositeIllustrate(AssetCompositorGroup):
         Diffuse Color pass from the Render Layers node
     i.world_scale : FloatSocket
         World units per Angstrom, used to convert the Angstrom inputs. Molecular Nodes imports structures at 0.1 (1 nm per world unit)
+    i.outline_color : ColorSocket
+        Value of the second color input
     i.shadow : BooleanSocket
         Darken each pixel by the surrounding pixels that are closer to the camera (Composite Cone Shadow)
     i.radius : FloatSocket
@@ -133,26 +170,20 @@ class CompositeIllustrate(AssetCompositorGroup):
         Colour the structure fades towards
     i.contour_outline : BooleanSocket
         Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)
-    i.contour_high : FloatSocket
-        Laplacian value, in Angstrom, at which the line is fully opaque
+    i.outline_depth : FloatSocket
+        Outline Depth
     i.smooth : BooleanSocket
         Average the line opacity where most of the 3x3 neighbourhood carries signal
     i.chain_outline : BooleanSocket
         Lines between chains from a chain_id AOV pass (Composite ID Outline)
     i.chain_id : FloatSocket
         chain_id AOV pass from the Render Layers node
-    i.chain_low : FloatSocket
-        Number of neighbours in another chain, of 24, at which the line starts to appear
-    i.chain_high : FloatSocket
-        Number of neighbours in another chain, of 24, at which the line is fully opaque
+    i.chain_difference : FloatSocket
+        Chain Difference
     i.residue_outline : BooleanSocket
         Lines between residues from a res_id AOV pass (Composite ID Outline)
     i.residue_id : FloatSocket
         res_id AOV pass from the Render Layers node
-    i.residue_low : FloatSocket
-        Number of neighbours in another residue, of 24, at which the line starts to appear
-    i.residue_high : FloatSocket
-        Number of neighbours in another residue, of 24, at which the line is fully opaque
     i.residue_difference : FloatSocket
         Difference in residue number above which two pixels are in different residues; raise it to outline groups of residues
 
@@ -183,6 +214,8 @@ class CompositeIllustrate(AssetCompositorGroup):
         """Diffuse Color pass from the Render Layers node"""
         world_scale: FloatSocket
         """World units per Angstrom, used to convert the Angstrom inputs. Molecular Nodes imports structures at 0.1 (1 nm per world unit)"""
+        outline_color: ColorSocket
+        """Value of the second color input"""
         shadow: BooleanSocket
         """Darken each pixel by the surrounding pixels that are closer to the camera (Composite Cone Shadow)"""
         radius: FloatSocket
@@ -211,26 +244,20 @@ class CompositeIllustrate(AssetCompositorGroup):
         """Colour the structure fades towards"""
         contour_outline: BooleanSocket
         """Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)"""
-        contour_high: FloatSocket
-        """Laplacian value, in Angstrom, at which the line is fully opaque"""
+        outline_depth: FloatSocket
+        """Outline Depth"""
         smooth: BooleanSocket
         """Average the line opacity where most of the 3x3 neighbourhood carries signal"""
         chain_outline: BooleanSocket
         """Lines between chains from a chain_id AOV pass (Composite ID Outline)"""
         chain_id: FloatSocket
         """chain_id AOV pass from the Render Layers node"""
-        chain_low: FloatSocket
-        """Number of neighbours in another chain, of 24, at which the line starts to appear"""
-        chain_high: FloatSocket
-        """Number of neighbours in another chain, of 24, at which the line is fully opaque"""
+        chain_difference: FloatSocket
+        """Chain Difference"""
         residue_outline: BooleanSocket
         """Lines between residues from a res_id AOV pass (Composite ID Outline)"""
         residue_id: FloatSocket
         """res_id AOV pass from the Render Layers node"""
-        residue_low: FloatSocket
-        """Number of neighbours in another residue, of 24, at which the line starts to appear"""
-        residue_high: FloatSocket
-        """Number of neighbours in another residue, of 24, at which the line is fully opaque"""
         residue_difference: FloatSocket
         """Difference in residue number above which two pixels are in different residues; raise it to outline groups of residues"""
 
@@ -253,6 +280,7 @@ class CompositeIllustrate(AssetCompositorGroup):
         depth: InputFloat = 0.0,
         diffuse_color: InputColor = None,
         world_scale: InputFloat = 0.1,
+        outline_color: InputColor = None,
         shadow: InputBoolean = True,
         radius: InputFloat = 50.0,
         cone_angle: InputFloat = 2.0,
@@ -267,17 +295,14 @@ class CompositeIllustrate(AssetCompositorGroup):
         back_fog: InputFloat = 1.0,
         fog_color: InputColor = None,
         contour_outline: InputBoolean = True,
-        contour_high: InputFloat = 10.0,
+        outline_depth: InputFloat = 45.1,
         smooth: InputBoolean = True,
         chain_outline: InputBoolean = False,
         chain_id: InputFloat = 0.0,
-        chain_low: InputFloat = 3.0,
-        chain_high: InputFloat = 10.0,
+        chain_difference: InputFloat = 1.0,
         residue_outline: InputBoolean = False,
         residue_id: InputFloat = 0.0,
-        residue_low: InputFloat = 3.0,
-        residue_high: InputFloat = 8.0,
-        residue_difference: InputFloat = 0.5,
+        residue_difference: InputFloat = 5.0,
     ):
         super().__init__(
             **{
@@ -287,6 +312,7 @@ class CompositeIllustrate(AssetCompositorGroup):
                 "Depth": depth,
                 "Diffuse Color": diffuse_color,
                 "World Scale": world_scale,
+                "Outline Color": outline_color,
                 "Shadow": shadow,
                 "Radius": radius,
                 "Cone Angle": cone_angle,
@@ -301,16 +327,13 @@ class CompositeIllustrate(AssetCompositorGroup):
                 "Back Fog": back_fog,
                 "Fog Color": fog_color,
                 "Contour Outline": contour_outline,
-                "Contour High": contour_high,
+                "Outline Depth": outline_depth,
                 "Smooth": smooth,
                 "Chain Outline": chain_outline,
                 "Chain ID": chain_id,
-                "Chain Low": chain_low,
-                "Chain High": chain_high,
+                "Chain Difference": chain_difference,
                 "Residue Outline": residue_outline,
                 "Residue ID": residue_id,
-                "Residue Low": residue_low,
-                "Residue High": residue_high,
                 "Residue Difference": residue_difference,
             }
         )
@@ -354,6 +377,11 @@ class CompositeIllustrate(AssetCompositorGroup):
             description="World units per Angstrom, used to convert the Angstrom inputs. Molecular Nodes imports structures at 0.1 (1 nm per world unit)",
             min_value=0.0,
             max_value=10_000.0,
+        )
+        outline_color = tree.inputs.color(
+            "Outline Color",
+            (0.0, 0.0, 0.0, 1.0),
+            description="Value of the second color input",
         )
         with tree.inputs.panel("Shadow"):
             shadow = tree.inputs.boolean(
@@ -454,12 +482,8 @@ class CompositeIllustrate(AssetCompositorGroup):
                 description="Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)",
                 is_panel_toggle=True,
             )
-            contour_high = tree.inputs.float(
-                "Contour High",
-                10.0,
-                description="Laplacian value, in Angstrom, at which the line is fully opaque",
-                min_value=0.0,
-                max_value=10_000.0,
+            outline_depth = tree.inputs.float(
+                "Outline Depth", 45.1, min_value=-10_000.0, max_value=10_000.0
             )
             smooth = tree.inputs.boolean(
                 "Smooth",
@@ -479,19 +503,8 @@ class CompositeIllustrate(AssetCompositorGroup):
                 description="chain_id AOV pass from the Render Layers node",
                 hide_value=True,
             )
-            chain_low = tree.inputs.float(
-                "Chain Low",
-                3.0,
-                description="Number of neighbours in another chain, of 24, at which the line starts to appear",
-                min_value=0.0,
-                max_value=24.0,
-            )
-            chain_high = tree.inputs.float(
-                "Chain High",
-                10.0,
-                description="Number of neighbours in another chain, of 24, at which the line is fully opaque",
-                min_value=0.0,
-                max_value=24.0,
+            chain_difference = tree.inputs.float(
+                "Chain Difference", 1.0, min_value=0.0, max_value=10_000.0
             )
         with tree.inputs.panel("Residue Outline", default_closed=True):
             residue_outline = tree.inputs.boolean(
@@ -506,23 +519,9 @@ class CompositeIllustrate(AssetCompositorGroup):
                 description="res_id AOV pass from the Render Layers node",
                 hide_value=True,
             )
-            residue_low = tree.inputs.float(
-                "Residue Low",
-                3.0,
-                description="Number of neighbours in another residue, of 24, at which the line starts to appear",
-                min_value=0.0,
-                max_value=24.0,
-            )
-            residue_high = tree.inputs.float(
-                "Residue High",
-                8.0,
-                description="Number of neighbours in another residue, of 24, at which the line is fully opaque",
-                min_value=0.0,
-                max_value=24.0,
-            )
             residue_difference = tree.inputs.float(
                 "Residue Difference",
-                0.5,
+                5.0,
                 description="Difference in residue number above which two pixels are in different residues; raise it to outline groups of residues",
                 min_value=0.0,
                 max_value=1_000_000.0,
@@ -552,9 +551,14 @@ class CompositeIllustrate(AssetCompositorGroup):
                 pixel_size=pixel_size,
                 world_scale=world_scale,
             )
+            math_1 = 1.0 - (1.0 - composite_cone_shadow) * shadow
+            menu_switch = c.MenuSwitch.color(
+                "Kuwahara",
+                {"None": math_1, "Kuwahara": c.Kuwahara(image=math_1, size=20.2)},
+            )
             mix = g.Mix(
                 a_color=alpha_convert,
-                b_color=1.0 - (1.0 - composite_cone_shadow) * shadow,
+                b_color=menu_switch.o.output,
                 data_type="RGBA",
                 blend_type="MULTIPLY",
             )
@@ -570,42 +574,48 @@ class CompositeIllustrate(AssetCompositorGroup):
             )
             switch = fog.switch.color(mix.o.result_color, composite_depth_fog)
         with c.Frame("Outlines"):
-            composite_id_outline = CompositeIDOutline(
-                id=residue_id,
-                min_difference=residue_difference,
-                low=residue_low,
-                high=residue_high,
+            composite_depth_fog_1 = CompositeDepthFog(
+                image=depth,
+                depth=depth,
+                near=near,
+                far=far,
+                front_fog=front_fog,
+                back_fog=back_fog,
+                fog_color=fog_color,
             )
-            math_1 = (
-                CompositeContourOutline(
-                    depth=depth, high=contour_high, smooth=smooth
-                ).o.opacity
-                * contour_outline
+            composite_contour_outline = CompositeContourOutline(
+                depth=WorldToAngstrom2(Angstrom=composite_depth_fog_1),
+                smooth=smooth,
+                value=outline_depth,
             )
-            math_2 = composite_id_outline.o.opacity * residue_outline
+            math_2 = composite_contour_outline.o.opacity * contour_outline
             math_3 = (
-                CompositeIDOutline(
-                    id=chain_id, low=chain_low, high=chain_high
-                ).o.opacity
+                IDMask(ID=residue_id, Threshold=residue_difference).o.outline
+                * residue_outline
+            )
+            math_4 = (
+                IDMask(ID=chain_id, Threshold=chain_difference).o.outline
                 * chain_outline
             )
             _string_1 = g.String(
                 string="Contour and residue outlines are combined by their maximum and darken the colour; the chain outline darkens it again separately. All three extend the alpha so lines survive on the background."
             )
             mix_1 = g.Mix(
+                factor_float=math_2.max(math_3) + math_4,
                 a_color=switch,
-                b_color=(1.0 - math_1.max(math_2)) * (1.0 - math_3),
+                b_color=outline_color,
                 data_type="RGBA",
                 blend_type="MULTIPLY",
             )
-            set_alpha_1 = c.SetAlpha(
-                image=mix_1.o.result_color,
-                alpha=alpha.max(math_1.max(math_2).max(math_3)),
-                type="Replace Alpha",
+            alpha_convert_1 = c.AlphaConvert(
+                image=c.SetAlpha(
+                    image=mix_1.o.result_color,
+                    alpha=alpha.max(math_2.max(math_3).max(math_4)),
+                )
             )
-            alpha_convert_1 = c.AlphaConvert(image=set_alpha_1)
+            anti_aliasing = c.AntiAliasing(image=alpha_convert_1, threshold=0.2)
 
-        alpha_convert_1 >> image_1
+        anti_aliasing >> image_1
 
         base_color.default_value = "Image"
 

@@ -10,11 +10,11 @@ from nodebpy.builder import (
     AssetCompositorGroup,
     BooleanSocket,
     FloatSocket,
+    IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputBoolean, InputFloat
-from ._shared.angstromtoworld import AngstromToWorld2
+from nodebpy.types import InputBoolean, InputFloat, InputInteger
 
 
 class CompositeContourOutline(AssetCompositorGroup):
@@ -25,19 +25,23 @@ class CompositeContourOutline(AssetCompositorGroup):
     ----------
     depth : InputFloat
         Depth pass from the Render Layers node, in world units
-    high : InputFloat
-        Laplacian value, in Angstrom, at which the line is fully opaque. A narrower range gives harder lines
     smooth : InputBoolean
         Average the opacity over the 3x3 neighbourhood where at least six of its nine pixels carry line signal, softening jagged lines
+    value : InputFloat
+        Value
+    size : InputInteger
+        The size of dilation/erosion in pixels. Positive values dilates and negative values erodes
 
     Inputs
     ------
     i.depth : FloatSocket
         Depth pass from the Render Layers node, in world units
-    i.high : FloatSocket
-        Laplacian value, in Angstrom, at which the line is fully opaque. A narrower range gives harder lines
     i.smooth : BooleanSocket
         Average the opacity over the 3x3 neighbourhood where at least six of its nine pixels carry line signal, softening jagged lines
+    i.value : FloatSocket
+        Value
+    i.size : IntegerSocket
+        The size of dilation/erosion in pixels. Positive values dilates and negative values erodes
 
     Outputs
     -------
@@ -56,10 +60,12 @@ class CompositeContourOutline(AssetCompositorGroup):
     class _Inputs(SocketAccessor):
         depth: FloatSocket
         """Depth pass from the Render Layers node, in world units"""
-        high: FloatSocket
-        """Laplacian value, in Angstrom, at which the line is fully opaque. A narrower range gives harder lines"""
         smooth: BooleanSocket
         """Average the opacity over the 3x3 neighbourhood where at least six of its nine pixels carry line signal, softening jagged lines"""
+        value: FloatSocket
+        """Value"""
+        size: IntegerSocket
+        """The size of dilation/erosion in pixels. Positive values dilates and negative values erodes"""
 
     class _Outputs(SocketAccessor):
         opacity: FloatSocket
@@ -75,10 +81,13 @@ class CompositeContourOutline(AssetCompositorGroup):
     def __init__(
         self,
         depth: InputFloat = 0.0,
-        high: InputFloat = 10.0,
         smooth: InputBoolean = True,
+        value: InputFloat = 4.59,
+        size: InputInteger = 0,
     ):
-        super().__init__(**{"Depth": depth, "High": high, "Smooth": smooth})
+        super().__init__(
+            **{"Depth": depth, "Smooth": smooth, "Value": value, "Size": size}
+        )
 
     def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
         depth = tree.inputs.float(
@@ -87,42 +96,48 @@ class CompositeContourOutline(AssetCompositorGroup):
             description="Depth pass from the Render Layers node, in world units",
             hide_value=True,
         )
-        high = tree.inputs.float(
-            "High",
-            10.0,
-            description="Laplacian value, in Angstrom, at which the line is fully opaque. A narrower range gives harder lines",
-            min_value=0.0,
-            max_value=10_000.0,
-        )
         smooth = tree.inputs.boolean(
             "Smooth",
             True,
             description="Average the opacity over the 3x3 neighbourhood where at least six of its nine pixels carry line signal, softening jagged lines",
         )
+        value = tree.inputs.float(
+            "Value", 4.59, min_value=-10_000.0, max_value=10_000.0
+        )
+        size = tree.inputs.integer(
+            "Size",
+            0,
+            description="The size of dilation/erosion in pixels. Positive values dilates and negative values erodes",
+            subtype="PIXEL",
+        )
         opacity = tree.outputs.float("Opacity")
 
         with c.Frame("Laplacian"):
-            map_range = AngstromToWorld2(
-                angstrom=c.Filter(image=depth, type="Laplace")
-            ).o.world.map_range(from_max=high)
+            math_1 = g.Math.greater_than(c.Filter(image=depth, type="Sobel"), value)
         with c.Frame("Smoothing"):
-            math_1 = g.Math.greater_than(
+            math_2 = g.Math.greater_than(
                 c.Blur(
-                    image=g.Math.greater_than(map_range, 0.0),
-                    size=(1.0, 1.0),
-                    type="Flat",
+                    image=g.Math.greater_than(math_1, 0.0), size=(1.0, 1.0), type="Flat"
                 ),
                 0.6,
             )
-            mix = math_1.o.value.mix.float(
-                map_range, c.Blur(image=map_range, size=(1.0, 1.0), type="Flat")
+            mix = g.Mix.float(
+                smooth,
+                math_1,
+                math_2.o.value.mix.float(
+                    math_1, c.Blur(image=math_1, size=(1.0, 1.0), type="Flat")
+                ),
             )
-            mix_1 = g.Mix.float(smooth, map_range, mix)
+            dilate_erode = c.DilateErode(
+                mask=c.AntiAliasing(image=mix.o.result_float, threshold=0.2),
+                size=size,
+                type="Distance",
+            )
             _string = g.String(
                 string="Illustrate averages the 3x3 neighbourhood when at least six of its pixels carry signal. A flat blur of radius one is that average, and the same blur of the signal mask is the fraction of pixels that carry it."
             )
 
-        mix_1 >> opacity
+        dilate_erode >> opacity
 
 
 ASSET = CompositeContourOutline
