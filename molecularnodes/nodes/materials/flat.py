@@ -12,7 +12,9 @@ class Flat(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        _material_output = FlatInternal() >> s.MaterialOutput(is_active_output=True)
+        _material_output = FlatInternal(outline="None") >> s.MaterialOutput(
+            is_active_output=True
+        )
 
 
 MATERIAL = Flat

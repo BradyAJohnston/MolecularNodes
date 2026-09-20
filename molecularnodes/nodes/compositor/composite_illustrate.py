@@ -68,14 +68,8 @@ class CompositeIllustrate(AssetCompositorGroup):
         Colour the structure fades towards
     contour_outline : InputBoolean
         Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)
-    contour_low : InputFloat
-        Laplacian value, in Angstrom, at which the line starts to appear
     contour_high : InputFloat
         Laplacian value, in Angstrom, at which the line is fully opaque
-    min_diff : InputFloat
-        Smallest depth step, in Angstrom, that contributes to a line
-    max_diff : InputFloat
-        Depth steps larger than this, in Angstrom, count as this much
     smooth : InputBoolean
         Average the line opacity where most of the 3x3 neighbourhood carries signal
     chain_outline : InputBoolean
@@ -139,14 +133,8 @@ class CompositeIllustrate(AssetCompositorGroup):
         Colour the structure fades towards
     i.contour_outline : BooleanSocket
         Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)
-    i.contour_low : FloatSocket
-        Laplacian value, in Angstrom, at which the line starts to appear
     i.contour_high : FloatSocket
         Laplacian value, in Angstrom, at which the line is fully opaque
-    i.min_diff : FloatSocket
-        Smallest depth step, in Angstrom, that contributes to a line
-    i.max_diff : FloatSocket
-        Depth steps larger than this, in Angstrom, count as this much
     i.smooth : BooleanSocket
         Average the line opacity where most of the 3x3 neighbourhood carries signal
     i.chain_outline : BooleanSocket
@@ -223,14 +211,8 @@ class CompositeIllustrate(AssetCompositorGroup):
         """Colour the structure fades towards"""
         contour_outline: BooleanSocket
         """Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)"""
-        contour_low: FloatSocket
-        """Laplacian value, in Angstrom, at which the line starts to appear"""
         contour_high: FloatSocket
         """Laplacian value, in Angstrom, at which the line is fully opaque"""
-        min_diff: FloatSocket
-        """Smallest depth step, in Angstrom, that contributes to a line"""
-        max_diff: FloatSocket
-        """Depth steps larger than this, in Angstrom, count as this much"""
         smooth: BooleanSocket
         """Average the line opacity where most of the 3x3 neighbourhood carries signal"""
         chain_outline: BooleanSocket
@@ -285,10 +267,7 @@ class CompositeIllustrate(AssetCompositorGroup):
         back_fog: InputFloat = 1.0,
         fog_color: InputColor = None,
         contour_outline: InputBoolean = True,
-        contour_low: InputFloat = 3.0,
         contour_high: InputFloat = 10.0,
-        min_diff: InputFloat = 0.0,
-        max_diff: InputFloat = 5.0,
         smooth: InputBoolean = True,
         chain_outline: InputBoolean = False,
         chain_id: InputFloat = 0.0,
@@ -322,10 +301,7 @@ class CompositeIllustrate(AssetCompositorGroup):
                 "Back Fog": back_fog,
                 "Fog Color": fog_color,
                 "Contour Outline": contour_outline,
-                "Contour Low": contour_low,
                 "Contour High": contour_high,
-                "Min Diff": min_diff,
-                "Max Diff": max_diff,
                 "Smooth": smooth,
                 "Chain Outline": chain_outline,
                 "Chain ID": chain_id,
@@ -478,31 +454,10 @@ class CompositeIllustrate(AssetCompositorGroup):
                 description="Lines on depth steps from a Laplacian of the depth pass (Composite Contour Outline)",
                 is_panel_toggle=True,
             )
-            contour_low = tree.inputs.float(
-                "Contour Low",
-                3.0,
-                description="Laplacian value, in Angstrom, at which the line starts to appear",
-                min_value=0.0,
-                max_value=10_000.0,
-            )
             contour_high = tree.inputs.float(
                 "Contour High",
                 10.0,
                 description="Laplacian value, in Angstrom, at which the line is fully opaque",
-                min_value=0.0,
-                max_value=10_000.0,
-            )
-            min_diff = tree.inputs.float(
-                "Min Diff",
-                0.0,
-                description="Smallest depth step, in Angstrom, that contributes to a line",
-                min_value=0.0,
-                max_value=10_000.0,
-            )
-            max_diff = tree.inputs.float(
-                "Max Diff",
-                5.0,
-                description="Depth steps larger than this, in Angstrom, count as this much",
                 min_value=0.0,
                 max_value=10_000.0,
             )
@@ -613,26 +568,20 @@ class CompositeIllustrate(AssetCompositorGroup):
                 back_fog=back_fog,
                 fog_color=fog_color,
             )
-            switch = c.Switch(
-                switch=fog, off=mix.o.result_color, on=composite_depth_fog
-            )
+            switch = fog.switch.color(mix.o.result_color, composite_depth_fog)
         with c.Frame("Outlines"):
-            composite_contour_outline = CompositeContourOutline(
-                depth=depth,
-                low=contour_low,
-                high=contour_high,
-                min_diff=min_diff,
-                max_diff=max_diff,
-                smooth=smooth,
-                world_scale=world_scale,
-            )
             composite_id_outline = CompositeIDOutline(
                 id=residue_id,
                 min_difference=residue_difference,
                 low=residue_low,
                 high=residue_high,
             )
-            math_1 = composite_contour_outline.o.opacity * contour_outline
+            math_1 = (
+                CompositeContourOutline(
+                    depth=depth, high=contour_high, smooth=smooth
+                ).o.opacity
+                * contour_outline
+            )
             math_2 = composite_id_outline.o.opacity * residue_outline
             math_3 = (
                 CompositeIDOutline(

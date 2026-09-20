@@ -22,17 +22,17 @@ class OxDNARealizeVectors(AssetGeometryGroup):
     Parameters
     ----------
     atoms : InputGeometry
-        Geometry to duplicate elements of
+        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
 
     Inputs
     ------
     i.atoms : GeometrySocket
-        Geometry to duplicate elements of
+        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
 
     Outputs
     -------
     o.geometry : GeometrySocket
-        Geometry
+        Original geometry with added edges pointing along the base and normal vectors
     """
 
     _name = "oxDNA Realize Vectors"
@@ -42,11 +42,11 @@ class OxDNARealizeVectors(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Geometry to duplicate elements of"""
+        """Vertices and edges representing nucleotides and phosphodiester bonds, respectively"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Original geometry with added edges pointing along the base and normal vectors"""
 
     if TYPE_CHECKING:
 
@@ -63,9 +63,13 @@ class OxDNARealizeVectors(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
-            "Atoms", description="Geometry to duplicate elements of"
+            "Atoms",
+            description="Vertices and edges representing nucleotides and phosphodiester bonds, respectively",
         )
-        geometry = tree.outputs.geometry("Geometry")
+        geometry = tree.outputs.geometry(
+            "Geometry",
+            description="Original geometry with added edges pointing along the base and normal vectors",
+        )
 
         value = g.Value(0.15)
         oxdna_vectors = OxDNAVectors()
@@ -138,5 +142,6 @@ class OxDNARealizeVectors(AssetGeometryGroup):
 ASSET = OxDNARealizeVectors
 
 ASSET_METADATA = {
+    "description": "Adds edges to the original geometry which point along the base and normal vectors. This provides a way for oxDNA vectors to be transformed (e.g. with armatures), as these edges can be converted back into vector data using the `oxDNA Recover Vectors` node.",
     "catalog_id": "0094c3e0-7885-427b-81b4-187a84dcff18",
 }

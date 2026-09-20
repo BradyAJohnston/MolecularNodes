@@ -424,7 +424,7 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.OxDNARecoverVectors
         children: embedded
-      - name: nodes.geometry.OxDNAStyleRibbon
+      - name: nodes.geometry.OxDNAStyleClassic
         children: embedded
       - name: nodes.geometry.OxDNAVectors
         children: embedded

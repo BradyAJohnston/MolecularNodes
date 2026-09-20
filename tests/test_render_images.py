@@ -245,7 +245,7 @@ def test_render_assembly(
                 ["linear.top", "linear_traj.dat"],
                 ["origami_old.top", "origami_old.dat"],
             ),
-            ("Arrows", "Curve"),
+            ("Sticks", "Ribbon"),
         )
     ),
 )
@@ -261,7 +261,7 @@ def test_render_oxdna_simple_circle(
         (
             atoms
             >> mg.CentreOnSelection()
-            >> mg.OxDNAStyleRibbon(
+            >> mg.OxDNAStyleClassic(
                 backbone_shape=backbone, material=mn.material.Default().material
             )
             >> join

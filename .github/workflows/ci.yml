@@ -53,8 +53,8 @@ jobs:
       - uses: SebRollen/toml-action@v1.2.0
         id: read_manifest
         with:
-          file: "${{ env.ADDON_NAME }}/blender_manifest.toml"
-          field: "version"
+          file: "pyproject.toml"
+          field: "project.version"
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
@@ -68,7 +68,7 @@ jobs:
           uv run -m nodebpy.assets build
       - name: Build extension
         run: |
-          blender -b --python-exit-code 1 -P build.py
+          uvx extbpy build
           mkdir artifact
           mv ${{ env.ADDON_NAME }}-${{ steps.read_manifest.outputs.value }}-*.zip ./artifact/.
       - name: Upload extension artifact
