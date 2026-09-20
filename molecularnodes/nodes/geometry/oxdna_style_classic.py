@@ -46,11 +46,11 @@ from .set_color import SetColor
 from .world_to_angstrom import WorldToAngstrom
 
 
-class OxDNAAreIDs53(CustomGeometryGroup):
-    _name = "oxDNA Are IDs 5'→3'"
+class OxDNADirection(CustomGeometryGroup):
+    _name = ".oxDNA Direction"
     _color_tag = "INPUT"
     _tree_properties = {
-        "description": "Extrapolate whether indices are assigned in 5'→3' order. Only works for relaxed DNA."
+        "description": "Infer whether indices are assigned in 3'→5' order (True) or 5'→3' order (False). Only works for relaxed DNA."
     }
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
@@ -67,7 +67,7 @@ class OxDNAAreIDs53(CustomGeometryGroup):
             g.Position().o.position.point.at(g.Index().o.index + 1) - g.Position()
         ).dot(OxDNAVectors().o.base_normal)
         (
-            (g.AttributeStatistic.point.float(atoms, compare, vector_math).o.mean < 0.0)
+            (g.AttributeStatistic.point.float(atoms, compare, vector_math).o.mean > 0.0)
             >> result
         )
 
@@ -495,7 +495,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     )
                     reverse_curve_1 = g.ReverseCurve(
                         curve=reverse_curve,
-                        selection=~OxDNAAreIDs53(Atoms=reverse_curve).o.result,
+                        selection=OxDNADirection(Atoms=reverse_curve),
                     )
                 curve_circle = g.CurveCircle(resolution=quality * 4)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
