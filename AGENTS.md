@@ -14,18 +14,18 @@ You are working in the Molecular Nodes repository, a Blender extension and Pytho
 
 ## Where to look
 
-| Question | Read |
-| --- | --- |
-| How the project is structured, how to build, test and write docs | `CONTRIBUTING.md` |
-| The AI policy in full | `AI_POLICY.md` |
-| Writing, building and testing node groups | `skills/mn-nodes/SKILL.md` |
-| Rendering from a script: Canvas, framing, styles, materials, animation | `skills/mn-render/SKILL.md` |
-| Design notes, surveys, in-progress plans | `docs/dev/` |
-| User-facing docs, API reference sources, node prose | `docs/` (`docs/api/*.qmd`, `docs/nodes.yml`, `docs/attributes.qmd`) |
-| Changelog | `docs/changelog.qmd` (add a line for user-visible changes) |
-| Build, dependency and tool config | `pyproject.toml` (`[tool.extbpy]`, `[tool.nodebpy.assets]`, `[tool.ruff]`) |
-| CI | `.github/workflows/ci.yml` |
-| nodebpy (the node-building library) | https://bradyajohnston.github.io/nodebpy |
+| Question                                                               | Read                                                                       |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| How the project is structured, how to build, test and write docs       | `CONTRIBUTING.md`                                                          |
+| The AI policy in full                                                  | `AI_POLICY.md`                                                             |
+| Writing, building and testing node groups                              | `skills/mn-nodes/SKILL.md`                                                 |
+| Rendering from a script: Canvas, framing, styles, materials, animation | `skills/mn-render/SKILL.md`                                                |
+| Design notes, surveys, in-progress plans                               | `docs/dev/`                                                                |
+| User-facing docs, API reference sources, node prose                    | `docs/` (`docs/api/*.qmd`, `docs/nodes.yml`, `docs/attributes.qmd`)        |
+| Changelog                                                              | `docs/changelog.qmd` (add a line for user-visible changes)                 |
+| Build, dependency and tool config                                      | `pyproject.toml` (`[tool.extbpy]`, `[tool.nodebpy.assets]`, `[tool.ruff]`) |
+| CI                                                                     | `.github/workflows/ci.yml`                                                 |
+| nodebpy (the node-building library)                                    | https://bradyajohnston.github.io/nodebpy                                   |
 
 ## Layout
 
@@ -40,7 +40,7 @@ molecularnodes/
   material.py, color.py, framing.py, download.py, session.py, handlers.py
 tests/           pytest suite; snapshots in tests/__snapshots__; small structures cached in tests/data
 docs/            Quarto site; docs/generate.py regenerates node pages from the built blend
-skills/          agent skills (also symlinked from .claude/skills/)
+skills/          agent skills
 ```
 
 Key facts:
