@@ -72,7 +72,7 @@ class XPBDSolveEdges(CustomGeometryGroup):
             target=edge_info.o.point_position,
             distance=distance.edge.at(edge_info.o.edge_index),
             w1=inverse_mass.o.w,
-            w2=inverse_mass.o.w.point.at(edge_info.o.edge_index),
+            w2=inverse_mass.o.w.point.at(edge_info.o.point_index),
             alpha=alpha.edge.at(edge_info.o.edge_index),
             deltat=deltat,
         )
@@ -319,7 +319,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
         geometry_1 = simulation_zone.items.geometry("Geometry", store_named_attribute)
         math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
-            geometry_1.current, name="inverse_mass", value=Mass().o.mass / 0.5
+            geometry_1.current, name="inverse_mass", value=1.0 / Mass()
         )
         repeat_zone = g.RepeatZone(substeps)
         geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
