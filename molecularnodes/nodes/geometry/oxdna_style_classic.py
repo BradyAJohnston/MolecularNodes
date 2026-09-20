@@ -90,8 +90,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Backbone Radius
     ball_radius : InputFloat
         Ball Radius
-    _5_3_taper : InputFloat
-        5'→3' Taper
+    backbone_taper : InputFloat
+        Backbone Taper
     end_overhang : InputFloat
         End Overhang
     base_shape : InputMenu | Literal["Sphere", "Cylinder", "None"]
@@ -147,8 +147,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Backbone Radius
     i.ball_radius : FloatSocket
         Ball Radius
-    i._5_3_taper : FloatSocket
-        5'→3' Taper
+    i.backbone_taper : FloatSocket
+        Backbone Taper
     i.end_overhang : FloatSocket
         End Overhang
     i.base_shape : MenuSocket
@@ -218,8 +218,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Backbone Radius"""
         ball_radius: FloatSocket
         """Ball Radius"""
-        _5_3_taper: FloatSocket
-        """5'→3' Taper"""
+        backbone_taper: FloatSocket
+        """Backbone Taper"""
         end_overhang: FloatSocket
         """End Overhang"""
         base_shape: MenuSocket
@@ -280,7 +280,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         backbone_shape: InputMenu | Literal["Sticks", "Ribbon"] = "Sticks",
         backbone_radius: InputFloat = 1.1,
         ball_radius: InputFloat = 2.3,
-        _5_3_taper: InputFloat = 0.0,
+        backbone_taper: InputFloat = 0.0,
         end_overhang: InputFloat = 1.8,
         base_shape: InputMenu | Literal["Sphere", "Cylinder", "None"] = "Sphere",
         base_geometry: InputGeometry = None,
@@ -310,7 +310,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "Backbone Shape": backbone_shape,
                 "Backbone Radius": backbone_radius,
                 "Ball Radius": ball_radius,
-                "5'→3' Taper": _5_3_taper,
+                "Backbone Taper": backbone_taper,
                 "End Overhang": end_overhang,
                 "Base Shape": base_shape,
                 "Base Geometry": base_geometry,
@@ -354,8 +354,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 max_value=340_282_000_000_000_000_000_000_000_000_000_000_000.0,
             )
             ball_radius = tree.inputs.float("Ball Radius", 2.3, min_value=0.0)
-            n_5_3_taper = tree.inputs.float(
-                "5'→3' Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
+            backbone_taper = tree.inputs.float(
+                "Backbone Taper", 0.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
             )
             end_overhang = tree.inputs.float("End Overhang", 1.8)
         with tree.inputs.panel("Bases"):
@@ -505,7 +505,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 curve_circle = g.CurveCircle(resolution=quality * 4)
                 switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
                     angstrom_to_world,
-                    angstrom_to_world.o.world - n_5_3_taper * angstrom_to_world,
+                    angstrom_to_world.o.world - backbone_taper * angstrom_to_world,
                 )
                 set_spline_resolution = (
                     set_position_1
