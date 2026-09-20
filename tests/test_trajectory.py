@@ -290,6 +290,76 @@ class TestTrajectory:
             pos_1,
         )
 
+    def test_manual_frame_raw(self, universe):
+        # with no subframes or averaging, the manual frame is the universe frame
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 3
+        assert np.allclose(traj.position, traj.frame_manager._position_at_frame(3))
+
+    @pytest.mark.parametrize("interpolate", [True, False])
+    def test_manual_frame_subframes(self, universe, interpolate: bool):
+        # the manual frame steps through subframes like the scene frame does
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.subframes = 0
+        traj.interpolate = interpolate
+        traj.frame = 0
+        verts_a = traj.position
+        traj.frame = 1
+        verts_b = traj.position
+        assert not np.allclose(verts_a, verts_b)
+
+        for subframes in [1, 2, 3, 4]:
+            frame = 1
+            fraction = frame % (subframes + 1) / (subframes + 1)
+            traj.subframes = subframes
+            traj.frame = frame
+            verts_c = traj.position
+
+            if interpolate:
+                assert not np.allclose(verts_b, verts_c)
+                assert np.allclose(verts_c, databpy.lerp(verts_a, verts_b, t=fraction))
+            else:
+                assert np.allclose(verts_a, verts_c)
+
+    def test_manual_frame_average(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 1
+        pos_1 = traj.position
+        traj.average = 1
+        expected = np.mean(
+            [traj.frame_manager._position_at_frame(f) for f in [0, 1, 2]], axis=0
+        )
+        assert not np.allclose(traj.position, pos_1)
+        assert np.allclose(traj.position, expected)
+
+    def test_manual_frame_offset_ignored(self, universe):
+        # the offset shifts where playback starts on the timeline, which has no
+        # meaning for a manually chosen frame
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 2
+        pos_2 = traj.position
+        traj.offset = 1
+        assert np.allclose(traj.position, pos_2)
+
+    def test_manual_frame_clamp(self, universe):
+        # the manual frame clamps to the last frame that maps onto the
+        # trajectory, which is expanded by the subframes
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        n_frames = universe.trajectory.n_frames
+        traj.frame = 100
+        assert traj.frame == n_frames - 1
+        traj.subframes = 2
+        traj.frame = 100
+        assert traj.frame == (n_frames - 1) * 3
+        assert np.allclose(
+            traj.position, traj.frame_manager._position_at_frame(n_frames - 1)
+        )
+
     def test_gui_selection_add_remove(self, universe):
         traj = mn.Molecule(universe)
         assert "selection_0" not in traj.list_attributes()
@@ -524,15 +594,18 @@ class TestTrajectory:
             assert "/nonexistent/path/trajectory.xtc" in error_msg
 
     def test_dssp(self, snapshot, universe):
+        initial_frame = universe.trajectory.frame
         t = mn.Molecule(universe).add_style("cartoon")
-        # test no sec_struct attribute without initializing dssp
-        with pytest.raises(
-            KeyError,
-            match='key "sec_struct" not found',
-        ):
-            t["sec_struct"]
+        # sec_struct is computed once from the current frame on import, so the
+        # cartoon has structure to show before the dssp module is initialized
+        initial_sec_struct = t["sec_struct"]
+        assert np.any(initial_sec_struct == 1)
+        assert "sec_struct" not in t.calculations
         # initialize dssp
         t.dssp.init()
+        # per-frame dssp on the import frame matches the import-time result
+        t.set_frame(initial_frame)
+        assert np.array_equal(t["sec_struct"], initial_sec_struct)
         # default dssp is per-frame
         t.set_frame(1)
         frame_sec_struct = t["sec_struct"]
@@ -558,6 +631,58 @@ class TestTrajectory:
         assert not np.allclose(no_sec_struct, frame_sec_struct)
         assert not np.allclose(no_sec_struct, sw_sec_struct)
         assert not np.allclose(no_sec_struct, avg_sec_struct)
+
+    def test_dssp_selection(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        t.dssp.init(selection="protein and resid 1-100")
+        t.set_frame(1)
+        sec_struct = t["sec_struct"]
+        resids = universe.atoms.resids
+        is_protein = np.isin(
+            universe.atoms.indices, universe.select_atoms("protein").indices
+        )
+        selected = is_protein & (resids <= 100)
+        # selected residues are assigned helix / sheet / loop
+        assert np.all(np.isin(sec_struct[selected], [1, 2, 3]))
+        assert np.any(sec_struct[selected] < 3)
+        # protein residues outside the selection fall back to loop
+        assert np.all(sec_struct[is_protein & ~selected] == 3)
+        # non-protein atoms get no secondary structure
+        assert np.all(sec_struct[~is_protein] == 0)
+        # a default run assigns structure beyond the selection
+        t_full = mn.Molecule(universe).add_style("cartoon")
+        t_full.dssp.init()
+        t_full.set_frame(1)
+        assert np.any(t_full["sec_struct"][is_protein & ~selected] < 3)
+
+    def test_dssp_set_selection(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        t.dssp.init(selection="protein and resid 1-100")
+        assert t.props.dssp.selection == "protein and resid 1-100"
+        t.set_frame(1)
+        resids = universe.atoms.resids
+        is_protein = np.isin(
+            universe.atoms.indices, universe.select_atoms("protein").indices
+        )
+        excluded = is_protein & (resids > 100)
+        assert np.all(t["sec_struct"][excluded] == 3)
+        # widening the selection part way through assigns structure to the rest
+        t.dssp.set_selection("protein")
+        assert t.props.dssp.selection == "protein"
+        t.set_frame(1)
+        assert np.any(t["sec_struct"][excluded] < 3)
+        # a bad selection raises and leaves the previous selection working
+        with pytest.raises(Exception):
+            t.dssp.set_selection("protein and bogus")
+        t.set_frame(2)
+        assert np.any(t["sec_struct"][excluded] < 3)
+        # the display option survives changing the selection
+        t.dssp.show_trajectory_average(threshold=0.5)
+        t.dssp.set_selection("protein and resid 1-100")
+        assert t.dssp._display_option == "trajectory-average"
+        t.set_frame(1)
+        assert np.all(t["sec_struct"][excluded] == 3)
+        assert np.any(t["sec_struct"][is_protein & ~excluded] < 3)
 
     def test_reload_operator(self, universe):
         traj = mn.entities.Molecule(universe)

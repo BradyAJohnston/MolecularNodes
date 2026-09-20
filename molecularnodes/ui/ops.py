@@ -28,6 +28,7 @@ from ..entities import (
     molecule,
 )
 from ..entities.base import EntityType
+from ..handlers import update_entities
 from ..nodes._utils import remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
 from ..session import get_session
@@ -204,7 +205,15 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         if not self.node_setup:
             return
         mol.create_asset_nodes()
-        mol.add_style(style=self.style, color="common", assembly=self.assembly)
+        kwargs = {}
+        if self.style == "spheres":
+            # the API picks instanced spheres for non-Cycles engines so renders
+            # look right, but a GUI import has to stay interactive on large
+            # systems, so it always keeps the point cloud (#1220)
+            kwargs["sphere"] = "Point"
+        mol.add_style(
+            style=self.style, color="common", assembly=self.assembly, **kwargs
+        )
 
     def draw(self, context):
         layout = self.layout
@@ -1234,15 +1243,27 @@ class MN_OT_DSSP_init(Operator):
 
     bl_idname = "mn.dssp_init"
     bl_label = "Initialize"
-    bl_description = "Initialize DSSP analysis for trajectory"
+    bl_description = (
+        "Initialize DSSP analysis for trajectory, or update the selection "
+        "DSSP is run on if already initialized"
+    )
 
     uuid: StringProperty()  # type: ignore
+    selection: StringProperty(default="protein")  # type: ignore
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
         if entity is None:
             return {"CANCELLED"}
-        entity.dssp.init()
+        try:
+            if entity.dssp._DSSP is None:
+                entity.dssp.init(selection=self.selection)
+            else:
+                entity.dssp.set_selection(self.selection)
+        except Exception as e:
+            self.report({"ERROR"}, f"DSSP failed for selection '{self.selection}': {e}")
+            return {"CANCELLED"}
+        update_entities(context.scene)
         return {"FINISHED"}
 
 

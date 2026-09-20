@@ -325,6 +325,10 @@ Chain ID:
   description: >-
     The 'chain_id' attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically
     then assigned an ID startin at `0` and increasing.
+Segment ID:
+  description: >-
+    The `segid` attribute, an integer representation of the segment IDs present in the structure (the MDAnalysis
+    `segid`). Segments are assigned an ID starting at `0` in the order they were read from the topology.
 Atom ID:
   description: >-
     The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom
@@ -353,6 +357,11 @@ Mass:
   description: The `mass` attribute of the point, used for centre of mass calculations
 B Factor:
   description: The `b_factor` attribute of the point, how well resolved the individual atoms are
+Charge:
+  description: >-
+    The `charge` attribute of the point, which is only present when the file or topology provided charges (partial
+    charges from a simulation topology, formal charges from a PDB charge column or mmCIF `pdbx_formal_charge`).
+    `0.0` if the geometry has no `charge` attribute
 Color:
   description: >-
     The `Color` attribute of the point, used for coloring the final generated geometry inside of the materials

@@ -2,15 +2,7 @@ import bpy
 import pytest
 import molecularnodes as mn
 from .constants import data_dir
-
-
-def _sphere(mol) -> str | None:
-    "The `Sphere Geometry` value on whichever style node has one."
-    for node in mol.tree.nodes:
-        for socket in node.inputs:
-            if socket.name == "Sphere":
-                return socket.default_value
-    return None
+from .utils import sphere_value
 
 
 def test_add_style_with_selection():
@@ -206,11 +198,11 @@ def test_add_style_invalid_style_raises():
             mol.add_style(style)
 
 
-@pytest.mark.parametrize("color", ["chain", "lipophobicity", "b_factor", "nonsense"])
+@pytest.mark.parametrize("color", ["chain", "occupancy", "b_factor", "nonsense"])
 def test_add_style_unknown_color_warns(color):
     """Unknown colors, and non-color attributes, must warn rather than render black.
 
-    `lipophobicity` and `b_factor` exist but are FLOAT attributes - reading them as a
+    `occupancy` and `b_factor` exist but are FLOAT attributes - reading them as a
     color silently produced black geometry.
     """
     mol = mn.Molecule.fetch("4ozs")
@@ -295,7 +287,7 @@ def test_spheres_geometry_follows_the_engine(engine, expected):
     """
     canvas = mn.Canvas(engine=engine)
     mol = mn.Molecule.fetch("4ozs").add_style("spheres")
-    assert _sphere(mol) == expected
+    assert sphere_value(mol) == expected
     assert canvas.scene.render.engine == (
         "BLENDER_EEVEE" if engine == "EEVEE" else "CYCLES"
     )
@@ -304,7 +296,7 @@ def test_spheres_geometry_follows_the_engine(engine, expected):
 def test_explicit_sphere_is_not_overridden():
     mn.Canvas(engine="EEVEE")
     mol = mn.Molecule.fetch("4ozs").add_style("spheres", sphere="Point")
-    assert _sphere(mol) == "Point"
+    assert sphere_value(mol) == "Point"
 
 
 def test_ball_and_stick_already_instances_and_is_left_alone():
@@ -312,7 +304,7 @@ def test_ball_and_stick_already_instances_and_is_left_alone():
     for engine in ("EEVEE", "CYCLES"):
         mn.Canvas(engine=engine)
         mol = mn.Molecule.fetch("4ozs").add_style("ball_and_stick")
-        assert _sphere(mol) == "Instance"
+        assert sphere_value(mol) == "Instance"
 
 
 def test_callable_style_keeps_its_own_geometry():
@@ -321,4 +313,4 @@ def test_callable_style_keeps_its_own_geometry():
 
     mn.Canvas(engine="EEVEE")
     mol = mn.Molecule.fetch("4ozs").add_style(lambda: StyleSpheres())
-    assert _sphere(mol) == "Point"
+    assert sphere_value(mol) == "Point"

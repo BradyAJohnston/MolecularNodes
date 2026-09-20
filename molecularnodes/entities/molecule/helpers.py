@@ -303,15 +303,21 @@ class FrameManager:
         return frames_to_cache
 
     def _mapped_uframes(self, frame: int) -> tuple[int, int]:
-        """Map a scene frame to the current and next universe frames.
+        """Map a scene or manual frame to the current and next universe frames.
 
         Applies the subframe/offset mapping, clamps to trajectory bounds for
         non-streaming trajectories, and updates the UI frame property.
 
+        The offset only applies when updating with the scene: it shifts where
+        playback starts on the timeline, which has no meaning for a manually
+        chosen frame. Subframes apply in both modes, so the manual frame is
+        stepped through subframes the same way the scene frame is.
+
         Parameters
         ----------
         frame : int
-            Scene frame number
+            Scene frame number, or the manual frame when not updating with the
+            scene
 
         Returns
         -------
@@ -321,7 +327,7 @@ class FrameManager:
         uframe_current = frame_mapper(
             frame=frame,
             subframes=self.trajectory.subframes,
-            offset=self.trajectory.offset,
+            offset=self.trajectory.offset if self.trajectory.update_with_scene else 0,
         )
         uframe_next = uframe_current + 1
 
@@ -417,17 +423,14 @@ class FrameManager:
         Parameters
         ----------
         frame : int
-            Scene frame number
+            Scene frame number, or the manual frame when not updating with the
+            scene
 
         Returns
         -------
         np.ndarray
             Processed atom positions
         """
-        if not self.trajectory.update_with_scene:
-            # Just return positions at the frame without any special handling
-            return self._position_at_frame(frame)
-
         uframe_current, uframe_next = self._mapped_uframes(frame)
 
         if self.trajectory.subframes > 0 and self.trajectory.interpolate:
@@ -540,7 +543,8 @@ class FrameManager:
         Parameters
         ----------
         frame : int
-            Scene frame number
+            Scene frame number, or the manual frame when not updating with the
+            scene
 
         Returns
         -------
@@ -549,10 +553,6 @@ class FrameManager:
         """
         if not self.attribute_caches:
             return {}
-
-        if not self.trajectory.update_with_scene:
-            # Just return attributes at the frame without any special handling
-            return self._attributes_at_frame(frame)
 
         uframe_current, uframe_next = self._mapped_uframes(frame)
 

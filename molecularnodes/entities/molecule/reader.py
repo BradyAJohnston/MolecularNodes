@@ -88,7 +88,6 @@ class ReaderBase(metaclass=ABCMeta):
             "vdw_radii": cls._compute_vdw_radii,
             "atom_name_int": cls._compute_atom_name_int,
             "charge": cls._compute_charge,
-            "lipophobicity": cls._compute_lipophobicity,
             "Color": cls._compute_color,
             "is_alpha_carbon": cls._compute_is_alpha_carbon,
             "is_solvent": filter.filter_solvent,
@@ -101,7 +100,14 @@ class ReaderBase(metaclass=ABCMeta):
         }
         for key, func in annotations.items():
             try:
-                array.set_annotation(key, func(array))
+                values = func(array)
+                if values is None:
+                    # the file provides nothing for this optional annotation: drop
+                    # any placeholder biotite filled in so it isn't stored
+                    if key in array.get_annotation_categories():
+                        array.del_annotation(key)
+                else:
+                    array.set_annotation(key, values)
             except Exception:
                 pass
 
@@ -251,23 +257,20 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_charge(array):
-        return np.array(
-            [
-                data.atom_charge.get(res, {}).get(atom, 0)
-                for res, atom in zip(array.res_name, array.atom_name)
-            ],
-            dtype=float,
-        )
-
-    @staticmethod
-    def _compute_lipophobicity(array):
-        return np.array(
-            [
-                data.lipophobicity.get(res, {}).get(atom, 0)
-                for res, atom in zip(array.res_name, array.atom_name)
-            ],
-            dtype=float,
-        )
+        """
+        The charges the file provides through the ``charge`` extra field (the
+        PDB charge column or mmCIF ``pdbx_formal_charge``), stored verbatim.
+        Biotite fills blank or ``?`` values with 0, so an annotation that is all
+        zeros means the file provided none and the annotation is dropped
+        (``None``). No values are looked up from the residue and atom name; that
+        lookup will return as a node instead (#1228).
+        """
+        if "charge" not in array.get_annotation_categories():
+            return None
+        charge = array.get_annotation("charge")
+        if not np.any(charge != 0):
+            return None
+        return charge.astype(float)
 
     @staticmethod
     def _compute_color(array, color_plddt: bool = False):
