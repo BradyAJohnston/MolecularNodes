@@ -266,6 +266,10 @@ This project has already gone through several iterations to improve the general 
 
 Please open an issue or PR if you would like to discuss submitting changes. Support for importing more data formats or improving on current import formats are more than welcome. Submitting changes for node groups can be a bit tricky as the node graphs inside of Blender don't work with `git`, so please open an issue or discussion with proposed changes.
 
+Before opening a pull request, read the [AI-assisted contributions policy](AI_POLICY.md). In short: you may use AI tools, but you are the author, you must understand and have tested every line, every PR needs an honest AI disclosure, and you must talk to reviewers yourself rather than through a tool. If you are new to the project, start small and open an issue first for anything beyond a small bug fix.
+
+If you point a coding agent at this repository, `AGENTS.md` (also reachable as `CLAUDE.md`) holds the rules it must follow and a map of where things live. The `skills/` directory holds longer agent-oriented guides for node development and scripted rendering.
+
 ## Building a Dev Environment
 
 Building a local development environment isn't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but it _is_ required for [running tests](#running-tests) and [building docs](#writing-and-building-docs) locally.
