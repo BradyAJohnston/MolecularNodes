@@ -692,7 +692,7 @@ class TestTrajectory:
         session.entities.pop(traj.uuid)
 
         bpy.data.objects[obj_name].select_set(True)
-        bpy.ops.mn.reload_trajectory()
+        bpy.ops.mn.session_reload_item()
 
         assert len(session.entities) == 1
 

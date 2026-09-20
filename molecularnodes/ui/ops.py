@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from typing import cast
 import bpy
-import MDAnalysis as mda
 import nodebpy
 from biotite import InvalidFileError
 from bpy.props import (
@@ -27,7 +26,6 @@ from ..entities import (
     ensemble,
     molecule,
 )
-from ..entities.base import EntityType
 from ..handlers import update_entities
 from ..nodes._utils import remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
@@ -697,52 +695,6 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return {"FINISHED"}
 
 
-class MN_OT_Reload_Trajectory(bpy.types.Operator):
-    bl_idname = "mn.reload_trajectory"
-    bl_label = "Reload Trajectory"
-    bl_description = (
-        "Reload the `mda.UNiverse` of the current Object to renable updating"
-    )
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        obj = context.active_object
-        loaded_trajectory = context.scene.MNSession.match(obj)
-        # "molecule" covers MD trajectories too — reloadable here when loaded
-        # from topology (+ trajectory) files
-        reloadable = obj.mn.entity_type.startswith("md") or (
-            obj.mn.entity_type == EntityType.MOLECULE and obj.mn.filepath_topology
-        )
-        return bool(reloadable) and not loaded_trajectory
-
-    def execute(self, context):
-        obj = context.active_object
-        try:
-            path_topo = resolve_file_path(obj.mn.filepath_topology, "Topology file")
-            path_traj = resolve_file_path(obj.mn.filepath_trajectory, "Trajectory file")
-        except ValueError as e:
-            self.report({"ERROR"}, str(e))
-            return {"CANCELLED"}
-
-        if "oxdna" in obj.mn.entity_type:
-            uni = mda.Universe(
-                path_topo,
-                path_traj,
-                topology_format=molecule.oxdna.OXDNAParser,
-                format=molecule.oxdna.OXDNAReader,
-            )
-            traj = molecule.oxdna.OXDNA(uni, create_object=False)
-        elif "streaming" in obj.mn.entity_type:
-            traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
-        else:
-            traj = Molecule.load(path_topo, path_traj, create_object=False)
-
-        traj.object = obj
-        traj.set_frame(context.scene.frame_current)
-        return {"FINISHED"}
-
-
 class MN_OT_Frames_To_Collection(bpy.types.Operator):
     bl_idname = "mn.frames_to_collection"
     bl_label = "Bake Frames to Collection"
@@ -1349,7 +1301,6 @@ CLASSES = [
     MN_OT_add_selection_to_style,
     MN_OT_Import_Molecule,
     MN_OT_Import_OxDNA,
-    MN_OT_Reload_Trajectory,
     MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,
     MN_OT_Import_Ensemble,
