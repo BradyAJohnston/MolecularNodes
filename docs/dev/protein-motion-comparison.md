@@ -193,11 +193,13 @@ one F-curve). What is missing is the sugar:
 
 ```python
 with canvas.timeline(fps=60) as t:
-    t.play(canvas.camera.orbit(theta=0.3), run_time=2)             # keyframes on the camera
-    t.play(style.set("opacity", 0.06), run_time=1)                  # keyframes on a node input
-    t.play(canvas.camera.focus(helix, fstop=4), run_time=1.5)       # DOF focus object tracks selection
+    t.play(canvas.camera.orbit(theta=0.3), run_time=2)  # keyframes on the camera
+    t.play(style.set("opacity", 0.06), run_time=1)  # keyframes on a node input
+    t.play(
+        canvas.camera.focus(helix, fstop=4), run_time=1.5
+    )  # DOF focus object tracks selection
     t.wait(0.5)
-    t.play(label.write(), run_time=0.8)                             # annotation progress property
+    t.play(label.write(), run_time=0.8)  # annotation progress property
 ```
 
 Pieces: rate functions applied through F-curve easing (Blender's Bezier handles or
