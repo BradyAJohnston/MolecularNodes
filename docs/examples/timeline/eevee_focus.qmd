@@ -1,0 +1,27 @@
+---
+title: "Focus pull"
+description: "A helix isolated by transparency, then two lens focus pulls with depth of field."
+video: videos/eevee_focus.mp4
+order: 3
+---
+
+{{< video videos/eevee_focus.mp4 >}}
+
+Calmodulin (1CLL) with helix 5 to 19 in gold. The rest of the chain is a second cartoon
+     style with a `Transparent` material, and its transparency socket is tweened to fade the
+     context. Focus is Blender's own depth of field, pulled from the helix to residues 82 to 92
+     and back with `canvas.camera.focus`.
+
+     Depth of field at Molecular Nodes' world scale is gentler than ProteinMotion's at the
+     same f-number, so the apertures here are wider than in the original.
+
+After ProteinMotion's [`eevee_focus.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/eevee_focus.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/eevee_focus.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/eevee_focus.py"}
+{{< include scripts/eevee_focus.py >}}
+```

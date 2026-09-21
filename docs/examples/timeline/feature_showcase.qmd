@@ -1,0 +1,28 @@
+---
+title: "Feature showcase"
+description: "A chapter tour of representations, colour, focus and NMR states on calmodulin."
+video: videos/feature_showcase_a.mp4
+order: 16
+---
+
+{{< video videos/feature_showcase_a.mp4 >}}
+
+{{< video videos/feature_showcase_b.mp4 >}}
+
+Chapters with headings, badges and a callout: representation cuts, painted regions and
+     transparency, a focus move onto the central helix, and then the deposited 1CFC NMR
+     ensemble played as a second entity.
+
+     ProteinMotion continues with a contact-guided morph into troponin C, hydrogen bonds, live
+     distances and electrostatics; those chapters are marked in the script as comments.
+
+After ProteinMotion's [`feature_showcase.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/feature_showcase.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/feature_showcase.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/feature_showcase.py"}
+{{< include scripts/feature_showcase.py >}}
+```

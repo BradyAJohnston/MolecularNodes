@@ -6,6 +6,7 @@ title: "Changelog"
 
 ## Added
 - `Canvas.timeline()`, a storyboard layer that compiles camera moves (`canvas.camera.look_at`, `orbit`, `dolly`, `zoom`, `move_to`, `focus`), value tweens on node inputs, entity and annotation properties, and trajectory playback (`traj.play(a, b)`) into ordinary keyframes. The camera is now parented to a `camera_pivot` empty so an orbit is one pair of keys; `Camera.location` and `Camera.rotation` are world-space. `entity.styles` gives the style nodes of an entity's tree by index or name for animating from the simple API.
+- A storyboard gallery in the docs (`docs/examples/timeline/`): nineteen scripts that reproduce ProteinMotion's examples with the timeline layer, with their renders, each noting what Molecular Nodes cannot do yet.
 - Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)

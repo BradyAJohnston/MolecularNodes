@@ -265,6 +265,20 @@ State as of 2026-09-21, PR "Canvas timeline layer (design discussion + prototype
   after loading a trajectory from a relative path raises in the session's
   `save_post` handler (`_remap_trajectory_paths`). Use absolute paths, or
   ignore; the file still saves.
+- **Storyboard gallery**: `docs/examples/timeline/` holds one script per
+  ProteinMotion example (`scripts/`), their renders (`videos/`, re-encoded
+  small) and a Quarto listing with a page per storyboard that embeds the
+  script from its file. The scripts are not run during the docs build. Their
+  shared helpers in `scripts/_common.py` are also a list of what the API still
+  lacks: a visibility switch spliced in front of linked `Selection` inputs, a
+  turntable empty for spinning an object about its centre, a transparent
+  context material standing in for per-atom opacity.
+- **Bug found on the way, not fixed here**: `handlers.render_pre_handler`
+  returns early when no entity has annotations, so the compositor's annotation
+  overlay keeps the previous scene's labels after `canvas.clear()`.
+  `_common.clear_annotation_overlay` blanks the image as a workaround.
 - **Next steps**: `follow=True` on `Focus` (section 4); a `Set Opacity` node
-  so fades are possible; `label.write()` once text annotations have a
-  `progress` property; user-facing docs once the API is agreed.
+  so fades are possible; `Animate Stagger`, `Morph To Attribute` and
+  `Style Highlight` as the gallery's comments call for them; `label.write()`
+  once text annotations have a `progress` property; user-facing docs for the
+  API itself once it is agreed.
