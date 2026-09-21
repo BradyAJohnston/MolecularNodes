@@ -131,9 +131,9 @@ def test_look_at_views(canvas, universe):
 
     # test different viewpoints
     canvas.look_at(v1, viewpoint="front")
-    r1f = camera.rotation_euler.copy()
+    r1f = canvas.camera.rotation
     canvas.look_at(v1, viewpoint="back")
-    r1b = camera.rotation_euler.copy()
+    r1b = canvas.camera.rotation
     assert r1f != r1b
 
     # a custom viewpoint is an XYZ Euler rotation in degrees
@@ -580,7 +580,7 @@ def test_canvas_ignores_dangling_entities_when_deciding(canvas):
 
 def _camera_distance(canvas, points):
     return float(
-        np.linalg.norm(np.asarray(points).mean(axis=0) - canvas.camera.camera.location)
+        np.linalg.norm(np.asarray(points).mean(axis=0) - canvas.camera.location)
     )
 
 
@@ -595,7 +595,7 @@ def test_look_at_accepts_any_number_of_points(canvas):
     assert len(points) > 8
 
     canvas.look_at(points)
-    offsets = points - np.asarray(canvas.camera.camera.location)
+    offsets = points - np.asarray(canvas.camera.location)
     depth = offsets @ canvas.camera.basis[2]
     assert (depth > 0).all(), "the subject ended up behind the camera"
 
@@ -650,7 +650,7 @@ def test_look_at_frames_consistently_across_viewpoints(canvas):
     filled = []
     for viewpoint in ("default", "front", "top", "left"):
         canvas.look_at(mol, viewpoint=viewpoint, margin=0.0)
-        offsets = points - np.asarray(canvas.camera.camera.location)
+        offsets = points - np.asarray(canvas.camera.location)
         basis = canvas.camera.basis
         depth = offsets @ basis[2]
         left, right, bottom, top = canvas.camera.frame_bounds(canvas.scene)
@@ -678,9 +678,7 @@ def test_look_at_extends_the_far_clip_to_reach_the_subject(canvas):
 
     canvas.look_at(mol)
     points = np.asarray(mol.get_view())
-    depth = (points - np.asarray(canvas.camera.camera.location)) @ canvas.camera.basis[
-        2
-    ]
+    depth = (points - np.asarray(canvas.camera.location)) @ canvas.camera.basis[2]
     assert canvas.camera.clip_end >= depth.max()
 
 
@@ -730,7 +728,7 @@ def test_look_at_leaves_breathing_room_by_default(canvas):
     points = np.asarray(mol.get_view())
 
     canvas.look_at(mol, viewpoint="front")
-    offsets = points - np.asarray(canvas.camera.camera.location)
+    offsets = points - np.asarray(canvas.camera.location)
     basis = canvas.camera.basis
     depth = offsets @ basis[2]
     left, right, bottom, top = canvas.camera.frame_bounds(canvas.scene)

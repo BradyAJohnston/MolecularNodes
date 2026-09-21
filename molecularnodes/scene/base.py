@@ -904,8 +904,16 @@ class Canvas:
             if entity.name in self.scene.objects:
                 session.remove(entity.uuid)
 
+        keep = {obj for obj in self.scene.objects if obj.type in {"CAMERA", "LIGHT"}}
+        # a camera hangs off its pivot empty; removing the parent would drop
+        # the camera onto its local transform, so the rig stays with it
+        for obj in list(keep):
+            parent = obj.parent
+            while parent is not None:
+                keep.add(parent)
+                parent = parent.parent
         for obj in list(self.scene.objects):
-            if obj.type in {"CAMERA", "LIGHT"}:
+            if obj in keep:
                 continue
             bpy.data.objects.remove(obj, do_unlink=True)
 
@@ -1147,14 +1155,11 @@ class Canvas:
         --------
         ```{python}
         import molecularnodes as mn
-        from molecularnodes.nodes import geometry as mg
 
         canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
         canvas.samples = 8
-        mol = mn.Molecule.fetch("4ozs")
-        with mol.tree as tree:
-            cartoon = mg.StyleCartoon()
-            tree.atoms >> cartoon >> tree.join
+        mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+        cartoon = mol.styles["Style Cartoon"]
         canvas.look_at(mol, viewpoint="front")
 
         with canvas.timeline(fps=24) as t:

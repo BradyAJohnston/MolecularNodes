@@ -1,7 +1,9 @@
 # A timeline layer on `Canvas`
 
 Design notes for the prototype in `molecularnodes/scene/timeline.py`, following
-item 5.1 of `protein-motion-comparison.md`. Written 2026-09-19 against Blender 5.2.
+item 5.1 of `protein-motion-comparison.md`. Written 2026-09-19 against Blender 5.2;
+section 6 records the decisions taken on 2026-09-21 and section 3 describes the
+code as it now is.
 
 ## 1. What problem this solves
 
@@ -41,9 +43,10 @@ that Blender's animation system should remain the engine.
 
 3. **Easing lives on the keys.** A tween writes two keys and sets the
    interpolation on the first (Blender attaches the segment's interpolation to
-   its left key). Only motion that has no two-key form is sampled per frame:
-   an orbit, whose path is an arc. Even then the samples are ordinary linear
-   keys, so a scrub between frames is still exact.
+   its left key). The camera is a pivot rig precisely so that an orbit has a
+   two-key form (one Euler component of the pivot); only an orbit about an
+   axis that is not an Euler component is sampled per frame, and even then the
+   samples are ordinary linear keys, so a scrub between frames is still exact.
 
 4. **One channel, one owner.** Two clips writing the same property over
    overlapping frames raise at authoring time. Blender would silently let the
@@ -61,7 +64,8 @@ Timeline            cursor in seconds, fps from the canvas, start frame
   .play(*clips, run_time=, easing=, at=)   clips run together; cursor advances past the longest
   .wait(seconds)                           hold
   .set(target, value)                      instant step at the cursor
-  .tween(target, value) / .frames(entity, a, b)   clip factories
+  .tween(target, value)                    clip factory; entity.play(a, b) and
+                                           canvas.camera.* make the others
   .finish() / with-block exit              fits scene frame range, rewinds
   .render(path)                            Canvas.animation over the storyboard
 
@@ -70,8 +74,8 @@ Clip                run_time, easing, apply(timeline, frame_start, frame_end, ea
   Step              hold-then-jump (CONSTANT)
   Sampled           one linear key per frame, Python easing on progress
   Frames            entity.frame keyed from universe frame a to b, entity detached from the scene frame
-  CameraMove        Tween whose end pose is solved at play time: LookAt, MoveTo, Dolly
-  Orbit             Sampled rotation of the camera matrix about a pivot
+  CameraMove        Tween whose end state is solved at play time: LookAt, MoveTo, Dolly
+  Orbit             two keys on one Euler component of the pivot, or sampled if the axis has none
   Focus             DOF via a focus empty whose location is tweened, plus f-stop
 
 Channel             (owner struct, property, index): the unit of keyframing
@@ -89,7 +93,7 @@ objects into channels:
 
 | target | resolves to |
 | --- | --- |
-| nodebpy socket `style.i.loop_radius` or a `bpy` node socket | the socket's `default_value` on the node tree |
+| nodebpy socket `mol.styles[0].i.loop_radius` or a `bpy` node socket | the socket's `default_value` on the node tree |
 | `(camera.data, "lens")`, `(obj, "location")`, `(scene.view_settings, "exposure")` | any RNA property on any struct |
 | `(entity, "subframes")` | the entity's `mn` property group |
 | `(annotation, "text_size")` | the annotation's entry in `object.mn_annotations`, or its typed inputs group |
@@ -100,30 +104,59 @@ without special cases; they are node sockets.
 
 ### Camera
 
-The camera stays a free object with keys on `location` and `rotation_euler`.
-The alternative, a pivot-empty rig with the camera parented to it, was
-considered and rejected for the prototype: it changes what `Camera.frame_points`
-writes (local versus world location), it makes `look_at` after an orbit depend
-on rig state, and a script re-run is the primary edit path anyway. The trade is
-that an orbit is a dense curve in the Graph Editor rather than one editable key
-pair. Section 6 revisits this.
+The camera is a rig: a pivot empty (`camera_pivot`, created the first time
+`Camera.pivot` is asked for, at the origin so nothing moves) with the camera
+parented to it. The pivot carries the viewing direction and sits at the
+centre of whatever was last framed; the camera's own transform is its offset
+from the pivot, looking down the pivot's `-Z`. `Camera.rotation` and
+`set_viewpoint` write the pivot's rotation and clear the camera's;
+`frame_points` moves the pivot to the enclosing-sphere centre of the points
+(without moving the camera) and then places the camera in world space.
+`Camera.location`, `rotation`, `basis` and `matrix_world` are all world-space
+and are composed from the transform channels rather than read from
+`Object.matrix_world`, so they never lag a depsgraph update.
+
+The rig is what makes the clips compose. `LookAt` keys the pivot and the
+camera (only the channels that change), `Orbit` keys the pivot's rotation,
+`Dolly` keys the camera's own location, so a dolly during an orbit is two
+clips on disjoint channels rather than a conflict. An orbit about world `z` or
+the camera's `right` axis (the pivot's local X) changes one Euler component
+and is written as one pair of keys with the easing on it; an orbit about any
+other axis samples the pivot's rotation per frame with continuous Eulers.
+`orbit(about=...)` eases the pivot's location to the new centre over the same
+frames as the turn, so a wide shot can swing in on a site without a jump.
+
+`Canvas.clear()` keeps the pivot along with the camera, since removing a
+parent drops the child onto its local transform.
 
 `LookAt` reuses `Camera.set_viewpoint` and `Camera.frame_points` in a dry run
-(pose captured, camera restored), so the destination is exactly what an
+(state captured, rig restored), so the destination is exactly what an
 immediate `canvas.look_at` gives. It keys `clip_end` as well when the framing
 would otherwise clip the subject.
 
 `Focus` uses Blender's own depth of field with a focus object rather than a
 distance, so every later camera move keeps the subject in focus without extra
 keys. The preset scene already ships a `focal_point` empty; the clip adopts it.
+The focus empty is not part of the rig, so focus stays on the site while the
+camera orbits.
 
 ### Entity playback
 
-`Frames` sets `update_with_scene = False` and keys `mn.frame` from universe
-frame `a` to `b`, respecting the entity's subframes (the property is stepped
-through them like the scene frame). Before the clip the trajectory holds `a`;
-after it, `b`. Playing at any speed, pausing, or scrubbing backwards falls out
-of ordinary F-curve behaviour.
+`traj.play(a, b)` returns a `Frames` clip. Played, it sets
+`update_with_scene = False` and keys `mn.frame` from universe frame `a` to
+`b`, respecting the entity's subframes (the property is stepped through them
+like the scene frame). Before the clip the trajectory holds `a`; after it,
+`b`. Playing at any speed, pausing, or scrubbing backwards falls out of
+ordinary F-curve behaviour. The property and its manual-frame machinery
+already existed for the GUI; the clip only keys it.
+
+### Styles from the simple API
+
+`add_style` keeps returning the entity for chaining. `entity.styles` is the
+handle a tween needs: it lists the tree's style nodes (any node with "Style"
+in its name, the panel's rule) by index or by node name or label, wrapped for
+nodebpy so `mol.styles["Style Cartoon"].i.loop_radius` is a target. Granular
+control of the tree stays with `with mol.tree`.
 
 ## 4. What the prototype does not do
 
@@ -169,59 +202,62 @@ line to draw is:
   factor, not the timeline writing attribute arrays per frame. Python-side
   per-frame writes are exactly the `record()` loop this layer exists to avoid.
 
-## 6. Open questions
+## 6. Open questions, and the decisions taken
 
-1. **Camera rig or free camera?** A rig (pivot empty, camera child, keys on the
-   empty's rotation and the camera's local Z) gives one key pair per orbit and
-   a familiar turntable setup for GUI users, at the cost of changing the
-   `Camera` contract. If the GUI-editability of orbits matters more than the
-   script being the source of truth, switch. The clip classes would not
-   change; only `Orbit.apply` and `Camera.frame_points` would.
-2. **Where do clip factories live?** Camera moves sit on `Camera` because they
-   read as `canvas.camera.orbit(...)`. Entity clips are on the timeline
-   (`t.frames(traj, 0, 100)`) to keep `Molecule` untouched; `traj.play(0, 100)`
-   would read better and is a one-line addition once the shape settles.
-   Annotation clips (`label.write()`) would follow the same pattern.
-3. **`add_style` should return the style node.** Every parameter tween in the
-   examples needs a handle on the node, which today means building the tree
-   with `with mol.tree`. Returning the node (or a thin style object) from
-   `add_style` would make `t.tween(style.i.quality, 4)` available from the
-   simple API.
-4. **Seconds or frames?** The cursor is in seconds so a storyboard survives an
-   fps change. Frame-based `at=` and `run_time=` overrides may be wanted for
-   syncing to trajectory frames; the conversion is trivial to expose.
-5. **Conflict granularity.** Overlap detection is per channel and per frame
-   range, so a tween and an orbit on the camera conflict only if both touch
-   `rotation_euler`. A `dolly` during an `orbit` conflicts on `location`;
-   composing them would need the orbit to sample the dolly's contribution,
-   i.e. a clip stack per channel. Not needed until someone asks.
+Settled on 2026-09-21.
+
+1. **Camera rig or free camera?** Rig. Opening the `.blend` will not be the
+   most common path but it will happen, and a turntable with one key pair per
+   orbit is what a GUI user expects to find. The pivot empty holds the orbit
+   centre and viewing direction; the focus empty stays separate. One level of
+   parenting; the `Camera` API is world-space throughout so callers do not
+   notice.
+2. **Where do clip factories live?** Camera moves on `canvas.camera`; entity
+   playback is `traj.play(a, b)` on the entity, keying the manual-frame
+   property that already exists for `Update with Scene` off. `Timeline.frames`
+   is gone. Annotation clips (`label.write()`) will follow the same pattern.
+3. **`add_style` return value.** Unchanged; it is a convenience and chains.
+   `entity.styles` (index, node name or label) gives the node for a tween.
+   Granular control is `with mol.tree`.
+4. **Seconds or frames?** Seconds; it reads intuitively and survives an fps
+   change.
+5. **Conflict granularity.** Per channel and frame range, as built. The rig
+   resolved the one case that motivated a clip stack: a dolly during an orbit
+   keys the camera while the orbit keys the pivot.
 
 ## 7. Verification
 
-`tests/test_timeline.py` (30 tests) covers easing endpoints and monotonicity,
+`tests/test_timeline.py` (37 tests) covers easing endpoints and monotonicity,
 cursor arithmetic, node-input tweens evaluated through `frame_set`, holds
 between clips, interpolation written onto keys, steps, vector and integer
-channels, entity and annotation channels, conflict detection, `look_at`
-matching the immediate call, orbit radius and pointing, continuity of the
-euler curve over a full turn, dolly and zoom, focus via the empty, trajectory
-playback with and without subframes, and a three-frame Cycles render of a
-storyboard to MP4.
+channels, entity and annotation channels, conflict detection, the rig
+(lazy creation without moving the camera, `look_at` recentring the pivot,
+`clear()` keeping it), `look_at` matching the immediate call, orbit radius and
+pointing, a turntable orbit being two keys on the pivot, an off-axis orbit
+being sampled and continuous, a dolly during an orbit, dolly and zoom, focus
+via the empty, `entity.styles` lookups feeding a tween, trajectory playback
+with and without subframes, and a three-frame Cycles render of a storyboard
+to MP4.
 
 ## 8. Picking this up
 
-State as of 2026-09-19, PR "Canvas timeline layer (design discussion + prototype)".
+State as of 2026-09-21, PR "Canvas timeline layer (design discussion + prototype)".
 
 - **Code**: `molecularnodes/scene/timeline.py` (clips, channels, timeline),
-  clip factories at the bottom of `molecularnodes/scene/camera.py`,
-  `Canvas.timeline()` in `molecularnodes/scene/base.py`, exports in
-  `molecularnodes/scene/__init__.py`.
-- **Tests**: `uv run pytest tests/test_timeline.py -q` (31 tests, ~10 s, one
-  tiny Cycles render). `tests/test_canvas.py` and `tests/test_framing.py` were
-  run alongside and pass.
+  the rig and clip factories in `molecularnodes/scene/camera.py`,
+  `Canvas.timeline()` and the rig-aware `clear()` in
+  `molecularnodes/scene/base.py`, `Styles` and `MolecularEntity.styles` in
+  `molecularnodes/entities/base.py`, `Molecule.play` in
+  `molecularnodes/entities/molecule/base.py`.
+- **Tests**: `uv run pytest tests/test_timeline.py -q` (37 tests, ~13 s, one
+  tiny Cycles render). `tests/test_canvas.py` (assertions moved from the
+  camera object's local transform to the world-space `Camera` properties),
+  `tests/test_framing.py`, `tests/test_utils.py` and the golden-image
+  `tests/test_render_images.py` pass alongside.
 - **Demo**: `uv run python docs/dev/canvas-timeline-demo.py <out_dir>` renders
   the storyboard in section 3 to `storyboard.mp4`, a contact sheet and a
   `.blend` holding the keyframes (EEVEE, 960x540, ~2 min). Open the blend to
-  see what the timeline wrote in the Graph Editor.
+  see the rig and what the timeline wrote in the Graph Editor.
 - **Environment**: `uv sync --all-extras` in a fresh checkout or worktree,
   otherwise `bpy` is missing. Set `BLENDER_USER_EXTENSIONS` before importing
   `bpy` in ad-hoc scripts (the demo does).
@@ -229,7 +265,6 @@ State as of 2026-09-19, PR "Canvas timeline layer (design discussion + prototype
   after loading a trajectory from a relative path raises in the session's
   `save_post` handler (`_remap_trajectory_paths`). Use absolute paths, or
   ignore; the file still saves.
-- **Next steps**, in the order they unblock each other: settle section 6
-  questions 1 to 3 on the PR; then `add_style` returning its node (small,
-  makes `t.tween(style.i.x, v)` reachable from the simple API); then
-  `follow=True` on `Focus`; then a `Set Opacity` node so fades are possible.
+- **Next steps**: `follow=True` on `Focus` (section 4); a `Set Opacity` node
+  so fades are possible; `label.write()` once text annotations have a
+  `progress` property; user-facing docs once the API is agreed.

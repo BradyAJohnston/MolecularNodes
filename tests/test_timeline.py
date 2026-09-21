@@ -216,10 +216,52 @@ def test_clips_back_to_back_do_not_conflict(canvas, cartoon_mol):
 
 
 def camera_pose(canvas, frame):
+    """World location and rotation of the camera at a frame."""
     canvas.frame = frame
     bpy.context.view_layer.update()
-    cam = canvas.camera.camera
-    return np.array(cam.matrix_world.translation), np.array(cam.rotation_euler)
+    matrix = canvas.camera.camera.matrix_world
+    return np.array(matrix.translation), np.array(matrix.to_euler("XYZ"))
+
+
+def test_the_camera_is_rigged_to_a_pivot_on_first_use(canvas):
+    cam = canvas.camera
+    obj = cam.camera
+    assert obj.parent is None
+    before = obj.matrix_world.copy()
+    pivot = cam.pivot
+    # parenting to the pivot leaves the camera where it was
+    assert obj.parent is pivot and pivot.type == "EMPTY"
+    assert np.allclose(cam.matrix_world, before, atol=1e-6)
+    assert cam.pivot is pivot
+
+
+def test_look_at_recentres_the_pivot_on_the_target(canvas, cartoon_mol):
+    mol, _ = cartoon_mol
+    cam = canvas.camera
+    view = mol.get_view("resid 1-10")
+    location = np.array(cam.location)
+    cam.recentre((1.0, 2.0, 3.0))
+    # moving the pivot does not move the camera
+    assert np.allclose(cam.location, location, atol=1e-6)
+    canvas.look_at(view)
+    assert np.allclose(
+        cam.pivot.location, mn.scene.timeline.target_centre(view), atol=1e-6
+    )
+    # the rotation lives on the pivot and the camera looks down its -Z
+    canvas.look_at(mol, viewpoint=(90, 0, -45))
+    assert np.allclose(np.degrees(cam.pivot.rotation_euler), (90, 0, -45), atol=1e-4)
+    assert np.allclose(cam.camera.rotation_euler, 0.0)
+    assert cam.rotation == pytest.approx((90, 0, -45), abs=1e-3)
+
+
+def test_clear_keeps_the_camera_rig(canvas, cartoon_mol):
+    cam = canvas.camera
+    pivot = cam.pivot
+    pose = cam.matrix_world.copy()
+    canvas.clear()
+    assert cam.camera.parent is pivot
+    assert pivot.name in canvas.scene.objects
+    assert np.allclose(cam.matrix_world, pose, atol=1e-6)
 
 
 def test_look_at_clip_lands_on_the_look_at_pose(canvas, cartoon_mol):
@@ -233,8 +275,8 @@ def test_look_at_clip_lands_on_the_look_at_pose(canvas, cartoon_mol):
     assert not np.allclose(start_location, end_location)
     # the destination is exactly what the immediate look_at gives
     canvas.look_at(mol, viewpoint="top")
-    assert np.allclose(end_location, canvas.camera.camera.location, atol=1e-5)
-    assert np.allclose(end_rotation, canvas.camera.camera.rotation_euler, atol=1e-6)
+    assert np.allclose(end_location, canvas.camera.location, atol=1e-5)
+    assert np.allclose(np.degrees(end_rotation), canvas.camera.rotation, atol=1e-4)
 
 
 def test_orbit_keeps_its_distance_from_the_pivot(canvas, cartoon_mol):
@@ -257,17 +299,61 @@ def test_orbit_keeps_its_distance_from_the_pivot(canvas, cartoon_mol):
     assert np.dot(forward, to_pivot) > 0.99
 
 
-def test_orbit_is_keyed_every_frame_and_continuous(canvas, cartoon_mol):
+def test_turntable_orbit_is_two_keys_on_the_pivot(canvas, cartoon_mol):
     mol, _ = cartoon_mol
+    pivot = canvas.camera.pivot
     with canvas.timeline(fps=10) as t:
         t.play(canvas.camera.orbit(360, about=mol), run_time=1, easing="linear")
-    fcurve = Channel(canvas.camera.camera, "rotation_euler", 2).fcurve()
-    assert len(fcurve.keyframe_points) == 11
+    fcurve = Channel(pivot, "rotation_euler", 2).fcurve()
+    assert [p.co.x for p in fcurve.keyframe_points] == [1, 11]
     angles = [p.co.y for p in fcurve.keyframe_points]
-    steps = np.diff(angles)
-    # no wrap-around jump in the euler curve over a full turn
-    assert np.allclose(steps, steps[0], atol=1e-6)
-    assert abs(angles[-1] - angles[0]) == pytest.approx(2 * math.pi, abs=1e-5)
+    assert angles[1] - angles[0] == pytest.approx(2 * math.pi)
+    # the other pivot channels and the camera itself are untouched
+    assert Channel(pivot, "rotation_euler", 0).fcurve() is None
+    assert Channel(canvas.camera.camera, "location", 0).fcurve() is None
+    # the camera's right axis is the pivot's X, so a tumble is two keys too
+    with canvas.timeline(fps=10, start=11) as t:
+        t.play(canvas.camera.orbit(30, axis="right"), run_time=1)
+    fcurve = Channel(pivot, "rotation_euler", 0).fcurve()
+    assert len(fcurve.keyframe_points) == 2
+
+
+def test_orbit_about_another_axis_is_sampled_and_continuous(canvas, cartoon_mol):
+    mol, _ = cartoon_mol
+    pivot = canvas.camera.pivot
+    with canvas.timeline(fps=10) as t:
+        t.play(
+            canvas.camera.orbit(360, axis=(1, 1, 0), about=mol),
+            run_time=1,
+            easing="linear",
+        )
+    start, _ = camera_pose(canvas, 1)
+    centre = np.array(mn.scene.timeline.target_centre(mol))
+    radius = np.linalg.norm(start - centre)
+    for index in range(3):
+        fcurve = Channel(pivot, "rotation_euler", index).fcurve()
+        assert len(fcurve.keyframe_points) == 11
+        # no wrap-around jump in the euler curve over a full turn
+        steps = np.abs(np.diff([p.co.y for p in fcurve.keyframe_points]))
+        assert steps.max() < math.pi
+    for frame in (1, 4, 7, 11):
+        location, _ = camera_pose(canvas, frame)
+        assert np.linalg.norm(location - centre) == pytest.approx(radius, rel=1e-5)
+    end, _ = camera_pose(canvas, 11)
+    assert np.allclose(end, start, atol=1e-4)
+
+
+def test_dolly_during_an_orbit_does_not_conflict(canvas, cartoon_mol):
+    mol, _ = cartoon_mol
+    centre = np.array(mn.scene.timeline.target_centre(mol))
+    start, _ = camera_pose(canvas, 1)
+    radius = np.linalg.norm(start - centre)
+    with canvas.timeline(fps=10) as t:
+        t.play(canvas.camera.orbit(90), canvas.camera.dolly(1.0), run_time=1)
+    end, _ = camera_pose(canvas, 11)
+    # the orbit turned the pivot and the dolly pulled the camera in on it
+    assert np.linalg.norm(end - centre) == pytest.approx(radius - 1.0, abs=1e-4)
+    assert not np.allclose(end[:2], start[:2], atol=0.1)
 
 
 def test_clips_start_from_where_the_previous_clip_left_the_camera(canvas, cartoon_mol):
@@ -343,10 +429,29 @@ def test_focus_uses_a_tracked_empty(canvas, cartoon_mol):
 # -- trajectory playback --------------------------------------------------------
 
 
+def test_styles_are_reachable_by_index_and_name(canvas, traj):
+    traj.add_style("cartoon", name="thin")
+    assert len(traj.styles) == 2
+    assert [style.name for style in traj.styles] == ["Style Ribbon", "Style Cartoon"]
+    assert traj.styles[1].name == traj.styles["Style Cartoon"].name == "Style Cartoon"
+    # a label set through add_style(name=) works too
+    assert traj.styles["thin"].name == "Style Cartoon"
+    with pytest.raises(KeyError, match="no style 'Style Surface'"):
+        traj.styles["Style Surface"]
+    with pytest.raises(IndexError):
+        traj.styles[2]
+    # the wrapped node's inputs animate from the simple API
+    cartoon = traj.styles["Style Cartoon"]
+    with canvas.timeline(fps=10) as t:
+        t.play(t.tween(cartoon.i.loop_radius, 1.5), run_time=1)
+    socket = cartoon.i.loop_radius.socket
+    assert value_at(canvas, socket, 11) == pytest.approx(1.5)
+
+
 def test_frames_clip_plays_the_trajectory(canvas, traj):
     assert traj.update_with_scene
     with canvas.timeline(fps=10) as t:
-        t.play(t.frames(traj, 0, 4), run_time=2)
+        t.play(traj.play(0, 4), run_time=2)
     assert not traj.update_with_scene
     canvas.frame = 1
     assert traj.uframe == 0
@@ -362,7 +467,7 @@ def test_frames_clip_plays_the_trajectory(canvas, traj):
 def test_frames_clip_honours_subframes(canvas, traj):
     traj.subframes = 1
     with canvas.timeline(fps=10) as t:
-        t.play(t.frames(traj, 0, 4), run_time=1)
+        t.play(traj.play(0, 4), run_time=1)
     canvas.frame = 11
     assert traj.frame == 8
     assert traj.uframe == 4

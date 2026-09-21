@@ -4,7 +4,7 @@ from typing import Sequence
 import bpy
 import numpy as np
 import numpy.typing as npt
-from mathutils import Vector
+from mathutils import Euler, Matrix, Vector
 from .. import framing
 
 
@@ -41,10 +41,34 @@ _viewpoint_rotation_eulers = {
 }
 
 
+#: Name of the empty a camera is parented to for orbiting.
+PIVOT_NAME = "camera_pivot"
+
+
+def world_matrix(obj: bpy.types.Object) -> Matrix:
+    """
+    The world matrix of an object composed from its transform channels.
+
+    ``Object.matrix_world`` is only refreshed by a depsgraph update, so it lags
+    a change to ``location`` or ``rotation_euler`` on the object or on any of
+    its parents. Composing the parent chain's ``matrix_basis`` gives the
+    matrix those channels currently describe. Constraints are not included.
+    """
+    if obj.parent is None:
+        return obj.matrix_basis.copy()
+    return world_matrix(obj.parent) @ obj.matrix_parent_inverse @ obj.matrix_basis
+
+
 class Camera:
     """
     A class to handle camera settings in Blender.
 
+    The camera is parented to a pivot empty, created the first time it is
+    needed, and the two together form a turntable rig: the pivot holds the
+    viewing direction and sits at the centre of whatever was last framed, and
+    the camera hangs off it looking down the pivot's ``-Z``. Turning the pivot
+    orbits the camera about the subject, which is what the timeline's
+    ``orbit`` keys, and what a user opening the file finds to grab.
     """
 
     def __init__(self):
@@ -62,6 +86,60 @@ class Camera:
     def camera_data(self) -> bpy.types.Camera:
         """Get Camera data"""
         return self.camera.data
+
+    @property
+    def pivot(self) -> bpy.types.Object:
+        """
+        The empty the camera is parented to and orbits about.
+
+        Created at the world origin, unrotated, the first time it is asked for,
+        so the camera keeps the pose it had. A camera that already has a parent
+        uses that as its pivot.
+        """
+        camera = self.camera
+        if camera.parent is None:
+            pivot = bpy.data.objects.new(PIVOT_NAME, None)
+            pivot.empty_display_type = "PLAIN_AXES"
+            pivot.empty_display_size = 0.5
+            bpy.context.scene.collection.objects.link(pivot)
+            camera.parent = pivot
+            camera.matrix_parent_inverse.identity()
+        return camera.parent
+
+    @property
+    def parent_matrix(self) -> Matrix:
+        """The world matrix the camera's own transform channels are relative to."""
+        camera = self.camera
+        if camera.parent is None:
+            return Matrix.Identity(4)
+        return world_matrix(camera.parent) @ camera.matrix_parent_inverse
+
+    @property
+    def matrix_world(self) -> Matrix:
+        """The camera's world matrix, current with its transform channels."""
+        return world_matrix(self.camera)
+
+    @property
+    def location(self) -> Vector:
+        """Get the camera's world-space location"""
+        return self.matrix_world.translation
+
+    @location.setter
+    def location(self, value: Sequence[float]) -> None:
+        """Set the camera's world-space location, leaving the pivot where it is"""
+        self.camera.location = self.parent_matrix.inverted() @ Vector(value)
+
+    def recentre(self, centre: Sequence[float]) -> None:
+        """
+        Move the pivot to ``centre`` without moving the camera.
+
+        The camera's own transform is re-expressed relative to the pivot's new
+        position, so its world pose does not change; only what an orbit turns
+        about does.
+        """
+        location = self.location
+        self.pivot.location = Vector(centre)
+        self.location = location
 
     @property
     def lens(self) -> float:
@@ -95,13 +173,25 @@ class Camera:
 
     @property
     def rotation(self) -> tuple[float, float, float]:
-        """Get Camera rotation in degrees (XYZ)"""
-        return tuple(degrees(angle) for angle in self.camera.rotation_euler)
+        """Get the camera's world rotation in degrees (XYZ)"""
+        camera = self.camera
+        compatible = (camera.parent or camera).rotation_euler
+        euler = self.matrix_world.to_euler("XYZ", compatible)
+        return tuple(degrees(angle) for angle in euler)
 
     @rotation.setter
     def rotation(self, angles: tuple[float, float, float]) -> None:
-        """Set Camera rotation in degrees (XYZ)"""
-        self.camera.rotation_euler = tuple(radians(angle) for angle in angles)
+        """
+        Set the camera's world rotation in degrees (XYZ).
+
+        The rotation goes on the pivot and the camera's own rotation is
+        cleared, so the camera looks down the pivot's ``-Z`` and turning the
+        pivot orbits it.
+        """
+        self.pivot.rotation_euler = Euler(
+            tuple(radians(angle) for angle in angles), "XYZ"
+        )
+        self.camera.rotation_euler = (0.0, 0.0, 0.0)
 
     @property
     def basis(self) -> np.ndarray:
@@ -111,7 +201,7 @@ class Camera:
         A Blender camera looks down its own ``-Z``, so ``forward`` is the
         negated third axis rather than the third axis itself.
         """
-        matrix = self.camera.matrix_world.to_3x3().normalized()
+        matrix = self.matrix_world.to_3x3().normalized()
         return np.array(
             [
                 matrix @ Vector((1.0, 0.0, 0.0)),
@@ -159,6 +249,9 @@ class Camera:
         changing where the camera is pointing. See
         [](`molecularnodes.framing.fit_camera_to_points`) for the solve.
 
+        The pivot is moved to the centre of the points first, so an orbit that
+        follows turns about what was framed.
+
         Parameters
         ----------
         points : array_like
@@ -175,6 +268,8 @@ class Camera:
         if scene is None:
             scene = bpy.context.scene
         points = framing.as_points(points)
+        centre, _ = framing.enclosing_sphere(points)
+        self.recentre(centre)
         bounds = self.frame_bounds(scene)
         basis = self.basis
 
@@ -186,7 +281,7 @@ class Camera:
         else:
             location = framing.fit_camera_to_points(points, basis, bounds, margin)
 
-        self.camera.location = location
+        self.location = location
         # a subject sitting beyond the far clip renders as nothing at all, so
         # make room for it rather than silently dropping it
         furthest = float(np.max((points - location) @ basis[2]))
@@ -241,11 +336,14 @@ class Camera:
         easing: str | None = None,
     ):
         """
-        A clip swinging the camera around a pivot by ``angle`` degrees.
+        A clip turning the camera's pivot by ``angle`` degrees.
 
         The camera keeps its distance from the pivot and its orientation
         relative to it, so a framed subject stays framed. A full turntable is
-        ``orbit(360, easing="linear")``.
+        ``orbit(360, easing="linear")``. Turning about the world ``z`` axis or
+        the camera's own ``right`` axis is one pair of keys on the pivot's
+        rotation, editable in the Graph Editor; any other axis is sampled per
+        frame.
 
         Parameters
         ----------
@@ -255,8 +353,10 @@ class Camera:
             World axis ``"x"``, ``"y"`` or ``"z"``, the camera's own ``"up"`` or
             ``"right"``, or any vector.
         about : MolecularEntity | bpy.types.Object | array_like, optional
-            The pivot, framed as for [](`~mn.Canvas.look_at`); its enclosing
-            sphere's centre is used. Every entity in the scene when left out.
+            What to turn about, as for [](`~mn.Canvas.look_at`). The pivot
+            eases to its centre over the clip while turning, so a wide shot
+            can swing in on a site. Left out, the pivot stays where the last
+            framing put it.
         run_time : float, optional
             Length in seconds (default 2).
         easing : str, optional
@@ -275,7 +375,8 @@ class Camera:
     ):
         """
         A clip moving the camera along its view axis by ``distance`` world
-        units; positive moves towards the subject.
+        units; positive moves towards the subject. Keys the camera's own
+        location, so it composes with an orbit of the pivot.
 
         Returns
         -------
@@ -307,8 +408,10 @@ class Camera:
         easing: str | None = None,
     ):
         """
-        A clip easing the camera to an explicit ``location`` and/or XYZ Euler
-        ``rotation`` in degrees.
+        A clip easing the camera to an explicit world ``location`` and/or XYZ
+        Euler ``rotation`` in degrees. The rotation goes on the pivot, as
+        :attr:`rotation` does; given only a rotation, the camera turns in
+        place.
 
         Returns
         -------
@@ -365,8 +468,7 @@ class Camera:
         # Viewpoint is a StrEnum, so named viewpoints (including bare strings) are
         # caught here; a Sequence[float] of Euler angles falls through
         if isinstance(viewpoint, str):
-            self.camera.rotation_euler = _viewpoint_rotation_eulers[
-                Viewpoint(viewpoint)
-            ]
+            euler = _viewpoint_rotation_eulers[Viewpoint(viewpoint)]
+            self.rotation = tuple(degrees(angle) for angle in euler)
         else:
             self.rotation = viewpoint

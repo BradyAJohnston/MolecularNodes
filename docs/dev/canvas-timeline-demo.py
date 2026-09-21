@@ -65,7 +65,7 @@ with canvas.timeline(fps=24) as t:
     )
     # play the trajectory while the label shrinks away
     t.play(
-        t.frames(traj, 0, 4),
+        traj.play(0, 4),
         t.tween((label, "text_size"), 8),
         run_time=2,
     )

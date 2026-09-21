@@ -22,8 +22,9 @@ Design notes
   layer is mostly about the camera, node inputs, entity playback and annotation
   parameters - the things that today need hand-placed keyframes.
 * **Easing lives on the keyframes.** Tweens set the interpolation of the
-  Blender keys so the curve is editable; only clips that cannot be expressed as
-  two keys (an orbit, whose path is an arc) are sampled per frame.
+  Blender keys so the curve is editable. The camera is a pivot rig so that an
+  orbit is two keys on the pivot's rotation; only an orbit about an axis that
+  is not one of the pivot's Euler components is sampled per frame.
 """
 
 from __future__ import annotations
@@ -38,6 +39,7 @@ from .. import framing
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
+from .camera import world_matrix
 
 if TYPE_CHECKING:
     from .base import Canvas
@@ -523,27 +525,42 @@ class Frames(Clip):
 # ---------------------------------------------------------------------------
 # Camera clips
 # ---------------------------------------------------------------------------
+#
+# The camera is a rig (see `Camera`): a pivot empty holding the viewing
+# direction, sitting at the centre of what was last framed, with the camera
+# parented to it. A framing move keys both objects, an orbit keys the pivot's
+# rotation and a dolly keys the camera's own location, so the three compose.
 
 
-def _camera_channels(camera: bpy.types.Object) -> list[Channel]:
-    return [Channel(camera, "location", i) for i in range(3)] + [
-        Channel(camera, "rotation_euler", i) for i in range(3)
-    ]
-
-
-def _pose_values(matrix: Matrix, previous: Euler) -> list[float]:
-    """Location and a rotation compatible with ``previous`` from a matrix."""
-    euler = matrix.to_euler("XYZ", previous)
-    return [*matrix.translation, *euler]
+def _transform_pairs(
+    obj: bpy.types.Object,
+    location: Vector | None = None,
+    rotation: Euler | None = None,
+) -> list[tuple[Channel, float]]:
+    """``(channel, value)`` pairs putting an object at a local location and rotation."""
+    pairs: list[tuple[Channel, float]] = []
+    if location is not None:
+        pairs += [(Channel(obj, "location", i), float(location[i])) for i in range(3)]
+    if rotation is not None:
+        rotation = rotation.copy()
+        # the equivalent angles nearest the current ones, so the curve does not
+        # take the long way round
+        rotation.make_compatible(obj.rotation_euler)
+        pairs += [
+            (Channel(obj, "rotation_euler", i), float(rotation[i])) for i in range(3)
+        ]
+    return pairs
 
 
 class CameraMove(Tween):
     """
-    Ease the camera from where it is to a pose solved when the clip is played.
+    Ease the camera rig from where it is to a state solved when the clip is
+    played.
 
-    Subclasses provide :meth:`end_pose`, which is evaluated with the camera in
-    its state at the start of the clip - what an earlier clip left it as - and
-    must leave the camera as it found it.
+    Subclasses provide :meth:`end_state`, evaluated with the rig as earlier
+    clips leave it at the start of this one. Only the channels the move changes
+    are keyed, so a move that leaves the pivot alone leaves it free for an
+    orbit played at the same time.
     """
 
     label = "camera"
@@ -553,19 +570,17 @@ class CameraMove(Tween):
         self._camera = camera
         self._pairs = []
 
-    def end_pose(self) -> Matrix:
+    def end_state(self) -> list[tuple[Channel, float]]:
         raise NotImplementedError
 
-    def extra_pairs(self) -> list[tuple[Channel, float]]:
-        """Channels beyond location and rotation (lens, clip range...)."""
-        return []
-
     def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
-        obj = self._camera.camera
-        previous = obj.rotation_euler.copy()
-        matrix = self.end_pose()
-        values = _pose_values(matrix, previous)
-        self._pairs = list(zip(_camera_channels(obj), values)) + self.extra_pairs()
+        self._pairs = [
+            (channel, value)
+            for channel, value in self.end_state()
+            if abs(channel.value_at(frame_start) - value) > 1e-9
+        ]
+        if not self._pairs:
+            return []
         return super().apply(timeline, frame_start, frame_end, easing)
 
     def __repr__(self) -> str:
@@ -573,7 +588,7 @@ class CameraMove(Tween):
 
 
 class LookAt(CameraMove):
-    """Ease the camera to the framing ``Canvas.look_at`` would jump to."""
+    """Ease the rig to the framing ``Canvas.look_at`` would jump to."""
 
     label = "look_at"
 
@@ -588,33 +603,35 @@ class LookAt(CameraMove):
     ):
         super().__init__(camera, run_time, easing)
         self._target, self._viewpoint, self._margin = target, viewpoint, margin
-        self._clip_end: float | None = None
 
-    def end_pose(self) -> Matrix:
+    def end_state(self) -> list[tuple[Channel, float]]:
         cam = self._camera
-        obj = cam.camera
-        saved = (obj.location.copy(), obj.rotation_euler.copy(), cam.clip_end)
+        obj, pivot = cam.camera, cam.pivot
+        saved = (
+            pivot.location.copy(),
+            pivot.rotation_euler.copy(),
+            obj.location.copy(),
+            obj.rotation_euler.copy(),
+            cam.clip_end,
+        )
         try:
+            # a dry run of the immediate look_at, so the destination is exactly
+            # what that gives
             if self._viewpoint is not None:
                 cam.set_viewpoint(self._viewpoint)
-                # the basis is read from matrix_world, which lags the rotation
-                bpy.context.view_layer.update()
             cam.frame_points(target_points(self._target), margin=self._margin)
-            bpy.context.view_layer.update()
-            self._clip_end = cam.clip_end
-            return obj.matrix_world.copy()
+            pairs = _transform_pairs(pivot, pivot.location, pivot.rotation_euler)
+            pairs += _transform_pairs(obj, obj.location, obj.rotation_euler)
+            if cam.clip_end > saved[4]:
+                pairs.append((Channel(cam.camera_data, "clip_end"), cam.clip_end))
+            return pairs
         finally:
-            obj.location, obj.rotation_euler, cam.clip_end = saved
-            bpy.context.view_layer.update()
-
-    def extra_pairs(self):
-        if self._clip_end is None or self._clip_end <= self._camera.clip_end:
-            return []
-        return [(Channel(self._camera.camera_data, "clip_end"), self._clip_end)]
+            pivot.location, pivot.rotation_euler = saved[0], saved[1]
+            obj.location, obj.rotation_euler, cam.clip_end = saved[2:]
 
 
 class MoveTo(CameraMove):
-    """Ease the camera to an explicit location and/or rotation (degrees)."""
+    """Ease the camera to an explicit world location and/or rotation (degrees)."""
 
     label = "move_to"
 
@@ -626,14 +643,26 @@ class MoveTo(CameraMove):
             raise ValueError("move_to needs a location, a rotation, or both.")
         self._location, self._rotation = location, rotation
 
-    def end_pose(self) -> Matrix:
-        obj = self._camera.camera
-        location = obj.location if self._location is None else Vector(self._location)
+    def end_state(self) -> list[tuple[Channel, float]]:
+        cam = self._camera
+        obj, pivot = cam.camera, cam.pivot
+        pairs: list[tuple[Channel, float]] = []
+        location = cam.location if self._location is None else Vector(self._location)
         if self._rotation is None:
-            rotation = obj.rotation_euler
+            parent = cam.parent_matrix
         else:
             rotation = Euler([math.radians(a) for a in self._rotation], "XYZ")
-        return Matrix.LocRotScale(location, rotation, None)
+            pairs += _transform_pairs(pivot, rotation=rotation)
+            pairs += _transform_pairs(obj, rotation=Euler((0.0, 0.0, 0.0), "XYZ"))
+            parent = (
+                world_matrix(pivot.parent) @ pivot.matrix_parent_inverse
+                if pivot.parent
+                else Matrix.Identity(4)
+            )
+            parent = parent @ Matrix.LocRotScale(pivot.location, rotation, pivot.scale)
+            parent = parent @ obj.matrix_parent_inverse
+        pairs += _transform_pairs(obj, location=parent.inverted() @ location)
+        return pairs
 
 
 class Dolly(CameraMove):
@@ -645,22 +674,23 @@ class Dolly(CameraMove):
         super().__init__(camera, run_time, easing)
         self._distance = float(distance)
 
-    def end_pose(self) -> Matrix:
+    def end_state(self) -> list[tuple[Channel, float]]:
         obj = self._camera.camera
-        forward = Vector(self._camera.basis[2])
-        matrix = obj.matrix_world.copy()
-        matrix.translation = obj.matrix_world.translation + forward * self._distance
-        return matrix
+        # the camera looks down its own -Z; in its parent's space that is
+        forward = obj.matrix_basis.to_3x3() @ Vector((0.0, 0.0, -1.0))
+        return _transform_pairs(obj, location=obj.location + forward * self._distance)
 
 
 class Orbit(Sampled):
     """
-    Swing the camera around a pivot, keeping it pointed the same way relative
-    to the subject.
+    Turn the camera's pivot about an axis, keeping the camera pointed the same
+    way relative to the subject.
 
-    The camera's world matrix is rotated about the pivot by an angle that grows
-    with the eased progress, so the distance to the pivot is constant and the
-    framing holds. Sampled per frame as an arc has no two-key form.
+    Turning about the world ``z`` axis or the camera's ``right`` axis changes
+    one component of the pivot's XYZ Euler rotation, so it is written as a
+    pair of keys with the easing on them - one editable curve. Any other axis
+    is sampled per frame. With ``about`` given, the pivot's location eases to
+    that centre over the same frames.
     """
 
     label = "orbit"
@@ -680,20 +710,17 @@ class Orbit(Sampled):
         self._angle = math.radians(angle)
         self._axis = axis
         self._about = about
-        self._start: Matrix | None = None
-        self._pivot: Vector | None = None
+        self._start: Euler | None = None
         self._axis_vector: Vector | None = None
         self._previous: Euler | None = None
 
     def channels(self) -> list[Channel]:
-        return _camera_channels(self._camera.camera)
+        return [Channel(self._camera.pivot, "rotation_euler", i) for i in range(3)]
 
     def prepare(self) -> None:
-        obj = self._camera.camera
-        bpy.context.view_layer.update()
-        self._start = obj.matrix_world.copy()
-        self._previous = obj.rotation_euler.copy()
-        self._pivot = target_centre(self._about)
+        pivot = self._camera.pivot
+        self._start = pivot.rotation_euler.copy()
+        self._previous = pivot.rotation_euler.copy()
         axis = self._axis
         if isinstance(axis, str):
             named = {
@@ -711,19 +738,60 @@ class Orbit(Sampled):
             axis = named[axis.lower()]
         self._axis_vector = Vector(axis).normalized()
 
+    def euler_component(self) -> tuple[int, float] | None:
+        """
+        The index of the pivot's Euler component that turns about the orbit
+        axis, and the sign to turn it with, if there is one.
+
+        For an XYZ Euler ``(x, y, z)`` the z component turns about world Z, the
+        x component about the pivot's own X axis and the y component about
+        world Z's rotation of Y; a matching axis can be keyed with two keys.
+        """
+        assert self._start is not None and self._axis_vector is not None
+        x, y, z = self._start
+        candidates = {
+            2: Vector((0.0, 0.0, 1.0)),
+            0: self._start.to_matrix() @ Vector((1.0, 0.0, 0.0)),
+            1: Matrix.Rotation(z, 3, "Z") @ Vector((0.0, 1.0, 0.0)),
+        }
+        for index, axis in candidates.items():
+            dot = axis.dot(self._axis_vector)
+            if abs(dot) > 1.0 - 1e-6:
+                return index, math.copysign(1.0, dot)
+        return None
+
     def sample(self, u: float) -> Sequence[float]:
-        assert self._start is not None and self._pivot is not None
-        rotation = Matrix.Rotation(self._angle * u, 4, self._axis_vector)
-        matrix = (
-            Matrix.Translation(self._pivot)
-            @ rotation
-            @ Matrix.Translation(-self._pivot)
-            @ self._start
-        )
-        values = _pose_values(matrix, self._previous)
+        assert self._start is not None and self._previous is not None
+        matrix = Matrix.Rotation(self._angle * u, 3, self._axis_vector)
+        euler = (matrix @ self._start.to_matrix()).to_euler("XYZ", self._previous)
         # keep successive eulers continuous so the curve never wraps
-        self._previous = Euler(values[3:], "XYZ")
-        return values
+        self._previous = euler
+        return list(euler)
+
+    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
+        self.prepare()
+        pivot = self._camera.pivot
+        written: list[Channel] = []
+        if self._about is not None:
+            centre = target_centre(self._about)
+            pairs = [
+                (Channel(pivot, "location", i), float(centre[i]))
+                for i in range(3)
+                if abs(pivot.location[i] - centre[i]) > 1e-9
+            ]
+            if pairs:
+                written += Tween(pairs=pairs).apply(
+                    timeline, frame_start, frame_end, easing
+                )
+        component = self.euler_component()
+        if component is None:
+            return written + super().apply(timeline, frame_start, frame_end, easing)
+        index, sign = component
+        channel = Channel(pivot, "rotation_euler", index)
+        end = channel.value_at(frame_start) + sign * self._angle
+        return written + Tween(pairs=[(channel, end)]).apply(
+            timeline, frame_start, frame_end, easing
+        )
 
     def __repr__(self) -> str:
         return f"<camera.orbit {math.degrees(self._angle):g}deg {self.run_time:g}s {self.easing}>"
@@ -775,9 +843,9 @@ class Focus(Clip):
         if data.dof.focus_object is not empty:
             # first focus pull: start from the camera's current focus distance
             # along its view axis, so the pull comes from where focus was
-            origin = self._camera.camera.matrix_world.translation
             empty.location = (
-                origin + Vector(self._camera.basis[2]) * data.dof.focus_distance
+                self._camera.location
+                + Vector(self._camera.basis[2]) * data.dof.focus_distance
             )
             data.dof.focus_object = empty
         data.dof.use_dof = True
@@ -818,12 +886,16 @@ class Timeline:
     --------
     ::
 
+        cartoon = mol.styles["Style Cartoon"]
         with canvas.timeline(fps=30) as t:
             t.play(canvas.camera.look_at(mol, viewpoint="front"), run_time=1)
             t.play(canvas.camera.orbit(90), t.tween(cartoon.i.loop_radius, 1.2), run_time=2)
             t.wait(0.5)
             t.play(canvas.camera.focus(mol.get_view("resid 40-60"), fstop=2), run_time=1)
         canvas.animation("story.mp4")
+
+    A trajectory plays through its own clip, ``traj.play(0, 100)``, which
+    detaches it from the scene frame and keys its frame property instead.
 
     Leaving the ``with`` block sets the scene's frame range to what was played,
     so [](`~mn.Canvas.animation`) renders exactly the storyboard.
@@ -941,17 +1013,6 @@ class Timeline:
     ) -> Tween:
         """A clip easing ``target`` to ``value``; see :func:`resolve_channels`."""
         return Tween(target, value, run_time, easing)
-
-    def frames(
-        self,
-        entity: MolecularEntity,
-        start: int,
-        end: int,
-        run_time: float | None = None,
-        easing: str | None = None,
-    ) -> Frames:
-        """A clip playing universe frames ``start`` to ``end`` of an entity."""
-        return Frames(entity, start, end, run_time, easing)
 
     # -- bookkeeping ------------------------------------------------------
 
