@@ -9,6 +9,10 @@ listing:
   sort-ui: false
   filter-ui: false
   page-size: 40
+# the listing template and video shortcodes reference the clips as HTML, which
+# Quarto does not follow when copying resources, so declare them
+resources:
+  - videos/*.mp4
 ---
 
 These are animations written against `Canvas.timeline()`: a script reads as a
