@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Extension
         run: |
-          blender -b --python-exit-code 1 -P build.py
+          uvx extbpy build
 
       - name: Create Draft Release
         run: |

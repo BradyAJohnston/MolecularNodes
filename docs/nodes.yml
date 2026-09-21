@@ -1,5 +1,5 @@
 # Extra documentation for the nodes included in Molecular Nodes, keyed by the
-# node group's name in molecularnodes/assets/node_data_file.blend.
+# node group's name in molecularnodes/assets/nodes.blend.
 #
 # The .blend file (via its node/socket descriptions and asset catalogs) is the
 # source of truth for everything structural; this file only holds what cannot

@@ -3,6 +3,7 @@ name = "molecularnodes"
 version = "520.2.1"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
+license = "GPL-3.0-or-later"
 dependencies = [
     "databpy>=0.9.0",
     "mdanalysis>=2.10",
@@ -55,9 +56,29 @@ dev = [
     "syrupy",
 ]
 
+[tool.extbpy]
+# Blender-specific metadata. `extbpy build` merges this with [project] to
+# generate blender_manifest.toml and the per-platform extension zips.
+pretty_name = "Molecular Nodes"
+tagline = "A toolbox for molecular import and animation in Blender"
+blender_version_min = "5.2.0"
+platforms = ["windows-x64", "linux-x64", "macos-arm64"]
+tags = ["Geometry Nodes", "Import-Export"]
+copyright = ["2022 Brady Johnston"]
+# Not bundled on top of what Blender already vendors (numpy, requests, ...).
+exclude_packages = ["pyarrow"]
+# Added to the default excludes (__pycache__/, .*, /*.zip).
+paths_exclude_pattern = ["*.blend[1-9]", "*.stamp", "*.MNSession"]
+# The node asset library is built, not committed: `uv run -m nodebpy.assets build`.
+required_files = ["molecularnodes/assets/nodes.blend"]
+
+[tool.extbpy.permissions]
+network = "Downloading structural data from the PDB and AFPDB"
+files = "Importing data files from disk and caching downloads"
+
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77"]
 
 [tool.setuptools]
 include-package-data = true

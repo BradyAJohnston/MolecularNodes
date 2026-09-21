@@ -44,18 +44,19 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
 > [!IMPORTANT]
-> For the first time building, run the `build.py` to download and setup required packages for the first time.
+> Before the first build, create the node asset library with `uv run -m nodebpy.assets build` (see "Node assets" below).
 
-`blender` is shorthand for the Blender executable. Depending on your OS and installation method, you may need to provide the full path to the Blender executable such as `/path/to/blender` or `C:\Path\To\blender.exe`.
+The extension is built with [extbpy](https://github.com/bradyajohnston/extbpy). Everything Blender needs to know lives in `pyproject.toml`: `[project]` supplies the version, description, license and maintainer, and `[tool.extbpy]` supplies the Blender version, platforms, tags and permissions. `blender_manifest.toml` is generated at build time, so it is not committed. Dependencies are resolved from `uv.lock`, downloaded into `.extbpy/wheels/` (cached between builds) and packed into one `.zip` per platform. If a `blender` executable is on your `PATH` the zips are also validated with `blender --command extension validate`.
 
-Packages are sourced from the `uv.lock` file. To properly install inside of Blender we have to download the `.whl` files to `molecularnodes/wheels/` and ensure the `blender_manifest.toml` is up to date. This is all handled inside of the `build.py` script. There are options to just download (`--download-only`) or just build the `.zip` files (`--build-only`).
-
-```py
-blender -b --python-exit-code 1 -P build.py -- --help # show help for build.py
-blender -b --python-exit-code 1 -P build.py -- --download-only # download required packages
-blender -b --python-exit-code 1 -P build.py -- --build-only # build the .zip files
-blender -b --python-exit-code 1 -P build.py # download and build
+```sh
+uvx extbpy sync                       # set up molecularnodes/ so Blender can load it from source
+uvx extbpy build                      # build zips for all configured platforms (also runs sync)
+uvx extbpy build -p current           # only this machine's platform
+uvx extbpy manifest -p linux-x64      # show the generated manifest
+uvx extbpy download                   # only fill the wheel cache
 ```
+
+For local development, `uvx extbpy sync` writes `molecularnodes/blender_manifest.toml` and `molecularnodes/wheels/` for your platform (both gitignored), which is what Blender and the Blender VS Code extension need to load the add-on directly from this directory. Re-run it after `uv lock` changes the dependencies.
 
 ### Node assets
 
@@ -265,6 +266,10 @@ This project has already gone through several iterations to improve the general 
 
 Please open an issue or PR if you would like to discuss submitting changes. Support for importing more data formats or improving on current import formats are more than welcome. Submitting changes for node groups can be a bit tricky as the node graphs inside of Blender don't work with `git`, so please open an issue or discussion with proposed changes.
 
+Before opening a pull request, read the [AI-assisted contributions policy](AI_POLICY.md). In short: you may use AI tools, but you are the author, you must understand and have tested every line, every PR needs an honest AI disclosure, and you must talk to reviewers yourself rather than through a tool. If you are new to the project, start small and open an issue first for anything beyond a small bug fix.
+
+If you point a coding agent at this repository, `AGENTS.md` (also reachable as `CLAUDE.md`) holds the rules it must follow and a map of where things live. The `skills/` directory holds longer agent-oriented guides for node development and scripted rendering.
+
 ## Building a Dev Environment
 
 Building a local development environment isn't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but it _is_ required for [running tests](#running-tests) and [building docs](#writing-and-building-docs) locally.
@@ -351,12 +356,14 @@ The long-form written documentation is all inside of `docs/`. Documentation is w
 
 ### Node Documentation
 
-The `.blend` asset file (`molecularnodes/assets/node_data_file.blend`) is the source of truth for the nodes: their descriptions, socket names, tooltips, defaults and asset catalogs. To update the descriptions of inputs, outputs and data types, the nodes themselves need to be updated inside the `.blend` file. Two things are generated from it:
+The nodes are ultimatley defined inside of `molecularnodes/nodes/*/*.py` files. These are the ultimate source of truth for the project. The command `uv run -m nodebpy.assets build` turns these `.py` files into a `.blend` asset file (`molecularnodes/assets/nodes.blend`).
 
-- The typed node classes in `molecularnodes/nodes/` (`geometry.py`, `shader.py`), including full docstrings. Regenerate them after changing the `.blend` file with `uv run generate_node_classes.py`, and commit the result.
-- The node documentation pages, generated twice from the same sources so each audience gets a page tailored to them, with the two versions linking to each other:
-  - **GUI pages** (`docs/nodes/<category>.qmd`, written directly by `docs/generate.py`): node name, demo video, description and the input/output socket tables read from the node group interface, listed under the **Nodes** navbar entry.
-  - **API pages** (`docs/api/reference/nodes.*`): `docs/generate.py` writes one quartodoc page per category into the marked block of `docs/_quarto.yml`, which `quartodoc build` renders from the generated node classes via the custom renderer (`docs/_renderer.py`).
+Changes can be made to nodes inside of the `.blend` - to keep these changes you must `uv run -m nodebpy.assets dump` to write those changes back out to the `.py` files. Changes can also be made directly to the `.py` files.
+
+To generate node documentation pages, run `uv run docs/generate.py`.
+
+- **GUI pages** (`docs/nodes/<category>.qmd`): node name, demo video, description and the input/output socket tables read from the node group interface, listed under the **Nodes** navbar entry. They get additional long-form prose and demo videos of the nodes in use from `docs/nodes.yml`.
+- **API pages** (`docs/api/reference/nodes.*`): `docs/generate.py` writes one quartodoc page per category into the marked block of `docs/_quarto.yml`, which `quartodoc build` renders from the generated node classes via the custom renderer (`docs/_renderer.py`).
 
 Extra information that can't live on the nodes themselves — long-form prose and demo videos of the nodes in use — lives in `docs/nodes.yml`, keyed by node group name, and is included on the GUI pages. Entries marked `custom: true` describe the node groups generated per imported structure (which have no class), documented on `docs/nodes/generated_nodes.qmd`. Relevant example videos should be updated in `docs/nodes.yml` when nodes are changed.
 
