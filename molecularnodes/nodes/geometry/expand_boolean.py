@@ -71,7 +71,7 @@ class ExpandBoolean(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         boolean = tree.inputs.boolean("Boolean", False, hide_value=True)
-        expand = tree.inputs.integer("Expand", 0, min_value=-2147483647)
+        expand = tree.inputs.integer("Expand", 0)
         boolean_1 = tree.outputs.boolean("Boolean")
 
         boolean_math = OffsetBoolean(

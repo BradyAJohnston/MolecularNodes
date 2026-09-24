@@ -221,7 +221,7 @@ class AnimateTrails(AssetGeometryGroup):
         lag_geometry = LagGeometry(input=atoms, selection=selection, count=trail_frames)
         reverse_curve = (
             lag_geometry
-            >> g.MeshToPoints(radius=0.05)
+            >> g.MeshToPoints()
             >> g.PointsToCurves(
                 curve_group_id=lag_geometry.o.index, weight=lag_geometry.o.lag_index
             )

@@ -146,12 +146,14 @@ class VisualizeAngle(AssetGeometryGroup):
         curve = tree.outputs.geometry("Curve")
 
         named_attribute = g.NamedAttribute.float("radius")
-        resample_curve = g.ResampleCurve(
-            curve=g.CurveLine(end=(0.0, 0.0, 0.0)), length=0.1, keep_last_segment=True
-        )
         store_named_attribute = (
             points
-            >> g.InstanceOnPoints(selection=selection, instance=resample_curve)
+            >> g.InstanceOnPoints(
+                selection=selection,
+                instance=g.ResampleCurve(
+                    curve=g.CurveLine(end=(0.0, 0.0, 0.0)), keep_last_segment=True
+                ),
+            )
             >> g.RealizeInstances(realize_to_point_domain=True)
             >> g.StoreNamedAttribute.point.float(
                 name="angle", value=angle * g.SplineParameter().o.factor * -1.0

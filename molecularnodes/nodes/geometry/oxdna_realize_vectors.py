@@ -134,7 +134,7 @@ class OxDNARealizeVectors(AssetGeometryGroup):
             g.JoinGeometry(
                 geometry=(for_each.generation.output, store_named_attribute_4)
             )
-            >> g.MergeByDistance(distance=0.001)
+            >> g.MergeByDistance()
             >> geometry
         )
 

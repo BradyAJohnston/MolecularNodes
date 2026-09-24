@@ -94,7 +94,6 @@ class OffsetBoolean(AssetGeometryGroup):
             "Offset",
             0,
             description="The offset to apply to the `Index` before evaluating the input field",
-            min_value=-2147483647,
         )
         boolean_1 = tree.outputs.boolean(
             "Boolean", description="The field evaluated at the offset `Index` value"

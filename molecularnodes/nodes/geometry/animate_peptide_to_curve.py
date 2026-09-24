@@ -75,9 +75,7 @@ class MN_utils_curve_resample(CustomGeometryGroup):
         )
         (
             g.ResampleCurve(
-                curve=capture.o.geometry,
-                count=g.SplineLength().o.point_count - 1.0,
-                length=0.1,
+                curve=capture.o.geometry, count=g.SplineLength().o.point_count - 1.0
             )
             >> g.SetPosition(position=sample_curve.o.position)
             >> geometry_1

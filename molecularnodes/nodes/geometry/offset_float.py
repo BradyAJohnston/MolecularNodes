@@ -94,7 +94,6 @@ class OffsetFloat(AssetGeometryGroup):
             "Offset",
             0,
             description="The offset to apply to the `Index` before evaluating the input field",
-            min_value=-2147483647,
         )
         value_1 = tree.outputs.float(
             "Value", description="The field evaluated at the offset `Index` value"

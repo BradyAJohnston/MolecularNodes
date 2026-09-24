@@ -276,7 +276,6 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
                 >> g.MeshToPoints(
                     selection=g.Compare.integer.equal(AtomName(), 55),
                     position=base_position.output,
-                    radius=0.05,
                 )
                 >> g.StoreNamedAttribute.point.integer(name="tmp_idx", value=g.Index())
                 >> g.PointsToCurves(curve_group_id=ChainID())
