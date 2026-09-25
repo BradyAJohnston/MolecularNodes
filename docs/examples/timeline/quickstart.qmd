@@ -1,0 +1,27 @@
+---
+title: "Quickstart"
+description: "A turn, a painted helix, a focus move and a cut to ball-and-stick on ubiquitin."
+video: videos/quickstart.mp4
+order: 1
+---
+
+{{< video videos/quickstart.mp4 >}}
+
+The first film: ubiquitin (1UBQ) turns under the camera, the camera moves in on the
+     painted helix (residues 23 to 34), turns a little more, pulls back out, and the
+     representation cuts to ball-and-stick.
+
+     ProteinMotion opens with a fade-in and marks the helix with a box highlight. Neither is
+     possible yet: a fade needs the `Set Opacity` node and the box needs a `Style Highlight`
+     node, so the helix is painted gold in the `Color` attribute instead.
+
+After ProteinMotion's [`quickstart.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/quickstart.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/quickstart.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/quickstart.py"}
+{{< include scripts/quickstart.py >}}
+```

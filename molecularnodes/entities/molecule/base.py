@@ -1160,6 +1160,48 @@ class Molecule(MolecularEntity):
         )
         return None
 
+    def play(
+        self,
+        start: int,
+        end: int,
+        run_time: float | None = None,
+        easing: str | None = None,
+    ):
+        """
+        A timeline clip playing trajectory frames ``start`` to ``end``.
+
+        Played on a [](`~mn.Canvas.timeline`), the clip detaches the entity
+        from the scene frame (``update_with_scene`` off) and keys its ``frame``
+        property from ``start`` to ``end`` over the clip's run time, so the
+        trajectory can be played at any speed, held, or scrubbed. Subframes
+        set on the entity are honoured. Nothing happens until it is played.
+
+        Parameters
+        ----------
+        start : int
+            Universe frame to start from.
+        end : int
+            Universe frame to end on; less than ``start`` plays backwards.
+        run_time : float, optional
+            Length in seconds (default 1).
+        easing : str, optional
+            Rate function (default ``"linear"``).
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.Frames
+
+        Examples
+        --------
+        ::
+
+            with canvas.timeline(fps=24) as t:
+                t.play(traj.play(0, 100), canvas.camera.orbit(90), run_time=4)
+        """
+        from ...scene.timeline import Frames
+
+        return Frames(self, start, end, run_time, easing)
+
     def add_style(
         self,
         style: STYLE_LITERALS | Callable = "spheres",

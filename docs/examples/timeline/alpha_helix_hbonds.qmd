@@ -1,0 +1,26 @@
+---
+title: "Alpha helix hydrogen bonds"
+description: "An ideal helix built in numpy, with the twelve i to i+4 pairs drawn as rulers."
+video: videos/alpha_helix_hbonds.mp4
+order: 11
+---
+
+{{< video videos/alpha_helix_hbonds.mp4 >}}
+
+A sixteen-residue alpha helix built from ideal backbone geometry into an MDAnalysis
+     universe, with explicit amide hydrogens. The twelve O(i) to N(i+4) pairs are drawn with
+     distance annotations, then the camera moves in on one turn to show the H···O pair.
+
+     ProteinMotion detects the pairs with a geometric hydrogen-bond finder; the rulers here are
+     placed by residue number.
+
+After ProteinMotion's [`alpha_helix_hbonds.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/alpha_helix_hbonds.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/alpha_helix_hbonds.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/alpha_helix_hbonds.py"}
+{{< include scripts/alpha_helix_hbonds.py >}}
+```

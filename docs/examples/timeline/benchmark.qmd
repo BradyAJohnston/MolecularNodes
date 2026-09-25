@@ -1,0 +1,23 @@
+---
+title: "Benchmark"
+description: "Timed turntables of replicated ubiquitin, written as a JSON report."
+video: videos/benchmark.mp4
+order: 18
+---
+
+{{< video videos/benchmark.mp4 >}}
+
+Copies of ubiquitin on a grid, one full turn each, timed end to end and written to
+     `benchmark.json`. Not a claim about peak performance; a reproducible number for one
+     machine.
+
+After ProteinMotion's [`benchmark.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/benchmark.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/benchmark.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/benchmark.py"}
+{{< include scripts/benchmark.py >}}
+```
