@@ -151,6 +151,7 @@ class Camera:
         points: npt.ArrayLike,
         margin: float = 0.05,
         scene: bpy.types.Scene | None = None,
+        clip_near: bool = False,
     ) -> None:
         """
         Move the camera so that every one of these points is in frame.
@@ -171,6 +172,11 @@ class Camera:
         scene : bpy.types.Scene, optional
             Scene to read the render aspect ratio from. Defaults to the active
             scene.
+        clip_near : bool, default False
+            Also move the near clipping plane up to the front of the subject's
+            bounding sphere, so that geometry sitting between the camera and
+            the subject is clipped away instead of hiding it. This is how
+            focusing on a buried ligand can see into the cavity that holds it.
         """
         if scene is None:
             scene = bpy.context.scene
@@ -193,6 +199,31 @@ class Camera:
         if furthest > self.clip_end:
             self.clip_end = furthest * 1.05
 
+        if clip_near:
+            self.clip_to_sphere(*framing.enclosing_sphere(points))
+
+    def clip_to_sphere(self, center: npt.ArrayLike, radius: float) -> None:
+        """
+        Clip away everything in front of a sphere around the subject.
+
+        Sets the near clipping plane to where the sphere starts along the view
+        direction, so geometry between the camera and the subject is cut open
+        rather than occluding it. Left unchanged if the camera is inside the
+        sphere.
+
+        Parameters
+        ----------
+        center : array_like
+            World-space center of the subject's sphere.
+        radius : float
+            Radius of the subject's sphere.
+        """
+        forward = self.basis[2]
+        depth = float((np.asarray(center) - np.asarray(self.camera.location)) @ forward)
+        near = depth - radius
+        if near > 0:
+            self.clip_start = near
+
     def set_viewpoint(self, viewpoint: Viewpoint | str | Sequence[float]) -> None:
         """
         Set viewpoint to a preset or a custom Euler rotation.
@@ -212,3 +243,7 @@ class Camera:
             ]
         else:
             self.rotation = viewpoint
+        # `basis` reads matrix_world, which only refreshes on a depsgraph
+        # update; without this a framing solve straight after would still use
+        # the previous orientation
+        bpy.context.view_layer.update()
