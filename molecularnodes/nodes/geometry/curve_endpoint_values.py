@@ -120,13 +120,11 @@ class CurveEndpointValues(AssetGeometryGroup):
             "Start Value",
             1,
             description="The value to output for the starting points of the curve",
-            min_value=-2147483647,
         )
         other_value = tree.inputs.integer(
             "Other Value",
             0,
             description="The value for the points which aren't part of the start or end points",
-            min_value=-2147483647,
         )
         end_size = tree.inputs.integer(
             "End Size", 1, description="The size of the end points", min_value=0

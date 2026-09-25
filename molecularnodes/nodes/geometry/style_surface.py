@@ -253,9 +253,7 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
                 resolution_y=utils_bounding_box.o.y,
                 resolution_z=utils_bounding_box.o.z,
             )
-            volume_to_mesh = g.VolumeToMesh(
-                volume=volume_cube, voxel_size=0.01, threshold=0.1
-            )
+            volume_to_mesh = g.VolumeToMesh(volume=volume_cube, voxel_size=0.01)
         with g.Frame("Pull in surface towards atoms"):
             position = g.Position()
             capture = g.CaptureAttribute.point(geometry=volume_to_mesh)

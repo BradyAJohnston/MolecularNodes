@@ -329,7 +329,7 @@ class SplitCurves(CustomGeometryGroup):
             "Selection", False, description="The calculated selection"
         )
         resolution = tree.inputs.integer("Resolution", 12, min_value=1)
-        expand = tree.inputs.integer("Expand", 1, min_value=-2147483647)
+        expand = tree.inputs.integer("Expand", 1)
         curve = tree.outputs.geometry("Curve")
 
         _dihedral_phi = DihedralPhi()
@@ -658,7 +658,7 @@ class BooleanShrink(CustomGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         boolean = tree.inputs.boolean("Boolean", False, hide_value=True)
-        shrink = tree.inputs.integer("Shrink", 0, min_value=-2147483647)
+        shrink = tree.inputs.integer("Shrink", 0)
         boolean_1 = tree.outputs.boolean("Boolean")
 
         boolean_math = OffsetBoolean(

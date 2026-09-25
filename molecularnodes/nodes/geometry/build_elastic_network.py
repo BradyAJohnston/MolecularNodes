@@ -158,7 +158,7 @@ class BuildElasticNetwork(AssetGeometryGroup):
                 "Alpha Carbon": plexus,
                 "All Atom": g.JoinGeometry(geometry=(plexus, plexus_1)),
             },
-        ) >> g.MergePoints(merge_id=g.ClusterByDistance(distance=0.001))
+        ) >> g.MergePoints(merge_id=g.ClusterByDistance())
         capture = g.CaptureAttribute.point(geometry=merge_points)
         index = capture.items.integer(
             "Index", g.SampleNearest.point(separate_geometry.o.selection)

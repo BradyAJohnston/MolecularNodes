@@ -118,7 +118,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
         )
         (
             geometry
-            >> g.InstancesToPoints(radius=0.05)
+            >> g.InstancesToPoints()
             >> g.InstanceOnPoints(
                 instance=evaluate_per_group.o.instances,
                 instance_index=sample_index_1,

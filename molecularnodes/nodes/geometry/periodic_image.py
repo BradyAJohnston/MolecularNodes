@@ -122,9 +122,7 @@ class PeriodicImage(AssetGeometryGroup):
             image_c = tree.inputs.integer("Image C", 0)
         points = tree.outputs.geometry("Points")
 
-        points_1 = g.Points(
-            position=a * image_a + b * image_b + c_ * image_c, radius=0.1
-        )
+        points_1 = g.Points(position=a * image_a + b * image_b + c_ * image_c)
 
         points_1 >> points
 
