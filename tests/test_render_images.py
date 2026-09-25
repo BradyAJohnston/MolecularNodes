@@ -17,6 +17,7 @@ failure the received and difference images are written to
 from itertools import product
 import pytest
 import molecularnodes as mn
+import molecularnodes.nodes.compositor as mc
 import molecularnodes.nodes.geometry as mg
 from .constants import data_dir
 from .utils import ImageSnapshotExtension
@@ -109,6 +110,84 @@ def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
     mol.add_style("cartoon")
     mol.add_style("sticks", selection=mol.universe.select_atoms("resid 100:150"))
     golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+def _outline_only(canvas):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined", "z", "normal"]
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        mask = mc.CompositeOutlineMask(depth=render.o.depth, normal=render.o.normal)
+        mc.CompositeOutline(image=image, mask=mask) >> output
+
+
+def _fog_only(canvas):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined", "z"]
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        near, far = mn.scene.compositor._depth_range(canvas.scene)
+        (
+            mc.CompositeDepthFog(
+                image=image,
+                depth=render.o.depth,
+                near=near,
+                far=far,
+                back_fog=0.2,
+                fog_color=(0.2, 0.3, 0.8, 1.0),
+            )
+            >> output
+        )
+
+
+def _illustrative_shadow_eevee(canvas):
+    canvas.engine = mn.scene.EEVEE(samples=16)
+    canvas.compositor.illustrative(outline=True, shading="shadow")
+
+
+# name -> (material, compositor setup applied after the camera is framed)
+COMPOSITOR_CASES = {
+    "plain": ("Default", lambda canvas: None),
+    "outline": ("Default", _outline_only),
+    "illustrative_ao": (
+        "Default",
+        lambda canvas: canvas.compositor.illustrative(outline=True, shading="ao"),
+    ),
+    # the Shadow pass only exists in EEVEE, so this case renders with EEVEE
+    "illustrative_shadow": ("Default", _illustrative_shadow_eevee),
+    "illustrate_shadow_contour": (
+        "Flat",
+        lambda canvas: canvas.compositor.illustrate(shadow=True, contour=True),
+    ),
+    "illustrate_chain": (
+        "Flat",
+        lambda canvas: canvas.compositor.illustrate(
+            shadow=True, contour=True, chain_outline=True
+        ),
+    ),
+    "illustrate_residue": (
+        "Flat",
+        lambda canvas: canvas.compositor.illustrate(
+            shadow=True, contour=True, residue_outline=True
+        ),
+    ),
+    "fog": ("Default", _fog_only),
+}
+
+
+@pytest.mark.parametrize("case", list(COMPOSITOR_CASES))
+def test_render_compositor(case, golden_canvas, tmp_path, image_snapshot):
+    # the compositor node assets: outlines, illustrative shading, Goodsell's
+    # Illustrate and depth fog, each through the Canvas plumbing
+    material, setup = COMPOSITOR_CASES[case]
+    golden_canvas.transparent = True
+    mol = _fetch_molecule()
+    mol.add_style("cartoon", material=getattr(mn.material, material)())
+    golden_canvas.look_at(mol, viewpoint="front")
+    setup(golden_canvas)
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
