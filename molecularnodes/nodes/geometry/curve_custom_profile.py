@@ -213,7 +213,7 @@ class CurveCustomProfile(AssetGeometryGroup):
         resample_curve = (
             capture.o.geometry
             >> g.SetSplineResolution(resolution=subdivisions)
-            >> g.ResampleCurve(mode="Evaluated", length=0.1)
+            >> g.ResampleCurve(mode="Evaluated")
         )
         spline_parameter_1 = g.SplineParameter()
         switch = CheckEndFaceCorner(

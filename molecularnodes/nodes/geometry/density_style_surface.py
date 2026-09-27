@@ -137,7 +137,7 @@ class DensityStyleSurface(AssetGeometryGroup):
 
         (
             volume
-            >> g.VolumeToMesh(threshold=threshold, voxel_size=0.3)
+            >> g.VolumeToMesh(threshold=threshold)
             >> g.DeleteGeometry.point(
                 selection=g.FaceArea().o.area.point.total(g.MeshIsland().o.island_index)
                 < hide_dust

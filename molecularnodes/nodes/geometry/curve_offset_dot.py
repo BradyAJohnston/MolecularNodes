@@ -123,7 +123,7 @@ class CurveOffsetDot(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         normal = tree.inputs.vector("Normal", (0.0, 0.0, 0.0), default_input="NORMAL")
-        offset = tree.inputs.integer("Offset", -1, min_value=-2147483647)
+        offset = tree.inputs.integer("Offset", -1)
         with tree.inputs.panel("Threshold"):
             threshold_direction = tree.inputs.menu(
                 "Threshold Direction", optional_label=True

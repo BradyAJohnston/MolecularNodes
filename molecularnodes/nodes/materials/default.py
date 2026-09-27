@@ -19,8 +19,6 @@ class Default(CustomShaderGroup):
             alpha=mn_color.o.alpha,
             ior=1.45,
             subsurface_scale=0.0,
-            coat_roughness=0.03,
-            thin_film_ior=1.33,
             subsurface_method="RANDOM_WALK_LEGACY",
         )
         _material_output = s.MaterialOutput(

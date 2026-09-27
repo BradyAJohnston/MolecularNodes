@@ -130,7 +130,7 @@ class Plexus(AssetGeometryGroup):
                     rotation=g.AxesToRotation(primary_axis=sample_index_1),
                 )
                 >> g.RealizeInstances(realize_to_point_domain=True)
-                >> g.MergeByDistance(distance=0.001)
+                >> g.MergeByDistance()
             )
         with g.Frame("Apply the distance probe"):
             realize_instances = g.RealizeInstances(

@@ -107,7 +107,6 @@ class CurveOffsetDihedral(AssetGeometryGroup):
             "Index",
             0,
             description="The index of the current point to calculate from",
-            min_value=-2147483647,
             default_input="INDEX",
         )
         offset = tree.inputs.integer(
