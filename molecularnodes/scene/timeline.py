@@ -39,7 +39,6 @@ from .. import framing
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
-from .camera import world_matrix
 
 if TYPE_CHECKING:
     from .base import Canvas
@@ -349,14 +348,53 @@ def target_centre(target) -> Vector:
 # ---------------------------------------------------------------------------
 
 
+@dataclass(frozen=True)
+class Key:
+    """One keyframe a clip asks for: a channel, a frame, a value, and the
+    ``(interpolation, easing)`` of the segment leading on from it."""
+
+    channel: Channel
+    frame: int
+    value: float
+    interpolation: tuple[str, str] | None = None
+
+
+def _tween_keys(
+    pairs: Sequence[tuple[Channel, float]], frame_start: int, frame_end: int, easing
+) -> list[Key]:
+    """Keys easing each channel from its value at ``frame_start`` to a value at
+    ``frame_end``, with the easing on the first key."""
+    interpolation = Easing.blender(easing)
+    keys = []
+    for channel, value in pairs:
+        if frame_end > frame_start:
+            keys.append(
+                Key(channel, frame_start, channel.value_at(frame_start), interpolation)
+            )
+        keys.append(Key(channel, frame_end, value, interpolation))
+    return keys
+
+
+def _step_keys(pairs: Sequence[tuple[Channel, float]], frame: int) -> list[Key]:
+    """Keys holding each channel's value up to the frame before ``frame`` and
+    jumping to a new value on it."""
+    hold = ("CONSTANT", "AUTO")
+    keys = []
+    for channel, value in pairs:
+        keys.append(Key(channel, frame - 1, channel.value_at(frame - 1), hold))
+        keys.append(Key(channel, frame, value, hold))
+    return keys
+
+
 class Clip(ABC):
     """
     Something that can be played on a timeline.
 
     A clip is a description - nothing happens when it is created. When it is
-    played, :meth:`apply` is given the frame range and easing to compile into
-    keyframes, and returns the channels it wrote so the timeline can detect two
-    clips fighting over one property.
+    played, :meth:`keys` is given the frame range and easing and returns the
+    keyframes to write. The timeline checks them against what earlier clips
+    wrote before any of them are inserted, so a clip that would fight another
+    over a property leaves the scene untouched.
     """
 
     run_time: float = 1.0
@@ -372,9 +410,12 @@ class Clip(ABC):
             self.easing = Easing.validate(easing)
 
     @abstractmethod
-    def apply(
+    def keys(
         self, timeline: "Timeline", frame_start: int, frame_end: int, easing: str
-    ) -> list[Channel]: ...
+    ) -> list[Key]: ...
+
+    def commit(self, timeline: "Timeline") -> None:
+        """Changes other than keyframes, made once the keys are accepted."""
 
     def __repr__(self) -> str:
         return f"<{self.label} {self.run_time:g}s {self.easing}>"
@@ -412,15 +453,8 @@ class Tween(Clip):
     def channels(self) -> list[Channel]:
         return [channel for channel, _ in self._pairs]
 
-    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
-        interpolation = Easing.blender(easing)
-        for channel, value in self._pairs:
-            if frame_end > frame_start:
-                channel.insert(
-                    frame_start, channel.value_at(frame_start), interpolation
-                )
-            channel.insert(frame_end, value, interpolation)
-        return self.channels()
+    def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
+        return _tween_keys(self._pairs, frame_start, frame_end, easing)
 
     def __repr__(self) -> str:
         return f"<tween {self._name} {self.run_time:g}s {self.easing}>"
@@ -435,12 +469,8 @@ class Step(Tween):
     label = "set"
     run_time = 0.0
 
-    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
-        hold = ("CONSTANT", "AUTO")
-        for channel, value in self._pairs:
-            channel.insert(frame_start - 1, channel.value_at(frame_start - 1), hold)
-            channel.insert(frame_start, value, hold)
-        return self.channels()
+    def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
+        return _step_keys(self._pairs, frame_start)
 
 
 class Sampled(Clip):
@@ -466,17 +496,18 @@ class Sampled(Clip):
         """Values for :meth:`channels` at eased progress ``u`` in ``[0, 1]``."""
         raise NotImplementedError
 
-    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
+    def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
         rate = Easing.function(easing)
         self.prepare()
         channels = self.channels()
         linear = Easing.blender(Easing.LINEAR)
         span = max(frame_end - frame_start, 1)
+        keys = []
         for frame in range(frame_start, frame_end + 1):
             u = rate(min((frame - frame_start) / span, 1.0))
             for channel, value in zip(channels, self.sample(u)):
-                channel.insert(frame, value, linear)
-        return channels
+                keys.append(Key(channel, frame, value, linear))
+        return keys
 
 
 class Frames(Clip):
@@ -505,15 +536,17 @@ class Frames(Clip):
         self._entity = entity
         self._start, self._end = int(start), int(end)
 
-    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
-        entity = self._entity
-        entity.update_with_scene = False
-        step = int(getattr(entity, "subframes", 0)) + 1
-        channel = Channel(entity.object.mn, "frame")
+    def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
+        step = int(getattr(self._entity, "subframes", 0)) + 1
+        channel = Channel(self._entity.object.mn, "frame")
         interpolation = Easing.blender(easing)
-        channel.insert(frame_start, self._start * step, interpolation)
-        channel.insert(frame_end, self._end * step, interpolation)
-        return [channel]
+        return [
+            Key(channel, frame_start, self._start * step, interpolation),
+            Key(channel, frame_end, self._end * step, interpolation),
+        ]
+
+    def commit(self, timeline) -> None:
+        self._entity.update_with_scene = False
 
     def __repr__(self) -> str:
         return (
@@ -526,26 +559,48 @@ class Frames(Clip):
 # Camera clips
 # ---------------------------------------------------------------------------
 #
-# The camera is a rig (see `Camera`): a pivot empty holding the viewing
-# direction, sitting at the centre of what was last framed, with the camera
-# parented to it. A framing move keys both objects, an orbit keys the pivot's
-# rotation and a dolly keys the camera's own location, so the three compose.
+# Camera clips rig the camera first (see `Camera.rig`): a pivot empty it is
+# parented to and orbits about, and a target empty it tracks and focuses on,
+# both sitting on the view axis at the subject. A framing move keys the whole
+# rig, an orbit keys the pivot's rotation, a dolly keys the camera's own
+# location and a focus pull keys the target, so they compose.
+
+
+def _rig(camera: "Camera") -> None:
+    """Rig the camera if it is not already, with the pivot at the depth of the
+    scene's entities, or at the focus distance if there are none."""
+    if camera.is_rigged:
+        return
+    distance = camera.camera_data.dof.focus_distance
+    try:
+        depth = (target_centre(None) - camera.location).dot(Vector(camera.basis[2]))
+    except ValueError:
+        depth = 0.0
+    if depth > camera.clip_start:
+        distance = depth
+    camera.rig(distance)
 
 
 def _transform_pairs(
     obj: bpy.types.Object,
     location: Vector | None = None,
     rotation: Euler | None = None,
+    compatible: Euler | None = None,
 ) -> list[tuple[Channel, float]]:
-    """``(channel, value)`` pairs putting an object at a local location and rotation."""
+    """
+    ``(channel, value)`` pairs putting an object at a local location and
+    rotation. The rotation is made compatible with ``compatible`` (the
+    object's current rotation by default), so the curve does not take the long
+    way round.
+    """
     pairs: list[tuple[Channel, float]] = []
     if location is not None:
         pairs += [(Channel(obj, "location", i), float(location[i])) for i in range(3)]
     if rotation is not None:
         rotation = rotation.copy()
-        # the equivalent angles nearest the current ones, so the curve does not
-        # take the long way round
-        rotation.make_compatible(obj.rotation_euler)
+        rotation.make_compatible(
+            obj.rotation_euler if compatible is None else compatible
+        )
         pairs += [
             (Channel(obj, "rotation_euler", i), float(rotation[i])) for i in range(3)
         ]
@@ -573,21 +628,67 @@ class CameraMove(Tween):
     def end_state(self) -> list[tuple[Channel, float]]:
         raise NotImplementedError
 
-    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
+    def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
+        _rig(self._camera)
         self._pairs = [
             (channel, value)
             for channel, value in self.end_state()
             if abs(channel.value_at(frame_start) - value) > 1e-9
         ]
-        if not self._pairs:
-            return []
-        return super().apply(timeline, frame_start, frame_end, easing)
+        return super().keys(timeline, frame_start, frame_end, easing)
 
     def __repr__(self) -> str:
         return f"<camera.{self.label} {self.run_time:g}s {self.easing}>"
 
 
-class LookAt(CameraMove):
+class _PoseMove(CameraMove):
+    """
+    A camera move whose destination is what an immediate change to the camera
+    gives: :meth:`pose` is run on the rig, its transforms (and the far clip
+    and orthographic scale, which framing can change) are read off, and the rig
+    is put back as it was.
+    """
+
+    def pose(self) -> None:
+        raise NotImplementedError
+
+    def end_state(self) -> list[tuple[Channel, float]]:
+        cam = self._camera
+        obj, pivot, target = cam.camera, cam.pivot, cam.target
+        data = cam.camera_data
+        saved = (
+            pivot.location.copy(),
+            pivot.rotation_euler.copy(),
+            obj.location.copy(),
+            obj.rotation_euler.copy(),
+            target.location.copy(),
+            data.clip_end,
+            data.ortho_scale,
+        )
+        try:
+            self.pose()
+            # compatible with the rotations the move starts from, not the
+            # ones the dry run just wrote
+            pairs = _transform_pairs(
+                pivot, pivot.location, pivot.rotation_euler, compatible=saved[1]
+            )
+            pairs += _transform_pairs(
+                obj, obj.location, obj.rotation_euler, compatible=saved[3]
+            )
+            pairs += _transform_pairs(target, target.location)
+            if data.clip_end > saved[5]:
+                pairs.append((Channel(data, "clip_end"), data.clip_end))
+            if data.type == "ORTHO":
+                pairs.append((Channel(data, "ortho_scale"), data.ortho_scale))
+            return pairs
+        finally:
+            pivot.location, pivot.rotation_euler = saved[0], saved[1]
+            obj.location, obj.rotation_euler = saved[2], saved[3]
+            target.location = saved[4]
+            data.clip_end, data.ortho_scale = saved[5], saved[6]
+
+
+class LookAt(_PoseMove):
     """Ease the rig to the framing ``Canvas.look_at`` would jump to."""
 
     label = "look_at"
@@ -604,33 +705,14 @@ class LookAt(CameraMove):
         super().__init__(camera, run_time, easing)
         self._target, self._viewpoint, self._margin = target, viewpoint, margin
 
-    def end_state(self) -> list[tuple[Channel, float]]:
+    def pose(self) -> None:
         cam = self._camera
-        obj, pivot = cam.camera, cam.pivot
-        saved = (
-            pivot.location.copy(),
-            pivot.rotation_euler.copy(),
-            obj.location.copy(),
-            obj.rotation_euler.copy(),
-            cam.clip_end,
-        )
-        try:
-            # a dry run of the immediate look_at, so the destination is exactly
-            # what that gives
-            if self._viewpoint is not None:
-                cam.set_viewpoint(self._viewpoint)
-            cam.frame_points(target_points(self._target), margin=self._margin)
-            pairs = _transform_pairs(pivot, pivot.location, pivot.rotation_euler)
-            pairs += _transform_pairs(obj, obj.location, obj.rotation_euler)
-            if cam.clip_end > saved[4]:
-                pairs.append((Channel(cam.camera_data, "clip_end"), cam.clip_end))
-            return pairs
-        finally:
-            pivot.location, pivot.rotation_euler = saved[0], saved[1]
-            obj.location, obj.rotation_euler, cam.clip_end = saved[2:]
+        if self._viewpoint is not None:
+            cam.set_viewpoint(self._viewpoint)
+        cam.frame_points(target_points(self._target), margin=self._margin)
 
 
-class MoveTo(CameraMove):
+class MoveTo(_PoseMove):
     """Ease the camera to an explicit world location and/or rotation (degrees)."""
 
     label = "move_to"
@@ -643,30 +725,16 @@ class MoveTo(CameraMove):
             raise ValueError("move_to needs a location, a rotation, or both.")
         self._location, self._rotation = location, rotation
 
-    def end_state(self) -> list[tuple[Channel, float]]:
+    def pose(self) -> None:
         cam = self._camera
-        obj, pivot = cam.camera, cam.pivot
-        pairs: list[tuple[Channel, float]] = []
-        location = cam.location if self._location is None else Vector(self._location)
-        if self._rotation is None:
-            parent = cam.parent_matrix
-        else:
-            rotation = Euler([math.radians(a) for a in self._rotation], "XYZ")
-            pairs += _transform_pairs(pivot, rotation=rotation)
-            pairs += _transform_pairs(obj, rotation=Euler((0.0, 0.0, 0.0), "XYZ"))
-            parent = (
-                world_matrix(pivot.parent) @ pivot.matrix_parent_inverse
-                if pivot.parent
-                else Matrix.Identity(4)
-            )
-            parent = parent @ Matrix.LocRotScale(pivot.location, rotation, pivot.scale)
-            parent = parent @ obj.matrix_parent_inverse
-        pairs += _transform_pairs(obj, location=parent.inverted() @ location)
-        return pairs
+        if self._rotation is not None:
+            cam.rotation = self._rotation
+        if self._location is not None:
+            cam.location = self._location
 
 
 class Dolly(CameraMove):
-    """Move the camera along its own view axis; positive is towards the subject."""
+    """Move the camera along its view axis; positive is towards the target."""
 
     label = "dolly"
 
@@ -675,10 +743,11 @@ class Dolly(CameraMove):
         self._distance = float(distance)
 
     def end_state(self) -> list[tuple[Channel, float]]:
-        obj = self._camera.camera
-        # the camera looks down its own -Z; in its parent's space that is
-        forward = obj.matrix_basis.to_3x3() @ Vector((0.0, 0.0, -1.0))
-        return _transform_pairs(obj, location=obj.location + forward * self._distance)
+        cam = self._camera
+        world = cam.location + Vector(cam.basis[2]) * self._distance
+        return _transform_pairs(
+            cam.camera, location=cam.parent_matrix.inverted() @ world
+        )
 
 
 class Orbit(Sampled):
@@ -689,8 +758,8 @@ class Orbit(Sampled):
     Turning about the world ``z`` axis or the camera's ``right`` axis changes
     one component of the pivot's XYZ Euler rotation, so it is written as a
     pair of keys with the easing on them - one editable curve. Any other axis
-    is sampled per frame. With ``about`` given, the pivot's location eases to
-    that centre over the same frames.
+    is sampled per frame. With ``about`` given, the pivot and the target ease
+    to that centre over the same frames.
     """
 
     label = "orbit"
@@ -718,6 +787,7 @@ class Orbit(Sampled):
         return [Channel(self._camera.pivot, "rotation_euler", i) for i in range(3)]
 
     def prepare(self) -> None:
+        _rig(self._camera)
         pivot = self._camera.pivot
         self._start = pivot.rotation_euler.copy()
         self._previous = pivot.rotation_euler.copy()
@@ -768,46 +838,46 @@ class Orbit(Sampled):
         self._previous = euler
         return list(euler)
 
-    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
+    def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
         self.prepare()
-        pivot = self._camera.pivot
-        written: list[Channel] = []
+        cam = self._camera
+        keys: list[Key] = []
         if self._about is not None:
             centre = target_centre(self._about)
             pairs = [
-                (Channel(pivot, "location", i), float(centre[i]))
+                (Channel(obj, "location", i), float(centre[i]))
+                for obj in (cam.pivot, cam.target)
                 for i in range(3)
-                if abs(pivot.location[i] - centre[i]) > 1e-9
+                if abs(obj.location[i] - centre[i]) > 1e-9
             ]
-            if pairs:
-                written += Tween(pairs=pairs).apply(
-                    timeline, frame_start, frame_end, easing
-                )
+            keys += _tween_keys(pairs, frame_start, frame_end, easing)
         component = self.euler_component()
         if component is None:
-            return written + super().apply(timeline, frame_start, frame_end, easing)
+            return keys + super().keys(timeline, frame_start, frame_end, easing)
         index, sign = component
-        channel = Channel(pivot, "rotation_euler", index)
+        channel = Channel(cam.pivot, "rotation_euler", index)
         end = channel.value_at(frame_start) + sign * self._angle
-        return written + Tween(pairs=[(channel, end)]).apply(
-            timeline, frame_start, frame_end, easing
-        )
+        return keys + _tween_keys([(channel, end)], frame_start, frame_end, easing)
 
     def __repr__(self) -> str:
         return f"<camera.orbit {math.degrees(self._angle):g}deg {self.run_time:g}s {self.easing}>"
 
 
-_FOCUS_EMPTY = "MN Focus"
+#: The f-stop a focus pull opens up from when depth of field was off: stopped
+#: down far enough that nothing visibly blurs.
+_SHARP_FSTOP = 128.0
 
 
 class Focus(Clip):
     """
     Pull focus onto a target with depth of field.
 
-    Uses Blender's own depth of field: an empty is placed at the target's centre
-    and set as the camera's focus object, so the focus distance follows every
-    later camera move for free. The empty's location and the f-stop are eased,
-    so the focus can be pulled from one subject to another.
+    Moves the rig's target empty, which is both the camera's focus object and
+    what it looks at, to the target's centre, so the camera turns to it and the
+    focus distance follows every later camera move for free. The f-stop is
+    eased too. If depth of field is off where the clip starts, it is keyed on
+    at the first frame and the aperture opens up from :data:`_SHARP_FSTOP`, so
+    the blur eases in instead of popping and nothing before the clip changes.
     """
 
     label = "focus"
@@ -820,39 +890,24 @@ class Focus(Clip):
         self._target = target
         self._fstop = float(fstop)
 
-    @staticmethod
-    def focus_empty(scene: bpy.types.Scene, data: bpy.types.Camera) -> bpy.types.Object:
-        """
-        The object the camera focuses on: whatever it already has, else the
-        preset's ``focal_point`` empty, else a new one.
-        """
-        empty = data.dof.focus_object
-        if empty is None:
-            empty = scene.objects.get("focal_point")
-        if empty is None:
-            empty = bpy.data.objects.new(_FOCUS_EMPTY, None)
-            empty.empty_display_type = "SPHERE"
-            empty.empty_display_size = 0.2
-            scene.collection.objects.link(empty)
-        empty.hide_render = True
-        return empty
-
-    def apply(self, timeline, frame_start, frame_end, easing) -> list[Channel]:
-        data = self._camera.camera_data
-        empty = self.focus_empty(timeline.canvas.scene, data)
-        if data.dof.focus_object is not empty:
-            # first focus pull: start from the camera's current focus distance
-            # along its view axis, so the pull comes from where focus was
-            empty.location = (
-                self._camera.location
-                + Vector(self._camera.basis[2]) * data.dof.focus_distance
-            )
-            data.dof.focus_object = empty
-        data.dof.use_dof = True
+    def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
+        cam = self._camera
+        _rig(cam)
+        dof = cam.camera_data.dof
         centre = target_centre(self._target)
-        pairs = [(Channel(empty, "location", i), centre[i]) for i in range(3)]
-        pairs.append((Channel(data.dof, "aperture_fstop"), self._fstop))
-        return Tween(pairs=pairs).apply(timeline, frame_start, frame_end, easing)
+        pairs = [(Channel(cam.target, "location", i), centre[i]) for i in range(3)]
+        keys = _tween_keys(pairs, frame_start, frame_end, easing)
+        fstop = Channel(dof, "aperture_fstop")
+        use_dof = Channel(dof, "use_dof")
+        if use_dof.value_at(frame_start):
+            return keys + _tween_keys(
+                [(fstop, self._fstop)], frame_start, frame_end, easing
+            )
+        keys += _step_keys([(use_dof, 1.0)], frame_start)
+        interpolation = Easing.blender(easing)
+        keys.append(Key(fstop, frame_start, _SHARP_FSTOP, interpolation))
+        keys.append(Key(fstop, frame_end, self._fstop, interpolation))
+        return keys
 
     def __repr__(self) -> str:
         return f"<camera.focus f/{self._fstop:g} {self.run_time:g}s {self.easing}>"
@@ -964,13 +1019,16 @@ class Timeline:
             Easing for every clip given, overriding each clip's own.
         at : float, optional
             Start the clips at this time instead of the cursor, leaving the
-            cursor where it is - for layering a clip over an earlier passage.
+            cursor where it is - for layering a clip over an earlier passage
+            on properties that are not animated later on.
 
         Raises
         ------
         ValueError
             If a clip writes a property that another clip already animates
-            over overlapping frames.
+            over overlapping frames, or that is already keyed later than the
+            clip ends: clips on one property are played in time order. Nothing
+            the clip would have written is kept.
         """
         if not clips:
             raise ValueError("play() needs at least one clip.")
@@ -987,8 +1045,11 @@ class Timeline:
             # put the scene at the clip's first frame, so the clip sees the
             # camera, geometry and values as earlier clips leave them there
             self.canvas.scene.frame_set(frame_start)
-            written = clip.apply(self, frame_start, frame_end, easing or clip.easing)
-            self._claim(clip, written, frame_start, frame_end)
+            keys = clip.keys(self, frame_start, frame_end, easing or clip.easing)
+            self._claim(clip, keys, frame_start, frame_end)
+            clip.commit(self)
+            for key in keys:
+                key.channel.insert(key.frame, key.value, key.interpolation)
             self._entries.append(Entry(clip, frame_start, frame_end))
             longest = max(longest, length)
         if at is None:
@@ -1017,17 +1078,40 @@ class Timeline:
     # -- bookkeeping ------------------------------------------------------
 
     def _claim(
-        self, clip: Clip, channels: Sequence[Channel], frame_start: int, frame_end: int
+        self, clip: Clip, keys: Sequence[Key], frame_start: int, frame_end: int
     ) -> None:
-        for channel in channels:
-            claims = self._written.setdefault(channel.key, [])
-            for a, b, other in claims:
+        """
+        Check the keys a clip wants to write against what is already there,
+        then record its channels. Raises before anything is recorded.
+        """
+        last: dict[tuple, tuple[Channel, int]] = {}
+        for key in keys:
+            _, frame = last.get(key.channel.key, (key.channel, key.frame))
+            last[key.channel.key] = (key.channel, max(frame, key.frame))
+        for channel_key, (channel, frame) in last.items():
+            for a, b, other in self._written.get(channel_key, []):
                 if a < frame_end and frame_start < b:
                     raise ValueError(
                         f"{clip!r} animates {channel!r} over frames {frame_start}-{frame_end}, "
                         f"which {other!r} already animates over {a}-{b}."
                     )
-            claims.append((frame_start, frame_end, clip))
+            fcurve = channel.fcurve()
+            later = fcurve and [
+                p.co.x for p in fcurve.keyframe_points if p.co.x > frame + 0.5
+            ]
+            if later:
+                # the keys after this clip were written for the value the
+                # property had then, so slotting a clip in before them would
+                # leave the property drifting back instead of holding
+                raise ValueError(
+                    f"{clip!r} animates {channel!r} up to frame {frame}, but it is "
+                    f"already keyed at frame {int(later[0])}. Play the clips on one "
+                    "property in time order."
+                )
+        for channel_key in last:
+            self._written.setdefault(channel_key, []).append(
+                (frame_start, frame_end, clip)
+            )
 
     def finish(self) -> None:
         """Fit the scene's frame range to the storyboard and rewind to its start."""
@@ -1069,6 +1153,7 @@ __all__ = [
     "Entry",
     "Focus",
     "Frames",
+    "Key",
     "LookAt",
     "MoveTo",
     "Orbit",

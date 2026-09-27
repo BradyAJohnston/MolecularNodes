@@ -904,16 +904,10 @@ class Canvas:
             if entity.name in self.scene.objects:
                 session.remove(entity.uuid)
 
-        keep = {obj for obj in self.scene.objects if obj.type in {"CAMERA", "LIGHT"}}
-        # a camera hangs off its pivot empty; removing the parent would drop
-        # the camera onto its local transform, so the rig stays with it
-        for obj in list(keep):
-            parent = obj.parent
-            while parent is not None:
-                keep.add(parent)
-                parent = parent.parent
+        # a timeline's camera rig goes too, leaving the camera where it was
+        self.camera.unrig()
         for obj in list(self.scene.objects):
-            if obj in keep:
+            if obj.type in {"CAMERA", "LIGHT"}:
                 continue
             bpy.data.objects.remove(obj, do_unlink=True)
 

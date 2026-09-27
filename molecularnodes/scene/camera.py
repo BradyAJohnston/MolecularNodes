@@ -41,8 +41,13 @@ _viewpoint_rotation_eulers = {
 }
 
 
-#: Name of the empty a camera is parented to for orbiting.
+#: Names of the rig the timeline builds for camera moves.
 PIVOT_NAME = "camera_pivot"
+TARGET_NAME = "camera_target"
+LOOK_AT_CONSTRAINT = "MN Look At"
+#: Custom property marking the rig's empties, so a user's own parent is never
+#: mistaken for the pivot.
+RIG_PROPERTY = "mn_camera_rig"
 
 
 def world_matrix(obj: bpy.types.Object) -> Matrix:
@@ -63,12 +68,12 @@ class Camera:
     """
     A class to handle camera settings in Blender.
 
-    The camera is parented to a pivot empty, created the first time it is
-    needed, and the two together form a turntable rig: the pivot holds the
-    viewing direction and sits at the centre of whatever was last framed, and
-    the camera hangs off it looking down the pivot's ``-Z``. Turning the pivot
-    orbits the camera about the subject, which is what the timeline's
-    ``orbit`` keys, and what a user opening the file finds to grab.
+    Camera moves played on a [](`~mn.Canvas.timeline`) rig the camera first
+    (:meth:`rig`): it is parented to a pivot empty that it orbits about, and a
+    Damped Track constraint points it at a target empty, which is also its
+    depth of field focus object. Without a timeline the camera is left as a
+    plain object. The ``location``, ``rotation`` and ``basis`` properties are
+    world-space either way.
     """
 
     def __init__(self):
@@ -87,24 +92,127 @@ class Camera:
         """Get Camera data"""
         return self.camera.data
 
-    @property
-    def pivot(self) -> bpy.types.Object:
-        """
-        The empty the camera is parented to and orbits about.
+    # -- rig ------------------------------------------------------------------
 
-        Created at the world origin, unrotated, the first time it is asked for,
-        so the camera keeps the pose it had. A camera that already has a parent
-        uses that as its pivot.
+    @property
+    def pivot(self) -> bpy.types.Object | None:
+        """The empty the camera orbits about, if the camera is rigged."""
+        parent = self.camera.parent
+        if parent is not None and parent.get(RIG_PROPERTY) == "pivot":
+            return parent
+        return None
+
+    @property
+    def target(self) -> bpy.types.Object | None:
+        """The empty the camera looks at and focuses on, if the camera is rigged."""
+        constraint = self.camera.constraints.get(LOOK_AT_CONSTRAINT)
+        return None if constraint is None else constraint.target
+
+    @property
+    def is_rigged(self) -> bool:
+        return self.pivot is not None and self.target is not None
+
+    def rig(self, distance: float) -> None:
         """
+        Rig the camera for timeline moves, without moving the view.
+
+        The camera is parented to a pivot empty placed ``distance`` in front
+        of it on its view axis, holding the viewing direction, and tracks a
+        target empty at the same point, which also becomes the depth of field
+        focus object. Turning the pivot orbits the camera; moving the target
+        turns the camera towards it and pulls focus. Does nothing if the
+        camera is already rigged.
+
+        Raises
+        ------
+        ValueError
+            If the camera already has a parent, or keyframes, which the rig
+            would reinterpret.
+        """
+        if self.is_rigged:
+            return
         camera = self.camera
-        if camera.parent is None:
-            pivot = bpy.data.objects.new(PIVOT_NAME, None)
-            pivot.empty_display_type = "PLAIN_AXES"
-            pivot.empty_display_size = 0.5
-            bpy.context.scene.collection.objects.link(pivot)
-            camera.parent = pivot
-            camera.matrix_parent_inverse.identity()
-        return camera.parent
+        if camera.parent is not None:
+            raise ValueError(
+                f"The camera is parented to '{camera.parent.name}'; timeline camera "
+                "moves need an unparented camera to rig."
+            )
+        if camera.animation_data is not None and camera.animation_data.action:
+            raise ValueError(
+                "The camera already has keyframes; timeline camera moves would "
+                "reinterpret them. Clear them first."
+            )
+        location = camera.location.copy()
+        rotation = camera.matrix_basis.to_euler("XYZ", camera.rotation_euler)
+
+        scene = bpy.context.scene
+        pivot = bpy.data.objects.new(PIVOT_NAME, None)
+        pivot.empty_display_type = "PLAIN_AXES"
+        pivot.empty_display_size = 0.5
+        pivot[RIG_PROPERTY] = "pivot"
+        target = bpy.data.objects.new(TARGET_NAME, None)
+        target.empty_display_type = "SPHERE"
+        target.empty_display_size = 0.2
+        target.hide_render = True
+        target[RIG_PROPERTY] = "target"
+        scene.collection.objects.link(pivot)
+        scene.collection.objects.link(target)
+
+        camera.parent = pivot
+        camera.matrix_parent_inverse.identity()
+        constraint = camera.constraints.new("DAMPED_TRACK")
+        constraint.name = LOOK_AT_CONSTRAINT
+        constraint.target = target
+        constraint.track_axis = "TRACK_NEGATIVE_Z"
+        self.camera_data.dof.focus_object = target
+        self._place(location, rotation, distance)
+
+    def unrig(self) -> None:
+        """
+        Remove the rig, leaving a plain camera where the rigged one was.
+
+        The animation the timeline wrote on the camera and its data goes with
+        it, since the camera's keys are relative to the pivot.
+        """
+        if not self.is_rigged:
+            return
+        camera = self.camera
+        pivot, target = self.pivot, self.target
+        matrix = self.matrix_world
+        camera.constraints.remove(camera.constraints[LOOK_AT_CONSTRAINT])
+        camera.parent = None
+        camera.animation_data_clear()
+        self.camera_data.animation_data_clear()
+        camera.matrix_basis = matrix
+        for obj in (pivot, target):
+            bpy.data.objects.remove(obj, do_unlink=True)
+
+    def _place(
+        self, location: Sequence[float], rotation: Euler, distance: float
+    ) -> None:
+        """
+        Pose the rig: the camera at a world ``location`` with a world
+        ``rotation``, and the pivot and target together ``distance`` in front
+        of it, so the camera already looks at the target.
+        """
+        pivot, target = self.pivot, self.target
+        assert pivot is not None and target is not None
+        rotation = Euler(rotation, "XYZ")
+        rotation.make_compatible(pivot.rotation_euler)
+        forward = rotation.to_matrix() @ Vector((0.0, 0.0, -1.0))
+        centre = Vector(location) + forward * distance
+        pivot.location = centre
+        pivot.rotation_euler = rotation
+        target.location = centre
+        self.camera.location = (0.0, 0.0, distance)
+        self.camera.rotation_euler = (0.0, 0.0, 0.0)
+
+    @property
+    def _distance(self) -> float:
+        """How far the rigged camera is from its target."""
+        target = self.target
+        assert target is not None
+        return (world_matrix(target).translation - self.location).length
 
     @property
     def parent_matrix(self) -> Matrix:
@@ -116,8 +224,24 @@ class Camera:
 
     @property
     def matrix_world(self) -> Matrix:
-        """The camera's world matrix, current with its transform channels."""
-        return world_matrix(self.camera)
+        """
+        The camera's world matrix, current with its transform channels and the
+        rig's look-at constraint.
+        """
+        matrix = world_matrix(self.camera)
+        target = self.target
+        if target is None:
+            return matrix
+        location = matrix.translation
+        direction = world_matrix(target).translation - location
+        if direction.length < 1e-9:
+            return matrix
+        # the Damped Track constraint: the shortest turn that points -Z at the
+        # target
+        rotation = matrix.to_3x3().normalized()
+        forward = rotation @ Vector((0.0, 0.0, -1.0))
+        turn = forward.rotation_difference(direction.normalized()).to_matrix()
+        return Matrix.LocRotScale(location, turn @ rotation, matrix.to_scale())
 
     @property
     def location(self) -> Vector:
@@ -126,20 +250,15 @@ class Camera:
 
     @location.setter
     def location(self, value: Sequence[float]) -> None:
-        """Set the camera's world-space location, leaving the pivot where it is"""
-        self.camera.location = self.parent_matrix.inverted() @ Vector(value)
-
-    def recentre(self, centre: Sequence[float]) -> None:
         """
-        Move the pivot to ``centre`` without moving the camera.
-
-        The camera's own transform is re-expressed relative to the pivot's new
-        position, so its world pose does not change; only what an orbit turns
-        about does.
+        Set the camera's world-space location, keeping the way it points. A
+        rigged camera takes its pivot and target along with it.
         """
-        location = self.location
-        self.pivot.location = Vector(centre)
-        self.location = location
+        if not self.is_rigged:
+            self.camera.location = value
+            return
+        rotation = self.matrix_world.to_euler("XYZ", self.pivot.rotation_euler)
+        self._place(value, rotation, self._distance)
 
     @property
     def lens(self) -> float:
@@ -174,9 +293,9 @@ class Camera:
     @property
     def rotation(self) -> tuple[float, float, float]:
         """Get the camera's world rotation in degrees (XYZ)"""
-        camera = self.camera
-        compatible = (camera.parent or camera).rotation_euler
-        euler = self.matrix_world.to_euler("XYZ", compatible)
+        if not self.is_rigged:
+            return tuple(degrees(angle) for angle in self.camera.rotation_euler)
+        euler = self.matrix_world.to_euler("XYZ", self.pivot.rotation_euler)
         return tuple(degrees(angle) for angle in euler)
 
     @rotation.setter
@@ -184,14 +303,14 @@ class Camera:
         """
         Set the camera's world rotation in degrees (XYZ).
 
-        The rotation goes on the pivot and the camera's own rotation is
-        cleared, so the camera looks down the pivot's ``-Z`` and turning the
-        pivot orbits it.
+        A rigged camera keeps its location; the rotation goes on the pivot, and
+        the pivot and target move onto the new view axis at the same distance.
         """
-        self.pivot.rotation_euler = Euler(
-            tuple(radians(angle) for angle in angles), "XYZ"
-        )
-        self.camera.rotation_euler = (0.0, 0.0, 0.0)
+        rotation = Euler(tuple(radians(angle) for angle in angles), "XYZ")
+        if not self.is_rigged:
+            self.camera.rotation_euler = rotation
+            return
+        self._place(self.location, rotation, self._distance)
 
     @property
     def basis(self) -> np.ndarray:
@@ -249,8 +368,9 @@ class Camera:
         changing where the camera is pointing. See
         [](`molecularnodes.framing.fit_camera_to_points`) for the solve.
 
-        The pivot is moved to the centre of the points first, so an orbit that
-        follows turns about what was framed.
+        A rigged camera's pivot and target move to the depth of the points'
+        centre on the view axis, so an orbit that follows turns about what was
+        framed.
 
         Parameters
         ----------
@@ -268,8 +388,6 @@ class Camera:
         if scene is None:
             scene = bpy.context.scene
         points = framing.as_points(points)
-        centre, _ = framing.enclosing_sphere(points)
-        self.recentre(centre)
         bounds = self.frame_bounds(scene)
         basis = self.basis
 
@@ -281,7 +399,13 @@ class Camera:
         else:
             location = framing.fit_camera_to_points(points, basis, bounds, margin)
 
-        self.location = location
+        if self.is_rigged:
+            centre, _ = framing.enclosing_sphere(points)
+            depth = float(np.dot(centre - location, basis[2]))
+            rotation = self.matrix_world.to_euler("XYZ", self.pivot.rotation_euler)
+            self._place(location, rotation, max(depth, self.clip_start))
+        else:
+            self.camera.location = location
         # a subject sitting beyond the far clip renders as nothing at all, so
         # make room for it rather than silently dropping it
         furthest = float(np.max((points - location) @ basis[2]))
@@ -354,9 +478,9 @@ class Camera:
             ``"right"``, or any vector.
         about : MolecularEntity | bpy.types.Object | array_like, optional
             What to turn about, as for [](`~mn.Canvas.look_at`). The pivot
-            eases to its centre over the clip while turning, so a wide shot
-            can swing in on a site. Left out, the pivot stays where the last
-            framing put it.
+            and the target ease to its centre over the clip while turning, so
+            the camera also turns to face it. Left out, the pivot stays where
+            the last framing put it.
         run_time : float, optional
             Length in seconds (default 2).
         easing : str, optional
@@ -375,7 +499,7 @@ class Camera:
     ):
         """
         A clip moving the camera along its view axis by ``distance`` world
-        units; positive moves towards the subject. Keys the camera's own
+        units; positive moves towards the target. Keys the camera's own
         location, so it composes with an orbit of the pivot.
 
         Returns
@@ -409,9 +533,10 @@ class Camera:
     ):
         """
         A clip easing the camera to an explicit world ``location`` and/or XYZ
-        Euler ``rotation`` in degrees. The rotation goes on the pivot, as
-        :attr:`rotation` does; given only a rotation, the camera turns in
-        place.
+        Euler ``rotation`` in degrees, as setting :attr:`location` and
+        :attr:`rotation` would: given only a rotation, the camera turns in
+        place; given only a location, it moves without turning. The pivot and
+        target travel with it.
 
         Returns
         -------
@@ -431,9 +556,11 @@ class Camera:
         """
         A clip pulling focus onto ``target`` with depth of field.
 
-        Enables depth of field on the camera with an empty at the target's
-        centre as the focus object, so later camera moves keep the subject in
-        focus. Playing it again on another target pulls focus across.
+        Moves the rig's target empty, which is the camera's focus object and
+        what it looks at, to the centre of ``target``: the camera turns to it
+        and later camera moves keep it in focus. If depth of field was off it
+        switches on as the clip starts, with the aperture opening up from fully
+        stopped down. Playing it again on another target pulls focus across.
 
         Parameters
         ----------
