@@ -560,10 +560,11 @@ class Frames(Clip):
 # ---------------------------------------------------------------------------
 #
 # Camera clips rig the camera first (see `Camera.rig`): a pivot empty it is
-# parented to and orbits about, and a target empty it tracks and focuses on,
-# both sitting on the view axis at the subject. A framing move keys the whole
-# rig, an orbit keys the pivot's rotation, a dolly keys the camera's own
-# location and a focus pull keys the target, so they compose.
+# parented to and orbits about, a target empty it tracks, both sitting on the
+# view axis at the subject, and a focus empty for depth of field. A framing
+# move keys the pivot, target and camera, an orbit keys the pivot's rotation,
+# a dolly keys the camera's own location and a focus pull keys the focus
+# empty, so they compose.
 
 
 def _rig(camera: "Camera") -> None:
@@ -872,9 +873,8 @@ class Focus(Clip):
     """
     Pull focus onto a target with depth of field.
 
-    Moves the rig's target empty, which is both the camera's focus object and
-    what it looks at, to the target's centre, so the camera turns to it and the
-    focus distance follows every later camera move for free. The f-stop is
+    Moves the rig's focus empty to the target's centre without moving the
+    view, so the focus distance follows every later camera move for free. The f-stop is
     eased too. If depth of field is off where the clip starts, it is keyed on
     at the first frame and the aperture opens up from :data:`_SHARP_FSTOP`, so
     the blur eases in instead of popping and nothing before the clip changes.
@@ -895,7 +895,7 @@ class Focus(Clip):
         _rig(cam)
         dof = cam.camera_data.dof
         centre = target_centre(self._target)
-        pairs = [(Channel(cam.target, "location", i), centre[i]) for i in range(3)]
+        pairs = [(Channel(cam.focus_point, "location", i), centre[i]) for i in range(3)]
         keys = _tween_keys(pairs, frame_start, frame_end, easing)
         fstop = Channel(dof, "aperture_fstop")
         use_dof = Channel(dof, "use_dof")

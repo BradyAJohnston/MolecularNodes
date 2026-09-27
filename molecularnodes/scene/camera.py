@@ -44,6 +44,7 @@ _viewpoint_rotation_eulers = {
 #: Names of the rig the timeline builds for camera moves.
 PIVOT_NAME = "camera_pivot"
 TARGET_NAME = "camera_target"
+FOCUS_NAME = "camera_focus"
 LOOK_AT_CONSTRAINT = "MN Look At"
 #: Custom property marking the rig's empties, so a user's own parent is never
 #: mistaken for the pivot.
@@ -69,10 +70,10 @@ class Camera:
     A class to handle camera settings in Blender.
 
     Camera moves played on a [](`~mn.Canvas.timeline`) rig the camera first
-    (:meth:`rig`): it is parented to a pivot empty that it orbits about, and a
-    Damped Track constraint points it at a target empty, which is also its
-    depth of field focus object. Without a timeline the camera is left as a
-    plain object. The ``location``, ``rotation`` and ``basis`` properties are
+    (:meth:`rig`): it is parented to a pivot empty that it orbits about, a
+    Damped Track constraint points it at a target empty, and a third empty is
+    its depth of field focus object. Without a timeline the camera is left as
+    a plain object. The ``location``, ``rotation`` and ``basis`` properties are
     world-space either way.
     """
 
@@ -109,6 +110,14 @@ class Camera:
         return None if constraint is None else constraint.target
 
     @property
+    def focus_point(self) -> bpy.types.Object | None:
+        """The empty the camera focuses on, if the camera is rigged."""
+        focus = self.camera_data.dof.focus_object
+        if focus is not None and focus.get(RIG_PROPERTY) == "focus":
+            return focus
+        return None
+
+    @property
     def is_rigged(self) -> bool:
         return self.pivot is not None and self.target is not None
 
@@ -118,10 +127,11 @@ class Camera:
 
         The camera is parented to a pivot empty placed ``distance`` in front
         of it on its view axis, holding the viewing direction, and tracks a
-        target empty at the same point, which also becomes the depth of field
-        focus object. Turning the pivot orbits the camera; moving the target
-        turns the camera towards it and pulls focus. Does nothing if the
-        camera is already rigged.
+        target empty at the same point. A third empty, also starting there,
+        becomes the depth of field focus object. Turning the pivot orbits the
+        camera, moving the target turns it, and moving the focus empty pulls
+        focus without moving the view. Does nothing if the camera is already
+        rigged.
 
         Raises
         ------
@@ -155,8 +165,13 @@ class Camera:
         target.empty_display_size = 0.2
         target.hide_render = True
         target[RIG_PROPERTY] = "target"
-        scene.collection.objects.link(pivot)
-        scene.collection.objects.link(target)
+        focus = bpy.data.objects.new(FOCUS_NAME, None)
+        focus.empty_display_type = "SPHERE"
+        focus.empty_display_size = 0.1
+        focus.hide_render = True
+        focus[RIG_PROPERTY] = "focus"
+        for obj in (pivot, target, focus):
+            scene.collection.objects.link(obj)
 
         camera.parent = pivot
         camera.matrix_parent_inverse.identity()
@@ -164,8 +179,9 @@ class Camera:
         constraint.name = LOOK_AT_CONSTRAINT
         constraint.target = target
         constraint.track_axis = "TRACK_NEGATIVE_Z"
-        self.camera_data.dof.focus_object = target
+        self.camera_data.dof.focus_object = focus
         self._place(location, rotation, distance)
+        focus.location = target.location
 
     def unrig(self) -> None:
         """
@@ -177,15 +193,16 @@ class Camera:
         if not self.is_rigged:
             return
         camera = self.camera
-        pivot, target = self.pivot, self.target
+        empties = [self.pivot, self.target, self.focus_point]
         matrix = self.matrix_world
         camera.constraints.remove(camera.constraints[LOOK_AT_CONSTRAINT])
         camera.parent = None
         camera.animation_data_clear()
         self.camera_data.animation_data_clear()
         camera.matrix_basis = matrix
-        for obj in (pivot, target):
-            bpy.data.objects.remove(obj, do_unlink=True)
+        for obj in empties:
+            if obj is not None:
+                bpy.data.objects.remove(obj, do_unlink=True)
 
     def _place(
         self, location: Sequence[float], rotation: Euler, distance: float
@@ -556,9 +573,9 @@ class Camera:
         """
         A clip pulling focus onto ``target`` with depth of field.
 
-        Moves the rig's target empty, which is the camera's focus object and
-        what it looks at, to the centre of ``target``: the camera turns to it
-        and later camera moves keep it in focus. If depth of field was off it
+        Moves the rig's focus empty to the centre of ``target`` without
+        moving the view, so later camera moves keep it in focus. If depth of
+        field was off it
         switches on as the clip starts, with the aperture opening up from fully
         stopped down. Playing it again on another target pulls focus across.
 

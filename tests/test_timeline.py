@@ -269,17 +269,19 @@ def test_only_timeline_camera_moves_rig_the_camera(canvas, cartoon_mol):
     before = evaluated_matrix(canvas)
     with canvas.timeline(fps=10, start=11) as t:
         t.play(cam.orbit(30), run_time=1)
-    # one empty parent to orbit about, one empty to look at and focus on
-    pivot, target = cam.pivot, cam.target
+    # one empty parent to orbit about, one to look at and one to focus on
+    pivot, target, focus = cam.pivot, cam.target, cam.focus_point
     assert cam.camera.parent is pivot and pivot.type == "EMPTY"
     assert pivot.parent is None
     (constraint,) = cam.camera.constraints
     assert constraint.type == "DAMPED_TRACK" and constraint.target is target
     assert target.type == "EMPTY" and target.hide_render
-    assert cam.camera_data.dof.focus_object is target
+    assert focus.type == "EMPTY" and focus.hide_render and focus is not target
+    assert cam.camera_data.dof.focus_object is focus
     # both sit on the view axis, so rigging did not move the view
     assert np.allclose(evaluated_matrix(canvas, 11), before, atol=1e-5)
     assert np.allclose(pivot.location, target.location)
+    assert np.allclose(focus.location, target.location)
     forward = np.array(target.location) - np.array(cam.location)
     assert np.dot(forward / np.linalg.norm(forward), cam.basis[2]) > 1 - 1e-6
 
@@ -298,9 +300,9 @@ def test_matrix_world_follows_the_look_at_constraint(canvas, cartoon_mol):
     mol, _ = cartoon_mol
     cam = canvas.camera
     with canvas.timeline(fps=10) as t:
-        # the target moves off the pivot, so the constraint turns the camera
-        t.play(cam.focus(mol.get_view("resid 1-10")), run_time=1)
-    canvas.frame = 11
+        t.play(cam.dolly(0.5))
+    # the target moves off the pivot, so the constraint turns the camera
+    cam.target.location.x += 1.0
     assert not np.allclose(cam.pivot.location, cam.target.location)
     assert np.allclose(cam.matrix_world, evaluated_matrix(canvas), atol=1e-5)
 
@@ -331,10 +333,10 @@ def test_clear_removes_the_rig_and_keeps_the_view(canvas, cartoon_mol):
     with canvas.timeline(fps=10) as t:
         t.play(cam.orbit(90), cam.zoom(80), run_time=1)
     pose = evaluated_matrix(canvas, 6)
-    pivot, target = cam.pivot.name, cam.target.name
+    names = [cam.pivot.name, cam.target.name, cam.focus_point.name]
     canvas.clear()
     assert cam.camera.parent is None and not cam.camera.constraints
-    assert pivot not in bpy.data.objects and target not in bpy.data.objects
+    assert not any(name in bpy.data.objects for name in names)
     # the keys were relative to the rig, so they go with it
     assert cam.camera.animation_data is None or cam.camera.animation_data.action is None
     assert np.allclose(evaluated_matrix(canvas, 20), pose, atol=1e-5)
@@ -540,6 +542,20 @@ def test_focus_leaves_the_frames_before_it_alone(canvas, cartoon_mol):
     assert dof.aperture_fstop == pytest.approx(mn.scene.timeline._SHARP_FSTOP)
     canvas.frame = 31
     assert dof.aperture_fstop == pytest.approx(1.4)
+
+
+def test_a_focus_pull_holds_the_framing(canvas, cartoon_mol):
+    mol, _ = cartoon_mol
+    cam = canvas.camera
+    helix, far = mol.get_view("resid 5-19"), mol.get_view("resid 100-120")
+    with canvas.timeline(fps=10) as t:
+        # framing and focus share a play: they key different empties
+        t.play(cam.look_at(helix, margin=0.3), cam.focus(helix), run_time=1)
+        t.play(cam.focus(far, fstop=1.4), run_time=1)
+    framed = evaluated_matrix(canvas, 11)
+    assert np.allclose(evaluated_matrix(canvas, 21), framed, atol=1e-6)
+    centre = np.array(mn.scene.timeline.target_centre(far))
+    assert np.allclose(cam.focus_point.location, centre, atol=1e-6)
 
 
 # -- trajectory playback --------------------------------------------------------
