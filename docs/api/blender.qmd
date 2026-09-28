@@ -154,6 +154,8 @@ description: Learnings, quirks and gotchas for programming in Blender.
 
 - Blender app handlers (like `frame_change_post`, etc) are easy to add, but not straightforward to remove. Using the `clear` will remove all handlers, which is not desirable. The alternative is to remove by using the actual handler name (the function name)
 
+- Avoid `bpy.ops.wm.read_factory_settings()` in a script that uses the installed extension. It has been reported to remove the extension's bundled Python packages mid-run, after which `Molecule.load()` fails on missing biotite files. To start from a clean scene, delete the default objects yourself or run each render in its own Blender process
+
 - Always use Blender's [portable installation](https://docs.blender.org/manual/en/latest/advanced/blender_directory_layout.html#portable-installation) to keep environments separate and clean
 
 - Never keep references to Blender [data](https://docs.blender.org/api/current/info_gotchas_internal_data_and_python_objects.html). This is the primary cause of most [crashes](https://docs.blender.org/api/current/info_gotchas_crashes.html) as outlined in the [gotchas](https://docs.blender.org/api/current/info_gotcha.html)
