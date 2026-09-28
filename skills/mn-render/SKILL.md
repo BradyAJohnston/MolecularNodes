@@ -153,7 +153,8 @@ mol.add_style(
   col = mol.named_attribute("Color")
   col[mol.universe.select_atoms("chainID A and resid 19-26").ix, :3] = (0.1, 0.7, 0.7)
   mol.store_named_attribute(col, "Color", atype="FLOAT_COLOR")
-  mol.add_style("cartoon")  # color=None reads Color; or store under another name and pass color="name"
+  # color=None reads Color; or store under another name and pass color="name"
+  mol.add_style("cartoon")
   ```
 - **Spheres in EEVEE.** Point clouds are ray-traced only by Cycles; on other engines
   `add_style` switches `StyleSpheres` from `sphere="Point"` to `"Instance"` for you.
