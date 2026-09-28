@@ -25,7 +25,11 @@ Blender does release the [`bpy`](https://pypi.org/p/bpy) module on PyPI, which l
 
 ## Installation
 
-If installed inside of Blender as an add-on, you can script using MN in the python console or when running scripts through Blender.
+If installed inside of Blender as an add-on, you can script using MN in the python console or when running scripts through Blender. The extension is not importable as `molecularnodes` there; import it through Blender's extension namespace instead:
+
+```python
+import bl_ext.blender_org.molecularnodes as mn
+```
 
 You can also install and use inside of your own python projects.
 
