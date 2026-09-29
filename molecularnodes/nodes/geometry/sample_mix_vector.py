@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputGeometry, InputInteger, InputVector
+from nodebpy.types import Default, InputFloat, InputGeometry, InputInteger, InputVector
 
 
 class SampleMixVector(AssetGeometryGroup):
@@ -28,11 +28,11 @@ class SampleMixVector(AssetGeometryGroup):
     b : InputGeometry
         Geometry B to sample and mix to
     position : InputVector
-        The field to sample from each geometry, defaulting to `Position`
+        The field to sample from each geometry, defaulting to `Position`. When unconnected: The position from the context.
     factor : InputFloat
         The amount to mix from A to B
     index : InputInteger
-        `Index` on the geometries to sample from
+        `Index` on the geometries to sample from. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -86,9 +86,9 @@ class SampleMixVector(AssetGeometryGroup):
         self,
         a: InputGeometry = None,
         b: InputGeometry = None,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         factor: InputFloat = 0.5,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(
             **{"A": a, "B": b, "Position": position, "Factor": factor, "Index": index}
@@ -120,15 +120,10 @@ class SampleMixVector(AssetGeometryGroup):
         )
         vector = tree.outputs.vector("Vector", description="The final mixed vector")
 
-        mix = g.Mix(
-            factor_float=factor,
-            a_vector=g.SampleIndex(
-                geometry=a, value=position, index=index, data_type="FLOAT_VECTOR"
-            ),
-            b_vector=g.SampleIndex(
-                geometry=b, value=position, index=index, data_type="FLOAT_VECTOR"
-            ),
-            data_type="VECTOR",
+        mix = g.Mix.vector(
+            factor,
+            g.SampleIndex.point.vector(a, position, index),
+            g.SampleIndex.point.vector(b, position, index),
             clamp_factor=True,
         )
 

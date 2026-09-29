@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 from .edge_info import EdgeInfo
 from .vector_angle import VectorAngle
 
@@ -26,7 +26,7 @@ class PointEdgeAngle(AssetGeometryGroup):
     Parameters
     ----------
     vertex_index : InputInteger
-        The index of the point at which to evaluate this node
+        The index of the point at which to evaluate this node. When unconnected: The index from the context.
     edge_a : InputInteger
         The index of the edges of this point to select
     edge_b : InputInteger
@@ -94,7 +94,7 @@ class PointEdgeAngle(AssetGeometryGroup):
 
     def __init__(
         self,
-        vertex_index: InputInteger = 0,
+        vertex_index: InputInteger = Default.INDEX,
         edge_a: InputInteger = 0,
         edge_b: InputInteger = 1,
     ):

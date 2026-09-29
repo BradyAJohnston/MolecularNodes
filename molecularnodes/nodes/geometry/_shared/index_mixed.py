@@ -12,7 +12,7 @@ from nodebpy.builder import (
     IntegerSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputInteger
+from nodebpy.types import Default, InputFloat, InputInteger
 
 
 class IndexMixed(CustomGeometryGroup):
@@ -22,7 +22,7 @@ class IndexMixed(CustomGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        The `Index` at which to add the `Offset` value to
+        The `Index` at which to add the `Offset` value to. When unconnected: The index from the context.
     offset : InputFloat
         The offset value to add to the to the `Index`
 
@@ -70,7 +70,7 @@ class IndexMixed(CustomGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputFloat = 0.5,
     ):
         super().__init__(**{"Index": index, "Offset": offset})

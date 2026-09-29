@@ -128,16 +128,13 @@ class VisualizeChiAngle(AssetGeometryGroup):
         angle = capture.items.float("Angle", dihedral_chi_angle.o.angle)
         bc = capture.items.vector("BC", dihedral_chi_angle.o.axis)
         output = capture.items.vector("Output", dihedral_chi_angle.o.up)
-        vector_math = (
-            bc.output
-            * g.Mix(factor_float=factor, b_float=1.0, clamp_factor=True).o.result_float
-            + g.Position()
-        )
         visualize_angle = VisualizeAngle(
             points=capture.o.geometry,
             selection=(g.EdgesOfVertex().o.total > 1)
             & (selection & MN_pivot_peptide()),
-            position=vector_math,
+            position=bc.output
+            * g.Mix.float(factor, b=1.0, clamp_factor=True).o.result_float
+            + g.Position(),
             angle=angle.output * -1.0,
             length=MNUnits(value=value).o.angstrom,
             up=output.output,

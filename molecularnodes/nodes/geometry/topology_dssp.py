@@ -218,11 +218,10 @@ class MN_topo_calc_helix(CustomGeometryGroup):
             )
         offset_index = OffsetIndex(offset=4)
         _offset_vector = OffsetVector(vector=backbone_nh, index=offset_index)
-        sample_index = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=boolean_math_10 | boolean_math_3 | boolean_math_7,
-            index=g.Index(),
-            data_type="BOOLEAN",
+        sample_index = g.SampleIndex.point.boolean(
+            capture.o.geometry,
+            boolean_math_10 | boolean_math_3 | boolean_math_7,
+            g.Index(),
         )
         (
             VisualizeRelativeAtoms(
@@ -306,7 +305,7 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
         boolean = capture_2.items.boolean("Boolean", boolean_run_fill)
         (
             capture_2.o.geometry
-            >> g.SampleIndex(value=boolean.output, index=g.Index(), data_type="BOOLEAN")
+            >> g.SampleIndex.point.boolean(value=boolean.output, index=g.Index())
             >> is_sheet
         )
 
@@ -392,10 +391,9 @@ class TopologyDSSP(AssetGeometryGroup):
         switch = BooleanRunTrim(
             boolean=g.BooleanMath.subtract(is_sheet.output, is_helix.output), size=3
         ).o.boolean.switch.integer(3, 2)
-        sample_index = capture.o.geometry >> g.SampleIndex(
+        sample_index = capture.o.geometry >> g.SampleIndex.point.integer(
             value=is_helix.output.switch.integer(switch, 1),
             index=mn_topo_assign_backbone.o.sample_index,
-            data_type="INT",
         )
         store_named_attribute = g.StoreNamedAttribute.point.integer(
             atoms_2, IsAlphaCarbon().o.selection, "sec_struct", sample_index

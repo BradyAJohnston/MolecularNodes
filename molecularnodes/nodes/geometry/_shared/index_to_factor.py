@@ -79,6 +79,6 @@ class IndexToFactor(CustomGeometryGroup):
         )
         factor = tree.outputs.float("Factor", subtype="FACTOR")
 
-        map_range = g.MapRange(value=index, from_max=size - 1, clamp=True)
+        map_range = g.MapRange.linear(index, from_max=size - 1, clamp=True)
 
         map_range >> factor

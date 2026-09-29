@@ -11,7 +11,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputVector
+from nodebpy.types import Default, InputFloat, InputVector
 
 
 class ConstraintDistance(CustomGeometryGroup):
@@ -23,7 +23,7 @@ class ConstraintDistance(CustomGeometryGroup):
     target : InputVector
         Target
     self_2 : InputVector
-        Self
+        Self. When unconnected: The position from the context.
     distance : InputFloat
         Distance
     w1 : InputFloat
@@ -94,7 +94,7 @@ class ConstraintDistance(CustomGeometryGroup):
     def __init__(
         self,
         target: InputVector = None,
-        self_2: InputVector = None,
+        self_2: InputVector = Default.POSITION,
         distance: InputFloat = 0.5,
         w1: InputFloat = 0.5,
         w2: InputFloat = 0.5,

@@ -13,7 +13,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputGeometry, InputInteger
+from nodebpy.types import Default, InputFloat, InputGeometry, InputInteger
 
 
 class SampleMixFloat(AssetGeometryGroup):
@@ -31,7 +31,7 @@ class SampleMixFloat(AssetGeometryGroup):
     factor : InputFloat
         Amount to mix from A to B
     index : InputInteger
-        `Index` on the geometries to sample from
+        `Index` on the geometries to sample from. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -90,7 +90,7 @@ class SampleMixFloat(AssetGeometryGroup):
         b: InputGeometry = None,
         value: InputFloat = 0.0,
         factor: InputFloat = 0.5,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(
             **{"A": a, "B": b, "Value": value, "Factor": factor, "Index": index}
@@ -118,20 +118,14 @@ class SampleMixFloat(AssetGeometryGroup):
         )
         value_1 = tree.outputs.float("Value", description="The final mixed float")
 
-        sample_index = g.SampleIndex(geometry=a, value=value, index=index)
-        sample_index_1 = g.SampleIndex(geometry=b, value=value, index=index)
-        mix = g.Mix(
-            factor_float=factor,
-            a_float=sample_index,
-            b_float=sample_index_1,
-            clamp_factor=True,
-        )
+        sample_index = g.SampleIndex.point.float(a, value, index)
+        sample_index_1 = g.SampleIndex.point.float(b, value, index)
+        mix = g.Mix.float(factor, sample_index, sample_index_1, clamp_factor=True)
         vector = g.Vector(vector=(0.0, 0.0, 1.0))
-        mix_1 = g.Mix(
-            factor_float=factor,
-            a_rotation=g.AxisAngleToRotation(axis=vector, angle=sample_index),
-            b_rotation=g.AxisAngleToRotation(axis=vector, angle=sample_index_1),
-            data_type="ROTATION",
+        mix_1 = g.Mix.rotation(
+            factor,
+            g.AxisAngleToRotation(axis=vector, angle=sample_index),
+            g.AxisAngleToRotation(axis=vector, angle=sample_index_1),
             clamp_factor=True,
         )
         _rotation_to_axis_angle = g.RotationToAxisAngle(

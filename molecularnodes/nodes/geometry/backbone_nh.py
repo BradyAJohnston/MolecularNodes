@@ -75,11 +75,10 @@ class BackboneNH(AssetGeometryGroup):
 
         backbone_n = BackboneN(method="Read")
         backbone_n_1 = BackboneN()
-        mix = g.Mix(
-            a_vector=BackboneCA(),
-            b_vector=OffsetVector(vector=BackboneC(), offset=-1),
-            factor_float=0.5,
-            data_type="VECTOR",
+        mix = g.Mix.vector(
+            0.5,
+            BackboneCA(),
+            OffsetVector(vector=BackboneC(), offset=-1),
             clamp_factor=True,
         )
         string = g.String(string="backbone_NH")

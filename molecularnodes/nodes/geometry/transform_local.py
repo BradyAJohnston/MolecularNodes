@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputMatrix, InputVector
+from nodebpy.types import Default, InputMatrix, InputVector
 
 
 class TransformLocal(AssetGeometryGroup):
@@ -22,7 +22,7 @@ class TransformLocal(AssetGeometryGroup):
     Parameters
     ----------
     origin : InputVector
-        Vector that defines the local space origin, defaults to `Position`
+        Vector that defines the local space origin, defaults to `Position`. When unconnected: The position from the context.
     transform : InputMatrix
         Transform to apply in local space
 
@@ -67,7 +67,7 @@ class TransformLocal(AssetGeometryGroup):
 
     def __init__(
         self,
-        origin: InputVector = None,
+        origin: InputVector = Default.POSITION,
         transform: InputMatrix = None,
     ):
         super().__init__(**{"Origin": origin, "Transform": transform})

@@ -95,9 +95,9 @@ class EdgeDetection(CustomShaderGroup):
         vector_math_1 = offset_raycast.o.hit_normal.dot(
             geometry_1.o.normal * geometry_1.o.backfacing.mix.float(1.0, -1.0)
         )
-        mix = g.Mix(
-            factor_float=math_1,
-            b_float=vector_math_1.acos().map_range(from_max=math.pi),
+        mix = g.Mix.float(
+            math_1,
+            b=vector_math_1.acos().map_range(from_max=math.pi),
             clamp_factor=True,
         )
         (
@@ -108,7 +108,7 @@ class EdgeDetection(CustomShaderGroup):
         )
         max_normal_delta.current.max(mix.o.result_float) >> max_normal_delta.next
         (
-            g.Mix(factor_float=math_1, clamp_factor=True).o.result_float.max(
+            g.Mix.float(math_1, clamp_factor=True).o.result_float.max(
                 object_edge_1.current
             )
             >> object_edge_1.next

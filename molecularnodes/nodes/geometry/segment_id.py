@@ -10,7 +10,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 from ._shared.attribute_at_index import AttributeAtIndex
 
 
@@ -21,7 +21,7 @@ class SegmentID(AssetGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -60,7 +60,7 @@ class SegmentID(AssetGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(**{"Index": index})
 

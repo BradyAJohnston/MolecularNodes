@@ -91,11 +91,8 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
             separate_geometry = g.SeparateGeometry.point(
                 capture.o.geometry, IsBackbone().o.selection
             )
-        sample_index_1 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=index.output,
-            index=g.Index(),
-            data_type="INT",
+        sample_index_1 = g.SampleIndex.point.integer(
+            capture.o.geometry, index.output, g.Index()
         )
         repeat_zone = g.RepeatZone(4)
         geometry = repeat_zone.items.geometry("Geometry", separate_geometry.o.selection)

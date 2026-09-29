@@ -237,11 +237,10 @@ class CurveSplitSplines(CustomGeometryGroup):
                         geometry=capture.o.geometry, resolution=offset_resolution
                     ),
                 },
-            ) >> g.SampleCurve(
+            ) >> g.SampleCurve.factor.quaternion(
                 value=rotation_2.output,
                 factor=factor.output,
                 curve_index=curve_index.output,
-                data_type="QUATERNION",
             )
         set_spline_resolution = g.SetHandleType(
             curve=g.SetSplineType.bezier(capture.o.geometry)

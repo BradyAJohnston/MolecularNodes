@@ -510,9 +510,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         axes_to_rotation = g.AxesToRotation(
             primary_axis=vector_math, secondary_axis=oxdna_vectors.o.base_normal
         )
-        vector_math_1 = g.SampleIndex(
-            geometry=atoms, value=vector_math, data_type="FLOAT_VECTOR"
-        ).o.value.length()
+        vector_math_1 = g.SampleIndex.point.vector(atoms, vector_math).o.value.length()
         with g.Frame("Colored bases"):
             menu_switch_1 = g.MenuSwitch.color(
                 base_colors,

@@ -17,7 +17,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputInteger, InputMenu, InputVector
+from nodebpy.types import Default, InputFloat, InputInteger, InputMenu, InputVector
 from .offset_vector import OffsetVector
 
 
@@ -28,7 +28,7 @@ class CurveOffsetDot(AssetGeometryGroup):
     Parameters
     ----------
     normal : InputVector
-        Normal
+        Normal. When unconnected: The geometry's normal direction.
     offset : InputInteger
         Offset
     threshold_direction : InputMenu | Literal["Less Than", "Greater Than"]
@@ -102,7 +102,7 @@ class CurveOffsetDot(AssetGeometryGroup):
 
     def __init__(
         self,
-        normal: InputVector = None,
+        normal: InputVector = Default.NORMAL,
         offset: InputInteger = -1,
         threshold_direction: InputMenu
         | Literal["Less Than", "Greater Than"] = "Less Than",

@@ -50,28 +50,14 @@ class MN_utils_curve_resample(CustomGeometryGroup):
             (accumulate_field + offset).wrap(0.0, g.SplineLength().o.length),
             accumulate_field,
         )
-        sample_curve = g.SampleCurve(
-            curves=capture.o.geometry,
-            value=field_float,
-            length=switch,
-            curve_index=value.output,
-            mode="LENGTH",
+        sample_curve = g.SampleCurve.length.float(
+            capture.o.geometry, field_float, switch, value.output
         )
-        sample_curve_1 = g.SampleCurve(
-            curves=capture.o.geometry,
-            value=field_int,
-            length=switch,
-            curve_index=value.output,
-            mode="LENGTH",
-            data_type="INT",
+        sample_curve_1 = g.SampleCurve.length.integer(
+            capture.o.geometry, field_int, switch, value.output
         )
-        sample_curve_2 = g.SampleCurve(
-            curves=capture.o.geometry,
-            value=field_vec,
-            length=switch,
-            curve_index=value.output,
-            mode="LENGTH",
-            data_type="FLOAT_VECTOR",
+        sample_curve_2 = g.SampleCurve.length.vector(
+            capture.o.geometry, field_vec, switch, value.output
         )
         (
             g.ResampleCurve(
@@ -225,18 +211,6 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
                 - MN_utils_aa_atom_pos(atom_name=3).o.position,
                 axis="X",
             )
-            vector_rotate = g.VectorRotate(
-                vector=position,
-                rotation=align_rotation_to_vector_1,
-                rotation_type="EULER_XYZ",
-                invert=True,
-            )
-            vector_rotate_1 = g.VectorRotate(
-                vector=position,
-                rotation=align_rotation_to_vector,
-                rotation_type="EULER_XYZ",
-                invert=True,
-            )
             set_position = (
                 atoms
                 >> g.SeparateGeometry.point(
@@ -244,46 +218,47 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
                     < domain_size.o.point_count
                 )
                 >> g.SetPosition(offset=mn_utils_aa_atom_pos.o.position * -1.0)
-                >> g.SetPosition(position=vector_rotate)
-                >> g.SetPosition(position=vector_rotate_1)
                 >> g.SetPosition(
-                    position=g.VectorRotate(
-                        vector=position,
-                        angle=-0.5574582,
-                        rotation_type="Y_AXIS",
-                        invert=True,
+                    position=g.VectorRotate.euler(
+                        position, rotation=align_rotation_to_vector_1, invert=True
+                    )
+                )
+                >> g.SetPosition(
+                    position=g.VectorRotate.euler(
+                        position, rotation=align_rotation_to_vector, invert=True
+                    )
+                )
+                >> g.SetPosition(
+                    position=g.VectorRotate.y_axis(
+                        position, angle=-0.5574582, invert=True
                     )
                 )
             )
-        sample_index = g.SampleIndex(
-            geometry=mn_utils_curve_resample,
-            value=mn_utils_curve_resample.o.position,
-            index=mn_utils_aa_atom_pos.o.group_index,
-            data_type="FLOAT_VECTOR",
+        sample_index = g.SampleIndex.point.vector(
+            mn_utils_curve_resample,
+            mn_utils_curve_resample.o.position,
+            mn_utils_aa_atom_pos.o.group_index,
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=mn_utils_curve_resample,
-            value=mn_utils_curve_resample.o.tangent,
-            index=mn_utils_aa_atom_pos.o.group_index,
-            data_type="FLOAT_VECTOR",
+        sample_index_1 = g.SampleIndex.point.vector(
+            mn_utils_curve_resample,
+            mn_utils_curve_resample.o.tangent,
+            mn_utils_aa_atom_pos.o.group_index,
         )
         set_curve_tilt = g.SetCurveTilt(
             curve=mn_utils_curve_resample,
             tilt=(math.pi / 2 * twist).point.leading() + rotate,
         )
-        sample_index_2 = g.SampleIndex(
-            geometry=set_curve_tilt,
-            value=g.CurveTilt(),
-            index=mn_utils_aa_atom_pos.o.group_index,
+        sample_index_2 = g.SampleIndex.point.float(
+            set_curve_tilt, g.CurveTilt(), mn_utils_aa_atom_pos.o.group_index
         )
         with g.Frame("Placing and Aligning AA Along the Curve"):
             position_1 = g.Position()
-            vector_rotate_2 = g.VectorRotate.euler(
+            vector_rotate = g.VectorRotate.euler(
                 position_1,
                 mn_utils_aa_atom_pos.o.position,
                 g.AlignRotationToVector(vector=sample_index_1.o.value * -1.0, axis="X"),
             )
-            vector_rotate_3 = g.VectorRotate(
+            vector_rotate_1 = g.VectorRotate(
                 vector=position_1,
                 center=mn_utils_aa_atom_pos.o.position,
                 axis=sample_index_1,
@@ -294,8 +269,8 @@ class AnimatePeptideToCurve(AssetGeometryGroup):
                 >> g.SetPosition(
                     offset=sample_index.o.value - mn_utils_aa_atom_pos.o.position
                 )
-                >> g.SetPosition(position=vector_rotate_2)
-                >> g.SetPosition(position=vector_rotate_3)
+                >> g.SetPosition(position=vector_rotate)
+                >> g.SetPosition(position=vector_rotate_1)
                 >> atoms_1
             )
 

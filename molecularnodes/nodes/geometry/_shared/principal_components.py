@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger, InputVector
+from nodebpy.types import Default, InputInteger, InputVector
 
 
 class PrincipalComponents(CustomGeometryGroup):
@@ -23,7 +23,7 @@ class PrincipalComponents(CustomGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     group_id : InputInteger
         An index used to group values together for multiple separate operations
 
@@ -86,7 +86,7 @@ class PrincipalComponents(CustomGeometryGroup):
 
     def __init__(
         self,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         group_id: InputInteger = 0,
     ):
         super().__init__(**{"Position": position, "Group ID": group_id})

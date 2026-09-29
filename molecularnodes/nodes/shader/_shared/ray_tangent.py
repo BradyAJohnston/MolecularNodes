@@ -39,7 +39,7 @@ class RayTangent(CustomShaderGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
@@ -47,13 +47,12 @@ class RayTangent(CustomShaderGroup):
         bitangent = tree.outputs.vector("Bitangent")
 
         geometry = s.Geometry()
-        vector_transform = s.VectorTransform(
-            vector=(0.0, 1.0, 0.0),
-            vector_type="NORMAL",
-            convert_from="CAMERA",
-            convert_to="WORLD",
+        vector_math = (geometry.o.incoming * -1.0).cross(
+            s.VectorTransform.normal(
+                (0.0, 1.0, 0.0), convert_from="CAMERA", convert_to="WORLD"
+            )
         )
-        vector_math = (geometry.o.incoming * -1.0).cross(vector_transform).normalize()
-        geometry.o.incoming.cross(vector_math) >> bitangent
+        vector_math_1 = vector_math.normalize()
+        geometry.o.incoming.cross(vector_math_1) >> bitangent
 
-        vector_math >> tangent
+        vector_math_1 >> tangent

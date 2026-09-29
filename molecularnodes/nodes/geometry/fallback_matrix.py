@@ -85,7 +85,7 @@ class FallbackMatrix(AssetGeometryGroup):
             description="The named attribute read from the geometry if it exists, or the fallback value if it doesn't",
         )
 
-        named_attribute = g.NamedAttribute.input_4x4_matrix(name)
+        named_attribute = g.NamedAttribute.matrix(name)
         (
             named_attribute.o.exists.switch.matrix(
                 fallback, named_attribute.o.attribute

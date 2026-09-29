@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputGeometry, InputVector
+from nodebpy.types import Default, InputGeometry, InputVector
 from .principal_components import PrincipalComponents
 
 
@@ -26,7 +26,7 @@ class GeometryPrincipalComponents(CustomGeometryGroup):
     geometry : InputGeometry
         Geometry to evaluate the given fields and store the resulting attributes on. All geometry types except volumes are supported
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -88,7 +88,7 @@ class GeometryPrincipalComponents(CustomGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
     ):
         super().__init__(**{"Geometry": geometry, "Position": position})
 
@@ -124,35 +124,23 @@ class GeometryPrincipalComponents(CustomGeometryGroup):
         capture = g.CaptureAttribute.point(geometry=geometry)
         position_1 = capture.items.vector("Position", position)
         principal_components_1 = PrincipalComponents(position=position_1.output)
-        sample_index = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=principal_components_1.o.group_center,
-            data_type="FLOAT_VECTOR",
+        sample_index = g.SampleIndex.point.vector(
+            capture.o.geometry, principal_components_1.o.group_center
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=principal_components_1.o.rotation,
-            data_type="QUATERNION",
+        sample_index_1 = g.SampleIndex.point.quaternion(
+            capture.o.geometry, principal_components_1.o.rotation
         )
-        sample_index_2 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=principal_components_1.o.principal_components,
-            data_type="FLOAT_VECTOR",
+        sample_index_2 = g.SampleIndex.point.vector(
+            capture.o.geometry, principal_components_1.o.principal_components
         )
-        sample_index_3 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=principal_components_1.o.longest_axis,
-            data_type="FLOAT_VECTOR",
+        sample_index_3 = g.SampleIndex.point.vector(
+            capture.o.geometry, principal_components_1.o.longest_axis
         )
-        sample_index_4 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=principal_components_1.o.intermediate_axis,
-            data_type="FLOAT_VECTOR",
+        sample_index_4 = g.SampleIndex.point.vector(
+            capture.o.geometry, principal_components_1.o.intermediate_axis
         )
-        sample_index_5 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=principal_components_1.o.shortest_axis,
-            data_type="FLOAT_VECTOR",
+        sample_index_5 = g.SampleIndex.point.vector(
+            capture.o.geometry, principal_components_1.o.shortest_axis
         )
 
         sample_index >> group_center

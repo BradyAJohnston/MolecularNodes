@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputVector
+from nodebpy.types import Default, InputFloat, InputVector
 
 
 class LerpPosition(CustomGeometryGroup):
@@ -22,7 +22,7 @@ class LerpPosition(CustomGeometryGroup):
     Parameters
     ----------
     a : InputVector
-        a
+        a. When unconnected: The position from the context.
     b : InputVector
         b
     deltat : InputFloat
@@ -75,7 +75,7 @@ class LerpPosition(CustomGeometryGroup):
 
     def __init__(
         self,
-        a: InputVector = None,
+        a: InputVector = Default.POSITION,
         b: InputVector = None,
         deltat: InputFloat = 0.5,
         decay: InputFloat = 0.5,

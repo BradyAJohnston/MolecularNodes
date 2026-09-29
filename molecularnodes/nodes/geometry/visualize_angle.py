@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputFloat, InputGeometry, InputVector
+from nodebpy.types import Default, InputBoolean, InputFloat, InputGeometry, InputVector
 
 
 class VisualizeAngle(AssetGeometryGroup):
@@ -28,7 +28,7 @@ class VisualizeAngle(AssetGeometryGroup):
     selection : InputBoolean
         Selection
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     angle : InputFloat
         Angle
     length : InputFloat
@@ -107,7 +107,7 @@ class VisualizeAngle(AssetGeometryGroup):
         self,
         points: InputGeometry = None,
         selection: InputBoolean = True,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         angle: InputFloat = 0.5,
         length: InputFloat = 0.005,
         up: InputVector = None,

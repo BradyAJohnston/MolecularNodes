@@ -195,13 +195,12 @@ class AnimateFrames(AssetGeometryGroup):
                     geometry=collection_info, component="INSTANCES"
                 ).o.instance_count
             )
-            sample_index = g.SampleIndex(
-                geometry=g.RealizeInstances(
+            sample_index = g.SampleIndex.point.vector(
+                g.RealizeInstances(
                     geometry=collection_info, realize_to_point_domain=True
                 ),
-                value=g.Position(),
-                index=g.Index(),
-                data_type="FLOAT_VECTOR",
+                g.Position(),
+                g.Index(),
             )
             set_position = (
                 duplicate_elements

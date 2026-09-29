@@ -12,7 +12,7 @@ from nodebpy.builder import (
     IntegerSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputGeometry, InputInteger
+from nodebpy.types import Default, InputGeometry, InputInteger
 
 
 class SampleAtomicAttributes(CustomGeometryGroup):
@@ -26,7 +26,7 @@ class SampleAtomicAttributes(CustomGeometryGroup):
     sample_atoms : InputGeometry
         Sample Atoms
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -69,7 +69,7 @@ class SampleAtomicAttributes(CustomGeometryGroup):
         self,
         atoms: InputGeometry = None,
         sample_atoms: InputGeometry = None,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(
             **{"Atoms": atoms, "Sample Atoms": sample_atoms, "Index": index}

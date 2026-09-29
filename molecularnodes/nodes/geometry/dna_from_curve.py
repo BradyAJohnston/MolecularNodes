@@ -1141,11 +1141,10 @@ class SetGeoUpdaterDeformOnly(CustomGeometryGroup):
             }
         )
         apply_geo_cache_deform_only >> geometry_3
-        store_bundle_item = g.StoreBundleItem(
-            bundle=get_geometry_bundle.o.bundle,
-            item=closure_zone.closure,
-            path="sim_apply_cache",
-            socket_type="CLOSURE",
+        store_bundle_item = g.StoreBundleItem.closure(
+            get_geometry_bundle.o.bundle,
+            "sim_apply_cache",
+            closure_zone.closure,
             structure_type="SINGLE",
         )
         (
@@ -1260,11 +1259,8 @@ class EvaluateCustomEffectors(CustomGeometryGroup):
             )
             repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
             world_4 = repeat_zone.items.bundle("World", world)
-            get_list_item = g.GetListItem(
-                list=get_nested_bundle_paths,
-                index=repeat_zone.iteration,
-                socket_type="STRING",
-                structure_type="SINGLE",
+            get_list_item = g.GetListItem.string(
+                get_nested_bundle_paths, repeat_zone.iteration, structure_type="SINGLE"
             )
             get_bundle_item = g.GetBundleItem.bundle(world_4.current, get_list_item)
             is_effector_for_geometry = IsEffectorForGeometry(
@@ -1308,10 +1304,9 @@ class EvaluateCustomEffectors(CustomGeometryGroup):
                 get_nested_bundle_paths_1.o.paths.list_length()
             )
             world_5 = repeat_zone_1.items.bundle("World", world_4.result)
-            get_list_item_1 = g.GetListItem(
-                list=get_nested_bundle_paths_1,
-                index=repeat_zone_1.iteration,
-                socket_type="STRING",
+            get_list_item_1 = g.GetListItem.string(
+                get_nested_bundle_paths_1,
+                repeat_zone_1.iteration,
                 structure_type="SINGLE",
             )
             separate_bundle_1 = g.SeparateBundle(
@@ -1811,11 +1806,12 @@ class EvaluateForces(CustomGeometryGroup):
         force = evaluate_closure.outputs.vector("Force")
         capture = g.CaptureAttribute.point(geometry=geometry_2, selection=selection)
         force_1 = capture.items.vector("Force", force)
-        sample_index = capture.o.geometry >> g.SampleIndex(
-            value=force_1.output, index=g.Index(), data_type="FLOAT_VECTOR"
+        vector_math = total_force.current + (
+            capture.o.geometry
+            >> g.SampleIndex.point.vector(value=force_1.output, index=g.Index())
         )
         switch = is_effector_for_geometry.o.affects_geometry.switch.vector(
-            total_force.current, total_force.current + sample_index
+            total_force.current, vector_math
         )
         switch >> total_force.next
         world_2 >> world_3
@@ -2469,8 +2465,8 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 },
             )
             get_bundle_item = g.GetBundleItem.geometry(xpbd_simulation, "DNA/DNA")
-            _get_bundle_item_1 = g.GetBundleItem.single(
-                xpbd_simulation, "SolverData/residual_error"
+            _get_bundle_item_1 = g.GetBundleItem.float(
+                xpbd_simulation, "SolverData/residual_error", structure_type="SINGLE"
             )
         with g.Frame("Transform back to object space"):
             convert_space_transform = ConvertSpaceTransform(
@@ -2617,13 +2613,12 @@ class DNAFromCurve(AssetGeometryGroup):
                 integer_math_1, abs(integer_math_1 - 3)
             )
         with g.Frame("Base distances"):
-            mix = g.Mix(
-                factor_float=wind,
-                a_float=g.Value(0.63),
-                b_float=g.Value(0.34),
-                clamp_factor=True,
+            math_1 = (
+                integer_math
+                * g.Mix.float(
+                    wind, g.Value(0.63), g.Value(0.34), clamp_factor=True
+                ).o.result_float
             )
-            math_1 = integer_math * mix.o.result_float
         math_2 = wind * (g.Value(math.tau).o.value / g.Value(10.5) * integer_math)
         axis_angle_to_rotation = g.AxisAngleToRotation(
             axis=g.CurveTangent(),
@@ -2704,9 +2699,7 @@ class DNAFromCurve(AssetGeometryGroup):
         with g.Frame("Rotate individual base nucleotides"):
             transform_local_axis = TransformLocalAxis(
                 axis=normal_1.output,
-                angle=g.Mix(
-                    factor_float=wind, a_float=math.pi / 4, clamp_factor=True
-                ).o.result_float,
+                angle=g.Mix.float(wind, math.pi / 4, clamp_factor=True).o.result_float,
             )
             capture_3 = g.CaptureAttribute.instance(geometry=instance_on_points)
             transform = capture_3.items.matrix("Transform", transform_local_axis)
