@@ -2,7 +2,7 @@
 title: "Changelog"
 ---
 
-# v520.2.1 - UNRELEASED
+# v520.3.0 - UNRELEASED
 
 ## Changed
 - The `oxDNA Style Ribbon` node is renamed `oxDNA Style Classic`. Its inputs are now in Å, its defaults match other oxDNA visualisers, `Ball Radius` no longer changes the backbone radius, base stems and bases share one rotation and end at the centre of the base, a `Stem Geometry` input takes custom stem geometry, backbone ends are filled, and `End Overhang` extends strand ends for the `Curve` backbone. [#1213](https://github.com/BradyAJohnston/MolecularNodes/pull/1213)
