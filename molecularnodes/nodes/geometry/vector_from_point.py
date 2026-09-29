@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputVector
+from nodebpy.types import Default, InputVector
 
 
 class VectorFromPoint(AssetGeometryGroup):
@@ -25,7 +25,7 @@ class VectorFromPoint(AssetGeometryGroup):
     target : InputVector
         Vector that is the target
     position : InputVector
-        Position of the current point
+        Position of the current point. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -78,7 +78,7 @@ class VectorFromPoint(AssetGeometryGroup):
     def __init__(
         self,
         target: InputVector = None,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
     ):
         super().__init__(**{"Target": target, "Position": position})
 

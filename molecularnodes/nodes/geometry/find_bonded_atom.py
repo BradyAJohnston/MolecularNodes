@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger, InputMenu
+from nodebpy.types import Default, InputInteger, InputMenu
 from ._shared.find_connected import FindConnected
 from .atom_name import AtomName
 from .menu_atom_name import MenuAtomName
@@ -27,7 +27,7 @@ class FindBondedAtom(AssetGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
     method : InputMenu | Literal["Any", "Exact"]
         Method
     atom_name : InputMenu | Literal["N", "CA", "C", "O", "CB", "CG", "CG1", "CG2", "OG", "OG1", "SG", "CD", "CD1", "CD2", "ND1", "ND2", "OD1", "OD2", "SD", "CE", "CE1", "CE2", "CE3", "NE", "NE1", "NE2", "OE1", "OE2", "CH2", "NH1", "NH2", "OH", "CZ", "CZ2", "CZ3", "NZ", "OXT", "P", "O1P", "OP1", "OP2", "O2P", "O5", "C5", "C4", "O4", "C3", "O3", "C2", "O2", "C1", "N1", "N9", "N3", "C8", "N7", "C5", "C6", "N6", "C2", "C4", "O6", "N2", "N4", "O2", "O4", "C7"]
@@ -88,7 +88,7 @@ class FindBondedAtom(AssetGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         method: InputMenu | Literal["Any", "Exact"] = "Exact",
         atom_name: InputMenu
         | Literal[

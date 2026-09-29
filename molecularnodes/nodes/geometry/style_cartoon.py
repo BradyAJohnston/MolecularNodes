@@ -113,23 +113,14 @@ class SampleFromCACurve(CustomGeometryGroup):
         position_1 = capture.items.vector("Position", sample_curve.o.position)
         tangent_1 = capture.items.vector("Tangent", sample_curve.o.tangent)
         normal_1 = capture.items.vector("Normal", sample_curve.o.normal)
-        sample_index = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=position_1.output,
-            index=tmp_ss_attributes.o.tmp_idx,
-            data_type="FLOAT_VECTOR",
+        sample_index = g.SampleIndex.point.vector(
+            capture.o.geometry, position_1.output, tmp_ss_attributes.o.tmp_idx
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=normal_1.output,
-            index=tmp_ss_attributes.o.tmp_idx,
-            data_type="FLOAT_VECTOR",
+        sample_index_1 = g.SampleIndex.point.vector(
+            capture.o.geometry, normal_1.output, tmp_ss_attributes.o.tmp_idx
         )
-        sample_index_2 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=tangent_1.output,
-            index=tmp_ss_attributes.o.tmp_idx,
-            data_type="FLOAT_VECTOR",
+        sample_index_2 = g.SampleIndex.point.vector(
+            capture.o.geometry, tangent_1.output, tmp_ss_attributes.o.tmp_idx
         )
 
         sample_index >> position
@@ -407,7 +398,7 @@ class NodeGroup(CustomGeometryGroup):
         scale = tree.inputs.vector("Scale", (1.0, 2.5, 1.0), subtype="XYZ")
         geometry = tree.outputs.geometry("Geometry")
 
-        mix = g.Mix(b_float=1.0, clamp_factor=True)
+        mix = g.Mix.float(b=1.0, clamp_factor=True)
         multiply_matrices = g.MultiplyMatrices(
             matrix=g.CombineTransform(rotation=rotation, scale=scale),
             matrix_001=g.CombineTransform(rotation=(0.0, 0.0, math.pi / 4)),
@@ -415,22 +406,19 @@ class NodeGroup(CustomGeometryGroup):
         capture = g.CaptureAttribute.point(geometry=curves)
         rotation_1 = capture.items.rotation("Rotation", CurveRotation())
         capture.items.vector("Position", g.Position())
-        sample_curve = g.SampleCurve(
-            curves=capture.o.geometry,
-            value=rotation_1.output,
-            length=g.SplineParameter().o.length + 0.0,
-            curve_index=g.CurveOfPoint().o.curve_index,
-            mode="LENGTH",
-            data_type="QUATERNION",
+        sample_curve = g.SampleCurve.length.quaternion(
+            capture.o.geometry,
+            rotation_1.output,
+            g.SplineParameter().o.length + 0.0,
+            g.CurveOfPoint().o.curve_index,
         )
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
         rotation_2 = capture_1.items.rotation("Rotation", sample_curve.o.value)
         position = capture_1.items.vector("Position", sample_curve.o.position)
-        mix_1 = g.Mix(
-            a_rotation=rotation_2.output,
-            b_rotation=OffsetRotation(rotation=rotation_2.output, offset=1),
-            factor_float=0.0,
-            data_type="ROTATION",
+        mix_1 = g.Mix.rotation(
+            0.0,
+            rotation_2.output,
+            OffsetRotation(rotation=rotation_2.output, offset=1),
             clamp_factor=True,
         )
         switch = g.EndpointSelection(end_size=0).o.selection.switch.rotation(
@@ -459,11 +447,8 @@ class NodeGroup(CustomGeometryGroup):
         fillet_curve = g.SetHandleType(
             curve=g.SetSplineType.bezier(transform_geometry)
         ) >> g.FilletCurve(
-            radius=g.Mix(
-                factor_float=mix.o.result_float,
-                a_float=0.001,
-                b_float=0.05,
-                clamp_factor=True,
+            radius=g.Mix.float(
+                mix.o.result_float, 0.001, 0.05, clamp_factor=True
             ).o.result_float,
             limit_radius=True,
         )
@@ -751,13 +736,11 @@ class CAToHelix(CustomGeometryGroup):
                 vector=g.CurveTangent(),
                 pivot_axis="Y",
             )
-            sample_curve = g.SampleCurve(
-                curves=curve,
-                value=CurveRotation(),
-                length=g.SplineParameter().o.length + 0.2,
-                curve_index=g.CurveOfPoint().o.curve_index,
-                mode="LENGTH",
-                data_type="QUATERNION",
+            sample_curve = g.SampleCurve.length.quaternion(
+                curve,
+                CurveRotation(),
+                g.SplineParameter().o.length + 0.2,
+                g.CurveOfPoint().o.curve_index,
             )
             capture = g.CaptureAttribute.point(geometry=curve)
             capture.node.mute = True

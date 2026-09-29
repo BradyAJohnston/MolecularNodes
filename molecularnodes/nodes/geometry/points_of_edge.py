@@ -11,7 +11,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 from .edge_info import EdgeInfo
 
 
@@ -22,7 +22,7 @@ class PointsOfEdge(AssetGeometryGroup):
     Parameters
     ----------
     vertex_index : InputInteger
-        Vertex Index
+        Vertex Index. When unconnected: The index from the context.
     edge_index : InputInteger
         Index within the gorup of edges that are connected to this point
 
@@ -80,7 +80,7 @@ class PointsOfEdge(AssetGeometryGroup):
 
     def __init__(
         self,
-        vertex_index: InputInteger = 0,
+        vertex_index: InputInteger = Default.INDEX,
         edge_index: InputInteger = 0,
     ):
         super().__init__(**{"Vertex Index": vertex_index, "Edge Index": edge_index})

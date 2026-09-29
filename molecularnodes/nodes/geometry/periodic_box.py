@@ -24,7 +24,7 @@ class PeriodicBox(AssetGeometryGroup):
     Parameters
     ----------
     update : InputBoolean
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
+        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
         a
     b : InputFloat

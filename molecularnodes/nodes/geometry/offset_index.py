@@ -10,7 +10,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 
 
 class OffsetIndex(AssetGeometryGroup):
@@ -20,7 +20,7 @@ class OffsetIndex(AssetGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        The `Index` at which to evaluate this offset from
+        The `Index` at which to evaluate this offset from. When unconnected: The index from the context.
     offset : InputInteger
         The `Offset` to apply to the `Index` of the point
 
@@ -62,7 +62,7 @@ class OffsetIndex(AssetGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(**{"Index": index, "Offset": offset})

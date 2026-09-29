@@ -17,6 +17,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputFloat,
     InputGeometry,
@@ -61,12 +62,6 @@ class XPBDSolveCurve(CustomGeometryGroup):
         repeat_zone = g.RepeatZone(points)
         geometry_2 = repeat_zone.items.geometry("Geometry", separate_components.o.curve)
         integer_math = repeat_zone.iteration + 1
-        math_1 = (
-            integer_math
-            * g.Mix(
-                factor_float=straightness, a_float=0.5, b_float=1.0, clamp_factor=True
-            ).o.result_float
-        )
         repeat_zone_1 = g.RepeatZone(2)
         geometry_3 = repeat_zone_1.items.geometry("Geometry", geometry_2.current)
         index_switch = g.IndexSwitch.boolean(
@@ -79,10 +74,14 @@ class XPBDSolveCurve(CustomGeometryGroup):
         index_switch_1 = g.IndexSwitch.integer(
             repeat_zone_1.iteration, (integer_math, -integer_math)
         )
+        switch = (repeat_zone.iteration > 0).switch.float(
+            integer_math,
+            integer_math
+            * g.Mix.float(straightness, 0.5, 1.0, clamp_factor=True).o.result_float,
+        )
         constraint_distance = ConstraintDistance(
             target=OffsetVector(offset=index_switch_1),
-            distance=(repeat_zone.iteration > 0).switch.float(integer_math, math_1)
-            * length,
+            distance=switch * length,
             w1=inverse_mass.o.w,
             w2=OffsetFloat(value=inverse_mass.o.w, offset=index_switch_1),
             alpha=alpha,
@@ -194,7 +193,7 @@ class SimulateCurve(AssetGeometryGroup):
     pin_selection : InputBoolean
         Pin Selection
     pin_target : InputVector
-        Pin Target
+        Pin Target. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -304,7 +303,7 @@ class SimulateCurve(AssetGeometryGroup):
         hook_target: InputVector = None,
         hook_decay: InputFloat = 0.5,
         pin_selection: InputBoolean = False,
-        pin_target: InputVector = None,
+        pin_target: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{

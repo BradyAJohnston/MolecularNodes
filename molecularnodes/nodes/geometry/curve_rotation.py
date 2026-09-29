@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputVector
+from nodebpy.types import Default, InputVector
 
 
 class CurveRotation(AssetGeometryGroup):
@@ -22,7 +22,7 @@ class CurveRotation(AssetGeometryGroup):
     Parameters
     ----------
     normal : InputVector
-        The default direction to use as the Secondary Axis / X axis when computing the rotation
+        The default direction to use as the Secondary Axis / X axis when computing the rotation. When unconnected: The geometry's normal direction.
 
     Inputs
     ------
@@ -61,7 +61,7 @@ class CurveRotation(AssetGeometryGroup):
 
     def __init__(
         self,
-        normal: InputVector = None,
+        normal: InputVector = Default.NORMAL,
     ):
         super().__init__(**{"Normal": normal})
 

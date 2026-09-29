@@ -107,8 +107,8 @@ class BreakBonds(AssetGeometryGroup):
         compare = edge_vertices.o.position_1.distance(
             edge_vertices.o.position_2
         ) > AngstromToWorld(angstrom=cutoff)
-        delete_geometry = atoms_2 >> g.DeleteGeometry(
-            selection=selection | compare, mode="EDGE_FACE", domain="EDGE"
+        delete_geometry = atoms_2 >> g.DeleteGeometry.only_edges_faces(
+            selection=selection | compare, domain="EDGE"
         )
         delete_geometry >> geometry
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> atoms_1

@@ -11,7 +11,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputBoolean, InputInteger
+from nodebpy.types import Default, InputBoolean, InputInteger
 from .offset_index import OffsetIndex
 
 
@@ -24,7 +24,7 @@ class OffsetBoolean(AssetGeometryGroup):
     boolean : InputBoolean
         The field to evaluate at the given `Index` + `Offset` on the point domain
     index : InputInteger
-        The `Index` at which to evaluate this offset from
+        The `Index` at which to evaluate this offset from. When unconnected: The index from the context.
     offset : InputInteger
         The offset to apply to the `Index` before evaluating the input field
 
@@ -71,7 +71,7 @@ class OffsetBoolean(AssetGeometryGroup):
     def __init__(
         self,
         boolean: InputBoolean = False,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(**{"Boolean": boolean, "Index": index, "Offset": offset})

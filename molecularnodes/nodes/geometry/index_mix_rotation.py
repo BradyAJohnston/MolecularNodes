@@ -104,11 +104,10 @@ class IndexMixRotation(AssetGeometryGroup):
         )
 
         fractionate_float = FractionateFloat(value=index)
-        mix = g.Mix(
-            factor_float=fractionate_float.o.fraction,
-            a_rotation=rotation.point.at(fractionate_float.o.floor),
-            b_rotation=rotation.point.at(fractionate_float.o.ceiling),
-            data_type="ROTATION",
+        mix = g.Mix.rotation(
+            fractionate_float.o.fraction,
+            rotation.point.at(fractionate_float.o.floor),
+            rotation.point.at(fractionate_float.o.ceiling),
             clamp_factor=True,
         )
 

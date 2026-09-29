@@ -85,14 +85,17 @@ class ColorOKLabMix(AssetGeometryGroup):
         b = tree.inputs.color("B", (0.6960105, 0.04253292, 0.03904183, 1.0))
         result = tree.outputs.color("Result", (0.0, 0.0, 0.0, 1.0))
 
-        mix = g.Mix(
-            factor_float=factor,
-            a_vector=ColorToOKLab(color=a),
-            b_vector=ColorToOKLab(color=b),
-            data_type="VECTOR",
-            clamp_factor=True,
+        (
+            OKLabToColor(
+                oklab=g.Mix.vector(
+                    factor,
+                    ColorToOKLab(color=a),
+                    ColorToOKLab(color=b),
+                    clamp_factor=True,
+                ).o.result_vector
+            )
+            >> result
         )
-        OKLabToColor(oklab=mix.o.result_vector) >> result
 
 
 ASSET = ColorOKLabMix

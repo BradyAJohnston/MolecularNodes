@@ -109,9 +109,7 @@ class ColorGoodsell(AssetGeometryGroup):
         (
             ColorOKLabOffset(
                 color=color,
-                luminance=g.Mix(
-                    factor_float=switch, b_float=-0.4, clamp_factor=True
-                ).o.result_float,
+                luminance=g.Mix.float(switch, b=-0.4, clamp_factor=True).o.result_float,
             )
             >> color_1
         )

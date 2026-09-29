@@ -101,33 +101,26 @@ class Plexus(AssetGeometryGroup):
 
         with g.Frame("Create a clean set of points for instancing on"):
             index = g.Index()
-            sample_index = g.SampleIndex(
-                geometry=points,
-                value=g.Position(),
-                index=index,
-                data_type="FLOAT_VECTOR",
-            )
-            math_1 = g.SampleIndex(
-                geometry=points, value=distance, index=index
-            ).o.value * g.SampleIndex(geometry=points, value=radius, index=index)
+            math_1 = g.SampleIndex.point.float(
+                points, distance, index
+            ).o.value * g.SampleIndex.point.float(points, radius, index)
             points_1 = g.Points(
                 count=g.DomainSize(geometry=points).o.point_count,
-                position=sample_index,
+                position=g.SampleIndex.point.vector(points, g.Position(), index),
                 radius=math_1,
             )
         with g.Frame("Create Distance Probe"):
             ico_sphere = g.IcoSphere()
-            sample_index_1 = g.SampleIndex(
-                geometry=ico_sphere,
-                value=g.Position().o.position * -1.0,
-                index=g.Index(),
-                data_type="FLOAT_VECTOR",
+            axes_to_rotation = g.AxesToRotation(
+                primary_axis=g.SampleIndex.point.vector(
+                    ico_sphere, g.Position().o.position * -1.0, g.Index()
+                )
             )
             merge_by_distance = (
                 g.InstanceOnPoints(
                     points=ico_sphere,
                     instance=g.MeshLine(count=2),
-                    rotation=g.AxesToRotation(primary_axis=sample_index_1),
+                    rotation=axes_to_rotation,
                 )
                 >> g.RealizeInstances(realize_to_point_domain=True)
                 >> g.MergeByDistance()

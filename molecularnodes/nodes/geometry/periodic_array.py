@@ -28,7 +28,7 @@ class PeriodicArray(AssetGeometryGroup):
     geometry : InputGeometry
         Geometry
     update : InputBoolean
-        Update the box lengths and angles with the simulation
+        Update the box lengths and angles with the simulation. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
         a
     b : InputFloat

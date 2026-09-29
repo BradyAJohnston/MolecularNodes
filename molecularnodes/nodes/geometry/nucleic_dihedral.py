@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputFloat, InputVector
+from nodebpy.types import Default, InputBoolean, InputFloat, InputVector
 from ._shared.mn_pivot_nucleic import MN_pivot_nucleic
 from ._shared.override_index import OverrideIndex
 from .accumulate_axis_rotation import AccumulateAxisRotation
@@ -32,7 +32,7 @@ class NucleicDihedral(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     selection : InputBoolean
         The resulting selection must overlap with this input selection
     alpha : InputFloat
@@ -103,7 +103,7 @@ class NucleicDihedral(AssetGeometryGroup):
 
     def __init__(
         self,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         selection: InputBoolean = True,
         alpha: InputFloat = 0.0,
         beta: InputFloat = 0.0,

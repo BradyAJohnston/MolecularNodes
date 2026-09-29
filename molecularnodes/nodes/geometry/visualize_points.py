@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputGeometry, InputVector
+from nodebpy.types import Default, InputBoolean, InputGeometry, InputVector
 from .primitive_arrow import PrimitiveArrow
 from .vector_from_point import VectorFromPoint
 
@@ -31,7 +31,7 @@ class VisualizePoints(AssetGeometryGroup):
     target : InputVector
         Vector that is the target
     position : InputVector
-        Position of the current point
+        Position of the current point. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -81,7 +81,7 @@ class VisualizePoints(AssetGeometryGroup):
         points: InputGeometry = None,
         selection: InputBoolean = True,
         target: InputVector = None,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{

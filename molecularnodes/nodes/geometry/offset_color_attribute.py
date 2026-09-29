@@ -11,7 +11,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 from .color import Color
 from .offset_index import OffsetIndex
 
@@ -23,7 +23,7 @@ class OffsetColorAttribute(AssetGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        The `Index` at which to evaluate this offset from
+        The `Index` at which to evaluate this offset from. When unconnected: The index from the context.
     offset : InputInteger
         The offset to apply to the `Index` before evaluating the input field
 
@@ -65,7 +65,7 @@ class OffsetColorAttribute(AssetGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(**{"Index": index, "Offset": offset})

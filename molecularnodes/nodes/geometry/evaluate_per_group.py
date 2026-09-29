@@ -120,11 +120,8 @@ class EvaluatePerGroup(AssetGeometryGroup):
         repeat_zone = g.RepeatZone(domain_size.o.point_count)
         geometry_2 = repeat_zone.items.geometry("Geometry")
         instances_1 = repeat_zone.items.geometry("Instances")
-        sample_index = g.SampleIndex(
-            geometry=separate_geometry.o.selection,
-            value=menu_switch.o.output,
-            index=repeat_zone.iteration,
-            data_type="INT",
+        sample_index = g.SampleIndex.point.integer(
+            separate_geometry.o.selection, menu_switch.o.output, repeat_zone.iteration
         )
         separate_geometry_1 = g.SeparateGeometry.point(
             geometry, g.Compare.integer.equal(sample_index, menu_switch.o.output)

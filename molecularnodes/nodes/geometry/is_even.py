@@ -11,7 +11,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 
 
 class IsEven(AssetGeometryGroup):
@@ -21,7 +21,7 @@ class IsEven(AssetGeometryGroup):
     Parameters
     ----------
     value : InputInteger
-        Value
+        Value. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -60,7 +60,7 @@ class IsEven(AssetGeometryGroup):
 
     def __init__(
         self,
-        value: InputInteger = 0,
+        value: InputInteger = Default.INDEX,
     ):
         super().__init__(**{"Value": value})
 

@@ -48,7 +48,7 @@ class MNColor(AssetShaderGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
@@ -60,17 +60,16 @@ class MNColor(AssetShaderGroup):
         attribute_2 = s.Attribute(
             attribute_type="INSTANCER", attribute_name="is_instanced"
         )
-        mix = g.Mix(
-            factor_float=attribute_2.o.factor,
-            a_color=attribute.o.color,
-            b_color=attribute_1.o.color,
-            data_type="RGBA",
+        mix = g.Mix.color(
+            attribute_2.o.factor,
+            attribute.o.color,
+            attribute_1.o.color,
             clamp_factor=True,
         )
-        mix_1 = g.Mix(
-            factor_float=attribute_2.o.factor,
-            a_float=attribute.o.alpha,
-            b_float=attribute_1.o.alpha,
+        mix_1 = g.Mix.float(
+            attribute_2.o.factor,
+            attribute.o.alpha,
+            attribute_1.o.alpha,
             clamp_factor=True,
         )
 

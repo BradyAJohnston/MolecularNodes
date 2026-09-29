@@ -156,27 +156,22 @@ class TransformMix(AssetGeometryGroup):
         )
 
         menu_switch = g.MenuSwitch.integer(menu, {"Single": 0, "Split": 1})
-        mix = g.Mix(
-            factor_float=g.IndexSwitch.float(menu_switch.o.output, (factor, rotation)),
-            a_rotation=a.rotation,
-            b_rotation=b.rotation,
-            data_type="ROTATION",
+        mix = g.Mix.rotation(
+            g.IndexSwitch.float(menu_switch.o.output, (factor, rotation)),
+            a.rotation,
+            b.rotation,
             clamp_factor=True,
         )
-        mix_1 = g.Mix(
-            factor_float=g.IndexSwitch.float(menu_switch.o.output, (factor, scale)),
-            a_vector=a.scale,
-            b_vector=b.scale,
-            data_type="VECTOR",
+        mix_1 = g.Mix.vector(
+            g.IndexSwitch.float(menu_switch.o.output, (factor, scale)),
+            a.scale,
+            b.scale,
             clamp_factor=True,
         )
-        mix_2 = g.Mix(
-            factor_float=g.IndexSwitch.float(
-                menu_switch.o.output, (factor, translation)
-            ),
-            a_vector=a.translation,
-            b_vector=b.translation,
-            data_type="VECTOR",
+        mix_2 = g.Mix.vector(
+            g.IndexSwitch.float(menu_switch.o.output, (factor, translation)),
+            a.translation,
+            b.translation,
             clamp_factor=True,
         )
         combine_transform = g.CombineTransform(
