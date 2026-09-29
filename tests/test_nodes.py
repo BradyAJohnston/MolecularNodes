@@ -29,6 +29,7 @@ from molecularnodes.nodes.geometry import (
     BuildElasticNetwork,
     Charge,
     ColorToOKLab,
+    FadeGeometry,
     FindBonds,
     NucleicChi,
     NucleicDihedral,
@@ -456,3 +457,28 @@ def test_simulate_elastic_network_two_points():
     centre = (positions * masses[:, None]).sum(axis=0) / masses.sum()
     assert np.allclose(centre, [0.75, 0.0, 0.0], atol=1e-4), centre
     assert np.isclose(np.linalg.norm(positions[1] - positions[0]), 0.5, atol=1e-4)
+
+
+@pytest.mark.parametrize("fade", [0.5, 1.0])
+def test_fade_geometry_scales_alpha(fade):
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    color = mol.named_attribute("Color")
+    with mol.tree.reset() as (atoms, join):
+        atoms >> FadeGeometry(fade=fade) >> join
+
+    faded = mol.named_attribute("Color", evaluate=True)
+    assert np.allclose(faded[:, :3], color[:, :3])
+    assert np.allclose(faded[:, 3], color[:, 3] * fade)
+
+
+def test_fade_geometry_zero_removes_geometry():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    with mol.tree.reset() as (atoms, join):
+        fade = FadeGeometry()
+        atoms >> fade >> join
+    # set after linking: at 0 the Geometry input is unused, so Blender marks it
+    # inactive and nodebpy won't link to it
+    fade.i.fade.default_value = 0.0
+
+    evaluated = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    assert len(evaluated.data.vertices) == 0

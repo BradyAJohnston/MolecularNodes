@@ -25,29 +25,29 @@ class AmbientOcclusionInternal(AssetShaderGroup):
     Parameters
     ----------
     menu : InputMenu | Literal["AO", "None"]
-        Menu
+        Shade with ambient occlusion (`AO`) or with the plain color (`None`)
     ao_space : InputMenu | Literal["Global", "Local"]
-        AO Space
+        Look in local geometry or world space for AO calculations
     distance : InputFloat
-        Distance
+        Distance for AO calculations
     exponent : InputFloat
-        Exponent
+        Exponent to apply to AO calculations
 
     Inputs
     ------
     i.menu : MenuSocket
-        Menu
+        Shade with ambient occlusion (`AO`) or with the plain color (`None`)
     i.ao_space : MenuSocket
-        AO Space
+        Look in local geometry or world space for AO calculations
     i.distance : FloatSocket
-        Distance
+        Distance for AO calculations
     i.exponent : FloatSocket
-        Exponent
+        Exponent to apply to AO calculations
 
     Outputs
     -------
     o.shader : ShaderSocket
-        Shader
+        Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute
     """
 
     _name = "Ambient Occlusion Internal"
@@ -57,17 +57,17 @@ class AmbientOcclusionInternal(AssetShaderGroup):
 
     class _Inputs(SocketAccessor):
         menu: MenuSocket
-        """Menu"""
+        """Shade with ambient occlusion (`AO`) or with the plain color (`None`)"""
         ao_space: MenuSocket
-        """AO Space"""
+        """Look in local geometry or world space for AO calculations"""
         distance: FloatSocket
-        """Distance"""
+        """Distance for AO calculations"""
         exponent: FloatSocket
-        """Exponent"""
+        """Exponent to apply to AO calculations"""
 
     class _Outputs(SocketAccessor):
         shader: ShaderSocket
-        """Shader"""
+        """Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute"""
 
     if TYPE_CHECKING:
 
@@ -93,7 +93,12 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu(
+            "Menu",
+            description="Shade with ambient occlusion (`AO`) or with the plain color (`None`)",
+            expanded=True,
+            optional_label=True,
+        )
         ao_space = tree.inputs.menu(
             "AO Space",
             description="Look in local geometry or world space for AO calculations",
@@ -114,7 +119,10 @@ class AmbientOcclusionInternal(AssetShaderGroup):
             min_value=0.0,
             max_value=10_000.0,
         )
-        shader = tree.outputs.shader("Shader")
+        shader = tree.outputs.shader(
+            "Shader",
+            description="Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute",
+        )
 
         mn_color = MNColor()
         color_ao = ColorAO(

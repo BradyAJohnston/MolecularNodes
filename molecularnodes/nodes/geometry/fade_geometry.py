@@ -22,21 +22,21 @@ class FadeGeometry(AssetGeometryGroup):
     Parameters
     ----------
     geometry : InputGeometry
-        The generated geometry for the style node group
+        Geometry to fade, such as the output of a style node
     fade : InputFloat
-        Fade
+        Multiplier for the alpha of the `Color` attribute. At `1` the geometry is passed through unchanged, at `0` it is removed
 
     Inputs
     ------
     i.geometry : GeometrySocket
-        The generated geometry for the style node group
+        Geometry to fade, such as the output of a style node
     i.fade : FloatSocket
-        Fade
+        Multiplier for the alpha of the `Color` attribute. At `1` the geometry is passed through unchanged, at `0` it is removed
 
     Outputs
     -------
     o.geometry : GeometrySocket
-        Geometry
+        Geometry with the faded alpha stored in `Color`
     """
 
     _name = "Fade Geometry"
@@ -46,13 +46,13 @@ class FadeGeometry(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """The generated geometry for the style node group"""
+        """Geometry to fade, such as the output of a style node"""
         fade: FloatSocket
-        """Fade"""
+        """Multiplier for the alpha of the `Color` attribute. At `1` the geometry is passed through unchanged, at `0` it is removed"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry with the faded alpha stored in `Color`"""
 
     if TYPE_CHECKING:
 
@@ -70,12 +70,20 @@ class FadeGeometry(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry(
-            "Geometry", description="The generated geometry for the style node group"
+            "Geometry",
+            description="Geometry to fade, such as the output of a style node",
         )
         fade = tree.inputs.float(
-            "Fade", 1.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
+            "Fade",
+            1.0,
+            description="Multiplier for the alpha of the `Color` attribute. At `1` the geometry is passed through unchanged, at `0` it is removed",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
         )
-        geometry_1 = tree.outputs.geometry("Geometry")
+        geometry_1 = tree.outputs.geometry(
+            "Geometry", description="Geometry with the faded alpha stored in `Color`"
+        )
 
         get_geometry_component = g.GetGeometryComponent(
             geometry=geometry, type="Instances"
@@ -105,6 +113,6 @@ class FadeGeometry(AssetGeometryGroup):
 ASSET = FadeGeometry
 
 ASSET_METADATA = {
-    "description": "Set the alpha of the `Color` attribute on the point and instance domains of the geometry. If fade is `0` or below then an empty geometry is returned. If `Fade` is `1.0` or above then computation is skipped.",
+    "description": "Fade geometry in and out by multiplying the alpha of its `Color` attribute on the point and instance domains. A `Fade` of `0` or below returns empty geometry, and a `Fade` of `1` or above passes the geometry through without any computation.",
     "catalog_id": "a1e4128a-131f-4e0e-b54e-81f863aba707",
 }
