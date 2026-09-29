@@ -5,6 +5,7 @@ title: "Changelog"
 # v520.1.0 - UNRELEASED
 
 ## Added
+- `Color matplotlib` node: colour a 0 to 1 value with matplotlib's colormaps, grouped by category, with a reverse toggle.
 - Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)

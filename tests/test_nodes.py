@@ -13,6 +13,7 @@ from nodebpy.nodes.geometry import (
     Group,
     Index,
     MeshLine,
+    NamedAttribute,
     Points,
     RealizeInstances,
     SetPosition,
@@ -456,3 +457,87 @@ def test_simulate_elastic_network_two_points():
     centre = (positions * masses[:, None]).sum(axis=0) / masses.sum()
     assert np.allclose(centre, [0.75, 0.0, 0.0], atol=1e-4), centre
     assert np.isclose(np.linalg.norm(positions[1] - positions[0]), 0.5, atol=1e-4)
+
+
+def _colormap_menus() -> list[tuple[str, str]]:
+    """(category input, colormap) for every map on the Color matplotlib node."""
+    import inspect
+    from typing import Literal, get_args, get_origin
+    from molecularnodes.nodes.geometry import ColorMatplotlib
+
+    params = inspect.signature(ColorMatplotlib.__init__).parameters
+    return [
+        (param, name)
+        for param in ("uniform", "sequential", "sequential_2", "diverging")
+        + ("cyclic", "qualitative", "miscellaneous")
+        for arg in get_args(params[param].annotation)
+        if get_origin(arg) is Literal
+        for name in get_args(arg)
+    ]
+
+
+# maps with more detail than 32 stops can hold, in 1/255 of sRGB
+_COLORMAP_LOSSY = {
+    "gist_ncar": 14.0,
+    "nipy_spectral": 11.0,
+    "hsv": 7.0,
+    "gist_rainbow": 7.0,
+    "gist_stern": 4.5,
+    "jet": 4.5,
+    "gnuplot2": 4.0,
+}
+
+
+@pytest.mark.parametrize("param, name", _colormap_menus())
+def _evaluate_colormap(x: np.ndarray, param: str, name: str, reverse=False):
+    """sRGB colours the Color matplotlib node gives at values ``x``."""
+    from molecularnodes.nodes.geometry import ColorMatplotlib
+
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    values = np.zeros(len(mol.atoms), dtype=np.float32)
+    values[: len(x)] = x
+    mol.store_named_attribute(values, "cmap_x")
+    with mol.tree.reset() as (atoms, join):
+        colormap = ColorMatplotlib(
+            value=NamedAttribute.float("cmap_x"),
+            reverse=reverse,
+            category=param.replace("_", " ").title(),
+            **{param: name},
+        )
+        (
+            atoms
+            >> StoreNamedAttribute.point.color(name="cmap", value=colormap.o.color)
+            >> join
+        )
+    # the node works in linear RGB, matplotlib in sRGB
+    linear = np.clip(mol.named_attribute("cmap", evaluate=True)[: len(x), :3], 0, 1)
+    return np.where(
+        linear <= 0.0031308, linear * 12.92, 1.055 * linear ** (1 / 2.4) - 0.055
+    )
+
+
+@pytest.mark.parametrize("param, name", _colormap_menus())
+def test_color_matplotlib_matches_matplotlib(param, name):
+    import matplotlib
+    from matplotlib.colors import ListedColormap
+
+    cmap = matplotlib.colormaps[name]
+    if isinstance(cmap, ListedColormap) and cmap.N <= 32:
+        # constant ramps: sample bin centres, away from the steps
+        x = (np.arange(cmap.N) + 0.5) / cmap.N
+        tolerance = 0.5
+    else:
+        # the 256 entries of matplotlib's lookup table
+        x = np.linspace(0.0, 1.0, 256)
+        tolerance = _COLORMAP_LOSSY.get(name, 2.5)
+    srgb = _evaluate_colormap(x, param, name)
+    assert np.abs(srgb - cmap(x)[:, :3]).max() * 255 <= tolerance
+
+
+def test_color_matplotlib_reverse():
+    import matplotlib
+
+    x = np.linspace(0.0, 1.0, 256)
+    srgb = _evaluate_colormap(x, "uniform", "viridis", reverse=True)
+    expected = matplotlib.colormaps["viridis_r"](x)[:, :3]
+    assert np.abs(srgb - expected).max() * 255 <= 2.5

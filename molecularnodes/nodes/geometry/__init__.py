@@ -53,6 +53,7 @@ from .color_backbone import ColorBackbone
 from .color_common import ColorCommon
 from .color_element import ColorElement
 from .color_goodsell import ColorGoodsell
+from .color_matplotlib import ColorMatplotlib
 from .color_mix_intermediate import ColorMixIntermediate
 from .color_oklab_mix import ColorOKLabMix
 from .color_oklab_offset import ColorOKLabOffset
@@ -315,6 +316,7 @@ __all__ = (
     "ColorCommon",
     "ColorElement",
     "ColorGoodsell",
+    "ColorMatplotlib",
     "ColorMixIntermediate",
     "ColorOKLabMix",
     "ColorOKLabOffset",
