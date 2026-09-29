@@ -322,6 +322,8 @@ def test_session_load_skips_entity_that_fails_to_restore(tmp_path):
     blend_path = tmp_path / "test.blend"
 
     session.pickle(blend_path)
+    # release the file handle so the file can be removed on Windows
+    bad.universe.trajectory.close()
     coords.unlink()
     session.clear()
     with pytest.warns(UserWarning, match="Could not restore `moved`.*Reload"):
