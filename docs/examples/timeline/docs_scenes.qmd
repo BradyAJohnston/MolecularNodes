@@ -1,0 +1,132 @@
+---
+title: "Documentation scenes"
+description: "Seventeen small scenes, one per ProteinMotion documentation snippet, from a single script."
+video: videos/docs_motion.mp4
+order: 19
+---
+
+One script, seventeen short storyboards: the scenes ProteinMotion renders beside its
+documentation snippets. Each is a function; run them all or name the ones you want:
+
+```bash
+uv run python docs/examples/timeline/scripts/docs_examples.py out_dir
+uv run python docs/examples/timeline/scripts/docs_examples.py out_dir callout_scene surface
+```
+
+Scenes whose subject Molecular Nodes cannot animate yet (write-on text, 3D highlights,
+hydrogen bonds, charge contacts, deformation) show what can be shown and say what is
+missing in a comment.
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_motion.mp4 >}}
+
+Rotation and movement
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_representations.mp4 >}}
+
+Representation changes
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_region_focus.mp4 >}}
+
+Camera focus
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_highlights.mp4 >}}
+
+3D highlights
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_writing.mp4 >}}
+
+Write and Unwrite
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_text_placement.mp4 >}}
+
+Text position
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_callout_scene.mp4 >}}
+
+Region callout
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_residue_labels.mp4 >}}
+
+Amino acid labels
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_residue_colors.mp4 >}}
+
+Residue colours
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_color_change.mp4 >}}
+
+Colour animation
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_opacity.mp4 >}}
+
+Residue transparency
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_surface.mp4 >}}
+
+Molecular surface
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_distances.mp4 >}}
+
+Distance lines
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_hydrogen_bonds.mp4 >}}
+
+Hydrogen bonds
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_charge_contacts.mp4 >}}
+
+Electrostatic contact
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_deformation.mp4 >}}
+
+Deformation and morph
+:::
+
+::: {.g-col-12 .g-col-md-4}
+{{< video videos/docs_nmr_states.mp4 >}}
+
+NMR state playback
+:::
+
+:::
+
+After ProteinMotion's [`docs_examples.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/docs_examples.py).
+
+## Script
+
+```{.python filename="scripts/docs_examples.py"}
+{{< include scripts/docs_examples.py >}}
+```

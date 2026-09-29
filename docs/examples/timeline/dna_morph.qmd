@@ -1,0 +1,23 @@
+---
+title: "DNA morph"
+description: "B-DNA to Z-DNA, as a cut where a contact-guided morph would go."
+video: videos/dna_morph.mp4
+order: 6
+---
+
+{{< video videos/dna_morph.mp4 >}}
+
+ProteinMotion morphs chain A of 1BNA into chain A of 2DCG with C1′ anchors and a
+     per-residue delay. That needs the planned `Morph To Attribute` node, so this storyboard
+     turns the source, cuts to the target, reframes and adds ball-and-stick.
+
+After ProteinMotion's [`dna_morph.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/dna_morph.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/dna_morph.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/dna_morph.py"}
+{{< include scripts/dna_morph.py >}}
+```

@@ -1,0 +1,26 @@
+---
+title: "NMR regions"
+description: "Ubiquitin's NMR conformers played back with camera moves onto two regions."
+video: videos/nmr_regions.mp4
+order: 8
+---
+
+{{< video videos/nmr_regions.mp4 >}}
+
+All 116 conformers of 2K39, aligned on the core Cα atoms with MDAnalysis before the entity
+     is created. The trajectory plays through `mol.play(start, end)` while the camera moves onto
+     the painted helix and then the painted tail, and the representation cuts to ball-and-stick.
+
+     ProteinMotion surrounds the regions with sphere, box and atom highlights; those wait on a
+     `Style Highlight` node.
+
+After ProteinMotion's [`nmr_regions.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/nmr_regions.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/nmr_regions.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/nmr_regions.py"}
+{{< include scripts/nmr_regions.py >}}
+```

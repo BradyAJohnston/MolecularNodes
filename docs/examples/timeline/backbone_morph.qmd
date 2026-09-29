@@ -1,0 +1,23 @@
+---
+title: "Backbone morph"
+description: "Calmodulin to troponin C, as a cut where the backbone morph would go."
+video: videos/backbone_morph.mp4
+order: 7
+---
+
+{{< video videos/backbone_morph.mp4 >}}
+
+The contact-guided backbone morph from calmodulin (1CLL) to troponin C (1NCX) is the
+     other morph example. Until `Morph To Attribute` exists, the two structures are shown one
+     after the other by keying the objects' render visibility, and the target turns to finish.
+
+After ProteinMotion's [`backbone_morph.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/backbone_morph.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/backbone_morph.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/backbone_morph.py"}
+{{< include scripts/backbone_morph.py >}}
+```
