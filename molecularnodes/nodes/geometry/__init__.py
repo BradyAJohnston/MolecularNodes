@@ -92,6 +92,7 @@ from .evaluate_ordered_bundles import EvaluateOrderedBundles
 from .evaluate_per_group import EvaluatePerGroup
 from .evluate_while_planar import EvluateWhilePlanar
 from .expand_boolean import ExpandBoolean
+from .fade_geometry import FadeGeometry
 from .fallback_boolean import FallbackBoolean
 from .fallback_color import FallbackColor
 from .fallback_float import FallbackFloat
@@ -354,6 +355,7 @@ __all__ = (
     "EvaluatePerGroup",
     "EvluateWhilePlanar",
     "ExpandBoolean",
+    "FadeGeometry",
     "FallbackBoolean",
     "FallbackColor",
     "FallbackFloat",
