@@ -474,11 +474,7 @@ def test_fade_geometry_scales_alpha(fade):
 def test_fade_geometry_zero_removes_geometry():
     mol = mn.Molecule.fetch("4ozs", cache=data_dir)
     with mol.tree.reset() as (atoms, join):
-        fade = FadeGeometry()
-        atoms >> fade >> join
-    # set after linking: at 0 the Geometry input is unused, so Blender marks it
-    # inactive and nodebpy won't link to it
-    fade.i.fade.default_value = 0.0
+        atoms >> FadeGeometry(fade=0.0) >> join
 
     evaluated = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
     assert len(evaluated.data.vertices) == 0
