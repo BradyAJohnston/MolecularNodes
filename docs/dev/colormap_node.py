@@ -10,20 +10,25 @@ matplotlib is needed only here, never at runtime. Re-run when matplotlib adds
 colormaps: the script fails if a map is not assigned to a category below.
 
 Each map becomes one Color Ramp of at most 32 stops (Blender's limit, beyond
-which extra stops are silently dropped). Stops are chosen greedily where the
-linear interpolation is furthest from matplotlib's 256 samples, working in
-linear RGB because that is what the ramp stores and interpolates; the error
-is measured back in 8-bit sRGB. Small ListedColormaps (the qualitative maps)
-are copied exactly with constant interpolation.
+which extra stops are silently dropped), using as few stops as reach
+TOLERANCE. Stop colours and positions are both fitted by least squares, not
+copied from matplotlib, against a numpy model of Blender's ramp
+(BKE_colorband_evaluate); linear and B-spline interpolation are each tried and
+the one needing fewer stops is kept. B-spline suits smooth maps like viridis,
+linear the maps matplotlib builds from straight sRGB segments. The error is
+measured in 8-bit sRGB against matplotlib's 256 samples. Small
+ListedColormaps (the qualitative maps) are copied exactly with constant
+interpolation. Fitting every map takes around 15 minutes.
 """
 
 from pathlib import Path
 import matplotlib
 import numpy as np
 from matplotlib.colors import ListedColormap
+from scipy.optimize import least_squares
 
 MAX_STOPS = 32
-TOLERANCE = 0.5  # stop adding stops once every sample is within this, in 1/255 sRGB
+TOLERANCE = 1.0  # fewest stops that keep every sample within this, in 1/255 sRGB
 LOSSY = 2.0  # errors above this are called out in the node's frame comment
 
 # matplotlib's own grouping, from its colormap reference gallery. Menu name,
@@ -88,8 +93,124 @@ def to_srgb(c):
     return np.where(c <= 0.0031308, c * 12.92, 1.055 * c ** (1 / 2.4) - 0.055)
 
 
+X = np.linspace(0.0, 1.0, 256)
+
+
 def samples(name: str) -> np.ndarray:
-    return matplotlib.colormaps[name](np.linspace(0.0, 1.0, 256))[:, :3]
+    return matplotlib.colormaps[name](X)[:, :3]
+
+
+def ramp_basis(pos: np.ndarray, x: np.ndarray, mode: str) -> np.ndarray:
+    """Matrix B with Blender's ramp colours at x = clip(B @ stop colours).
+
+    Follows BKE_colorband_evaluate in RGB mode, for sorted stops from 0 to 1.
+    """
+    n = len(pos)
+    rows = np.arange(len(x))
+    B = np.zeros((len(x), n))
+    if mode == "B_SPLINE":
+        # at x == 1 Blender stays on the last segment rather than snapping
+        x = np.minimum(x, np.nextafter(pos[-1], 0))
+    a = np.searchsorted(pos, x, side="right")  # first stop past x
+    end = a == n
+    B[rows[end], n - 1] = 1.0
+    r, a = rows[~end], a[~end]
+    span = pos[a - 1] - pos[a]
+    fac = np.where(span != 0, (x[r] - pos[a]) / np.where(span != 0, span, 1), 0.0)
+    if mode == "LINEAR":
+        np.add.at(B, (r, a), 1 - fac)
+        np.add.at(B, (r, a - 1), fac)
+        return B
+    t = np.clip(fac, 0, 1)
+    weights = [
+        -(t**3) / 6 + t**2 / 2 - t / 2 + 1 / 6,
+        t**3 / 2 - t**2 + 2 / 3,
+        -(t**3) / 2 + t**2 / 2 + t / 2 + 1 / 6,
+        t**3 / 6,
+    ]
+    neighbours = [
+        np.where(a >= n - 1, a, a + 1),
+        a,
+        a - 1,
+        np.where(a < 2, a - 1, a - 2),
+    ]
+    for w, i in zip(weights, neighbours):
+        np.add.at(B, (r, i), w)
+    return B
+
+
+def fit_stops(srgb: np.ndarray, n: int, mode: str):
+    """(error, positions, linear colours) of an n-stop ramp fitted to srgb."""
+
+    def unpack(p):
+        gaps = np.exp(p[: n - 1] - p[: n - 1].max())
+        pos = np.concatenate([[0.0], np.cumsum(gaps) / gaps.sum()])
+        pos[-1] = 1.0
+        return pos, p[n - 1 :].reshape(n, 3)
+
+    def error(pos, cols):
+        out = to_srgb(np.clip(ramp_basis(pos, X, mode) @ cols, 0, 1))
+        return (out - srgb) * 255
+
+    # start from the knots a greedy linear fit through the samples would pick
+    lin = to_linear(srgb)
+    chosen = [0, len(X) - 1]
+    while len(chosen) < n:
+        s = sorted(chosen)
+        approx = np.stack([np.interp(X, X[s], lin[s, k]) for k in range(3)], 1)
+        e = np.abs(to_srgb(approx) - srgb).max(1)
+        e[s] = -1
+        chosen.append(int(e.argmax()))
+    pos = X[sorted(chosen)]
+    cols = np.linalg.lstsq(ramp_basis(pos, X, mode), lin, rcond=None)[0]
+    cols = np.clip(cols, 1e-9, 1 - 1e-9)
+
+    best = (np.abs(error(pos, cols)).max(), pos, cols)
+    lo = np.r_[np.full(n - 1, -np.inf), np.zeros(3 * n)]
+    hi = np.r_[np.full(n - 1, np.inf), np.ones(3 * n)]
+    for power in (2, 8):  # least squares, then close to the worst-case error
+        p0 = np.r_[np.log(np.maximum(np.diff(pos), 1e-4)), cols.ravel()]
+        try:
+            sol = least_squares(
+                lambda p: (
+                    np.sign(r := error(*unpack(p)).ravel()) * np.abs(r) ** (power / 2)
+                ),
+                np.clip(p0, lo + 1e-9, hi - 1e-9),
+                bounds=(lo, hi),
+                max_nfev=200,
+                x_scale="jac",
+            )
+        except np.linalg.LinAlgError:
+            # an occasional ill-conditioned step; keep the best fit so far
+            print(f"  {mode} with {n} stops: solver failed, keeping earlier fit")
+            break
+        pos, cols = unpack(sol.x)
+        e = np.abs(error(pos, cols)).max()
+        if e < best[0]:
+            best = (e, pos, cols)
+    return best
+
+
+def fewest_stops(srgb: np.ndarray, mode: str):
+    """(error, positions, colours) with the fewest stops within TOLERANCE, or
+    the best MAX_STOPS fit when none is."""
+    fits = {}
+
+    def at(n):
+        if n not in fits:
+            fits[n] = fit_stops(srgb, n, mode)
+        return fits[n]
+
+    lo, hi = 2, MAX_STOPS
+    if at(hi)[0] >= TOLERANCE:
+        return at(hi)
+    while lo < hi:  # bisect, taking error to fall as stops are added
+        mid = (lo + hi) // 2
+        if at(mid)[0] < TOLERANCE:
+            hi = mid
+        else:
+            lo = mid + 1
+    return at(hi)
 
 
 def fit(name: str):
@@ -101,17 +222,14 @@ def fit(name: str):
         colors = to_linear(np.asarray(cmap.colors, dtype=float)[:, :3])
         stops = [(i / cmap.N, c) for i, c in enumerate(colors)]
         return stops, "CONSTANT", 0.0
+    print(name, flush=True)
     srgb = samples(name)
-    lin = to_linear(srgb)
-    x = np.linspace(0.0, 1.0, len(lin))
-    chosen = [0, len(lin) - 1]
-    while True:
-        s = sorted(chosen)
-        approx = np.stack([np.interp(x, x[s], lin[s, k]) for k in range(3)], axis=1)
-        error = np.abs(to_srgb(approx) - srgb).max(axis=1) * 255
-        if len(s) >= MAX_STOPS or error.max() < TOLERANCE:
-            return [(x[i], lin[i]) for i in s], "LINEAR", float(error.max())
-        chosen.append(int(error.argmax()))
+    options = []
+    for mode in ("LINEAR", "B_SPLINE"):
+        error, pos, cols = fewest_stops(srgb, mode)
+        options.append((len(pos), error, mode, list(zip(pos, cols))))
+    n, error, mode, stops = min(options, key=lambda o: o[:2])
+    return stops, mode, float(error)
 
 
 def check_coverage() -> None:
@@ -135,7 +253,8 @@ def comment(name: str, category: str, n: int, interpolation: str, error: float) 
     else:
         text = (
             f"{name}: {category}. {n} stops fitted to matplotlib "
-            f"{matplotlib.__version__} in linear RGB, max error {error:.1f}/255 in sRGB."
+            f"{matplotlib.__version__}, {interpolation.replace('_', '-').lower()} "
+            f"interpolation, max error {error:.1f}/255 in sRGB."
         )
         if error > LOSSY:
             text += " Detail finer than the stops can hold is lost."

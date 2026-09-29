@@ -488,7 +488,6 @@ _COLORMAP_LOSSY = {
 }
 
 
-@pytest.mark.parametrize("param, name", _colormap_menus())
 def _evaluate_colormap(x: np.ndarray, param: str, name: str, reverse=False):
     """sRGB colours the Color matplotlib node gives at values ``x``."""
     from molecularnodes.nodes.geometry import ColorMatplotlib
@@ -532,6 +531,38 @@ def test_color_matplotlib_matches_matplotlib(param, name):
         tolerance = _COLORMAP_LOSSY.get(name, 2.5)
     srgb = _evaluate_colormap(x, param, name)
     assert np.abs(srgb - cmap(x)[:, :3]).max() * 255 <= tolerance
+
+
+@pytest.mark.parametrize("mode", ["LINEAR", "B_SPLINE"])
+def test_colormap_generator_ramp_model(mode):
+    """The generator fits ramps against a numpy model of Blender's Color Ramp;
+    check the model against Blender's own evaluation."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).parents[1] / "docs/dev/colormap_node.py"
+    spec = importlib.util.spec_from_file_location("colormap_node", path)
+    generator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(generator)
+
+    tree = bpy.data.node_groups.new("ramp_model", "GeometryNodeTree")
+    ramp = tree.nodes.new("ShaderNodeValToRGB").color_ramp
+    ramp.interpolation = mode
+    rng = np.random.default_rng(0)
+    x = np.concatenate([np.linspace(0, 1, 101), rng.random(100)])
+    for n in range(2, 12):
+        pos = np.sort(np.concatenate([[0.0, 1.0], rng.random(n - 2)]))
+        colors = rng.random((n, 3))
+        while len(ramp.elements) > 1:
+            ramp.elements.remove(ramp.elements[-1])
+        ramp.elements[0].position = 0.0
+        ramp.elements[0].color = (*colors[0], 1.0)
+        for p, c in zip(pos[1:], colors[1:]):
+            ramp.elements.new(p).color = (*c, 1.0)
+        blender = np.array([ramp.evaluate(v)[:3] for v in x])
+        model = np.clip(generator.ramp_basis(pos, x, mode) @ colors, 0, 1)
+        assert np.abs(blender - model).max() < 1e-3
+    bpy.data.node_groups.remove(tree)
 
 
 def test_color_matplotlib_reverse():
