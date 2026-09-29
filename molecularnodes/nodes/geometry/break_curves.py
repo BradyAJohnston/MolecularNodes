@@ -89,7 +89,7 @@ class BreakCurves(AssetGeometryGroup):
         (
             capture.o.geometry
             >> g.CurveToMesh()
-            >> g.DeleteGeometry.all(selection=EdgeLength() > threshold, domain="EDGE")
+            >> g.DeleteGeometry.edge(selection=EdgeLength() > threshold)
             >> g.MeshToCurve()
             >> curves_1
         )
