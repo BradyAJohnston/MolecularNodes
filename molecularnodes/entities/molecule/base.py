@@ -213,6 +213,9 @@ class Molecule(MolecularEntity):
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
     _entity_type: EntityType = EntityType.MOLECULE
+    # extra `mda.Universe()` arguments for subclasses whose files can't be
+    # recognised from their extension, used when restoring from a saved session
+    _universe_kwargs: dict = {}
 
     def __init__(
         self,
@@ -1434,7 +1437,9 @@ class Molecule(MolecularEntity):
             frame = state.pop("_universe_frame", None)
             if topology and trajectory:
                 try:
-                    self.universe = mda.Universe(topology, trajectory)
+                    self.universe = mda.Universe(
+                        topology, trajectory, **self._universe_kwargs
+                    )
                     if frame is not None:
                         self.universe.trajectory[frame]
                 except Exception as e:

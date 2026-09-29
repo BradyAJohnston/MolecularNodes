@@ -306,3 +306,42 @@ def test_opening_another_file_drops_the_previous_entities(tmp_path):
 
     bpy.ops.wm.open_mainfile(filepath=str(empty))
     assert session.n_items == 0
+
+
+def test_session_load_skips_entity_that_fails_to_restore(tmp_path):
+    "One entity failing to restore used to lose every entity in the session"
+    import shutil
+
+    session = mn.session.get_session()
+    session.clear()
+    topo = data_dir / "md_ppr/box.gro"
+    coords = tmp_path / "moved.xtc"
+    shutil.copy(data_dir / "md_ppr/first_5_frames.xtc", coords)
+    good = mn.Molecule.load(topo, data_dir / "md_ppr/first_5_frames.xtc")
+    bad = mn.Molecule.load(topo, coords, name="moved")
+    blend_path = tmp_path / "test.blend"
+
+    session.pickle(blend_path)
+    coords.unlink()
+    session.clear()
+    with pytest.warns(UserWarning, match="Could not restore `moved`.*Reload"):
+        session.load(blend_path)
+
+    assert session.get(good.uuid) is not None
+    assert session.get(bad.uuid) is None
+
+
+def test_session_loads_legacy_single_pickle(tmp_path):
+    "Sessions saved before entities were pickled individually still load"
+    import pickle
+
+    session = mn.session.get_session()
+    session.clear()
+    mol = mn.Molecule.load(data_dir / "1cd3.cif")
+    blend_path = tmp_path / "test.blend"
+    with open(session.stashpath(blend_path), "wb") as f:
+        pickle.dump(session, f)
+
+    session.clear()
+    session.load(blend_path)
+    assert isinstance(session.get(mol.uuid), mn.Molecule)

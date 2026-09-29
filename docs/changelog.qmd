@@ -2,6 +2,12 @@
 title: "Changelog"
 ---
 
+# v520.2.1 - UNRELEASED
+
+## Fixed
+- oxDNA trajectories are restored when reopening a saved `.blend` file, instead of the `.top` topology being read with Amber's parser and failing. [#1253](https://github.com/BradyAJohnston/MolecularNodes/issues/1253)
+- An entity that fails to restore when reopening a `.blend` file (for example because its trajectory file was moved) no longer stops every other entity in the file from restoring. A warning names the entity and points to Reload to relink it. Sessions saved with this version load in older versions as an empty session.
+
 # v520.1.0 - UNRELEASED
 
 ## Added
