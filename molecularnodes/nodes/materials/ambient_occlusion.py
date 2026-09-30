@@ -5,19 +5,15 @@ from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup
-from ..shader.color_ao import ColorAO
-from ..shader.mn_color import MNColor
+from ..shader.ambient_occlusion_internal import AmbientOcclusionInternal
 
 
 class AmbientOcclusion(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        _material_output = s.MaterialOutput(
-            surface=s.Emission(
-                color=ColorAO(color=MNColor().o.color, ao_space="Global", exponent=2.0)
-            ),
-            is_active_output=True,
+        _material_output = AmbientOcclusionInternal() >> s.MaterialOutput(
+            is_active_output=True
         )
 
 

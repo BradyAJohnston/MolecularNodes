@@ -257,6 +257,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.SymmetryID
         children: embedded
+      - name: nodes.shader.AmbientOcclusionInternal
+        children: embedded
       - name: nodes.shader.ColorAO
         children: embedded
       - name: nodes.shader.FlatInternal
@@ -455,11 +457,13 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.EvaluateOrderedBundles
         children: embedded
-      - name: nodes.geometry.EvluateWhilePlanar
+      - name: nodes.geometry.EvaluateWhilePlanar
+        children: embedded
+      - name: nodes.geometry.FadeGeometry
         children: embedded
       - name: nodes.geometry.FallbackGeometry
         children: embedded
-      - name: nodes.geometry.GeoemtryToPlanar
+      - name: nodes.geometry.GeometryToPlanar
         children: embedded
       - name: nodes.geometry.LagGeometry
         children: embedded

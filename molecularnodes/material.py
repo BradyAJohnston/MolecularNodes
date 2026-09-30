@@ -12,7 +12,7 @@ from .nodes.materials import (
     squishy,
     transparent,
 )
-from .nodes.shader import ColorAO
+from .nodes.shader import AmbientOcclusionInternal, ColorAO
 from .nodes.shader import FlatInternal as FlatShader
 from .nodes.shader import TransparentOutlineInternal as TransparentOutlineShader
 
@@ -251,7 +251,7 @@ class AmbientOcclusion(PresetMaterial):
         name: str | None = None,
     ):
         self._build(name)
-        self.ao = self._handle(ColorAO)
+        self.ao = self._handle(AmbientOcclusionInternal)
         if distance is not None:
             self.distance = distance
         if exponent is not None:

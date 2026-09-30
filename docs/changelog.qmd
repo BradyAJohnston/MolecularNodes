@@ -21,11 +21,13 @@ title: "Changelog"
 # v520.2.0 - 2026-09-18
 
 ## Added
+- `Fade Geometry` node, which fades geometry in and out by multiplying the alpha of its `Color` attribute on the point and instance domains. The `Ambient Occlusion` material now reads that alpha, so fading works with it as well as with `Default` and `Squishy`. [#1255](https://github.com/BradyAJohnston/MolecularNodes/pull/1255)
 - Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - DSSP takes a selection string (`dssp.init(selection=...)`, default `"protein"`, and a field in the trajectory panel), so termini or non-standard residues missing the required N, CA, C and O atoms can be excluded. Protein residues outside the selection are drawn as loops. [#1217](https://github.com/BradyAJohnston/MolecularNodes/issues/1217)
 
 ## Changed
+- Fixed the spelling of the `Evaluate While Planar` and `Geometry to Planar` nodes (previously `Evluate While Planar` and `Geoemtry to Planar`). Scripts using `mg.EvluateWhilePlanar` or `mg.GeoemtryToPlanar` need the new `mg.EvaluateWhilePlanar` and `mg.GeometryToPlanar` names. [#1255](https://github.com/BradyAJohnston/MolecularNodes/pull/1255)
 - The `lipophobicity` attribute is no longer stored on import, and partial charges are no longer looked up from the residue and atom name. Both lookups will return as nodes instead. [#1228](https://github.com/BradyAJohnston/MolecularNodes/issues/1228)
 
 ## Fixed

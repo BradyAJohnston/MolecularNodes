@@ -34,7 +34,7 @@ from .edge_length import EdgeLength
 from .evaluate_on_atoms import EvaluateOnAtoms
 from .evaluate_ordered_bundles import EvaluateOrderedBundles
 from .evaluate_per_group import EvaluatePerGroup
-from .evluate_while_planar import EvluateWhilePlanar
+from .evaluate_while_planar import EvaluateWhilePlanar
 from .is_alpha_carbon import IsAlphaCarbon
 from .mn_typed_bundles import MNTypedBundles
 from .set_color import SetColor
@@ -831,7 +831,7 @@ class StyleSurface(AssetGeometryGroup):
             _string = g.String(
                 string="We get better performance if we first orient the structure better inside of a bounding box for more efficient use of grid space & voxels!"
             )
-            store_named_attribute = EvluateWhilePlanar(
+            store_named_attribute = EvaluateWhilePlanar(
                 geometry=geometry_9, closure=closure_zone_4.closure
             ) >> g.StoreNamedAttribute.point.integer(name="chain_id", value=group_id_1)
             store_named_attribute >> geometry_10
