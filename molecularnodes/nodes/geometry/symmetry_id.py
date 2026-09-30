@@ -79,4 +79,5 @@ ASSET = SymmetryID
 
 ASSET_METADATA = {
     "description": "Read the `sym_id` attribute, created when a single chain appears multiple times resulting from a symmetry operation being applied",
+    "catalog_id": "dfef0d3c-e718-420a-8b22-e7c3a3a9e333",
 }

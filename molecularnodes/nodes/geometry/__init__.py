@@ -82,6 +82,7 @@ from .dihedral_nucleic_angle import DihedralNucleicAngle
 from .dihedral_phi import DihedralPhi
 from .dihedral_psi import DihedralPsi
 from .dna_from_curve import DNAFromCurve
+from .ease_value import EaseValue
 from .edge_group_id import EdgeGroupID
 from .edge_info import EdgeInfo
 from .edge_length import EdgeLength
@@ -229,6 +230,7 @@ from .simulate_elastic_network import SimulateElasticNetwork
 from .simulate_on_faces import SimulateOnFaces
 from .slice_edge_instances import SliceEdgeInstances
 from .split_to_centred_instances import SplitToCentredInstances
+from .stagger_value import StaggerValue
 from .starfile_instances import StarfileInstances
 from .structure_parameter import StructureParameter
 from .style_ball_and_stick import StyleBallAndStick
@@ -346,6 +348,7 @@ __all__ = (
     "DihedralNucleicAngle",
     "DihedralPhi",
     "DihedralPsi",
+    "EaseValue",
     "EdgeGroupID",
     "EdgeInfo",
     "EdgeLength",
@@ -493,6 +496,7 @@ __all__ = (
     "SimulateOnFaces",
     "SliceEdgeInstances",
     "SplitToCentredInstances",
+    "StaggerValue",
     "StarfileInstances",
     "StructureParameter",
     "StyleBallAndStick",

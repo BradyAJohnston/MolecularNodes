@@ -6,13 +6,17 @@ from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup
 from ..shader.flat_internal import FlatInternal
+from ..shader.mn_color import MNColor
 
 
 class Flat(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        _material_output = FlatInternal() >> s.MaterialOutput(is_active_output=True)
+        mix_shader = s.MixShader(
+            fac=MNColor().o.alpha, shader=s.TransparentBSDF(), shader_001=FlatInternal()
+        )
+        _material_output = s.MaterialOutput(surface=mix_shader, is_active_output=True)
 
 
 MATERIAL = Flat

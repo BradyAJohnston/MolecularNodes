@@ -281,6 +281,10 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.AnimateWiggle
         children: embedded
+      - name: nodes.geometry.EaseValue
+        children: embedded
+      - name: nodes.geometry.StaggerValue
+        children: embedded
     - kind: page
       path: nodes.attributes
       summary:
