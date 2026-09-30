@@ -1,4 +1,4 @@
-# Node-group asset "Animate Ease" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Ease Value" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
@@ -18,9 +18,9 @@ from nodebpy.types import InputBoolean, InputFloat, InputMenu
 from ._shared.ease_switch import EaseSwitch
 
 
-class AnimateEase(AssetGeometryGroup):
+class EaseValue(AssetGeometryGroup):
     """
-    Animate Ease
+    Ease Value
 
     Parameters
     ----------
@@ -70,8 +70,8 @@ class AnimateEase(AssetGeometryGroup):
         Eased value between `From` and `To`
     """
 
-    _name = "Animate Ease"
-    _asset_name = "Animate Ease"
+    _name = "Ease Value"
+    _asset_name = "Ease Value"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "CONVERTER"
 
@@ -159,25 +159,27 @@ class AnimateEase(AssetGeometryGroup):
             "Ease",
             description="Apply the curve at the start (In), the end (Out) or both ends (In Out) of the transition",
         )
-        clamp = tree.inputs.boolean(
-            "Clamp",
-            True,
-            description="Clamp the input value to 0..1 before easing so the output never leaves the From..To range",
-        )
-        from_ = tree.inputs.float(
-            "From",
-            0.0,
-            description="Output value when the input is 0",
-            min_value=-10_000.0,
-            max_value=10_000.0,
-        )
-        to = tree.inputs.float(
-            "To",
-            1.0,
-            description="Output value when the input is 1",
-            min_value=-10_000.0,
-            max_value=10_000.0,
-        )
+        with tree.inputs.panel("Clamp", default_closed=True):
+            clamp = tree.inputs.boolean(
+                "Clamp",
+                True,
+                description="Clamp the input value to 0..1 before easing so the output never leaves the From..To range",
+                is_panel_toggle=True,
+            )
+            from_ = tree.inputs.float(
+                "From",
+                0.0,
+                description="Output value when the input is 0",
+                min_value=-10_000.0,
+                max_value=10_000.0,
+            )
+            to = tree.inputs.float(
+                "To",
+                1.0,
+                description="Output value when the input is 1",
+                min_value=-10_000.0,
+                max_value=10_000.0,
+            )
         with tree.inputs.panel("Curve", default_closed=True):
             overshoot = tree.inputs.float(
                 "Overshoot",
@@ -307,7 +309,7 @@ class AnimateEase(AssetGeometryGroup):
         ease.default_value = "In Out"
 
 
-ASSET = AnimateEase
+ASSET = EaseValue
 
 ASSET_METADATA = {
     "description": "Ease a 0..1 value with Penner easing curves (In, Out or In Out) and map it to a From..To range",

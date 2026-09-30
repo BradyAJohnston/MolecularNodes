@@ -79,4 +79,5 @@ ASSET = AssemblyID
 
 ASSET_METADATA = {
     "description": "Read the `assembly_id` attribute, which defines which biological assembly the points belong to",
+    "catalog_id": "dfef0d3c-e718-420a-8b22-e7c3a3a9e333",
 }

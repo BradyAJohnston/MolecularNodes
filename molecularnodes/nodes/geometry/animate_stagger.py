@@ -15,8 +15,8 @@ from nodebpy.builder import (
     SocketAccessor,
 )
 from nodebpy.types import Default, InputBoolean, InputFloat, InputInteger, InputMenu
-from .animate_ease import AnimateEase
 from .chain_id import ChainID
+from .ease_value import EaseValue
 from .ures_id import UResID
 
 
@@ -34,6 +34,8 @@ class AnimateStagger(AssetGeometryGroup):
         Per-point value multiplied by `Delay` when `Order` is `Attribute`, e.g. `res_id`, or a stored start frame with `Frame Start` 0 and `Delay` 1
     reverse : InputBoolean
         Stagger from the highest `Order` value to the lowest, so the last residue starts first
+    stagger : InputFloat
+        Stagger
     frame_start : InputInteger
         Frame the first point starts on
     delay : InputFloat
@@ -55,6 +57,8 @@ class AnimateStagger(AssetGeometryGroup):
         Per-point value multiplied by `Delay` when `Order` is `Attribute`, e.g. `res_id`, or a stored start frame with `Frame Start` 0 and `Delay` 1
     i.reverse : BooleanSocket
         Stagger from the highest `Order` value to the lowest, so the last residue starts first
+    i.stagger : FloatSocket
+        Stagger
     i.frame_start : IntegerSocket
         Frame the first point starts on
     i.delay : FloatSocket
@@ -88,6 +92,8 @@ class AnimateStagger(AssetGeometryGroup):
         """Per-point value multiplied by `Delay` when `Order` is `Attribute`, e.g. `res_id`, or a stored start frame with `Frame Start` 0 and `Delay` 1"""
         reverse: BooleanSocket
         """Stagger from the highest `Order` value to the lowest, so the last residue starts first"""
+        stagger: FloatSocket
+        """Stagger"""
         frame_start: IntegerSocket
         """Frame the first point starts on"""
         delay: FloatSocket
@@ -118,6 +124,7 @@ class AnimateStagger(AssetGeometryGroup):
         order: InputMenu | Literal["Residue", "Chain", "Atom", "Attribute"] = "Residue",
         attribute: InputFloat = 0.0,
         reverse: InputBoolean = False,
+        stagger: InputFloat = 0.0,
         frame_start: InputInteger = 1,
         delay: InputFloat = 1.0,
         length: InputFloat = 25.0,
@@ -143,6 +150,7 @@ class AnimateStagger(AssetGeometryGroup):
                 "Order": order,
                 "Attribute": attribute,
                 "Reverse": reverse,
+                "Stagger": stagger,
                 "Frame Start": frame_start,
                 "Delay": delay,
                 "Length": length,
@@ -173,6 +181,7 @@ class AnimateStagger(AssetGeometryGroup):
             False,
             description="Stagger from the highest `Order` value to the lowest, so the last residue starts first",
         )
+        stagger = tree.inputs.float("Stagger", 0.0)
         with tree.inputs.panel("Timing"):
             frame_start = tree.inputs.integer(
                 "Frame Start", 1, description="Frame the first point starts on"
@@ -225,18 +234,18 @@ class AnimateStagger(AssetGeometryGroup):
                 menu_switch.o.output,
                 menu_switch.o.output.point.max() - menu_switch.o.output,
             )
-            math_1 = frame_start + switch * delay
+            _math_1 = frame_start + switch * delay
         with g.Frame("Progress"):
             _string_1 = g.String(
                 string="Linear progress of each point over Length frames. Map Range returns 0 when its range is empty, so a Length of 0 falls back to a step at the start frame."
             )
             switch_1 = (length <= 0.0).switch.float(
-                frame.map_range(math_1, math_1 + length, clamp=False),
-                (frame >= math_1).switch.float(true=1.0),
+                frame.map_range(stagger, stagger + length, clamp=False),
+                (frame >= stagger).switch.float(true=1.0),
             )
-        AnimateEase(value=switch_1, interpolation=interpolation, ease=ease) >> factor
+        EaseValue(value=switch_1, interpolation=interpolation, ease=ease) >> factor
 
-        math_1 >> start
+        stagger >> start
 
         order.default_value = "Residue"
         interpolation.default_value = "Cubic"

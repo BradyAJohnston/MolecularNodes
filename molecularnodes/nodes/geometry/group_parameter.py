@@ -35,10 +35,10 @@ class GroupParameter(AssetGeometryGroup):
         If the point is the first point in the `Group ID`
     o.is_last : BooleanSocket
         If the point is the last item in the `Group ID`
-    o.group_size : IntegerSocket
-        Group Size
     o.relative_index : IntegerSocket
         The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`
+    o.group_size : IntegerSocket
+        Group Size
     """
 
     _name = "Group Parameter"
@@ -55,10 +55,10 @@ class GroupParameter(AssetGeometryGroup):
         """If the point is the first point in the `Group ID`"""
         is_last: BooleanSocket
         """If the point is the last item in the `Group ID`"""
-        group_size: IntegerSocket
-        """Group Size"""
         relative_index: IntegerSocket
         """The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`"""
+        group_size: IntegerSocket
+        """Group Size"""
 
     if TYPE_CHECKING:
 
@@ -86,11 +86,11 @@ class GroupParameter(AssetGeometryGroup):
         is_last = tree.outputs.boolean(
             "Is Last", description="If the point is the last item in the `Group ID`"
         )
-        group_size = tree.outputs.integer("Group Size")
         relative_index = tree.outputs.integer(
             "Relative Index",
             description="The relative index  of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`",
         )
+        group_size = tree.outputs.integer("Group Size")
 
         accumulate_field = g.AccumulateField.point.integer(group_index=group_id)
         ~accumulate_field.o.trailing >> is_first
@@ -101,8 +101,8 @@ class GroupParameter(AssetGeometryGroup):
             >> is_last
         )
 
-        accumulate_field.o.total >> group_size
         accumulate_field.o.trailing >> relative_index
+        accumulate_field.o.total >> group_size
 
 
 ASSET = GroupParameter

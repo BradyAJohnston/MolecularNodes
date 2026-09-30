@@ -79,4 +79,5 @@ ASSET = ImageID
 
 ASSET_METADATA = {
     "description": "Specify which image the point belongs to, for CryoET data",
+    "catalog_id": "dfef0d3c-e718-420a-8b22-e7c3a3a9e333",
 }
