@@ -1,4 +1,4 @@
-# Node-group asset "Geoemtry to Planar" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Geometry to Planar" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -17,23 +17,23 @@ from nodebpy.types import InputBoolean, InputGeometry
 from ._shared.geometry_principal_components import GeometryPrincipalComponents
 
 
-class GeoemtryToPlanar(AssetGeometryGroup):
+class GeometryToPlanar(AssetGeometryGroup):
     """
-    Geoemtry to Planar
+    Geometry to Planar
 
     Parameters
     ----------
     geometry : InputGeometry
         Geometry to transform
     selection : InputBoolean
-        The parts of the geometry that contibute to the planar calculation
+        The parts of the geometry that contribute to the planar calculation
 
     Inputs
     ------
     i.geometry : GeometrySocket
         Geometry to transform
     i.selection : BooleanSocket
-        The parts of the geometry that contibute to the planar calculation
+        The parts of the geometry that contribute to the planar calculation
 
     Outputs
     -------
@@ -43,8 +43,8 @@ class GeoemtryToPlanar(AssetGeometryGroup):
         Transform
     """
 
-    _name = "Geoemtry to Planar"
-    _asset_name = "Geoemtry to Planar"
+    _name = "Geometry to Planar"
+    _asset_name = "Geometry to Planar"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
@@ -52,7 +52,7 @@ class GeoemtryToPlanar(AssetGeometryGroup):
         geometry: GeometrySocket
         """Geometry to transform"""
         selection: BooleanSocket
-        """The parts of the geometry that contibute to the planar calculation"""
+        """The parts of the geometry that contribute to the planar calculation"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -79,7 +79,7 @@ class GeoemtryToPlanar(AssetGeometryGroup):
         selection = tree.inputs.boolean(
             "Selection",
             True,
-            description="The parts of the geometry that contibute to the planar calculation",
+            description="The parts of the geometry that contribute to the planar calculation",
             hide_value=True,
         )
         geometry_1 = tree.outputs.geometry("Geometry")
@@ -102,7 +102,7 @@ class GeoemtryToPlanar(AssetGeometryGroup):
         combine_transform >> transform
 
 
-ASSET = GeoemtryToPlanar
+ASSET = GeometryToPlanar
 
 ASSET_METADATA = {
     "catalog_id": "a1e4128a-131f-4e0e-b54e-81f863aba707",

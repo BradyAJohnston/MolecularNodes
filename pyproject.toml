@@ -1,6 +1,6 @@
 [project]
 name = "molecularnodes"
-version = "520.2.1"
+version = "520.3.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 license = "GPL-3.0-or-later"
@@ -13,7 +13,7 @@ dependencies = [
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.30.0",
+    "nodebpy>=520.31.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"

@@ -2,23 +2,44 @@
 title: "Changelog"
 ---
 
-# v520.1.0 - UNRELEASED
+# v520.3.0 - UNRELEASED
+
+## Changed
+- The `oxDNA Style Ribbon` node is renamed `oxDNA Style Classic`. Its inputs are now in Å, its defaults match other oxDNA visualisers, `Ball Radius` no longer changes the backbone radius, base stems and bases share one rotation and end at the centre of the base, a `Stem Geometry` input takes custom stem geometry, backbone ends are filled, and `End Overhang` extends strand ends for the `Curve` backbone. [#1213](https://github.com/BradyAJohnston/MolecularNodes/pull/1213)
+- The Reload operator (`mn.session_reload_item`) relinks any entity object to the session from its recorded source files or PDB code, replacing `mn.reload_trajectory`. [#1244](https://github.com/BradyAJohnston/MolecularNodes/pull/1244)
+
+## Fixed
+- oxDNA trajectories are restored when reopening a saved `.blend` file, instead of the `.top` topology being read with Amber's parser and failing. [#1253](https://github.com/BradyAJohnston/MolecularNodes/issues/1253)
+- An entity that fails to restore when reopening a `.blend` file (for example because its trajectory file was moved) no longer stops every other entity in the file from restoring. A warning names the entity and points to Reload to relink it. Sessions saved with this version load in older versions as an empty session.
+- The oxDNA style node colours every strand with the strand colours, instead of only strands whose `chain_id` modulo 4 is non-zero, and the backbone offset uses the correct cross product so the major and minor grooves are no longer swapped. [#1213](https://github.com/BradyAJohnston/MolecularNodes/pull/1213)
+- Styles use the bonds found by `Find Bonds` again. `Evaluate on Atoms` no longer attaches the stored `MN/Atoms` bundle when it returns geometry, so styles read the new geometry instead of the stored atoms. [#1231](https://github.com/BradyAJohnston/MolecularNodes/issues/1231)
+- `Build Elastic Network` builds networks again, with van der Waals radii passed to its `Plexus` input. Simulating the network is still not fully working. [#1229](https://github.com/BradyAJohnston/MolecularNodes/issues/1229)
+- Import operators give clearer error messages for empty or missing file paths. [#1242](https://github.com/BradyAJohnston/MolecularNodes/pull/1242)
+- `Color to OKLab` and `OKLab to Color` now use Ottosson's linear-sRGB to LMS matrix instead of the CIE-XYZ one, so OKLab lightness, chroma and hue match the reference values and pure blue is no longer clipped to black on the round trip. Nodes built on them (`Color OKLab Mix`, `Color OKLab Offset`, `OKLab Offset LCh`, the LCh conversions) change appearance slightly.
+- `Simulate Elastic Network` stored twice the mass instead of the inverse mass, and the XPBD edge solver read the partner point's inverse mass at the edge index rather than the partner's point index, so constraint corrections were weighted wrongly and the mass-weighted centre drifted.
+
+# v520.2.0 - 2026-09-18
 
 ## Added
 - `Color matplotlib` node: colour a 0 to 1 value with matplotlib's colormaps, grouped by category, with a reverse toggle.
+- `Fade Geometry` node, which fades geometry in and out by multiplying the alpha of its `Color` attribute on the point and instance domains. The `Ambient Occlusion` material now reads that alpha, so fading works with it as well as with `Default` and `Squishy`. [#1255](https://github.com/BradyAJohnston/MolecularNodes/pull/1255)
 - Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
-- Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
+- DSSP takes a selection string (`dssp.init(selection=...)`, default `"protein"`, and a field in the trajectory panel), so termini or non-standard residues missing the required N, CA, C and O atoms can be excluded. Protein residues outside the selection are drawn as loops. [#1217](https://github.com/BradyAJohnston/MolecularNodes/issues/1217)
 
 ## Changed
+- Fixed the spelling of the `Evaluate While Planar` and `Geometry to Planar` nodes (previously `Evluate While Planar` and `Geoemtry to Planar`). Scripts using `mg.EvluateWhilePlanar` or `mg.GeoemtryToPlanar` need the new `mg.EvaluateWhilePlanar` and `mg.GeometryToPlanar` names. [#1255](https://github.com/BradyAJohnston/MolecularNodes/pull/1255)
 - The `lipophobicity` attribute is no longer stored on import, and partial charges are no longer looked up from the residue and atom name. Both lookups will return as nodes instead. [#1228](https://github.com/BradyAJohnston/MolecularNodes/issues/1228)
 
 ## Fixed
-- `Color to OKLab` and `OKLab to Color` now use Ottosson's linear-sRGB to LMS matrix instead of the CIE-XYZ one, so OKLab lightness, chroma and hue match the reference values and pure blue is no longer clipped to black on the round trip. Nodes built on them (`Color OKLab Mix`, `Color OKLab Offset`, `OKLab Offset LCh`, the LCh conversions) change appearance slightly.
-- `Simulate Elastic Network` stored twice the mass instead of the inverse mass, and the XPBD edge solver read the partner point's inverse mass at the edge index rather than the partner's point index, so constraint corrections were weighted wrongly and the mass-weighted centre drifted.
 - The `charge` attribute is now the charge read from the file or topology (the PDB charge column, mmCIF `pdbx_formal_charge`, which mmCIF and BinaryCIF files now read, or a simulation topology's charges) instead of a partial charge looked up from the residue and atom name that masked it. It is only stored when the file or topology provides charges; the `Charge` node reads `0.0` otherwise. [#1221](https://github.com/BradyAJohnston/MolecularNodes/issues/1221)
 - Manual frame management (`Update with Scene` off) now uses the same subframes, interpolation, averaging and periodic correction as scene playback, so the manual frame can be keyframed with interpolation between trajectory frames. The offset still only applies to scene playback. [#1218](https://github.com/BradyAJohnston/MolecularNodes/issues/1218)
 - Importing with the Spheres style through the GUI always uses a `Point` cloud again, regardless of the render engine, so large systems stay interactive on import. The engine-dependent `Instance` default from #1172 still applies to `Molecule.add_style()` from the Python API. [#1220](https://github.com/BradyAJohnston/MolecularNodes/issues/1220)
+
+# v520.1.0 - 2026-09-14
+
+## Added
+- Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 
 # v520.0.1 - 2026-09-06
 

@@ -546,6 +546,13 @@ Contains Geometry:
   description: Check if a geometry contains geometry in any of the domains
 Fallback Geometry:
   description: Fallback geometry for when the input geometry is empty in all domains
+Fade Geometry:
+  description: >-
+    Fade geometry in and out by multiplying the alpha of its `Color` attribute on the point and instance
+    domains. Place it after a style node and animate `Fade::Float` from `1` to `0` to fade that style out of a scene, or
+    from `0` to `1` to fade it in. The node multiplies the existing alpha, so geometry that is already
+    partly transparent stays proportionally more transparent. Only materials that read the alpha show the
+    fade: `Default`, `Squishy` and `Ambient Occlusion` do, while `Flat` and `Transparent` ignore it.
 Plexus:
   description: Find points that are within a given distance of each other and create an edge between them
 Visualize Points: {}

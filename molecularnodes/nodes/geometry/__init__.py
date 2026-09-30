@@ -91,8 +91,9 @@ from .evaluate_on_atoms import EvaluateOnAtoms
 from .evaluate_on_instances import EvaluateOnInstances
 from .evaluate_ordered_bundles import EvaluateOrderedBundles
 from .evaluate_per_group import EvaluatePerGroup
-from .evluate_while_planar import EvluateWhilePlanar
+from .evaluate_while_planar import EvaluateWhilePlanar
 from .expand_boolean import ExpandBoolean
+from .fade_geometry import FadeGeometry
 from .fallback_boolean import FallbackBoolean
 from .fallback_color import FallbackColor
 from .fallback_float import FallbackFloat
@@ -109,8 +110,8 @@ from .force_gravity import ForceGravity
 from .force_mesh_collide import ForceMeshCollide
 from .fractionate_float import FractionateFloat
 from .frame_id import FrameID
-from .geoemtry_to_planar import GeoemtryToPlanar
 from .geometry_field_remap import GeometryFieldRemap
+from .geometry_to_planar import GeometryToPlanar
 from .get_geometry_atoms import GetGeometryAtoms
 from .group_info import GroupInfo
 from .group_parameter import GroupParameter
@@ -354,8 +355,9 @@ __all__ = (
     "EvaluateOnInstances",
     "EvaluateOrderedBundles",
     "EvaluatePerGroup",
-    "EvluateWhilePlanar",
+    "EvaluateWhilePlanar",
     "ExpandBoolean",
+    "FadeGeometry",
     "FallbackBoolean",
     "FallbackColor",
     "FallbackFloat",
@@ -372,8 +374,8 @@ __all__ = (
     "ForceMeshCollide",
     "FractionateFloat",
     "FrameID",
-    "GeoemtryToPlanar",
     "GeometryFieldRemap",
+    "GeometryToPlanar",
     "GetGeometryAtoms",
     "Group2IndexAngle",
     "Group3IndexAngle",

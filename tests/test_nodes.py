@@ -30,6 +30,7 @@ from molecularnodes.nodes.geometry import (
     BuildElasticNetwork,
     Charge,
     ColorToOKLab,
+    FadeGeometry,
     FindBonds,
     NucleicChi,
     NucleicDihedral,
@@ -572,3 +573,24 @@ def test_color_matplotlib_reverse():
     srgb = _evaluate_colormap(x, "uniform", "viridis", reverse=True)
     expected = matplotlib.colormaps["viridis_r"](x)[:, :3]
     assert np.abs(srgb - expected).max() * 255 <= 2.5
+
+
+@pytest.mark.parametrize("fade", [0.5, 1.0])
+def test_fade_geometry_scales_alpha(fade):
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    color = mol.named_attribute("Color")
+    with mol.tree.reset() as (atoms, join):
+        atoms >> FadeGeometry(fade=fade) >> join
+
+    faded = mol.named_attribute("Color", evaluate=True)
+    assert np.allclose(faded[:, :3], color[:, :3])
+    assert np.allclose(faded[:, 3], color[:, 3] * fade)
+
+
+def test_fade_geometry_zero_removes_geometry():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    with mol.tree.reset() as (atoms, join):
+        atoms >> FadeGeometry(fade=0.0) >> join
+
+    evaluated = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    assert len(evaluated.data.vertices) == 0
