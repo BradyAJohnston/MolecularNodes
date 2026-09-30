@@ -401,6 +401,7 @@ class OXDNA(Molecule):
         "velocity",
         "angular_velocity",
     )
+    _universe_kwargs = {"topology_format": OXDNAParser, "format": OXDNAReader}
 
     def __init__(
         self,
@@ -455,8 +456,7 @@ class OXDNA(Molecule):
             style=style,
             selection=selection,
             create_object=create_object,
-            topology_format=OXDNAParser,
-            format=OXDNAReader,
+            **cls._universe_kwargs,
         )
         assert isinstance(entity, cls)
         return entity
