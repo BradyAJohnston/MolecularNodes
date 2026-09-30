@@ -102,29 +102,21 @@ class EvaluateOnInstances(AssetGeometryGroup):
                 group_id=index.output,
             )
         index_1 = g.Index()
-        sample_index = g.SampleIndex(
-            geometry=geometry,
-            value=g.InstanceTransform(),
-            index=index_1,
-            data_type="FLOAT4X4",
-            domain="INSTANCE",
-        )
-        sample_index_1 = g.SampleIndex(
-            geometry=geometry,
-            value=g.InstanceReference(),
-            index=index_1,
-            data_type="INT",
-            domain="INSTANCE",
-        )
         (
             geometry
-            >> g.InstancesToPoints(radius=0.05)
+            >> g.InstancesToPoints()
             >> g.InstanceOnPoints(
                 instance=evaluate_per_group.o.instances,
-                instance_index=sample_index_1,
+                instance_index=g.SampleIndex.instance.integer(
+                    geometry, g.InstanceReference(), index_1
+                ),
                 pick_instance=True,
             )
-            >> g.SetInstanceTransform(transform=sample_index)
+            >> g.SetInstanceTransform(
+                transform=g.SampleIndex.instance.matrix(
+                    geometry, g.InstanceTransform(), index_1
+                )
+            )
             >> geometry_1
         )
 

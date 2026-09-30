@@ -16,6 +16,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputFloat,
     InputGeometry,
@@ -39,11 +40,11 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
     scale : InputFloat
         Scale
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     target_index : InputInteger
         Index for the selected point to measure to
     target_position : InputVector
-        Target Position
+        Target Position. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -101,9 +102,9 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         scale: InputFloat = 1.0,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         target_index: InputInteger = 100,
-        target_position: InputVector = None,
+        target_position: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{

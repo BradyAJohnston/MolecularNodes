@@ -94,17 +94,13 @@ class MN_bs_smooth(CustomGeometryGroup):
             iterations,
             ExpandBoolean(boolean=mn_select_sec_struct.o.is_structured, expand=1),
         )
-        mix = g.Mix(
-            factor_float=factor,
-            a_vector=position,
-            b_vector=blur_attribute,
-            data_type="VECTOR",
-            clamp_factor=True,
-        )
         (
             geometry
             >> g.SetPosition(
-                selection=mn_select_sec_struct.o.is_sheet, position=mix.o.result_vector
+                selection=mn_select_sec_struct.o.is_sheet,
+                position=g.Mix.vector(
+                    factor, position, blur_attribute, clamp_factor=True
+                ).o.result_vector,
             )
             >> geometry_1
         )

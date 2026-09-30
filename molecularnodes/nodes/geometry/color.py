@@ -12,7 +12,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 
 
 class Color(AssetGeometryGroup):
@@ -22,7 +22,7 @@ class Color(AssetGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -58,7 +58,7 @@ class Color(AssetGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(**{"Index": index})
 

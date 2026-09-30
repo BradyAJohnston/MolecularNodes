@@ -7,9 +7,12 @@ import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import (
+    Compare,
     GetBundleItem,
     GetGeometryBundle,
     Group,
+    Index,
+    MeshLine,
     NamedAttribute,
     Points,
     RealizeInstances,
@@ -30,14 +33,18 @@ from molecularnodes.nodes.geometry import (
     BreakBonds,
     BuildElasticNetwork,
     Charge,
+    ColorToOKLab,
+    FadeGeometry,
     FindBonds,
     NucleicChi,
     NucleicDihedral,
+    OKLabToColor,
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
     SegmentID,
     SetColor,
+    SimulateElasticNetwork,
     StyleCartoon,
 )
 from .constants import codes, data_dir
@@ -690,3 +697,220 @@ def test_animate_reveal():
     cull = reveal(mode="Cull")
     assert len(cull["position"]) == int((factor > 0).sum())
     assert np.allclose(cull["position"], position[factor > 0])
+# Reference values from Ottosson, "A perceptual color space for image processing"
+# (https://bottosson.github.io/posts/oklab/), linear sRGB in, OKLab out.
+OKLAB_REFERENCE = {
+    (1.0, 0.0, 0.0): (0.62796, 0.22486, 0.12585),
+    (0.0, 1.0, 0.0): (0.86644, -0.23389, 0.17950),
+    (0.0, 0.0, 1.0): (0.45201, -0.03246, -0.31153),
+    (1.0, 1.0, 1.0): (1.0, 0.0, 0.0),
+}
+
+
+@pytest.mark.parametrize("rgb", list(OKLAB_REFERENCE))
+def test_color_to_oklab(rgb):
+    """Color to OKLab matches Ottosson's reference values and round-trips."""
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    with mol.tree.reset() as (atoms, join):
+        oklab = ColorToOKLab(color=(*rgb, 1.0))
+        (
+            atoms
+            >> StoreNamedAttribute.point.vector(name="oklab", value=oklab)
+            >> StoreNamedAttribute.point.color(
+                name="rgb", value=OKLabToColor(oklab=oklab)
+            )
+            >> join
+        )
+    lab = mol.named_attribute("oklab", evaluate=True)[0]
+    back = mol.named_attribute("rgb", evaluate=True)[0, :3]
+    assert np.allclose(lab, OKLAB_REFERENCE[rgb], atol=1e-3), lab
+    assert np.allclose(back, rgb, atol=1e-4), back
+
+
+def _simulate_two_point_network(mol, frames: int):
+    """Two points 1.0 apart with masses 1 and 3, joined by one edge whose rest
+    length is set to 0.5, simulated with no external forces."""
+    with mol.tree.reset() as (atoms, join):
+        mass = Compare.integer.equal(Index().o.index, 0).o.result.switch.float(3.0, 1.0)
+        (
+            MeshLine(count=2, start_location=(0.0, 0.0, 0.0), offset=(1.0, 0.0, 0.0))
+            >> StoreNamedAttribute.point.float(name="mass", value=mass)
+            >> SimulateElasticNetwork(
+                substeps=1,
+                force=(0.0, 0.0, 0.0),
+                drag=0.0,
+                edge_length_source="Custom",
+                edge_length=0.5,
+            )
+            >> join
+        )
+    scene = bpy.context.scene
+    start = scene.frame_current
+    try:
+        for f in range(start, start + frames + 1):
+            scene.frame_set(f)
+        return (
+            mol.named_attribute("position", evaluate=True),
+            mol.named_attribute("inverse_mass", evaluate=True),
+        )
+    finally:
+        scene.frame_set(start)
+
+
+def test_simulate_elastic_network_inverse_mass():
+    """The stored inverse mass is 1 / mass."""
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    _, inverse_mass = _simulate_two_point_network(mol, frames=0)
+    assert np.allclose(inverse_mass, [1.0, 1.0 / 3.0], atol=1e-6), inverse_mass
+
+
+def test_simulate_elastic_network_two_points():
+    """One XPBD step of a single distance constraint: each point moves in
+    proportion to its inverse mass, the mass-weighted centre stays put and the
+    edge reaches its rest length."""
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    positions, _ = _simulate_two_point_network(mol, frames=1)
+    # C = 1.0 - 0.5, point 0 (w=1) moves C * 1 / (1 + 1/3), point 1 (w=1/3) moves
+    # C * (1/3) / (1 + 1/3), both toward each other along x
+    expected = np.array([[0.375, 0.0, 0.0], [0.875, 0.0, 0.0]])
+    assert np.allclose(positions, expected, atol=1e-4), positions
+    masses = np.array([1.0, 3.0])
+    centre = (positions * masses[:, None]).sum(axis=0) / masses.sum()
+    assert np.allclose(centre, [0.75, 0.0, 0.0], atol=1e-4), centre
+    assert np.isclose(np.linalg.norm(positions[1] - positions[0]), 0.5, atol=1e-4)
+
+
+def _colormap_menus() -> list[tuple[str, str]]:
+    """(category input, colormap) for every map on the Color matplotlib node."""
+    import inspect
+    from typing import Literal, get_args, get_origin
+    from molecularnodes.nodes.geometry import ColorMatplotlib
+
+    params = inspect.signature(ColorMatplotlib.__init__).parameters
+    return [
+        (param, name)
+        for param in ("uniform", "sequential", "sequential_2", "diverging")
+        + ("cyclic", "qualitative", "miscellaneous")
+        for arg in get_args(params[param].annotation)
+        if get_origin(arg) is Literal
+        for name in get_args(arg)
+    ]
+
+
+# maps with more detail than 32 stops can hold, in 1/255 of sRGB
+_COLORMAP_LOSSY = {
+    "gist_ncar": 14.0,
+    "nipy_spectral": 11.0,
+    "hsv": 7.0,
+    "gist_rainbow": 7.0,
+    "gist_stern": 4.5,
+    "jet": 4.5,
+    "gnuplot2": 4.0,
+}
+
+
+def _evaluate_colormap(x: np.ndarray, param: str, name: str, reverse=False):
+    """sRGB colours the Color matplotlib node gives at values ``x``."""
+    from molecularnodes.nodes.geometry import ColorMatplotlib
+
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    values = np.zeros(len(mol.atoms), dtype=np.float32)
+    values[: len(x)] = x
+    mol.store_named_attribute(values, "cmap_x")
+    with mol.tree.reset() as (atoms, join):
+        colormap = ColorMatplotlib(
+            value=NamedAttribute.float("cmap_x"),
+            reverse=reverse,
+            category=param.replace("_", " ").title(),
+            **{param: name},
+        )
+        (
+            atoms
+            >> StoreNamedAttribute.point.color(name="cmap", value=colormap.o.color)
+            >> join
+        )
+    # the node works in linear RGB, matplotlib in sRGB
+    linear = np.clip(mol.named_attribute("cmap", evaluate=True)[: len(x), :3], 0, 1)
+    return np.where(
+        linear <= 0.0031308, linear * 12.92, 1.055 * linear ** (1 / 2.4) - 0.055
+    )
+
+
+@pytest.mark.parametrize("param, name", _colormap_menus())
+def test_color_matplotlib_matches_matplotlib(param, name):
+    import matplotlib
+    from matplotlib.colors import ListedColormap
+
+    cmap = matplotlib.colormaps[name]
+    if isinstance(cmap, ListedColormap) and cmap.N <= 32:
+        # constant ramps: sample bin centres, away from the steps
+        x = (np.arange(cmap.N) + 0.5) / cmap.N
+        tolerance = 0.5
+    else:
+        # the 256 entries of matplotlib's lookup table
+        x = np.linspace(0.0, 1.0, 256)
+        tolerance = _COLORMAP_LOSSY.get(name, 2.5)
+    srgb = _evaluate_colormap(x, param, name)
+    assert np.abs(srgb - cmap(x)[:, :3]).max() * 255 <= tolerance
+
+
+@pytest.mark.parametrize("mode", ["LINEAR", "B_SPLINE"])
+def test_colormap_generator_ramp_model(mode):
+    """The generator fits ramps against a numpy model of Blender's Color Ramp;
+    check the model against Blender's own evaluation."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).parents[1] / "docs/dev/colormap_node.py"
+    spec = importlib.util.spec_from_file_location("colormap_node", path)
+    generator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(generator)
+
+    tree = bpy.data.node_groups.new("ramp_model", "GeometryNodeTree")
+    ramp = tree.nodes.new("ShaderNodeValToRGB").color_ramp
+    ramp.interpolation = mode
+    rng = np.random.default_rng(0)
+    x = np.concatenate([np.linspace(0, 1, 101), rng.random(100)])
+    for n in range(2, 12):
+        pos = np.sort(np.concatenate([[0.0, 1.0], rng.random(n - 2)]))
+        colors = rng.random((n, 3))
+        while len(ramp.elements) > 1:
+            ramp.elements.remove(ramp.elements[-1])
+        ramp.elements[0].position = 0.0
+        ramp.elements[0].color = (*colors[0], 1.0)
+        for p, c in zip(pos[1:], colors[1:]):
+            ramp.elements.new(p).color = (*c, 1.0)
+        blender = np.array([ramp.evaluate(v)[:3] for v in x])
+        model = np.clip(generator.ramp_basis(pos, x, mode) @ colors, 0, 1)
+        assert np.abs(blender - model).max() < 1e-3
+    bpy.data.node_groups.remove(tree)
+
+
+def test_color_matplotlib_reverse():
+    import matplotlib
+
+    x = np.linspace(0.0, 1.0, 256)
+    srgb = _evaluate_colormap(x, "uniform", "viridis", reverse=True)
+    expected = matplotlib.colormaps["viridis_r"](x)[:, :3]
+    assert np.abs(srgb - expected).max() * 255 <= 2.5
+
+
+@pytest.mark.parametrize("fade", [0.5, 1.0])
+def test_fade_geometry_scales_alpha(fade):
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    color = mol.named_attribute("Color")
+    with mol.tree.reset() as (atoms, join):
+        atoms >> FadeGeometry(fade=fade) >> join
+
+    faded = mol.named_attribute("Color", evaluate=True)
+    assert np.allclose(faded[:, :3], color[:, :3])
+    assert np.allclose(faded[:, 3], color[:, 3] * fade)
+
+
+def test_fade_geometry_zero_removes_geometry():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    with mol.tree.reset() as (atoms, join):
+        atoms >> FadeGeometry(fade=0.0) >> join
+
+    evaluated = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    assert len(evaluated.data.vertices) == 0

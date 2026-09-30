@@ -11,7 +11,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger, InputVector
+from nodebpy.types import Default, InputInteger, InputVector
 from .offset_index import OffsetIndex
 
 
@@ -22,9 +22,9 @@ class OffsetVector(AssetGeometryGroup):
     Parameters
     ----------
     vector : InputVector
-        The field to evaluate at the given `Index` + `Offset` on the point domain
+        The field to evaluate at the given `Index` + `Offset` on the point domain. When unconnected: The position from the context.
     index : InputInteger
-        The `Index` at which to evaluate this offset from
+        The `Index` at which to evaluate this offset from. When unconnected: The index from the context.
     offset : InputInteger
         The offset to apply to the `Index` before evaluating the input field
 
@@ -70,8 +70,8 @@ class OffsetVector(AssetGeometryGroup):
 
     def __init__(
         self,
-        vector: InputVector = None,
-        index: InputInteger = 0,
+        vector: InputVector = Default.POSITION,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(**{"Vector": vector, "Index": index, "Offset": offset})
@@ -95,7 +95,6 @@ class OffsetVector(AssetGeometryGroup):
             "Offset",
             0,
             description="The offset to apply to the `Index` before evaluating the input field",
-            min_value=-2147483647,
         )
         value = tree.outputs.vector(
             "Value", description="The field evaluated at the offset `Index` value"

@@ -103,11 +103,8 @@ class Cleanup(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        sample_index = g.SampleIndex(
-            geometry=color_source,
-            value=Color(),
-            index=g.NamedAttribute.integer("tmp_idx").o.attribute,
-            data_type="FLOAT_COLOR",
+        sample_index = g.SampleIndex.point.color(
+            color_source, Color(), g.NamedAttribute.integer("tmp_idx").o.attribute
         )
         (
             SetColor(atoms=geometry, color=sample_index)

@@ -315,3 +315,57 @@ def test_op_import_spheres_stay_points_under_eevee():
         assert sphere_value(api) == "Instance"
     finally:
         scene.render.engine = engine
+
+
+@pytest.mark.parametrize(
+    "op, kwargs, message",
+    [
+        ("import_molecule", {"method": "local"}, "Structure file path is empty"),
+        (
+            "import_molecule",
+            {"method": "local", "filepath": "/nonexistent/file.pdb"},
+            "Structure file not found",
+        ),
+        (
+            "import_molecule",
+            {
+                "method": "local",
+                "filepath": str(data_dir / "md_ppr/box.gro"),
+                "trajectory": "/nonexistent/traj.xtc",
+            },
+            "Trajectory file not found",
+        ),
+        (
+            "import_oxdna",
+            {"topology": str(data_dir / "oxdna/linear.top")},
+            "Trajectory file path is empty",
+        ),
+        (
+            "import_oxdna",
+            {
+                "topology": str(data_dir / "oxdna/linear_traj.dat"),
+                "trajectory": str(data_dir / "oxdna/linear_traj.dat"),
+            },
+            "does not look like an oxDNA topology file",
+        ),
+        (
+            "import_oxdna",
+            {
+                "topology": str(data_dir / "oxdna/linear.top"),
+                "trajectory": str(data_dir / "oxdna/linear.top"),
+            },
+            "No frames found",
+        ),
+        ("import_density", {}, "Map file path is empty"),
+        (
+            "import_ensemble",
+            {"filepath": "/nonexistent/file.star"},
+            "Ensemble file not found",
+        ),
+    ],
+)
+def test_op_import_bad_paths_report_errors(op, kwargs, message):
+    """Bad file paths are reported by the operator rather than raising a traceback
+    from deep inside a file reader."""
+    with pytest.raises(RuntimeError, match=message):
+        getattr(bpy.ops.mn, op)(**kwargs)

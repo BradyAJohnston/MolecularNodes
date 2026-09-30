@@ -104,11 +104,10 @@ class IndexMixVector(AssetGeometryGroup):
         )
 
         fractionate_float = FractionateFloat(value=index)
-        mix = g.Mix(
-            factor_float=fractionate_float.o.fraction,
-            a_vector=value.point.at(fractionate_float.o.floor),
-            b_vector=value.point.at(fractionate_float.o.ceiling),
-            data_type="VECTOR",
+        mix = g.Mix.vector(
+            fractionate_float.o.fraction,
+            value.point.at(fractionate_float.o.floor),
+            value.point.at(fractionate_float.o.ceiling),
             clamp_factor=True,
         )
 

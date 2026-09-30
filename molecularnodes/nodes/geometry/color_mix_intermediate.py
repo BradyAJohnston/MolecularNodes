@@ -116,79 +116,46 @@ class ColorMixIntermediate(AssetGeometryGroup):
         output = tree.outputs.color("Output", (0.8, 0.8, 0.8, 1.0))
 
         color_to_oklab = ColorToOKLab(color=intermediate_1)
-        mix = g.Mix(
-            factor_float=factor,
-            a_color=a,
-            b_color=intermediate_1,
-            data_type="RGBA",
+        mix = g.Mix.vector(
+            factor,
+            g.Mix.vector(
+                factor, ColorToOKLab(color=a), color_to_oklab, clamp_factor=True
+            ).o.result_vector,
+            g.Mix.vector(
+                factor, color_to_oklab, ColorToOKLab(color=b), clamp_factor=True
+            ).o.result_vector,
             clamp_factor=True,
         )
-        mix_1 = g.Mix(
-            factor_float=factor,
-            a_color=intermediate_1,
-            b_color=b,
-            data_type="RGBA",
-            clamp_factor=True,
-        )
-        mix_2 = g.Mix(
-            factor_float=factor,
-            a_vector=ColorToOKLab(color=a),
-            b_vector=color_to_oklab,
-            data_type="VECTOR",
-            clamp_factor=True,
-        )
-        mix_3 = g.Mix(
-            factor_float=factor,
-            a_vector=color_to_oklab,
-            b_vector=ColorToOKLab(color=b),
-            data_type="VECTOR",
-            clamp_factor=True,
-        )
-        mix_4 = g.Mix(
-            factor_float=factor,
-            a_vector=mix_2.o.result_vector,
-            b_vector=mix_3.o.result_vector,
-            data_type="VECTOR",
-            clamp_factor=True,
-        )
-        combine_color = g.CombineColor(
-            red=mix_1.o.result_color.r,
-            green=mix_1.o.result_color.g,
-            blue=mix_1.o.result_color.b,
-            alpha=intermediate_1.a,
-        )
-        combine_color_1 = g.CombineColor(
-            red=mix.o.result_color.r,
-            green=mix.o.result_color.g,
-            blue=mix.o.result_color.b,
-            alpha=a.a,
-        )
-        mix_5 = g.Mix(
-            factor_float=factor,
-            a_color=combine_color_1,
-            b_color=combine_color,
-            data_type="RGBA",
-            clamp_factor=True,
-        )
-        combine_color_2 = g.CombineColor(
-            red=mix_5.o.result_color.r,
-            green=mix_5.o.result_color.g,
-            blue=mix_5.o.result_color.b,
-            alpha=combine_color_1.o.color.a,
-        )
-        result = g.Mix(
-            factor_float=factor,
-            a_color=a,
-            b_color=b,
-            data_type="RGBA",
-            clamp_factor=True,
+        result = g.Mix.color(
+            factor, a, intermediate_1, clamp_factor=True
         ).o.result_color
+        combine_color = g.CombineColor(
+            red=result.r, green=result.g, blue=result.b, alpha=a.a
+        )
+        result_1 = g.Mix.color(
+            factor, intermediate_1, b, clamp_factor=True
+        ).o.result_color
+        combine_color_1 = g.CombineColor(
+            red=result_1.r, green=result_1.g, blue=result_1.b, alpha=intermediate_1.a
+        )
+        result_2 = g.Mix.color(
+            factor, combine_color, combine_color_1, clamp_factor=True
+        ).o.result_color
+        combine_color_2 = g.CombineColor(
+            red=result_2.r,
+            green=result_2.g,
+            blue=result_2.b,
+            alpha=combine_color.o.color.a,
+        )
+        result_3 = g.Mix.color(factor, a, b, clamp_factor=True).o.result_color
         switch = intermediate.switch.color(
             ColorOKLabMix(factor=factor, a=a, b=b),
-            OKLabToColor(oklab=mix_4.o.result_vector),
+            OKLabToColor(oklab=mix.o.result_vector),
         )
         switch_1 = intermediate.switch.color(
-            g.CombineColor(red=result.r, green=result.g, blue=result.b, alpha=a.a),
+            g.CombineColor(
+                red=result_3.r, green=result_3.g, blue=result_3.b, alpha=a.a
+            ),
             combine_color_2,
         )
         g.MenuSwitch.color(menu, {"Linear": switch_1, "OKLab": switch}) >> output

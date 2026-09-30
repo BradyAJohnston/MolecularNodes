@@ -18,6 +18,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputFloat,
     InputGeometry,
@@ -72,7 +73,7 @@ class XPBDSolveEdges(CustomGeometryGroup):
             target=edge_info.o.point_position,
             distance=distance.edge.at(edge_info.o.edge_index),
             w1=inverse_mass.o.w,
-            w2=inverse_mass.o.w.point.at(edge_info.o.edge_index),
+            w2=inverse_mass.o.w.point.at(edge_info.o.point_index),
             alpha=alpha.edge.at(edge_info.o.edge_index),
             deltat=deltat,
         )
@@ -124,7 +125,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
     pin_selection : InputBoolean
         Pin Selection
     pin_target : InputVector
-        Pin Target
+        Pin Target. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -229,7 +230,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
         hook_target: InputVector = None,
         hook_decay: InputFloat = 2.0,
         pin_selection: InputBoolean = False,
-        pin_target: InputVector = None,
+        pin_target: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{
@@ -319,7 +320,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
         geometry_1 = simulation_zone.items.geometry("Geometry", store_named_attribute)
         math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
-            geometry_1.current, name="inverse_mass", value=Mass().o.mass / 0.5
+            geometry_1.current, name="inverse_mass", value=1.0 / Mass()
         )
         repeat_zone = g.RepeatZone(substeps)
         geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)

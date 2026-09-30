@@ -75,11 +75,8 @@ class MNFresnel(CustomShaderGroup):
         value = tree.outputs.float("Value")
 
         fresnel = s.Fresnel(ior=ior)
-        mix = g.Mix(
-            factor_float=factor,
-            a_float=MN_mask_transparent(value=fresnel),
-            b_float=fresnel,
-            clamp_factor=True,
+        mix = g.Mix.float(
+            factor, MN_mask_transparent(value=fresnel), fresnel, clamp_factor=True
         )
 
         mix >> value

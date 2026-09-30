@@ -124,23 +124,14 @@ class SelectedInstances(AssetGeometryGroup):
         separate_first_point = SeparateFirstPoint(
             geometry=capture_1.o.geometry, sort=False, group_id=index.output
         )
-        sample_index = g.SampleIndex(
-            geometry=separate_first_point,
-            value=all_points_select.output,
-            index=index_1,
-            data_type="BOOLEAN",
+        sample_index = g.SampleIndex.point.boolean(
+            separate_first_point, all_points_select.output, index_1
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=separate_first_point,
-            value=some_points_selected.output,
-            index=index_1,
-            data_type="BOOLEAN",
+        sample_index_1 = g.SampleIndex.point.boolean(
+            separate_first_point, some_points_selected.output, index_1
         )
-        sample_index_2 = g.SampleIndex(
-            geometry=separate_first_point,
-            value=no_points_selected.output,
-            index=index_1,
-            data_type="BOOLEAN",
+        sample_index_2 = g.SampleIndex.point.boolean(
+            separate_first_point, no_points_selected.output, index_1
         )
 
         sample_index >> entirely_selected

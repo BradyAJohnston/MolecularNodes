@@ -11,7 +11,7 @@ existing Blender object, without rebuilding its geometry.
 
 import bpy
 import MDAnalysis as mda
-from ..blender.utils import path_resolve
+from ..blender.utils import path_resolve, resolve_file_path
 from ..converters import universe_from_atoms
 from ..download import StructureDownloader
 from .base import EntityType, MolecularEntity
@@ -46,9 +46,10 @@ def _reload_molecule(obj: bpy.types.Object) -> Molecule:
 
 def _reload_trajectory(obj: bpy.types.Object) -> Molecule:
     mn = obj.mn
-    path_topo = path_resolve(mn.filepath_topology)
-    path_traj = path_resolve(mn.filepath_trajectory)
-    if "oxdna" in mn.entity_type:
+    path_topo = resolve_file_path(mn.filepath_topology, "Topology file")
+    if mn.entity_type == EntityType.MD_OXDNA:
+        # an oxDNA topology carries no positions, so the trajectory is required
+        path_traj = resolve_file_path(mn.filepath_trajectory, "Trajectory file")
         universe = mda.Universe(
             path_topo,
             path_traj,
@@ -56,8 +57,12 @@ def _reload_trajectory(obj: bpy.types.Object) -> Molecule:
             format=OXDNAReader,
         )
         entity = OXDNA(universe, create_object=False)
-    else:
+    elif mn.filepath_trajectory:
+        path_traj = resolve_file_path(mn.filepath_trajectory, "Trajectory file")
         entity = Molecule.load(path_topo, path_traj, create_object=False)
+    else:
+        # a topology-only universe (e.g. a `.gro` with its own coordinates)
+        entity = Molecule(mda.Universe(path_topo), create_object=False)
     entity.object = obj
     entity.set_frame(bpy.context.scene.frame_current)
     return entity

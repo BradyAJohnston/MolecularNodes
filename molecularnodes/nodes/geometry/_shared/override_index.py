@@ -11,7 +11,7 @@ from nodebpy.builder import (
     IntegerSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputBoolean, InputInteger
+from nodebpy.types import Default, InputBoolean, InputInteger
 
 
 class OverrideIndex(CustomGeometryGroup):
@@ -23,7 +23,7 @@ class OverrideIndex(CustomGeometryGroup):
     selection : InputBoolean
         Selection
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
     override : InputInteger
         Override
 
@@ -67,7 +67,7 @@ class OverrideIndex(CustomGeometryGroup):
     def __init__(
         self,
         selection: InputBoolean = True,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         override: InputInteger = 0,
     ):
         super().__init__(

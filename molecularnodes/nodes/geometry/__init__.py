@@ -56,6 +56,7 @@ from .color_backbone import ColorBackbone
 from .color_common import ColorCommon
 from .color_element import ColorElement
 from .color_goodsell import ColorGoodsell
+from .color_matplotlib import ColorMatplotlib
 from .color_mix_intermediate import ColorMixIntermediate
 from .color_oklab_mix import ColorOKLabMix
 from .color_oklab_offset import ColorOKLabOffset
@@ -93,8 +94,9 @@ from .evaluate_on_atoms import EvaluateOnAtoms
 from .evaluate_on_instances import EvaluateOnInstances
 from .evaluate_ordered_bundles import EvaluateOrderedBundles
 from .evaluate_per_group import EvaluatePerGroup
-from .evluate_while_planar import EvluateWhilePlanar
+from .evaluate_while_planar import EvaluateWhilePlanar
 from .expand_boolean import ExpandBoolean
+from .fade_geometry import FadeGeometry
 from .fallback_boolean import FallbackBoolean
 from .fallback_color import FallbackColor
 from .fallback_float import FallbackFloat
@@ -111,8 +113,8 @@ from .force_gravity import ForceGravity
 from .force_mesh_collide import ForceMeshCollide
 from .fractionate_float import FractionateFloat
 from .frame_id import FrameID
-from .geoemtry_to_planar import GeoemtryToPlanar
 from .geometry_field_remap import GeometryFieldRemap
+from .geometry_to_planar import GeometryToPlanar
 from .get_geometry_atoms import GetGeometryAtoms
 from .group_info import GroupInfo
 from .group_parameter import GroupParameter
@@ -172,7 +174,7 @@ from .oklab_to_color import OKLabToColor
 from .oklab_to_lch import OKLabToLCh
 from .oxdna_realize_vectors import OxDNARealizeVectors
 from .oxdna_recover_vectors import OxDNARecoverVectors
-from .oxdna_style_ribbon import OxDNAStyleRibbon
+from .oxdna_style_classic import OxDNAStyleClassic
 from .oxdna_vectors import OxDNAVectors
 from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
@@ -321,6 +323,7 @@ __all__ = (
     "ColorCommon",
     "ColorElement",
     "ColorGoodsell",
+    "ColorMatplotlib",
     "ColorMixIntermediate",
     "ColorOKLabMix",
     "ColorOKLabOffset",
@@ -358,8 +361,9 @@ __all__ = (
     "EvaluateOnInstances",
     "EvaluateOrderedBundles",
     "EvaluatePerGroup",
-    "EvluateWhilePlanar",
+    "EvaluateWhilePlanar",
     "ExpandBoolean",
+    "FadeGeometry",
     "FallbackBoolean",
     "FallbackColor",
     "FallbackFloat",
@@ -376,8 +380,8 @@ __all__ = (
     "ForceMeshCollide",
     "FractionateFloat",
     "FrameID",
-    "GeoemtryToPlanar",
     "GeometryFieldRemap",
+    "GeometryToPlanar",
     "GetGeometryAtoms",
     "Group2IndexAngle",
     "Group3IndexAngle",
@@ -437,7 +441,7 @@ __all__ = (
     "OffsetVector",
     "OxDNARealizeVectors",
     "OxDNARecoverVectors",
-    "OxDNAStyleRibbon",
+    "OxDNAStyleClassic",
     "OxDNAVectors",
     "PeptideChi",
     "PeptideDihedral",

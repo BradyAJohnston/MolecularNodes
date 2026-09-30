@@ -23,7 +23,6 @@ class Squishy(CustomShaderGroup):
             subsurface_scale=0.2,
             coat_weight=1.0,
             coat_roughness=0.24545455,
-            thin_film_ior=1.33,
         )
         _material_output = s.MaterialOutput(
             surface=principled_bsdf, is_active_output=True

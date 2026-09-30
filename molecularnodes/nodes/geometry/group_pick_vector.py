@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputInteger, InputVector
+from nodebpy.types import Default, InputBoolean, InputInteger, InputVector
 from .group_pick import GroupPick
 
 
@@ -27,7 +27,7 @@ class GroupPickVector(AssetGeometryGroup):
     group_id : InputInteger
         Field definining the `Group ID` to pick from for the points
     position : InputVector
-        Vector field to pick vlaue for, defaults to `Position`
+        Vector field to pick vlaue for, defaults to `Position`. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -81,7 +81,7 @@ class GroupPickVector(AssetGeometryGroup):
         self,
         pick: InputBoolean = False,
         group_id: InputInteger = 0,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
     ):
         super().__init__(**{"Pick": pick, "Group ID": group_id, "Position": position})
 

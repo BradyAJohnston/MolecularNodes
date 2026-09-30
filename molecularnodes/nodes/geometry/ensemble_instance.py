@@ -169,7 +169,7 @@ class EnsembleInstance(AssetGeometryGroup):
                 points=separate_geometry.o.inverted,
                 instance=g.CollectionInfo(collection=instances, separate_children=True),
                 instance_index=ChainID(),
-                rotation=g.NamedAttribute.input_4x4_matrix("transform").o.attribute,
+                rotation=g.NamedAttribute.matrix("transform").o.attribute,
                 pick_instance=True,
             )
             set_material = (

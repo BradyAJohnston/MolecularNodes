@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 from typing import cast
 import bpy
-import MDAnalysis as mda
 import nodebpy
 from biotite import InvalidFileError
 from bpy.props import (
@@ -17,7 +16,7 @@ from bpy.props import (
 from bpy.types import Context, Operator
 from ..annotations.props import create_annotation_type_inputs
 from ..blender import coll
-from ..blender.utils import path_resolve
+from ..blender.utils import path_resolve, resolve_file_path
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import (
     OXDNA,
@@ -27,7 +26,6 @@ from ..entities import (
     ensemble,
     molecule,
 )
-from ..entities.base import EntityType
 from ..handlers import update_entities
 from ..nodes._utils import remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
@@ -362,7 +360,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         mols = []
         try:
             if self.method == "local":
-                topology = path_resolve(self.filepath)
+                topology = resolve_file_path(self.filepath, "Structure file")
                 if self.trajectory.startswith("imd://"):
                     mol = StreamingTrajectory.load(
                         topology=topology,
@@ -376,7 +374,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 elif self.trajectory:
                     mol = Molecule.load(
                         topology,
-                        path_resolve(self.trajectory),
+                        resolve_file_path(self.trajectory, "Trajectory file"),
                         **self._universe_kwargs(),
                     )
                     message = (
@@ -414,9 +412,10 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                     "There may not be a `.pdb` formatted file available - try a different download format.",
                 )
             return {"CANCELLED"}
-        except (InvalidFileError, ValueError) as e:
-            # unreadable file contents (e.g. a structure factor file with no
-            # coordinates); show the message instead of a console traceback
+        except (InvalidFileError, ValueError, OSError) as e:
+            # a missing file, or unreadable file contents (e.g. a structure
+            # factor file with no coordinates); show the message instead of a
+            # console traceback
             self.report({"ERROR"}, str(e))
             return {"CANCELLED"}
 
@@ -584,18 +583,22 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        file_path = path_resolve(self.filepath)
-        if self.ensemble_type == "cellpack":
-            ensemble.CellPack.load(
-                file_path=file_path,
-                name=Path(self.filepath).name,
-                node_setup=self.node_setup,
-            )
-        else:
-            ensemble.StarFile.load(
-                file_path=file_path,
-                node_setup=self.node_setup,
-            )
+        try:
+            file_path = resolve_file_path(self.filepath, "Ensemble file")
+            if self.ensemble_type == "cellpack":
+                ensemble.CellPack.load(
+                    file_path=file_path,
+                    name=file_path.name,
+                    node_setup=self.node_setup,
+                )
+            else:
+                ensemble.StarFile.load(
+                    file_path=file_path,
+                    node_setup=self.node_setup,
+                )
+        except (ValueError, OSError) as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
 
         _increase_view_distance()
         return {"FINISHED"}
@@ -677,56 +680,18 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        density.Grids.load(
-            file_path=path_resolve(self.filepath),
-            invert=self.invert,
-            style=self.style if self.setup_nodes else None,
-            center=self.center,
-            overwrite=self.overwrite,
-        )
-        _increase_view_distance()
-        return {"FINISHED"}
-
-
-class MN_OT_Reload_Trajectory(bpy.types.Operator):
-    bl_idname = "mn.reload_trajectory"
-    bl_label = "Reload Trajectory"
-    bl_description = (
-        "Reload the `mda.UNiverse` of the current Object to renable updating"
-    )
-    bl_options = {"REGISTER", "UNDO"}
-
-    @classmethod
-    def poll(cls, context):
-        obj = context.active_object
-        loaded_trajectory = context.scene.MNSession.match(obj)
-        # "molecule" covers MD trajectories too — reloadable here when loaded
-        # from topology (+ trajectory) files
-        reloadable = obj.mn.entity_type.startswith("md") or (
-            obj.mn.entity_type == EntityType.MOLECULE and obj.mn.filepath_topology
-        )
-        return bool(reloadable) and not loaded_trajectory
-
-    def execute(self, context):
-        obj = context.active_object
-        path_topo = path_resolve(obj.mn.filepath_topology)
-        path_traj = path_resolve(obj.mn.filepath_trajectory)
-
-        if "oxdna" in obj.mn.entity_type:
-            uni = mda.Universe(
-                path_topo,
-                path_traj,
-                topology_format=molecule.oxdna.OXDNAParser,
-                format=molecule.oxdna.OXDNAReader,
+        try:
+            density.Grids.load(
+                file_path=resolve_file_path(self.filepath, "Map file"),
+                invert=self.invert,
+                style=self.style if self.setup_nodes else None,
+                center=self.center,
+                overwrite=self.overwrite,
             )
-            traj = molecule.oxdna.OXDNA(uni, create_object=False)
-        elif "streaming" in obj.mn.entity_type:
-            traj = StreamingTrajectory.load(path_topo, path_traj, create_object=False)
-        else:
-            traj = Molecule.load(path_topo, path_traj, create_object=False)
-
-        traj.object = obj
-        traj.set_frame(context.scene.frame_current)
+        except (ValueError, OSError) as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
+        _increase_view_distance()
         return {"FINISHED"}
 
 
@@ -831,11 +796,16 @@ class MN_OT_Import_OxDNA(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(self)
 
     def execute(self, context):
-        OXDNA.load(
-            topology=path_resolve(self.topology),
-            coordinates=path_resolve(self.trajectory),
-            name=self.name,
-        )
+        try:
+            OXDNA.load(
+                topology=resolve_file_path(self.topology, "Topology file"),
+                coordinates=resolve_file_path(self.trajectory, "Trajectory file"),
+                name=self.name,
+            )
+        except (ValueError, OSError) as e:
+            self.report({"ERROR"}, str(e))
+            return {"CANCELLED"}
+
         _increase_view_distance()
         return {"FINISHED"}
 
@@ -1331,7 +1301,6 @@ CLASSES = [
     MN_OT_add_selection_to_style,
     MN_OT_Import_Molecule,
     MN_OT_Import_OxDNA,
-    MN_OT_Reload_Trajectory,
     MN_OT_Frames_To_Collection,
     MN_OT_Import_Map,
     MN_OT_Import_Ensemble,

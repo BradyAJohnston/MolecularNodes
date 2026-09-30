@@ -102,11 +102,8 @@ class SampleMixedColor(AssetGeometryGroup):
         index_mix_color = IndexMixColor(color=color, index=index)
         (
             geometry
-            >> g.SampleIndex(
-                value=index_mix_color.o.color,
-                index=index_mix_color.o.from_,
-                data_type="FLOAT_COLOR",
-                clamp=True,
+            >> g.SampleIndex.point.color(
+                value=index_mix_color.o.color, index=index_mix_color.o.from_, clamp=True
             )
             >> color_1
         )

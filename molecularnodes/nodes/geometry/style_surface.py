@@ -34,7 +34,7 @@ from .edge_length import EdgeLength
 from .evaluate_on_atoms import EvaluateOnAtoms
 from .evaluate_ordered_bundles import EvaluateOrderedBundles
 from .evaluate_per_group import EvaluatePerGroup
-from .evluate_while_planar import EvluateWhilePlanar
+from .evaluate_while_planar import EvaluateWhilePlanar
 from .is_alpha_carbon import IsAlphaCarbon
 from .mn_typed_bundles import MNTypedBundles
 from .set_color import SetColor
@@ -102,21 +102,15 @@ class Surface_compute_density_from_points(CustomGeometryGroup):
 
         position = g.Position()
         sample_nearest = g.SampleNearest.point(atoms)
-        sample_index = g.SampleIndex(
-            geometry=atoms,
-            value=position,
-            index=sample_nearest,
-            data_type="FLOAT_VECTOR",
+        math_1 = probe_size + g.SampleIndex.point.float(
+            atoms, VDWRadii().o.vdw_radii * scale_radius, sample_nearest
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=atoms,
-            value=VDWRadii().o.vdw_radii * scale_radius,
-            index=sample_nearest,
-        )
-        math_1 = probe_size + sample_index_1 - sample_index.o.value.distance(position)
-        (math_1 > 0.0) >> result
+        math_2 = math_1 - g.SampleIndex.point.vector(
+            atoms, position, sample_nearest
+        ).o.value.distance(position)
+        (math_2 > 0.0) >> result
 
-        math_1 >> distance
+        math_2 >> distance
 
 
 class Utils_bounding_box(CustomGeometryGroup):
@@ -253,25 +247,18 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
                 resolution_y=utils_bounding_box.o.y,
                 resolution_z=utils_bounding_box.o.z,
             )
-            volume_to_mesh = g.VolumeToMesh(
-                volume=volume_cube, voxel_size=0.01, threshold=0.1
-            )
+            volume_to_mesh = g.VolumeToMesh(volume=volume_cube, voxel_size=0.01)
         with g.Frame("Pull in surface towards atoms"):
             position = g.Position()
             capture = g.CaptureAttribute.point(geometry=volume_to_mesh)
             value = capture.items.integer(
                 "Value", g.SampleNearest.point(separate_geometry.o.selection)
             )
-            sample_index = g.SampleIndex(
-                geometry=separate_geometry.o.selection,
-                value=position,
-                index=value.output,
-                data_type="FLOAT_VECTOR",
+            sample_index = g.SampleIndex.point.vector(
+                separate_geometry.o.selection, position, value.output
             )
-            sample_index_1 = g.SampleIndex(
-                geometry=separate_geometry.o.selection,
-                value=scale_radii * VDWRadii(),
-                index=value.output,
+            sample_index_1 = g.SampleIndex.point.float(
+                separate_geometry.o.selection, scale_radii * VDWRadii(), value.output
             )
             set_position = capture.o.geometry >> g.SetPosition(
                 position=sample_index.o.value
@@ -301,16 +288,13 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
             mn_surface_smooth_bumps = MN_surface_smooth_bumps(Geometry=set_position_1)
         triangulate = mn_surface_smooth_bumps >> g.Triangulate(quad_method="Beauty")
         with g.Frame("Sample colors of nearest atom"):
-            sample_index_2 = g.SampleIndex(
-                geometry=menu_switch,
-                value=Color(),
-                index=g.SampleNearest.point(menu_switch),
-                data_type="FLOAT_COLOR",
+            blur_attribute_1 = g.BlurAttribute.color(
+                g.SampleIndex.point.color(
+                    menu_switch, Color(), g.SampleNearest.point(menu_switch)
+                ),
+                color_blur,
             )
-            set_color = SetColor(
-                atoms=triangulate,
-                color=g.BlurAttribute.color(sample_index_2, color_blur),
-            )
+            set_color = SetColor(atoms=triangulate, color=blur_attribute_1)
         (
             set_color
             >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
@@ -465,28 +449,21 @@ class SurfaceToRadius(CustomGeometryGroup):
         position = g.Position()
         capture = g.CaptureAttribute.point(geometry=geometry)
         value = capture.items.integer("Value", g.SampleNearest.point(atoms))
-        sample_index = g.SampleIndex(
-            geometry=atoms, value=position, index=value.output, data_type="FLOAT_VECTOR"
-        )
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
-        value_001 = capture_1.items.vector("Value.001", sample_index)
+        value_001 = capture_1.items.vector(
+            "Value.001", g.SampleIndex.point.vector(atoms, position, value.output)
+        )
         vector_math = (
             position.o.position - value_001.output
-        ).normalize() * g.SampleIndex(
-            geometry=atoms, value=scale_radii * VDWRadii(), index=value.output
+        ).normalize() * g.SampleIndex.point.float(
+            atoms, scale_radii * VDWRadii(), value.output
         )
-        mix = g.Mix(
-            a_vector=value_001.output + vector_math,
-            b_vector=g.Position(),
-            factor_float=0.0,
-            data_type="VECTOR",
-            clamp_factor=True,
+        set_position = capture_1.o.geometry >> g.SetPosition(
+            position=g.Mix.vector(
+                0.0, value_001.output + vector_math, g.Position(), clamp_factor=True
+            ).o.result_vector
         )
-        (
-            capture_1.o.geometry
-            >> g.SetPosition(position=mix.o.result_vector)
-            >> geometry_1
-        )
+        set_position >> geometry_1
         (
             MNTypedBundles(
                 closure=closure_zone.closure, step=step, path="Surface to Radius"
@@ -854,7 +831,7 @@ class StyleSurface(AssetGeometryGroup):
             _string = g.String(
                 string="We get better performance if we first orient the structure better inside of a bounding box for more efficient use of grid space & voxels!"
             )
-            store_named_attribute = EvluateWhilePlanar(
+            store_named_attribute = EvaluateWhilePlanar(
                 geometry=geometry_9, closure=closure_zone_4.closure
             ) >> g.StoreNamedAttribute.point.integer(name="chain_id", value=group_id_1)
             store_named_attribute >> geometry_10

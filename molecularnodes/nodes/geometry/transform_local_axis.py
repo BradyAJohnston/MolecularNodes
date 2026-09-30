@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputVector
+from nodebpy.types import Default, InputFloat, InputVector
 
 
 class TransformLocalAxis(AssetGeometryGroup):
@@ -23,7 +23,7 @@ class TransformLocalAxis(AssetGeometryGroup):
     Parameters
     ----------
     origin : InputVector
-        The vector defining the local space. Defaults to `Position`
+        The vector defining the local space. Defaults to `Position`. When unconnected: The position from the context.
     axis : InputVector
         The axis to rotate around
     angle : InputFloat
@@ -74,7 +74,7 @@ class TransformLocalAxis(AssetGeometryGroup):
 
     def __init__(
         self,
-        origin: InputVector = None,
+        origin: InputVector = Default.POSITION,
         axis: InputVector = None,
         angle: InputFloat = 0.0,
     ):

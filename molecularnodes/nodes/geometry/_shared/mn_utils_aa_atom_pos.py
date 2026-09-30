@@ -101,11 +101,10 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
                 group_index=accumulate_field.o.leading,
                 vector=position_1,
             )
-            mix = g.Mix(
-                a_vector=utils_group_field_at_selection_1.o.vector,
-                b_vector=utils_group_field_at_selection_2.o.vector,
-                factor_float=0.5,
-                data_type="VECTOR",
+            mix = g.Mix.vector(
+                0.5,
+                utils_group_field_at_selection_1.o.vector,
+                utils_group_field_at_selection_2.o.vector,
                 clamp_factor=True,
             )
             (

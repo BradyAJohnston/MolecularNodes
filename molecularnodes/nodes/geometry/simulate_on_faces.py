@@ -17,6 +17,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputFloat,
     InputGeometry,
@@ -95,7 +96,7 @@ class SimulateOnFaces(AssetGeometryGroup):
     pin_selection : InputBoolean
         Pin Selection
     pin_target : InputVector
-        Pin Target
+        Pin Target. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -198,7 +199,7 @@ class SimulateOnFaces(AssetGeometryGroup):
         hook_target: InputVector = None,
         hook_decay: InputFloat = 2.0,
         pin_selection: InputBoolean = False,
-        pin_target: InputVector = None,
+        pin_target: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{

@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     StringSocket,
 )
-from nodebpy.types import InputInteger, InputString
+from nodebpy.types import Default, InputInteger, InputString
 
 
 class AttributeAtIndex(CustomGeometryGroup):
@@ -22,7 +22,7 @@ class AttributeAtIndex(CustomGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
     name : InputString
         Name
 
@@ -61,7 +61,7 @@ class AttributeAtIndex(CustomGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         name: InputString = "res_id",
     ):
         super().__init__(**{"Index": index, "Name": name})
