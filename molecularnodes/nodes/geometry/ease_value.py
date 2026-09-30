@@ -25,7 +25,7 @@ class EaseValue(AssetGeometryGroup):
     Parameters
     ----------
     value : InputFloat
-        Linear progress to ease, from 0 to 1. Link `Animate Value` or `Animate Stagger` to animate it
+        Linear progress to ease, from 0 to 1. Link `Animate Value` or `Stagger Value` to animate it
     interpolation : InputMenu | Literal["Linear", "Sinusoidal", "Quadratic", "Cubic", "Quartic", "Quintic", "Exponential", "Circular", "Back", "Bounce", "Elastic"]
         Shape of the easing curve, following Robert Penner's easing functions (easings.net)
     ease : InputMenu | Literal["In", "Out", "In Out"]
@@ -46,7 +46,7 @@ class EaseValue(AssetGeometryGroup):
     Inputs
     ------
     i.value : FloatSocket
-        Linear progress to ease, from 0 to 1. Link `Animate Value` or `Animate Stagger` to animate it
+        Linear progress to ease, from 0 to 1. Link `Animate Value` or `Stagger Value` to animate it
     i.interpolation : MenuSocket
         Shape of the easing curve, following Robert Penner's easing functions (easings.net)
     i.ease : MenuSocket
@@ -77,7 +77,7 @@ class EaseValue(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         value: FloatSocket
-        """Linear progress to ease, from 0 to 1. Link `Animate Value` or `Animate Stagger` to animate it"""
+        """Linear progress to ease, from 0 to 1. Link `Animate Value` or `Stagger Value` to animate it"""
         interpolation: MenuSocket
         """Shape of the easing curve, following Robert Penner's easing functions (easings.net)"""
         ease: MenuSocket
@@ -149,7 +149,7 @@ class EaseValue(AssetGeometryGroup):
         value = tree.inputs.float(
             "Value",
             0.0,
-            description="Linear progress to ease, from 0 to 1. Link `Animate Value` or `Animate Stagger` to animate it",
+            description="Linear progress to ease, from 0 to 1. Link `Animate Value` or `Stagger Value` to animate it",
         )
         interpolation = tree.inputs.menu(
             "Interpolation",

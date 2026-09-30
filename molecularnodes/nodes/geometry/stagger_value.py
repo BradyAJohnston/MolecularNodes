@@ -97,7 +97,7 @@ class StaggerValue(AssetGeometryGroup):
             "Width",
             3.0,
             description="How many `ID`s are staggered at the same time during the animation.",
-            min_value=-10_000.0,
+            min_value=0.0,
             max_value=10_000.0,
         )
         id = tree.inputs.integer(
@@ -115,16 +115,15 @@ class StaggerValue(AssetGeometryGroup):
         value_1 = tree.outputs.float("Value")
 
         field_min_max = g.FieldMinAndMax.point.integer(id, group_id)
-        map_range = g.MapRange.float(
-            id, field_min_max.o.min, field_min_max.o.max, clamp=True
+        math_1 = g.Math.subtract(id, field_min_max.o.min)
+        math_2 = (
+            g.Math.subtract(field_min_max.o.max, field_min_max.o.min).o.value + width
         )
-        map_range_1 = (width / g.Value(2.0)).map_range(
-            from_max=g.Math.subtract(field_min_max.o.max, field_min_max.o.min)
-        )
+        math_3 = math_1.o.value / math_2
         (
-            value.map_range(
-                g.Math.subtract(map_range.o.result, map_range_1, use_clamp=True),
-                g.Math.add(map_range.o.result, map_range_1, use_clamp=True),
+            (width > 0.0).switch.float(
+                value >= math_3,
+                value.map_range(math_3, (math_1.o.value + width) / math_2),
             )
             >> value_1
         )

@@ -271,21 +271,19 @@ quartodoc:
       contents:
       - name: nodes.geometry.AnimateAction
         children: embedded
-      - name: nodes.geometry.AnimateEase
-        children: embedded
       - name: nodes.geometry.AnimateFrames
         children: embedded
       - name: nodes.geometry.AnimatePeptideToCurve
-        children: embedded
-      - name: nodes.geometry.AnimateReveal
-        children: embedded
-      - name: nodes.geometry.AnimateStagger
         children: embedded
       - name: nodes.geometry.AnimateTrails
         children: embedded
       - name: nodes.geometry.AnimateValue
         children: embedded
       - name: nodes.geometry.AnimateWiggle
+        children: embedded
+      - name: nodes.geometry.EaseValue
+        children: embedded
+      - name: nodes.geometry.StaggerValue
         children: embedded
     - kind: page
       path: nodes.attributes

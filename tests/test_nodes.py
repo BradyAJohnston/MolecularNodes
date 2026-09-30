@@ -18,7 +18,6 @@ from nodebpy.nodes.geometry import (
     RealizeInstances,
     SetPosition,
     StoreNamedAttribute,
-    Value,
 )
 import molecularnodes as mn
 from molecularnodes.nodes._utils import (
@@ -27,13 +26,12 @@ from molecularnodes.nodes._utils import (
     get_final_style_nodes,
 )
 from molecularnodes.nodes.geometry import (
-    AnimateEase,
-    AnimateReveal,
-    AnimateStagger,
+    AnimateAction,
     BreakBonds,
     BuildElasticNetwork,
     Charge,
     ColorToOKLab,
+    EaseValue,
     FadeGeometry,
     FindBonds,
     NucleicChi,
@@ -45,7 +43,9 @@ from molecularnodes.nodes.geometry import (
     SegmentID,
     SetColor,
     SimulateElasticNetwork,
+    StaggerValue,
     StyleCartoon,
+    UResID,
 )
 from .constants import codes, data_dir
 from .utils import GeometrySet, NumpySnapshotExtension
@@ -513,8 +513,9 @@ def test_animate_ease_penner():
         for curve, ease in combos:
             geometry = geometry >> StoreNamedAttribute.point.float(
                 name=f"{curve}|{ease}",
-                value=AnimateEase(
-                    value=NamedAttribute.float("t"), interpolation=curve, ease=ease
+                value=(
+                    NamedAttribute.float("t").o.attribute
+                    >> EaseValue(interpolation=curve, ease=ease)
                 ),
             )
         geometry >> join
@@ -540,7 +541,7 @@ def test_animate_ease_range_and_clamp():
     mol.store_named_attribute(raw, "raw")
 
     def ease(clamp: bool):
-        return AnimateEase(
+        return EaseValue(
             value=NamedAttribute.float("raw"),
             interpolation="Linear",
             ease="In",
@@ -563,140 +564,132 @@ def test_animate_ease_range_and_clamp():
     assert np.allclose(free, 2.0 - 5.0 * raw, atol=1e-5)
 
 
-def test_animate_stagger():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
-    rank = (np.arange(len(mol)) % 4).astype(float)
-    mol.store_named_attribute(rank, "rank")
-    frames = [5.0, 12.0, 20.0, 27.5, 40.0]
+def _stagger(value, rank, span, width):
+    # every ID gets an equal window; starts are spread so ~`width` overlap
+    denominator = span + width
+    start = rank / denominator
+    if width == 0:
+        return (value >= start).astype(float)
+    return np.clip((value - start) / (width / denominator), 0.0, 1.0)
 
-    def stagger(frame: float, **kwargs):
-        # Frame defaults to the scene frame, so a constant has to be linked in
-        options = dict(
-            order="Attribute",
-            attribute=NamedAttribute.float("rank"),
-            frame_start=10,
-            delay=5.0,
-            length=10.0,
-            interpolation="Linear",
-            ease="In",
-        )
-        options.update(kwargs)
-        return AnimateStagger(frame=Value(frame), **options)
+
+def test_stagger_value():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    index = np.arange(len(mol))
+    rank = index % 4
+    mol.store_named_attribute(rank, "rank")
+    # ids 0..7 split into two groups of 0..3 and 4..7
+    mol.store_named_attribute(index % 8, "grouped")
+    mol.store_named_attribute(index % 8 // 4, "group")
+    values = [0.0, 0.2, 0.5, 0.75, 1.0]
+    widths = [0.0, 1.0, 3.0]
 
     with mol.tree.reset() as (atoms, join):
         geometry = atoms
-        for frame in frames:
+        for value in values:
+            for width in widths:
+                geometry = geometry >> StoreNamedAttribute.point.float(
+                    name=f"{value}|{width}",
+                    value=StaggerValue(
+                        value, width=width, id=NamedAttribute.integer("rank")
+                    ),
+                )
             geometry = geometry >> StoreNamedAttribute.point.float(
-                name=f"stagger_{frame}", value=stagger(frame)
+                name=f"group|{value}",
+                value=StaggerValue(
+                    value,
+                    width=2.0,
+                    id=NamedAttribute.integer("grouped"),
+                    group_id=NamedAttribute.integer("group"),
+                ),
+            )
+        geometry >> join
+
+    for value in values:
+        for width in widths:
+            got = mol.named_attribute(f"{value}|{width}", evaluate=True)
+            expected = _stagger(value, rank, 3, width)
+            assert np.allclose(got, expected, atol=1e-5), (value, width)
+        # each group staggers over its own ID range
+        got = mol.named_attribute(f"group|{value}", evaluate=True)
+        assert np.allclose(got, _stagger(value, rank, 3, 2.0), atol=1e-5), value
+
+
+def test_animate_action():
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    rank = np.arange(len(mol)) % 4
+    mol.store_named_attribute(rank, "rank")
+    times = [0.0, 12.0, 17.0, 20.0, 30.0]
+
+    def action(time, **kwargs):
+        return AnimateAction(
+            start=10.0, length=10.0, time="Value", value=time, **kwargs
+        )
+
+    with mol.tree.reset() as (atoms, join):
+        geometry = atoms
+        for time in times:
+            node = action(time)
+            geometry = (
+                geometry
+                >> StoreNamedAttribute.point.float(name=f"linear|{time}", value=node)
+                >> StoreNamedAttribute.point.boolean(
+                    name=f"active|{time}", value=node.o.active
+                )
+                >> StoreNamedAttribute.point.float(
+                    name=f"cubic|{time}",
+                    value=action(time, interpolation="Cubic", ease="In"),
+                )
+                >> StoreNamedAttribute.point.float(
+                    name=f"stagger|{time}",
+                    value=action(
+                        time,
+                        stagger=True,
+                        width=1.0,
+                        id=NamedAttribute.integer("rank"),
+                    ),
+                )
+                >> StoreNamedAttribute.point.float(
+                    name=f"residue|{time}",
+                    value=action(time, stagger=True, width=1.0, id=UResID()),
+                )
             )
         (
             geometry
+            >> StoreNamedAttribute.point.float(name="end", value=action(0.0).o.end)
             >> StoreNamedAttribute.point.float(
-                name="start", value=stagger(20.0).o.start
-            )
-            >> StoreNamedAttribute.point.float(
-                name="reverse", value=stagger(20.0, reverse=True)
-            )
-            >> StoreNamedAttribute.point.float(
-                name="snap", value=stagger(20.0, length=0.0)
-            )
-            >> StoreNamedAttribute.point.float(
-                name="cubic", value=stagger(17.0, interpolation="Cubic")
-            )
-            >> StoreNamedAttribute.point.float(
-                name="residue",
-                value=AnimateStagger(
-                    frame=Value(100.0),
-                    frame_start=0,
-                    delay=1.0,
-                    length=50.0,
-                    interpolation="Linear",
-                    ease="In",
-                ),
+                name="frames",
+                value=AnimateAction(start=10.0, length=10.0, time="Frames"),
             )
             >> join
         )
 
-    start = 10.0 + rank * 5.0
-    assert np.allclose(mol.named_attribute("start", evaluate=True), start)
-    for frame in frames:
-        expected = np.clip((frame - start) / 10.0, 0.0, 1.0)
-        got = mol.named_attribute(f"stagger_{frame}", evaluate=True)
-        assert np.allclose(got, expected, atol=1e-5), frame
-
-    start_reversed = 10.0 + (rank.max() - rank) * 5.0
-    expected = np.clip((20.0 - start_reversed) / 10.0, 0.0, 1.0)
-    assert np.allclose(mol.named_attribute("reverse", evaluate=True), expected)
-
-    snap = mol.named_attribute("snap", evaluate=True)
-    assert np.array_equal(snap, (20.0 >= start).astype(float))
-
-    linear = np.clip((17.0 - start) / 10.0, 0.0, 1.0)
-    cubic = mol.named_attribute("cubic", evaluate=True)
-    assert np.allclose(cubic, linear**3, atol=1e-5)
-
-    # the default Order staggers by residue through the `ures_id` attribute
     ures_id = mol.named_attribute("ures_id")
-    expected = np.clip((100.0 - ures_id) / 50.0, 0.0, 1.0)
-    assert np.allclose(mol.named_attribute("residue", evaluate=True), expected)
+    ures_rank = ures_id - ures_id.min()
+    for time in times:
+        linear = np.clip((time - 10.0) / 10.0, 0.0, 1.0)
+        got = mol.named_attribute(f"linear|{time}", evaluate=True)
+        assert np.allclose(got, linear, atol=1e-5), time
+        active = mol.named_attribute(f"active|{time}", evaluate=True)
+        assert np.all(active == (10.0 <= time <= 20.0)), time
+        cubic = mol.named_attribute(f"cubic|{time}", evaluate=True)
+        assert np.allclose(cubic, linear**3, atol=1e-5), time
+        stagger = mol.named_attribute(f"stagger|{time}", evaluate=True)
+        assert np.allclose(stagger, _stagger(linear, rank, 3, 1.0), atol=1e-5), time
+        residue = mol.named_attribute(f"residue|{time}", evaluate=True)
+        expected = _stagger(linear, ures_rank, ures_rank.max(), 1.0)
+        assert np.allclose(residue, expected, atol=1e-5), time
 
+    assert np.allclose(mol.named_attribute("end", evaluate=True), 20.0)
 
-def test_animate_reveal():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
-    n = len(mol)
-    factor = (np.arange(n) % 3) / 2.0
-    first_half = np.arange(n) < n // 2
-    mol.store_named_attribute(factor, "f")
-    mol.store_named_attribute(first_half, "first_half")
-    color = mol.named_attribute("Color")
-    vdw_radii = mol.named_attribute("vdw_radii")
-    position = mol.named_attribute("position")
-    assert np.all(color[:, 3] == 1.0)
-
-    def reveal(selection=None, **kwargs):
-        # nodes must be built inside the tree context, so the selection is a factory
-        with mol.tree.reset() as (atoms, join):
-            if selection is not None:
-                kwargs["selection"] = selection()
-            (atoms >> AnimateReveal(factor=NamedAttribute.float("f"), **kwargs) >> join)
-        return {
-            name: mol.named_attribute(name, evaluate=True)
-            for name in ("Color", "vdw_radii", "position")
-        }
-
-    alpha = reveal(mode="Alpha")
-    assert np.allclose(alpha["Color"][:, :3], color[:, :3])
-    assert np.allclose(alpha["Color"][:, 3], factor)
-    assert np.allclose(alpha["vdw_radii"], vdw_radii)
-    assert np.allclose(alpha["position"], position)
-
-    inverted = reveal(mode="Alpha", invert=True)
-    assert np.allclose(inverted["Color"][:, 3], 1.0 - factor)
-
-    # the selection limits the change; unselected points keep their alpha
-    selected = reveal(
-        mode="Alpha", selection=lambda: NamedAttribute.boolean("first_half")
-    )
-    assert np.allclose(selected["Color"][first_half, 3], factor[first_half])
-    assert np.all(selected["Color"][~first_half, 3] == 1.0)
-
-    # a second reveal multiplies into the alpha the first one wrote
-    with mol.tree.reset() as (atoms, join):
-        (
-            atoms
-            >> AnimateReveal(factor=NamedAttribute.float("f"))
-            >> AnimateReveal(factor=0.5)
-            >> join
-        )
-    assert np.allclose(mol.named_attribute("Color", evaluate=True)[:, 3], factor / 2)
-
-    scale = reveal(mode="Scale")
-    assert np.allclose(scale["vdw_radii"], vdw_radii * factor)
-    assert np.allclose(scale["Color"], color)
-
-    cull = reveal(mode="Cull")
-    assert len(cull["position"]) == int((factor > 0).sum())
-    assert np.allclose(cull["position"], position[factor > 0])
+    scene = bpy.context.scene
+    frame = scene.frame_current
+    try:
+        scene.frame_set(15)
+        frames = mol.named_attribute("frames", evaluate=True)
+        assert np.allclose(frames, 0.5, atol=1e-5)
+    finally:
+        scene.frame_set(frame)
 
 
 # Reference values from Ottosson, "A perceptual color space for image processing"
