@@ -291,6 +291,14 @@ Color Backbone:
     Atoms that are neither maintain their current `Color` attribute
   videos:
     - https://imgur.com/nadPkJd
+Color matplotlib:
+  description: >-
+    Colour a `Value::Float` from `0` to `1` with one of matplotlib's colormaps. Pick the group with `Category::Menu`,
+    then the colormap from that group's menu; the other groups' menus are ignored. `Reverse::Bool` runs the colormap
+    from `1` to `0`, like matplotlib's `_r` maps. Values outside `0..1` are clamped. Pair with `Field Remap::Node`
+    or a Map Range node to colour an attribute such as `b_factor` over its own range. Each colormap is a Color Ramp
+    of at most 32 stops fitted to matplotlib's colours, within about 1/255 for most maps; a few busy maps such as
+    `gist_ncar`, `nipy_spectral` and `jet` lose some detail, noted in the frame next to each ramp inside the node.
 Color Mix Intermediate:
   description: >-
     Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces

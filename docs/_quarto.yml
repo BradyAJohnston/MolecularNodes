@@ -337,6 +337,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorGoodsell
         children: embedded
+      - name: nodes.geometry.ColorMatplotlib
+        children: embedded
       - name: nodes.geometry.ColorMixIntermediate
         children: embedded
       - name: nodes.geometry.ColorOKLabMix
