@@ -14,7 +14,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputBoolean, InputFloat, InputInteger, InputMenu
+from nodebpy.types import Default, InputBoolean, InputFloat, InputInteger, InputMenu
 from .animate_ease import AnimateEase
 from .chain_id import ChainID
 from .ures_id import UResID
@@ -27,7 +27,7 @@ class AnimateStagger(AssetGeometryGroup):
     Parameters
     ----------
     frame : InputFloat
-        Frame to evaluate the stagger at. Defaults to the current scene frame
+        Frame to evaluate the stagger at. Defaults to the current scene frame. When unconnected: The current frame in the scene.
     order : InputMenu | Literal["Residue", "Chain", "Atom", "Attribute"]
         What delays each point's start: its residue (`URes ID`), its chain, its atom index or the `Attribute` input
     attribute : InputFloat
@@ -114,7 +114,7 @@ class AnimateStagger(AssetGeometryGroup):
 
     def __init__(
         self,
-        frame: InputFloat = 0.0,
+        frame: InputFloat = Default.SCENE_FRAME,
         order: InputMenu | Literal["Residue", "Chain", "Atom", "Attribute"] = "Residue",
         attribute: InputFloat = 0.0,
         reverse: InputBoolean = False,

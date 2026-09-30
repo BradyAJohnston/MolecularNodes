@@ -697,6 +697,8 @@ def test_animate_reveal():
     cull = reveal(mode="Cull")
     assert len(cull["position"]) == int((factor > 0).sum())
     assert np.allclose(cull["position"], position[factor > 0])
+
+
 # Reference values from Ottosson, "A perceptual color space for image processing"
 # (https://bottosson.github.io/posts/oklab/), linear sRGB in, OKLab out.
 OKLAB_REFERENCE = {

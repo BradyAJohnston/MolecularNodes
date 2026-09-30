@@ -12,11 +12,9 @@ class AmbientOcclusion(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-
         _material_output = AmbientOcclusionInternal() >> s.MaterialOutput(
             is_active_output=True
         )
-        _material_output = s.MaterialOutput(surface=mix_shader, is_active_output=True)
 
 
 MATERIAL = AmbientOcclusion
