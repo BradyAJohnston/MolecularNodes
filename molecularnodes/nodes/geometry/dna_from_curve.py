@@ -606,14 +606,10 @@ class ObjectEffector(CustomGeometryGroup):
         object = tree.inputs.object("Object", optional_label=True)
         effector = tree.outputs.bundle("Effector")
 
-        get_bundle_item = g.GetBundleItem.bundle(
-            g.GetGeometryBundle(
-                geometry=g.ObjectInfo(object=object).o.geometry
-            ).o.bundle,
-            "effectors",
+        (
+            g.ObjectInfo(object=object).o.geometry.bundle().get.bundle("effectors")
+            >> effector
         )
-
-        get_bundle_item.o.item >> effector
 
 
 class CollectionEffector(CustomGeometryGroup):
@@ -628,15 +624,13 @@ class CollectionEffector(CustomGeometryGroup):
             )
         effectors = tree.outputs.bundle("Effectors")
 
-        collection_children = g.CollectionChildren(
-            collection=collection, recursive=True
-        )
-        repeat_zone = g.RepeatZone(collection_children.o.objects.list_length())
+        collection_children = collection.children(True)
+        repeat_zone = g.RepeatZone(collection_children.objects.list_length())
         bundle = repeat_zone.items.bundle(name="Bundle")
         store_bundle_item = g.StoreBundleItem.bundle(
             bundle.current,
             name_pattern.format({"i": repeat_zone.iteration}),
-            ObjectEffector(Object=collection_children.o.objects[repeat_zone.iteration]),
+            ObjectEffector(Object=collection_children.objects[repeat_zone.iteration]),
         )
         store_bundle_item >> bundle.next
 
@@ -702,9 +696,8 @@ class SetEffector(CustomGeometryGroup):
             delimiter="/",
         )
         (
-            get_geometry_bundle
-            >> g.SetGeometryBundle(
-                bundle=g.StoreBundleItem.bundle(
+            get_geometry_bundle.o.geometry.set_bundle(
+                g.StoreBundleItem.bundle(
                     get_geometry_bundle.o.bundle, join_strings, effector
                 )
             )
@@ -959,11 +952,7 @@ class SetGeometryTags(CustomGeometryGroup):
         store_bundle_item = g.StoreBundleItem.string(
             get_geometry_bundle.o.bundle, "tags", StringToList(String=tags)
         )
-        (
-            get_geometry_bundle
-            >> g.SetGeometryBundle(bundle=store_bundle_item)
-            >> geometry_1
-        )
+        get_geometry_bundle.o.geometry.set_bundle(store_bundle_item) >> geometry_1
 
 
 class SetFriction(CustomGeometryGroup):
@@ -1149,11 +1138,7 @@ class SetGeoUpdaterDeformOnly(CustomGeometryGroup):
             closure_zone.closure,
             structure_type="SINGLE",
         )
-        (
-            get_geometry_bundle
-            >> g.SetGeometryBundle(bundle=store_bundle_item)
-            >> geometry_1
-        )
+        get_geometry_bundle.o.geometry.set_bundle(store_bundle_item) >> geometry_1
 
 
 class IsEffectorForGeometry(CustomGeometryGroup):
@@ -1180,13 +1165,11 @@ class IsEffectorForGeometry(CustomGeometryGroup):
         )
         affects_geometry = tree.outputs.boolean("Affects Geometry")
 
-        get_bundle_item = g.GetBundleItem.string(
-            g.GetGeometryBundle(geometry=geometry).o.bundle, "tags"
-        )
+        get_bundle_item = geometry.bundle().get.string("tags")
         get_bundle_item.node.warning_propagation = "NONE"
         separate_bundle = g.SeparateBundle(effector)
         filter = separate_bundle.items.string("filter")
-        tag_filter = g.TagFilter(tag_filter=filter.output, tags=get_bundle_item.o.item)
+        tag_filter = g.TagFilter(tag_filter=filter.output, tags=get_bundle_item)
 
         tag_filter >> affects_geometry
 
@@ -1201,12 +1184,10 @@ class ForEachSimGeometry(CustomGeometryGroup):
         closure = tree.inputs.closure("Closure")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world, mode="Data Type", data_type="Geometry"
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
+        get_nested_bundle_paths = world.paths("Data Type", data_type="Geometry")
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
         world_2 = repeat_zone.items.bundle(world, "World")
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         get_bundle_item = g.GetBundleItem.geometry(world_2.current, get_list_item, True)
         evaluate_closure = g.EvaluateClosure(closure, define_signature=True)
         evaluate_closure.inputs.bundle(
@@ -1257,24 +1238,22 @@ class EvaluateCustomEffectors(CustomGeometryGroup):
             geometry_1 = closure_zone.outputs.geometry(
                 "Geometry", structure_type="SINGLE"
             )
-            get_nested_bundle_paths = g.GetNestedBundlePaths(
-                bundle=world,
-                mode="Bundle Type",
-                bundle_type="Blender.CustomEffector.Geometry",
+            get_nested_bundle_paths = world.paths(
+                "Bundle Type", bundle_type="Blender.CustomEffector.Geometry"
             )
-            repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
+            repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
             world_4 = repeat_zone.items.bundle(world, "World")
             get_list_item = g.GetListItem.string(
                 get_nested_bundle_paths, repeat_zone.iteration, structure_type="SINGLE"
             )
-            get_bundle_item = g.GetBundleItem.bundle(world_4.current, get_list_item)
+            get_bundle_item = world_4.current.get.bundle(get_list_item)
             is_effector_for_geometry = IsEffectorForGeometry(
-                Effector=get_bundle_item.o.item,
+                Effector=get_bundle_item,
                 **{"Effector Path": get_list_item},
                 Geometry=geometry.output,
                 **{"Geometry Path": path.output},
             )
-            separate_bundle = g.SeparateBundle(get_bundle_item.o.item)
+            separate_bundle = g.SeparateBundle(get_bundle_item)
             closure = separate_bundle.items.closure("closure")
             stage_1 = separate_bundle.items.string("stage")
             evaluate_closure = g.EvaluateClosure(closure.output)
@@ -1300,14 +1279,10 @@ class EvaluateCustomEffectors(CustomGeometryGroup):
             )
             switch_1 >> world_4.next
         with g.Frame("Evaluate World Effectors"):
-            get_nested_bundle_paths_1 = g.GetNestedBundlePaths(
-                bundle=world_4.result,
-                mode="Bundle Type",
-                bundle_type="Blender.CustomEffector.World",
+            get_nested_bundle_paths_1 = world_4.result.paths(
+                "Bundle Type", bundle_type="Blender.CustomEffector.World"
             )
-            repeat_zone_1 = g.RepeatZone(
-                get_nested_bundle_paths_1.o.paths.list_length()
-            )
+            repeat_zone_1 = g.RepeatZone(get_nested_bundle_paths_1.list_length())
             world_5 = repeat_zone_1.items.bundle(world_4.result, "World")
             get_list_item_1 = g.GetListItem.string(
                 get_nested_bundle_paths_1,
@@ -1315,7 +1290,7 @@ class EvaluateCustomEffectors(CustomGeometryGroup):
                 structure_type="SINGLE",
             )
             separate_bundle_1 = g.SeparateBundle(
-                g.GetBundleItem.bundle(world_5.current, get_list_item_1).o.item
+                world_5.current.get.bundle(get_list_item_1)
             )
             stage_2 = separate_bundle_1.items.string("stage", structure_type="SINGLE")
             closure_1 = separate_bundle_1.items.closure("closure")
@@ -1375,16 +1350,10 @@ class SetPreviousWorldItems(CustomGeometryGroup):
         cache = tree.inputs.bundle("Cache")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world,
-            mode="Bundle Type",
-            pattern_mode="Wildcard",
-            bundle_type="*",
-            data_type="Bundle",
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
+        get_nested_bundle_paths = world.paths("Bundle Type", "Wildcard", "*", "Bundle")
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
         world_2 = repeat_zone.items.bundle(world, "World")
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         get_bundle_item = g.GetBundleItem.bundle(world_2.current, get_list_item, True)
         get_bundle_item_1 = g.GetBundleItem.bundle(cache, get_list_item)
         store_bundle_item = g.StoreBundleItem.bundle(
@@ -1422,9 +1391,7 @@ class ApplyEachGeometryCache(CustomGeometryGroup):
         get_bundle_item = g.GetBundleItem.geometry(cache, path.output)
         get_geometry_bundle = g.GetGeometryBundle(geometry=geometry.output)
         evaluate_closure = g.EvaluateClosure(
-            g.GetBundleItem.closure(
-                get_geometry_bundle.o.bundle, "sim_apply_cache"
-            ).o.item
+            get_geometry_bundle.o.bundle.get.closure("sim_apply_cache")
         )
         evaluate_closure.inputs.geometry(get_geometry_bundle.o.geometry, "Geometry")
         evaluate_closure.inputs.geometry(get_bundle_item.o.item, "Cache")
@@ -1722,12 +1689,10 @@ class EvaluateEffectorAttributes(CustomGeometryGroup):
         combine_bundle_7.items.bundle(combine_bundle_4.o.bundle, "Rod Stretch Shear")
         combine_bundle_7.items.bundle(combine_bundle_5.o.bundle, "Rod Bend Twist")
         combine_bundle_7.items.bundle(combine_bundle_6.o.bundle, "Cross Edge Length")
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=combine_bundle_7.o.bundle,
-            mode="Bundle Type",
-            bundle_type="Blender.FieldPreEvaluation",
+        get_nested_bundle_paths = combine_bundle_7.o.bundle.paths(
+            "Bundle Type", bundle_type="Blender.FieldPreEvaluation"
         )
-        list_length = get_nested_bundle_paths.o.paths.list_length()
+        list_length = get_nested_bundle_paths.list_length()
         with g.Frame("For each geomery > for each effector type > for each effector"):
             closure_zone_7 = g.ClosureZone()
             world_2 = closure_zone_7.inputs.bundle("World", structure_type="SINGLE")
@@ -1741,31 +1706,27 @@ class EvaluateEffectorAttributes(CustomGeometryGroup):
             )
             repeat_zone = g.RepeatZone(list_length)
             geometry_16 = repeat_zone.items.geometry(geometry_14.output, "Geometry")
-            get_bundle_item = g.GetBundleItem.bundle(
-                combine_bundle_7.o.bundle,
-                get_nested_bundle_paths.o.paths[repeat_zone.iteration],
+            separate_bundle_7 = g.SeparateBundle(
+                combine_bundle_7.o.bundle.get.bundle(
+                    get_nested_bundle_paths[repeat_zone.iteration]
+                )
             )
-            separate_bundle_7 = g.SeparateBundle(get_bundle_item.o.item)
             effector_type = separate_bundle_7.items.string("effector_type")
             closure = separate_bundle_7.items.closure("closure")
-            get_nested_bundle_paths_1 = g.GetNestedBundlePaths(
-                bundle=world_2.output,
-                bundle_type=effector_type.output,
-                mode="Bundle Type",
+            get_nested_bundle_paths_1 = world_2.output.paths(
+                "Bundle Type", bundle_type=effector_type.output
             )
-            repeat_zone_1 = g.RepeatZone(
-                get_nested_bundle_paths_1.o.paths.list_length()
-            )
+            repeat_zone_1 = g.RepeatZone(get_nested_bundle_paths_1.list_length())
             geometry_17 = repeat_zone_1.items.geometry(geometry_16.current, "Geometry")
-            get_list_item = get_nested_bundle_paths_1.o.paths[repeat_zone_1.iteration]
-            get_bundle_item_1 = g.GetBundleItem.bundle(world_2.output, get_list_item)
+            get_list_item = get_nested_bundle_paths_1[repeat_zone_1.iteration]
+            get_bundle_item = world_2.output.get.bundle(get_list_item)
             evaluate_closure = g.EvaluateClosure(closure.output)
             evaluate_closure.inputs.geometry(geometry_17.current, "Geometry")
-            evaluate_closure.inputs.bundle(get_bundle_item_1.o.item, "Effector")
+            evaluate_closure.inputs.bundle(get_bundle_item, "Effector")
             evaluate_closure.inputs.string(get_list_item, "Effector Path")
             geometry_18 = evaluate_closure.outputs.geometry("Geometry")
             is_effector_for_geometry = IsEffectorForGeometry(
-                Effector=get_bundle_item_1.o.item,
+                Effector=get_bundle_item,
                 **{"Effector Path": get_list_item},
                 Geometry=geometry_17.current,
                 **{"Geometry Path": path.output},
@@ -1797,20 +1758,20 @@ class EvaluateForces(CustomGeometryGroup):
         path = closure_zone.inputs.string("Path", structure_type="SINGLE")
         world_3 = closure_zone.outputs.bundle("World", structure_type="SINGLE")
         geometry_1 = closure_zone.outputs.geometry("Geometry", structure_type="SINGLE")
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world, mode="Bundle Type", bundle_type="Blender.Force"
+        get_nested_bundle_paths = world.paths(
+            "Bundle Type", bundle_type="Blender.Force"
         )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
         total_force = repeat_zone.items.vector(name="Total Force")
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
-        get_bundle_item = g.GetBundleItem.bundle(world_2.output, get_list_item)
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
+        get_bundle_item = world_2.output.get.bundle(get_list_item)
         is_effector_for_geometry = IsEffectorForGeometry(
-            Effector=get_bundle_item.o.item,
+            Effector=get_bundle_item,
             **{"Effector Path": get_list_item},
             Geometry=geometry.output,
             **{"Geometry Path": path.output},
         )
-        separate_bundle = g.SeparateBundle(get_bundle_item.o.item)
+        separate_bundle = g.SeparateBundle(get_bundle_item)
         closure = separate_bundle.items.closure("closure")
         evaluate_closure = g.EvaluateClosure(closure.output)
         evaluate_closure.inputs.geometry(geometry.output, "Geometry")
@@ -1913,12 +1874,10 @@ class ForEachTypedBundle(CustomGeometryGroup):
         closure = tree.inputs.closure("Closure")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world, bundle_type=type, mode="Bundle Type"
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
+        get_nested_bundle_paths = world.paths("Bundle Type", bundle_type=type)
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
         world_2 = repeat_zone.items.bundle(world, "World")
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         get_bundle_item = g.GetBundleItem.bundle(world_2.current, get_list_item, True)
         evaluate_closure = g.EvaluateClosure(closure)
         evaluate_closure.inputs.bundle(get_bundle_item.o.bundle, "World")
@@ -1981,18 +1940,12 @@ class ClearPreviousWorldItems(CustomGeometryGroup):
         world = tree.inputs.bundle("World")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world,
-            mode="Bundle Type",
-            pattern_mode="Wildcard",
-            bundle_type="*",
-            data_type="Bundle",
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
+        get_nested_bundle_paths = world.paths("Bundle Type", "Wildcard", "*", "Bundle")
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
         world_2 = repeat_zone.items.bundle(world, "World")
         join_strings = g.JoinStrings(
             (
-                get_nested_bundle_paths.o.paths[repeat_zone.iteration],
+                get_nested_bundle_paths[repeat_zone.iteration],
                 g.String(string="previous"),
             ),
             delimiter="/",
@@ -2046,16 +1999,14 @@ class CopySolverData(CustomGeometryGroup):
         cache = tree.inputs.bundle("Cache")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=cache, mode="Bundle Type", bundle_type="Blender.XPBDSolverData"
+        get_nested_bundle_paths = cache.paths(
+            "Bundle Type", bundle_type="Blender.XPBDSolverData"
         )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
         world_2 = repeat_zone.items.bundle(world, "World")
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         store_bundle_item = g.StoreBundleItem.bundle(
-            world_2.current,
-            get_list_item,
-            g.GetBundleItem.bundle(cache, get_list_item).o.item,
+            world_2.current, get_list_item, cache.get.bundle(get_list_item)
         )
         store_bundle_item >> world_2.next
 
@@ -2485,7 +2436,7 @@ class SimulateDNAGuide(CustomGeometryGroup):
                     "Solver Output Path": "SolverData",
                 },
             )
-            get_bundle_item = g.GetBundleItem.geometry(xpbd_simulation, "DNA/DNA")
+            get_bundle_item = xpbd_simulation.o.world.get.geometry("DNA/DNA")
             _get_bundle_item_1 = g.GetBundleItem.float(
                 xpbd_simulation, "SolverData/residual_error", structure_type="SINGLE"
             )
@@ -2499,7 +2450,7 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 }
             )
             transform_geometry = g.TransformGeometry(
-                geometry=get_bundle_item.o.item,
+                geometry=get_bundle_item,
                 transform=convert_space_transform.o.transform,
                 mode="Matrix",
             )

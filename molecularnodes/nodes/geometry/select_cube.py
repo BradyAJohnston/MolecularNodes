@@ -113,7 +113,7 @@ class SelectCube(AssetGeometryGroup):
             object=object, as_instance=True, transform_space="RELATIVE"
         ).o.transform.invert()
         between_vector = BetweenVector(
-            value=g.ProjectPoint(vector=g.Position(), transform=invert_matrix),
+            value=g.Position().o.position.project_point(invert_matrix),
             lower=(-1.0, -1.0, -1.0),
             upper=(1.0, 1.0, 1.0),
         )

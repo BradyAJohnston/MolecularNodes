@@ -326,10 +326,11 @@ class SplitCurves(CustomGeometryGroup):
         _dihedral_phi = DihedralPhi()
         compare = DihedralPsi().o.psi > -3.080002
         with g.Frame("Switch back and forth for beta-sheet fixing"):
-            boolean_math = IsSheet().o.selection & (
-                g.Index().o.index - g.AccumulateField.point.integer(compare).o.leading
-            ).modulo(2)
-            _switch = boolean_math.switch.float(-1.0, 1.0)
+            integer_math = g.IntegerMath.modulo(
+                g.Index().o.index - g.AccumulateField.point.integer(compare).o.leading,
+                2,
+            )
+            _switch = (IsSheet().o.selection & integer_math).switch.float(-1.0, 1.0)
         _dihedral_psi = DihedralPsi()
         accumulate_field = g.AccumulateField.point.integer(
             g.BooleanMath.subtract(
@@ -343,7 +344,7 @@ class SplitCurves(CustomGeometryGroup):
         capture = g.CaptureAttribute.point(geometry=curve_to_points)
         selection_1 = capture.items.boolean(switch_1, "Selection")
         vector_math = curve_to_points.o.normal * g.Switch.float(
-            accumulate_field.o.leading.modulo(2), -1.0, 1.0
+            g.IntegerMath.modulo(accumulate_field.o.leading, 2), -1.0, 1.0
         )
         accumulate_field_1 = g.AccumulateField.point.integer(
             g.Position().o.position.distance(OffsetVector(offset=-1)) > 5.0
@@ -427,11 +428,9 @@ class NodeGroup(CustomGeometryGroup):
         switch_1 = IsSheet().o.selection.switch.rotation(
             switch, switch.rotate((0.0, 0.0, math.pi / 4), rotation_space="LOCAL")
         )
-        blur_attribute = g.BlurAttribute.vector(
-            g.RotateVector(rotation=switch_1, vector=(1.0, 0.0, 0.0)),
-            84,
-            g.EndpointSelection(start_size=4, end_size=3),
-        )
+        blur_attribute = g.RotateVector(
+            rotation=switch_1, vector=(1.0, 0.0, 0.0)
+        ).o.vector.blur(84, g.EndpointSelection(start_size=4, end_size=3))
         set_curve_normal = (
             capture_1.o.geometry
             >> g.SetPosition(position=position.output)
@@ -561,10 +560,10 @@ class CAToSheet(CustomGeometryGroup):
                 axis=g.CurveTangent(),
                 angle=math_1.o.value.wrap(0.0, 2.0) * 3.14159 + g.Math.to_radians(30.0),
             )
-            blur_attribute = g.BlurAttribute.vector(
-                g.Normal(legacy_corner_normals=True).o.normal.rotate(
-                    axis_angle_to_rotation
-                )
+            blur_attribute = (
+                g.Normal(legacy_corner_normals=True)
+                .o.normal.rotate(axis_angle_to_rotation)
+                .blur()
             )
         capture = g.CaptureAttribute.point(
             geometry=g.SetCurveNormal(curve=curve, normal=blur_attribute, mode="Free")
@@ -699,7 +698,7 @@ class CAToHelix(CustomGeometryGroup):
                 >> g.SetSplineType()
                 >> g.SetPosition(
                     selection=boolean_math,
-                    position=g.BlurAttribute.vector(g.Position(), 2, boolean_math),
+                    position=g.Position().o.position.blur(2, boolean_math),
                 )
                 >> g.SetCurveNormal()
                 >> g.ResampleCurve(length=MNUnits(value=2.0).o.angstrom, mode="Length")

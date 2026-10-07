@@ -86,24 +86,18 @@ class BackboneNH(AssetGeometryGroup):
             VectorDirection(to=backbone_n, from_=BackboneCA(method="Read")).o.direction
             + VectorDirection(to=backbone_n, from_=BackboneC(method="Read")).o.direction
         )
-        _vector_math_1 = g.VectorMath.multiply_add(
-            vector_math.normalize(),
-            AngstromToWorld(angstrom=1.01),
-            BackboneN(method="Read"),
+        _vector_math_1 = vector_math.normalize().mul_add(
+            AngstromToWorld(angstrom=1.01), BackboneN(method="Read")
         )
-        vector_math_2 = g.VectorMath.multiply_add(
-            VectorDirection(to=backbone_n_1, from_=mix.o.result_vector).o.direction,
-            AngstromToWorld(angstrom=1.01),
-            backbone_n_1,
-        )
+        vector_math_2 = VectorDirection(
+            to=backbone_n_1, from_=mix.o.result_vector
+        ).o.direction.mul_add(AngstromToWorld(angstrom=1.01), backbone_n_1)
         (
             g.MenuSwitch.vector(
                 menu,
                 {
                     "Read": g.NamedAttribute.vector(string).o.attribute,
-                    "Compute": FallbackVector(
-                        name=string, fallback=vector_math_2.o.vector
-                    ),
+                    "Compute": FallbackVector(name=string, fallback=vector_math_2),
                 },
             )
             >> nh

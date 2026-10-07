@@ -78,13 +78,14 @@ class EvaluateOnInstances(AssetGeometryGroup):
 
         with g.Frame("Get unique geometry references and evaluate on them"):
             instance_reference = g.InstanceReference()
+            boolean_math = g.BooleanMath.l_not(
+                g.AccumulateField.instance.integer(
+                    group_index=instance_reference
+                ).o.trailing
+            )
             sort_elements = (
                 geometry
-                >> g.SeparateGeometry.instance(
-                    selection=~g.AccumulateField.instance.integer(
-                        group_index=instance_reference
-                    ).o.trailing
-                )
+                >> g.SeparateGeometry.instance(selection=boolean_math)
                 >> g.SortElements.instance(sort_weight=instance_reference)
             )
             capture = g.CaptureAttribute.instance(geometry=sort_elements)

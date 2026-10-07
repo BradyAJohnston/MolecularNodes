@@ -110,12 +110,12 @@ class EvaluatePerGroup(AssetGeometryGroup):
             menu_switch = g.MenuSwitch.integer(
                 group, {"chain_id": ChainID(), "Group ID": group_id}
             )
-            separate_geometry = g.SeparateGeometry.point(
-                geometry,
-                ~g.AccumulateField.point.integer(
+            boolean_math = g.BooleanMath.l_not(
+                g.AccumulateField.point.integer(
                     group_index=menu_switch.o.output
-                ).o.trailing,
+                ).o.trailing
             )
+            separate_geometry = g.SeparateGeometry.point(geometry, boolean_math)
             domain_size = g.DomainSize(geometry=separate_geometry.o.selection)
         repeat_zone = g.RepeatZone(domain_size.o.point_count)
         geometry_2 = repeat_zone.items.geometry(name="Geometry")

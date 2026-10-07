@@ -93,9 +93,7 @@ class EvaluateOrderedBundles(AssetGeometryGroup):
             ),
             delimiter="/",
         )
-        evaluate_closure = g.EvaluateClosure(
-            g.GetBundleItem.closure(bundles, join_strings).o.item
-        )
+        evaluate_closure = g.EvaluateClosure(bundles.get.closure(join_strings))
         evaluate_closure.inputs.geometry(geometry_2.current, "Geometry")
         geometry_3 = evaluate_closure.outputs.geometry("Geometry")
         geometry_3.output >> geometry_2.next

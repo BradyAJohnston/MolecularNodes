@@ -4,6 +4,7 @@
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
+from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -69,9 +70,10 @@ class IsEven(AssetGeometryGroup):
         even = tree.outputs.boolean("Even")
         odd = tree.outputs.boolean("Odd")
 
-        integer_math = value.modulo(2)
-        ~integer_math >> even
+        integer_math = g.IntegerMath.modulo(value, 2)
+        boolean_math = g.BooleanMath.l_not(integer_math)
 
+        boolean_math >> even
         integer_math >> odd
 
 

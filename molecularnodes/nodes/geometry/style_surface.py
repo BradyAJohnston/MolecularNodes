@@ -131,12 +131,8 @@ class Utils_bounding_box(CustomGeometryGroup):
         mn_world_scale = MN_world_scale()
         bounding_box = g.BoundingBox(geometry=geometry)
         math_1 = mn_world_scale.o.world_scale * 2.0
-        vector_math = (
-            g.VectorMath.snap(bounding_box.o.min, mn_world_scale).o.vector - math_1
-        )
-        vector_math_1 = (
-            g.VectorMath.snap(bounding_box.o.max, mn_world_scale).o.vector + math_1
-        )
+        vector_math = bounding_box.o.min.snap(mn_world_scale) - math_1
+        vector_math_1 = bounding_box.o.max.snap(mn_world_scale) + math_1
         vector = (vector_math_1 - vector_math) * subdivisions
         vector.x.max(2.0) >> x
         vector.y.max(2.0) >> y
@@ -167,7 +163,7 @@ class MN_surface_smooth_bumps(CustomGeometryGroup):
             geometry
             >> g.SetPosition(
                 selection=face_group_boundaries,
-                position=g.BlurAttribute.vector(g.Position(), 4),
+                position=g.Position().o.position.blur(4),
             )
             >> geometry_1
         )
@@ -265,10 +261,14 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
                 + (position.o.position - sample_index).normalize() * sample_index_1
             )
         with g.Frame("smoothing of tightened surface"):
-            blur_attribute = g.BlurAttribute.float(
-                g.EdgeAngle().o.signed_angle.map_range(-0.2, -1.0).face.evaluate(), 2
-            )
             position_1 = g.Position()
+            blur_attribute = g.Position().o.position.blur(
+                relaxation_steps,
+                g.EdgeAngle()
+                .o.signed_angle.map_range(-0.2, -1.0)
+                .face.evaluate()
+                .blur(2),
+            )
             capture_1 = g.CaptureAttribute.point(geometry=set_position)
             value_1 = capture_1.items.vector(position_1, "Value")
             vector_math = g.Normal(legacy_corner_normals=True).o.normal * (
@@ -276,24 +276,17 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
             )
             set_position_1 = (
                 capture_1.o.geometry
-                >> g.SetPosition(position=g.BlurAttribute.vector(position_1, 2))
+                >> g.SetPosition(position=position_1.o.position.blur(2))
                 >> g.SetPosition(offset=vector_math)
-                >> g.SetPosition(position=g.BlurAttribute.vector(g.Position(), 2))
-                >> g.SetPosition(
-                    position=g.BlurAttribute.vector(
-                        g.Position(), relaxation_steps, blur_attribute
-                    )
-                )
+                >> g.SetPosition(position=g.Position().o.position.blur(2))
+                >> g.SetPosition(position=blur_attribute)
             )
             mn_surface_smooth_bumps = MN_surface_smooth_bumps(Geometry=set_position_1)
         triangulate = mn_surface_smooth_bumps >> g.Triangulate(quad_method="Beauty")
         with g.Frame("Sample colors of nearest atom"):
-            blur_attribute_1 = g.BlurAttribute.color(
-                g.SampleIndex.point.color(
-                    menu_switch, Color(), g.SampleNearest.point(menu_switch)
-                ),
-                color_blur,
-            )
+            blur_attribute_1 = g.SampleIndex.point.color(
+                menu_switch, Color(), g.SampleNearest.point(menu_switch)
+            ).o.value.blur(color_blur)
             set_color = SetColor(atoms=triangulate, color=blur_attribute_1)
         (
             set_color
@@ -321,12 +314,9 @@ class RelaxSurface(CustomGeometryGroup):
         _map_range = edge_length.o.length.map_range(
             field_min_max.o.min, field_min_max.o.max
         )
-        blur_attribute = g.BlurAttribute.vector(
-            g.Position(),
+        blur_attribute = g.Position().o.position.blur(
             relaxation_steps,
-            g.BlurAttribute.float(
-                g.EdgeAngle().o.signed_angle.map_range(-0.2, 0.3, 1.0, 0.0)
-            ),
+            g.EdgeAngle().o.signed_angle.map_range(-0.2, 0.3, 1.0, 0.0).blur(),
         )
         mn_surface_smooth_bumps = MN_surface_smooth_bumps(
             Geometry=geometry.output >> g.SetPosition(position=blur_attribute)
@@ -415,9 +405,7 @@ class SampleColors(CustomGeometryGroup):
             exclude_names=True,
         )
         (
-            SetColor(
-                atoms=transfer_attributes, color=g.BlurAttribute.color(Color(), blur)
-            )
+            SetColor(atoms=transfer_attributes, color=Color().o.color.blur(blur))
             >> geometry_1.input
         )
         (

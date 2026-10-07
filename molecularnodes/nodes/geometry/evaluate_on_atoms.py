@@ -150,8 +150,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
                         menu_switch.o.output, (geometry_2.output, None)
                     ),
                 )
-            )
-            >> g.SetGeometryBundle(bundle=index_switch_1)
+            ).o.geometry.set_bundle(index_switch_1)
             >> geometry_1
         )
         _string = g.String(

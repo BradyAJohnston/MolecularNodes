@@ -89,8 +89,7 @@ class MN_bs_smooth(CustomGeometryGroup):
 
         mn_select_sec_struct = MN_select_sec_struct()
         position = g.Position()
-        blur_attribute = g.BlurAttribute.vector(
-            position,
+        blur_attribute = position.o.position.blur(
             iterations,
             ExpandBoolean(boolean=mn_select_sec_struct.o.is_structured, expand=1),
         )

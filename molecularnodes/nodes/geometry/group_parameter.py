@@ -93,7 +93,7 @@ class GroupParameter(AssetGeometryGroup):
         )
 
         accumulate_field = g.AccumulateField.point.integer(group_index=group_id)
-        ~accumulate_field.o.trailing >> is_first
+        boolean_math = g.BooleanMath.l_not(accumulate_field.o.trailing)
         (
             g.Compare.integer.equal(
                 accumulate_field.o.leading, accumulate_field.o.total
@@ -101,6 +101,7 @@ class GroupParameter(AssetGeometryGroup):
             >> is_last
         )
 
+        boolean_math >> is_first
         accumulate_field.o.total >> group_size
         accumulate_field.o.trailing >> relative_index
 
