@@ -4,7 +4,14 @@ title: "Changelog"
 
 # v520.3.0 - UNRELEASED
 
+## Added
+- Added the `Segment ID` attribute input node, which reads the integer `segid` attribute from the points. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
+- Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
+- `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
+- `Ease Value` and `Stagger Value` nodes under Animate: Penner easing curves (In / Out / In Out) for any 0..1 value or field, and a per-point stagger that gives each ID its own equal-length 0..1 transition.
+
 ## Changed
+- `Animate Action` now takes float `Start` and `Length`, can run on scene seconds, frames or a linked value, and has built-in `Stagger` and `Easing` options.
 - The `oxDNA Style Ribbon` node is renamed `oxDNA Style Classic`. Its inputs are now in Å, its defaults match other oxDNA visualisers, `Ball Radius` no longer changes the backbone radius, base stems and bases share one rotation and end at the centre of the base, a `Stem Geometry` input takes custom stem geometry, backbone ends are filled, and `End Overhang` extends strand ends for the `Curve` backbone. [#1213](https://github.com/BradyAJohnston/MolecularNodes/pull/1213)
 - The Reload operator (`mn.session_reload_item`) relinks any entity object to the session from its recorded source files or PDB code, replacing `mn.reload_trajectory`. [#1244](https://github.com/BradyAJohnston/MolecularNodes/pull/1244)
 
