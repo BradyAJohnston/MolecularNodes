@@ -1,5 +1,5 @@
 # Node group "Curve Split Splines" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -211,22 +211,22 @@ class CurveSplitSplines(CustomGeometryGroup):
         curve_handle_positions = g.CurveHandlePositions()
         capture = g.CaptureAttribute.point(geometry=curve)
         factor = capture.items.float(
-            "Factor", OffsetPointAlongCurve(offset=offset_amount).o.factor
+            OffsetPointAlongCurve(offset=offset_amount).o.factor, "Factor"
         )
         curve_index = capture.items.integer(
-            "Curve Index", g.CurveOfPoint().o.curve_index
+            g.CurveOfPoint().o.curve_index, "Curve Index"
         )
-        selection_1 = capture.items.boolean("Selection", selection)
-        capture.items.integer("Curve Group ID", curve_group_id)
-        distance_cutoff_1 = capture.items.float("Distance Cutoff", distance_cutoff)
-        rotation_2 = capture.items.rotation("Rotation", rotation)
-        index_1 = capture.items.integer("Index", g.Index())
+        selection_1 = capture.items.boolean(selection, "Selection")
+        capture.items.integer(curve_group_id, "Curve Group ID")
+        distance_cutoff_1 = capture.items.float(distance_cutoff, "Distance Cutoff")
+        rotation_2 = capture.items.rotation(rotation, "Rotation")
+        index_1 = capture.items.integer(g.Index(), "Index")
         normal = capture.items.vector(
-            "Normal", g.Normal(legacy_corner_normals=True).o.normal
+            g.Normal(legacy_corner_normals=True).o.normal, "Normal"
         )
-        position = capture.items.vector("Position", g.Position())
+        position = capture.items.vector(g.Position(), "Position")
         trailing = capture.items.integer(
-            "Trailing", g.AccumulateField.point.integer(~selection).o.trailing
+            g.AccumulateField.point.integer(~selection).o.trailing, "Trailing"
         )
         with g.Frame("Potentially sample a new interpolated point along the curve"):
             sample_curve = g.MenuSwitch.geometry(
@@ -246,14 +246,14 @@ class CurveSplitSplines(CustomGeometryGroup):
             curve=g.SetSplineType.bezier(capture.o.geometry)
         ) >> g.SetSplineResolution(resolution=1)
         capture_1 = g.CaptureAttribute.point(geometry=set_spline_resolution)
-        left = capture_1.items.vector("Left", curve_handle_positions.o.left)
-        right = capture_1.items.vector("Right", curve_handle_positions.o.right)
+        left = capture_1.items.vector(curve_handle_positions.o.left, "Left")
+        right = capture_1.items.vector(curve_handle_positions.o.right, "Right")
         spline_length = g.SplineLength()
         capture_2 = g.CaptureAttribute.curve(
             geometry=capture_1.o.geometry, selection=g.IsSplineCyclic()
         )
         point_count = capture_2.items.integer(
-            "Point Count", spline_length.o.point_count
+            spline_length.o.point_count, "Point Count"
         )
         with g.Frame("Check if we should make the cyclic peptide cyclic again"):
             boolean_math = capture_2.o.selection & g.Compare.integer.equal(

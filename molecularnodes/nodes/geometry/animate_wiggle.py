@@ -1,5 +1,5 @@
 # Node-group asset "Animate Wiggle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
@@ -432,8 +432,8 @@ class AnimateWiggle(AssetGeometryGroup):
         )
 
         repeat_zone = g.RepeatZone(5)
-        geometry = repeat_zone.items.geometry("Geometry", atoms)
-        integer = repeat_zone.items.integer("Integer")
+        geometry = repeat_zone.items.geometry(atoms, "Geometry")
+        integer = repeat_zone.items.integer(name="Integer")
         mn_utils_rotate_res = MN_utils_rotate_res(
             Selection=MN_animate_wiggle_mask_res(A=integer.current).o.result
             & selection,

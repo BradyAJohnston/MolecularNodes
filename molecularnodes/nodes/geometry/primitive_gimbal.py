@@ -1,5 +1,5 @@
 # Node-group asset "Primitive Gimbal" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
@@ -125,8 +125,8 @@ class PrimitiveGimbal(AssetGeometryGroup):
         geometry = tree.outputs.geometry("Geometry")
 
         repeat_zone = g.RepeatZone(3)
-        geometry_1 = repeat_zone.items.geometry("Geometry")
-        integer = repeat_zone.items.integer("Integer")
+        geometry_1 = repeat_zone.items.geometry(name="Geometry")
+        integer = repeat_zone.items.integer(name="Integer")
         index_switch = g.IndexSwitch.rotation(
             integer.current,
             ((0.0, math.pi / 2, 0.0), (-math.pi / 2, 0.0, 0.0), (0.0, 0.0, 0.0)),

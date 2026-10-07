@@ -1,5 +1,5 @@
 # Node group "Animate Collection Pick" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -106,22 +106,25 @@ class AnimateCollectionPick(CustomGeometryGroup):
             ).o.instance_count
             - 1
         )
-        compare = g.Compare.integer.equal(
-            g.Index(), g.IntegerMath.minimum(float_to_integer, integer_math)
-        )
-        compare_1 = g.Compare.integer.equal(
-            g.IntegerMath.minimum(float_to_integer.o.integer + 1, integer_math),
-            g.Index(),
-        )
         (
-            g.SeparateGeometry.instance(collection_info, compare)
+            g.SeparateGeometry.instance(
+                collection_info,
+                g.Compare.integer.equal(
+                    g.Index(), float_to_integer.o.integer.min(integer_math)
+                ),
+            )
             >> g.RealizeInstances(
                 realize_all=realize_instances, realize_to_point_domain=True
             )
             >> current
         )
         (
-            g.SeparateGeometry.instance(collection_info, compare_1)
+            g.SeparateGeometry.instance(
+                collection_info,
+                g.Compare.integer.equal(
+                    (float_to_integer.o.integer + 1).min(integer_math), g.Index()
+                ),
+            )
             >> g.RealizeInstances(
                 realize_all=realize_instances, realize_to_point_domain=True
             )

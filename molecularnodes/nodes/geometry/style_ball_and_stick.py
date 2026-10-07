@@ -1,5 +1,5 @@
 # Node-group asset "Style Ball and Stick" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -246,7 +246,9 @@ class StyleBallAndStick(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        separate_geometry = atoms_1 >> g.SeparateGeometry.point(selection=selection)
+        separate_geometry = atoms_1.output >> g.SeparateGeometry.point(
+            selection=selection
+        )
         style_spheres = StyleSpheres(
             atoms=separate_geometry.o.selection,
             sphere=sphere,
@@ -273,7 +275,7 @@ class StyleBallAndStick(AssetGeometryGroup):
             geometry=g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks)),
             material=material,
         )
-        set_material >> geometry_1
+        set_material >> geometry_1.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         sphere.default_value = "Instance"

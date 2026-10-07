@@ -1,5 +1,5 @@
 # Node-group asset "Style Ribbon" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -414,7 +414,9 @@ class StyleRibbon(AssetGeometryGroup):
                 ),
             ),
         )
-        separate_polymers = SeparatePolymers(atoms=CheckGeometry(geometry=atoms_1))
+        separate_polymers = SeparatePolymers(
+            atoms=CheckGeometry(geometry=atoms_1.output)
+        )
         mn_utils_style_ribbon_nucleic = MN_utils_style_ribbon_nucleic(
             atoms=separate_polymers.o.nucleic,
             selection=selection,
@@ -448,7 +450,7 @@ class StyleRibbon(AssetGeometryGroup):
                 mn_utils_style_ribbon_nucleic.o.geometry,
             )
         )
-        join_geometry >> geometry_1
+        join_geometry >> geometry_1.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
         _join_geometry_1 = g.JoinGeometry(
             geometry=(

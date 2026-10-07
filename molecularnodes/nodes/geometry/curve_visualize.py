@@ -1,5 +1,5 @@
 # Node-group asset "Curve Visualize" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 import bpy
@@ -142,9 +142,9 @@ class CurveVisualize(AssetGeometryGroup):
         instances = tree.outputs.geometry("Instances")
 
         capture = g.CaptureAttribute.point(geometry=curve)
-        selection_1 = capture.items.boolean("Selection", selection)
-        position_1 = capture.items.vector("Position", position)
-        normal_1 = capture.items.vector("Normal", normal)
+        selection_1 = capture.items.boolean(selection, "Selection")
+        position_1 = capture.items.vector(position, "Position")
+        normal_1 = capture.items.vector(normal, "Normal")
         curve_handle_positions = g.CurveHandlePositions(relative=True)
         _curve_rotation = CurveRotation(normal=normal_1.output)
         primitive_arrow = PrimitiveArrow(

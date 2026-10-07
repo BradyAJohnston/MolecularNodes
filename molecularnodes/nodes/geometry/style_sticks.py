@@ -1,5 +1,5 @@
 # Node-group asset "Style Sticks" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -181,7 +181,9 @@ class StyleSticks(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        separate_geometry = atoms_1 >> g.SeparateGeometry.point(selection=selection)
+        separate_geometry = atoms_1.output >> g.SeparateGeometry.point(
+            selection=selection
+        )
         mn_utils_style_sticks = MN_utils_style_sticks(
             atoms=separate_geometry.o.selection,
             radius=scale,
@@ -204,7 +206,10 @@ class StyleSticks(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
-        g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks)) >> geometry_1
+        (
+            g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks))
+            >> geometry_1.input
+        )
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         sphere.default_value = "Instance"

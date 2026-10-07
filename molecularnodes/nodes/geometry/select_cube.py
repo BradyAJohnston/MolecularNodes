@@ -1,5 +1,5 @@
 # Node-group asset "Select Cube" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 import bpy
@@ -113,7 +113,7 @@ class SelectCube(AssetGeometryGroup):
             object=object, as_instance=True, transform_space="RELATIVE"
         ).o.transform.invert()
         between_vector = BetweenVector(
-            value=g.ProjectPoint(vector=g.Position(), transform=invert_matrix),
+            value=g.Position().o.position.project_point(invert_matrix),
             lower=(-1.0, -1.0, -1.0),
             upper=(1.0, 1.0, 1.0),
         )
