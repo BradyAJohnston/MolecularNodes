@@ -693,6 +693,33 @@ Animate Value:
     to linearly interpolate the value beyond the min and max values.
   videos:
     - https://imgur.com/2oOnwRm
+Animate Action:
+  description: >-
+    A 0..1 `Value::Float` that rises from `Start::Float` over `Length::Float`, for timing one step of an
+    animation. `Time` picks the clock: the scene's `Seconds` or `Frames`, or any linked `Value`. Turn on
+    `Stagger::Boolean` to offset each `ID::Integer` as in `Stagger Value::Node`, and pick an `Interpolation`
+    and `Ease` to shape the transition as in `Ease Value::Node`. `Active::Boolean` is true while the time is
+    between `Start` and `End::Float`, which is `Start` plus `Length`.
+Ease Value:
+  description: >-
+    Reshape a linear `Value::Float` between 0 and 1 with one of Robert Penner's easing curves
+    (`Linear`, `Sinusoidal`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Exponential`, `Circular`,
+    `Back`, `Bounce` or `Elastic`, as listed on easings.net) applied at the start (`In`), the end
+    (`Out`) or both ends (`In Out`) of the transition, then map the result to `From::Float`..`To::Float`.
+    Works per point, so it can ease a field as well as a single value. Chain it after
+    `Animate Value::Node` or `Stagger Value::Node`, or set the same menus on `Animate Action::Node`.
+    `Overshoot::Float` shapes `Back`, and `Period::Float` and `Amplitude::Float` shape `Elastic`. With
+    `Clamp::Boolean` off the curve is evaluated outside 0..1 and the output can leave the `From`..`To`
+    range.
+Stagger Value:
+  description: >-
+    Spread a 0..1 `Value::Float` across points so that each `ID::Integer` makes its own 0..1 transition,
+    starting later than the ID before it. Every ID takes the same share of the input range, so all IDs
+    move at the same speed. `Width::Float` sets how many IDs are moving at once: small widths animate
+    one ID after another, and larger widths overlap them more. A `Width` of 0 switches each ID straight
+    from 0 to 1. `ID` defaults to the `id` attribute, or the index if there is none; link
+    `URes ID::Node` to stagger by residue. `Group ID::Integer` staggers each group over its own range
+    of IDs. Chain it into `Ease Value::Node` to ease each ID's transition.
 Animate Trails:
   description: >-
     Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms
