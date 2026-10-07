@@ -241,6 +241,7 @@ from .style_sticks import StyleSticks
 from .style_surface import StyleSurface
 from .sub_group_info import SubGroupInfo
 from .switch_residue_name import SwitchResidueName
+from .symmetry_cubic import SymmetryCubic
 from .symmetry_cyclic import SymmetryCyclic
 from .symmetry_dihedral import SymmetryDihedral
 from .symmetry_helical import SymmetryHelical
@@ -510,6 +511,7 @@ __all__ = (
     "StyleSurface",
     "SubGroupInfo",
     "SwitchResidueName",
+    "SymmetryCubic",
     "SymmetryCyclic",
     "SymmetryDihedral",
     "SymmetryHelical",

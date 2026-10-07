@@ -16,6 +16,7 @@ failure the received and difference images are written to
 
 from itertools import product
 import pytest
+from nodebpy.nodes.geometry import RandomValue, StoreNamedAttribute
 import molecularnodes as mn
 import molecularnodes.nodes.geometry as mg
 from .constants import data_dir
@@ -215,6 +216,13 @@ def test_render_symmetry(golden_canvas, tmp_path, assembly_image_snapshot, code)
             atoms
             >> mg.StyleRibbon(material=mn.material.Flat().material)
             >> SYMMETRY_EXAMPLES[code]()
+            >> StoreNamedAttribute.instance.color(
+                name="Color",
+                value=mg.ColorMatplotlib(
+                    RandomValue(), category="Uniform", uniform="magma"
+                ),
+            )
+            >> StoreNamedAttribute.instance.boolean(name="is_instanced", value=True)
             >> join
         )
     golden_canvas.look_at(mol, viewpoint="front" if code == "4UDV" else "top")

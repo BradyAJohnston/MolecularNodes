@@ -674,7 +674,15 @@ Symmetry Helical:
   description: >-
     Build a helical filament: `Count::Integer` subunits, each advanced `Rise::Float` Angstrom along the `Axis::Vector`
     and rotated `Twist::Float` about it, relative to the one before. Actin, microtubules, amyloid and pili. The defaults
-    are actin's 27.5 Angstrom rise and -166.7 degree twist. Shares the `Animate::Float` input with
+    are actin's 27.5 Angstrom rise and -166.7 degree twist. `Axial Symmetry::Integer` repeats each subunit evenly around
+    the axis for filaments with Cn symmetry, such as amyloid built from two protofilaments (C2). Shares the
+    `Animate::Float` input with `Symmetry Cyclic::Node`.
+Symmetry Cubic:
+  description: >-
+    Build a cubic assembly from one copy: `Group::Menu` picks tetrahedral (12 copies, as in Dps), octahedral (24, as in
+    ferritin) or icosahedral (60, as in small virus capsids). At zero `Orientation::Rotation` the two-folds lie along X,
+    Y and Z with a three-fold along (1, 1, 1), and for icosahedral a five-fold along (0, 1, 1.618); rotate it to match a
+    structure, and set `Centre::Vector` to the point all the axes pass through. Shares the `Animate::Float` input with
     `Symmetry Cyclic::Node`.
 Periodic Array:
   description: Replicate the trajectory across periodic boundaries.
