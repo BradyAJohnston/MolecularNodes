@@ -1,5 +1,5 @@
 # Node-group asset "Curve Offset Dihedral" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger, InputVector
+from nodebpy.types import Default, InputInteger, InputVector
 from .dihedral_angle import DihedralAngle
 from .offset_vector import OffsetVector
 
@@ -24,11 +24,11 @@ class CurveOffsetDihedral(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        The vector to use as the B & C components for `Dihedral Angle` calculation
+        The vector to use as the B & C components for `Dihedral Angle` calculation. When unconnected: The position from the context.
     normal : InputVector
-        The normal that will be added the `Position` to create the A & D components of the dihedral calcaulation
+        The normal that will be added the `Position` to create the A & D components of the dihedral calcaulation. When unconnected: The geometry's normal direction.
     index : InputInteger
-        The index of the current point to calculate from
+        The index of the current point to calculate from. When unconnected: The index from the context.
     offset : InputInteger
         The number of points to offset before calculating the angle
 
@@ -81,9 +81,9 @@ class CurveOffsetDihedral(AssetGeometryGroup):
 
     def __init__(
         self,
-        position: InputVector = None,
-        normal: InputVector = None,
-        index: InputInteger = 0,
+        position: InputVector = Default.POSITION,
+        normal: InputVector = Default.NORMAL,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(
@@ -107,7 +107,6 @@ class CurveOffsetDihedral(AssetGeometryGroup):
             "Index",
             0,
             description="The index of the current point to calculate from",
-            min_value=-2147483647,
             default_input="INDEX",
         )
         offset = tree.inputs.integer(

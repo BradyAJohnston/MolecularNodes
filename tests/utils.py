@@ -372,3 +372,12 @@ class GeometrySet(db.GeometrySet):
         if self.grease_pencil:
             summary["grease_pencil"] = "present"
         return summary
+
+
+def sphere_value(mol) -> str | None:
+    "The `Sphere` value on whichever style node has one."
+    for node in mol.modifier_node_tree.nodes:
+        for socket in node.inputs:
+            if socket.name == "Sphere":
+                return socket.default_value
+    return None

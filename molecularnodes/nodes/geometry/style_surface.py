@@ -1,5 +1,5 @@
 # Node-group asset "Style Surface" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -34,7 +34,7 @@ from .edge_length import EdgeLength
 from .evaluate_on_atoms import EvaluateOnAtoms
 from .evaluate_ordered_bundles import EvaluateOrderedBundles
 from .evaluate_per_group import EvaluatePerGroup
-from .evluate_while_planar import EvluateWhilePlanar
+from .evaluate_while_planar import EvaluateWhilePlanar
 from .is_alpha_carbon import IsAlphaCarbon
 from .mn_typed_bundles import MNTypedBundles
 from .set_color import SetColor
@@ -69,11 +69,11 @@ class MN_utils_style_surface_new(CustomGeometryGroup):
         geometry = tree.outputs.geometry("Geometry")
 
         evaluate_closure = g.EvaluateClosure(grid_create, define_signature=True)
-        evaluate_closure.inputs.geometry("Atoms", atoms)
+        evaluate_closure.inputs.geometry(atoms, "Atoms")
         grid = evaluate_closure.outputs.geometry("Grid", structure_type="SINGLE")
         _field_to_list = g.FieldToList(count=g.ListLength.string(""), items={})
         (
-            EvaluateOrderedBundles(geometry=grid, bundles=mesh_processing)
+            EvaluateOrderedBundles(geometry=grid.output, bundles=mesh_processing)
             >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
             >> g.SetMaterial(material=material)
             >> geometry
@@ -102,21 +102,15 @@ class Surface_compute_density_from_points(CustomGeometryGroup):
 
         position = g.Position()
         sample_nearest = g.SampleNearest.point(atoms)
-        sample_index = g.SampleIndex(
-            geometry=atoms,
-            value=position,
-            index=sample_nearest,
-            data_type="FLOAT_VECTOR",
+        math_1 = probe_size + g.SampleIndex.point.float(
+            atoms, VDWRadii().o.vdw_radii * scale_radius, sample_nearest
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=atoms,
-            value=VDWRadii().o.vdw_radii * scale_radius,
-            index=sample_nearest,
-        )
-        math_1 = probe_size + sample_index_1 - sample_index.o.value.distance(position)
-        (math_1 > 0.0) >> result
+        math_2 = math_1 - g.SampleIndex.point.vector(
+            atoms, position, sample_nearest
+        ).o.value.distance(position)
+        (math_2 > 0.0) >> result
 
-        math_1 >> distance
+        math_2 >> distance
 
 
 class Utils_bounding_box(CustomGeometryGroup):
@@ -137,12 +131,8 @@ class Utils_bounding_box(CustomGeometryGroup):
         mn_world_scale = MN_world_scale()
         bounding_box = g.BoundingBox(geometry=geometry)
         math_1 = mn_world_scale.o.world_scale * 2.0
-        vector_math = (
-            g.VectorMath.snap(bounding_box.o.min, mn_world_scale).o.vector - math_1
-        )
-        vector_math_1 = (
-            g.VectorMath.snap(bounding_box.o.max, mn_world_scale).o.vector + math_1
-        )
+        vector_math = bounding_box.o.min.snap(mn_world_scale) - math_1
+        vector_math_1 = bounding_box.o.max.snap(mn_world_scale) + math_1
         vector = (vector_math_1 - vector_math) * subdivisions
         vector.x.max(2.0) >> x
         vector.y.max(2.0) >> y
@@ -173,7 +163,7 @@ class MN_surface_smooth_bumps(CustomGeometryGroup):
             geometry
             >> g.SetPosition(
                 selection=face_group_boundaries,
-                position=g.BlurAttribute.vector(g.Position(), 4),
+                position=g.Position().o.position.blur(4),
             )
             >> geometry_1
         )
@@ -253,64 +243,51 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
                 resolution_y=utils_bounding_box.o.y,
                 resolution_z=utils_bounding_box.o.z,
             )
-            volume_to_mesh = g.VolumeToMesh(
-                volume=volume_cube, voxel_size=0.01, threshold=0.1
-            )
+            volume_to_mesh = g.VolumeToMesh(volume=volume_cube, voxel_size=0.01)
         with g.Frame("Pull in surface towards atoms"):
             position = g.Position()
             capture = g.CaptureAttribute.point(geometry=volume_to_mesh)
             value = capture.items.integer(
-                "Value", g.SampleNearest.point(separate_geometry.o.selection)
+                g.SampleNearest.point(separate_geometry.o.selection), "Value"
             )
-            sample_index = g.SampleIndex(
-                geometry=separate_geometry.o.selection,
-                value=position,
-                index=value.output,
-                data_type="FLOAT_VECTOR",
+            sample_index = g.SampleIndex.point.vector(
+                separate_geometry.o.selection, position, value.output
             )
-            sample_index_1 = g.SampleIndex(
-                geometry=separate_geometry.o.selection,
-                value=scale_radii * VDWRadii(),
-                index=value.output,
+            sample_index_1 = g.SampleIndex.point.float(
+                separate_geometry.o.selection, scale_radii * VDWRadii(), value.output
             )
             set_position = capture.o.geometry >> g.SetPosition(
                 position=sample_index.o.value
                 + (position.o.position - sample_index).normalize() * sample_index_1
             )
         with g.Frame("smoothing of tightened surface"):
-            blur_attribute = g.BlurAttribute.float(
-                g.EdgeAngle().o.signed_angle.map_range(-0.2, -1.0).face.evaluate(), 2
-            )
             position_1 = g.Position()
+            blur_attribute = g.Position().o.position.blur(
+                relaxation_steps,
+                g.EdgeAngle()
+                .o.signed_angle.map_range(-0.2, -1.0)
+                .face.evaluate()
+                .blur(2),
+            )
             capture_1 = g.CaptureAttribute.point(geometry=set_position)
-            value_1 = capture_1.items.vector("Value", position_1)
+            value_1 = capture_1.items.vector(position_1, "Value")
             vector_math = g.Normal(legacy_corner_normals=True).o.normal * (
                 value_1.output.distance(position_1) * -1.8
             )
             set_position_1 = (
                 capture_1.o.geometry
-                >> g.SetPosition(position=g.BlurAttribute.vector(position_1, 2))
+                >> g.SetPosition(position=position_1.o.position.blur(2))
                 >> g.SetPosition(offset=vector_math)
-                >> g.SetPosition(position=g.BlurAttribute.vector(g.Position(), 2))
-                >> g.SetPosition(
-                    position=g.BlurAttribute.vector(
-                        g.Position(), relaxation_steps, blur_attribute
-                    )
-                )
+                >> g.SetPosition(position=g.Position().o.position.blur(2))
+                >> g.SetPosition(position=blur_attribute)
             )
             mn_surface_smooth_bumps = MN_surface_smooth_bumps(Geometry=set_position_1)
         triangulate = mn_surface_smooth_bumps >> g.Triangulate(quad_method="Beauty")
         with g.Frame("Sample colors of nearest atom"):
-            sample_index_2 = g.SampleIndex(
-                geometry=menu_switch,
-                value=Color(),
-                index=g.SampleNearest.point(menu_switch),
-                data_type="FLOAT_COLOR",
-            )
-            set_color = SetColor(
-                atoms=triangulate,
-                color=g.BlurAttribute.color(sample_index_2, color_blur),
-            )
+            blur_attribute_1 = g.SampleIndex.point.color(
+                menu_switch, Color(), g.SampleNearest.point(menu_switch)
+            ).o.value.blur(color_blur)
+            set_color = SetColor(atoms=triangulate, color=blur_attribute_1)
         (
             set_color
             >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
@@ -337,19 +314,14 @@ class RelaxSurface(CustomGeometryGroup):
         _map_range = edge_length.o.length.map_range(
             field_min_max.o.min, field_min_max.o.max
         )
-        blur_attribute = g.BlurAttribute.vector(
-            g.Position(),
+        blur_attribute = g.Position().o.position.blur(
             relaxation_steps,
-            g.BlurAttribute.float(
-                g.EdgeAngle().o.signed_angle.map_range(-0.2, 0.3, 1.0, 0.0)
-            ),
+            g.EdgeAngle().o.signed_angle.map_range(-0.2, 0.3, 1.0, 0.0).blur(),
         )
-        (
-            MN_surface_smooth_bumps(
-                Geometry=geometry >> g.SetPosition(position=blur_attribute)
-            )
-            >> geometry_1
+        mn_surface_smooth_bumps = MN_surface_smooth_bumps(
+            Geometry=geometry.output >> g.SetPosition(position=blur_attribute)
         )
+        mn_surface_smooth_bumps >> geometry_1.input
         (
             MNTypedBundles(
                 closure=closure_zone.closure, step=step, path="Relax Surface"
@@ -368,11 +340,11 @@ class TriangulateMesh(CustomGeometryGroup):
         closure_zone = g.ClosureZone()
         geometry = closure_zone.inputs.geometry("Geometry")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        mn_surface_smooth_bumps = MN_surface_smooth_bumps(Geometry=geometry)
+        mn_surface_smooth_bumps = MN_surface_smooth_bumps(Geometry=geometry.output)
         mn_surface_smooth_bumps.node.mute = True
         triangulate = mn_surface_smooth_bumps >> g.Triangulate(quad_method="Beauty")
         triangulate.node.mute = True
-        triangulate >> geometry_1
+        triangulate >> geometry_1.input
         (
             MNTypedBundles(
                 closure=closure_zone.closure, step=step, path="Triangulate Mesh"
@@ -423,8 +395,8 @@ class SampleColors(CustomGeometryGroup):
         menu_switch = g.MenuSwitch.geometry(
             color_source, {"Alpha Carbon": switch, "Nearest": atoms}
         )
-        capture = g.CaptureAttribute.point(geometry=geometry)
-        index = capture.items.integer("Index", g.SampleNearest.point(menu_switch))
+        capture = g.CaptureAttribute.point(geometry=geometry.output)
+        index = capture.items.integer(g.SampleNearest.point(menu_switch), "Index")
         transfer_attributes = capture.o.geometry >> g.TransferAttributes(
             target_point_id=index.output,
             source=menu_switch,
@@ -433,10 +405,8 @@ class SampleColors(CustomGeometryGroup):
             exclude_names=True,
         )
         (
-            SetColor(
-                atoms=transfer_attributes, color=g.BlurAttribute.color(Color(), blur)
-            )
-            >> geometry_1
+            SetColor(atoms=transfer_attributes, color=Color().o.color.blur(blur))
+            >> geometry_1.input
         )
         (
             MNTypedBundles(
@@ -463,30 +433,23 @@ class SurfaceToRadius(CustomGeometryGroup):
         geometry = closure_zone.inputs.geometry("Geometry")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         position = g.Position()
-        capture = g.CaptureAttribute.point(geometry=geometry)
-        value = capture.items.integer("Value", g.SampleNearest.point(atoms))
-        sample_index = g.SampleIndex(
-            geometry=atoms, value=position, index=value.output, data_type="FLOAT_VECTOR"
-        )
+        capture = g.CaptureAttribute.point(geometry=geometry.output)
+        value = capture.items.integer(g.SampleNearest.point(atoms), "Value")
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
-        value_001 = capture_1.items.vector("Value.001", sample_index)
+        value_001 = capture_1.items.vector(
+            g.SampleIndex.point.vector(atoms, position, value.output), "Value.001"
+        )
         vector_math = (
             position.o.position - value_001.output
-        ).normalize() * g.SampleIndex(
-            geometry=atoms, value=scale_radii * VDWRadii(), index=value.output
+        ).normalize() * g.SampleIndex.point.float(
+            atoms, scale_radii * VDWRadii(), value.output
         )
-        mix = g.Mix(
-            a_vector=value_001.output + vector_math,
-            b_vector=g.Position(),
-            factor_float=0.0,
-            data_type="VECTOR",
-            clamp_factor=True,
+        set_position = capture_1.o.geometry >> g.SetPosition(
+            position=g.Mix.vector(
+                0.0, value_001.output + vector_math, g.Position(), clamp_factor=True
+            ).o.result_vector
         )
-        (
-            capture_1.o.geometry
-            >> g.SetPosition(position=mix.o.result_vector)
-            >> geometry_1
-        )
+        set_position >> geometry_1.input
         (
             MNTypedBundles(
                 closure=closure_zone.closure, step=step, path="Surface to Radius"
@@ -756,7 +719,7 @@ class StyleSurface(AssetGeometryGroup):
                     "Geometry", structure_type="SINGLE"
                 )
                 utils_bounding_box = Utils_bounding_box(
-                    Geometry=atoms_1, Subdivisions=quality * 5.0
+                    Geometry=atoms_1.output, Subdivisions=quality * 5.0
                 )
                 cube_grid_topology = g.CubeGridTopology(
                     bounds_min=utils_bounding_box.o.min,
@@ -767,22 +730,22 @@ class StyleSurface(AssetGeometryGroup):
                 )
                 field_to_grid = g.FieldToGrid.boolean(topology=cube_grid_topology)
                 density = field_to_grid.items.float(
-                    "Density",
                     Surface_compute_density_from_points(
-                        Atoms=atoms_1, **{"Scale Radius": scale}
+                        Atoms=atoms_1.output, **{"Scale Radius": scale}
                     ).o.distance,
+                    "Density",
                 )
-                grid_mean = g.SetGridBackground.float(density.grid).o.grid.mean()
+                grid_mean = g.SetGridBackground.float(density.output).o.grid.mean()
                 grid_mean.node.mute = True
                 subdivision_surface = grid_mean.median().to_mesh(
                     AngstromToWorld(angstrom=4.3)
                 ) >> g.SubdivisionSurface(limit_surface=False, quality=1)
-                subdivision_surface >> geometry_1
+                subdivision_surface >> geometry_1.input
             with g.Frame("New SDF Node"):
                 closure_zone_1 = g.ClosureZone()
                 atoms_2 = closure_zone_1.inputs.geometry("Atoms")
                 geometry_2 = closure_zone_1.outputs.geometry("Geometry")
-                points_to_sdf_grid = atoms_2 >> g.PointsToSDFGrid(
+                points_to_sdf_grid = atoms_2.output >> g.PointsToSDFGrid(
                     radius=scale * VDWRadii(),
                     voxel_size=AngstromToWorld(
                         angstrom=2.0 / g.Switch.float(quality, 0.5, quality)
@@ -793,7 +756,7 @@ class StyleSurface(AssetGeometryGroup):
                     .sdf_mean(mean_width, mean_iterations)
                     .sdf_fillet(fillet)
                 )
-                sdf_grid_fillet.to_mesh(0.0) >> geometry_2
+                sdf_grid_fillet.to_mesh(0.0) >> geometry_2.input
         closure_zone_2 = g.ClosureZone()
         atoms_3 = closure_zone_2.inputs.geometry("Atoms")
         geometry_3 = closure_zone_2.outputs.geometry("Geometry")
@@ -801,7 +764,7 @@ class StyleSurface(AssetGeometryGroup):
         geometry_4 = closure_zone_3.inputs.geometry("Geometry")
         geometry_5 = closure_zone_3.outputs.geometry("Geometry")
         mn_utils_style_surface_sdf = MN_utils_style_surface_sdf(
-            Atoms=geometry_4,
+            Atoms=geometry_4.output,
             Selection=selection,
             Quality=quality,
             **{
@@ -811,7 +774,7 @@ class StyleSurface(AssetGeometryGroup):
             },
             Material=material,
         )
-        mn_utils_style_surface_sdf >> geometry_5
+        mn_utils_style_surface_sdf >> geometry_5.input
         menu_switch = g.MenuSwitch.closure(
             "SDF", {"Current": closure_zone.closure, "SDF": closure_zone_1.closure}
         )
@@ -823,10 +786,10 @@ class StyleSurface(AssetGeometryGroup):
             geometry_7 = closure_zone_4.outputs.geometry("Geometry")
             join_bundle = g.JoinBundle(
                 bundle=(
-                    SurfaceToRadius(**{"Scale Radii": scale}, Atoms=geometry_6),
+                    SurfaceToRadius(**{"Scale Radii": scale}, Atoms=geometry_6.output),
                     SampleColors(
                         **{"Color Source": color_source},
-                        Atoms=geometry_6,
+                        Atoms=geometry_6.output,
                         Blur=color_blur,
                     ),
                     RelaxSurface(**{"Relaxation Steps": relax}),
@@ -836,16 +799,16 @@ class StyleSurface(AssetGeometryGroup):
             evaluate_closure = g.EvaluateClosure(
                 menu_switch.o.output, define_signature=True
             )
-            evaluate_closure.inputs.geometry("Atoms", geometry_6)
+            evaluate_closure.inputs.geometry(geometry_6.output, "Atoms")
             geometry_8 = evaluate_closure.outputs.geometry(
                 "Geometry", structure_type="SINGLE"
             )
             set_material = (
-                EvaluateOrderedBundles(geometry=geometry_8, bundles=join_bundle)
+                EvaluateOrderedBundles(geometry=geometry_8.output, bundles=join_bundle)
                 >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
                 >> g.SetMaterial(material=material)
             )
-            set_material >> geometry_7
+            set_material >> geometry_7.input
         with g.Frame('Create surface while points are as "flat" as possible'):
             closure_zone_5 = g.ClosureZone()
             geometry_9 = closure_zone_5.inputs.geometry("Geometry")
@@ -854,17 +817,19 @@ class StyleSurface(AssetGeometryGroup):
             _string = g.String(
                 string="We get better performance if we first orient the structure better inside of a bounding box for more efficient use of grid space & voxels!"
             )
-            store_named_attribute = EvluateWhilePlanar(
-                geometry=geometry_9, closure=closure_zone_4.closure
-            ) >> g.StoreNamedAttribute.point.integer(name="chain_id", value=group_id_1)
-            store_named_attribute >> geometry_10
+            store_named_attribute = EvaluateWhilePlanar(
+                geometry=geometry_9.output, closure=closure_zone_4.closure
+            ) >> g.StoreNamedAttribute.point.integer(
+                name="chain_id", value=group_id_1.output
+            )
+            store_named_attribute >> geometry_10.input
         evaluate_per_group = EvaluatePerGroup(
-            geometry=atoms_3,
+            geometry=atoms_3.output,
             closure=closure_zone_5.closure,
             group=separate_by,
             group_id=group_id,
         )
-        evaluate_per_group >> geometry_3
+        evaluate_per_group >> geometry_3.input
         (
             EvaluateOnAtoms(
                 geometry=atoms, selection=selection, closure=closure_zone_2.closure

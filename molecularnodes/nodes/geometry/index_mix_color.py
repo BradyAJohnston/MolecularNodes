@@ -1,5 +1,5 @@
 # Node-group asset "Index Mix Color" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -105,11 +105,10 @@ class IndexMixColor(AssetGeometryGroup):
         )
 
         fractionate_float = FractionateFloat(value=index)
-        mix = g.Mix(
-            factor_float=fractionate_float.o.fraction,
-            a_color=color.point.at(fractionate_float.o.floor),
-            b_color=color.point.at(fractionate_float.o.ceiling),
-            data_type="RGBA",
+        mix = g.Mix.color(
+            fractionate_float.o.fraction,
+            color.point.at(fractionate_float.o.floor),
+            color.point.at(fractionate_float.o.ceiling),
             clamp_factor=True,
             clamp_result=True,
         )

@@ -1,5 +1,5 @@
 # Node-group asset "Plexus" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -101,36 +101,29 @@ class Plexus(AssetGeometryGroup):
 
         with g.Frame("Create a clean set of points for instancing on"):
             index = g.Index()
-            sample_index = g.SampleIndex(
-                geometry=points,
-                value=g.Position(),
-                index=index,
-                data_type="FLOAT_VECTOR",
-            )
-            math_1 = g.SampleIndex(
-                geometry=points, value=distance, index=index
-            ).o.value * g.SampleIndex(geometry=points, value=radius, index=index)
+            math_1 = g.SampleIndex.point.float(
+                points, distance, index
+            ).o.value * g.SampleIndex.point.float(points, radius, index)
             points_1 = g.Points(
                 count=g.DomainSize(geometry=points).o.point_count,
-                position=sample_index,
+                position=g.SampleIndex.point.vector(points, g.Position(), index),
                 radius=math_1,
             )
         with g.Frame("Create Distance Probe"):
             ico_sphere = g.IcoSphere()
-            sample_index_1 = g.SampleIndex(
-                geometry=ico_sphere,
-                value=g.Position().o.position * -1.0,
-                index=g.Index(),
-                data_type="FLOAT_VECTOR",
+            axes_to_rotation = g.AxesToRotation(
+                primary_axis=g.SampleIndex.point.vector(
+                    ico_sphere, g.Position().o.position * -1.0, g.Index()
+                )
             )
             merge_by_distance = (
                 g.InstanceOnPoints(
                     points=ico_sphere,
                     instance=g.MeshLine(count=2),
-                    rotation=g.AxesToRotation(primary_axis=sample_index_1),
+                    rotation=axes_to_rotation,
                 )
                 >> g.RealizeInstances(realize_to_point_domain=True)
-                >> g.MergeByDistance(distance=0.001)
+                >> g.MergeByDistance()
             )
         with g.Frame("Apply the distance probe"):
             realize_instances = g.RealizeInstances(
@@ -140,7 +133,7 @@ class Plexus(AssetGeometryGroup):
                 realize_to_point_domain=True,
             )
             capture = g.CaptureAttribute.point(geometry=realize_instances)
-            index_1 = capture.items.integer("Index", g.SampleNearest.point(points_1))
+            index_1 = capture.items.integer(g.SampleNearest.point(points_1), "Index")
             merge_points = (
                 capture.o.geometry
                 >> g.SetPosition(

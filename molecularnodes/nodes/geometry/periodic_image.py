@@ -1,5 +1,5 @@
 # Node-group asset "Periodic Image" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -122,9 +122,7 @@ class PeriodicImage(AssetGeometryGroup):
             image_c = tree.inputs.integer("Image C", 0)
         points = tree.outputs.geometry("Points")
 
-        points_1 = g.Points(
-            position=a * image_a + b * image_b + c_ * image_c, radius=0.1
-        )
+        points_1 = g.Points(position=a * image_a + b * image_b + c_ * image_c)
 
         points_1 >> points
 

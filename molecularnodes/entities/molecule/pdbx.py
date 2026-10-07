@@ -14,7 +14,7 @@ class PDBXReader(ReaderBase):
             "sec_struct": self._get_secondary_structure,
             "entity_id": self._get_entity_id,
         }
-        self._extra_fields = ["b_factor", "occupancy", "atom_id"]
+        self._extra_fields = ["b_factor", "occupancy", "atom_id", "charge"]
         super().__init__(file_path)
 
     def read(self, file_path):

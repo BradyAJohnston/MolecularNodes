@@ -1,5 +1,5 @@
 # Node-group asset "Lag Geometry" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -118,7 +118,7 @@ class LagGeometry(AssetGeometryGroup):
 
         index_1 = g.Index()
         simulation_zone = g.SimulationZone()
-        geometry_1 = simulation_zone.items.geometry("Geometry")
+        geometry_1 = simulation_zone.items.geometry(name="Geometry")
         join_geometry = g.JoinGeometry(
             geometry=(
                 g.GeometryToInstance(
@@ -129,9 +129,9 @@ class LagGeometry(AssetGeometryGroup):
         )
         g.SeparateGeometry.instance(join_geometry, g.Index() < count) >> geometry_1.next
         capture = g.CaptureAttribute.point(geometry=geometry_1.result)
-        index_2 = capture.items.integer("Index", index_1)
+        index_2 = capture.items.integer(index_1, "Index")
         capture_1 = g.CaptureAttribute.instance(geometry=capture.o.geometry)
-        index_3 = capture_1.items.integer("Index", index_1)
+        index_3 = capture_1.items.integer(index_1, "Index")
         capture_1.o.geometry >> g.RealizeInstances(realize_all=realize_all) >> geometry
 
         index_3.output >> lag_index

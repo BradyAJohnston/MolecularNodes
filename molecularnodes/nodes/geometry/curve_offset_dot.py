@@ -1,5 +1,5 @@
 # Node-group asset "Curve Offset Dot" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -17,7 +17,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputInteger, InputMenu, InputVector
+from nodebpy.types import Default, InputFloat, InputInteger, InputMenu, InputVector
 from .offset_vector import OffsetVector
 
 
@@ -28,7 +28,7 @@ class CurveOffsetDot(AssetGeometryGroup):
     Parameters
     ----------
     normal : InputVector
-        Normal
+        Normal. When unconnected: The geometry's normal direction.
     offset : InputInteger
         Offset
     threshold_direction : InputMenu | Literal["Less Than", "Greater Than"]
@@ -102,7 +102,7 @@ class CurveOffsetDot(AssetGeometryGroup):
 
     def __init__(
         self,
-        normal: InputVector = None,
+        normal: InputVector = Default.NORMAL,
         offset: InputInteger = -1,
         threshold_direction: InputMenu
         | Literal["Less Than", "Greater Than"] = "Less Than",
@@ -123,7 +123,7 @@ class CurveOffsetDot(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         normal = tree.inputs.vector("Normal", (0.0, 0.0, 0.0), default_input="NORMAL")
-        offset = tree.inputs.integer("Offset", -1, min_value=-2147483647)
+        offset = tree.inputs.integer("Offset", -1)
         with tree.inputs.panel("Threshold"):
             threshold_direction = tree.inputs.menu(
                 "Threshold Direction", optional_label=True

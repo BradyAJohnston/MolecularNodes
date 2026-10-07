@@ -15,6 +15,38 @@ def path_resolve(path: str | Path) -> Path:
         raise ValueError(f"Unable to resolve path: {path}")
 
 
+def resolve_file_path(path: str | Path, label: str = "File") -> Path:
+    """Resolve a file path property to an existing file.
+
+    Shared by the import operators: an empty or non-existent path is caught here
+    with a user-facing message, rather than letting a reader further down fail on
+    a directory or missing file with an obscure traceback.
+
+    Parameters
+    ----------
+    path : str | Path
+        The (possibly Blender-relative, ``//``-prefixed) path to resolve.
+    label : str, optional
+        Name for the path in error messages, e.g. ``"Topology"``.
+
+    Returns
+    -------
+    Path
+        The resolved absolute path.
+
+    Raises
+    ------
+    ValueError
+        If the path is empty or does not point at an existing file.
+    """
+    if not str(path).strip():
+        raise ValueError(f"{label} path is empty")
+    resolved = path_resolve(path)
+    if not resolved.is_file():
+        raise ValueError(f"{label} not found: '{resolved}'")
+    return resolved
+
+
 def set_obj_active(
     obj: bpy.types.Object, context: bpy.types.Context | None = None
 ) -> None:

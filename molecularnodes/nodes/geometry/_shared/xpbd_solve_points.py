@@ -1,5 +1,5 @@
 # Node group "XPBD Solve Points" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -120,9 +120,9 @@ class XPBDSolvePoints(CustomGeometryGroup):
             + g.RandomValue.vector((-1.0, -1.0, -1.0), (1.0, 1.0, 1.0)).o.value * 0.001
         )
         capture = g.CaptureAttribute.point(geometry=geometry)
-        capture.items.vector("Vector", vector_math)
+        capture.items.vector(vector_math, "Vector")
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
-        index = capture_1.items.integer("Index", g.IndexOfNearest().o.index)
+        index = capture_1.items.integer(g.IndexOfNearest().o.index, "Index")
         evaluate_at_index = residue_id.o.res_id.point.at(index.output)
         _compare = g.Compare.integer.not_equal(
             abs(residue_id.o.res_id - evaluate_at_index), 1

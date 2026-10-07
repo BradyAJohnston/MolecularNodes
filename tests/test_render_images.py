@@ -167,7 +167,7 @@ def test_render_assembly(
                 ["linear.top", "linear_traj.dat"],
                 ["origami_old.top", "origami_old.dat"],
             ),
-            ("Arrows", "Curve"),
+            ("Sticks", "Ribbon"),
         )
     ),
 )
@@ -183,7 +183,7 @@ def test_render_oxdna_simple_circle(
         (
             atoms
             >> mg.CentreOnSelection()
-            >> mg.OxDNAStyleRibbon(
+            >> mg.OxDNAStyleClassic(
                 backbone_shape=backbone, material=mn.material.Default().material
             )
             >> join
@@ -218,4 +218,26 @@ def test_render_symmetry(golden_canvas, tmp_path, assembly_image_snapshot, code)
             >> join
         )
     golden_canvas.look_at(mol, viewpoint="front" if code == "4UDV" else "top")
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "material",
+    [mn.material.Default, mn.material.AmbientOcclusion],
+)
+def test_render_faded_geometry(
+    golden_canvas, tmp_path, assembly_image_snapshot, material
+):
+    mol = mn.Molecule.fetch("1een")
+    with mol.tree.reset() as (atoms, join):
+        (atoms >> mg.StyleCartoon(material=mn.material.Flat().material) >> join)
+
+        (
+            atoms
+            >> mg.StyleSurface(material=material().material)
+            >> mg.FadeGeometry(fade=0.3)
+            >> join
+        )
+
+    golden_canvas.look_at(mol)
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)

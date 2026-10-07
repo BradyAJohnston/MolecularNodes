@@ -1,5 +1,5 @@
 # Node-group asset "Style Cartoon" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -110,26 +110,17 @@ class SampleFromCACurve(CustomGeometryGroup):
             curve_index=tmp_ss_attributes.o.tmp_idx_curve,
         )
         capture = g.CaptureAttribute.point(geometry=ca_curve)
-        position_1 = capture.items.vector("Position", sample_curve.o.position)
-        tangent_1 = capture.items.vector("Tangent", sample_curve.o.tangent)
-        normal_1 = capture.items.vector("Normal", sample_curve.o.normal)
-        sample_index = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=position_1.output,
-            index=tmp_ss_attributes.o.tmp_idx,
-            data_type="FLOAT_VECTOR",
+        position_1 = capture.items.vector(sample_curve.o.position, "Position")
+        tangent_1 = capture.items.vector(sample_curve.o.tangent, "Tangent")
+        normal_1 = capture.items.vector(sample_curve.o.normal, "Normal")
+        sample_index = g.SampleIndex.point.vector(
+            capture.o.geometry, position_1.output, tmp_ss_attributes.o.tmp_idx
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=normal_1.output,
-            index=tmp_ss_attributes.o.tmp_idx,
-            data_type="FLOAT_VECTOR",
+        sample_index_1 = g.SampleIndex.point.vector(
+            capture.o.geometry, normal_1.output, tmp_ss_attributes.o.tmp_idx
         )
-        sample_index_2 = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=tangent_1.output,
-            index=tmp_ss_attributes.o.tmp_idx,
-            data_type="FLOAT_VECTOR",
+        sample_index_2 = g.SampleIndex.point.vector(
+            capture.o.geometry, tangent_1.output, tmp_ss_attributes.o.tmp_idx
         )
 
         sample_index >> position
@@ -147,7 +138,7 @@ class FixLoopAlignmentIntoAH(CustomGeometryGroup):
         geometry = tree.outputs.geometry("Geometry")
 
         capture = g.CaptureAttribute.point(geometry=curve)
-        selection = capture.items.boolean("Selection", IsHelix().o.selection)
+        selection = capture.items.boolean(IsHelix().o.selection, "Selection")
         with g.Frame("Subdivide the first and last segments going into AH"):
             boolean_math = g.BooleanMath.subtract(
                 g.EndpointSelection(start_size=0, end_size=2),
@@ -173,10 +164,10 @@ class FixLoopAlignmentIntoAH(CustomGeometryGroup):
             ) & selection.output
         capture_1 = g.CaptureAttribute.point(geometry=subdivide_curve)
         value = capture_1.items.integer(
-            "Value",
             CurveEndpointValues(
                 start_size=2, start_value=-1, end_size=2, end_value=1
             ).o.value,
+            "Value",
         )
         vector_in_angstroms = VectorInAngstroms(
             vector=OffsetVector(vector=tangent, offset=value.output),
@@ -245,14 +236,14 @@ class CAToLoops(CustomGeometryGroup):
                 | boolean_math
             )
         capture = g.CaptureAttribute.point(geometry=geometry)
-        boolean = capture.items.boolean("Boolean", boolean_math_2)
-        subdivisions_1 = capture.items.integer("Subdivisions", subdivisions)
-        radius_1 = capture.items.float("Radius", radius)
+        boolean = capture.items.boolean(boolean_math_2, "Boolean")
+        subdivisions_1 = capture.items.integer(subdivisions, "Subdivisions")
+        radius_1 = capture.items.float(radius, "Radius")
         rotate_rotation = CurveRotation().o.rotation.rotate(
             (0.0, 0.0, 0.0), rotation_space="LOCAL"
         )
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
-        rotation = capture_1.items.rotation("Rotation", rotate_rotation)
+        rotation = capture_1.items.rotation(rotate_rotation, "Rotation")
         with g.Frame("Don't resample when directly from one SS to another"):
             compare = g.SplineLength().o.point_count > 2
         switch = tmp_ss_attributes.o.tmp_ss_is_last.switch.float(
@@ -273,8 +264,8 @@ class CAToLoops(CustomGeometryGroup):
             SampleFromCACurve(**{"CA Curve": geometry}, Offset=-0.2).o.tangent,
         )
         capture_2 = g.CaptureAttribute.point(geometry=curve_split_splines)
-        capture_2.items.vector("Position", switch_1)
-        tangent = capture_2.items.vector("Tangent", switch_2)
+        capture_2.items.vector(switch_1, "Position")
+        tangent = capture_2.items.vector(switch_2, "Tangent")
         switch_3 = endpoint_selection.o.selection.switch.vector(
             sample_from_ca_curve.o.normal, sample_from_ca_curve_1.o.normal
         )
@@ -329,16 +320,17 @@ class SplitCurves(CustomGeometryGroup):
             "Selection", False, description="The calculated selection"
         )
         resolution = tree.inputs.integer("Resolution", 12, min_value=1)
-        expand = tree.inputs.integer("Expand", 1, min_value=-2147483647)
+        expand = tree.inputs.integer("Expand", 1)
         curve = tree.outputs.geometry("Curve")
 
         _dihedral_phi = DihedralPhi()
         compare = DihedralPsi().o.psi > -3.080002
         with g.Frame("Switch back and forth for beta-sheet fixing"):
-            boolean_math = IsSheet().o.selection & (
-                g.Index().o.index - g.AccumulateField.point.integer(compare).o.leading
-            ).modulo(2)
-            _switch = boolean_math.switch.float(-1.0, 1.0)
+            integer_math = g.IntegerMath.modulo(
+                g.Index().o.index - g.AccumulateField.point.integer(compare).o.leading,
+                2,
+            )
+            _switch = (IsSheet().o.selection & integer_math).switch.float(-1.0, 1.0)
         _dihedral_psi = DihedralPsi()
         accumulate_field = g.AccumulateField.point.integer(
             g.BooleanMath.subtract(
@@ -350,19 +342,19 @@ class SplitCurves(CustomGeometryGroup):
             selection, ExpandBoolean(boolean=selection, expand=expand)
         )
         capture = g.CaptureAttribute.point(geometry=curve_to_points)
-        selection_1 = capture.items.boolean("Selection", switch_1)
+        selection_1 = capture.items.boolean(switch_1, "Selection")
         vector_math = curve_to_points.o.normal * g.Switch.float(
-            accumulate_field.o.leading.modulo(2), -1.0, 1.0
+            g.IntegerMath.modulo(accumulate_field.o.leading, 2), -1.0, 1.0
         )
         accumulate_field_1 = g.AccumulateField.point.integer(
             g.Position().o.position.distance(OffsetVector(offset=-1)) > 5.0
         )
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
         group_id = capture_1.items.integer(
-            "Group ID",
             SubGroupInfo(
                 sub_group_id=selection_1.output, group_id=accumulate_field_1.o.trailing
             ).o.group_id,
+            "Group ID",
         )
         set_spline_type = (
             g.SeparateGeometry.point(capture_1.o.geometry, selection_1.output)
@@ -407,30 +399,27 @@ class NodeGroup(CustomGeometryGroup):
         scale = tree.inputs.vector("Scale", (1.0, 2.5, 1.0), subtype="XYZ")
         geometry = tree.outputs.geometry("Geometry")
 
-        mix = g.Mix(b_float=1.0, clamp_factor=True)
+        mix = g.Mix.float(b=1.0, clamp_factor=True)
         multiply_matrices = g.MultiplyMatrices(
             matrix=g.CombineTransform(rotation=rotation, scale=scale),
             matrix_001=g.CombineTransform(rotation=(0.0, 0.0, math.pi / 4)),
         )
         capture = g.CaptureAttribute.point(geometry=curves)
-        rotation_1 = capture.items.rotation("Rotation", CurveRotation())
-        capture.items.vector("Position", g.Position())
-        sample_curve = g.SampleCurve(
-            curves=capture.o.geometry,
-            value=rotation_1.output,
-            length=g.SplineParameter().o.length + 0.0,
-            curve_index=g.CurveOfPoint().o.curve_index,
-            mode="LENGTH",
-            data_type="QUATERNION",
+        rotation_1 = capture.items.rotation(CurveRotation(), "Rotation")
+        capture.items.vector(g.Position(), "Position")
+        sample_curve = g.SampleCurve.length.quaternion(
+            capture.o.geometry,
+            rotation_1.output,
+            g.SplineParameter().o.length + 0.0,
+            g.CurveOfPoint().o.curve_index,
         )
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
-        rotation_2 = capture_1.items.rotation("Rotation", sample_curve.o.value)
-        position = capture_1.items.vector("Position", sample_curve.o.position)
-        mix_1 = g.Mix(
-            a_rotation=rotation_2.output,
-            b_rotation=OffsetRotation(rotation=rotation_2.output, offset=1),
-            factor_float=0.0,
-            data_type="ROTATION",
+        rotation_2 = capture_1.items.rotation(sample_curve.o.value, "Rotation")
+        position = capture_1.items.vector(sample_curve.o.position, "Position")
+        mix_1 = g.Mix.rotation(
+            0.0,
+            rotation_2.output,
+            OffsetRotation(rotation=rotation_2.output, offset=1),
             clamp_factor=True,
         )
         switch = g.EndpointSelection(end_size=0).o.selection.switch.rotation(
@@ -439,11 +428,9 @@ class NodeGroup(CustomGeometryGroup):
         switch_1 = IsSheet().o.selection.switch.rotation(
             switch, switch.rotate((0.0, 0.0, math.pi / 4), rotation_space="LOCAL")
         )
-        blur_attribute = g.BlurAttribute.vector(
-            g.RotateVector(rotation=switch_1, vector=(1.0, 0.0, 0.0)),
-            84,
-            g.EndpointSelection(start_size=4, end_size=3),
-        )
+        blur_attribute = g.RotateVector(
+            rotation=switch_1, vector=(1.0, 0.0, 0.0)
+        ).o.vector.blur(84, g.EndpointSelection(start_size=4, end_size=3))
         set_curve_normal = (
             capture_1.o.geometry
             >> g.SetPosition(position=position.output)
@@ -459,11 +446,8 @@ class NodeGroup(CustomGeometryGroup):
         fillet_curve = g.SetHandleType(
             curve=g.SetSplineType.bezier(transform_geometry)
         ) >> g.FilletCurve(
-            radius=g.Mix(
-                factor_float=mix.o.result_float,
-                a_float=0.001,
-                b_float=0.05,
-                clamp_factor=True,
+            radius=g.Mix.float(
+                mix.o.result_float, 0.001, 0.05, clamp_factor=True
             ).o.result_float,
             limit_radius=True,
         )
@@ -510,9 +494,9 @@ class TweakArrowHeads(CustomGeometryGroup):
             > 0.44
         )
         capture = g.CaptureAttribute.face(geometry=geometry)
-        boolean = capture.items.boolean("Boolean", boolean_math)
+        boolean = capture.items.boolean(boolean_math, "Boolean")
         normal = capture.items.vector(
-            "Normal", g.Normal(legacy_corner_normals=True).o.normal
+            g.Normal(legacy_corner_normals=True).o.normal, "Normal"
         )
         extrude_mesh = capture.o.geometry >> g.ExtrudeMesh(
             selection=boolean.output,
@@ -576,17 +560,17 @@ class CAToSheet(CustomGeometryGroup):
                 axis=g.CurveTangent(),
                 angle=math_1.o.value.wrap(0.0, 2.0) * 3.14159 + g.Math.to_radians(30.0),
             )
-            blur_attribute = g.BlurAttribute.vector(
-                g.Normal(legacy_corner_normals=True).o.normal.rotate(
-                    axis_angle_to_rotation
-                )
+            blur_attribute = (
+                g.Normal(legacy_corner_normals=True)
+                .o.normal.rotate(axis_angle_to_rotation)
+                .blur()
             )
         capture = g.CaptureAttribute.point(
             geometry=g.SetCurveNormal(curve=curve, normal=blur_attribute, mode="Free")
         )
-        resolution = capture.items.integer("Resolution", subdivisions)
-        thickness_1 = capture.items.float("Thickness", thickness)
-        width_1 = capture.items.float("Width", width)
+        resolution = capture.items.integer(subdivisions, "Resolution")
+        thickness_1 = capture.items.float(thickness, "Thickness")
+        width_1 = capture.items.float(width, "Width")
         vector_math = g.CurveTangent().o.tangent * (
             CurveEndpointValues(start_value=-1, end_value=1).o.value
             * MNUnits(value=0.2).o.angstrom
@@ -605,9 +589,9 @@ class CAToSheet(CustomGeometryGroup):
             geometry=g.SetHandleType(curve=set_spline_type)
         )
         arrow_mask = capture_1.items.float(
-            "Arrow Mask",
             (g.SplineLength().o.point_count - 1.0).max(1.0)
             - g.SplineParameter().o.index,
+            "Arrow Mask",
         )
         with g.Frame("Adjustment for arrowheads"):
             switch = arrows.switch.float(
@@ -658,7 +642,7 @@ class BooleanShrink(CustomGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         boolean = tree.inputs.boolean("Boolean", False, hide_value=True)
-        shrink = tree.inputs.integer("Shrink", 0, min_value=-2147483647)
+        shrink = tree.inputs.integer("Shrink", 0)
         boolean_1 = tree.outputs.boolean("Boolean")
 
         boolean_math = OffsetBoolean(
@@ -714,7 +698,7 @@ class CAToHelix(CustomGeometryGroup):
                 >> g.SetSplineType()
                 >> g.SetPosition(
                     selection=boolean_math,
-                    position=g.BlurAttribute.vector(g.Position(), 2, boolean_math),
+                    position=g.Position().o.position.blur(2, boolean_math),
                 )
                 >> g.SetCurveNormal()
                 >> g.ResampleCurve(length=MNUnits(value=2.0).o.angstrom, mode="Length")
@@ -751,18 +735,16 @@ class CAToHelix(CustomGeometryGroup):
                 vector=g.CurveTangent(),
                 pivot_axis="Y",
             )
-            sample_curve = g.SampleCurve(
-                curves=curve,
-                value=CurveRotation(),
-                length=g.SplineParameter().o.length + 0.2,
-                curve_index=g.CurveOfPoint().o.curve_index,
-                mode="LENGTH",
-                data_type="QUATERNION",
+            sample_curve = g.SampleCurve.length.quaternion(
+                curve,
+                CurveRotation(),
+                g.SplineParameter().o.length + 0.2,
+                g.CurveOfPoint().o.curve_index,
             )
             capture = g.CaptureAttribute.point(geometry=curve)
             capture.node.mute = True
-            value = capture.items.rotation("Value", sample_curve.o.value)
-            position = capture.items.vector("Position", sample_curve.o.position)
+            value = capture.items.rotation(sample_curve.o.value, "Value")
+            position = capture.items.vector(sample_curve.o.position, "Position")
             set_position = capture.o.geometry >> g.SetPosition(position=position.output)
             set_position.node.mute = True
             set_spline_type = (
@@ -1325,7 +1307,9 @@ class StyleCartoon(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
-        capture_1 = g.CaptureAttribute.point(geometry=atoms_1, selection=selection)
+        capture_1 = g.CaptureAttribute.point(
+            geometry=atoms_1.output, selection=selection
+        )
         math_1 = quality * 3.0
         math_2 = quality * 5.0
         menu_switch = g.MenuSwitch.integer(base_shape, {"Cylinder": 0, "Rectangle": 1})
@@ -1394,7 +1378,7 @@ class StyleCartoon(AssetGeometryGroup):
                 mn_utils_style_ribbon_nucleic.o.geometry,
             )
         )
-        join_geometry >> geometry_1
+        join_geometry >> geometry_1.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         peptide_shape.default_value = "Sharp"

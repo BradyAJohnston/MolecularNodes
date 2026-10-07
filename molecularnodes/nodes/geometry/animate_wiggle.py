@@ -1,5 +1,5 @@
 # Node-group asset "Animate Wiggle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
@@ -161,14 +161,14 @@ class MN_animate_noise_repeat(CustomGeometryGroup):
             noise_dimensions="4D",
             normalize=True,
         )
-        map_range = g.MapRange(
-            vector=noise_texture.o.color,
-            to_min_float3=(-1.0, -1.0, -1.0),
-            clamp=True,
-            data_type="FLOAT_VECTOR",
-        )
         noise_texture.o.factor.map_range(to_min=-1.0) * amplitude >> noise_float
-        map_range.o.vector * amplitude >> noise_vector
+        (
+            g.MapRange.vector(
+                noise_texture.o.color, to_min=(-1.0, -1.0, -1.0), clamp=True
+            ).o.vector
+            * amplitude
+            >> noise_vector
+        )
 
 
 class MN_utils_rotate_res(CustomGeometryGroup):
@@ -201,12 +201,12 @@ class MN_utils_rotate_res(CustomGeometryGroup):
         position = tree.outputs.vector("Position")
 
         mn_utils_aa_atom_pos = MN_utils_aa_atom_pos(atom_name=atom_name_rotation)
-        mix = g.Mix(
-            factor_float=scale_b_factor,
-            b_float=mn_utils_aa_atom_pos.o.b_factor.map_range(
+        mix = g.Mix.float(
+            scale_b_factor,
+            1.0,
+            mn_utils_aa_atom_pos.o.b_factor.map_range(
                 1.0, 100.0, interpolation_type="SMOOTHERSTEP"
             ),
-            a_float=1.0,
             clamp_factor=True,
         )
         math_1 = mix.o.result_float * amplitude
@@ -432,8 +432,8 @@ class AnimateWiggle(AssetGeometryGroup):
         )
 
         repeat_zone = g.RepeatZone(5)
-        geometry = repeat_zone.items.geometry("Geometry", atoms)
-        integer = repeat_zone.items.integer("Integer")
+        geometry = repeat_zone.items.geometry(atoms, "Geometry")
+        integer = repeat_zone.items.integer(name="Integer")
         mn_utils_rotate_res = MN_utils_rotate_res(
             Selection=MN_animate_wiggle_mask_res(A=integer.current).o.result
             & selection,

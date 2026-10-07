@@ -1,5 +1,5 @@
 # Node group ".MN_bs_smooth" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -89,22 +89,17 @@ class MN_bs_smooth(CustomGeometryGroup):
 
         mn_select_sec_struct = MN_select_sec_struct()
         position = g.Position()
-        blur_attribute = g.BlurAttribute.vector(
-            position,
+        blur_attribute = position.o.position.blur(
             iterations,
             ExpandBoolean(boolean=mn_select_sec_struct.o.is_structured, expand=1),
-        )
-        mix = g.Mix(
-            factor_float=factor,
-            a_vector=position,
-            b_vector=blur_attribute,
-            data_type="VECTOR",
-            clamp_factor=True,
         )
         (
             geometry
             >> g.SetPosition(
-                selection=mn_select_sec_struct.o.is_sheet, position=mix.o.result_vector
+                selection=mn_select_sec_struct.o.is_sheet,
+                position=g.Mix.vector(
+                    factor, position, blur_attribute, clamp_factor=True
+                ).o.result_vector,
             )
             >> geometry_1
         )

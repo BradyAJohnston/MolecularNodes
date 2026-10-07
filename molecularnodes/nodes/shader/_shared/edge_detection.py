@@ -1,5 +1,5 @@
 # Node group "Edge Detection" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
@@ -73,9 +73,9 @@ class EdgeDetection(CustomShaderGroup):
         geometry = s.Geometry()
         geometry_1 = s.Geometry()
         repeat_zone = g.RepeatZone(8)
-        max_distance = repeat_zone.items.float("Max Distance")
-        max_normal_delta = repeat_zone.items.float("Max Normal Delta")
-        object_edge_1 = repeat_zone.items.float("Object Edge")
+        max_distance = repeat_zone.items.float(name="Max Distance")
+        max_normal_delta = repeat_zone.items.float(name="Max Normal Delta")
+        object_edge_1 = repeat_zone.items.float(name="Object Edge")
         map_range = g.WhiteNoiseTexture(
             vector=s.Geometry().o.position, noise_dimensions="4D"
         ).o.value.map_range(to_max=360.0)
@@ -95,9 +95,9 @@ class EdgeDetection(CustomShaderGroup):
         vector_math_1 = offset_raycast.o.hit_normal.dot(
             geometry_1.o.normal * geometry_1.o.backfacing.mix.float(1.0, -1.0)
         )
-        mix = g.Mix(
-            factor_float=math_1,
-            b_float=vector_math_1.acos().map_range(from_max=math.pi),
+        mix = g.Mix.float(
+            math_1,
+            b=vector_math_1.acos().map_range(from_max=math.pi),
             clamp_factor=True,
         )
         (
@@ -108,7 +108,7 @@ class EdgeDetection(CustomShaderGroup):
         )
         max_normal_delta.current.max(mix.o.result_float) >> max_normal_delta.next
         (
-            g.Mix(factor_float=math_1, clamp_factor=True).o.result_float.max(
+            g.Mix.float(math_1, clamp_factor=True).o.result_float.max(
                 object_edge_1.current
             )
             >> object_edge_1.next

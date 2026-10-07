@@ -1,5 +1,5 @@
 # Node-group asset "Random Color" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -15,7 +15,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputInteger, InputMenu
+from nodebpy.types import Default, InputFloat, InputInteger, InputMenu
 from .lch_to_oklab import LChToOKLab
 from .oklab_to_color import OKLabToColor
 
@@ -27,7 +27,7 @@ class RandomColor(AssetGeometryGroup):
     Parameters
     ----------
     id : InputInteger
-        ID
+        ID. When unconnected: The "id" attribute if available, otherwise the index.
     color_seed : InputInteger
         Seed value for the random generation of the colors
     colorspace : InputMenu | Literal["HSL", "OKLab"]
@@ -98,7 +98,7 @@ class RandomColor(AssetGeometryGroup):
 
     def __init__(
         self,
-        id: InputInteger = 0,
+        id: InputInteger = Default.ID_OR_INDEX,
         color_seed: InputInteger = 0,
         colorspace: InputMenu | Literal["HSL", "OKLab"] = "HSL",
         hsl_saturation: InputFloat = 0.6,

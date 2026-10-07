@@ -1,5 +1,5 @@
 # Node-group asset "Simulate Elastic Network" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -18,6 +18,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputFloat,
     InputGeometry,
@@ -63,16 +64,16 @@ class XPBDSolveEdges(CustomGeometryGroup):
                 geometry, attribute=g.EdgesOfVertex().o.total
             ).o.max
         )
-        geometry_2 = repeat_zone.items.geometry("Geometry", geometry)
-        correction = repeat_zone.items.vector("Correction")
-        value = repeat_zone.items.integer("Value")
+        geometry_2 = repeat_zone.items.geometry(geometry, "Geometry")
+        correction = repeat_zone.items.vector(name="Correction")
+        value = repeat_zone.items.integer(name="Value")
         edge_info = EdgeInfo(edge_index=repeat_zone.iteration)
         boolean_math = selection & edge_info.o.is_valid
         constraint_distance = ConstraintDistance(
             target=edge_info.o.point_position,
             distance=distance.edge.at(edge_info.o.edge_index),
             w1=inverse_mass.o.w,
-            w2=inverse_mass.o.w.point.at(edge_info.o.edge_index),
+            w2=inverse_mass.o.w.point.at(edge_info.o.point_index),
             alpha=alpha.edge.at(edge_info.o.edge_index),
             deltat=deltat,
         )
@@ -124,7 +125,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
     pin_selection : InputBoolean
         Pin Selection
     pin_target : InputVector
-        Pin Target
+        Pin Target. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -229,7 +230,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
         hook_target: InputVector = None,
         hook_decay: InputFloat = 2.0,
         pin_selection: InputBoolean = False,
-        pin_target: InputVector = None,
+        pin_target: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{
@@ -316,13 +317,13 @@ class SimulateElasticNetwork(AssetGeometryGroup):
             >> g.StoreNamedAttribute.edge.float(name="tmp_length", value=EdgeLength())
         )
         simulation_zone = g.SimulationZone()
-        geometry_1 = simulation_zone.items.geometry("Geometry", store_named_attribute)
+        geometry_1 = simulation_zone.items.geometry(store_named_attribute, "Geometry")
         math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
-            geometry_1.current, name="inverse_mass", value=Mass().o.mass / 0.5
+            geometry_1.current, name="inverse_mass", value=1.0 / Mass()
         )
         repeat_zone = g.RepeatZone(substeps)
-        geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
+        geometry_2 = repeat_zone.items.geometry(store_named_attribute_1, "Geometry")
         xpbd_init = XPBDInit(
             geometry=geometry_2.current,
             selection=boolean_math,

@@ -1,5 +1,5 @@
 # Node-group asset "Topology DSSP" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -158,13 +158,13 @@ class MN_topo_calc_helix(CustomGeometryGroup):
         backbone_nh = BackboneNH(menu="Read")
         capture = g.CaptureAttribute.point(geometry=ca_mesh)
         n_3_helix = capture.items.boolean(
-            "3-helix", HBondBackboneCheck(**{"NH Offset": 3}).o.is_bonded
+            HBondBackboneCheck(**{"NH Offset": 3}).o.is_bonded, "3-helix"
         )
         n_4_helix = capture.items.boolean(
-            "4-helix", HBondBackboneCheck(**{"NH Offset": 4}).o.is_bonded
+            HBondBackboneCheck(**{"NH Offset": 4}).o.is_bonded, "4-helix"
         )
         n_5_helix = capture.items.boolean(
-            "5-helix", HBondBackboneCheck(**{"NH Offset": 6}).o.is_bonded
+            HBondBackboneCheck(**{"NH Offset": 6}).o.is_bonded, "5-helix"
         )
         with g.Frame():
             boolean_math = n_4_helix.output & OffsetBoolean(
@@ -218,11 +218,10 @@ class MN_topo_calc_helix(CustomGeometryGroup):
             )
         offset_index = OffsetIndex(offset=4)
         _offset_vector = OffsetVector(vector=backbone_nh, index=offset_index)
-        sample_index = g.SampleIndex(
-            geometry=capture.o.geometry,
-            value=boolean_math_10 | boolean_math_3 | boolean_math_7,
-            index=g.Index(),
-            data_type="BOOLEAN",
+        sample_index = g.SampleIndex.point.boolean(
+            capture.o.geometry,
+            boolean_math_10 | boolean_math_3 | boolean_math_7,
+            g.Index(),
         )
         (
             VisualizeRelativeAtoms(
@@ -261,15 +260,15 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
                 >> g.SampleNearest.point(sample_position=backbone_nh)
             )
             capture = g.CaptureAttribute.point(geometry=ca_mesh)
-            o_nh = capture.items.integer("O -> NH", sample_nearest)
-            nh_o = capture.items.integer("NH -> O", sample_nearest_1)
+            o_nh = capture.items.integer(sample_nearest, "O -> NH")
+            nh_o = capture.items.integer(sample_nearest_1, "NH -> O")
         with g.Frame("Check if they are actually bonded to to the relevant atom"):
             capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
             co_nh = capture_1.items.boolean(
-                "CO:NH", CheckHBond(**{"NH Index": o_nh.output}, Distance=3).o.is_bonded
+                CheckHBond(**{"NH Index": o_nh.output}, Distance=3).o.is_bonded, "CO:NH"
             )
             nh_co = capture_1.items.boolean(
-                "NH:CO", CheckHBond(**{"CO Index": nh_o.output}, Distance=4).o.is_bonded
+                CheckHBond(**{"CO Index": nh_o.output}, Distance=4).o.is_bonded, "NH:CO"
             )
         with g.Frame("Debug arrows for HBonds"):
             value = g.Value(1.0)
@@ -303,10 +302,10 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
                 fill_size=2,
             )
         capture_2 = g.CaptureAttribute.point(geometry=capture_1.o.geometry)
-        boolean = capture_2.items.boolean("Boolean", boolean_run_fill)
+        boolean = capture_2.items.boolean(boolean_run_fill, "Boolean")
         (
             capture_2.o.geometry
-            >> g.SampleIndex(value=boolean.output, index=g.Index(), data_type="BOOLEAN")
+            >> g.SampleIndex.point.boolean(value=boolean.output, index=g.Index())
             >> is_sheet
         )
 
@@ -375,30 +374,29 @@ class TopologyDSSP(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_2 = closure_zone.inputs.geometry("Atoms")
         geometry = closure_zone.outputs.geometry("Geometry")
-        mn_topo_assign_backbone = MN_topo_assign_backbone(atoms=atoms_2)
+        mn_topo_assign_backbone = MN_topo_assign_backbone(atoms=atoms_2.output)
         capture = g.CaptureAttribute.point(geometry=mn_topo_assign_backbone.o.ca_atoms)
         is_sheet = capture.items.boolean(
-            "Is Sheet",
             MN_topo_calc_sheet(
                 **{"CA Mesh": mn_topo_assign_backbone.o.ca_atoms}
             ).o.is_sheet,
+            "Is Sheet",
         )
         is_helix = capture.items.boolean(
-            "Is Helix",
             MN_topo_calc_helix(
                 **{"CA Mesh": mn_topo_assign_backbone.o.ca_atoms}
             ).o.is_helix,
+            "Is Helix",
         )
         switch = BooleanRunTrim(
             boolean=g.BooleanMath.subtract(is_sheet.output, is_helix.output), size=3
         ).o.boolean.switch.integer(3, 2)
-        sample_index = capture.o.geometry >> g.SampleIndex(
+        sample_index = capture.o.geometry >> g.SampleIndex.point.integer(
             value=is_helix.output.switch.integer(switch, 1),
             index=mn_topo_assign_backbone.o.sample_index,
-            data_type="INT",
         )
         store_named_attribute = g.StoreNamedAttribute.point.integer(
-            atoms_2, IsAlphaCarbon().o.selection, "sec_struct", sample_index
+            atoms_2.output, IsAlphaCarbon().o.selection, "sec_struct", sample_index
         )
         store_named_attribute_1 = g.StoreNamedAttribute.point.integer(
             store_named_attribute,
@@ -407,7 +405,7 @@ class TopologyDSSP(AssetGeometryGroup):
                 MenuResidueMask(atom_name="CA").o.index
             ),
         )
-        store_named_attribute_1 >> geometry
+        store_named_attribute_1 >> geometry.input
         (
             EvaluateOnAtoms(
                 geometry=atoms, closure=closure_zone.closure, result="Bundle"

@@ -1,5 +1,5 @@
 # Node-group asset "Build Elastic Network" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -18,6 +18,7 @@ from nodebpy.types import InputBoolean, InputFloat, InputGeometry, InputMenu
 from ._shared.sample_atomic_attributes import SampleAtomicAttributes
 from .is_alpha_carbon import IsAlphaCarbon
 from .plexus import Plexus
+from .vdw_radii import VDWRadii
 
 
 class BuildElasticNetwork(AssetGeometryGroup):
@@ -138,28 +139,29 @@ class BuildElasticNetwork(AssetGeometryGroup):
         )
 
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
+        vdw_radii = VDWRadii()
         plexus = Plexus(
             points=g.SeparateGeometry.point(
                 separate_geometry.o.selection, IsAlphaCarbon().o.selection
             ).o.selection,
             distance=alpha_carbon,
-            radius=0.0,
+            radius=vdw_radii,
         )
         plexus_1 = Plexus(
             points=g.SeparateGeometry.point(separate_geometry.o.selection).o.selection,
             distance=all_atom,
-            radius=0.0,
+            radius=vdw_radii,
         )
-        merge_by_distance = g.MenuSwitch.geometry(
+        merge_points = g.MenuSwitch.geometry(
             menu,
             {
                 "Alpha Carbon": plexus,
                 "All Atom": g.JoinGeometry(geometry=(plexus, plexus_1)),
             },
-        ) >> g.MergeByDistance(distance=0.0001)
-        capture = g.CaptureAttribute.point(geometry=merge_by_distance)
+        ) >> g.MergePoints(merge_id=g.ClusterByDistance())
+        capture = g.CaptureAttribute.point(geometry=merge_points)
         index = capture.items.integer(
-            "Index", g.SampleNearest.point(separate_geometry.o.selection)
+            g.SampleNearest.point(separate_geometry.o.selection), "Index"
         )
         (
             SampleAtomicAttributes(

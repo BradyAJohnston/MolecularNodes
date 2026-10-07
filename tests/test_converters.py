@@ -64,7 +64,6 @@ def test_biotite_converter(code, format):
         ("is_backbone", 0),
         ("is_nucleic", 0),
         ("is_peptide", 0),
-        ("lipophobicity", 0),
         ("Color", 0),
         ("is_hetero", 0),
         ("is_side_chain", 0),

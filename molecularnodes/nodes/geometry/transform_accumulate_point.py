@@ -1,5 +1,5 @@
 # Node-group asset "Transform Accumulate Point" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -15,6 +15,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputInteger,
     InputMatrix,
@@ -35,7 +36,7 @@ class TransformAccumulatePoint(AssetGeometryGroup):
     accumulate : InputBoolean
         Include the transform in the final accumlation
     position : InputVector
-        Point to transform, defaults to `Position`
+        Point to transform, defaults to `Position`. When unconnected: The position from the context.
     transform : InputMatrix
         Transform field to accumulate
     group_id : InputInteger
@@ -99,7 +100,7 @@ class TransformAccumulatePoint(AssetGeometryGroup):
             "Point", "Edge", "Face", "Face Corner", "Spline", "Instance"
         ] = "Point",
         accumulate: InputBoolean = True,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         transform: InputMatrix = None,
         group_id: InputInteger = 0,
     ):

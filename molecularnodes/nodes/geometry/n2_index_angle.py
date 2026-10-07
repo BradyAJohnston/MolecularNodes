@@ -1,5 +1,5 @@
 # Node-group asset "2 Index Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger, InputVector
+from nodebpy.types import Default, InputInteger, InputVector
 from .vector_angle import VectorAngle
 
 
@@ -23,11 +23,11 @@ class Group2IndexAngle(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        The `Position` vectors to use for the angle calculation
+        The `Position` vectors to use for the angle calculation. When unconnected: The position from the context.
     index_a : InputInteger
         First end point for the angle calculation around the current point
     index_b : InputInteger
-        The `Index` for the middle point in the angle calculation, defaulting to the current point
+        The `Index` for the middle point in the angle calculation, defaulting to the current point. When unconnected: The index from the context.
     index_c : InputInteger
         Last end point for the angle calculation around the current point
 
@@ -77,9 +77,9 @@ class Group2IndexAngle(AssetGeometryGroup):
 
     def __init__(
         self,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         index_a: InputInteger = 0,
-        index_b: InputInteger = 0,
+        index_b: InputInteger = Default.INDEX,
         index_c: InputInteger = 2,
     ):
         super().__init__(

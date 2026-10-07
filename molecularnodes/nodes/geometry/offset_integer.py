@@ -1,5 +1,5 @@
 # Node-group asset "Offset Integer" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -10,7 +10,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 from .offset_index import OffsetIndex
 
 
@@ -23,7 +23,7 @@ class OffsetInteger(AssetGeometryGroup):
     integer : InputInteger
         The field to evaluate at the given `Index` + `Offset` on the point domain
     index : InputInteger
-        The `Index` at which to evaluate this offset from
+        The `Index` at which to evaluate this offset from. When unconnected: The index from the context.
     offset : InputInteger
         The offset to apply to the `Index` before evaluating the input field
 
@@ -70,7 +70,7 @@ class OffsetInteger(AssetGeometryGroup):
     def __init__(
         self,
         integer: InputInteger = 0,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(**{"Integer": integer, "Index": index, "Offset": offset})

@@ -1,5 +1,5 @@
 # Node-group asset "Group Parameter" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -35,10 +35,10 @@ class GroupParameter(AssetGeometryGroup):
         If the point is the first point in the `Group ID`
     o.is_last : BooleanSocket
         If the point is the last item in the `Group ID`
-    o.group_size : IntegerSocket
-        Group Size
     o.relative_index : IntegerSocket
         The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`
+    o.group_size : IntegerSocket
+        Group Size
     """
 
     _name = "Group Parameter"
@@ -55,10 +55,10 @@ class GroupParameter(AssetGeometryGroup):
         """If the point is the first point in the `Group ID`"""
         is_last: BooleanSocket
         """If the point is the last item in the `Group ID`"""
-        group_size: IntegerSocket
-        """Group Size"""
         relative_index: IntegerSocket
         """The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`"""
+        group_size: IntegerSocket
+        """Group Size"""
 
     if TYPE_CHECKING:
 
@@ -86,14 +86,14 @@ class GroupParameter(AssetGeometryGroup):
         is_last = tree.outputs.boolean(
             "Is Last", description="If the point is the last item in the `Group ID`"
         )
-        group_size = tree.outputs.integer("Group Size")
         relative_index = tree.outputs.integer(
             "Relative Index",
             description="The relative index  of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`",
         )
+        group_size = tree.outputs.integer("Group Size")
 
         accumulate_field = g.AccumulateField.point.integer(group_index=group_id)
-        ~accumulate_field.o.trailing >> is_first
+        boolean_math = g.BooleanMath.l_not(accumulate_field.o.trailing)
         (
             g.Compare.integer.equal(
                 accumulate_field.o.leading, accumulate_field.o.total
@@ -101,8 +101,9 @@ class GroupParameter(AssetGeometryGroup):
             >> is_last
         )
 
-        accumulate_field.o.total >> group_size
+        boolean_math >> is_first
         accumulate_field.o.trailing >> relative_index
+        accumulate_field.o.total >> group_size
 
 
 ASSET = GroupParameter

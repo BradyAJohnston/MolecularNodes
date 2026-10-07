@@ -1,5 +1,5 @@
 # Node-group asset "Visualize Relative Atoms" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -16,6 +16,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputFloat,
     InputGeometry,
@@ -39,11 +40,11 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
     scale : InputFloat
         Scale
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     target_index : InputInteger
         Index for the selected point to measure to
     target_position : InputVector
-        Target Position
+        Target Position. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -101,9 +102,9 @@ class VisualizeRelativeAtoms(AssetGeometryGroup):
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
         scale: InputFloat = 1.0,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         target_index: InputInteger = 100,
-        target_position: InputVector = None,
+        target_position: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{

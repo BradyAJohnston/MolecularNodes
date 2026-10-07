@@ -213,6 +213,9 @@ class Molecule(MolecularEntity):
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
     _entity_type: EntityType = EntityType.MOLECULE
+    # extra `mda.Universe()` arguments for subclasses whose files can't be
+    # recognised from their extension, used when restoring from a saved session
+    _universe_kwargs: dict = {}
 
     def __init__(
         self,
@@ -399,11 +402,15 @@ class Molecule(MolecularEntity):
             return np.zeros(len(self))
 
     def _compute_charge(self) -> np.ndarray:
-        # corresponds to Charges topology attr
-        if hasattr(self.atoms, "charges"):
-            return self.atoms.charges
-        else:
-            return np.zeros(len(self))
+        # corresponds to Charges topology attr. Only stored when the topology (or
+        # the file, carried across by the biotite converter) provides charges; an
+        # all-zero array carries no information. Skipped like any other missing
+        # topology attribute; no residue / atom-name lookup is done, that will
+        # return as a node instead (#1228).
+        charges = self.atoms.charges  # raises mda.NoDataError when absent
+        if not np.any(charges != 0):
+            raise mda.NoDataError("topology provides no charges")
+        return charges
 
     def _compute_res_id(self) -> np.ndarray:
         return self.atoms.resids
@@ -516,15 +523,6 @@ class Molecule(MolecularEntity):
         )
         return np.logical_and(np.logical_or(~backbone, is_alpha_carbon), is_polymer)
 
-    def _compute_lipophobicity(self) -> np.ndarray:
-        return np.array(
-            [
-                data.lipophobicity.get(res, {}).get(atom, 0)
-                for res, atom in zip(self.atoms.resnames, self.atoms.names)
-            ],
-            dtype=float,
-        )
-
     def _compute_color(self) -> np.ndarray:
         from ... import color
 
@@ -554,8 +552,16 @@ class Molecule(MolecularEntity):
         return self.atoms.entity_ids
 
     def _compute_sec_struct(self) -> np.ndarray:
-        # carried across from the structure file by the converter
-        return self.atoms.sec_structs
+        try:
+            # carried across from the structure file by the converter
+            return self.atoms.sec_structs
+        except (mda.NoDataError, AttributeError):
+            pass
+        # otherwise compute it once from the current frame so the cartoon has
+        # something to show, per-frame updates require enabling the DSSP module
+        if len(self.universe.select_atoms("protein")) == 0:
+            raise mda.NoDataError("No protein atoms to compute secondary structure")
+        return self.dssp.compute_frame()
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
@@ -601,7 +607,6 @@ class Molecule(MolecularEntity):
             "chain_id": self._compute_chain_id_int,
             "atom_types": self._compute_atom_type_int,
             "atom_name": self._compute_atom_name_int,
-            "lipophobicity": self._compute_lipophobicity,
             "Color": self._compute_color,
             "is_alpha_carbon": "name CA or name BB",
             "is_backbone": self._compute_is_backbone,
@@ -1302,7 +1307,7 @@ class Molecule(MolecularEntity):
         # module-level mapping used by every other entity is left untouched
         style_mapping = STYLE_NODE_MAPPING
         if isinstance(self, OXDNA):
-            style_mapping = {**STYLE_NODE_MAPPING, "ribbon": g.OxDNAStyleRibbon}
+            style_mapping = {**STYLE_NODE_MAPPING, "ribbon": g.OxDNAStyleClassic}
 
         if not style_is_callable and "sphere" not in kwargs:
             # spheres default to point clouds, which only Cycles can draw
@@ -1432,7 +1437,9 @@ class Molecule(MolecularEntity):
             frame = state.pop("_universe_frame", None)
             if topology and trajectory:
                 try:
-                    self.universe = mda.Universe(topology, trajectory)
+                    self.universe = mda.Universe(
+                        topology, trajectory, **self._universe_kwargs
+                    )
                     if frame is not None:
                         self.universe.trajectory[frame]
                 except Exception as e:

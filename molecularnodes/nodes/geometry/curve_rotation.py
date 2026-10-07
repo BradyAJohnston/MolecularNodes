@@ -1,5 +1,5 @@
 # Node-group asset "Curve Rotation" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputVector
+from nodebpy.types import Default, InputVector
 
 
 class CurveRotation(AssetGeometryGroup):
@@ -22,7 +22,7 @@ class CurveRotation(AssetGeometryGroup):
     Parameters
     ----------
     normal : InputVector
-        The default direction to use as the Secondary Axis / X axis when computing the rotation
+        The default direction to use as the Secondary Axis / X axis when computing the rotation. When unconnected: The geometry's normal direction.
 
     Inputs
     ------
@@ -61,7 +61,7 @@ class CurveRotation(AssetGeometryGroup):
 
     def __init__(
         self,
-        normal: InputVector = None,
+        normal: InputVector = Default.NORMAL,
     ):
         super().__init__(**{"Normal": normal})
 

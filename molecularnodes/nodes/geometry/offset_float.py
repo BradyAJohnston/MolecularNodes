@@ -1,5 +1,5 @@
 # Node-group asset "Offset Float" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -11,7 +11,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputInteger
+from nodebpy.types import Default, InputFloat, InputInteger
 from .offset_index import OffsetIndex
 
 
@@ -24,7 +24,7 @@ class OffsetFloat(AssetGeometryGroup):
     value : InputFloat
         The field to evaluate at the given `Index` + `Offset` on the point domain
     index : InputInteger
-        The `Index` at which to evaluate this offset from
+        The `Index` at which to evaluate this offset from. When unconnected: The index from the context.
     offset : InputInteger
         The offset to apply to the `Index` before evaluating the input field
 
@@ -71,7 +71,7 @@ class OffsetFloat(AssetGeometryGroup):
     def __init__(
         self,
         value: InputFloat = 0.0,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(**{"Value": value, "Index": index, "Offset": offset})
@@ -94,7 +94,6 @@ class OffsetFloat(AssetGeometryGroup):
             "Offset",
             0,
             description="The offset to apply to the `Index` before evaluating the input field",
-            min_value=-2147483647,
         )
         value_1 = tree.outputs.float(
             "Value", description="The field evaluated at the offset `Index` value"

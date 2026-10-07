@@ -1,5 +1,5 @@
 # Node-group asset "oxDNA Realize Vectors" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -22,17 +22,17 @@ class OxDNARealizeVectors(AssetGeometryGroup):
     Parameters
     ----------
     atoms : InputGeometry
-        Geometry to duplicate elements of
+        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
 
     Inputs
     ------
     i.atoms : GeometrySocket
-        Geometry to duplicate elements of
+        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
 
     Outputs
     -------
     o.geometry : GeometrySocket
-        Geometry
+        Original geometry with added edges pointing along the base and normal vectors
     """
 
     _name = "oxDNA Realize Vectors"
@@ -42,11 +42,11 @@ class OxDNARealizeVectors(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Geometry to duplicate elements of"""
+        """Vertices and edges representing nucleotides and phosphodiester bonds, respectively"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Original geometry with added edges pointing along the base and normal vectors"""
 
     if TYPE_CHECKING:
 
@@ -63,16 +63,20 @@ class OxDNARealizeVectors(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
-            "Atoms", description="Geometry to duplicate elements of"
+            "Atoms",
+            description="Vertices and edges representing nucleotides and phosphodiester bonds, respectively",
         )
-        geometry = tree.outputs.geometry("Geometry")
+        geometry = tree.outputs.geometry(
+            "Geometry",
+            description="Original geometry with added edges pointing along the base and normal vectors",
+        )
 
         value = g.Value(0.15)
         oxdna_vectors = OxDNAVectors()
         for_each = g.ForEachGeometryElementZone(geometry=atoms)
-        position = for_each.inputs.vector("Position", g.Position())
-        base_vector = for_each.inputs.vector("base_vector", oxdna_vectors.o.base_vector)
-        base_normal = for_each.inputs.vector("base_normal", oxdna_vectors.o.base_normal)
+        position = for_each.items.vector(g.Position(), "Position")
+        base_vector = for_each.items.vector(oxdna_vectors.o.base_vector, "base_vector")
+        base_normal = for_each.items.vector(oxdna_vectors.o.base_normal, "base_normal")
         with g.Frame("Create edges pointing along base and normal vectors"):
             mesh_line = g.MeshLine.end_points(
                 2, position.output, position.output + base_vector.output * value
@@ -130,7 +134,7 @@ class OxDNARealizeVectors(AssetGeometryGroup):
             g.JoinGeometry(
                 geometry=(for_each.generation.output, store_named_attribute_4)
             )
-            >> g.MergeByDistance(distance=0.001)
+            >> g.MergeByDistance()
             >> geometry
         )
 
@@ -138,5 +142,6 @@ class OxDNARealizeVectors(AssetGeometryGroup):
 ASSET = OxDNARealizeVectors
 
 ASSET_METADATA = {
+    "description": "Adds edges to the original geometry which point along the base and normal vectors. This provides a way for oxDNA vectors to be transformed (e.g. with armatures), as these edges can be converted back into vector data using the `oxDNA Recover Vectors` node.",
     "catalog_id": "0094c3e0-7885-427b-81b4-187a84dcff18",
 }

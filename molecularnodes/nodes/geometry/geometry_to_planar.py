@@ -1,5 +1,5 @@
-# Node-group asset "Evluate While Planar" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Node-group asset "Geometry to Planar" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -8,45 +8,43 @@ from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
-    ClosureSocket,
     GeometrySocket,
+    MatrixSocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputBoolean, InputClosure, InputGeometry
-from .geoemtry_to_planar import GeoemtryToPlanar
+from nodebpy.types import InputBoolean, InputGeometry
+from ._shared.geometry_principal_components import GeometryPrincipalComponents
 
 
-class EvluateWhilePlanar(AssetGeometryGroup):
+class GeometryToPlanar(AssetGeometryGroup):
     """
-    Evluate While Planar
+    Geometry to Planar
 
     Parameters
     ----------
     geometry : InputGeometry
         Geometry to transform
     selection : InputBoolean
-        The parts of the geometry that contibute to the planar calculation
-    closure : InputClosure
-        Closure
+        The parts of the geometry that contribute to the planar calculation
 
     Inputs
     ------
     i.geometry : GeometrySocket
         Geometry to transform
     i.selection : BooleanSocket
-        The parts of the geometry that contibute to the planar calculation
-    i.closure : ClosureSocket
-        Closure
+        The parts of the geometry that contribute to the planar calculation
 
     Outputs
     -------
     o.geometry : GeometrySocket
         Geometry
+    o.transform : MatrixSocket
+        Transform
     """
 
-    _name = "Evluate While Planar"
-    _asset_name = "Evluate While Planar"
+    _name = "Geometry to Planar"
+    _asset_name = "Geometry to Planar"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "GEOMETRY"
 
@@ -54,13 +52,13 @@ class EvluateWhilePlanar(AssetGeometryGroup):
         geometry: GeometrySocket
         """Geometry to transform"""
         selection: BooleanSocket
-        """The parts of the geometry that contibute to the planar calculation"""
-        closure: ClosureSocket
-        """Closure"""
+        """The parts of the geometry that contribute to the planar calculation"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
         """Geometry"""
+        transform: MatrixSocket
+        """Transform"""
 
     if TYPE_CHECKING:
 
@@ -73,37 +71,38 @@ class EvluateWhilePlanar(AssetGeometryGroup):
         self,
         geometry: InputGeometry = None,
         selection: InputBoolean = True,
-        closure: InputClosure = None,
     ):
-        super().__init__(
-            **{"Geometry": geometry, "Selection": selection, "Closure": closure}
-        )
+        super().__init__(**{"Geometry": geometry, "Selection": selection})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         geometry = tree.inputs.geometry("Geometry", description="Geometry to transform")
         selection = tree.inputs.boolean(
             "Selection",
             True,
-            description="The parts of the geometry that contibute to the planar calculation",
+            description="The parts of the geometry that contribute to the planar calculation",
             hide_value=True,
         )
-        closure = tree.inputs.closure("Closure")
         geometry_1 = tree.outputs.geometry("Geometry")
+        transform = tree.outputs.matrix("Transform")
 
-        geoemtry_to_planar = GeoemtryToPlanar(geometry=geometry, selection=selection)
-        evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry("Geometry", geoemtry_to_planar.o.geometry)
-        geometry_2 = evaluate_closure.outputs.geometry("Geometry")
-        (
-            geometry_2
-            >> g.TransformGeometry(
-                transform=geoemtry_to_planar.o.transform.invert(), mode="Matrix"
+        geometry_principal_components = GeometryPrincipalComponents(
+            geometry=g.SeparateGeometry.point(geometry, selection).o.selection
+        )
+        with g.Frame("Transform to Planar"):
+            combine_transform = g.CombineTransform(
+                translation=geometry_principal_components.o.group_center * -1.0,
+                rotation=geometry_principal_components.o.rotation.invert(),
             )
+        (
+            geometry
+            >> g.TransformGeometry(transform=combine_transform, mode="Matrix")
             >> geometry_1
         )
 
+        combine_transform >> transform
 
-ASSET = EvluateWhilePlanar
+
+ASSET = GeometryToPlanar
 
 ASSET_METADATA = {
     "catalog_id": "a1e4128a-131f-4e0e-b54e-81f863aba707",

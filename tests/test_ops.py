@@ -6,7 +6,7 @@ import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
 from .constants import codes, data_dir
-from .utils import NumpySnapshotExtension
+from .utils import NumpySnapshotExtension, sphere_value
 
 
 @pytest.mark.parametrize("code", codes)
@@ -288,3 +288,84 @@ def test_op_fetch_comma_separated_codes():
     mols = [session.match(obj) for obj in objects]
     trees = [mol.modifier_node_tree for mol in mols]
     assert trees[0] != trees[1]
+
+
+def test_op_import_spheres_stay_points_under_eevee():
+    """GUI imports keep spheres as a point cloud whatever the engine (#1220).
+
+    The API swaps to instanced spheres under EEVEE so renders look right, but
+    an import from the dialog has to stay interactive on large systems, so it
+    keeps the point cloud regardless.
+    """
+    scene = bpy.context.scene
+    engine = scene.render.engine
+    scene.render.engine = "BLENDER_EEVEE"
+    try:
+        with ObjectTracker() as o:
+            bpy.ops.mn.import_molecule(
+                code=codes[0],
+                file_format="cif",
+                style="spheres",
+                cache_dir=str(data_dir),
+            )
+            imported = scene.MNSession.match(o.latest())
+        assert sphere_value(imported) == "Point"
+
+        api = mn.Molecule.fetch(codes[0], cache=data_dir).add_style("spheres")
+        assert sphere_value(api) == "Instance"
+    finally:
+        scene.render.engine = engine
+
+
+@pytest.mark.parametrize(
+    "op, kwargs, message",
+    [
+        ("import_molecule", {"method": "local"}, "Structure file path is empty"),
+        (
+            "import_molecule",
+            {"method": "local", "filepath": "/nonexistent/file.pdb"},
+            "Structure file not found",
+        ),
+        (
+            "import_molecule",
+            {
+                "method": "local",
+                "filepath": str(data_dir / "md_ppr/box.gro"),
+                "trajectory": "/nonexistent/traj.xtc",
+            },
+            "Trajectory file not found",
+        ),
+        (
+            "import_oxdna",
+            {"topology": str(data_dir / "oxdna/linear.top")},
+            "Trajectory file path is empty",
+        ),
+        (
+            "import_oxdna",
+            {
+                "topology": str(data_dir / "oxdna/linear_traj.dat"),
+                "trajectory": str(data_dir / "oxdna/linear_traj.dat"),
+            },
+            "does not look like an oxDNA topology file",
+        ),
+        (
+            "import_oxdna",
+            {
+                "topology": str(data_dir / "oxdna/linear.top"),
+                "trajectory": str(data_dir / "oxdna/linear.top"),
+            },
+            "No frames found",
+        ),
+        ("import_density", {}, "Map file path is empty"),
+        (
+            "import_ensemble",
+            {"filepath": "/nonexistent/file.star"},
+            "Ensemble file not found",
+        ),
+    ],
+)
+def test_op_import_bad_paths_report_errors(op, kwargs, message):
+    """Bad file paths are reported by the operator rather than raising a traceback
+    from deep inside a file reader."""
+    with pytest.raises(RuntimeError, match=message):
+        getattr(bpy.ops.mn, op)(**kwargs)

@@ -1,5 +1,5 @@
 # Node-group asset "Simulate on Faces" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -17,6 +17,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import (
+    Default,
     InputBoolean,
     InputFloat,
     InputGeometry,
@@ -95,7 +96,7 @@ class SimulateOnFaces(AssetGeometryGroup):
     pin_selection : InputBoolean
         Pin Selection
     pin_target : InputVector
-        Pin Target
+        Pin Target. When unconnected: The position from the context.
 
     Inputs
     ------
@@ -198,7 +199,7 @@ class SimulateOnFaces(AssetGeometryGroup):
         hook_target: InputVector = None,
         hook_decay: InputFloat = 2.0,
         pin_selection: InputBoolean = False,
-        pin_target: InputVector = None,
+        pin_target: InputVector = Default.POSITION,
     ):
         super().__init__(
             **{
@@ -273,13 +274,13 @@ class SimulateOnFaces(AssetGeometryGroup):
             points, ~g.NamedAttribute.float("mass").o.exists, "mass", 1.0
         )
         simulation_zone = g.SimulationZone()
-        geometry_1 = simulation_zone.items.geometry("Geometry", store_named_attribute)
+        geometry_1 = simulation_zone.items.geometry(store_named_attribute, "Geometry")
         math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
             geometry_1.current, name="inverse_mass", value=1.0 / Mass()
         )
         repeat_zone = g.RepeatZone(substeps)
-        geometry_2 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
+        geometry_2 = repeat_zone.items.geometry(store_named_attribute_1, "Geometry")
         xpbd_init = XPBDInit(
             geometry=geometry_2.current,
             selection=boolean_math,
@@ -310,7 +311,7 @@ class SimulateOnFaces(AssetGeometryGroup):
         geometry_2.result >> geometry_1.next
         capture = g.CaptureAttribute.point(geometry=geometry_1.result)
         normal_1 = capture.items.vector(
-            "Normal", g.SampleNearestSurface.vector(faces, g.Normal().o.normal).o.value
+            g.SampleNearestSurface.vector(faces, g.Normal().o.normal).o.value, "Normal"
         )
 
         capture.o.geometry >> geometry

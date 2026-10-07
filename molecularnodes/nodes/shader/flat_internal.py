@@ -1,5 +1,5 @@
 # Node-group asset "Flat Internal" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import ShaderNodeTree
@@ -92,11 +92,10 @@ class FlatInternal(AssetShaderGroup):
         emission = tree.outputs.shader("Emission")
 
         mn_color = MNColor()
-        mix = g.Mix(
-            factor_float=OutlineMask(threshold=threshold, thickness=thickness),
-            a_color=mn_color.o.color,
-            b_color=(0.0, 0.0, 0.0, 1.0),
-            data_type="RGBA",
+        mix = g.Mix.color(
+            OutlineMask(threshold=threshold, thickness=thickness),
+            mn_color.o.color,
+            (0.0, 0.0, 0.0, 1.0),
             clamp_factor=True,
         )
         emission_1 = s.Emission(
@@ -111,3 +110,7 @@ class FlatInternal(AssetShaderGroup):
 
 
 ASSET = FlatInternal
+
+ASSET_METADATA = {
+    "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",
+}

@@ -257,6 +257,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.SymmetryID
         children: embedded
+      - name: nodes.shader.AmbientOcclusionInternal
+        children: embedded
       - name: nodes.shader.ColorAO
         children: embedded
       - name: nodes.shader.FlatInternal
@@ -279,6 +281,10 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.AnimateWiggle
         children: embedded
+      - name: nodes.geometry.EaseValue
+        children: embedded
+      - name: nodes.geometry.StaggerValue
+        children: embedded
     - kind: page
       path: nodes.attributes
       summary:
@@ -295,6 +301,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ChainID
         children: embedded
+      - name: nodes.geometry.Charge
+        children: embedded
       - name: nodes.geometry.Color
         children: embedded
       - name: nodes.geometry.EntityID
@@ -308,6 +316,8 @@ quartodoc:
       - name: nodes.geometry.ResidueName
         children: embedded
       - name: nodes.geometry.SecondaryStructure
+        children: embedded
+      - name: nodes.geometry.SegmentID
         children: embedded
       - name: nodes.geometry.UResID
         children: embedded
@@ -330,6 +340,8 @@ quartodoc:
       - name: nodes.geometry.ColorElement
         children: embedded
       - name: nodes.geometry.ColorGoodsell
+        children: embedded
+      - name: nodes.geometry.ColorMatplotlib
         children: embedded
       - name: nodes.geometry.ColorMixIntermediate
         children: embedded
@@ -391,7 +403,7 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.OxDNARecoverVectors
         children: embedded
-      - name: nodes.geometry.OxDNAStyleRibbon
+      - name: nodes.geometry.OxDNAStyleClassic
         children: embedded
       - name: nodes.geometry.OxDNAVectors
         children: embedded
@@ -457,11 +469,13 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.EvaluateOrderedBundles
         children: embedded
-      - name: nodes.geometry.EvluateWhilePlanar
+      - name: nodes.geometry.EvaluateWhilePlanar
+        children: embedded
+      - name: nodes.geometry.FadeGeometry
         children: embedded
       - name: nodes.geometry.FallbackGeometry
         children: embedded
-      - name: nodes.geometry.GeoemtryToPlanar
+      - name: nodes.geometry.GeometryToPlanar
         children: embedded
       - name: nodes.geometry.LagGeometry
         children: embedded
