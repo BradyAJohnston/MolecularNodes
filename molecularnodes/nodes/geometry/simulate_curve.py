@@ -1,5 +1,5 @@
 # Node-group asset "Simulate Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -60,10 +60,10 @@ class XPBDSolveCurve(CustomGeometryGroup):
         inverse_mass = InverseMass()
         separate_components = g.SeparateComponents(geometry=geometry)
         repeat_zone = g.RepeatZone(points)
-        geometry_2 = repeat_zone.items.geometry("Geometry", separate_components.o.curve)
+        geometry_2 = repeat_zone.items.geometry(separate_components.o.curve, "Geometry")
         integer_math = repeat_zone.iteration + 1
         repeat_zone_1 = g.RepeatZone(2)
-        geometry_3 = repeat_zone_1.items.geometry("Geometry", geometry_2.current)
+        geometry_3 = repeat_zone_1.items.geometry(geometry_2.current, "Geometry")
         index_switch = g.IndexSwitch.boolean(
             repeat_zone_1.iteration,
             (
@@ -132,10 +132,10 @@ class XPBDSolvePointsForCurve(CustomGeometryGroup):
             + g.RandomValue.vector((-1.0, -1.0, -1.0), (1.0, 1.0, 1.0)).o.value * 0.001
         )
         capture = g.CaptureAttribute.point(geometry=geometry)
-        vector = capture.items.vector("Vector", vector_math)
+        vector = capture.items.vector(vector_math, "Vector")
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
         index = capture_1.items.integer(
-            "Index", g.IndexOfNearest(position=vector.output).o.index
+            g.IndexOfNearest(position=vector.output).o.index, "Index"
         )
         math_1 = radius.point.at(index.output) + radius
         constraint_distance = ConstraintDistance(
@@ -419,13 +419,13 @@ class SimulateCurve(AssetGeometryGroup):
             1.0,
         )
         simulation_zone = g.SimulationZone()
-        geometry_2 = simulation_zone.items.geometry("Geometry", store_named_attribute)
+        geometry_2 = simulation_zone.items.geometry(store_named_attribute, "Geometry")
         math_1 = simulation_zone.delta_time / substeps
         store_named_attribute_1 = g.StoreNamedAttribute.point.float(
             geometry_2.current, name="inverse_mass", value=1.0 / Mass()
         )
         repeat_zone = g.RepeatZone(substeps)
-        geometry_3 = repeat_zone.items.geometry("Geometry", store_named_attribute_1)
+        geometry_3 = repeat_zone.items.geometry(store_named_attribute_1, "Geometry")
         xpbd_init = XPBDInit(
             geometry=geometry_3.current,
             selection=boolean_math,

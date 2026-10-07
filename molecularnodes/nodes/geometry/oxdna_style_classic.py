@@ -1,5 +1,5 @@
 # Node-group asset "oxDNA Style Classic" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -492,7 +492,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
-                ChainID().o.chain_id.modulo(4), (strand_1, strand_2, strand_3, strand_4)
+                g.IntegerMath.modulo(ChainID(), 4),
+                (strand_1, strand_2, strand_3, strand_4),
             )
             menu_switch = g.MenuSwitch.color(
                 strand_colors,

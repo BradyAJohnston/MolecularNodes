@@ -1,5 +1,5 @@
 # Node-group asset "Animate Peptide to Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
@@ -44,7 +44,7 @@ class MN_utils_curve_resample(CustomGeometryGroup):
                 curve=geometry, length=length, mode="Length", count=18
             )
         )
-        value = capture.items.integer("Value", g.Index())
+        value = capture.items.integer(g.Index(), "Value")
         accumulate_field = length.point.trailing(value.output)
         switch = g.Compare.float.equal(offset, 0.0, 0.001).o.result.switch.float(
             (accumulate_field + offset).wrap(0.0, g.SplineLength().o.length),

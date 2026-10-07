@@ -1,5 +1,5 @@
 # Node group ".Sample Atomic Attributes to Face Corner" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -83,7 +83,7 @@ class SampleAtomicAttributesToFaceCorner(CustomGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
 
         repeat_zone = g.RepeatZone(9)
-        geometry_2 = repeat_zone.items.geometry("Geometry", geometry)
+        geometry_2 = repeat_zone.items.geometry(geometry, "Geometry")
         index_switch = g.IndexSwitch.string(
             repeat_zone.iteration,
             (
@@ -106,7 +106,7 @@ class SampleAtomicAttributesToFaceCorner(CustomGeometryGroup):
         )
         store_named_attribute >> geometry_2.next
         repeat_zone_1 = g.RepeatZone(3)
-        geometry_3 = repeat_zone_1.items.geometry("Geometry", geometry_2.result)
+        geometry_3 = repeat_zone_1.items.geometry(geometry_2.result, "Geometry")
         index_switch_1 = g.IndexSwitch.string(
             repeat_zone_1.iteration, ("vdw_radii", "mass", "b_factor")
         )
@@ -118,7 +118,7 @@ class SampleAtomicAttributesToFaceCorner(CustomGeometryGroup):
         )
         store_named_attribute_1 >> geometry_3.next
         repeat_zone_2 = g.RepeatZone(6)
-        geometry_4 = repeat_zone_2.items.geometry("Geometry", geometry_3.result)
+        geometry_4 = repeat_zone_2.items.geometry(geometry_3.result, "Geometry")
         index_switch_2 = g.IndexSwitch.string(
             repeat_zone_2.iteration,
             (

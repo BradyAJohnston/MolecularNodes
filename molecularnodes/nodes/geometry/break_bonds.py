@@ -1,5 +1,5 @@
 # Node-group asset "Break Bonds" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -107,10 +107,10 @@ class BreakBonds(AssetGeometryGroup):
         compare = edge_vertices.o.position_1.distance(
             edge_vertices.o.position_2
         ) > AngstromToWorld(angstrom=cutoff)
-        delete_geometry = atoms_2 >> g.DeleteGeometry.only_edges_faces(
+        delete_geometry = atoms_2.output >> g.DeleteGeometry.only_edges_faces(
             selection=selection | compare, domain="EDGE"
         )
-        delete_geometry >> geometry
+        delete_geometry >> geometry.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> atoms_1
 
 

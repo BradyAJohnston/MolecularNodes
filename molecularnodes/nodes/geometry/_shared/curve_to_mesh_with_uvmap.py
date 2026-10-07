@@ -1,5 +1,5 @@
 # Node group "Curve to Mesh with UVMap" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -115,12 +115,12 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         capture = g.CaptureAttribute.point(
             geometry=g.CurveCircle(resolution=profile_resolution)
         )
-        factor = capture.items.float("Factor", g.SplineParameter().o.factor)
-        index = capture.items.integer("Index", g.SplineParameter().o.index)
+        factor = capture.items.float(g.SplineParameter().o.factor, "Factor")
+        index = capture.items.integer(g.SplineParameter().o.index, "Index")
         capture_1 = g.CaptureAttribute.point(geometry=curve)
-        factor_1 = capture_1.items.float("Factor", index_switch)
-        index_1 = capture_1.items.integer("Index", g.SplineParameter().o.index)
-        length = capture_1.items.float("Length", g.SplineLength().o.length)
+        factor_1 = capture_1.items.float(index_switch, "Factor")
+        index_1 = capture_1.items.integer(g.SplineParameter().o.index, "Index")
+        length = capture_1.items.float(g.SplineLength().o.length, "Length")
         switch = CheckEndFaceCorner(
             captured_index=index.output
         ).o.is_end_face_corner.switch.float(factor.output, 1.0)

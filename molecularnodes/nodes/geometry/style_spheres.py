@@ -1,5 +1,5 @@
 # Node-group asset "Style Spheres" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -181,7 +181,7 @@ class StyleSpheres(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         mn_utils_style_spheres_icosphere = MN_utils_style_spheres_icosphere(
-            atoms=atoms_1,
+            atoms=atoms_1.output,
             selection=selection,
             scale=scale,
             subdivisions=quality,
@@ -189,7 +189,7 @@ class StyleSpheres(AssetGeometryGroup):
             material=material,
         )
         mn_utils_style_spheres_points = MN_utils_style_spheres_points(
-            atoms=atoms_1, selection=selection, scale=scale, material=material
+            atoms=atoms_1.output, selection=selection, scale=scale, material=material
         )
         realize_instances = g.RealizeInstances(
             geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True
@@ -202,7 +202,7 @@ class StyleSpheres(AssetGeometryGroup):
                 "Mesh": realize_instances,
             },
         )
-        menu_switch >> geometry_1
+        menu_switch >> geometry_1.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
         sphere.default_value = "Point"

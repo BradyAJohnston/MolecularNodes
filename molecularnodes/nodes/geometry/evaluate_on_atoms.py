@@ -1,5 +1,5 @@
 # Node-group asset "Evaluate on Atoms" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -121,32 +121,36 @@ class EvaluateOnAtoms(AssetGeometryGroup):
             )
             evaluate_closure = g.EvaluateClosure(closure)
             evaluate_closure.inputs.geometry(
-                "Atoms",
                 (
                     MN_ensure_ures_id(input=check_geometry)
                     >> g.SeparateGeometry.point(selection=selection)
                 ).o.selection,
+                "Atoms",
             )
             geometry_2 = evaluate_closure.outputs.geometry("Geometry")
         menu_switch = g.MenuSwitch.integer(result, {"Geometry": 0, "Bundle": 1})
-        store_bundle_item = g.StoreBundleItem.geometry(
-            get_geometry_atoms.o.bundle,
-            "MN/Atoms",
-            g.IndexSwitch.geometry(
-                menu_switch.o.output, (get_geometry_atoms.o.atoms, geometry_2)
-            ),
+        index_switch = g.IndexSwitch.geometry(
+            menu_switch.o.output, (get_geometry_atoms.o.atoms, geometry_2.output)
         )
-        index_switch = g.IndexSwitch.bundle(
-            menu_switch.o.output, (get_geometry_atoms.o.bundle, store_bundle_item, None)
+        index_switch_1 = g.IndexSwitch.bundle(
+            menu_switch.o.output,
+            (
+                get_geometry_atoms.o.bundle,
+                g.StoreBundleItem.geometry(
+                    get_geometry_atoms.o.bundle, "MN/Atoms", index_switch
+                ),
+                None,
+            ),
         )
         (
             g.JoinGeometry(
                 geometry=(
                     get_geometry_atoms.o.geometry,
-                    g.IndexSwitch.geometry(menu_switch.o.output, (geometry_2, None)),
+                    g.IndexSwitch.geometry(
+                        menu_switch.o.output, (geometry_2.output, None)
+                    ),
                 )
-            )
-            >> g.SetGeometryBundle(bundle=index_switch)
+            ).o.geometry.set_bundle(index_switch_1)
             >> geometry_1
         )
         _string = g.String(

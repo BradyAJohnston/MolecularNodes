@@ -1,5 +1,5 @@
 # Node-group asset "Evaluate Per Group" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -110,16 +110,16 @@ class EvaluatePerGroup(AssetGeometryGroup):
             menu_switch = g.MenuSwitch.integer(
                 group, {"chain_id": ChainID(), "Group ID": group_id}
             )
-            separate_geometry = g.SeparateGeometry.point(
-                geometry,
-                ~g.AccumulateField.point.integer(
+            boolean_math = g.BooleanMath.l_not(
+                g.AccumulateField.point.integer(
                     group_index=menu_switch.o.output
-                ).o.trailing,
+                ).o.trailing
             )
+            separate_geometry = g.SeparateGeometry.point(geometry, boolean_math)
             domain_size = g.DomainSize(geometry=separate_geometry.o.selection)
         repeat_zone = g.RepeatZone(domain_size.o.point_count)
-        geometry_2 = repeat_zone.items.geometry("Geometry")
-        instances_1 = repeat_zone.items.geometry("Instances")
+        geometry_2 = repeat_zone.items.geometry(name="Geometry")
+        instances_1 = repeat_zone.items.geometry(name="Instances")
         sample_index = g.SampleIndex.point.integer(
             separate_geometry.o.selection, menu_switch.o.output, repeat_zone.iteration
         )
@@ -127,11 +127,14 @@ class EvaluatePerGroup(AssetGeometryGroup):
             geometry, g.Compare.integer.equal(sample_index, menu_switch.o.output)
         )
         evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry("Geometry", separate_geometry_1.o.selection)
-        evaluate_closure.inputs.integer("group_id", sample_index)
+        evaluate_closure.inputs.geometry(separate_geometry_1.o.selection, "Geometry")
+        evaluate_closure.inputs.integer(sample_index, "group_id")
         geometry_3 = evaluate_closure.outputs.geometry("Geometry")
-        store_named_attribute = geometry_3 >> g.StoreNamedAttribute.point.integer(
-            name="group_id", value=repeat_zone.iteration
+        store_named_attribute = (
+            geometry_3.output
+            >> g.StoreNamedAttribute.point.integer(
+                name="group_id", value=repeat_zone.iteration
+            )
         )
         join_geometry = g.JoinGeometry(
             geometry=(instances_1.current, g.GeometryToInstance(store_named_attribute))

@@ -1,5 +1,5 @@
 # Node-group asset "Animate Trails" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -228,7 +228,7 @@ class AnimateTrails(AssetGeometryGroup):
             >> g.ReverseCurve()
         )
         capture = g.CaptureAttribute.point(geometry=reverse_curve)
-        factor = capture.items.float("Factor", g.SplineParameter().o.factor)
+        factor = capture.items.float(g.SplineParameter().o.factor, "Factor")
         menu_switch = g.MenuSwitch.geometry(
             trail_threshold,
             {

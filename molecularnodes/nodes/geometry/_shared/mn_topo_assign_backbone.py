@@ -1,5 +1,5 @@
 # Node group ".MN_topo_assign_backbone" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -83,10 +83,10 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
         with g.Frame("Compute only on backbone atoms, but capture their idx first"):
             is_alpha_carbon = IsAlphaCarbon()
             capture = g.CaptureAttribute.point(geometry=atoms)
-            selection = capture.items.boolean("Selection", is_alpha_carbon.o.selection)
+            selection = capture.items.boolean(is_alpha_carbon.o.selection, "Selection")
             index = capture.items.integer(
-                "Index",
                 g.AccumulateField.point.integer(is_alpha_carbon.o.selection).o.trailing,
+                "Index",
             )
             separate_geometry = g.SeparateGeometry.point(
                 capture.o.geometry, IsBackbone().o.selection
@@ -95,7 +95,7 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
             capture.o.geometry, index.output, g.Index()
         )
         repeat_zone = g.RepeatZone(4)
-        geometry = repeat_zone.items.geometry("Geometry", separate_geometry.o.selection)
+        geometry = repeat_zone.items.geometry(separate_geometry.o.selection, "Geometry")
         menu_residue_mask = MenuResidueMask(
             atom_name=g.IndexSwitch.menu(repeat_zone.iteration, ("N", "CA", "C", "O"))
         )
