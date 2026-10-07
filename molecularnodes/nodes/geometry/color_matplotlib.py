@@ -251,33 +251,42 @@ class ColorMatplotlib(AssetGeometryGroup):
         )
         category = tree.inputs.menu(
             "Category",
+            "Uniform",
             description="Group of colormaps, as in matplotlib's colormap reference",
         )
         uniform = tree.inputs.menu(
             "Uniform",
+            "viridis",
             description="Perceptually uniform sequential colormap, used when Category is Uniform",
         )
         sequential = tree.inputs.menu(
             "Sequential",
+            "Greys",
             description="Sequential colormap, used when Category is Sequential",
         )
         sequential_2 = tree.inputs.menu(
             "Sequential 2",
+            "binary",
             description="Sequential (2) colormap, used when Category is Sequential 2",
         )
         diverging = tree.inputs.menu(
             "Diverging",
+            "PiYG",
             description="Diverging colormap, used when Category is Diverging",
         )
         cyclic = tree.inputs.menu(
-            "Cyclic", description="Cyclic colormap, used when Category is Cyclic"
+            "Cyclic",
+            "twilight",
+            description="Cyclic colormap, used when Category is Cyclic",
         )
         qualitative = tree.inputs.menu(
             "Qualitative",
+            "Pastel1",
             description="Qualitative colormap, used when Category is Qualitative",
         )
         miscellaneous = tree.inputs.menu(
             "Miscellaneous",
+            "ocean",
             description="Miscellaneous colormap, used when Category is Miscellaneous",
         )
         color = tree.outputs.color(
@@ -2758,15 +2767,6 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
             >> color
         )
-
-        category.default_value = "Uniform"
-        uniform.default_value = "viridis"
-        sequential.default_value = "Greys"
-        sequential_2.default_value = "binary"
-        diverging.default_value = "PiYG"
-        cyclic.default_value = "twilight"
-        qualitative.default_value = "Pastel1"
-        miscellaneous.default_value = "ocean"
 
 
 ASSET = ColorMatplotlib

@@ -126,7 +126,7 @@ class CurveOffsetDot(AssetGeometryGroup):
         offset = tree.inputs.integer("Offset", -1)
         with tree.inputs.panel("Threshold"):
             threshold_direction = tree.inputs.menu(
-                "Threshold Direction", optional_label=True
+                "Threshold Direction", "Less Than", optional_label=True
             )
             threshold_cutoff = tree.inputs.float(
                 "Threshold Cutoff", -0.9, min_value=-10_000.0, max_value=10_000.0
@@ -158,8 +158,6 @@ class CurveOffsetDot(AssetGeometryGroup):
         menu_switch >> thresholded
         accumulate_field.o.trailing >> leading
         axis_angle_to_rotation >> rotation
-
-        threshold_direction.default_value = "Less Than"
 
 
 ASSET = CurveOffsetDot

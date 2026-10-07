@@ -144,7 +144,7 @@ class EnsembleInstance(AssetGeometryGroup):
             hide_value=True,
         )
         selection_type = tree.inputs.menu(
-            "Selection Type", expanded=True, optional_label=True
+            "Selection Type", "Simple", expanded=True, optional_label=True
         )
         instances = tree.inputs.collection("Instances", optional_label=True)
         fraction = tree.inputs.float(
@@ -197,8 +197,6 @@ class EnsembleInstance(AssetGeometryGroup):
             )
             >> instances_1
         )
-
-        selection_type.default_value = "Simple"
 
 
 ASSET = EnsembleInstance

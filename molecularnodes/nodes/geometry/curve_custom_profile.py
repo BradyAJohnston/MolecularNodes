@@ -172,13 +172,15 @@ class CurveCustomProfile(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
         subdivisions = tree.inputs.integer("Subdivisions", 6, min_value=1)
-        profile_type = tree.inputs.menu("Profile Type", optional_label=True)
+        profile_type = tree.inputs.menu(
+            "Profile Type", "Custom Profile", optional_label=True
+        )
         uv_map = tree.inputs.boolean(
             "UV Map",
             False,
             description="Compute and store the `uv_map` attribute on the `Face Corner` domain of the final mesh",
         )
-        u_component = tree.inputs.menu("U Component", optional_label=True)
+        u_component = tree.inputs.menu("U Component", "Factor", optional_label=True)
         with tree.inputs.panel("Profile", default_closed=True):
             profile_rotation = tree.inputs.rotation("Profile Rotation", (0.0, 0.0, 0.0))
             profile_scale = tree.inputs.vector(
@@ -268,9 +270,6 @@ class CurveCustomProfile(AssetGeometryGroup):
             )
             >> geometry
         )
-
-        profile_type.default_value = "Custom Profile"
-        u_component.default_value = "Factor"
 
 
 ASSET = CurveCustomProfile

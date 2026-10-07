@@ -95,12 +95,14 @@ class AmbientOcclusionInternal(AssetShaderGroup):
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         menu = tree.inputs.menu(
             "Menu",
+            "AO",
             description="Shade with ambient occlusion (`AO`) or with the plain color (`None`)",
             expanded=True,
             optional_label=True,
         )
         ao_space = tree.inputs.menu(
             "AO Space",
+            "Global",
             description="Look in local geometry or world space for AO calculations",
             expanded=True,
             optional_label=True,
@@ -139,9 +141,6 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         )
 
         mix_shader >> shader
-
-        menu.default_value = "AO"
-        ao_space.default_value = "Global"
 
 
 ASSET = AmbientOcclusionInternal

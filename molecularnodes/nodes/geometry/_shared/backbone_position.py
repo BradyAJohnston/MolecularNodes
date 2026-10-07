@@ -73,9 +73,10 @@ class BackbonePosition(CustomGeometryGroup):
         super().__init__(**{"Method": method, "Menu": menu})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu("Method", "Read", expanded=True, optional_label=True)
         menu = tree.inputs.menu(
             "Menu",
+            "backbone_N",
             description="the particular backbone residue to read the value from",
             optional_label=True,
         )
@@ -104,6 +105,3 @@ class BackbonePosition(CustomGeometryGroup):
             )
             >> position
         )
-
-        method.default_value = "Read"
-        menu.default_value = "backbone_N"

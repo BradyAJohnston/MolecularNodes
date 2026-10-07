@@ -112,7 +112,9 @@ class ColorOKLabOffset(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         color = tree.inputs.color("Color", (0.07984344, 1.0, 0.2559341, 1.0))
-        colorspace = tree.inputs.menu("Colorspace", expanded=True, optional_label=True)
+        colorspace = tree.inputs.menu(
+            "Colorspace", "OKLab", expanded=True, optional_label=True
+        )
         luminance = tree.inputs.float(
             "Luminance", 0.0, min_value=-1.0, max_value=1.0, subtype="FACTOR"
         )
@@ -148,8 +150,6 @@ class ColorOKLabOffset(AssetGeometryGroup):
             )
             >> color_1
         )
-
-        colorspace.default_value = "OKLab"
 
 
 ASSET = ColorOKLabOffset

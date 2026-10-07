@@ -127,7 +127,9 @@ class RandomColor(AssetGeometryGroup):
             min_value=-10000,
             max_value=10000,
         )
-        colorspace = tree.inputs.menu("Colorspace", expanded=True, optional_label=True)
+        colorspace = tree.inputs.menu(
+            "Colorspace", "HSL", expanded=True, optional_label=True
+        )
         with tree.inputs.panel("HSL"):
             hsl_saturation = tree.inputs.float(
                 "HSL Saturation",
@@ -170,8 +172,6 @@ class RandomColor(AssetGeometryGroup):
             )
             >> color
         )
-
-        colorspace.default_value = "HSL"
 
 
 ASSET = RandomColor

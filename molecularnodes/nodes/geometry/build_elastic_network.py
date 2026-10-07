@@ -116,6 +116,7 @@ class BuildElasticNetwork(AssetGeometryGroup):
         )
         menu = tree.inputs.menu(
             "Menu",
+            "Alpha Carbon",
             description="Output a network between just alpha carbons, or one that includes all atoms",
             optional_label=True,
         )
@@ -172,8 +173,6 @@ class BuildElasticNetwork(AssetGeometryGroup):
             >> g.SortElements.point(sort_weight=index.output)
             >> mesh
         )
-
-        menu.default_value = "Alpha Carbon"
 
 
 ASSET = BuildElasticNetwork

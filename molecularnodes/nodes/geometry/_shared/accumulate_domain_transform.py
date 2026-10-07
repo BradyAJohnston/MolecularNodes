@@ -86,7 +86,9 @@ class AccumulateDomainTransform(CustomGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        domain = tree.inputs.menu("Domain", optional_label=True, hide_value=True)
+        domain = tree.inputs.menu(
+            "Domain", "Point", optional_label=True, hide_value=True
+        )
         transform = tree.inputs.matrix("Transform", hide_value=True)
         group_id = tree.inputs.integer("Group ID", 0, hide_value=True)
         leading = tree.outputs.matrix("Leading")
@@ -122,5 +124,3 @@ class AccumulateDomainTransform(CustomGeometryGroup):
             )
             >> trailling
         )
-
-        domain.default_value = "Point"

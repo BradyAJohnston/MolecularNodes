@@ -187,6 +187,7 @@ class StyleBallAndStick(AssetGeometryGroup):
         with tree.inputs.panel("Sphere", default_closed=True):
             sphere = tree.inputs.menu(
                 "Sphere",
+                "Instance",
                 description="Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.",
                 expanded=True,
                 optional_label=True,
@@ -200,7 +201,7 @@ class StyleBallAndStick(AssetGeometryGroup):
             )
         with tree.inputs.panel("Bond", default_closed=True):
             bond_split = tree.inputs.menu(
-                "Bond Split", expanded=True, optional_label=True
+                "Bond Split", "Double", expanded=True, optional_label=True
             )
             bond_scale = tree.inputs.float(
                 "Bond Scale",
@@ -277,9 +278,6 @@ class StyleBallAndStick(AssetGeometryGroup):
         )
         set_material >> geometry_1.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
-
-        sphere.default_value = "Instance"
-        bond_split.default_value = "Double"
 
 
 ASSET = StyleBallAndStick

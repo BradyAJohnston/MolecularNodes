@@ -98,6 +98,7 @@ class TransformAccumulate(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         domain = tree.inputs.menu(
             "Domain",
+            "Point",
             description="Domain on which to accumulate transforms",
             optional_label=True,
         )
@@ -128,8 +129,6 @@ class TransformAccumulate(AssetGeometryGroup):
             )
             >> transform_1
         )
-
-        domain.default_value = "Point"
 
 
 ASSET = TransformAccumulate

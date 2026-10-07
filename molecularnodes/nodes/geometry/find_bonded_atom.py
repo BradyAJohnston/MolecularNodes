@@ -173,8 +173,8 @@ class FindBondedAtom(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
-        method = tree.inputs.menu("Method", optional_label=True)
-        atom_name = tree.inputs.menu("Atom Name", optional_label=True)
+        method = tree.inputs.menu("Method", "Exact", optional_label=True)
+        atom_name = tree.inputs.menu("Atom Name", "N", optional_label=True)
         distance = tree.inputs.integer("Distance", 2, min_value=1, max_value=3)
         is_valid = tree.outputs.boolean("Is Valid")
         index_1 = tree.outputs.integer("Index")
@@ -191,9 +191,6 @@ class FindBondedAtom(AssetGeometryGroup):
 
         find_connected >> is_valid
         evaluate_at_index >> index_1
-
-        method.default_value = "Exact"
-        atom_name.default_value = "N"
 
 
 ASSET = FindBondedAtom

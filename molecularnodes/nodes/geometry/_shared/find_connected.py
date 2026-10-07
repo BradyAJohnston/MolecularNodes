@@ -94,7 +94,7 @@ class FindConnected(CustomGeometryGroup):
         value = tree.inputs.integer("Value", 0, hide_value=True)
         match = tree.inputs.integer("Match", 2)
         distance = tree.inputs.integer("Distance", 2, min_value=1, max_value=3)
-        method = tree.inputs.menu("Method", optional_label=True)
+        method = tree.inputs.menu("Method", "Any", optional_label=True)
         is_valid = tree.outputs.boolean("Is Valid")
         length = tree.outputs.integer("Length")
         index = tree.outputs.integer("Index")
@@ -140,5 +140,3 @@ class FindConnected(CustomGeometryGroup):
 
         float_to_integer >> length
         menu_switch >> index
-
-        method.default_value = "Any"

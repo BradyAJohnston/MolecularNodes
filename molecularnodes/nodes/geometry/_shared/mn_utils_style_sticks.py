@@ -185,7 +185,7 @@ class MN_utils_style_sticks(CustomGeometryGroup):
         extra_bond_rotate = tree.inputs.float(
             "Extra Bond Rotate", 0.0, min_value=-10_000.0, max_value=10_000.0
         )
-        menu = tree.inputs.menu("Menu", optional_label=True)
+        menu = tree.inputs.menu("Menu", "Single", optional_label=True)
         with tree.inputs.panel("Material"):
             shade_smooth = tree.inputs.boolean(
                 "Shade Smooth",
@@ -295,5 +295,3 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
                 >> geometry
             )
-
-        menu.default_value = "Single"

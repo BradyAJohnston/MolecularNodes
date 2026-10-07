@@ -117,7 +117,7 @@ class SymmetryCubic(AssetGeometryGroup):
             "Geometry", description="Geometry to replicate over the group"
         )
         group = tree.inputs.menu(
-            "Group", description="Which cubic point group to build"
+            "Group", "Tetrahedral", description="Which cubic point group to build"
         )
         orientation = tree.inputs.rotation(
             "Orientation",
@@ -195,8 +195,6 @@ class SymmetryCubic(AssetGeometryGroup):
             )
             >> instances
         )
-
-        group.default_value = "Tetrahedral"
 
 
 ASSET = SymmetryCubic

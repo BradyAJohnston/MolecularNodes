@@ -153,10 +153,12 @@ class EaseValue(AssetGeometryGroup):
         )
         interpolation = tree.inputs.menu(
             "Interpolation",
+            "Cubic",
             description="Shape of the easing curve, following Robert Penner's easing functions (easings.net)",
         )
         ease = tree.inputs.menu(
             "Ease",
+            "In Out",
             description="Apply the curve at the start (In), the end (Out) or both ends (In Out) of the transition",
         )
         with tree.inputs.panel("Clamp", default_closed=True):
@@ -304,9 +306,6 @@ class EaseValue(AssetGeometryGroup):
                 ),
             )
         from_ + (to - from_) * ease_switch_3 >> value_1
-
-        interpolation.default_value = "Cubic"
-        ease.default_value = "In Out"
 
 
 ASSET = EaseValue

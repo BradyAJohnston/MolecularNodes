@@ -70,7 +70,7 @@ class BackboneNH(AssetGeometryGroup):
         super().__init__(**{"Menu": menu})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Compute", expanded=True, optional_label=True)
         nh = tree.outputs.vector("NH")
 
         backbone_n = BackboneN(method="Read")
@@ -102,8 +102,6 @@ class BackboneNH(AssetGeometryGroup):
             )
             >> nh
         )
-
-        menu.default_value = "Compute"
 
 
 ASSET = BackboneNH

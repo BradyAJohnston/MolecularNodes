@@ -100,7 +100,9 @@ class ForceMeshCollide(AssetGeometryGroup):
             hide_value=True,
         )
         geometry = tree.inputs.geometry("Geometry")
-        geometry_bounds = tree.inputs.menu("Geometry Bounds", optional_label=True)
+        geometry_bounds = tree.inputs.menu(
+            "Geometry Bounds", "Original", optional_label=True
+        )
         collision_distance = tree.inputs.float(
             "Collision Distance", 0.1, min_value=-10_000.0, max_value=10_000.0
         )
@@ -123,8 +125,6 @@ class ForceMeshCollide(AssetGeometryGroup):
             add + vector_math_1 * (vector_math_2 > -0.1).switch.float(-1.0, map_range)
             >> force
         )
-
-        geometry_bounds.default_value = "Original"
 
 
 ASSET = ForceMeshCollide

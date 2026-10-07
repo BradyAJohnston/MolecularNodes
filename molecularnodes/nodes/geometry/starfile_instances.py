@@ -166,7 +166,7 @@ class StarfileInstances(AssetGeometryGroup):
             structure_type="SINGLE",
             force_non_field=True,
         )
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Object", expanded=True, optional_label=True)
         geometry = tree.inputs.geometry(
             "Geometry",
             description="Becomes the output value if it is chosen by the menu input",
@@ -239,8 +239,6 @@ class StarfileInstances(AssetGeometryGroup):
                 )
                 >> instances
             )
-
-        menu.default_value = "Object"
 
 
 ASSET = StarfileInstances

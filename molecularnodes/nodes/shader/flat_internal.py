@@ -82,7 +82,9 @@ class FlatInternal(AssetShaderGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        outline = tree.inputs.menu("Outline", expanded=True, optional_label=True)
+        outline = tree.inputs.menu(
+            "Outline", "Outline", expanded=True, optional_label=True
+        )
         threshold = tree.inputs.float(
             "Threshold", 0.8, min_value=0.0, max_value=10_000.0
         )
@@ -105,8 +107,6 @@ class FlatInternal(AssetShaderGroup):
         )
 
         emission_1 >> emission
-
-        outline.default_value = "Outline"
 
 
 ASSET = FlatInternal

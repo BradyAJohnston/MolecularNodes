@@ -122,8 +122,8 @@ class ColorRainbow(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        factor = tree.inputs.menu("Factor", optional_label=True)
-        color_space = tree.inputs.menu("Color Space", optional_label=True)
+        factor = tree.inputs.menu("Factor", "Chain", optional_label=True)
+        color_space = tree.inputs.menu("Color Space", "HSV", optional_label=True)
         offset = tree.inputs.float(
             "Offset",
             0.0,
@@ -178,9 +178,6 @@ class ColorRainbow(AssetGeometryGroup):
             )
             >> color
         )
-
-        factor.default_value = "Chain"
-        color_space.default_value = "HSV"
 
 
 ASSET = ColorRainbow

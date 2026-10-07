@@ -81,7 +81,9 @@ class DihedralPsi(AssetGeometryGroup):
         super().__init__(**{"Method": method})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu(
+            "Method", "Compute", expanded=True, optional_label=True
+        )
         psi = tree.outputs.float(
             "Psi",
             description="The calculated `Psi` angle for the residue, in the range of `(-pi, pi)`",
@@ -120,8 +122,6 @@ class DihedralPsi(AssetGeometryGroup):
             * -1.0
             >> psi
         )
-
-        method.default_value = "Compute"
 
 
 ASSET = DihedralPsi

@@ -75,7 +75,9 @@ class BackboneVectors(AssetGeometryGroup):
         super().__init__(**{"Method": method})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu(
+            "Method", "Compute", expanded=True, optional_label=True
+        )
         normal = tree.outputs.vector(
             "Normal",
             description="The vector used for the `Normal` of a curve when reading positions from a peptide backbone",
@@ -101,8 +103,6 @@ class BackboneVectors(AssetGeometryGroup):
 
         vector_math_2 >> normal
         vector_math >> tangent
-
-        method.default_value = "Compute"
 
 
 ASSET = BackboneVectors

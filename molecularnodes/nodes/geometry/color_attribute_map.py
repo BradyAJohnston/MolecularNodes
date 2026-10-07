@@ -126,7 +126,7 @@ class ColorAttributeMap(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        color_space = tree.inputs.menu("Color Space", optional_label=True)
+        color_space = tree.inputs.menu("Color Space", "Linear", optional_label=True)
         name = tree.inputs.string(
             "Name",
             "b_factor",
@@ -185,8 +185,6 @@ class ColorAttributeMap(AssetGeometryGroup):
             )
             >> color
         )
-
-        color_space.default_value = "Linear"
 
 
 ASSET = ColorAttributeMap

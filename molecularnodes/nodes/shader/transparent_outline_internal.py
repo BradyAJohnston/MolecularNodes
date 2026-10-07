@@ -94,7 +94,9 @@ class TransparentOutlineInternal(AssetShaderGroup):
             max_value=1.0,
             subtype="FACTOR",
         )
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu(
+            "Menu", "Transparent", expanded=True, optional_label=True
+        )
         outline_color = tree.inputs.color("Outline Color", (1.0, 1.0, 1.0, 1.0))
         shader = tree.outputs.shader("Shader")
 
@@ -118,8 +120,6 @@ class TransparentOutlineInternal(AssetShaderGroup):
             )
             >> shader
         )
-
-        menu.default_value = "Transparent"
 
 
 ASSET = TransparentOutlineInternal

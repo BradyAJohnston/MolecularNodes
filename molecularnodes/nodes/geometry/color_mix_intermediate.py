@@ -108,7 +108,7 @@ class ColorMixIntermediate(AssetGeometryGroup):
         factor = tree.inputs.float(
             "Factor", 0.5, min_value=0.0, max_value=1.0, subtype="FACTOR"
         )
-        menu = tree.inputs.menu("Menu", optional_label=True)
+        menu = tree.inputs.menu("Menu", "Linear", optional_label=True)
         intermediate = tree.inputs.boolean("Intermediate", False)
         a = tree.inputs.color("A", (0.0769495, 0.4785124, 0.5, 1.0))
         intermediate_1 = tree.inputs.color("Intermediate", (0.5, 0.5, 0.5, 1.0))
@@ -159,8 +159,6 @@ class ColorMixIntermediate(AssetGeometryGroup):
             combine_color_2,
         )
         g.MenuSwitch.color(menu, {"Linear": switch_1, "OKLab": switch}) >> output
-
-        menu.default_value = "Linear"
 
 
 ASSET = ColorMixIntermediate

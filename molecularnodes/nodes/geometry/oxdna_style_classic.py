@@ -360,6 +360,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Backbone"):
             backbone_shape = tree.inputs.menu(
                 "Backbone Shape",
+                "Sticks",
                 description="The visual style of the backbone",
                 expanded=True,
                 optional_label=True,
@@ -393,6 +394,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Bases"):
             base_shape = tree.inputs.menu(
                 "Base Shape",
+                "Sphere",
                 description="Visual style of the bases",
                 expanded=True,
                 optional_label=True,
@@ -421,6 +423,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Base colors"):
             base_colors = tree.inputs.menu(
                 "Base Colors",
+                "Uniform",
                 description="Method used to determine base colors",
                 expanded=True,
                 optional_label=True,
@@ -445,6 +448,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Strand colors"):
             strand_colors = tree.inputs.menu(
                 "Strand Colors",
+                "Auto",
                 description="Method used to determine strand colors. `Auto` will color strands using a finite palette of distinct pastel hues.",
                 expanded=True,
                 optional_label=True,
@@ -660,11 +664,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         smooth_by_angle = SmoothByAngle(mesh=set_shade_smooth, angle=math.pi / 3)
         smooth_by_angle.node.warning_propagation = "ERRORS"
         smooth_by_angle >> g.SetMaterial(material=material) >> geometry
-
-        backbone_shape.default_value = "Sticks"
-        base_shape.default_value = "Sphere"
-        base_colors.default_value = "Uniform"
-        strand_colors.default_value = "Auto"
 
 
 ASSET = OxDNAStyleClassic

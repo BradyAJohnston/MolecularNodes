@@ -101,7 +101,9 @@ class EvaluatePerGroup(AssetGeometryGroup):
             "Geometry", description="Geometry to split into two parts"
         )
         closure = tree.inputs.closure("Closure")
-        group = tree.inputs.menu("Group", expanded=True, optional_label=True)
+        group = tree.inputs.menu(
+            "Group", "chain_id", expanded=True, optional_label=True
+        )
         group_id = tree.inputs.integer("Group ID", 0, hide_value=True)
         geometry_1 = tree.outputs.geometry("Geometry")
         instances = tree.outputs.geometry("Instances")
@@ -147,8 +149,6 @@ class EvaluatePerGroup(AssetGeometryGroup):
 
         geometry_2.result >> geometry_1
         instances_1.result >> instances
-
-        group.default_value = "chain_id"
 
 
 ASSET = EvaluatePerGroup

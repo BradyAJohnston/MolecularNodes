@@ -67,6 +67,7 @@ class UnitConvert(CustomGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         distance_type = tree.inputs.menu(
             "Distance Type",
+            "Angstrom",
             description="What unit to scale the value to",
             optional_label=True,
         )
@@ -95,5 +96,3 @@ class UnitConvert(CustomGeometryGroup):
             )
             >> world
         )
-
-        distance_type.default_value = "Angstrom"

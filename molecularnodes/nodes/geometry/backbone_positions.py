@@ -84,7 +84,9 @@ class BackbonePositions(AssetGeometryGroup):
         super().__init__(**{"Method": method})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu(
+            "Method", "Compute", expanded=True, optional_label=True
+        )
         o = tree.outputs.vector(
             "O", description="The position of the backbone _O_ atom for the residue"
         )
@@ -130,8 +132,6 @@ class BackbonePositions(AssetGeometryGroup):
             )
             >> nh
         )
-
-        method.default_value = "Compute"
 
 
 ASSET = BackbonePositions

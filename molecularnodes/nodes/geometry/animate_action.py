@@ -192,6 +192,7 @@ class AnimateAction(AssetGeometryGroup):
         length = tree.inputs.float("Length", 5.0, min_value=0.0)
         time = tree.inputs.menu(
             "Time",
+            "Seconds",
             description="Which source to use as time for animating the action",
             optional_label=True,
         )
@@ -225,10 +226,12 @@ class AnimateAction(AssetGeometryGroup):
         with tree.inputs.panel("Easing", default_closed=True):
             interpolation = tree.inputs.menu(
                 "Interpolation",
+                "Linear",
                 description="Shape of the easing curve, following Robert Penner's easing functions (easings.net)",
             )
             ease = tree.inputs.menu(
                 "Ease",
+                "In",
                 description="Apply the curve at the start (In), the end (Out) or both ends (In Out) of the transition",
             )
             overshoot = tree.inputs.float(
@@ -294,10 +297,6 @@ class AnimateAction(AssetGeometryGroup):
         )
 
         math_1 >> end
-
-        time.default_value = "Seconds"
-        interpolation.default_value = "Linear"
-        ease.default_value = "In"
 
 
 ASSET = AnimateAction

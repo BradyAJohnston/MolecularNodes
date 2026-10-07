@@ -96,7 +96,7 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
-        u_component = tree.inputs.menu("U Component", optional_label=True)
+        u_component = tree.inputs.menu("U Component", "Factor", optional_label=True)
         profile_resolution = tree.inputs.integer(
             "Profile Resolution", 12, min_value=3, max_value=512
         )
@@ -144,5 +144,3 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         combine_xyz = g.CombineXYZ(x=switch_1, y=switch)
 
         combine_xyz >> uv_map
-
-        u_component.default_value = "Factor"

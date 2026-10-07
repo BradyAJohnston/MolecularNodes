@@ -87,7 +87,7 @@ class MNTypedBundles(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        type = tree.inputs.menu("Type", optional_label=True)
+        type = tree.inputs.menu("Type", "MN.MeshProcess", optional_label=True)
         closure = tree.inputs.closure("Closure")
         step = tree.inputs.integer("step", 1)
         path = tree.inputs.string("Path", "", optional_label=True)
@@ -105,8 +105,6 @@ class MNTypedBundles(AssetGeometryGroup):
         )
 
         store_bundle_item >> bundle
-
-        type.default_value = "MN.MeshProcess"
 
 
 ASSET = MNTypedBundles

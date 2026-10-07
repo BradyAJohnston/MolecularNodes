@@ -381,7 +381,7 @@ class NodeGroup(CustomGeometryGroup):
             "Reset Curve Normal", False, structure_type="SINGLE", force_non_field=True
         )
         rotation = tree.inputs.rotation("Rotation", (0.0, 0.0, 0.0))
-        menu = tree.inputs.menu("Menu", optional_label=True)
+        menu = tree.inputs.menu("Menu", "Smooth", optional_label=True)
         resolution = tree.inputs.integer(
             "Resolution",
             12,
@@ -470,8 +470,6 @@ class NodeGroup(CustomGeometryGroup):
         triangulate.node.mute = True
 
         triangulate >> geometry
-
-        menu.default_value = "Smooth"
 
 
 class TweakArrowHeads(CustomGeometryGroup):
@@ -846,7 +844,7 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
                 False,
                 description="Render beta-strands with directional arrows.",
             )
-            arrows_sharp = tree.inputs.menu("Arrows Sharp")
+            arrows_sharp = tree.inputs.menu("Arrows Sharp", "Sharp")
             _arrows_point = tree.inputs.boolean("Arrows Point", False)
             _arrow_thickness_scale = tree.inputs.float(
                 "Arrow Thickness Scale", 1.0, min_value=0.0, max_value=10_000.0
@@ -959,8 +957,6 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
         split_curves >> viewer
 
         atoms_to_ca_curves >> ca_splines
-
-        arrows_sharp.default_value = "Sharp"
 
 
 class StyleCartoon(AssetGeometryGroup):
@@ -1206,6 +1202,7 @@ class StyleCartoon(AssetGeometryGroup):
         with tree.inputs.panel("Peptide", default_closed=True):
             peptide_shape = tree.inputs.menu(
                 "Peptide Shape",
+                "Sharp",
                 description="Create rounded sheets and helices",
                 expanded=True,
                 optional_label=True,
@@ -1213,6 +1210,7 @@ class StyleCartoon(AssetGeometryGroup):
             with tree.inputs.panel("Helix", default_closed=True):
                 helix_shape = tree.inputs.menu(
                     "Helix Shape",
+                    "Spiral",
                     description="Use cylinders for helices instead of ribbons",
                     expanded=True,
                     optional_label=True,
@@ -1232,6 +1230,7 @@ class StyleCartoon(AssetGeometryGroup):
             with tree.inputs.panel("Sheet", default_closed=True):
                 sheet_arrows = tree.inputs.menu(
                     "Sheet Arrows",
+                    "Arrow",
                     description="User arrows for sheets",
                     expanded=True,
                     optional_label=True,
@@ -1260,7 +1259,7 @@ class StyleCartoon(AssetGeometryGroup):
                 )
         with tree.inputs.panel("Nucleic", default_closed=True):
             backbone_shape = tree.inputs.menu(
-                "Backbone Shape", expanded=True, optional_label=True
+                "Backbone Shape", "Cylinder", expanded=True, optional_label=True
             )
             nucleic_width = tree.inputs.float(
                 "Nucleic Width", 3.0, min_value=0.0, max_value=10_000.0
@@ -1273,7 +1272,7 @@ class StyleCartoon(AssetGeometryGroup):
             )
             with tree.inputs.panel("Base", default_closed=True):
                 base_shape = tree.inputs.menu(
-                    "Base Shape", expanded=True, optional_label=True
+                    "Base Shape", "Rectangle", expanded=True, optional_label=True
                 )
                 base_scale_cylinder = tree.inputs.vector(
                     "Base Scale Cylinder", (1.0, 1.0, 7.0)
@@ -1380,12 +1379,6 @@ class StyleCartoon(AssetGeometryGroup):
         )
         join_geometry >> geometry_1.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
-
-        peptide_shape.default_value = "Sharp"
-        helix_shape.default_value = "Spiral"
-        sheet_arrows.default_value = "Arrow"
-        backbone_shape.default_value = "Cylinder"
-        base_shape.default_value = "Rectangle"
 
 
 ASSET = StyleCartoon

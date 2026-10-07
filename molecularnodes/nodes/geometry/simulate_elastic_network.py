@@ -267,7 +267,7 @@ class SimulateElasticNetwork(AssetGeometryGroup):
             drag = tree.inputs.float("Drag", 0.1, min_value=0.0, max_value=10_000.0)
             with tree.inputs.panel("Edge"):
                 edge_length_source = tree.inputs.menu(
-                    "Edge Length Source", optional_label=True
+                    "Edge Length Source", "Original", optional_label=True
                 )
                 edge_length = tree.inputs.float(
                     "Edge Length", 0.1, min_value=0.0, max_value=10_000.0
@@ -362,8 +362,6 @@ class SimulateElasticNetwork(AssetGeometryGroup):
             >> g.RemoveNamedAttribute(pattern_mode="Wildcard", name="tmp_*")
             >> geometry
         )
-
-        edge_length_source.default_value = "Original"
 
 
 ASSET = SimulateElasticNetwork

@@ -78,6 +78,7 @@ class EaseSwitch(CustomGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         ease = tree.inputs.menu(
             "Ease",
+            "In Out",
             description="Apply the curve at the start (In), the end (Out) or both ends (In Out) of the transition",
         )
         in_ = tree.inputs.float("In", 0.0, description="Value used when easing In")
@@ -88,5 +89,3 @@ class EaseSwitch(CustomGeometryGroup):
         value = tree.outputs.float("Value")
 
         g.MenuSwitch.float(ease, {"In": in_, "Out": out, "In Out": in_out}) >> value
-
-        ease.default_value = "In Out"

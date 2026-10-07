@@ -61,12 +61,10 @@ class ProfileTypePicker(CustomGeometryGroup):
         super().__init__(**{"Menu": menu})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", optional_label=True)
+        menu = tree.inputs.menu("Menu", "Custom Profile", optional_label=True)
         output = tree.outputs.integer("Output")
 
         (
             g.MenuSwitch.integer(menu, {"Default Profile": 0, "Custom Profile": 1})
             >> output
         )
-
-        menu.default_value = "Custom Profile"

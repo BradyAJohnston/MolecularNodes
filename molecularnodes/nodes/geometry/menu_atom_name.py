@@ -142,7 +142,7 @@ class MenuAtomName(AssetGeometryGroup):
         super().__init__(**{"Atom Name": atom_name})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        atom_name = tree.inputs.menu("Atom Name", optional_label=True)
+        atom_name = tree.inputs.menu("Atom Name", "N", optional_label=True)
         atom_name_1 = tree.outputs.integer("atom_name")
         selection = tree.outputs.boolean("Selection")
         atom_name_2 = tree.outputs.string("atom_name")
@@ -439,8 +439,6 @@ class MenuAtomName(AssetGeometryGroup):
         )
 
         menu_switch >> atom_name_1
-
-        atom_name.default_value = "N"
 
 
 ASSET = MenuAtomName

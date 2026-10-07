@@ -172,10 +172,10 @@ class AnimateTrails(AssetGeometryGroup):
         )
         with tree.inputs.panel("Trail"):
             trail_threshold = tree.inputs.menu(
-                "Trail Threshold", expanded=True, optional_label=True
+                "Trail Threshold", "Unlimited", expanded=True, optional_label=True
             )
             trail_curve_type = tree.inputs.menu(
-                "Trail Curve Type", expanded=True, optional_label=True
+                "Trail Curve Type", "Poly", expanded=True, optional_label=True
             )
             trail_frames = tree.inputs.integer(
                 "Trail Frames",
@@ -254,9 +254,6 @@ class AnimateTrails(AssetGeometryGroup):
             >> g.SetMaterial(material=material)
             >> geometry
         )
-
-        trail_threshold.default_value = "Unlimited"
-        trail_curve_type.default_value = "Poly"
 
 
 ASSET = AnimateTrails

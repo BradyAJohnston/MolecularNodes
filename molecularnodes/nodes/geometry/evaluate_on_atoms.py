@@ -107,6 +107,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         closure = tree.inputs.closure("Closure")
         result = tree.inputs.menu(
             "Result",
+            "Geometry",
             description="Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output.",
             expanded=True,
             optional_label=True,
@@ -156,8 +157,6 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         _string = g.String(
             string="Evaluate the 'Closure' on the 'Atoms' geometry, join the resulting geometry with the input geometry.\n\nIf the input 'Geometry' doesn't contain a 'MN/Atoms' bundle then we treat the input geometry as the 'Atoms'."
         )
-
-        result.default_value = "Geometry"
 
 
 ASSET = EvaluateOnAtoms

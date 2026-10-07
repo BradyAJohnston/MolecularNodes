@@ -123,7 +123,7 @@ class TransformMix(AssetGeometryGroup):
         b = tree.inputs.matrix(
             "B", description="Transform B which will be mixed to at 1.0"
         )
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Single", expanded=True, optional_label=True)
         translation = tree.inputs.float(
             "Translation",
             0.5,
@@ -181,8 +181,6 @@ class TransformMix(AssetGeometryGroup):
         )
 
         combine_transform >> transform
-
-        menu.default_value = "Single"
 
 
 ASSET = TransformMix

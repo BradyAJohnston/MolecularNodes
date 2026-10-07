@@ -68,7 +68,7 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
             "Material", description="Material to apply to the resulting geometry"
         )
         uv_map = tree.inputs.boolean("UV Map", False)
-        u_component = tree.inputs.menu("U Component", optional_label=True)
+        u_component = tree.inputs.menu("U Component", "Factor", optional_label=True)
         threshold = tree.inputs.float(
             "Threshold", 4.5, min_value=0.0, max_value=10_000.0
         )
@@ -110,8 +110,6 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
         )
 
         set_curve_radius >> curve
-
-        u_component.default_value = "Factor"
 
 
 class StyleRibbon(AssetGeometryGroup):
@@ -354,6 +352,7 @@ class StyleRibbon(AssetGeometryGroup):
                 )
                 u_component = tree.inputs.menu(
                     "U Component",
+                    "Factor",
                     description="Store either the 'Length' or the 'Factor' of the curve as the U component.",
                     expanded=True,
                     optional_label=True,
@@ -361,7 +360,10 @@ class StyleRibbon(AssetGeometryGroup):
         with tree.inputs.panel("Nucleic", default_closed=True):
             with tree.inputs.panel("Nucleic Backbone"):
                 nucleic_backbone_shape = tree.inputs.menu(
-                    "Nucleic Backbone Shape", expanded=True, optional_label=True
+                    "Nucleic Backbone Shape",
+                    "Cicular",
+                    expanded=True,
+                    optional_label=True,
                 )
                 nucleic_backbone_radius = tree.inputs.float(
                     "Nucleic Backbone Radius", 2.0, min_value=0.0
@@ -458,9 +460,6 @@ class StyleRibbon(AssetGeometryGroup):
                 mn_utils_style_ribbon_nucleic.o.curve,
             )
         )
-
-        u_component.default_value = "Factor"
-        nucleic_backbone_shape.default_value = "Cicular"
 
 
 ASSET = StyleRibbon

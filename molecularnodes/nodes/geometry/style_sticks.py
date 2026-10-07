@@ -145,6 +145,7 @@ class StyleSticks(AssetGeometryGroup):
         )
         sphere = tree.inputs.menu(
             "Sphere",
+            "Instance",
             description="Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.",
             expanded=True,
             optional_label=True,
@@ -211,8 +212,6 @@ class StyleSticks(AssetGeometryGroup):
             >> geometry_1.input
         )
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
-
-        sphere.default_value = "Instance"
 
 
 ASSET = StyleSticks

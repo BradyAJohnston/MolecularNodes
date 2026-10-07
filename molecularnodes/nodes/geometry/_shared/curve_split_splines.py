@@ -182,9 +182,11 @@ class CurveSplitSplines(CustomGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
         selection = tree.inputs.boolean("Selection", True, hide_value=True)
-        curve_normal = tree.inputs.menu("Curve Normal", optional_label=True)
+        curve_normal = tree.inputs.menu("Curve Normal", "Free", optional_label=True)
         curve_group_id = tree.inputs.integer("Curve Group ID", 0)
-        distance_split = tree.inputs.menu("Distance Split", optional_label=True)
+        distance_split = tree.inputs.menu(
+            "Distance Split", "Split Distance", optional_label=True
+        )
         distance_cutoff = tree.inputs.float(
             "Distance Cutoff", 0.0, min_value=-10_000.0, max_value=10_000.0
         )
@@ -194,7 +196,7 @@ class CurveSplitSplines(CustomGeometryGroup):
                 "Offset Amount", 0.0, min_value=-10_000.0, max_value=10_000.0
             )
             offset_spline_type = tree.inputs.menu(
-                "Offset Spline Type", optional_label=True
+                "Offset Spline Type", "Bezier", optional_label=True
             )
             offset_resolution = tree.inputs.integer(
                 "Offset Resolution", 12, min_value=1
@@ -306,7 +308,3 @@ class CurveSplitSplines(CustomGeometryGroup):
         sample_curve.o.position >> offset_position
         sample_curve.o.tangent >> offset_tangent
         sample_curve.o.normal >> offset_normal
-
-        curve_normal.default_value = "Free"
-        distance_split.default_value = "Split Distance"
-        offset_spline_type.default_value = "Bezier"

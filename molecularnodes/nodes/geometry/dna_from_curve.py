@@ -81,7 +81,7 @@ class CustomWorldObjectSpace(CustomGeometryGroup):
     _tree_properties = {"default_group_node_width": 200}
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        space = tree.inputs.menu("Space", optional_label=True)
+        space = tree.inputs.menu("Space", "Custom Space", optional_label=True)
         custom_0_world_1_object_2 = tree.outputs.integer(
             "Custom = 0,World = 1, Object = 2"
         )
@@ -115,8 +115,6 @@ class CustomWorldObjectSpace(CustomGeometryGroup):
         menu_switch.o.world_space >> is_world_space
         menu_switch.o.object_space >> is_object_space
 
-        space.default_value = "Custom Space"
-
 
 class CustomForce(CustomGeometryGroup):
     _name = "Custom Force"
@@ -128,6 +126,7 @@ class CustomForce(CustomGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         mode = tree.inputs.menu(
             "Mode",
+            "Field",
             description="How the force field is defined.",
             optional_label=True,
             structure_type="SINGLE",
@@ -160,6 +159,7 @@ class CustomForce(CustomGeometryGroup):
         ):
             geometry_space = tree.inputs.menu(
                 "Geometry Space",
+                "World Space",
                 description="The space the geometry is transformed to before the field is evaluated.",
                 optional_label=True,
                 structure_type="SINGLE",
@@ -184,6 +184,7 @@ class CustomForce(CustomGeometryGroup):
         ):
             force_space = tree.inputs.menu(
                 "Force Space",
+                "World Space",
                 description="The space the provided force vector is in.",
                 optional_label=True,
                 structure_type="SINGLE",
@@ -290,10 +291,6 @@ class CustomForce(CustomGeometryGroup):
         combine_bundle.items.closure(menu_switch.o.output, "closure")
 
         combine_bundle.o.bundle >> force_1
-
-        mode.default_value = "Field"
-        geometry_space.default_value = "World Space"
-        force_space.default_value = "World Space"
 
 
 class StoreEdgeLength(CustomGeometryGroup):
@@ -1018,7 +1015,7 @@ class SetMass(CustomGeometryGroup):
                 force_non_field=True,
             )
             moment_of_inertia_mode = tree.inputs.menu(
-                "Moment of Inertia Mode", optional_label=True
+                "Moment of Inertia Mode", "Custom", optional_label=True
             )
             moment_of_inertia_1 = tree.inputs.vector(
                 "Moment of Inertia", (1.0, 1.0, 1.0), optional_label=True
@@ -1048,8 +1045,6 @@ class SetMass(CustomGeometryGroup):
             )
             >> geometry_1
         )
-
-        moment_of_inertia_mode.default_value = "Custom"
 
 
 class SimAttributes(CustomGeometryGroup):
@@ -1317,7 +1312,7 @@ class RenameSimAttributes(CustomGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
-        mode = tree.inputs.menu("Mode", optional_label=True)
+        mode = tree.inputs.menu("Mode", "Single", optional_label=True)
         old = tree.inputs.string("Old", "", optional_label=True)
         new = tree.inputs.string("New", "", optional_label=True)
         world_1 = tree.outputs.bundle("World")
@@ -1336,8 +1331,6 @@ class RenameSimAttributes(CustomGeometryGroup):
             >> geometry_1.input
         )
         ForEachSimGeometry(World=world, Closure=closure_zone.closure) >> world_1
-
-        mode.default_value = "Single"
 
 
 class SetPreviousWorldItems(CustomGeometryGroup):
@@ -1964,7 +1957,7 @@ class RemoveSimAttributes(CustomGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
-        mode = tree.inputs.menu("Mode", optional_label=True)
+        mode = tree.inputs.menu("Mode", "Exact", optional_label=True)
         name = tree.inputs.string("Name", "", optional_label=True)
         world_1 = tree.outputs.bundle("World")
 
@@ -1982,8 +1975,6 @@ class RemoveSimAttributes(CustomGeometryGroup):
             >> geometry_1.input
         )
         ForEachSimGeometry(World=world, Closure=closure_zone.closure) >> world_1
-
-        mode.default_value = "Exact"
 
 
 class CopySolverData(CustomGeometryGroup):
@@ -2107,9 +2098,9 @@ class ConvertSpaceTransform(CustomGeometryGroup):
     _tree_properties = {"default_group_node_width": 180}
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        from_space = tree.inputs.menu("From Space", optional_label=True)
+        from_space = tree.inputs.menu("From Space", "World Space", optional_label=True)
         from_object = tree.inputs.object("From Object", optional_label=True)
-        to_space = tree.inputs.menu("To Space", optional_label=True)
+        to_space = tree.inputs.menu("To Space", "World Space", optional_label=True)
         to_object = tree.inputs.object("To Object", optional_label=True)
         custom_to_world = tree.inputs.matrix("Custom to World")
         transform = tree.outputs.matrix("Transform")
@@ -2138,9 +2129,6 @@ class ConvertSpaceTransform(CustomGeometryGroup):
         multiply_matrices.o.matrix.invert() >> inverted
 
         multiply_matrices >> transform
-
-        from_space.default_value = "World Space"
-        to_space.default_value = "World Space"
 
 
 class SimulateDNAGuide(CustomGeometryGroup):
@@ -2549,13 +2537,13 @@ class DNAFromCurve(AssetGeometryGroup):
         base_resolution = tree.inputs.integer(
             "Base Resolution", 0, min_value=0, max_value=4
         )
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Static", expanded=True, optional_label=True)
         wind = tree.inputs.float(
             "Wind", 1.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
         )
         with tree.inputs.panel("Bases"):
             base_instance = tree.inputs.menu(
-                "Base Instance", expanded=True, optional_label=True
+                "Base Instance", "Instance", expanded=True, optional_label=True
             )
         geometry = tree.outputs.geometry("Geometry")
 
@@ -2690,9 +2678,6 @@ class DNAFromCurve(AssetGeometryGroup):
             >> g.JoinGeometry()
             >> geometry
         )
-
-        menu.default_value = "Static"
-        base_instance.default_value = "Instance"
 
 
 ASSET = DNAFromCurve

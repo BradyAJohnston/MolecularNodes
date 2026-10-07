@@ -191,7 +191,9 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
         probe_size = tree.inputs.float(
             "Probe Size", 0.6, min_value=0.0, max_value=10_000.0
         )
-        color_source = tree.inputs.menu("Color Source", optional_label=True)
+        color_source = tree.inputs.menu(
+            "Color Source", "Alpha Carbon", optional_label=True
+        )
         color_blur = tree.inputs.integer(
             "Color Blur",
             1,
@@ -295,8 +297,6 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
             >> surface_geometry
         )
 
-        color_source.default_value = "Alpha Carbon"
-
 
 class RelaxSurface(CustomGeometryGroup):
     _name = ".Relax Surface"
@@ -357,7 +357,9 @@ class SampleColors(CustomGeometryGroup):
     _name = ".Sample Colors"
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        color_source = tree.inputs.menu("Color Source", optional_label=True)
+        color_source = tree.inputs.menu(
+            "Color Source", "Alpha Carbon", optional_label=True
+        )
         atoms = tree.inputs.geometry("Atoms")
         step = tree.inputs.integer("step", 1)
         blur = tree.inputs.integer(
@@ -414,8 +416,6 @@ class SampleColors(CustomGeometryGroup):
             )
             >> bundle
         )
-
-        color_source.default_value = "Alpha Carbon"
 
 
 class SurfaceToRadius(CustomGeometryGroup):
@@ -682,12 +682,12 @@ class StyleSurface(AssetGeometryGroup):
                     )
             with tree.inputs.panel("Separate", default_closed=True):
                 separate_by = tree.inputs.menu(
-                    "Separate By", expanded=True, optional_label=True
+                    "Separate By", "chain_id", expanded=True, optional_label=True
                 )
                 group_id = tree.inputs.integer("Group ID", 0, hide_value=True)
         with tree.inputs.panel("Material", default_closed=True):
             color_source = tree.inputs.menu(
-                "Color Source", expanded=True, optional_label=True
+                "Color Source", "Alpha Carbon", expanded=True, optional_label=True
             )
             color_blur = tree.inputs.integer(
                 "Color Blur",
@@ -836,9 +836,6 @@ class StyleSurface(AssetGeometryGroup):
             )
             >> geometry
         )
-
-        separate_by.default_value = "chain_id"
-        color_source.default_value = "Alpha Carbon"
 
 
 ASSET = StyleSurface

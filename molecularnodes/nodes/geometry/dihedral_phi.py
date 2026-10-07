@@ -82,7 +82,7 @@ class DihedralPhi(AssetGeometryGroup):
         super().__init__(**{"Menu": menu})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Compute", expanded=True, optional_label=True)
         phi = tree.outputs.float(
             "Phi",
             description="The calculated `Phi` angle for the residue, in the range of `(-pi, pi)`",
@@ -121,8 +121,6 @@ class DihedralPhi(AssetGeometryGroup):
             ),
         )
         switch.o.output * -1.0 >> phi
-
-        menu.default_value = "Compute"
 
 
 ASSET = DihedralPhi

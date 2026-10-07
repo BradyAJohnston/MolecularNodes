@@ -125,7 +125,7 @@ class ColorAttributeRandom(AssetGeometryGroup):
             description="Attribute to base the random color generation on ",
             optional_label=True,
         )
-        colorspace = tree.inputs.menu("Colorspace", optional_label=True)
+        colorspace = tree.inputs.menu("Colorspace", "HSL", optional_label=True)
         color_seed = tree.inputs.integer(
             "Color Seed",
             0,
@@ -172,8 +172,6 @@ class ColorAttributeRandom(AssetGeometryGroup):
             )
             >> color
         )
-
-        colorspace.default_value = "HSL"
 
 
 ASSET = ColorAttributeRandom

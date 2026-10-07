@@ -62,12 +62,12 @@ class BackboneO(AssetGeometryGroup):
         super().__init__(**{"Method": method})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu(
+            "Method", "Compute", expanded=True, optional_label=True
+        )
         o = tree.outputs.vector("O")
 
         BackbonePosition(method=method, menu="backbone_O") >> o
-
-        method.default_value = "Compute"
 
 
 ASSET = BackboneO

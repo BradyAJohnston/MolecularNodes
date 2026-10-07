@@ -116,7 +116,7 @@ class DomainSwitchMatrix(CustomGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", optional_label=True)
+        menu = tree.inputs.menu("Menu", "Point", optional_label=True)
         point = tree.inputs.matrix("Point")
         edge = tree.inputs.matrix("Edge")
         face = tree.inputs.matrix("Face")
@@ -139,5 +139,3 @@ class DomainSwitchMatrix(CustomGeometryGroup):
             )
             >> output
         )
-
-        menu.default_value = "Point"

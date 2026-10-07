@@ -110,7 +110,7 @@ class MenuResidueName(AssetGeometryGroup):
         super().__init__(**{"Residue Name": residue_name})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        residue_name = tree.inputs.menu("Residue Name", optional_label=True)
+        residue_name = tree.inputs.menu("Residue Name", "ALA", optional_label=True)
         res_name = tree.outputs.integer("res_name")
         selection = tree.outputs.boolean("Selection")
 
@@ -163,8 +163,6 @@ class MenuResidueName(AssetGeometryGroup):
         g.Compare.integer.equal(menu_switch.o.output, ResidueName()) >> selection
 
         menu_switch >> res_name
-
-        residue_name.default_value = "ALA"
 
 
 ASSET = MenuResidueName

@@ -101,8 +101,10 @@ class ColorAO(AssetShaderGroup):
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 0.0))
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
-        ao_space = tree.inputs.menu("AO Space", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "AO", expanded=True, optional_label=True)
+        ao_space = tree.inputs.menu(
+            "AO Space", "Local", expanded=True, optional_label=True
+        )
         distance = tree.inputs.float("Distance", 1.0, min_value=0.0, max_value=1000.0)
         exponent = tree.inputs.float("Exponent", 0.5, min_value=0.0, max_value=10_000.0)
         result = tree.outputs.color("Result", (0.8, 0.8, 0.8, 1.0))
@@ -136,9 +138,6 @@ class ColorAO(AssetShaderGroup):
         )
 
         mix.o.result_color >> result
-
-        menu.default_value = "AO"
-        ao_space.default_value = "Local"
 
 
 ASSET = ColorAO
