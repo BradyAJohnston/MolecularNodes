@@ -102,8 +102,8 @@ class GroupParameter(AssetGeometryGroup):
         )
 
         boolean_math >> is_first
-        accumulate_field.o.total >> group_size
         accumulate_field.o.trailing >> relative_index
+        accumulate_field.o.total >> group_size
 
 
 ASSET = GroupParameter
