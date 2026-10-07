@@ -2,7 +2,7 @@
 # Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
@@ -34,7 +34,7 @@ class SymmetryCubic(AssetGeometryGroup):
     ----------
     geometry : InputGeometry
         Geometry to replicate over the group
-    group : InputMenu
+    group : InputMenu | Literal["Tetrahedral", "Octahedral", "Icosahedral"]
         Which cubic point group to build
     orientation : InputRotation
         Rotation of the group's axes. At zero the two-folds lie along X, Y and Z and a three-fold along (1, 1, 1); for icosahedral a five-fold lies along (0, 1, 1.618)
@@ -96,7 +96,8 @@ class SymmetryCubic(AssetGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
-        group: InputMenu = "",
+        group: InputMenu
+        | Literal["Tetrahedral", "Octahedral", "Icosahedral"] = "Tetrahedral",
         orientation: InputRotation = None,
         centre: InputVector = None,
         animate: InputFloat = 1.0,
@@ -116,7 +117,7 @@ class SymmetryCubic(AssetGeometryGroup):
             "Geometry", description="Geometry to replicate over the group"
         )
         group = tree.inputs.menu(
-            "Group", "", description="Which cubic point group to build"
+            "Group", description="Which cubic point group to build"
         )
         orientation = tree.inputs.rotation(
             "Orientation",
@@ -194,6 +195,8 @@ class SymmetryCubic(AssetGeometryGroup):
             )
             >> instances
         )
+
+        group.default_value = "Tetrahedral"
 
 
 ASSET = SymmetryCubic
