@@ -1,0 +1,24 @@
+---
+title: "GroEL/GroES"
+description: "The 21-chain chaperonin coloured by chain, then a single subunit."
+video: videos/large_protein_complex.mp4
+order: 15
+---
+
+{{< video videos/large_protein_complex.mp4 >}}
+
+{{< video videos/large_protein_subunit.mp4 >}}
+
+1AON coloured by chain with `Color Attribute Random`, half a turn as cartoon and a
+     quarter turn as ball-and-stick. A second storyboard spins one subunit.
+
+After ProteinMotion's [`large_protein.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/large_protein.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/large_protein.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/large_protein.py"}
+{{< include scripts/large_protein.py >}}
+```

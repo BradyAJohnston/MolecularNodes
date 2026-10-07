@@ -1,0 +1,24 @@
+---
+title: "DNA base styles"
+description: "Slabs and sticks for the bases, a painted region, chain transparency and a surface."
+video: videos/dna_styles.mp4
+order: 5
+---
+
+{{< video videos/dna_styles.mp4 >}}
+
+B-DNA (1BNA). The cartoon's `Base Shape` gives the slab and stick looks; ProteinMotion's
+     ring and ladder styles have no cartoon equivalent yet. Residues 5 to 8 of chain A are
+     painted, chain B fades through a transparent material, and the scene ends on a molecular
+     surface.
+
+After ProteinMotion's [`dna_styles.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/dna_styles.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/dna_styles.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/dna_styles.py"}
+{{< include scripts/dna_styles.py >}}
+```

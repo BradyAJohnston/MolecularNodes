@@ -1,0 +1,26 @@
+---
+title: "tRNA styles"
+description: "Base shapes, a loop callout, B-factor colouring and a surface on yeast tRNA."
+video: videos/rna_styles.mp4
+order: 4
+---
+
+{{< video videos/rna_styles.mp4 >}}
+
+Yeast tRNA (1EHZ) with the anticodon loop painted gold. The camera turns while the rest
+     of the molecule fades, a callout names the loop, the base shape cuts from rectangles to
+     cylinders, the cartoon cuts to B-factor colouring and finally to a surface.
+
+     ProteinMotion writes the callout on with a vector animation and eases each residue's
+     colour in turn; both are cuts here.
+
+After ProteinMotion's [`rna_styles.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/rna_styles.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/rna_styles.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/rna_styles.py"}
+{{< include scripts/rna_styles.py >}}
+```
