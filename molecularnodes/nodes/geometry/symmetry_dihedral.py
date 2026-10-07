@@ -1,5 +1,5 @@
 # Node-group asset "Symmetry Dihedral" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
@@ -35,10 +35,8 @@ class SymmetryDihedral(AssetGeometryGroup):
         Point the symmetry axes pass through
     offset : InputFloat
         Rotation of the flipped ring about the axis, which sets where the perpendicular two-fold lies
-    factor : InputFloat
-        0 places every copy back on the original, 1 builds the full symmetry
-    stagger : InputFloat
-        Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes
+    animate : InputFloat
+        0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another
 
     Inputs
     ------
@@ -52,10 +50,8 @@ class SymmetryDihedral(AssetGeometryGroup):
         Point the symmetry axes pass through
     i.offset : FloatSocket
         Rotation of the flipped ring about the axis, which sets where the perpendicular two-fold lies
-    i.factor : FloatSocket
-        0 places every copy back on the original, 1 builds the full symmetry
-    i.stagger : FloatSocket
-        Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes
+    i.animate : FloatSocket
+        0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another
 
     Outputs
     -------
@@ -82,10 +78,8 @@ class SymmetryDihedral(AssetGeometryGroup):
         """Point the symmetry axes pass through"""
         offset: FloatSocket
         """Rotation of the flipped ring about the axis, which sets where the perpendicular two-fold lies"""
-        factor: FloatSocket
-        """0 places every copy back on the original, 1 builds the full symmetry"""
-        stagger: FloatSocket
-        """Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes"""
+        animate: FloatSocket
+        """0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
@@ -105,8 +99,7 @@ class SymmetryDihedral(AssetGeometryGroup):
         axis: InputVector = None,
         centre: InputVector = None,
         offset: InputFloat = 0.0,
-        factor: InputFloat = 1.0,
-        stagger: InputFloat = 0.0,
+        animate: InputFloat = 1.0,
     ):
         super().__init__(
             **{
@@ -115,8 +108,7 @@ class SymmetryDihedral(AssetGeometryGroup):
                 "Axis": axis,
                 "Centre": centre,
                 "Offset": offset,
-                "Factor": factor,
-                "Stagger": stagger,
+                "Animate": animate,
             }
         )
 
@@ -149,30 +141,20 @@ class SymmetryDihedral(AssetGeometryGroup):
             description="Rotation of the flipped ring about the axis, which sets where the perpendicular two-fold lies",
             subtype="ANGLE",
         )
-        with tree.inputs.panel("Animate", default_closed=True):
-            factor = tree.inputs.float(
-                "Factor",
-                1.0,
-                description="0 places every copy back on the original, 1 builds the full symmetry",
-                min_value=0.0,
-                max_value=1.0,
-                subtype="FACTOR",
-            )
-            stagger = tree.inputs.float(
-                "Stagger",
-                0.0,
-                description="Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes",
-                min_value=0.0,
-                max_value=1.0,
-                subtype="FACTOR",
-            )
+        animate = tree.inputs.float(
+            "Animate",
+            1.0,
+            description="0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
+        )
         instances = tree.outputs.geometry("Instances")
 
         index = g.Index()
         with g.Frame("Dn operators"):
             axis_angle_to_rotation = g.AxisAngleToRotation(
-                axis=axis,
-                angle=index.o.index.modulo(order) * (math.tau / order) + offset,
+                axis=axis, angle=index.o.index % order * (math.tau / order) + offset
             )
             axis_angle_to_rotation_1 = g.AxisAngleToRotation(
                 axis=g.RotateVector(
@@ -189,18 +171,17 @@ class SymmetryDihedral(AssetGeometryGroup):
             )
             switch = (index >= order).switch.rotation(
                 g.AxisAngleToRotation(
-                    axis=axis, angle=index.o.index.modulo(order) * (math.tau / order)
+                    axis=axis, angle=index.o.index % order * (math.tau / order)
                 ),
                 rotate_rotation,
             )
         (
             SymmetryInstance(
                 geometry=geometry,
-                points=g.Points(count=order * 2, radius=0.1),
+                points=g.Points(count=order * 2),
                 rotation=switch,
                 centre=centre,
-                factor=factor,
-                stagger=stagger,
+                animate=animate,
             )
             >> instances
         )

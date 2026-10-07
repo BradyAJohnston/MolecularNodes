@@ -1,5 +1,5 @@
 # Node-group asset "Symmetry Cyclic" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING
@@ -33,10 +33,8 @@ class SymmetryCyclic(AssetGeometryGroup):
         Direction of the symmetry axis
     centre : InputVector
         Point the symmetry axis passes through
-    factor : InputFloat
-        0 places every copy back on the original, 1 builds the full symmetry
-    stagger : InputFloat
-        Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes
+    animate : InputFloat
+        0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another
 
     Inputs
     ------
@@ -48,10 +46,8 @@ class SymmetryCyclic(AssetGeometryGroup):
         Direction of the symmetry axis
     i.centre : VectorSocket
         Point the symmetry axis passes through
-    i.factor : FloatSocket
-        0 places every copy back on the original, 1 builds the full symmetry
-    i.stagger : FloatSocket
-        Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes
+    i.animate : FloatSocket
+        0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another
 
     Outputs
     -------
@@ -76,10 +72,8 @@ class SymmetryCyclic(AssetGeometryGroup):
         """Direction of the symmetry axis"""
         centre: VectorSocket
         """Point the symmetry axis passes through"""
-        factor: FloatSocket
-        """0 places every copy back on the original, 1 builds the full symmetry"""
-        stagger: FloatSocket
-        """Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes"""
+        animate: FloatSocket
+        """0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
@@ -98,8 +92,7 @@ class SymmetryCyclic(AssetGeometryGroup):
         order: InputInteger = 3,
         axis: InputVector = None,
         centre: InputVector = None,
-        factor: InputFloat = 1.0,
-        stagger: InputFloat = 0.0,
+        animate: InputFloat = 1.0,
     ):
         super().__init__(
             **{
@@ -107,8 +100,7 @@ class SymmetryCyclic(AssetGeometryGroup):
                 "Order": order,
                 "Axis": axis,
                 "Centre": centre,
-                "Factor": factor,
-                "Stagger": stagger,
+                "Animate": animate,
             }
         )
 
@@ -135,23 +127,14 @@ class SymmetryCyclic(AssetGeometryGroup):
             description="Point the symmetry axis passes through",
             subtype="XYZ",
         )
-        with tree.inputs.panel("Animate", default_closed=True):
-            factor = tree.inputs.float(
-                "Factor",
-                1.0,
-                description="0 places every copy back on the original, 1 builds the full symmetry",
-                min_value=0.0,
-                max_value=1.0,
-                subtype="FACTOR",
-            )
-            stagger = tree.inputs.float(
-                "Stagger",
-                0.0,
-                description="Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes",
-                min_value=0.0,
-                max_value=1.0,
-                subtype="FACTOR",
-            )
+        animate = tree.inputs.float(
+            "Animate",
+            1.0,
+            description="0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
+        )
         instances = tree.outputs.geometry("Instances")
 
         with g.Frame("Cn operators"):
@@ -164,11 +147,10 @@ class SymmetryCyclic(AssetGeometryGroup):
         (
             SymmetryInstance(
                 geometry=geometry,
-                points=g.Points(count=order, radius=0.1),
+                points=g.Points(count=order),
                 rotation=axis_angle_to_rotation,
                 centre=centre,
-                factor=factor,
-                stagger=stagger,
+                animate=animate,
             )
             >> instances
         )

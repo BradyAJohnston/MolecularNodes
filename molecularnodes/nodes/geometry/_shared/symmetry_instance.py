@@ -1,5 +1,5 @@
 # Node group "Symmetry Instance" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -33,10 +33,8 @@ class SymmetryInstance(CustomGeometryGroup):
         Translation of each operator, evaluated on the points
     centre : InputVector
         Point the rotations are applied about
-    factor : InputFloat
-        0 places every copy back on the original, 1 builds the full symmetry
-    stagger : InputFloat
-        Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes
+    animate : InputFloat
+        0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another
 
     Inputs
     ------
@@ -50,10 +48,8 @@ class SymmetryInstance(CustomGeometryGroup):
         Translation of each operator, evaluated on the points
     i.centre : VectorSocket
         Point the rotations are applied about
-    i.factor : FloatSocket
-        0 places every copy back on the original, 1 builds the full symmetry
-    i.stagger : FloatSocket
-        Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes
+    i.animate : FloatSocket
+        0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another
 
     Outputs
     -------
@@ -75,10 +71,8 @@ class SymmetryInstance(CustomGeometryGroup):
         """Translation of each operator, evaluated on the points"""
         centre: VectorSocket
         """Point the rotations are applied about"""
-        factor: FloatSocket
-        """0 places every copy back on the original, 1 builds the full symmetry"""
-        stagger: FloatSocket
-        """Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes"""
+        animate: FloatSocket
+        """0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
@@ -98,8 +92,7 @@ class SymmetryInstance(CustomGeometryGroup):
         rotation: InputRotation = None,
         translation: InputVector = None,
         centre: InputVector = None,
-        factor: InputFloat = 1.0,
-        stagger: InputFloat = 0.0,
+        animate: InputFloat = 1.0,
     ):
         super().__init__(
             **{
@@ -108,8 +101,7 @@ class SymmetryInstance(CustomGeometryGroup):
                 "Rotation": rotation,
                 "Translation": translation,
                 "Centre": centre,
-                "Factor": factor,
-                "Stagger": stagger,
+                "Animate": animate,
             }
         )
 
@@ -139,45 +131,27 @@ class SymmetryInstance(CustomGeometryGroup):
             description="Point the rotations are applied about",
             subtype="XYZ",
         )
-        factor = tree.inputs.float(
-            "Factor",
+        animate = tree.inputs.float(
+            "Animate",
             1.0,
-            description="0 places every copy back on the original, 1 builds the full symmetry",
-            min_value=0.0,
-            max_value=1.0,
-            subtype="FACTOR",
-        )
-        stagger = tree.inputs.float(
-            "Stagger",
-            0.0,
-            description="Delay each copy by its order, so at 1 the last copy only starts moving as the first finishes",
+            description="0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another",
             min_value=0.0,
             max_value=1.0,
             subtype="FACTOR",
         )
         instances = tree.outputs.geometry("Instances")
 
-        with g.Frame("Per-copy factor"):
-            math_1 = g.Math.maximum(
-                g.DomainSize(geometry=points, component="POINTCLOUD").o.point_count - 1,
-                1.0,
-            )
-            math_2 = g.Index().o.index / math_1 * stagger
-            clamp = ((factor - math_2) / (1.0 - math_2).max(0.0001)).clamp()
-            _string = g.String(
-                string="Each copy waits for its share of the timeline before it starts moving: with Stagger at 0 every copy shares the same Factor, at 1 the last copy only begins as the first one finishes."
-            )
         with g.Frame("Partial operator"):
             rotation_to_axis_angle = rotation.to_axis_angle()
             axis_angle_to_rotation = g.AxisAngleToRotation(
                 axis=rotation_to_axis_angle.axis,
-                angle=rotation_to_axis_angle.angle * clamp,
+                angle=rotation_to_axis_angle.angle * animate,
             )
-            _string_1 = g.String(
-                string="Rotating about the operator's own axis by a fraction of its angle is the exact interpolation from the identity to that operator. A rotation about a centre c is R p + (c - R c), so the centre is folded into the position; at factor 0 that is zero and every copy sits on the original."
+            _string = g.String(
+                string="Rotating about the operator's own axis by a fraction of its angle is the exact interpolation from the identity to that operator. A rotation about a centre c is R p + (c - R c), so the centre is folded into the position; at Animate 0 that is zero and every copy sits on the original."
             )
             vector_math = (
-                centre - centre.rotate(axis_angle_to_rotation) + translation * clamp
+                centre - centre.rotate(axis_angle_to_rotation) + translation * animate
             )
         (
             points

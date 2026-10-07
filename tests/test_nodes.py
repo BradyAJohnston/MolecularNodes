@@ -395,15 +395,34 @@ def test_symmetry_cyclic():
 def test_symmetry_cyclic_factor():
     axis, centre = (0.0, 0.0, 1.0), (0.5, 0.1, -0.2)
     positions, realized, _, _ = _realized_symmetry(
-        lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, factor=0.0)
+        lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, animate=0.0)
     )
     assert np.allclose(realized, np.tile(positions, (4, 1)), atol=1e-4)
 
     positions, realized, _, _ = _realized_symmetry(
-        lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, factor=0.5)
+        lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, animate=0.5)
     )
     operators = [
         (_rotation_about(axis, 0.5 * 2 * np.pi * k / 4), np.zeros(3)) for k in range(4)
+    ]
+    assert np.allclose(
+        realized, _expected_copies(positions, operators, centre), atol=1e-4
+    )
+
+
+def test_symmetry_cyclic_stagger():
+    # Animate is evaluated per copy, so Stagger Value (ID falls back to the copy
+    # index) gives each copy its own window: width 1 over 4 copies is
+    # start k / 4, length 1 / 4, so at 0.375 the copies sit at 1, 0.5, 0, 0
+    axis, centre = (0.0, 0.0, 1.0), (0.5, 0.1, -0.2)
+    positions, realized, _, _ = _realized_symmetry(
+        lambda: SymmetryCyclic(
+            order=4, axis=axis, centre=centre, animate=StaggerValue(0.375, width=1.0)
+        )
+    )
+    operators = [
+        (_rotation_about(axis, fraction * 2 * np.pi * k / 4), np.zeros(3))
+        for k, fraction in enumerate([1.0, 0.5, 0.0, 0.0])
     ]
     assert np.allclose(
         realized, _expected_copies(positions, operators, centre), atol=1e-4
