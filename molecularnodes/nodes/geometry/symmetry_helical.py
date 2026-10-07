@@ -1,6 +1,7 @@
 # Node-group asset "Symmetry Helical" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
+import math
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
@@ -28,11 +29,13 @@ class SymmetryHelical(AssetGeometryGroup):
     geometry : InputGeometry
         Geometry to replicate along the helix
     count : InputInteger
-        Number of subunits to place along the helix
+        Number of subunits to place along the helix, each repeated Axial Symmetry times around the axis
     rise : InputFloat
         Distance advanced along the axis per subunit, in Angstrom
     twist : InputFloat
         Angle rotated about the axis per subunit
+    axial_symmetry : InputInteger
+        Cn rotational symmetry about the helical axis: each subunit is repeated this many times evenly around the axis, as in filaments built from several protofilaments
     axis : InputVector
         Direction of the helical axis
     centre : InputVector
@@ -45,11 +48,13 @@ class SymmetryHelical(AssetGeometryGroup):
     i.geometry : GeometrySocket
         Geometry to replicate along the helix
     i.count : IntegerSocket
-        Number of subunits to place along the helix
+        Number of subunits to place along the helix, each repeated Axial Symmetry times around the axis
     i.rise : FloatSocket
         Distance advanced along the axis per subunit, in Angstrom
     i.twist : FloatSocket
         Angle rotated about the axis per subunit
+    i.axial_symmetry : IntegerSocket
+        Cn rotational symmetry about the helical axis: each subunit is repeated this many times evenly around the axis, as in filaments built from several protofilaments
     i.axis : VectorSocket
         Direction of the helical axis
     i.centre : VectorSocket
@@ -75,11 +80,13 @@ class SymmetryHelical(AssetGeometryGroup):
         geometry: GeometrySocket
         """Geometry to replicate along the helix"""
         count: IntegerSocket
-        """Number of subunits to place along the helix"""
+        """Number of subunits to place along the helix, each repeated Axial Symmetry times around the axis"""
         rise: FloatSocket
         """Distance advanced along the axis per subunit, in Angstrom"""
         twist: FloatSocket
         """Angle rotated about the axis per subunit"""
+        axial_symmetry: IntegerSocket
+        """Cn rotational symmetry about the helical axis: each subunit is repeated this many times evenly around the axis, as in filaments built from several protofilaments"""
         axis: VectorSocket
         """Direction of the helical axis"""
         centre: VectorSocket
@@ -104,6 +111,7 @@ class SymmetryHelical(AssetGeometryGroup):
         count: InputInteger = 10,
         rise: InputFloat = 27.5,
         twist: InputFloat = -2.909464,
+        axial_symmetry: InputInteger = 1,
         axis: InputVector = None,
         centre: InputVector = None,
         animate: InputFloat = 1.0,
@@ -114,6 +122,7 @@ class SymmetryHelical(AssetGeometryGroup):
                 "Count": count,
                 "Rise": rise,
                 "Twist": twist,
+                "Axial Symmetry": axial_symmetry,
                 "Axis": axis,
                 "Centre": centre,
                 "Animate": animate,
@@ -127,7 +136,7 @@ class SymmetryHelical(AssetGeometryGroup):
         count = tree.inputs.integer(
             "Count",
             10,
-            description="Number of subunits to place along the helix",
+            description="Number of subunits to place along the helix, each repeated Axial Symmetry times around the axis",
             min_value=1,
             max_value=10000,
         )
@@ -143,6 +152,13 @@ class SymmetryHelical(AssetGeometryGroup):
             -2.909464,
             description="Angle rotated about the axis per subunit",
             subtype="ANGLE",
+        )
+        axial_symmetry = tree.inputs.integer(
+            "Axial Symmetry",
+            1,
+            description="Cn rotational symmetry about the helical axis: each subunit is repeated this many times evenly around the axis, as in filaments built from several protofilaments",
+            min_value=1,
+            max_value=100,
         )
         axis = tree.inputs.vector(
             "Axis",
@@ -168,19 +184,22 @@ class SymmetryHelical(AssetGeometryGroup):
 
         index = g.Index()
         with g.Frame("Helical operators"):
+            integer_math = index.o.index // axial_symmetry
             axis_angle_to_rotation = g.AxisAngleToRotation(
-                axis=axis, angle=twist * index
+                axis=axis,
+                angle=twist * integer_math
+                + index.o.index % axial_symmetry * (math.tau / axial_symmetry),
             )
             _string = g.String(
-                string="Subunit k is twisted k times about the axis and raised k times along it. Rise is given in Angstrom and converted to world units; the defaults are actin's 27.5 A rise and -166.7 degree twist."
+                string="Copy k is subunit k div n of the helix, where n is Axial Symmetry: it is twisted that many times about the axis and raised that many times along it, then turned a further (k mod n) / n of a full turn about the axis. Rise is given in Angstrom and converted to world units; the defaults are actin's 27.5 A rise and -166.7 degree twist."
             )
             vector_math = axis.normalize() * (
-                AngstromToWorld(angstrom=rise).o.world * index
+                AngstromToWorld(angstrom=rise).o.world * integer_math
             )
         (
             SymmetryInstance(
                 geometry=geometry,
-                points=g.Points(count=count),
+                points=g.Points(count=count * axial_symmetry),
                 rotation=axis_angle_to_rotation,
                 translation=vector_math,
                 centre=centre,

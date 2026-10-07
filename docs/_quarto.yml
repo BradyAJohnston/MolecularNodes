@@ -441,6 +441,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.RotationRELION
         children: embedded
+      - name: nodes.geometry.SymmetryCubic
+        children: embedded
       - name: nodes.geometry.SymmetryCyclic
         children: embedded
       - name: nodes.geometry.SymmetryDihedral
