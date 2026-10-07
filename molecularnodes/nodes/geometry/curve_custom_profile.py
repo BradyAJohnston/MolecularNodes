@@ -1,5 +1,5 @@
 # Node-group asset "Curve Custom Profile" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -205,11 +205,11 @@ class CurveCustomProfile(AssetGeometryGroup):
         )
         spline_parameter = g.SplineParameter()
         capture = g.CaptureAttribute.point(geometry=curve)
-        rotation = capture.items.rotation("Rotation", index_switch)
-        scale = capture.items.vector("Scale", profile_scale)
-        factor = capture.items.float("Factor", spline_parameter.o.factor)
-        length = capture.items.float("Length", spline_parameter.o.length)
-        index = capture.items.integer("Index", spline_parameter.o.index)
+        rotation = capture.items.rotation(index_switch, "Rotation")
+        scale = capture.items.vector(profile_scale, "Scale")
+        factor = capture.items.float(spline_parameter.o.factor, "Factor")
+        length = capture.items.float(spline_parameter.o.length, "Length")
+        index = capture.items.integer(spline_parameter.o.index, "Index")
         resample_curve = (
             capture.o.geometry
             >> g.SetSplineResolution(resolution=subdivisions)
@@ -235,8 +235,8 @@ class CurveCustomProfile(AssetGeometryGroup):
                 geometry=profile_curve, fallback=transform_geometry
             )
         )
-        factor_1 = capture_1.items.float("Factor", spline_parameter_1.o.factor)
-        index_1 = capture_1.items.integer("Index", spline_parameter_1.o.index)
+        factor_1 = capture_1.items.float(spline_parameter_1.o.factor, "Factor")
+        index_1 = capture_1.items.integer(spline_parameter_1.o.index, "Index")
         curve_to_mesh = g.CurveToMesh(
             curve=resample_curve,
             profile_curve=capture_1.o.geometry,

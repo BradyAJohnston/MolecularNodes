@@ -1,5 +1,5 @@
 # Node-group asset "Assembly Instance" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -176,9 +176,9 @@ class AssemblyInstance(AssetGeometryGroup):
             mix = g.Mix.rotation(rotation, b=attribute.rotation, clamp_factor=True)
             mix_1 = g.Mix.vector(position, b=attribute.translation, clamp_factor=True)
         capture = g.CaptureAttribute.point(geometry=separate_geometry.o.selection)
-        position_1 = capture.items.vector("Position", mix_1.o.result_vector)
-        rotation_1 = capture.items.rotation("Rotation", mix.o.result_rotation)
-        sym_id = capture.items.integer("sym_id", SymmetryID())
+        position_1 = capture.items.vector(mix_1.o.result_vector, "Position")
+        rotation_1 = capture.items.rotation(mix.o.result_rotation, "Rotation")
+        sym_id = capture.items.integer(SymmetryID(), "sym_id")
         instance_on_points = (
             capture.o.geometry
             >> g.SetPosition(position=position_1.output)
@@ -190,7 +190,7 @@ class AssemblyInstance(AssetGeometryGroup):
             )
         )
         capture_1 = g.CaptureAttribute.instance(geometry=instance_on_points)
-        new_chain_id = capture_1.items.integer("new_chain_id", g.Index())
+        new_chain_id = capture_1.items.integer(g.Index(), "new_chain_id")
         (
             capture_1.o.geometry
             >> g.RealizeInstances(realize_all=realize_all)

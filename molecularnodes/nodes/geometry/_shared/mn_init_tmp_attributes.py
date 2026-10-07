@@ -1,5 +1,5 @@
 # Node group ".MN_init_tmp_attributes" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -72,9 +72,9 @@ class MN_init_tmp_attributes(CustomGeometryGroup):
             ).o.group_id,
         )
         capture = g.CaptureAttribute.point(geometry=store_named_attribute)
-        is_first = capture.items.boolean("Is First", group_parameter.o.is_first)
-        is_last = capture.items.boolean("Is Last", group_parameter.o.is_last)
-        size = capture.items.integer("Size", group_parameter.o.group_size)
+        is_first = capture.items.boolean(group_parameter.o.is_first, "Is First")
+        is_last = capture.items.boolean(group_parameter.o.is_last, "Is Last")
+        size = capture.items.integer(group_parameter.o.group_size, "Size")
         (
             capture.o.geometry
             >> g.StoreNamedAttribute.point.integer(

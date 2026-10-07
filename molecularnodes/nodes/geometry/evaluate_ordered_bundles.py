@@ -1,5 +1,5 @@
 # Node-group asset "Evaluate Ordered Bundles" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -85,7 +85,7 @@ class EvaluateOrderedBundles(AssetGeometryGroup):
 
         sorted_bundle_paths = SortedBundlePaths(bundle=bundles, bundle_type=prefix)
         repeat_zone = g.RepeatZone(sorted_bundle_paths.o.list.list_length())
-        geometry_2 = repeat_zone.items.geometry("Geometry", geometry)
+        geometry_2 = repeat_zone.items.geometry(geometry, "Geometry")
         join_strings = g.JoinStrings(
             (
                 sorted_bundle_paths.o.list[repeat_zone.iteration],
@@ -96,9 +96,9 @@ class EvaluateOrderedBundles(AssetGeometryGroup):
         evaluate_closure = g.EvaluateClosure(
             g.GetBundleItem.closure(bundles, join_strings).o.item
         )
-        evaluate_closure.inputs.geometry("Geometry", geometry_2.current)
+        evaluate_closure.inputs.geometry(geometry_2.current, "Geometry")
         geometry_3 = evaluate_closure.outputs.geometry("Geometry")
-        geometry_3 >> geometry_2.next
+        geometry_3.output >> geometry_2.next
 
         geometry_2.result >> geometry_1
 

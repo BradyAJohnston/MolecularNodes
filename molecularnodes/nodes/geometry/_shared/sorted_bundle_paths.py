@@ -1,5 +1,5 @@
 # Node group "Sorted Bundle Paths" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -80,9 +80,12 @@ class SortedBundlePaths(CustomGeometryGroup):
             pattern_mode="Wildcard",
         )
         format_string = g.FormatString("{v}/step", items={"v": get_nested_bundle_paths})
-        g.GetBundleItem.integer(bundle, format_string.o.string[index]).o.item >> item
+        (
+            g.GetBundleItem.integer(bundle, format_string.o.string[index.output]).o.item
+            >> item.input
+        )
         closure_to_list = g.ClosureToList(
             count=format_string.o.string.list_length(), closure=closure_zone.closure
         )
         item_1 = closure_to_list.items.integer("Item", structure_type="DYNAMIC")
-        get_nested_bundle_paths.o.paths.sort(item_1) >> list
+        get_nested_bundle_paths.o.paths.sort(item_1.output) >> list

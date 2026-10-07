@@ -1,5 +1,5 @@
 # Node-group asset "Evaluate on Instances" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -88,7 +88,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
                 >> g.SortElements.instance(sort_weight=instance_reference)
             )
             capture = g.CaptureAttribute.instance(geometry=sort_elements)
-            index = capture.items.integer("Index", g.Index())
+            index = capture.items.integer(g.Index(), "Index")
             with g.Frame("Clear Instance Transforms"):
                 realize_instances = (
                     capture.o.geometry

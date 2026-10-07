@@ -1,5 +1,5 @@
 # Node group "Edge Detection" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
@@ -73,9 +73,9 @@ class EdgeDetection(CustomShaderGroup):
         geometry = s.Geometry()
         geometry_1 = s.Geometry()
         repeat_zone = g.RepeatZone(8)
-        max_distance = repeat_zone.items.float("Max Distance")
-        max_normal_delta = repeat_zone.items.float("Max Normal Delta")
-        object_edge_1 = repeat_zone.items.float("Object Edge")
+        max_distance = repeat_zone.items.float(name="Max Distance")
+        max_normal_delta = repeat_zone.items.float(name="Max Normal Delta")
+        object_edge_1 = repeat_zone.items.float(name="Object Edge")
         map_range = g.WhiteNoiseTexture(
             vector=s.Geometry().o.position, noise_dimensions="4D"
         ).o.value.map_range(to_max=360.0)

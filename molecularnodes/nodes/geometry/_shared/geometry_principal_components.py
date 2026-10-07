@@ -1,5 +1,5 @@
 # Node group "Geometry Principal Components" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -122,7 +122,7 @@ class GeometryPrincipalComponents(CustomGeometryGroup):
             )
 
         capture = g.CaptureAttribute.point(geometry=geometry)
-        position_1 = capture.items.vector("Position", position)
+        position_1 = capture.items.vector(position, "Position")
         principal_components_1 = PrincipalComponents(position=position_1.output)
         sample_index = g.SampleIndex.point.vector(
             capture.o.geometry, principal_components_1.o.group_center

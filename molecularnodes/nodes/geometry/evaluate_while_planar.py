@@ -1,5 +1,5 @@
 # Node-group asset "Evaluate While Planar" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -92,10 +92,10 @@ class EvaluateWhilePlanar(AssetGeometryGroup):
 
         geometry_to_planar = GeometryToPlanar(geometry=geometry, selection=selection)
         evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry("Geometry", geometry_to_planar.o.geometry)
+        evaluate_closure.inputs.geometry(geometry_to_planar.o.geometry, "Geometry")
         geometry_2 = evaluate_closure.outputs.geometry("Geometry")
         (
-            geometry_2
+            geometry_2.output
             >> g.TransformGeometry(
                 transform=geometry_to_planar.o.transform.invert(), mode="Matrix"
             )

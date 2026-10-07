@@ -1,5 +1,5 @@
 # Node group ".MN_utils_style_sticks" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
@@ -220,7 +220,7 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                     * MNUnits(value=extra_bond_offset).o.angstrom
                 )
             capture = g.CaptureAttribute.edge(geometry=separate_geometry.o.selection)
-            vector = capture.items.vector("Vector", vector_math_1)
+            vector = capture.items.vector(vector_math_1, "Vector")
         split_edges = capture.o.geometry >> g.SplitEdges()
         with g.Frame("Rotate and offset Extra Bonds"):
             map_bond_type = Map_bond_type()
@@ -252,7 +252,7 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 menu_switch.o.double & IsExtraBonds().o.is_extra_bonds
             ).switch.float(1.0, scale_extra_bond_radius)
             capture_2 = g.CaptureAttribute.edge(geometry=menu_switch)
-            output = capture_2.items.float("Output", switch)
+            output = capture_2.items.float(switch, "Output")
         set_curve_radius = (
             capture_2.o.geometry
             >> g.MeshToCurve()
@@ -261,12 +261,12 @@ class MN_utils_style_sticks(CustomGeometryGroup):
         with g.Frame("Get correct index to sample from"):
             capture_3 = g.CaptureAttribute.curve(geometry=set_curve_radius)
             first_point = capture_3.items.integer(
-                "First Point", g.PointsOfCurve().o.point_index
+                g.PointsOfCurve().o.point_index, "First Point"
             )
             last_point = capture_3.items.integer(
-                "Last Point", g.PointsOfCurve(sort_index=1).o.point_index
+                g.PointsOfCurve(sort_index=1).o.point_index, "Last Point"
             )
-            curve_index = capture_3.items.integer("Curve Index", g.Index())
+            curve_index = capture_3.items.integer(g.Index(), "Curve Index")
             switch_1 = (
                 resolution
                 < g.AccumulateField.face.integer(
