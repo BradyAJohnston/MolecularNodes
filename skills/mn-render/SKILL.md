@@ -44,6 +44,15 @@ Without the `BLENDER_USER_EXTENSIONS` line, an installed MN extension's bundled 
 shadow the venv. `tests/conftest.py` does the same thing. Keep scratch scripts outside
 the repo.
 
+**Inside Blender with the installed extension** (`blender -b --python script.py`), the
+package is `import bl_ext.blender_org.molecularnodes as mn`; `import molecularnodes`
+fails there. Install headless with `blender --online-mode --command extension install
+--enable molecularnodes` (without `--online-mode` Blender refuses to reach the platform).
+Do not call `bpy.ops.wm.read_factory_settings()` to reset between renders: it has been
+reported to strip the extension's bundled wheels mid-run, so the next `Molecule.load()`
+fails on a missing biotite file. Delete the default objects by hand, or use one Blender
+process per render.
+
 ## 3. Minimal still
 
 ```python
@@ -136,6 +145,17 @@ mol.add_style(
   chain), `"plddt"`, the name of an existing *colour* attribute, an RGBA sequence, or a
   callable returning a colour socket. Any other string warns and applies nothing (this
   replaced a silent black render). Arrays go on directly with `mol["Color"] = rgba_array`.
+- **Colouring part of a cartoon.** Do not add one `cartoon` style per selection to
+  colour regions: each style builds its own ribbon, so the chain is cut at every
+  boundary (blocky helix ends, stubs at the cuts). Use one style and colour it from a
+  per-atom attribute:
+  ```python
+  col = mol.named_attribute("Color")
+  col[mol.universe.select_atoms("chainID A and resid 19-26").ix, :3] = (0.1, 0.7, 0.7)
+  mol.store_named_attribute(col, "Color", atype="FLOAT_COLOR")
+  # color=None reads Color; or store under another name and pass color="name"
+  mol.add_style("cartoon")
+  ```
 - **Spheres in EEVEE.** Point clouds are ray-traced only by Cycles; on other engines
   `add_style` switches `StyleSpheres` from `sphere="Point"` to `"Instance"` for you.
   If you build the tree by hand, set `sphere="Instance"` or `"Mesh"` yourself, and use
