@@ -1,4 +1,5 @@
 import json
+import logging
 from abc import ABCMeta
 from io import BytesIO
 from pathlib import Path
@@ -8,6 +9,8 @@ from biotite.structure import AtomArray, AtomArrayStack, BondType, filter
 from ... import color
 from ...assets import data
 from ...utils import count_value_changes
+
+logger = logging.getLogger(__name__)
 
 
 def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
@@ -173,7 +176,8 @@ class ReaderBase(metaclass=ABCMeta):
             if as_json_string:
                 return json.dumps(self._assemblies())
             return self._assemblies()
-        except InvalidFileError:
+        except InvalidFileError as e:
+            logger.warning(f"Failed to parse biological assemblies: {e}")
             return ""
 
     def _assemblies(self):
