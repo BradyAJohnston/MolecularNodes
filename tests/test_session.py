@@ -48,8 +48,18 @@ def test_reload_molecule_from_file(tmp_path):
     assert reloaded.object is obj
 
 
-def test_reload_molecule_from_code(fetch):
+def test_reload_molecule_from_code(fetch, monkeypatch):
+    import functools
+    from molecularnodes.download import StructureDownloader
+    from molecularnodes.entities import reload
     from molecularnodes.entities.reload import reload_entity
+
+    # reload re-fetches the code into the default cache; read tests/data instead
+    monkeypatch.setattr(
+        reload,
+        "StructureDownloader",
+        functools.partial(StructureDownloader, cache=data_dir),
+    )
 
     session = mn.session.get_session()
     mol = fetch("1BNA")

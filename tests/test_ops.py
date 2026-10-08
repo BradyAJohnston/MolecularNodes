@@ -16,12 +16,17 @@ def test_op_fetch(fetch, snapshot_custom: NumpySnapshotExtension, code):
     format = "cif"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(code=code, file_format=format, style=style)
+        bpy.ops.mn.import_molecule(
+            code=code, file_format=format, style=style, cache_dir=str(data_dir)
+        )
         mol1 = scene.MNSession.match(o.latest())
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_molecule(
-            code=f"pdb_{code.rjust(8, '0')}", file_format=format, style=style
+            code=f"pdb_{code.rjust(8, '0')}",
+            file_format=format,
+            style=style,
+            cache_dir=str(data_dir),
         )
         mol2 = scene.MNSession.match(o.latest())
 
