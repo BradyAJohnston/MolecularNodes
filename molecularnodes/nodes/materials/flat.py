@@ -14,7 +14,9 @@ class Flat(CustomShaderGroup):
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         mix_shader = s.MixShader(
-            fac=MNColor().o.alpha, shader=s.TransparentBSDF(), shader_001=FlatInternal()
+            fac=MNColor().o.alpha,
+            shader=s.TransparentBSDF(),
+            shader_001=FlatInternal(outline="None"),
         )
         _material_output = s.MaterialOutput(surface=mix_shader, is_active_output=True)
 
