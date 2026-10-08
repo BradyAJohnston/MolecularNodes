@@ -233,15 +233,31 @@ class PDBAssemblyParser(AssemblyParser):
             if transform_start is None:
                 raise InvalidFileError("No 'BIOMT' records found for chosen assembly")
 
-            matrices = _parse_transformations(assembly_lines[transform_start:stop])
+            # only the BIOMT lines, as the final chain set of an assembly also
+            # includes the blank line separating it from the next BIOMOLECULE
+            biomt_lines = [
+                line
+                for line in assembly_lines[transform_start:stop]
+                if line.lstrip().startswith("BIOMT")
+            ]
+            matrices = _parse_transformations(biomt_lines)
 
             for matrix in matrices:
-                transformations.append((affected_chain_ids, matrix.tolist()))
+                transformations.append(
+                    {
+                        "chain_ids": affected_chain_ids,
+                        "matrix": matrix.tolist(),
+                        "pdb_model_num": i,
+                    }
+                )
 
         return transformations
 
     def get_assemblies(self):
         assembly_dict = {}
+        # no assembly records is not an error, just a structure without assemblies
+        if self._file.get_remark(300) is None and self._file.get_remark(350) is None:
+            return assembly_dict
         for assembly_id in self.list_assemblies():
             assembly_dict[assembly_id] = self.get_transformations(assembly_id)
 

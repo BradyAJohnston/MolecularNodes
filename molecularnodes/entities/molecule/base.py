@@ -922,7 +922,8 @@ class Molecule(MolecularEntity):
         if as_array:
             try:
                 return utils.array_transforms_from_dict(assemblies_info)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError) as e:
+                logger.warning(f"Failed to convert biological assemblies to array: {e}")
                 return None
         return assemblies_info
 

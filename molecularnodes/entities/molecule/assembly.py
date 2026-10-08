@@ -25,11 +25,12 @@ class AssemblyParser(metaclass=ABCMeta):
         Return a ``list`` of transformations for a set of chains
         transformations:
 
-        transformations on sets of chains for this assembly
-        |          chain IDs affected by the transformation
-        |          |        4x4 rotation, translation & scale matrix
-        |          |        |
-        list[tuple[ndarray, ndarray]]]
+        Each transformation is a ``dict`` with the keys:
+
+        - ``"chain_ids"``: ``list[str]`` of chain IDs affected by the transformation
+        - ``"matrix"``: 4x4 rotation, translation & scale matrix as nested lists
+        - ``"pdb_model_num"``: ``int`` index of the chain set the transformation
+          belongs to
         """
 
     @abstractmethod
