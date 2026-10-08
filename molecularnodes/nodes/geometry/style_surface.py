@@ -745,40 +745,83 @@ class StyleSurface(AssetGeometryGroup):
                 closure_zone_1 = g.ClosureZone()
                 atoms_2 = closure_zone_1.inputs.geometry("Atoms")
                 geometry_2 = closure_zone_1.outputs.geometry("Geometry")
-                angstrom_to_world = AngstromToWorld(
-                    angstrom=2.0 / g.Switch.float(quality, 0.5, quality)
-                )
-                with g.Frame("Build the grid in positive space"):
-                    _string = g.String(
-                        string="Shift the atoms so the grid sits entirely in positive space, and OpenVDB only creates tree nodes on one side of each axis. The shift is a whole number of voxels, so the voxels land on the atoms where they would without it. The mesh is shifted back after."
-                    )
-                    vector_math = (
-                        g.BoundingBox(geometry=atoms_2.output).o.min * -1.0
-                        + (offset + 1.0)
-                    ).snap(angstrom_to_world)
-                points_to_sdf_grid = g.PointsToSDFGrid(
-                    points=g.SetPosition(geometry=atoms_2.output, offset=vector_math),
+                points_to_sdf_grid = atoms_2.output >> g.PointsToSDFGrid(
                     radius=scale * VDWRadii(),
-                    voxel_size=angstrom_to_world,
+                    voxel_size=AngstromToWorld(
+                        angstrom=2.0 / g.Switch.float(quality, 0.5, quality)
+                    ),
                 )
                 sdf_grid_fillet = (
                     points_to_sdf_grid.o.sdf_grid.sdf_offset(offset)
                     .sdf_mean(mean_width, mean_iterations)
                     .sdf_fillet(fillet)
                 )
-                (
-                    sdf_grid_fillet.to_mesh(0.0)
-                    >> g.TransformGeometry(translation=vector_math * -1.0)
-                    >> geometry_2.input
+                sdf_grid_fillet.to_mesh(0.0) >> geometry_2.input
+            with g.Frame("Experimental: coarse SDF offset"):
+                closure_zone_2 = g.ClosureZone()
+                atoms_3 = closure_zone_2.inputs.geometry("Atoms")
+                geometry_3 = closure_zone_2.outputs.geometry("Geometry")
+                with g.Frame("Coarse Subdivisions"):
+                    integer = g.Integer()
+                _string = g.String(
+                    string="Experimental, pick 'SDF Coarse' in the SDF menu switch to try it. Runs the same offset, mean and fillet as 'SDF' but on a grid whose voxels are 'Coarse Voxel Factor' times larger (2 = 8x fewer voxels), meshes that and subdivides the mesh back up (plain Subdivide Mesh: Subdivision Surface costs ~250 ms here). Surface to Radius then projects the vertices onto the atom spheres, which restores detail on the convex parts."
                 )
-        closure_zone_2 = g.ClosureZone()
-        atoms_3 = closure_zone_2.inputs.geometry("Atoms")
-        geometry_3 = closure_zone_2.outputs.geometry("Geometry")
-        closure_zone_3 = g.ClosureZone()
-        geometry_4 = closure_zone_3.inputs.geometry("Geometry")
-        geometry_5 = closure_zone_3.outputs.geometry("Geometry")
+                with g.Frame("Coarse Voxel Factor"):
+                    value = g.Value(2.0)
+                points_to_sdf_grid_1 = atoms_3.output >> g.PointsToSDFGrid(
+                    radius=scale * VDWRadii(),
+                    voxel_size=AngstromToWorld(
+                        angstrom=2.0 / g.Switch.float(quality, 0.5, quality)
+                    ).o.world
+                    * value,
+                )
+                sdf_grid_fillet_1 = (
+                    points_to_sdf_grid_1.o.sdf_grid.sdf_offset(offset)
+                    .sdf_mean(mean_width, mean_iterations)
+                    .sdf_fillet(fillet)
+                )
+                (
+                    sdf_grid_fillet_1.to_mesh(0.0)
+                    >> g.SubdivideMesh(level=integer)
+                    >> geometry_3.input
+                )
+            with g.Frame("Experimental: solvent-excluded surface"):
+                closure_zone_3 = g.ClosureZone()
+                atoms_4 = closure_zone_3.inputs.geometry("Atoms")
+                geometry_4 = closure_zone_3.outputs.geometry("Geometry")
+                with g.Frame("SES Subdivisions"):
+                    integer_1 = g.Integer(integer=0)
+                _string_1 = g.String(
+                    string="Experimental, pick 'SES' in the SDF menu switch to try it. The solvent-excluded surface is what a probe sphere (water, ~1.4 A) traces rolling over the atoms: build the grid with atom radius + probe radius (the solvent-accessible surface), then shrink it back by the probe radius, which fills crevices smoothly. Surface to Radius in Mesh processing projects vertices back onto atom spheres and partly undoes the smooth pockets: mute it to see the raw SES."
+                )
+                with g.Frame("Probe Radius (A)"):
+                    value_1 = g.Value(1.4)
+                angstrom_to_world = AngstromToWorld(angstrom=value_1)
+                with g.Frame("SES Voxel Factor"):
+                    value_2 = g.Value(1.0)
+                points_to_sdf_grid_2 = atoms_4.output >> g.PointsToSDFGrid(
+                    radius=scale * VDWRadii() + angstrom_to_world,
+                    voxel_size=AngstromToWorld(
+                        angstrom=2.0 / g.Switch.float(quality, 0.5, quality)
+                    ).o.world
+                    * value_2,
+                )
+                sdf_grid_mean = points_to_sdf_grid_2.o.sdf_grid.sdf_offset(
+                    angstrom_to_world.o.world * -1.0
+                ).sdf_mean(mean_width, mean_iterations)
+                (
+                    sdf_grid_mean.to_mesh(0.0)
+                    >> g.SubdivideMesh(level=integer_1)
+                    >> geometry_4.input
+                )
+        closure_zone_4 = g.ClosureZone()
+        atoms_5 = closure_zone_4.inputs.geometry("Atoms")
+        geometry_5 = closure_zone_4.outputs.geometry("Geometry")
+        closure_zone_5 = g.ClosureZone()
+        geometry_6 = closure_zone_5.inputs.geometry("Geometry")
+        geometry_7 = closure_zone_5.outputs.geometry("Geometry")
         mn_utils_style_surface_sdf = MN_utils_style_surface_sdf(
-            Atoms=geometry_4.output,
+            Atoms=geometry_6.output,
             Selection=selection,
             Quality=quality,
             **{
@@ -788,22 +831,28 @@ class StyleSurface(AssetGeometryGroup):
             },
             Material=material,
         )
-        mn_utils_style_surface_sdf >> geometry_5.input
+        mn_utils_style_surface_sdf >> geometry_7.input
         menu_switch = g.MenuSwitch.closure(
-            "SDF", {"Current": closure_zone.closure, "SDF": closure_zone_1.closure}
+            "SDF",
+            {
+                "Current": closure_zone.closure,
+                "SDF": closure_zone_1.closure,
+                "SDF Coarse": closure_zone_2.closure,
+                "SES": closure_zone_3.closure,
+            },
         )
         with g.Frame("Mesh processing"):
             triangulate_mesh = TriangulateMesh()
             triangulate_mesh.node.mute = True
-            closure_zone_4 = g.ClosureZone()
-            geometry_6 = closure_zone_4.inputs.geometry("Geometry")
-            geometry_7 = closure_zone_4.outputs.geometry("Geometry")
+            closure_zone_6 = g.ClosureZone()
+            geometry_8 = closure_zone_6.inputs.geometry("Geometry")
+            geometry_9 = closure_zone_6.outputs.geometry("Geometry")
             join_bundle = g.JoinBundle(
                 bundle=(
-                    SurfaceToRadius(**{"Scale Radii": scale}, Atoms=geometry_6.output),
+                    SurfaceToRadius(**{"Scale Radii": scale}, Atoms=geometry_8.output),
                     SampleColors(
                         **{"Color Source": color_source},
-                        Atoms=geometry_6.output,
+                        Atoms=geometry_8.output,
                         Blur=color_blur,
                     ),
                     RelaxSurface(**{"Relaxation Steps": relax}),
@@ -813,40 +862,42 @@ class StyleSurface(AssetGeometryGroup):
             evaluate_closure = g.EvaluateClosure(
                 menu_switch.o.output, define_signature=True
             )
-            evaluate_closure.inputs.geometry(geometry_6.output, "Atoms")
-            geometry_8 = evaluate_closure.outputs.geometry(
+            evaluate_closure.inputs.geometry(geometry_8.output, "Atoms")
+            geometry_10 = evaluate_closure.outputs.geometry(
                 "Geometry", structure_type="SINGLE"
             )
             set_material = (
-                EvaluateOrderedBundles(geometry=geometry_8.output, bundles=join_bundle)
+                EvaluateOrderedBundles(geometry=geometry_10.output, bundles=join_bundle)
                 >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
                 >> g.SetMaterial(material=material)
             )
-            set_material >> geometry_7.input
+            set_material >> geometry_9.input
         with g.Frame('Create surface while points are as "flat" as possible'):
-            closure_zone_5 = g.ClosureZone()
-            geometry_9 = closure_zone_5.inputs.geometry("Geometry")
-            group_id_1 = closure_zone_5.inputs.integer("group_id")
-            geometry_10 = closure_zone_5.outputs.geometry("Geometry")
-            _string_1 = g.String(
+            closure_zone_7 = g.ClosureZone()
+            geometry_11 = closure_zone_7.inputs.geometry("Geometry")
+            group_id_1 = closure_zone_7.inputs.integer("group_id")
+            geometry_12 = closure_zone_7.outputs.geometry("Geometry")
+            _string_2 = g.String(
                 string="We get better performance if we first orient the structure better inside of a bounding box for more efficient use of grid space & voxels!"
             )
             store_named_attribute = EvaluateWhilePlanar(
-                geometry=geometry_9.output, closure=closure_zone_4.closure
+                geometry=geometry_11.output,
+                closure=closure_zone_6.closure,
+                positive_space=True,
             ) >> g.StoreNamedAttribute.point.integer(
                 name="chain_id", value=group_id_1.output
             )
-            store_named_attribute >> geometry_10.input
+            store_named_attribute >> geometry_12.input
         evaluate_per_group = EvaluatePerGroup(
-            geometry=atoms_3.output,
-            closure=closure_zone_5.closure,
+            geometry=atoms_5.output,
+            closure=closure_zone_7.closure,
             group=separate_by,
             group_id=group_id,
         )
-        evaluate_per_group >> geometry_3.input
+        evaluate_per_group >> geometry_5.input
         (
             EvaluateOnAtoms(
-                geometry=atoms, selection=selection, closure=closure_zone_2.closure
+                geometry=atoms, selection=selection, closure=closure_zone_4.closure
             )
             >> geometry
         )
