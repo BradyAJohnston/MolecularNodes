@@ -1,5 +1,5 @@
 # Node-group asset "Curve Custom Profile" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -172,13 +172,15 @@ class CurveCustomProfile(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         curve = tree.inputs.geometry("Curve")
         subdivisions = tree.inputs.integer("Subdivisions", 6, min_value=1)
-        profile_type = tree.inputs.menu("Profile Type", optional_label=True)
+        profile_type = tree.inputs.menu(
+            "Profile Type", "Custom Profile", optional_label=True
+        )
         uv_map = tree.inputs.boolean(
             "UV Map",
             False,
             description="Compute and store the `uv_map` attribute on the `Face Corner` domain of the final mesh",
         )
-        u_component = tree.inputs.menu("U Component", optional_label=True)
+        u_component = tree.inputs.menu("U Component", "Factor", optional_label=True)
         with tree.inputs.panel("Profile", default_closed=True):
             profile_rotation = tree.inputs.rotation("Profile Rotation", (0.0, 0.0, 0.0))
             profile_scale = tree.inputs.vector(
@@ -205,15 +207,15 @@ class CurveCustomProfile(AssetGeometryGroup):
         )
         spline_parameter = g.SplineParameter()
         capture = g.CaptureAttribute.point(geometry=curve)
-        rotation = capture.items.rotation("Rotation", index_switch)
-        scale = capture.items.vector("Scale", profile_scale)
-        factor = capture.items.float("Factor", spline_parameter.o.factor)
-        length = capture.items.float("Length", spline_parameter.o.length)
-        index = capture.items.integer("Index", spline_parameter.o.index)
+        rotation = capture.items.rotation(index_switch, "Rotation")
+        scale = capture.items.vector(profile_scale, "Scale")
+        factor = capture.items.float(spline_parameter.o.factor, "Factor")
+        length = capture.items.float(spline_parameter.o.length, "Length")
+        index = capture.items.integer(spline_parameter.o.index, "Index")
         resample_curve = (
             capture.o.geometry
             >> g.SetSplineResolution(resolution=subdivisions)
-            >> g.ResampleCurve(mode="Evaluated", length=0.1)
+            >> g.ResampleCurve(mode="Evaluated")
         )
         spline_parameter_1 = g.SplineParameter()
         switch = CheckEndFaceCorner(
@@ -235,8 +237,8 @@ class CurveCustomProfile(AssetGeometryGroup):
                 geometry=profile_curve, fallback=transform_geometry
             )
         )
-        factor_1 = capture_1.items.float("Factor", spline_parameter_1.o.factor)
-        index_1 = capture_1.items.integer("Index", spline_parameter_1.o.index)
+        factor_1 = capture_1.items.float(spline_parameter_1.o.factor, "Factor")
+        index_1 = capture_1.items.integer(spline_parameter_1.o.index, "Index")
         curve_to_mesh = g.CurveToMesh(
             curve=resample_curve,
             profile_curve=capture_1.o.geometry,
@@ -268,9 +270,6 @@ class CurveCustomProfile(AssetGeometryGroup):
             )
             >> geometry
         )
-
-        profile_type.default_value = "Custom Profile"
-        u_component.default_value = "Factor"
 
 
 ASSET = CurveCustomProfile

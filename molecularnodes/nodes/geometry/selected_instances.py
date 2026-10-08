@@ -1,5 +1,5 @@
 # Node-group asset "Selected Instances" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -104,7 +104,7 @@ class SelectedInstances(AssetGeometryGroup):
         capture = g.CaptureAttribute.instance(
             geometry=g.BoundingBox(geometry=instances)
         )
-        index = capture.items.integer("Index", g.Index())
+        index = capture.items.integer(g.Index(), "Index")
         accumulate_field = g.AccumulateField.point.integer(selection, index.output)
         index_1 = g.Index()
         capture_1 = g.CaptureAttribute.point(
@@ -112,35 +112,26 @@ class SelectedInstances(AssetGeometryGroup):
             >> g.RealizeInstances(realize_to_point_domain=True)
         )
         all_points_select = capture_1.items.boolean(
-            "All Points Select", g.Compare.integer.equal(accumulate_field.o.total, 8)
+            g.Compare.integer.equal(accumulate_field.o.total, 8), "All Points Select"
         )
         some_points_selected = capture_1.items.boolean(
-            "Some Points Selected",
             (accumulate_field.o.total < 8) & (accumulate_field.o.total > 0),
+            "Some Points Selected",
         )
         no_points_selected = capture_1.items.boolean(
-            "No points selected", g.Compare.integer.equal(accumulate_field.o.total, 0)
+            g.Compare.integer.equal(accumulate_field.o.total, 0), "No points selected"
         )
         separate_first_point = SeparateFirstPoint(
             geometry=capture_1.o.geometry, sort=False, group_id=index.output
         )
-        sample_index = g.SampleIndex(
-            geometry=separate_first_point,
-            value=all_points_select.output,
-            index=index_1,
-            data_type="BOOLEAN",
+        sample_index = g.SampleIndex.point.boolean(
+            separate_first_point, all_points_select.output, index_1
         )
-        sample_index_1 = g.SampleIndex(
-            geometry=separate_first_point,
-            value=some_points_selected.output,
-            index=index_1,
-            data_type="BOOLEAN",
+        sample_index_1 = g.SampleIndex.point.boolean(
+            separate_first_point, some_points_selected.output, index_1
         )
-        sample_index_2 = g.SampleIndex(
-            geometry=separate_first_point,
-            value=no_points_selected.output,
-            index=index_1,
-            data_type="BOOLEAN",
+        sample_index_2 = g.SampleIndex.point.boolean(
+            separate_first_point, no_points_selected.output, index_1
         )
 
         sample_index >> entirely_selected

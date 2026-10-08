@@ -1,5 +1,5 @@
 # Node-group asset "Evaluate Per Group" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -101,7 +101,9 @@ class EvaluatePerGroup(AssetGeometryGroup):
             "Geometry", description="Geometry to split into two parts"
         )
         closure = tree.inputs.closure("Closure")
-        group = tree.inputs.menu("Group", expanded=True, optional_label=True)
+        group = tree.inputs.menu(
+            "Group", "chain_id", expanded=True, optional_label=True
+        )
         group_id = tree.inputs.integer("Group ID", 0, hide_value=True)
         geometry_1 = tree.outputs.geometry("Geometry")
         instances = tree.outputs.geometry("Instances")
@@ -110,31 +112,31 @@ class EvaluatePerGroup(AssetGeometryGroup):
             menu_switch = g.MenuSwitch.integer(
                 group, {"chain_id": ChainID(), "Group ID": group_id}
             )
-            separate_geometry = g.SeparateGeometry.point(
-                geometry,
-                ~g.AccumulateField.point.integer(
+            boolean_math = g.BooleanMath.l_not(
+                g.AccumulateField.point.integer(
                     group_index=menu_switch.o.output
-                ).o.trailing,
+                ).o.trailing
             )
+            separate_geometry = g.SeparateGeometry.point(geometry, boolean_math)
             domain_size = g.DomainSize(geometry=separate_geometry.o.selection)
         repeat_zone = g.RepeatZone(domain_size.o.point_count)
-        geometry_2 = repeat_zone.items.geometry("Geometry")
-        instances_1 = repeat_zone.items.geometry("Instances")
-        sample_index = g.SampleIndex(
-            geometry=separate_geometry.o.selection,
-            value=menu_switch.o.output,
-            index=repeat_zone.iteration,
-            data_type="INT",
+        geometry_2 = repeat_zone.items.geometry(name="Geometry")
+        instances_1 = repeat_zone.items.geometry(name="Instances")
+        sample_index = g.SampleIndex.point.integer(
+            separate_geometry.o.selection, menu_switch.o.output, repeat_zone.iteration
         )
         separate_geometry_1 = g.SeparateGeometry.point(
             geometry, g.Compare.integer.equal(sample_index, menu_switch.o.output)
         )
         evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry("Geometry", separate_geometry_1.o.selection)
-        evaluate_closure.inputs.integer("group_id", sample_index)
+        evaluate_closure.inputs.geometry(separate_geometry_1.o.selection, "Geometry")
+        evaluate_closure.inputs.integer(sample_index, "group_id")
         geometry_3 = evaluate_closure.outputs.geometry("Geometry")
-        store_named_attribute = geometry_3 >> g.StoreNamedAttribute.point.integer(
-            name="group_id", value=repeat_zone.iteration
+        store_named_attribute = (
+            geometry_3.output
+            >> g.StoreNamedAttribute.point.integer(
+                name="group_id", value=repeat_zone.iteration
+            )
         )
         join_geometry = g.JoinGeometry(
             geometry=(instances_1.current, g.GeometryToInstance(store_named_attribute))
@@ -147,8 +149,6 @@ class EvaluatePerGroup(AssetGeometryGroup):
 
         geometry_2.result >> geometry_1
         instances_1.result >> instances
-
-        group.default_value = "chain_id"
 
 
 ASSET = EvaluatePerGroup

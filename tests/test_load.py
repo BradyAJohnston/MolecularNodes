@@ -34,8 +34,8 @@ STYLE_PARAMS = [
 
 
 @pytest.mark.parametrize("code, assembly, style", STYLE_PARAMS)
-def test_style_1(snapshot, code, assembly, style):
-    mol = mn.Molecule.fetch(code, cache=data_dir)
+def test_style_1(fetch, snapshot, code, assembly, style):
+    mol = fetch(code)
     with mol.tree.reset() as (atoms, join):
         match style:
             case "ball_and_stick":
@@ -62,8 +62,8 @@ def test_style_1(snapshot, code, assembly, style):
 @pytest.mark.parametrize(
     "code, format", list(itertools.product(codes, ["bcif", "cif", "pdb"]))
 )
-def test_download_format(code, format):
-    mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
+def test_download_format(fetch, code, format):
+    mol = fetch(code, format=format)
     assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
     with db.ObjectTracker() as o:
         bpy.ops.mn.import_molecule(
@@ -75,14 +75,14 @@ def test_download_format(code, format):
 
 
 @pytest.mark.parametrize("code", codes)
-def test_style_positions(snapshot_custom: NumpySnapshotExtension, code):
-    mol = mn.Molecule.fetch(code, cache=data_dir)
+def test_style_positions(fetch, snapshot_custom: NumpySnapshotExtension, code):
+    mol = fetch(code)
     assert snapshot_custom == mol.position
 
 
-def test_local_pdb(snapshot_custom):
+def test_local_pdb(fetch, snapshot_custom):
     molecules = [mn.Molecule.load(data_dir / f"1l58.{ext}") for ext in ("cif", "pdb")]
-    molecules.append(mn.Molecule.fetch("1l58", format="bcif"))
+    molecules.append(fetch("1l58", format="bcif"))
     for mol in molecules:
         assert snapshot_custom == mol.named_attribute("position")
 
@@ -111,8 +111,8 @@ def test_pdb_no_bonds(snapshot):
     assert snapshot == mol.position
 
 
-def test_rcsb_nmr(snapshot_custom):
-    mol = mn.Molecule.fetch("2M6Q", cache=data_dir)
+def test_rcsb_nmr(fetch, snapshot_custom):
+    mol = fetch("2M6Q")
     # multi-model (NMR) structures now load as trajectory frames of the Universe
     assert mol.universe.trajectory.n_frames > 1
 
@@ -141,12 +141,12 @@ def _terminal_backbone_indices(mol) -> tuple[int, int]:
     return int(first_n[0].ix), int(last_c[0].ix)
 
 
-def test_cyclic_peptide_closing_bond():
+def test_cyclic_peptide_closing_bond(fetch):
     # 1KAL is a head-to-tail cyclic peptide. The closing C -> N bond is absent
     # from the file's struct_conn (which lists only the disulfides), so it is
     # detected geometrically on import and must appear in the bonds and the
     # mesh edges (#858)
-    mol = mn.Molecule.fetch("1KAL")
+    mol = fetch("1KAL")
     first_n, last_c = _terminal_backbone_indices(mol)
 
     bonds = np.sort(mol.universe.atoms.bonds.indices, axis=1)
@@ -156,7 +156,7 @@ def test_cyclic_peptide_closing_bond():
     assert np.any(np.all(edges == sorted((first_n, last_c)), axis=1))
 
     # a linear peptide must not gain a closing bond
-    mol_linear = mn.Molecule.fetch("4ozs")
+    mol_linear = fetch("4ozs")
     first_n, last_c = _terminal_backbone_indices(mol_linear)
     bonds = np.sort(mol_linear.universe.atoms.bonds.indices, axis=1)
     assert not np.any(np.all(bonds == sorted((first_n, last_c)), axis=1))

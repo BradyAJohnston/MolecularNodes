@@ -16,10 +16,12 @@ failure the received and difference images are written to
 
 from itertools import product
 import pytest
+from nodebpy.nodes.geometry import RandomValue, StoreNamedAttribute
 import molecularnodes as mn
 import molecularnodes.nodes.compositor as mc
 import molecularnodes.nodes.geometry as mg
 from .constants import data_dir
+from .test_nodes import SYMMETRY_EXAMPLES
 from .utils import ImageSnapshotExtension
 
 
@@ -48,27 +50,27 @@ def _render(canvas, tmp_path) -> bytes:
     return file.read_bytes()
 
 
-def _fetch_molecule():
-    return mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+def _fetch_molecule(fetch):
+    return fetch("4ozs", format="bcif")
 
 
-def test_render_spheres(golden_canvas, tmp_path, image_snapshot):
-    mol = _fetch_molecule()
+def test_render_spheres(fetch, golden_canvas, tmp_path, image_snapshot):
+    mol = _fetch_molecule(fetch)
     mol.add_style("spheres")
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
-def test_render_cartoon(golden_canvas, tmp_path, image_snapshot):
-    mol = _fetch_molecule()
+def test_render_cartoon(fetch, golden_canvas, tmp_path, image_snapshot):
+    mol = _fetch_molecule(fetch)
     mol.add_style("cartoon")
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
-def test_render_annotations(golden_canvas, tmp_path, image_snapshot):
+def test_render_annotations(fetch, golden_canvas, tmp_path, image_snapshot):
     # exercises the annotation overlay through the compositor
-    mol = _fetch_molecule()
+    mol = _fetch_molecule(fetch)
     mol.add_style("cartoon")
     mol.annotations.add_atom_info(selection="name CA and resid 20", show_resid=True)
     golden_canvas.look_at(mol, viewpoint="front")
@@ -77,8 +79,8 @@ def test_render_annotations(golden_canvas, tmp_path, image_snapshot):
 
 # spheres and cartoon are covered by the dedicated tests above
 @pytest.mark.parametrize("style", ["ball_and_stick", "ribbon", "sticks", "surface"])
-def test_render_style(style, golden_canvas, tmp_path, image_snapshot):
-    mol = _fetch_molecule()
+def test_render_style(fetch, style, golden_canvas, tmp_path, image_snapshot):
+    mol = _fetch_molecule(fetch)
     mol.add_style(style)
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
@@ -88,25 +90,25 @@ def test_render_style(style, golden_canvas, tmp_path, image_snapshot):
     "material",
     ["Default", "AmbientOcclusion", "Flat", "Squishy", "Transparent"],
 )
-def test_render_material(material, golden_canvas, tmp_path, image_snapshot):
-    mol = _fetch_molecule()
+def test_render_material(fetch, material, golden_canvas, tmp_path, image_snapshot):
+    mol = _fetch_molecule(fetch)
     mol.add_style("surface", material=getattr(mn.material, material)())
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
-def test_render_selection_string(golden_canvas, tmp_path, image_snapshot):
+def test_render_selection_string(fetch, golden_canvas, tmp_path, image_snapshot):
     # a selection phrase masks the second style to part of the molecule
-    mol = _fetch_molecule()
+    mol = _fetch_molecule(fetch)
     mol.add_style("cartoon")
     mol.add_style("spheres", selection="resid 1:40")
     golden_canvas.look_at(mol, viewpoint="front")
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
-def test_render_selection_atomgroup(golden_canvas, tmp_path, image_snapshot):
+def test_render_selection_atomgroup(fetch, golden_canvas, tmp_path, image_snapshot):
     # an MDAnalysis AtomGroup can be used as a selection directly
-    mol = _fetch_molecule()
+    mol = _fetch_molecule(fetch)
     mol.add_style("cartoon")
     mol.add_style("sticks", selection=mol.universe.select_atoms("resid 100:150"))
     golden_canvas.look_at(mol, viewpoint="front")
@@ -179,12 +181,12 @@ COMPOSITOR_CASES = {
 
 
 @pytest.mark.parametrize("case", list(COMPOSITOR_CASES))
-def test_render_compositor(case, golden_canvas, tmp_path, image_snapshot):
+def test_render_compositor(case, fetch, golden_canvas, tmp_path, image_snapshot):
     # the compositor node assets: outlines, illustrative shading, Goodsell's
     # Illustrate and depth fog, each through the Canvas plumbing
     material, setup = COMPOSITOR_CASES[case]
     golden_canvas.transparent = True
-    mol = _fetch_molecule()
+    mol = _fetch_molecule(fetch)
     mol.add_style("cartoon", material=getattr(mn.material, material)())
     golden_canvas.look_at(mol, viewpoint="front")
     setup(golden_canvas)
@@ -214,9 +216,9 @@ def assembly_image_snapshot(snapshot):
     ),
 )
 def test_render_assembly(
-    golden_canvas, tmp_path, assembly_image_snapshot, code, node, assembly
+    fetch, golden_canvas, tmp_path, assembly_image_snapshot, code, node, assembly
 ):
-    mol = mn.Molecule.fetch(code)
+    mol = fetch(code)
     mat = mn.material.Flat()
     if node == "code":
         with mol.tree.reset() as (atoms, join):
@@ -276,8 +278,53 @@ def test_render_oxdna_simple_circle(
     list(product(("1KAL",), ("ribbon", "ball_and_stick", "cartoon"))),
 )
 def test_render_cyclic_peptide(
-    golden_canvas, tmp_path, assembly_image_snapshot, pdb_id, style
+    fetch, golden_canvas, tmp_path, assembly_image_snapshot, pdb_id, style
 ):
-    mol = mn.Molecule.fetch(pdb_id).add_style(style)
+    mol = fetch(pdb_id).add_style(style)
     golden_canvas.look_at(mol, viewpoint="top")
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize("code", list(SYMMETRY_EXAMPLES))
+def test_render_symmetry(fetch, golden_canvas, tmp_path, assembly_image_snapshot, code):
+    # generated symmetry reproducing the entry's deposited assembly; the rings
+    # are viewed down their axis and the helix side on
+    mol = fetch(code)
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> mg.StyleRibbon(material=mn.material.Flat().material)
+            >> SYMMETRY_EXAMPLES[code]()
+            >> StoreNamedAttribute.instance.color(
+                name="Color",
+                value=mg.ColorMatplotlib(
+                    RandomValue(), category="Uniform", uniform="magma"
+                ),
+            )
+            >> StoreNamedAttribute.instance.boolean(name="is_instanced", value=True)
+            >> join
+        )
+    golden_canvas.look_at(mol, viewpoint="front" if code == "4UDV" else "top")
+    assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "material",
+    [mn.material.Default, mn.material.AmbientOcclusion],
+)
+def test_render_faded_geometry(
+    fetch, golden_canvas, tmp_path, assembly_image_snapshot, material
+):
+    mol = fetch("1een")
+    with mol.tree.reset() as (atoms, join):
+        (atoms >> mg.StyleCartoon(material=mn.material.Flat().material) >> join)
+
+        (
+            atoms
+            >> mg.StyleSurface(material=material().material)
+            >> mg.FadeGeometry(fade=0.3)
+            >> join
+        )
+
+    golden_canvas.look_at(mol)
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)

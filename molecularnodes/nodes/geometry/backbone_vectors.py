@@ -1,5 +1,5 @@
 # Node-group asset "Backbone Vectors" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -75,7 +75,9 @@ class BackboneVectors(AssetGeometryGroup):
         super().__init__(**{"Method": method})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu(
+            "Method", "Compute", expanded=True, optional_label=True
+        )
         normal = tree.outputs.vector(
             "Normal",
             description="The vector used for the `Normal` of a curve when reading positions from a peptide backbone",
@@ -89,21 +91,18 @@ class BackboneVectors(AssetGeometryGroup):
         )
 
         backbone_positions = BackbonePositions(method=method)
-        mix = g.Mix(
-            a_vector=backbone_positions.o.c,
-            b_vector=backbone_positions.o.n,
-            factor_float=0.45,
-            data_type="VECTOR",
-            clamp_factor=True,
-        )
         vector_math = (backbone_positions.o.c - backbone_positions.o.n).normalize()
-        vector_math_1 = (mix.o.result_vector - backbone_positions.o.ca).normalize()
-        vector_math.cross(vector_math_1).normalize() >> bitangent
+        vector_math_1 = (
+            g.Mix.vector(
+                0.45, backbone_positions.o.c, backbone_positions.o.n, clamp_factor=True
+            ).o.result_vector
+            - backbone_positions.o.ca
+        )
+        vector_math_2 = vector_math_1.normalize()
+        vector_math.cross(vector_math_2).normalize() >> bitangent
 
-        vector_math_1 >> normal
+        vector_math_2 >> normal
         vector_math >> tangent
-
-        method.default_value = "Compute"
 
 
 ASSET = BackboneVectors

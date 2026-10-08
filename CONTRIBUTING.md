@@ -266,6 +266,10 @@ This project has already gone through several iterations to improve the general 
 
 Please open an issue or PR if you would like to discuss submitting changes. Support for importing more data formats or improving on current import formats are more than welcome. Submitting changes for node groups can be a bit tricky as the node graphs inside of Blender don't work with `git`, so please open an issue or discussion with proposed changes.
 
+Before opening a pull request, read the [AI-assisted contributions policy](AI_POLICY.md). In short: you may use AI tools, but you are the author, you must understand and have tested every line, every PR needs an honest AI disclosure, and you must talk to reviewers yourself rather than through a tool. If you are new to the project, start small and open an issue first for anything beyond a small bug fix.
+
+If you point a coding agent at this repository, `AGENTS.md` (also reachable as `CLAUDE.md`) holds the rules it must follow and a map of where things live. The `skills/` directory holds longer agent-oriented guides for node development and scripted rendering.
+
 ## Building a Dev Environment
 
 Building a local development environment isn't required for building and running the add-on (this is handled by the Python that is shipped inside of Blender), but it _is_ required for [running tests](#running-tests) and [building docs](#writing-and-building-docs) locally.
@@ -326,6 +330,8 @@ pytest -v tests/test_load.py # run a single tests file
 pytest -v -k centre # pattern match to 'centre' and only run tests with that in the name
 ```
 
+Tests load structures with the `fetch` fixture (`def test_x(fetch): mol = fetch("4ozs")`), which reads from `tests/data` and never downloads. If a test needs a new structure, download it into `tests/data` once and commit it. Tests that have to reach a server are marked `@pytest.mark.network`; any other test that opens a remote connection fails. CI runs the network tests in a single job, because many jobs downloading at once get rate limited. Run them locally with `pytest -m network`, or skip them with `pytest -m "not network"`.
+
 Look over other tests to see how we are structuring them. Most of the tests will involve importing data, generating a 3D model and then creating a `snapshot` of the attributes for some subset of vertices from that 3D model.
 We could snapshot _all_ of the vertices, but the snapshots are just `.txt` files so the diffs would become very large.
 When changing something that _should_ change the output of the snapshots, we end up with _very_ large number of files changed.
@@ -352,12 +358,14 @@ The long-form written documentation is all inside of `docs/`. Documentation is w
 
 ### Node Documentation
 
-The `.blend` asset file (`molecularnodes/assets/node_data_file.blend`) is the source of truth for the nodes: their descriptions, socket names, tooltips, defaults and asset catalogs. To update the descriptions of inputs, outputs and data types, the nodes themselves need to be updated inside the `.blend` file. Two things are generated from it:
+The nodes are ultimatley defined inside of `molecularnodes/nodes/*/*.py` files. These are the ultimate source of truth for the project. The command `uv run -m nodebpy.assets build` turns these `.py` files into a `.blend` asset file (`molecularnodes/assets/nodes.blend`).
 
-- The typed node classes in `molecularnodes/nodes/` (`geometry.py`, `shader.py`), including full docstrings. Regenerate them after changing the `.blend` file with `uv run generate_node_classes.py`, and commit the result.
-- The node documentation pages, generated twice from the same sources so each audience gets a page tailored to them, with the two versions linking to each other:
-  - **GUI pages** (`docs/nodes/<category>.qmd`, written directly by `docs/generate.py`): node name, demo video, description and the input/output socket tables read from the node group interface, listed under the **Nodes** navbar entry.
-  - **API pages** (`docs/api/reference/nodes.*`): `docs/generate.py` writes one quartodoc page per category into the marked block of `docs/_quarto.yml`, which `quartodoc build` renders from the generated node classes via the custom renderer (`docs/_renderer.py`).
+Changes can be made to nodes inside of the `.blend` - to keep these changes you must `uv run -m nodebpy.assets dump` to write those changes back out to the `.py` files. Changes can also be made directly to the `.py` files.
+
+To generate node documentation pages, run `uv run docs/generate.py`.
+
+- **GUI pages** (`docs/nodes/<category>.qmd`): node name, demo video, description and the input/output socket tables read from the node group interface, listed under the **Nodes** navbar entry. They get additional long-form prose and demo videos of the nodes in use from `docs/nodes.yml`.
+- **API pages** (`docs/api/reference/nodes.*`): `docs/generate.py` writes one quartodoc page per category into the marked block of `docs/_quarto.yml`, which `quartodoc build` renders from the generated node classes via the custom renderer (`docs/_renderer.py`).
 
 Extra information that can't live on the nodes themselves — long-form prose and demo videos of the nodes in use — lives in `docs/nodes.yml`, keyed by node group name, and is included on the GUI pages. Entries marked `custom: true` describe the node groups generated per imported structure (which have no class), documented on `docs/nodes/generated_nodes.qmd`. Relevant example videos should be updated in `docs/nodes.yml` when nodes are changed.
 

@@ -1,5 +1,5 @@
 # Node group "Index Mixed" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -12,7 +12,7 @@ from nodebpy.builder import (
     IntegerSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputInteger
+from nodebpy.types import Default, InputFloat, InputInteger
 
 
 class IndexMixed(CustomGeometryGroup):
@@ -22,7 +22,7 @@ class IndexMixed(CustomGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        The `Index` at which to add the `Offset` value to
+        The `Index` at which to add the `Offset` value to. When unconnected: The index from the context.
     offset : InputFloat
         The offset value to add to the to the `Index`
 
@@ -70,7 +70,7 @@ class IndexMixed(CustomGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputFloat = 0.5,
     ):
         super().__init__(**{"Index": index, "Offset": offset})

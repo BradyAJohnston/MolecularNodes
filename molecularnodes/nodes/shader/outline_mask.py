@@ -1,5 +1,5 @@
 # Node-group asset "Outline Mask" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import ShaderNodeTree
@@ -86,16 +86,10 @@ class OutlineMask(AssetShaderGroup):
             edge_detection.o.co_planar_delta,
             camera_data.o.view_distance * (threshold / 100.0),
         )
-        math_2 = g.Math(
-            value_001=edge_detection.o.object_edge,
-            value=1.0,
-            operation="SUBTRACT",
-            use_clamp=True,
-        )
-        math_3 = 1.0 - math_1.o.value.min(
+        math_2 = math_1.o.value.min(
             g.Math.less_than(edge_detection.o.normal_delta, 0.55)
-        ).min(math_2)
-        math_3 - s.Geometry().o.backfacing >> outline
+        ).min(g.Math.subtract(1.0, edge_detection.o.object_edge, use_clamp=True))
+        1.0 - math_2 - s.Geometry().o.backfacing >> outline
 
 
 ASSET = OutlineMask

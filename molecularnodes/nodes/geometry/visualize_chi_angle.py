@@ -1,5 +1,5 @@
 # Node-group asset "Visualize Chi Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -125,19 +125,16 @@ class VisualizeChiAngle(AssetGeometryGroup):
 
         dihedral_chi_angle = DihedralChiAngle()
         capture = g.CaptureAttribute.point(geometry=geometry)
-        angle = capture.items.float("Angle", dihedral_chi_angle.o.angle)
-        bc = capture.items.vector("BC", dihedral_chi_angle.o.axis)
-        output = capture.items.vector("Output", dihedral_chi_angle.o.up)
-        vector_math = (
-            bc.output
-            * g.Mix(factor_float=factor, b_float=1.0, clamp_factor=True).o.result_float
-            + g.Position()
-        )
+        angle = capture.items.float(dihedral_chi_angle.o.angle, "Angle")
+        bc = capture.items.vector(dihedral_chi_angle.o.axis, "BC")
+        output = capture.items.vector(dihedral_chi_angle.o.up, "Output")
         visualize_angle = VisualizeAngle(
             points=capture.o.geometry,
             selection=(g.EdgesOfVertex().o.total > 1)
             & (selection & MN_pivot_peptide()),
-            position=vector_math,
+            position=bc.output
+            * g.Mix.float(factor, b=1.0, clamp_factor=True).o.result_float
+            + g.Position(),
             angle=angle.output * -1.0,
             length=MNUnits(value=value).o.angstrom,
             up=output.output,

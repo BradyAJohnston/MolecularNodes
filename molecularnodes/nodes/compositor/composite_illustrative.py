@@ -1,5 +1,5 @@
 # Node-group asset "Composite Illustrative" (CompositorNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import CompositorNodeTree
@@ -286,6 +286,7 @@ class CompositeIllustrative(AssetCompositorGroup):
     def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
         base_color = tree.inputs.menu(
             "Base Color",
+            "Image",
             description="Whether to shade the rendered image or the flat Diffuse Color pass, which ignores lighting and materials entirely",
             expanded=True,
         )
@@ -350,6 +351,7 @@ class CompositeIllustrative(AssetCompositorGroup):
             )
             shading_source = tree.inputs.menu(
                 "Shading Source",
+                "Ambient Occlusion",
                 description="Which pass darkens the base colour",
                 expanded=True,
             )
@@ -363,6 +365,7 @@ class CompositeIllustrative(AssetCompositorGroup):
             )
             shading_smoothing = tree.inputs.menu(
                 "Shading Smoothing",
+                "Kuwahara",
                 description="Filter applied to the shading pass before it is used. Kuwahara gives a painterly, flat result; Blur a soft one",
                 expanded=True,
             )
@@ -523,10 +526,6 @@ class CompositeIllustrative(AssetCompositorGroup):
             )
 
         switch_3 >> image_1
-
-        base_color.default_value = "Image"
-        shading_source.default_value = "Ambient Occlusion"
-        shading_smoothing.default_value = "Kuwahara"
 
 
 ASSET = CompositeIllustrative

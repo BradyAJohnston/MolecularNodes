@@ -1,5 +1,5 @@
 # Node-group asset "Color AO" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import ShaderNodeTree
@@ -101,8 +101,10 @@ class ColorAO(AssetShaderGroup):
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 0.0))
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
-        ao_space = tree.inputs.menu("AO Space", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "AO", expanded=True, optional_label=True)
+        ao_space = tree.inputs.menu(
+            "AO Space", "Local", expanded=True, optional_label=True
+        )
         distance = tree.inputs.float("Distance", 1.0, min_value=0.0, max_value=1000.0)
         exponent = tree.inputs.float("Exponent", 0.5, min_value=0.0, max_value=10_000.0)
         result = tree.outputs.color("Result", (0.8, 0.8, 0.8, 1.0))
@@ -118,25 +120,28 @@ class ColorAO(AssetShaderGroup):
                 ).o.ao,
             },
         )
-        math_1 = g.Math(
-            value_001=menu_switch.o.output**exponent,
-            value=1.0,
-            operation="SUBTRACT",
-            use_clamp=True,
+        menu_switch_1 = s.MenuSwitch.float(
+            menu,
+            {
+                "AO": g.Math.subtract(
+                    1.0, menu_switch.o.output**exponent, use_clamp=True
+                ),
+                "None": 0.0,
+            },
         )
-        mix = g.Mix(
-            factor_float=s.MenuSwitch.float(menu, {"AO": math_1, "None": 0.0}).o.output,
-            a_color=color,
-            b_color=(0.0, 0.0, 0.0, 1.0),
-            data_type="RGBA",
+        mix = g.Mix.color(
+            menu_switch_1.o.output,
+            color,
+            (0.0, 0.0, 0.0, 1.0),
             blend_type="MULTIPLY",
             clamp_factor=True,
         )
 
         mix.o.result_color >> result
 
-        menu.default_value = "AO"
-        ao_space.default_value = "Local"
-
 
 ASSET = ColorAO
+
+ASSET_METADATA = {
+    "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",
+}

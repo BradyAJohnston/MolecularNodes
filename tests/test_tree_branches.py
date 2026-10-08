@@ -1,4 +1,3 @@
-import molecularnodes as mn
 from molecularnodes.nodes.geometry import StyleCartoon, StyleRibbon, StyleSpheres
 
 
@@ -11,8 +10,8 @@ def branches(tree):
     return [link.from_node for link in join_nodes(tree)[0].inputs[0].links]
 
 
-def test_atoms_and_join_created_on_demand():
-    mol = mn.Molecule.fetch("4ozs")
+def test_atoms_and_join_created_on_demand(fetch):
+    mol = fetch("4ozs")
     with mol.tree as tree:
         tree.atoms >> StyleCartoon() >> tree.join
 
@@ -23,8 +22,8 @@ def test_atoms_and_join_created_on_demand():
     assert len(branches(mol.tree)) == 1
 
 
-def test_atoms_and_join_are_reused_across_branches():
-    mol = mn.Molecule.fetch("4ozs")
+def test_atoms_and_join_are_reused_across_branches(fetch):
+    mol = fetch("4ozs")
     with mol.tree as tree:
         tree.atoms >> StyleCartoon() >> tree.join
     with mol.tree as tree:
@@ -39,8 +38,8 @@ def test_atoms_and_join_are_reused_across_branches():
     assert len(mol.named_attribute("position", evaluate=True)) > 0
 
 
-def test_join_keeps_existing_work_feeding_the_output():
-    mol = mn.Molecule.fetch("1BNA")
+def test_join_keeps_existing_work_feeding_the_output(fetch):
+    mol = fetch("1BNA")
     # a style wired straight to the output, with no join in between
     with mol.tree as tree:
         tree.atoms >> StyleCartoon() >> tree.geometry
@@ -54,8 +53,8 @@ def test_join_keeps_existing_work_feeding_the_output():
     assert len(branches(mol.tree)) == 2
 
 
-def test_reset_returns_the_same_sockets():
-    mol = mn.Molecule.fetch("4ozs")
+def test_reset_returns_the_same_sockets(fetch):
+    mol = fetch("4ozs")
     with mol.tree.reset() as (atoms, join):
         atoms >> StyleCartoon() >> join
 
@@ -64,8 +63,8 @@ def test_reset_returns_the_same_sockets():
     assert len(join_nodes(mol.tree)) == 1
 
 
-def test_reset_with_custom_input_name():
-    mol = mn.Molecule.fetch("4ozs")
+def test_reset_with_custom_input_name(fetch):
+    mol = fetch("4ozs")
     with mol.tree.reset(input="Volume") as (volume, join):
         volume >> StyleCartoon() >> join
 

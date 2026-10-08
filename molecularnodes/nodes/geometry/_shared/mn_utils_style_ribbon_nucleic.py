@@ -1,5 +1,5 @@
 # Node group ".MN_utils_style_ribbon_nucleic" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
@@ -240,9 +240,9 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
         remove_named_attribute.node.warning_propagation = "ERRORS"
         capture = g.CaptureAttribute.point(geometry=remove_named_attribute)
         selection_1 = capture.items.boolean(
-            "Selection", IsNucleic(and_=selection).o.selection
+            IsNucleic(and_=selection).o.selection, "Selection"
         )
-        backbone_radius_1 = capture.items.float("Backbone Radius", backbone_radius)
+        backbone_radius_1 = capture.items.float(backbone_radius, "Backbone Radius")
         transform_geometry = g.TransformGeometry(
             geometry=g.CurveCircle(resolution=4, radius=0.01),
             rotation=(math.pi / 2, math.pi / 4, -math.pi / 2),
@@ -253,22 +253,22 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
                 >> g.SeparateGeometry.point(selection=selection_1.output)
             ).o.selection
         )
-        unique_group_id = capture_1.items.integer("Unique Group ID", UniqueResidueID())
+        unique_group_id = capture_1.items.integer(UniqueResidueID(), "Unique Group ID")
         sample_nucleic_base_values = SampleNucleicBaseValues(
             input=unique_group_id.output
         )
         capture_2 = g.CaptureAttribute.point(geometry=capture_1.o.geometry)
         base_valid = capture_2.items.boolean(
-            "base_valid", sample_nucleic_base_values.o.base_valid
+            sample_nucleic_base_values.o.base_valid, "base_valid"
         )
-        capture_2.items.vector("base_pivot", sample_nucleic_base_values.o.base_pivot)
-        base_z = capture_2.items.vector("base_Z", sample_nucleic_base_values.o.base_z)
-        base_y = capture_2.items.vector("base_Y", sample_nucleic_base_values.o.base_y)
+        capture_2.items.vector(sample_nucleic_base_values.o.base_pivot, "base_pivot")
+        base_z = capture_2.items.vector(sample_nucleic_base_values.o.base_z, "base_Z")
+        base_y = capture_2.items.vector(sample_nucleic_base_values.o.base_y, "base_Y")
         base_position = capture_2.items.vector(
-            "base_position", sample_nucleic_base_values.o.base_position
+            sample_nucleic_base_values.o.base_position, "base_position"
         )
         base_color = capture_2.items.color(
-            "Base Color", sample_nucleic_base_values.o.base_color
+            sample_nucleic_base_values.o.base_color, "Base Color"
         )
         with g.Frame("Delete between chains and distance too large"):
             points_to_curves = (
@@ -276,7 +276,6 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
                 >> g.MeshToPoints(
                     selection=g.Compare.integer.equal(AtomName(), 55),
                     position=base_position.output,
-                    radius=0.05,
                 )
                 >> g.StoreNamedAttribute.point.integer(name="tmp_idx", value=g.Index())
                 >> g.PointsToCurves(curve_group_id=ChainID())

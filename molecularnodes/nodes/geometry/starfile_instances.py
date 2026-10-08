@@ -1,5 +1,5 @@
 # Node-group asset "Starfile Instances" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -166,7 +166,7 @@ class StarfileInstances(AssetGeometryGroup):
             structure_type="SINGLE",
             force_non_field=True,
         )
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Object", expanded=True, optional_label=True)
         geometry = tree.inputs.geometry(
             "Geometry",
             description="Becomes the output value if it is chosen by the menu input",
@@ -239,8 +239,6 @@ class StarfileInstances(AssetGeometryGroup):
                 )
                 >> instances
             )
-
-        menu.default_value = "Object"
 
 
 ASSET = StarfileInstances

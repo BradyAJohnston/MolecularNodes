@@ -1,5 +1,5 @@
 # Node-group asset "Build Elastic Network" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -116,6 +116,7 @@ class BuildElasticNetwork(AssetGeometryGroup):
         )
         menu = tree.inputs.menu(
             "Menu",
+            "Alpha Carbon",
             description="Output a network between just alpha carbons, or one that includes all atoms",
             optional_label=True,
         )
@@ -158,10 +159,10 @@ class BuildElasticNetwork(AssetGeometryGroup):
                 "Alpha Carbon": plexus,
                 "All Atom": g.JoinGeometry(geometry=(plexus, plexus_1)),
             },
-        ) >> g.MergePoints(merge_id=g.ClusterByDistance(distance=0.001))
+        ) >> g.MergePoints(merge_id=g.ClusterByDistance())
         capture = g.CaptureAttribute.point(geometry=merge_points)
         index = capture.items.integer(
-            "Index", g.SampleNearest.point(separate_geometry.o.selection)
+            g.SampleNearest.point(separate_geometry.o.selection), "Index"
         )
         (
             SampleAtomicAttributes(
@@ -172,8 +173,6 @@ class BuildElasticNetwork(AssetGeometryGroup):
             >> g.SortElements.point(sort_weight=index.output)
             >> mesh
         )
-
-        menu.default_value = "Alpha Carbon"
 
 
 ASSET = BuildElasticNetwork

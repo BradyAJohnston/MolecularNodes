@@ -1,5 +1,5 @@
 # Node group ".Sample Nucleic Base Values" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -94,10 +94,9 @@ class SampleNucleicBaseValues(CustomGeometryGroup):
         with g.Frame("Sample relevant base positions for orientations"):
             residue_mask = ResidueMask(atom_name=61)
             Color(index=ResidueMask(atom_name=67).o.index) >> base_color
-            mix = g.Mix(
-                a_vector=ResidueMask(atom_name=55).o.position,
-                b_vector=ResidueMask(atom_name=57).o.position,
-                data_type="VECTOR",
+            mix = g.Mix.vector(
+                a=ResidueMask(atom_name=55).o.position,
+                b=ResidueMask(atom_name=57).o.position,
                 clamp_factor=True,
             )
             select_nucleic_type = SelectNucleicType()

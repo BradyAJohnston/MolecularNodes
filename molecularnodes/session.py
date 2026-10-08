@@ -157,35 +157,37 @@ class MNSession:
         if self.n_items == 0:
             return None
 
-        # skip entities that can't be pickled, so that one bad entity doesn't lose
-        # the session state for everything else in the scene
-        picklable = {}
-        for uuid, entity in self.entities.items():
-            try:
-                pk.dumps(entity)
-                picklable[uuid] = entity
-            except Exception as e:
-                warnings.warn(
-                    f"Not saving `{entity.name}` with the session, "
-                    f"as it cannot be serialized: {e}"
-                )
-        if len(picklable) == 0:
+        # pickle each entity on its own, so that one bad entity - either failing to
+        # save now or failing to restore on load - doesn't lose the session state
+        # for everything else in the scene
+        pickled = {}
+        _make_trajectory_paths_relative(self.molecules)
+        try:
+            for uuid, entity in self.entities.items():
+                try:
+                    pickled[uuid] = (entity.name, pk.dumps(entity))
+                except Exception as e:
+                    warnings.warn(
+                        f"Not saving `{entity.name}` with the session, "
+                        f"as it cannot be serialized: {e}"
+                    )
+        finally:
+            _make_trajectory_paths_absolute(self.molecules)
+        if len(pickled) == 0:
             return None
 
-        all_entities = self.entities
-        self.entities = picklable
-        _make_trajectory_paths_relative(self.molecules)
+        # `entities` stays empty so older versions load the file as an empty session
+        stash = MNSession()
+        stash._pickled_entities = pickled
         # dump to a temporary file and swap it into place, so that a failed dump
         # can't leave a truncated session file next to the .blend
         temp_path = pickle_path.with_name(f"{pickle_path.name}.tmp")
         try:
             with open(temp_path, "wb") as f:
-                pk.dump(self, f)
+                pk.dump(stash, f)
             temp_path.replace(pickle_path)
         finally:
             temp_path.unlink(missing_ok=True)
-            _make_trajectory_paths_absolute(self.molecules)
-            self.entities = all_entities
 
         print(f"Saved session to: {pickle_path}")
 
@@ -196,9 +198,21 @@ class MNSession:
         with open(pickle_path, "rb") as f:
             session = pk.load(f)
 
+        if hasattr(session, "_pickled_entities"):
+            for name, data in session._pickled_entities.values():
+                try:
+                    self.register_entity(pk.loads(data))
+                except Exception as e:
+                    warnings.warn(
+                        f"Could not restore `{name}` from the saved session, so it "
+                        "won't update with the scene. Once its source files are "
+                        "available, select it and use Reload in the Molecular Nodes "
+                        f"panel to relink it. {e}"
+                    )
         # TODO: clear up in later versions
-        # this handles reloading sessions which don't have the `entities` attribute
-        if hasattr(session, "entities"):
+        # this handles reloading sessions saved before entities were pickled
+        # individually, or which don't have the `entities` attribute
+        elif hasattr(session, "entities"):
             for item in session.entities.values():
                 self.register_entity(item)
         else:

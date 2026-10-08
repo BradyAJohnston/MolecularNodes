@@ -28,6 +28,20 @@ def _ag_to_bool(ag: AtomGroup) -> np.typing.NDArray[np.bool_]:
     return mask
 
 
+def _isin(values: np.ndarray, test_values) -> np.typing.NDArray[np.bool_]:
+    """
+    Per-element membership test, like `np.isin`, for arrays with few unique values.
+
+    Residue and atom names are object arrays with many repeats, which `np.isin`
+    compares one atom at a time against every test value. Testing only the unique
+    values and mapping the result back is much faster for long lists of names.
+    """
+    unique, inverse = np.unique(values, return_inverse=True)
+    test_values = set(test_values)
+    is_in = np.fromiter((v in test_values for v in unique), bool, len(unique))
+    return is_in[inverse].reshape(np.shape(values))
+
+
 # ============================================================================
 # Position Cache Management
 # ============================================================================

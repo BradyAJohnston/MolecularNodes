@@ -1,5 +1,5 @@
 # Node-group asset "Transparent Outline Internal" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import ShaderNodeTree
@@ -94,7 +94,9 @@ class TransparentOutlineInternal(AssetShaderGroup):
             max_value=1.0,
             subtype="FACTOR",
         )
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu(
+            "Menu", "Transparent", expanded=True, optional_label=True
+        )
         outline_color = tree.inputs.color("Outline Color", (1.0, 1.0, 1.0, 1.0))
         shader = tree.outputs.shader("Shader")
 
@@ -118,8 +120,6 @@ class TransparentOutlineInternal(AssetShaderGroup):
             )
             >> shader
         )
-
-        menu.default_value = "Transparent"
 
 
 ASSET = TransparentOutlineInternal

@@ -1,11 +1,9 @@
 import databpy
 import numpy as np
-import molecularnodes as mn
-from .constants import data_dir
 
 
-def test_set_position():
-    mol = mn.Molecule.fetch("8FAT", cache=data_dir)
+def test_set_position(fetch):
+    mol = fetch("8FAT")
     pos_a = mol.position
     mol.position += 10
     pos_b = mol.position

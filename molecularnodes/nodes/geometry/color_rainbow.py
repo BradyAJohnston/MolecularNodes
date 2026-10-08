@@ -1,5 +1,5 @@
 # Node-group asset "Color Rainbow" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -122,8 +122,8 @@ class ColorRainbow(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        factor = tree.inputs.menu("Factor", optional_label=True)
-        color_space = tree.inputs.menu("Color Space", optional_label=True)
+        factor = tree.inputs.menu("Factor", "Chain", optional_label=True)
+        color_space = tree.inputs.menu("Color Space", "HSV", optional_label=True)
         offset = tree.inputs.float(
             "Offset",
             0.0,
@@ -178,9 +178,6 @@ class ColorRainbow(AssetGeometryGroup):
             )
             >> color
         )
-
-        factor.default_value = "Chain"
-        color_space.default_value = "HSV"
 
 
 ASSET = ColorRainbow

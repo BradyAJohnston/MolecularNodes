@@ -1,5 +1,5 @@
 # Node-group asset "Composite Illustrate" (CompositorNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import CompositorNodeTree
@@ -22,18 +22,6 @@ from .composite_contour_outline import CompositeContourOutline
 from .composite_depth_fog import CompositeDepthFog
 
 
-class WorldToAngstrom2(CustomCompositorGroup):
-    _name = "WorldToAngstrom"
-
-    def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
-        angstrom = tree.inputs.float(
-            "Angstrom", 0.5, min_value=-10_000.0, max_value=10_000.0
-        )
-        world = tree.outputs.float("World")
-
-        angstrom / g.Value(0.1) >> world
-
-
 class IDMask(CustomCompositorGroup):
     _name = "ID Mask"
     _color_tag = "CONVERTER"
@@ -45,20 +33,29 @@ class IDMask(CustomCompositorGroup):
             description="res_id AOV pass from the Render Layers node",
             hide_value=True,
         )
-        type = tree.inputs.menu("Type", optional_label=True)
+        type = tree.inputs.menu("Type", "Sobel", optional_label=True)
         threshold = tree.inputs.float(
             "Threshold", 6.0, min_value=-10_000.0, max_value=10_000.0
         )
         outline = tree.outputs.float("Outline")
 
         anti_aliasing = c.AntiAliasing(
-            image=g.Math.greater_than(c.Filter(image=id, type=type), threshold),
-            threshold=0.2,
+            image=g.Math.greater_than(c.Filter(image=id, type=type), threshold)
         )
 
         anti_aliasing >> outline
 
-        type.default_value = "Sobel"
+
+class WorldToAngstrom2(CustomCompositorGroup):
+    _name = "WorldToAngstrom"
+
+    def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
+        angstrom = tree.inputs.float(
+            "Angstrom", 0.5, min_value=-10_000.0, max_value=10_000.0
+        )
+        world = tree.outputs.float("World")
+
+        angstrom / g.Value(0.1) >> world
 
 
 class CompositeIllustrate(AssetCompositorGroup):
@@ -341,6 +338,7 @@ class CompositeIllustrate(AssetCompositorGroup):
     def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
         base_color = tree.inputs.menu(
             "Base Color",
+            "Image",
             description="The flat Diffuse Color pass, which ignores lighting and materials, or the rendered image",
             expanded=True,
         )
@@ -556,11 +554,8 @@ class CompositeIllustrate(AssetCompositorGroup):
                 "Kuwahara",
                 {"None": math_1, "Kuwahara": c.Kuwahara(image=math_1, size=20.2)},
             )
-            mix = g.Mix(
-                a_color=alpha_convert,
-                b_color=menu_switch.o.output,
-                data_type="RGBA",
-                blend_type="MULTIPLY",
+            mix = g.Mix.color(
+                a=alpha_convert, b=menu_switch.o.output, blend_type="MULTIPLY"
             )
         with c.Frame("Fog"):
             composite_depth_fog = CompositeDepthFog(
@@ -583,41 +578,35 @@ class CompositeIllustrate(AssetCompositorGroup):
                 back_fog=back_fog,
                 fog_color=fog_color,
             )
-            composite_contour_outline = CompositeContourOutline(
-                depth=WorldToAngstrom2(Angstrom=composite_depth_fog_1),
-                smooth=smooth,
-                value=outline_depth,
-            )
-            math_2 = composite_contour_outline.o.opacity * contour_outline
-            math_3 = (
+            math_2 = (
                 IDMask(ID=residue_id, Threshold=residue_difference).o.outline
                 * residue_outline
             )
-            math_4 = (
+            math_3 = (
                 IDMask(ID=chain_id, Threshold=chain_difference).o.outline
                 * chain_outline
             )
             _string_1 = g.String(
                 string="Contour and residue outlines are combined by their maximum and darken the colour; the chain outline darkens it again separately. All three extend the alpha so lines survive on the background."
             )
-            mix_1 = g.Mix(
-                factor_float=math_2.max(math_3) + math_4,
-                a_color=switch,
-                b_color=outline_color,
-                data_type="RGBA",
-                blend_type="MULTIPLY",
+            composite_contour_outline = CompositeContourOutline(
+                depth=WorldToAngstrom2(Angstrom=composite_depth_fog_1),
+                smooth=smooth,
+                value=outline_depth,
             )
-            alpha_convert_1 = c.AlphaConvert(
-                image=c.SetAlpha(
-                    image=mix_1.o.result_color,
-                    alpha=alpha.max(math_2.max(math_3).max(math_4)),
-                )
+            math_4 = composite_contour_outline.o.opacity * contour_outline
+            set_alpha_1 = c.SetAlpha(
+                image=g.Mix.color(
+                    math_4.max(math_2) + math_3,
+                    switch,
+                    outline_color,
+                    blend_type="MULTIPLY",
+                ).o.result_color,
+                alpha=alpha.max(math_4.max(math_2).max(math_3)),
             )
-            anti_aliasing = c.AntiAliasing(image=alpha_convert_1, threshold=0.2)
+            anti_aliasing = c.AntiAliasing(image=c.AlphaConvert(image=set_alpha_1))
 
         anti_aliasing >> image_1
-
-        base_color.default_value = "Image"
 
 
 ASSET = CompositeIllustrate

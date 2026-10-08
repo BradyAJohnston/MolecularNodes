@@ -1,5 +1,5 @@
 # Material "Squishy", dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # The class is a recipe for the material's shader tree — build recreates the material and runs it into material.node_tree.
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
@@ -23,7 +23,6 @@ class Squishy(CustomShaderGroup):
             subsurface_scale=0.2,
             coat_weight=1.0,
             coat_roughness=0.24545455,
-            thin_film_ior=1.33,
         )
         _material_output = s.MaterialOutput(
             surface=principled_bsdf, is_active_output=True

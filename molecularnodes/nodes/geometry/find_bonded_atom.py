@@ -1,5 +1,5 @@
 # Node-group asset "Find Bonded Atom" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger, InputMenu
+from nodebpy.types import Default, InputInteger, InputMenu
 from ._shared.find_connected import FindConnected
 from .atom_name import AtomName
 from .menu_atom_name import MenuAtomName
@@ -27,7 +27,7 @@ class FindBondedAtom(AssetGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
     method : InputMenu | Literal["Any", "Exact"]
         Method
     atom_name : InputMenu | Literal["N", "CA", "C", "O", "CB", "CG", "CG1", "CG2", "OG", "OG1", "SG", "CD", "CD1", "CD2", "ND1", "ND2", "OD1", "OD2", "SD", "CE", "CE1", "CE2", "CE3", "NE", "NE1", "NE2", "OE1", "OE2", "CH2", "NH1", "NH2", "OH", "CZ", "CZ2", "CZ3", "NZ", "OXT", "P", "O1P", "OP1", "OP2", "O2P", "O5", "C5", "C4", "O4", "C3", "O3", "C2", "O2", "C1", "N1", "N9", "N3", "C8", "N7", "C5", "C6", "N6", "C2", "C4", "O6", "N2", "N4", "O2", "O4", "C7"]
@@ -88,7 +88,7 @@ class FindBondedAtom(AssetGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         method: InputMenu | Literal["Any", "Exact"] = "Exact",
         atom_name: InputMenu
         | Literal[
@@ -173,8 +173,8 @@ class FindBondedAtom(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
-        method = tree.inputs.menu("Method", optional_label=True)
-        atom_name = tree.inputs.menu("Atom Name", optional_label=True)
+        method = tree.inputs.menu("Method", "Exact", optional_label=True)
+        atom_name = tree.inputs.menu("Atom Name", "N", optional_label=True)
         distance = tree.inputs.integer("Distance", 2, min_value=1, max_value=3)
         is_valid = tree.outputs.boolean("Is Valid")
         index_1 = tree.outputs.integer("Index")
@@ -191,9 +191,6 @@ class FindBondedAtom(AssetGeometryGroup):
 
         find_connected >> is_valid
         evaluate_at_index >> index_1
-
-        method.default_value = "Exact"
-        atom_name.default_value = "N"
 
 
 ASSET = FindBondedAtom

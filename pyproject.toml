@@ -1,11 +1,11 @@
 [project]
 name = "molecularnodes"
-version = "520.2.1"
+version = "520.3.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 license = "GPL-3.0-or-later"
 dependencies = [
-    "databpy>=0.9.0",
+    "databpy>=0.10.1",
     "mdanalysis>=2.10",
     "biotite>=1.7.1",
     "mrcfile",
@@ -13,7 +13,7 @@ dependencies = [
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.27.0",
+    "nodebpy>=520.34.1",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -50,6 +50,7 @@ dev = [
     "pre-commit",
     "pytest",
     "pytest-cov",
+    "pytest-codspeed",
     "pytest-xdist",
     "rdkit",
     "ruff",
@@ -96,6 +97,10 @@ molecularnodes = ["assets/*",
                   "**/*.py",
                   "annotations/fonts/*"]
 
+
+[tool.pytest.ini_options]
+# benchmarks are run separately with `pytest benchmarks --codspeed`
+testpaths = ["tests"]
 
 [tool.ruff.lint]
 # pyflakes, pycodestyle isort and varibale naming
@@ -150,3 +155,5 @@ typed-api = true
 add-reroutes = true
 split-inputs = true
 iterations = 100
+# uncompressed, so each read of the library (one per style added) is ~40% faster
+no-compress = true

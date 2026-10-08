@@ -286,6 +286,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.SymmetryID
         children: embedded
+      - name: nodes.shader.AmbientOcclusionInternal
+        children: embedded
       - name: nodes.shader.ColorAO
         children: embedded
       - name: nodes.shader.FlatInternal
@@ -307,6 +309,10 @@ quartodoc:
       - name: nodes.geometry.AnimateValue
         children: embedded
       - name: nodes.geometry.AnimateWiggle
+        children: embedded
+      - name: nodes.geometry.EaseValue
+        children: embedded
+      - name: nodes.geometry.StaggerValue
         children: embedded
     - kind: page
       path: nodes.attributes
@@ -363,6 +369,8 @@ quartodoc:
       - name: nodes.geometry.ColorElement
         children: embedded
       - name: nodes.geometry.ColorGoodsell
+        children: embedded
+      - name: nodes.geometry.ColorMatplotlib
         children: embedded
       - name: nodes.geometry.ColorMixIntermediate
         children: embedded
@@ -462,6 +470,14 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.RotationRELION
         children: embedded
+      - name: nodes.geometry.SymmetryCubic
+        children: embedded
+      - name: nodes.geometry.SymmetryCyclic
+        children: embedded
+      - name: nodes.geometry.SymmetryDihedral
+        children: embedded
+      - name: nodes.geometry.SymmetryHelical
+        children: embedded
       - name: nodes.geometry.TEMRotation
         children: embedded
     - kind: page
@@ -484,11 +500,13 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.EvaluateOrderedBundles
         children: embedded
-      - name: nodes.geometry.EvluateWhilePlanar
+      - name: nodes.geometry.EvaluateWhilePlanar
+        children: embedded
+      - name: nodes.geometry.FadeGeometry
         children: embedded
       - name: nodes.geometry.FallbackGeometry
         children: embedded
-      - name: nodes.geometry.GeoemtryToPlanar
+      - name: nodes.geometry.GeometryToPlanar
         children: embedded
       - name: nodes.geometry.LagGeometry
         children: embedded

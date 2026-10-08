@@ -1,5 +1,5 @@
 # Node-group asset "Menu Residue Mask" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -144,7 +144,7 @@ class MenuResidueMask(AssetGeometryGroup):
         super().__init__(**{"Atom Name": atom_name})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        atom_name = tree.inputs.menu("Atom Name", optional_label=True)
+        atom_name = tree.inputs.menu("Atom Name", "N", optional_label=True)
         is_valid = tree.outputs.boolean(
             "Is Valid",
             description="Group contains only one occurrance of the selected atom. None or more than one returns False",
@@ -166,8 +166,6 @@ class MenuResidueMask(AssetGeometryGroup):
         group_pick_vector >> is_valid
         group_pick_vector.o.index >> index
         group_pick_vector.o.vector >> position
-
-        atom_name.default_value = "N"
 
 
 ASSET = MenuResidueMask

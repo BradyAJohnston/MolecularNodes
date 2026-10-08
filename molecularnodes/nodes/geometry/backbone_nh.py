@@ -1,5 +1,5 @@
 # Node-group asset "Backbone NH" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -70,16 +70,15 @@ class BackboneNH(AssetGeometryGroup):
         super().__init__(**{"Menu": menu})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Compute", expanded=True, optional_label=True)
         nh = tree.outputs.vector("NH")
 
         backbone_n = BackboneN(method="Read")
         backbone_n_1 = BackboneN()
-        mix = g.Mix(
-            a_vector=BackboneCA(),
-            b_vector=OffsetVector(vector=BackboneC(), offset=-1),
-            factor_float=0.5,
-            data_type="VECTOR",
+        mix = g.Mix.vector(
+            0.5,
+            BackboneCA(),
+            OffsetVector(vector=BackboneC(), offset=-1),
             clamp_factor=True,
         )
         string = g.String(string="backbone_NH")
@@ -87,30 +86,22 @@ class BackboneNH(AssetGeometryGroup):
             VectorDirection(to=backbone_n, from_=BackboneCA(method="Read")).o.direction
             + VectorDirection(to=backbone_n, from_=BackboneC(method="Read")).o.direction
         )
-        _vector_math_1 = g.VectorMath.multiply_add(
-            vector_math.normalize(),
-            AngstromToWorld(angstrom=1.01),
-            BackboneN(method="Read"),
+        _vector_math_1 = vector_math.normalize().mul_add(
+            AngstromToWorld(angstrom=1.01), BackboneN(method="Read")
         )
-        vector_math_2 = g.VectorMath.multiply_add(
-            VectorDirection(to=backbone_n_1, from_=mix.o.result_vector).o.direction,
-            AngstromToWorld(angstrom=1.01),
-            backbone_n_1,
-        )
+        vector_math_2 = VectorDirection(
+            to=backbone_n_1, from_=mix.o.result_vector
+        ).o.direction.mul_add(AngstromToWorld(angstrom=1.01), backbone_n_1)
         (
             g.MenuSwitch.vector(
                 menu,
                 {
                     "Read": g.NamedAttribute.vector(string).o.attribute,
-                    "Compute": FallbackVector(
-                        name=string, fallback=vector_math_2.o.vector
-                    ),
+                    "Compute": FallbackVector(name=string, fallback=vector_math_2),
                 },
             )
             >> nh
         )
-
-        menu.default_value = "Compute"
 
 
 ASSET = BackboneNH

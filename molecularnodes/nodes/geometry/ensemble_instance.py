@@ -1,5 +1,5 @@
 # Node-group asset "Ensemble Instance" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -144,7 +144,7 @@ class EnsembleInstance(AssetGeometryGroup):
             hide_value=True,
         )
         selection_type = tree.inputs.menu(
-            "Selection Type", expanded=True, optional_label=True
+            "Selection Type", "Simple", expanded=True, optional_label=True
         )
         instances = tree.inputs.collection("Instances", optional_label=True)
         fraction = tree.inputs.float(
@@ -169,7 +169,7 @@ class EnsembleInstance(AssetGeometryGroup):
                 points=separate_geometry.o.inverted,
                 instance=g.CollectionInfo(collection=instances, separate_children=True),
                 instance_index=ChainID(),
-                rotation=g.NamedAttribute.input_4x4_matrix("transform").o.attribute,
+                rotation=g.NamedAttribute.matrix("transform").o.attribute,
                 pick_instance=True,
             )
             set_material = (
@@ -197,8 +197,6 @@ class EnsembleInstance(AssetGeometryGroup):
             )
             >> instances_1
         )
-
-        selection_type.default_value = "Simple"
 
 
 ASSET = EnsembleInstance

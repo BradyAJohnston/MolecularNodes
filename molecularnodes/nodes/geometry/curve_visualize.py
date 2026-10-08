@@ -1,5 +1,5 @@
 # Node-group asset "Curve Visualize" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 import bpy
@@ -15,7 +15,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputFloat, InputGeometry, InputVector
+from nodebpy.types import Default, InputBoolean, InputFloat, InputGeometry, InputVector
 from ._shared.mn_units import MNUnits
 from ._shared.unit_convert import UnitConvert
 from .curve_rotation import CurveRotation
@@ -35,9 +35,9 @@ class CurveVisualize(AssetGeometryGroup):
     selection : InputBoolean
         Selection
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     normal : InputVector
-        Normal
+        Normal. When unconnected: The geometry's normal direction.
     handles : InputBoolean
         Handles
     value : InputFloat
@@ -105,8 +105,8 @@ class CurveVisualize(AssetGeometryGroup):
         self,
         curve: InputGeometry = None,
         selection: InputBoolean = True,
-        position: InputVector = None,
-        normal: InputVector = None,
+        position: InputVector = Default.POSITION,
+        normal: InputVector = Default.NORMAL,
         handles: InputBoolean = False,
         value: InputFloat = 3.0,
         arrow_size: InputFloat = 2.0,
@@ -142,9 +142,9 @@ class CurveVisualize(AssetGeometryGroup):
         instances = tree.outputs.geometry("Instances")
 
         capture = g.CaptureAttribute.point(geometry=curve)
-        selection_1 = capture.items.boolean("Selection", selection)
-        position_1 = capture.items.vector("Position", position)
-        normal_1 = capture.items.vector("Normal", normal)
+        selection_1 = capture.items.boolean(selection, "Selection")
+        position_1 = capture.items.vector(position, "Position")
+        normal_1 = capture.items.vector(normal, "Normal")
         curve_handle_positions = g.CurveHandlePositions(relative=True)
         _curve_rotation = CurveRotation(normal=normal_1.output)
         primitive_arrow = PrimitiveArrow(

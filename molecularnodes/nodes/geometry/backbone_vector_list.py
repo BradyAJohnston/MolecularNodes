@@ -1,5 +1,5 @@
 # Node-group asset "Backbone Vector List" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputGeometry, InputInteger
+from nodebpy.types import Default, InputGeometry, InputInteger
 from .backbone_positions import BackbonePositions
 from .sample_position import SamplePosition
 
@@ -27,7 +27,7 @@ class BackboneVectorList(AssetGeometryGroup):
     ca_atoms : InputGeometry
         CA Atoms
     index : InputInteger
-        The `Index` at which to sample the `Position` field from
+        The `Index` at which to sample the `Position` field from. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -70,7 +70,7 @@ class BackboneVectorList(AssetGeometryGroup):
     def __init__(
         self,
         ca_atoms: InputGeometry = None,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(**{"CA Atoms": ca_atoms, "Index": index})
 

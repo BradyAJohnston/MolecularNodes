@@ -1,5 +1,5 @@
 # Node-group asset "Density Style Wire" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -151,7 +151,7 @@ class DensityStyleWire(AssetGeometryGroup):
         named_attribute = g.NamedAttribute.float("radius")
         (
             volume
-            >> g.VolumeToMesh(threshold=threshold, voxel_size=0.3)
+            >> g.VolumeToMesh(threshold=threshold)
             >> g.DeleteGeometry.point(
                 selection=g.FaceArea().o.area.point.total(g.MeshIsland().o.island_index)
                 < hide_dust

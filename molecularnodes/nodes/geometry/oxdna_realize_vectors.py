@@ -1,5 +1,5 @@
 # Node-group asset "oxDNA Realize Vectors" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -74,9 +74,9 @@ class OxDNARealizeVectors(AssetGeometryGroup):
         value = g.Value(0.15)
         oxdna_vectors = OxDNAVectors()
         for_each = g.ForEachGeometryElementZone(geometry=atoms)
-        position = for_each.inputs.vector("Position", g.Position())
-        base_vector = for_each.inputs.vector("base_vector", oxdna_vectors.o.base_vector)
-        base_normal = for_each.inputs.vector("base_normal", oxdna_vectors.o.base_normal)
+        position = for_each.items.vector(g.Position(), "Position")
+        base_vector = for_each.items.vector(oxdna_vectors.o.base_vector, "base_vector")
+        base_normal = for_each.items.vector(oxdna_vectors.o.base_normal, "base_normal")
         with g.Frame("Create edges pointing along base and normal vectors"):
             mesh_line = g.MeshLine.end_points(
                 2, position.output, position.output + base_vector.output * value
@@ -134,7 +134,7 @@ class OxDNARealizeVectors(AssetGeometryGroup):
             g.JoinGeometry(
                 geometry=(for_each.generation.output, store_named_attribute_4)
             )
-            >> g.MergeByDistance(distance=0.001)
+            >> g.MergeByDistance()
             >> geometry
         )
 

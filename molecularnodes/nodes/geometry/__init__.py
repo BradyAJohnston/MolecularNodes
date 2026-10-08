@@ -53,6 +53,7 @@ from .color_backbone import ColorBackbone
 from .color_common import ColorCommon
 from .color_element import ColorElement
 from .color_goodsell import ColorGoodsell
+from .color_matplotlib import ColorMatplotlib
 from .color_mix_intermediate import ColorMixIntermediate
 from .color_oklab_mix import ColorOKLabMix
 from .color_oklab_offset import ColorOKLabOffset
@@ -81,6 +82,7 @@ from .dihedral_nucleic_angle import DihedralNucleicAngle
 from .dihedral_phi import DihedralPhi
 from .dihedral_psi import DihedralPsi
 from .dna_from_curve import DNAFromCurve
+from .ease_value import EaseValue
 from .edge_group_id import EdgeGroupID
 from .edge_info import EdgeInfo
 from .edge_length import EdgeLength
@@ -90,8 +92,9 @@ from .evaluate_on_atoms import EvaluateOnAtoms
 from .evaluate_on_instances import EvaluateOnInstances
 from .evaluate_ordered_bundles import EvaluateOrderedBundles
 from .evaluate_per_group import EvaluatePerGroup
-from .evluate_while_planar import EvluateWhilePlanar
+from .evaluate_while_planar import EvaluateWhilePlanar
 from .expand_boolean import ExpandBoolean
+from .fade_geometry import FadeGeometry
 from .fallback_boolean import FallbackBoolean
 from .fallback_color import FallbackColor
 from .fallback_float import FallbackFloat
@@ -108,8 +111,8 @@ from .force_gravity import ForceGravity
 from .force_mesh_collide import ForceMeshCollide
 from .fractionate_float import FractionateFloat
 from .frame_id import FrameID
-from .geoemtry_to_planar import GeoemtryToPlanar
 from .geometry_field_remap import GeometryFieldRemap
+from .geometry_to_planar import GeometryToPlanar
 from .get_geometry_atoms import GetGeometryAtoms
 from .group_info import GroupInfo
 from .group_parameter import GroupParameter
@@ -169,6 +172,7 @@ from .oklab_to_color import OKLabToColor
 from .oklab_to_lch import OKLabToLCh
 from .oxdna_realize_vectors import OxDNARealizeVectors
 from .oxdna_recover_vectors import OxDNARecoverVectors
+from .oxdna_style_classic import OxDNAStyleClassic
 from .oxdna_vectors import OxDNAVectors
 from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
@@ -226,6 +230,7 @@ from .simulate_elastic_network import SimulateElasticNetwork
 from .simulate_on_faces import SimulateOnFaces
 from .slice_edge_instances import SliceEdgeInstances
 from .split_to_centred_instances import SplitToCentredInstances
+from .stagger_value import StaggerValue
 from .starfile_instances import StarfileInstances
 from .structure_parameter import StructureParameter
 from .style_ball_and_stick import StyleBallAndStick
@@ -236,6 +241,10 @@ from .style_sticks import StyleSticks
 from .style_surface import StyleSurface
 from .sub_group_info import SubGroupInfo
 from .switch_residue_name import SwitchResidueName
+from .symmetry_cubic import SymmetryCubic
+from .symmetry_cyclic import SymmetryCyclic
+from .symmetry_dihedral import SymmetryDihedral
+from .symmetry_helical import SymmetryHelical
 from .symmetry_id import SymmetryID
 from .tem_rotation import TEMRotation
 from .topology_dssp import TopologyDSSP
@@ -314,6 +323,7 @@ __all__ = (
     "ColorCommon",
     "ColorElement",
     "ColorGoodsell",
+    "ColorMatplotlib",
     "ColorMixIntermediate",
     "ColorOKLabMix",
     "ColorOKLabOffset",
@@ -342,6 +352,7 @@ __all__ = (
     "DihedralNucleicAngle",
     "DihedralPhi",
     "DihedralPsi",
+    "EaseValue",
     "EdgeGroupID",
     "EdgeInfo",
     "EdgeLength",
@@ -351,8 +362,9 @@ __all__ = (
     "EvaluateOnInstances",
     "EvaluateOrderedBundles",
     "EvaluatePerGroup",
-    "EvluateWhilePlanar",
+    "EvaluateWhilePlanar",
     "ExpandBoolean",
+    "FadeGeometry",
     "FallbackBoolean",
     "FallbackColor",
     "FallbackFloat",
@@ -369,8 +381,8 @@ __all__ = (
     "ForceMeshCollide",
     "FractionateFloat",
     "FrameID",
-    "GeoemtryToPlanar",
     "GeometryFieldRemap",
+    "GeometryToPlanar",
     "GetGeometryAtoms",
     "Group2IndexAngle",
     "Group3IndexAngle",
@@ -430,6 +442,7 @@ __all__ = (
     "OffsetVector",
     "OxDNARealizeVectors",
     "OxDNARecoverVectors",
+    "OxDNAStyleClassic",
     "OxDNAVectors",
     "PeptideChi",
     "PeptideDihedral",
@@ -487,6 +500,7 @@ __all__ = (
     "SimulateOnFaces",
     "SliceEdgeInstances",
     "SplitToCentredInstances",
+    "StaggerValue",
     "StarfileInstances",
     "StructureParameter",
     "StyleBallAndStick",
@@ -497,6 +511,10 @@ __all__ = (
     "StyleSurface",
     "SubGroupInfo",
     "SwitchResidueName",
+    "SymmetryCubic",
+    "SymmetryCyclic",
+    "SymmetryDihedral",
+    "SymmetryHelical",
     "SymmetryID",
     "TEMRotation",
     "TopologyDSSP",

@@ -1,5 +1,5 @@
 # Node-group asset "Sample Mixed Color" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -102,11 +102,8 @@ class SampleMixedColor(AssetGeometryGroup):
         index_mix_color = IndexMixColor(color=color, index=index)
         (
             geometry
-            >> g.SampleIndex(
-                value=index_mix_color.o.color,
-                index=index_mix_color.o.from_,
-                data_type="FLOAT_COLOR",
-                clamp=True,
+            >> g.SampleIndex.point.color(
+                value=index_mix_color.o.color, index=index_mix_color.o.from_, clamp=True
             )
             >> color_1
         )

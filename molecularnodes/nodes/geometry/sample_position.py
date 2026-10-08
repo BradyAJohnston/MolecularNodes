@@ -1,5 +1,5 @@
 # Node-group asset "Sample Position" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputGeometry, InputInteger, InputVector
+from nodebpy.types import Default, InputGeometry, InputInteger, InputVector
 
 
 class SamplePosition(AssetGeometryGroup):
@@ -25,9 +25,9 @@ class SamplePosition(AssetGeometryGroup):
     geometry : InputGeometry
         The geometry to sample the `Position` from
     position : InputVector
-        The `Position` field to sample the values from
+        The `Position` field to sample the values from. When unconnected: The position from the context.
     index : InputInteger
-        The `Index` at which to sample the `Position` field from
+        The `Index` at which to sample the `Position` field from. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -75,8 +75,8 @@ class SamplePosition(AssetGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
-        position: InputVector = None,
-        index: InputInteger = 0,
+        position: InputVector = Default.POSITION,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(**{"Geometry": geometry, "Position": position, "Index": index})
 
@@ -103,9 +103,7 @@ class SamplePosition(AssetGeometryGroup):
 
         (
             geometry
-            >> g.SampleIndex(
-                value=position, index=index, data_type="FLOAT_VECTOR", clamp=True
-            )
+            >> g.SampleIndex.point.vector(value=position, index=index, clamp=True)
             >> position_1
         )
 

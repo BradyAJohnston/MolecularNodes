@@ -1,5 +1,5 @@
 # Node-group asset "Composite Outline Mask" (CompositorNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
@@ -178,12 +178,11 @@ class CompositeOutlineMask(AssetCompositorGroup):
             )
             math_3 = math_1.o.value.max(math_2.o.value * use_normals)
         with c.Frame("Line weight"):
-            dilate_erode = c.DilateErode(
-                mask=c.AntiAliasing(image=math_3, threshold=0.2),
-                size=size - 1.0,
-                type="Distance",
+            anti_aliasing = c.AntiAliasing(
+                image=c.DilateErode(
+                    mask=c.AntiAliasing(image=math_3), size=size - 1.0, type="Distance"
+                )
             )
-            anti_aliasing = c.AntiAliasing(image=dilate_erode, threshold=0.2)
 
         anti_aliasing >> mask
 

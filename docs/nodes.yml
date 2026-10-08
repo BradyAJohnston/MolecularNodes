@@ -1,5 +1,5 @@
 # Extra documentation for the nodes included in Molecular Nodes, keyed by the
-# node group's name in molecularnodes/assets/node_data_file.blend.
+# node group's name in molecularnodes/assets/nodes.blend.
 #
 # The .blend file (via its node/socket descriptions and asset catalogs) is the
 # source of truth for everything structural; this file only holds what cannot
@@ -291,6 +291,14 @@ Color Backbone:
     Atoms that are neither maintain their current `Color` attribute
   videos:
     - https://imgur.com/nadPkJd
+Color matplotlib:
+  description: >-
+    Colour a `Value::Float` from `0` to `1` with one of matplotlib's colormaps. Pick the group with `Category::Menu`,
+    then the colormap from that group's menu; the other groups' menus are ignored. `Reverse::Bool` runs the colormap
+    from `1` to `0`, like matplotlib's `_r` maps. Values outside `0..1` are clamped. Pair with `Field Remap::Node`
+    or a Map Range node to colour an attribute such as `b_factor` over its own range. Each colormap is a Color Ramp
+    of at most 32 stops fitted to matplotlib's colours, within about 1/255 for most maps; a few busy maps such as
+    `gist_ncar`, `nipy_spectral` and `jet` lose some detail, noted in the frame next to each ramp inside the node.
 Color Mix Intermediate:
   description: >-
     Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces
@@ -538,6 +546,13 @@ Contains Geometry:
   description: Check if a geometry contains geometry in any of the domains
 Fallback Geometry:
   description: Fallback geometry for when the input geometry is empty in all domains
+Fade Geometry:
+  description: >-
+    Fade geometry in and out by multiplying the alpha of its `Color` attribute on the point and instance
+    domains. Place it after a style node and animate `Fade::Float` from `1` to `0` to fade that style out of a scene, or
+    from `0` to `1` to fade it in. The node multiplies the existing alpha, so geometry that is already
+    partly transparent stays proportionally more transparent. Only materials that read the alpha show the
+    fade: `Default`, `Squishy` and `Ambient Occlusion` do, while `Flat` and `Transparent` ignore it.
 Plexus:
   description: Find points that are within a given distance of each other and create an edge between them
 Visualize Points: {}
@@ -643,6 +658,32 @@ Boolean Run Trim:
     which they are considered false
 Ensemble Instance:
   description: Instance the items of an ensemble onto the given points
+Symmetry Cyclic:
+  description: >-
+    Build a cyclic (Cn) assembly the file does not describe: `Order::Integer` copies of the geometry evenly spaced
+    about an `Axis::Vector` passing through `Centre::Vector`. Rings, pores and most homo-oligomers. The `Animate::Float`
+    input interpolates each copy from the original (0) to its final placement (1) for assembly animations. It is
+    evaluated per copy, so `Stagger Value::Node` moves the copies one after another. Every copy carries a `sym_id` attribute, readable with the
+    `Symmetry ID::Node` node.
+Symmetry Dihedral:
+  description: >-
+    Build a dihedral (Dn) assembly: a ring of `Order::Integer` copies about the `Axis::Vector`, plus the same ring
+    flipped by a two-fold perpendicular to it, giving 2n copies. Back-to-back rings such as GroEL. Shares the
+    `Animate::Float` input with `Symmetry Cyclic::Node`.
+Symmetry Helical:
+  description: >-
+    Build a helical filament: `Count::Integer` subunits, each advanced `Rise::Float` Angstrom along the `Axis::Vector`
+    and rotated `Twist::Float` about it, relative to the one before. Actin, microtubules, amyloid and pili. The defaults
+    are actin's 27.5 Angstrom rise and -166.7 degree twist. `Axial Symmetry::Integer` repeats each subunit evenly around
+    the axis for filaments with Cn symmetry, such as amyloid built from two protofilaments (C2). Shares the
+    `Animate::Float` input with `Symmetry Cyclic::Node`.
+Symmetry Cubic:
+  description: >-
+    Build a cubic assembly from one copy: `Group::Menu` picks tetrahedral (12 copies, as in Dps), octahedral (24, as in
+    ferritin) or icosahedral (60, as in small virus capsids). At zero `Orientation::Rotation` the two-folds lie along X,
+    Y and Z with a three-fold along (1, 1, 1), and for icosahedral a five-fold along (0, 1, 1.618); rotate it to match a
+    structure, and set `Centre::Vector` to the point all the axes pass through. Shares the `Animate::Float` input with
+    `Symmetry Cyclic::Node`.
 Periodic Array:
   description: Replicate the trajectory across periodic boundaries.
 Periodic Box:
@@ -678,6 +719,33 @@ Animate Value:
     to linearly interpolate the value beyond the min and max values.
   videos:
     - https://imgur.com/2oOnwRm
+Animate Action:
+  description: >-
+    A 0..1 `Value::Float` that rises from `Start::Float` over `Length::Float`, for timing one step of an
+    animation. `Time` picks the clock: the scene's `Seconds` or `Frames`, or any linked `Value`. Turn on
+    `Stagger::Boolean` to offset each `ID::Integer` as in `Stagger Value::Node`, and pick an `Interpolation`
+    and `Ease` to shape the transition as in `Ease Value::Node`. `Active::Boolean` is true while the time is
+    between `Start` and `End::Float`, which is `Start` plus `Length`.
+Ease Value:
+  description: >-
+    Reshape a linear `Value::Float` between 0 and 1 with one of Robert Penner's easing curves
+    (`Linear`, `Sinusoidal`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Exponential`, `Circular`,
+    `Back`, `Bounce` or `Elastic`, as listed on easings.net) applied at the start (`In`), the end
+    (`Out`) or both ends (`In Out`) of the transition, then map the result to `From::Float`..`To::Float`.
+    Works per point, so it can ease a field as well as a single value. Chain it after
+    `Animate Value::Node` or `Stagger Value::Node`, or set the same menus on `Animate Action::Node`.
+    `Overshoot::Float` shapes `Back`, and `Period::Float` and `Amplitude::Float` shape `Elastic`. With
+    `Clamp::Boolean` off the curve is evaluated outside 0..1 and the output can leave the `From`..`To`
+    range.
+Stagger Value:
+  description: >-
+    Spread a 0..1 `Value::Float` across points so that each `ID::Integer` makes its own 0..1 transition,
+    starting later than the ID before it. Every ID takes the same share of the input range, so all IDs
+    move at the same speed. `Width::Float` sets how many IDs are moving at once: small widths animate
+    one ID after another, and larger widths overlap them more. A `Width` of 0 switches each ID straight
+    from 0 to 1. `ID` defaults to the `id` attribute, or the index if there is none; link
+    `URes ID::Node` to stagger by residue. `Group ID::Integer` staggers each group over its own range
+    of IDs. Chain it into `Ease Value::Node` to ease each ID's transition.
 Animate Trails:
   description: >-
     Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms

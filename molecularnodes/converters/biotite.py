@@ -8,17 +8,20 @@ from MDAnalysis.core.topologyattrs import (
     AtomAttr,
     Atomids,
     Atomnames,
+    Atomtypes,
     Bonds,
     ChainIDs,
     Charges,
     Elements,
     ICodes,
+    Masses,
     Occupancies,
     Resids,
     Resnames,
     Segids,
     Tempfactors,
 )
+from MDAnalysis.guesser.default_guesser import DefaultGuesser
 from MDAnalysis.topology.base import TopologyReaderBase, change_squash
 
 
@@ -116,6 +119,14 @@ class BiotiteParser(TopologyReaderBase):
         attrs.append(ChainIDs(chainids))
         attrs.append(Atomnames(atom_array.atom_name))
         attrs.append(Elements(elements))
+        # Types and masses come from the parsed elements. Left to MDAnalysis they
+        # are guessed from the atom names, which makes a calcium ion (atom name CA)
+        # a carbon type. Masses use MDAnalysis' own lookup, once per element.
+        attrs.append(Atomtypes(np.char.upper(elements.astype(str)).astype(object)))
+        unique_elements, element_index = np.unique(elements, return_inverse=True)
+        guesser = DefaultGuesser(None)
+        unique_masses = [guesser.get_atom_mass(element) for element in unique_elements]
+        attrs.append(Masses(np.array(unique_masses, dtype=np.float64)[element_index]))
         # Residue Attr's
         residx, (resids, resnames, icodes, chainids) = change_squash(
             (resids, resnames, icodes, chainids),
@@ -206,6 +217,33 @@ _EXTRA_ANNOTATIONS: dict[str, type[AtomAttr]] = {
 }
 
 
+def _match_bond_types(bonds: np.ndarray, pairs: np.ndarray) -> np.ndarray:
+    """
+    Look up the bond type of each atom index pair, irrespective of the order of the
+    two atoms. ``bonds`` is a biotite ``(i, j, bond_type)`` array; pairs missing from
+    it get a bond type of 0.
+    """
+    bonds = np.asarray(bonds, dtype=np.int64).reshape(-1, 3)
+    pairs = np.sort(np.asarray(pairs, dtype=np.int64).reshape(-1, 2), axis=1)
+    types = np.zeros(len(pairs), dtype=int)
+    if len(bonds) == 0 or len(pairs) == 0:
+        return types
+
+    # encode each unordered pair as a single integer key, then match keys by sorting
+    n = int(max(bonds[:, :2].max(), pairs.max())) + 1
+    bond_pairs = np.sort(bonds[:, :2], axis=1)
+    bond_keys = bond_pairs[:, 0] * n + bond_pairs[:, 1]
+    order = np.argsort(bond_keys, kind="stable")
+    bond_keys = bond_keys[order]
+    bond_types = bonds[order, 2]
+
+    keys = pairs[:, 0] * n + pairs[:, 1]
+    idx = np.searchsorted(bond_keys, keys).clip(max=len(bond_keys) - 1)
+    found = bond_keys[idx] == keys
+    types[found] = bond_types[idx[found]]
+    return types
+
+
 def universe_from_atoms(
     structure: AtomArray | AtomArrayStack,
 ) -> mda.Universe:
@@ -228,7 +266,8 @@ def universe_from_atoms(
         A Universe wrapping the structure, with bonds, all coordinate frames, and the
         carried-over file-parsed annotations.
     """
-    universe = mda.Universe(BiotiteWrapper(structure))
+    # types and masses are set by the parser, so nothing is left to guess
+    universe = mda.Universe(BiotiteWrapper(structure), to_guess=())
 
     # Load every model of a stack as a trajectory frame. `structure.coord` has shape
     # (n_models, n_atoms, 3), exactly what MemoryReader expects.
@@ -248,16 +287,8 @@ def universe_from_atoms(
     # domain when it builds the object. Attached as a plain attribute since it is only
     # needed once, at object-creation time.
     if reference.bonds is not None and hasattr(universe.atoms, "bonds"):
-        bond_type_by_pair = {
-            frozenset((int(i), int(j))): int(t)
-            for i, j, t in reference.bonds.as_array()
-        }
-        universe._mn_bond_types = np.array(
-            [
-                bond_type_by_pair.get(frozenset((int(i), int(j))), 0)
-                for i, j in universe.atoms.bonds.indices
-            ],
-            dtype=int,
+        universe._mn_bond_types = _match_bond_types(
+            reference.bonds.as_array(), universe.atoms.bonds.indices
         )
 
     return universe

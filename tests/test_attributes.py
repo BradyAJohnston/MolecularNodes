@@ -11,14 +11,14 @@ formats = ["pdb", "cif", "bcif"]
 
 
 @pytest.mark.parametrize("code, format", list(itertools.product(codes, formats)))
-def test_attribute(snapshot, code, format):
-    mol = mn.Molecule.fetch(code, cache=data_dir, format=format)
+def test_attribute(fetch, snapshot, code, format):
+    mol = fetch(code, format=format)
     # no style applied, so the geometry is the parsed file and is exact on all platforms
     assert snapshot == GeometrySet(mol.object, strict=True).summary()
 
 
-def test_store_named_attribute(snapshot_custom):
-    mol = mn.Molecule.fetch("8H1B", cache=data_dir, format="bcif")
+def test_store_named_attribute(fetch, snapshot_custom):
+    mol = fetch("8H1B", format="bcif")
     before = mol.named_attribute("position")
     mol.store_named_attribute(mol.named_attribute("position") + 10, "position")
     after = mol.named_attribute("position")
@@ -26,16 +26,16 @@ def test_store_named_attribute(snapshot_custom):
     assert not np.allclose(before, after)
 
 
-def test_uv_map(snapshot_custom):
-    mol = mn.Molecule.fetch("1cd3", cache=data_dir, format="bcif")
+def test_uv_map(fetch, snapshot_custom):
+    mol = fetch("1cd3", format="bcif")
     with mol.tree.reset() as (atoms, join):
         atoms >> StyleRibbon(uv_map=True, quality=1) >> join
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[:1000]
     assert snapshot_custom == mol.named_attribute("uv_map", evaluate=True)[-1000:]
 
 
-def test_bond_attributes(snapshot):
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
+def test_bond_attributes(fetch, snapshot):
+    mol = fetch("1BNA", format="bcif")
     with mol.tree.reset() as (atoms, join):
         atoms >> StyleSpheres(sphere="Mesh") >> join
 
@@ -43,11 +43,11 @@ def test_bond_attributes(snapshot):
 
 
 @pytest.mark.parametrize("format", formats)
-def test_charge_from_file(format):
+def test_charge_from_file(fetch, format):
     # 8U8W carries formal charges on its ions (NA 1+, 2x CL 1-, 2x IOD 1-) in the PDB
     # charge column and in `pdbx_formal_charge`; they are stored verbatim, with 0 on
     # every other atom
-    mol = mn.Molecule.fetch("8U8W", cache=data_dir, format=format)
+    mol = fetch("8U8W", format=format)
     charge = mol.named_attribute("charge")
     is_ion = np.isin(mol.universe.atoms.resnames, ["NA", "CL", "IOD"])
     assert is_ion.sum() == 5
@@ -56,10 +56,10 @@ def test_charge_from_file(format):
 
 
 @pytest.mark.parametrize("format", formats)
-def test_charge_absent_without_file_charges(format):
+def test_charge_absent_without_file_charges(fetch, format):
     # 4ozs has no charges in the file (blank column / all `?`), so no `charge`
     # attribute is stored rather than a looked-up or zero-filled one
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format=format)
+    mol = fetch("4ozs", format=format)
     assert "charge" not in mol.list_attributes()
 
 
@@ -89,3 +89,41 @@ def test_charge_absent_without_topology_charges():
     mol = mn.Molecule.load(GRO, XTC)
     assert not hasattr(mol.universe.atoms, "charges")
     assert "charge" not in mol.list_attributes()
+
+
+@pytest.mark.parametrize("format", formats)
+def test_ligands_are_not_alpha_carbon_or_backbone(fetch, format):
+    # 1ATN has calcium ions with the atom name `CA`, an ATP whose ribose atoms share
+    # names with the nucleic backbone, a modified residue (HIC 73) in the chain whose
+    # alpha carbon must still be flagged, and an N-terminal ACE cap that stays backbone
+    mol = fetch("1ATN", format=format)
+    res_name = mol.universe.atoms.resnames
+    is_ligand = np.isin(res_name, ["CA", "ATP"])
+    assert is_ligand.sum() == 4 + 31
+    for name in ["is_alpha_carbon", "is_backbone"]:
+        assert not np.any(mol.named_attribute(name)[is_ligand])
+    is_alpha_carbon = mol.named_attribute("is_alpha_carbon")
+    assert np.all(mol.named_attribute("atomic_number")[is_alpha_carbon] == 6)
+    assert np.any(is_alpha_carbon & (res_name == "HIC"))
+    assert np.all(mol.named_attribute("is_peptide")[res_name == "HIC"])
+    is_ace_c_o = (res_name == "ACE") & np.isin(mol.universe.atoms.names, ["C", "O"])
+    assert is_ace_c_o.sum() == 2
+    assert np.all(mol.named_attribute("is_backbone")[is_ace_c_o])
+
+
+def test_ligands_are_not_alpha_carbon_or_backbone_reader():
+    from biotite.structure import filter_amino_acids, filter_nucleotides
+    from molecularnodes.download import StructureDownloader
+    from molecularnodes.entities.molecule.reader import read_structure
+
+    path = StructureDownloader(cache=data_dir).download("1ATN", format="pdb")
+    array = read_structure(path).array
+    is_ace = array.res_name == "ACE"
+    is_ligand = ~(filter_amino_acids(array) | filter_nucleotides(array) | is_ace)
+    assert np.any(array.res_name[is_ligand] == "CA")
+    for name in ["is_alpha_carbon", "is_backbone"]:
+        assert not np.any(array.get_annotation(name)[is_ligand])
+    assert np.any(array.is_alpha_carbon & (array.res_name == "HIC"))
+    is_ace_c_o = is_ace & np.isin(array.atom_name, ["C", "O"])
+    assert is_ace_c_o.sum() == 2
+    assert np.all(array.is_backbone[is_ace_c_o])

@@ -1,5 +1,5 @@
 # Node-group asset "Select Res ID String" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -74,23 +74,26 @@ class SelectResIDString(AssetGeometryGroup):
         selection_2 = closure_zone_1.outputs.boolean("Selection")
         residue_id = ResidueID()
         string_3 = g.String(string="-")
-        g.Compare.integer.equal(string_1.to_integer(), ResidueID()) >> selection_1
+        (
+            g.Compare.integer.equal(string_1.output.to_integer(), ResidueID())
+            >> selection_1.input
+        )
         trim_string = string.split(",").trim()
         repeat_zone = g.RepeatZone(trim_string.list_length())
-        boolean = repeat_zone.items.boolean("Boolean")
+        boolean = repeat_zone.items.boolean(name="Boolean")
         get_list_item = trim_string[repeat_zone.iteration]
-        trim_string_1 = string_2.split(string_3).trim()
+        trim_string_1 = string_2.output.split(string_3).trim()
         boolean_math = (residue_id >= trim_string_1[0].to_integer()) & (
             residue_id <= trim_string_1[1].to_integer()
         )
-        boolean_math >> selection_2
+        boolean_math >> selection_2.input
         switch = get_list_item.contains(string_3).switch.closure(
             closure_zone.closure, closure_zone_1.closure
         )
         evaluate_closure = g.EvaluateClosure(switch)
-        evaluate_closure.inputs.string("String", get_list_item)
+        evaluate_closure.inputs.string(get_list_item, "String")
         selection_3 = evaluate_closure.outputs.boolean("Selection")
-        (boolean.current | selection_3) >> boolean.next
+        (boolean.current | selection_3.output) >> boolean.next
 
         boolean.result >> selection
 

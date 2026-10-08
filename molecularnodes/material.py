@@ -4,6 +4,7 @@ import bpy
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as sh
+from .nodes._assets import link_asset_groups
 from .nodes.materials import (
     ambient_occlusion,
     default,
@@ -12,7 +13,7 @@ from .nodes.materials import (
     squishy,
     transparent,
 )
-from .nodes.shader import ColorAO
+from .nodes.shader import AmbientOcclusionInternal, ColorAO
 from .nodes.shader import FlatInternal as FlatShader
 from .nodes.shader import TransparentOutlineInternal as TransparentOutlineShader
 
@@ -68,6 +69,13 @@ def append_material(name: str) -> bpy.types.Material:
 
 def add_all_materials() -> dict[str, bpy.types.Material]:
     "Ensure all pre-built materials exist in the file."
+    # the asset groups each missing recipe uses, linked with one library read
+    link_asset_groups(
+        value
+        for name, module in RECIPES.items()
+        if bpy.data.materials.get(name) is None
+        for value in vars(module).values()
+    )
     materials = {name: append_material(name) for name in MATERIAL_NAMES}
     # a preset that no style uses yet has zero users, so without a fake user it
     # would be dropped on save/reload or swept up by an orphan purge before the
@@ -83,7 +91,7 @@ def add_aov(
     attribute: str | None = None,
     type: Literal["VALUE", "COLOR"] = "VALUE",
     offset: float = 0.0,
-) -> sh.AovOutput:
+) -> sh.AOVOutput:
     """
     Write a named attribute of the geometry to an AOV render pass.
 
@@ -118,7 +126,7 @@ def add_aov(
 
     Returns
     -------
-    nodebpy.shader.AovOutput
+    nodebpy.shader.AOVOutput
         The added ``AOV Output`` node.
     """
     tree = material.node_tree
@@ -126,9 +134,9 @@ def add_aov(
     with TreeBuilder(tree):
         source = sh.Attribute(attribute_name=attribute or name)
         if type == "COLOR":
-            return sh.AovOutput(color=source.o.color, aov_name=name)
+            return sh.AOVOutput(color=source.o.color, aov_name=name)
         value = source.o.fac + offset if offset else source.o.fac
-        return sh.AovOutput(value=value, aov_name=name)
+        return sh.AOVOutput(value=value, aov_name=name)
 
 
 def has_aov(material: bpy.types.Material, name: str) -> bool:
@@ -236,7 +244,7 @@ class PresetMaterial:
         attribute: str | None = None,
         type: Literal["VALUE", "COLOR"] = "VALUE",
         offset: float = 0.0,
-    ) -> sh.AovOutput:
+    ) -> sh.AOVOutput:
         "Write a named attribute to an AOV render pass; see :func:`add_aov`."
         return add_aov(
             self.material, name, attribute=attribute, type=type, offset=offset
@@ -328,7 +336,7 @@ class AmbientOcclusion(PresetMaterial):
         name: str | None = None,
     ):
         self._build(name)
-        self.ao = self._handle(ColorAO)
+        self.ao = self._handle(AmbientOcclusionInternal)
         if distance is not None:
             self.distance = distance
         if exponent is not None:
