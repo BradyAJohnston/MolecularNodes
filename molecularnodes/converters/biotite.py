@@ -206,6 +206,33 @@ _EXTRA_ANNOTATIONS: dict[str, type[AtomAttr]] = {
 }
 
 
+def _match_bond_types(bonds: np.ndarray, pairs: np.ndarray) -> np.ndarray:
+    """
+    Look up the bond type of each atom index pair, irrespective of the order of the
+    two atoms. ``bonds`` is a biotite ``(i, j, bond_type)`` array; pairs missing from
+    it get a bond type of 0.
+    """
+    bonds = np.asarray(bonds, dtype=np.int64).reshape(-1, 3)
+    pairs = np.sort(np.asarray(pairs, dtype=np.int64).reshape(-1, 2), axis=1)
+    types = np.zeros(len(pairs), dtype=int)
+    if len(bonds) == 0 or len(pairs) == 0:
+        return types
+
+    # encode each unordered pair as a single integer key, then match keys by sorting
+    n = int(max(bonds[:, :2].max(), pairs.max())) + 1
+    bond_pairs = np.sort(bonds[:, :2], axis=1)
+    bond_keys = bond_pairs[:, 0] * n + bond_pairs[:, 1]
+    order = np.argsort(bond_keys, kind="stable")
+    bond_keys = bond_keys[order]
+    bond_types = bonds[order, 2]
+
+    keys = pairs[:, 0] * n + pairs[:, 1]
+    idx = np.searchsorted(bond_keys, keys).clip(max=len(bond_keys) - 1)
+    found = bond_keys[idx] == keys
+    types[found] = bond_types[idx[found]]
+    return types
+
+
 def universe_from_atoms(
     structure: AtomArray | AtomArrayStack,
 ) -> mda.Universe:
@@ -248,16 +275,8 @@ def universe_from_atoms(
     # domain when it builds the object. Attached as a plain attribute since it is only
     # needed once, at object-creation time.
     if reference.bonds is not None and hasattr(universe.atoms, "bonds"):
-        bond_type_by_pair = {
-            frozenset((int(i), int(j))): int(t)
-            for i, j, t in reference.bonds.as_array()
-        }
-        universe._mn_bond_types = np.array(
-            [
-                bond_type_by_pair.get(frozenset((int(i), int(j))), 0)
-                for i, j in universe.atoms.bonds.indices
-            ],
-            dtype=int,
+        universe._mn_bond_types = _match_bond_types(
+            reference.bonds.as_array(), universe.atoms.bonds.indices
         )
 
     return universe

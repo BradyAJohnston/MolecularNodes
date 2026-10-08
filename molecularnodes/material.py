@@ -1,9 +1,11 @@
+import os
 from types import ModuleType
 from typing import Generic, TypeVar, overload
 import bpy
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as sh
+from nodebpy.builder.asset import AssetNodeGroup
 from .nodes.materials import (
     ambient_occlusion,
     default,
@@ -66,8 +68,44 @@ def append_material(name: str) -> bpy.types.Material:
     return _build_recipe(module)
 
 
+def _link_recipe_groups(modules: list[ModuleType]) -> None:
+    """
+    Link the node groups that the recipes use, reading each asset library once.
+
+    Each asset group otherwise reads the whole library when it is first created,
+    which made building every material several times slower. Groups already in
+    the file are skipped, and the asset classes then reuse the linked groups.
+    """
+    names_by_library: dict[str, set[str]] = {}
+    for module in modules:
+        for value in vars(module).values():
+            if not (isinstance(value, type) and issubclass(value, AssetNodeGroup)):
+                continue
+            if value._asset_name in bpy.data.node_groups:
+                continue
+            path = value._library.path()
+            names_by_library.setdefault(path, set()).add(value._asset_name)
+
+    for path, names in names_by_library.items():
+        # without a built library the asset classes build from source instead
+        if not os.path.exists(path):
+            continue
+        with bpy.data.libraries.load(path, link=True, pack=True, assets_only=True) as (
+            src,
+            dst,
+        ):
+            dst.node_groups = sorted(name for name in names if name in src.node_groups)
+
+
 def add_all_materials() -> dict[str, bpy.types.Material]:
     "Ensure all pre-built materials exist in the file."
+    _link_recipe_groups(
+        [
+            module
+            for name, module in RECIPES.items()
+            if bpy.data.materials.get(name) is None
+        ]
+    )
     materials = {name: append_material(name) for name in MATERIAL_NAMES}
     # a preset that no style uses yet has zero users, so without a fake user it
     # would be dropped on save/reload or swept up by an orphan purge before the
