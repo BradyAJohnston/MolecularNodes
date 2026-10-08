@@ -114,6 +114,20 @@ def test_universe_from_atoms_topology(code):
             assert np.array_equal(getattr(u.atoms, attr), array.get_annotation(name))
 
 
+def test_universe_from_atoms_types_from_elements():
+    """Types and masses come from the parsed elements, not guessed from atom names."""
+    array = read_structure(data_dir / "1f2n.bcif").array[0]
+    u = universe_from_atoms(array)
+
+    assert np.array_equal(u.atoms.types, np.char.upper(array.element.astype(str)))
+    # 1f2n has calcium ions with the atom name CA, which name-guessing made carbon
+    calcium = u.select_atoms("resname CA")
+    assert len(calcium) > 0
+    assert set(calcium.types) == {"CA"}
+    assert np.allclose(calcium.masses, 40.08)
+    assert np.allclose(u.select_atoms("protein and name CA").masses, 12.011)
+
+
 @pytest.mark.parametrize("code", multimodel_codes)
 def test_universe_from_atoms_multimodel(code):
     """A multi-model stack becomes a multi-frame universe with matching coordinates."""
