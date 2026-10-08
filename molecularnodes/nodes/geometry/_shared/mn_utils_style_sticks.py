@@ -281,11 +281,13 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 ),
                 scale=g.Radius().o.radius * radius,
             )
+            capture_4 = g.CaptureAttribute.face(geometry=curve_to_mesh)
+            index = capture_4.items.integer(switch_1, "Index")
             sample_atomic_attributes_to_face_corner = (
                 SampleAtomicAttributesToFaceCorner(
-                    geometry=curve_to_mesh,
+                    geometry=capture_4.o.geometry,
                     sample_atoms=capture_3.o.geometry,
-                    index=switch_1,
+                    index=index.output,
                 )
             )
         with g.Frame("Set up materials"):

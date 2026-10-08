@@ -745,18 +745,32 @@ class StyleSurface(AssetGeometryGroup):
                 closure_zone_1 = g.ClosureZone()
                 atoms_2 = closure_zone_1.inputs.geometry("Atoms")
                 geometry_2 = closure_zone_1.outputs.geometry("Geometry")
-                points_to_sdf_grid = atoms_2.output >> g.PointsToSDFGrid(
+                angstrom_to_world = AngstromToWorld(
+                    angstrom=2.0 / g.Switch.float(quality, 0.5, quality)
+                )
+                with g.Frame("Build the grid in positive space"):
+                    _string = g.String(
+                        string="Shift the atoms so the grid sits entirely in positive space, and OpenVDB only creates tree nodes on one side of each axis. The shift is a whole number of voxels, so the voxels land on the atoms where they would without it. The mesh is shifted back after."
+                    )
+                    vector_math = (
+                        g.BoundingBox(geometry=atoms_2.output).o.min * -1.0
+                        + (offset + 1.0)
+                    ).snap(angstrom_to_world)
+                points_to_sdf_grid = g.PointsToSDFGrid(
+                    points=g.SetPosition(geometry=atoms_2.output, offset=vector_math),
                     radius=scale * VDWRadii(),
-                    voxel_size=AngstromToWorld(
-                        angstrom=2.0 / g.Switch.float(quality, 0.5, quality)
-                    ),
+                    voxel_size=angstrom_to_world,
                 )
                 sdf_grid_fillet = (
                     points_to_sdf_grid.o.sdf_grid.sdf_offset(offset)
                     .sdf_mean(mean_width, mean_iterations)
                     .sdf_fillet(fillet)
                 )
-                sdf_grid_fillet.to_mesh(0.0) >> geometry_2.input
+                (
+                    sdf_grid_fillet.to_mesh(0.0)
+                    >> g.TransformGeometry(translation=vector_math * -1.0)
+                    >> geometry_2.input
+                )
         closure_zone_2 = g.ClosureZone()
         atoms_3 = closure_zone_2.inputs.geometry("Atoms")
         geometry_3 = closure_zone_2.outputs.geometry("Geometry")
@@ -814,7 +828,7 @@ class StyleSurface(AssetGeometryGroup):
             geometry_9 = closure_zone_5.inputs.geometry("Geometry")
             group_id_1 = closure_zone_5.inputs.integer("group_id")
             geometry_10 = closure_zone_5.outputs.geometry("Geometry")
-            _string = g.String(
+            _string_1 = g.String(
                 string="We get better performance if we first orient the structure better inside of a bounding box for more efficient use of grid space & voxels!"
             )
             store_named_attribute = EvaluateWhilePlanar(
