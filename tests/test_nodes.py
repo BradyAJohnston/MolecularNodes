@@ -65,8 +65,8 @@ def _input_sockets(tree: bpy.types.NodeTree) -> dict:
     }
 
 
-def test_get_nodes():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir).add_style("spheres")
+def test_get_nodes(fetch):
+    mol = fetch("4ozs").add_style("spheres")
 
     last = get_output(mol.node_group).inputs[0].links[0].from_node
     assert last.name == "Join Geometry"
@@ -74,7 +74,7 @@ def test_get_nodes():
     assert style.name == "Style Spheres"
     assert style.node_tree.name == "Style Spheres"
 
-    mol2 = mn.Molecule.fetch("1cd3", cache=data_dir).add_style("cartoon")
+    mol2 = fetch("1cd3").add_style("cartoon")
 
     assert get_final_style_nodes(mol2.node_group)[0].node_tree.name == "Style Cartoon"
 
@@ -91,8 +91,10 @@ def test_selection():
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, code):
-    mol = mn.Molecule.fetch(code, cache=data_dir)
+def test_selection_working(
+    fetch, snapshot_custom: NumpySnapshotExtension, attribute, code
+):
+    mol = fetch(code)
     with mol.tree.reset() as (atoms, join):
         sel = Group()
         sel.node.node_tree = custom_boolean_iswitch(
@@ -112,8 +114,8 @@ def test_selection_working(snapshot_custom: NumpySnapshotExtension, attribute, c
 
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("attribute", ["chain_id", "entity_id"])
-def test_color_custom(snapshot_custom: NumpySnapshotExtension, code, attribute):
-    mol = mn.Molecule.fetch(code, cache=data_dir)
+def test_color_custom(fetch, snapshot_custom: NumpySnapshotExtension, code, attribute):
+    mol = fetch(code)
 
     group_col = custom_color_iswitch(
         name=f"Color Entity {mol.name}",
@@ -184,8 +186,8 @@ def test_color_lookup_supplied():
     "node", [PeptideDihedral, NucleicDihedral, PeptideChi, NucleicChi]
 )
 @pytest.mark.parametrize("code", ["8H1B", "1BNA"])
-def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, node):
-    mol = mn.Molecule.fetch(code, cache=data_dir)
+def test_dihedral_rotations(fetch, snapshot_custom: NumpySnapshotExtension, code, node):
+    mol = fetch(code)
     with mol.tree.reset() as (atoms, join):
         pos = node()
         (atoms >> SetPosition(position=pos) >> join)
@@ -197,8 +199,8 @@ def test_dihedral_rotations(snapshot_custom: NumpySnapshotExtension, code, node)
     assert snapshot_custom == mol.named_attribute("position", evaluate=True)[:100]
 
 
-def test_topo_bonds():
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
+def test_topo_bonds(fetch):
+    mol = fetch("1BNA")
     with mol.tree.reset() as (atoms, join):
         atoms >> BreakBonds(cutoff=0.0) >> join
 
@@ -216,31 +218,31 @@ def test_topo_bonds():
     assert len(mol.object.data.edges) == len(gs_new.mesh.edges)
 
 
-def test_is_modifier():
+def test_is_modifier(fetch):
     bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
     for tree in bpy.data.node_groups:
         if tree.name.startswith("Style") and "Preset" not in tree.name:
             assert tree.is_modifier
-    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    mol = fetch("4ozs").add_style("spheres")
     assert mol.modifier_node_tree.is_modifier
 
 
-def test_node_setup():
-    mn.Molecule.fetch("4ozs").add_style("spheres")
+def test_node_setup(fetch):
+    fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     assert tree.interface.items_tree["Atoms"].name == "Atoms"
     assert list(get_input(tree).outputs.keys()) == ["Atoms", ""]
     assert list(get_output(tree).inputs.keys()) == ["Geometry", ""]
 
 
-def test_reuse_node_group():
-    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+def test_reuse_node_group(fetch):
+    mol = fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     n_nodes = len(tree.nodes)
     bpy.data.objects.remove(mol.object)
     del mol
     assert n_nodes == len(tree.nodes)
-    mn.Molecule.fetch("4ozs")
+    fetch("4ozs")
     assert n_nodes == len(tree.nodes)
 
 
@@ -351,10 +353,10 @@ SYMMETRY_EXAMPLES = {
 @pytest.mark.parametrize(
     "code", ["1STP", "6ZPA", "8QUK", "4PNO", "2C2U", "1H05", "6B8F", "2BUK"]
 )
-def test_symmetry_matches_deposited_assembly(code):
+def test_symmetry_matches_deposited_assembly(fetch, code):
     from scipy.spatial import cKDTree
 
-    mol = mn.Molecule.fetch(code)
+    mol = fetch(code)
     positions = mol.named_attribute("position")
     deposited = np.vstack(
         [
@@ -392,9 +394,11 @@ def _expected_copies(positions, operators, centre) -> np.ndarray:
     )
 
 
-def _realized_symmetry(make_node) -> tuple[np.ndarray, np.ndarray, np.ndarray, float]:
+def _realized_symmetry(
+    fetch, make_node
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, float]:
     "Original and realized positions, realized sym_id and world scale for a symmetry node."
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    mol = fetch("4ozs")
     positions = mol.named_attribute("position")
     with mol.tree.reset() as (atoms, join):
         atoms >> make_node() >> RealizeInstances() >> join
@@ -406,10 +410,10 @@ def _realized_symmetry(make_node) -> tuple[np.ndarray, np.ndarray, np.ndarray, f
     )
 
 
-def test_symmetry_cyclic():
+def test_symmetry_cyclic(fetch):
     axis, centre = (0.3, -0.2, 1.0), (0.5, 0.1, -0.2)
     positions, realized, sym_id, _ = _realized_symmetry(
-        lambda: SymmetryCyclic(order=5, axis=axis, centre=centre)
+        fetch, lambda: SymmetryCyclic(order=5, axis=axis, centre=centre)
     )
     operators = [
         (_rotation_about(axis, 2 * np.pi * k / 5), np.zeros(3)) for k in range(5)
@@ -421,15 +425,15 @@ def test_symmetry_cyclic():
     assert np.array_equal(sym_id, np.repeat(np.arange(5), len(positions)))
 
 
-def test_symmetry_cyclic_factor():
+def test_symmetry_cyclic_factor(fetch):
     axis, centre = (0.0, 0.0, 1.0), (0.5, 0.1, -0.2)
     positions, realized, _, _ = _realized_symmetry(
-        lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, animate=0.0)
+        fetch, lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, animate=0.0)
     )
     assert np.allclose(realized, np.tile(positions, (4, 1)), atol=1e-4)
 
     positions, realized, _, _ = _realized_symmetry(
-        lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, animate=0.5)
+        fetch, lambda: SymmetryCyclic(order=4, axis=axis, centre=centre, animate=0.5)
     )
     operators = [
         (_rotation_about(axis, 0.5 * 2 * np.pi * k / 4), np.zeros(3)) for k in range(4)
@@ -439,15 +443,16 @@ def test_symmetry_cyclic_factor():
     )
 
 
-def test_symmetry_cyclic_stagger():
+def test_symmetry_cyclic_stagger(fetch):
     # Animate is evaluated per copy, so Stagger Value (ID falls back to the copy
     # index) gives each copy its own window: width 1 over 4 copies is
     # start k / 4, length 1 / 4, so at 0.375 the copies sit at 1, 0.5, 0, 0
     axis, centre = (0.0, 0.0, 1.0), (0.5, 0.1, -0.2)
     positions, realized, _, _ = _realized_symmetry(
+        fetch,
         lambda: SymmetryCyclic(
             order=4, axis=axis, centre=centre, animate=StaggerValue(0.375, width=1.0)
-        )
+        ),
     )
     operators = [
         (_rotation_about(axis, fraction * 2 * np.pi * k / 4), np.zeros(3))
@@ -458,10 +463,10 @@ def test_symmetry_cyclic_stagger():
     )
 
 
-def test_symmetry_dihedral():
+def test_symmetry_dihedral(fetch):
     axis, centre = (0.0, 0.0, 1.0), (0.2, -0.4, 0.1)
     positions, realized, sym_id, _ = _realized_symmetry(
-        lambda: SymmetryDihedral(order=3, axis=axis, centre=centre)
+        fetch, lambda: SymmetryDihedral(order=3, axis=axis, centre=centre)
     )
     # the two-fold for a Z axis lies along Y, matching ProteinBlender's choice
     flip = _rotation_about((0.0, 1.0, 0.0), np.pi)
@@ -476,11 +481,12 @@ def test_symmetry_dihedral():
     assert np.array_equal(sym_id, np.repeat(np.arange(6), len(positions)))
 
 
-def test_symmetry_dihedral_offset():
+def test_symmetry_dihedral_offset(fetch):
     # the offset rotates the flipped ring about the axis, moving the two-fold by half of it
     axis, centre, offset = (0.0, 0.0, 1.0), (0.0, 0.0, 0.0), 0.7
     positions, realized, _, _ = _realized_symmetry(
-        lambda: SymmetryDihedral(order=2, axis=axis, centre=centre, offset=offset)
+        fetch,
+        lambda: SymmetryDihedral(order=2, axis=axis, centre=centre, offset=offset),
     )
     flip = _rotation_about((0.0, 1.0, 0.0), np.pi)
     ring = [_rotation_about(axis, np.pi * k) for k in range(2)]
@@ -524,14 +530,14 @@ def _kabsch(p: np.ndarray, q: np.ndarray) -> np.ndarray:
         ("Icosahedral", _rotation_about((0.0, 1.0, (1 + 5**0.5) / 2), 2 * np.pi / 5)),
     ],
 )
-def test_symmetry_cubic(group, generator):
+def test_symmetry_cubic(fetch, group, generator):
     # the reference group is generated independently from its standard
     # generators: a two-, four- or five-fold plus the three-fold along (1, 1, 1)
     expected = _rotation_group(
         [generator, _rotation_about((1.0, 1.0, 1.0), 2 * np.pi / 3)]
     )
     positions, realized, sym_id, _ = _realized_symmetry(
-        lambda: SymmetryCubic(group=group)
+        fetch, lambda: SymmetryCubic(group=group)
     )
     rotations = [
         _kabsch(positions, realized[sym_id == k]) for k in range(len(expected))
@@ -543,13 +549,14 @@ def test_symmetry_cubic(group, generator):
         assert not any(np.allclose(r, rotations[j], atol=1e-4) for j in range(i))
 
 
-def test_symmetry_helical():
+def test_symmetry_helical(fetch):
     axis, centre = (0.0, 1.0, 1.0), (0.1, 0.2, 0.3)
     rise, twist = 27.5, np.radians(-166.7)
     positions, realized, sym_id, world_scale = _realized_symmetry(
+        fetch,
         lambda: SymmetryHelical(
             count=6, rise=rise, twist=twist, axis=axis, centre=centre
-        )
+        ),
     )
     direction = np.asarray(axis) / np.linalg.norm(axis)
     operators = [
@@ -563,10 +570,11 @@ def test_symmetry_helical():
     assert np.array_equal(sym_id, np.repeat(np.arange(6), len(positions)))
 
 
-def test_symmetry_helical_axial_symmetry():
+def test_symmetry_helical_axial_symmetry(fetch):
     axis, centre = (0.0, 1.0, 1.0), (0.1, 0.2, 0.3)
     rise, twist = 4.8, np.radians(-2.8)
     positions, realized, sym_id, world_scale = _realized_symmetry(
+        fetch,
         lambda: SymmetryHelical(
             count=4,
             axial_symmetry=3,
@@ -574,7 +582,7 @@ def test_symmetry_helical_axial_symmetry():
             twist=twist,
             axis=axis,
             centre=centre,
-        )
+        ),
     )
     direction = np.asarray(axis) / np.linalg.norm(axis)
     # copy k is layer k // 3, turned a further (k % 3) / 3 of a turn
@@ -592,13 +600,13 @@ def test_symmetry_helical_axial_symmetry():
     assert np.array_equal(sym_id, np.repeat(np.arange(12), len(positions)))
 
 
-def test_symmetry_helical_matches_deposited_filament():
+def test_symmetry_helical_matches_deposited_filament(fetch):
     from scipy.spatial import cKDTree
 
     # 8AZT deposits layers k = -1..1 and the node builds k = 0..2. Both sets are
     # closed under the helix, so the node's copies are the deposit stepped up
     # one layer: twisted -2.825 degrees and raised 4.806 A about the axis.
-    mol = mn.Molecule.fetch("8AZT")
+    mol = fetch("8AZT")
     positions = mol.named_attribute("position")
     deposited = np.vstack(
         [
@@ -634,14 +642,14 @@ def _store_charge_node(mol):
     return mol.named_attribute("charge_node", evaluate=True)
 
 
-def test_charge_node():
+def test_charge_node(fetch):
     # 4ozs provides no charges, so there is no `charge` attribute and the node reads 0.0
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    mol = fetch("4ozs")
     assert "charge" not in mol.list_attributes()
     assert np.all(_store_charge_node(mol) == 0)
 
     # 8U8W carries formal charges on its ions, which the node reads back verbatim
-    mol = mn.Molecule.fetch("8U8W", cache=data_dir)
+    mol = fetch("8U8W")
     expected = mol.named_attribute("charge")
     assert np.any(expected != 0)
     assert np.allclose(_store_charge_node(mol), expected)
@@ -671,8 +679,8 @@ def test_segment_id(topology, trajectory, n_segments):
     assert np.array_equal(traj.named_attribute("node_segid", evaluate=True), expected)
 
 
-def test_build_elastic_network():
-    mol = mn.Molecule.fetch("4ozs")
+def test_build_elastic_network(fetch):
+    mol = fetch("4ozs")
 
     with mol.tree.reset() as (atoms, join):
         BuildElasticNetwork(atoms) >> join
@@ -683,7 +691,7 @@ def test_build_elastic_network():
     assert len(gs.mesh.vertices) == sum(mol["is_alpha_carbon"])
 
 
-def test_evaluate_on_atoms_bundle():
+def test_evaluate_on_atoms_bundle(fetch):
     """
     The `Evaluate on Atoms` node was previously still storing the 'MN/Atoms' bundle,
     even when the output was set to geometry. It was just filling it with emptry geometry.
@@ -696,7 +704,7 @@ def test_evaluate_on_atoms_bundle():
     and we check if it exists and create a point if so which we can test for with pytest.
     """
 
-    mol = mn.Molecule.fetch("4ozs")
+    mol = fetch("4ozs")
 
     with mol.tree.reset() as (atoms, join):
         bundle = (atoms >> FindBonds() >> GetGeometryBundle()).o.bundle
@@ -830,8 +838,8 @@ EASE_CURVES = [
 EASE_TYPES = ["In", "Out", "In Out"]
 
 
-def test_animate_ease_penner():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+def test_animate_ease_penner(fetch):
+    mol = fetch("4ozs")
     grid = np.linspace(0.0, 1.0, 9)
     t = grid[np.arange(len(mol)) % len(grid)]
     mol.store_named_attribute(t, "t")
@@ -864,8 +872,8 @@ def test_animate_ease_penner():
         assert np.allclose(ease_out, mirrored, atol=1e-4), curve
 
 
-def test_animate_ease_range_and_clamp():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+def test_animate_ease_range_and_clamp(fetch):
+    mol = fetch("4ozs")
     raw = np.linspace(-1.0, 2.0, 7)[np.arange(len(mol)) % 7]
     mol.store_named_attribute(raw, "raw")
 
@@ -902,8 +910,8 @@ def _stagger(value, rank, span, width):
     return np.clip((value - start) / (width / denominator), 0.0, 1.0)
 
 
-def test_stagger_value():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+def test_stagger_value(fetch):
+    mol = fetch("4ozs")
     index = np.arange(len(mol))
     rank = index % 4
     mol.store_named_attribute(rank, "rank")
@@ -944,8 +952,8 @@ def test_stagger_value():
         assert np.allclose(got, _stagger(value, rank, 3, 2.0), atol=1e-5), value
 
 
-def test_animate_action():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+def test_animate_action(fetch):
+    mol = fetch("4ozs")
     rank = np.arange(len(mol)) % 4
     mol.store_named_attribute(rank, "rank")
     times = [0.0, 12.0, 17.0, 20.0, 30.0]
@@ -1032,9 +1040,9 @@ OKLAB_REFERENCE = {
 
 
 @pytest.mark.parametrize("rgb", list(OKLAB_REFERENCE))
-def test_color_to_oklab(rgb):
+def test_color_to_oklab(fetch, rgb):
     """Color to OKLab matches Ottosson's reference values and round-trips."""
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    mol = fetch("4ozs")
     with mol.tree.reset() as (atoms, join):
         oklab = ColorToOKLab(color=(*rgb, 1.0))
         (
@@ -1081,18 +1089,18 @@ def _simulate_two_point_network(mol, frames: int):
         scene.frame_set(start)
 
 
-def test_simulate_elastic_network_inverse_mass():
+def test_simulate_elastic_network_inverse_mass(fetch):
     """The stored inverse mass is 1 / mass."""
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    mol = fetch("4ozs")
     _, inverse_mass = _simulate_two_point_network(mol, frames=0)
     assert np.allclose(inverse_mass, [1.0, 1.0 / 3.0], atol=1e-6), inverse_mass
 
 
-def test_simulate_elastic_network_two_points():
+def test_simulate_elastic_network_two_points(fetch):
     """One XPBD step of a single distance constraint: each point moves in
     proportion to its inverse mass, the mass-weighted centre stays put and the
     edge reaches its rest length."""
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    mol = fetch("4ozs")
     positions, _ = _simulate_two_point_network(mol, frames=1)
     # C = 1.0 - 0.5, point 0 (w=1) moves C * 1 / (1 + 1/3), point 1 (w=1/3) moves
     # C * (1/3) / (1 + 1/3), both toward each other along x
@@ -1133,11 +1141,11 @@ _COLORMAP_LOSSY = {
 }
 
 
-def _evaluate_colormap(x: np.ndarray, param: str, name: str, reverse=False):
+def _evaluate_colormap(fetch, x: np.ndarray, param: str, name: str, reverse=False):
     """sRGB colours the Color matplotlib node gives at values ``x``."""
     from molecularnodes.nodes.geometry import ColorMatplotlib
 
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+    mol = fetch("4ozs")
     values = np.zeros(len(mol.atoms), dtype=np.float32)
     values[: len(x)] = x
     mol.store_named_attribute(values, "cmap_x")
@@ -1161,7 +1169,7 @@ def _evaluate_colormap(x: np.ndarray, param: str, name: str, reverse=False):
 
 
 @pytest.mark.parametrize("param, name", _colormap_menus())
-def test_color_matplotlib_matches_matplotlib(param, name):
+def test_color_matplotlib_matches_matplotlib(fetch, param, name):
     import matplotlib
     from matplotlib.colors import ListedColormap
 
@@ -1174,7 +1182,7 @@ def test_color_matplotlib_matches_matplotlib(param, name):
         # the 256 entries of matplotlib's lookup table
         x = np.linspace(0.0, 1.0, 256)
         tolerance = _COLORMAP_LOSSY.get(name, 2.5)
-    srgb = _evaluate_colormap(x, param, name)
+    srgb = _evaluate_colormap(fetch, x, param, name)
     assert np.abs(srgb - cmap(x)[:, :3]).max() * 255 <= tolerance
 
 
@@ -1210,18 +1218,18 @@ def test_colormap_generator_ramp_model(mode):
     bpy.data.node_groups.remove(tree)
 
 
-def test_color_matplotlib_reverse():
+def test_color_matplotlib_reverse(fetch):
     import matplotlib
 
     x = np.linspace(0.0, 1.0, 256)
-    srgb = _evaluate_colormap(x, "uniform", "viridis", reverse=True)
+    srgb = _evaluate_colormap(fetch, x, "uniform", "viridis", reverse=True)
     expected = matplotlib.colormaps["viridis_r"](x)[:, :3]
     assert np.abs(srgb - expected).max() * 255 <= 2.5
 
 
 @pytest.mark.parametrize("fade", [0.5, 1.0])
-def test_fade_geometry_scales_alpha(fade):
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+def test_fade_geometry_scales_alpha(fetch, fade):
+    mol = fetch("4ozs")
     color = mol.named_attribute("Color")
     with mol.tree.reset() as (atoms, join):
         atoms >> FadeGeometry(fade=fade) >> join
@@ -1231,8 +1239,8 @@ def test_fade_geometry_scales_alpha(fade):
     assert np.allclose(faded[:, 3], color[:, 3] * fade)
 
 
-def test_fade_geometry_zero_removes_geometry():
-    mol = mn.Molecule.fetch("4ozs", cache=data_dir)
+def test_fade_geometry_zero_removes_geometry(fetch):
+    mol = fetch("4ozs")
     with mol.tree.reset() as (atoms, join):
         atoms >> FadeGeometry(fade=0.0) >> join
 

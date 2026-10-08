@@ -20,7 +20,7 @@ def _read_array(code):
 @pytest.mark.parametrize(
     "code, format", list(itertools.product(codes, ["bcif", "cif", "pdb"]))
 )
-def test_biotite_converter(code, format):
+def test_biotite_converter(fetch, code, format):
     # the biotite array is the ground truth of what was parsed and computed from the file
     path = download.StructureDownloader(cache=data_dir).download(
         code=code, format=format, database="rcsb"
@@ -31,7 +31,7 @@ def test_biotite_converter(code, format):
 
     # the unified Molecule loads that same file through the converter and computes its
     # named attributes MDAnalysis-side; the two must agree
-    mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    mol = fetch(code, format=format)
     mol_attrs = mol.list_attributes(drop_hidden=False)
 
     # positions (Angstrom -> Blender world units)
@@ -193,9 +193,9 @@ def test_from_file_multimodel_frames(code):
     assert traj.universe.trajectory.n_frames == n_models
 
 
-def test_fetch_stores_source_and_assemblies():
+def test_fetch_stores_source_and_assemblies(fetch):
     """fetch records the code/database and exposes biological assemblies."""
-    traj = mn.Molecule.fetch("4ozs", format=".bcif", cache=data_dir)
+    traj = fetch("4ozs", format=".bcif")
     assert traj.props.code == "4ozs"
     assert traj.props.database == "rcsb"
     assemblies = traj.assemblies()

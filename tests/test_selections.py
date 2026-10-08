@@ -4,8 +4,8 @@ import pytest
 import molecularnodes as mn
 
 
-def test_selection_string_changes():
-    mol = mn.Molecule.fetch("1bna")
+def test_selection_string_changes(fetch):
+    mol = fetch("1BNA")
     sel = mol.selections.from_string("resid 1:10")
 
     with mol.tree.reset() as (atoms, join):
@@ -17,9 +17,9 @@ def test_selection_string_changes():
     assert len(current) > len(mol.named_attribute("position", evaluate=True))
 
 
-def test_selection_updating_toggle_rebuilds_atomgroup():
+def test_selection_updating_toggle_rebuilds_atomgroup(fetch):
     """Toggling `updating` swaps between an UpdatingAtomGroup and a static one."""
-    mol = mn.Molecule.fetch("1bna")
+    mol = fetch("1BNA")
     sel = mol.selections.from_string("resid 1:10")
     manager = mol.selections
 
@@ -38,9 +38,9 @@ def test_selection_updating_toggle_rebuilds_atomgroup():
     assert manager.ag_is_updating(ag_updating)
 
 
-def test_selection_periodic_toggle_rebuilds_atomgroup():
+def test_selection_periodic_toggle_rebuilds_atomgroup(fetch):
     """Toggling `periodic` recreates the AtomGroup and re-stores the attribute."""
-    mol = mn.Molecule.fetch("1bna")
+    mol = fetch("1BNA")
     sel = mol.selections.from_string("around 5.0 resid 1")
     manager = mol.selections
 
@@ -55,9 +55,9 @@ def test_selection_periodic_toggle_rebuilds_atomgroup():
     assert mask.sum() == ag_after.n_atoms
 
 
-def test_selection_bad_string_sets_message_and_recovers():
+def test_selection_bad_string_sets_message_and_recovers(fetch):
     """An invalid selection string flags an error and a valid one clears it."""
-    mol = mn.Molecule.fetch("1bna")
+    mol = fetch("1BNA")
     sel = mol.selections.from_string("resid 1:10")
     mask_before = mol.named_attribute(sel.name)
 
@@ -71,9 +71,9 @@ def test_selection_bad_string_sets_message_and_recovers():
     assert mol.named_attribute(sel.name).sum() < mask_before.sum()
 
 
-def test_selections_find_by_string():
+def test_selections_find_by_string(fetch):
     "`find` searches by selection string; `get` searches by selection name."
-    mol = mn.Molecule.fetch("4ozs")
+    mol = fetch("4ozs")
     assert mol.selections.find("protein") is None
     item = mol.selections.from_string("protein")
     assert mol.selections.find("protein").name == item.name
@@ -84,49 +84,49 @@ def test_selections_find_by_string():
     assert mol.selections.find("protein", updating=False) is None
 
 
-def test_selections_node_reuses_existing():
+def test_selections_node_reuses_existing(fetch):
     "Repeated calls must not pile up duplicate selections and mesh attributes."
-    mol = mn.Molecule.fetch("4ozs")
+    mol = fetch("4ozs")
     with mol.tree:
         for _ in range(5):
             mol.selections.node("protein")
     assert len(mol.selections) == 1
 
 
-def test_selections_node_flags_are_distinct():
-    mol = mn.Molecule.fetch("4ozs")
+def test_selections_node_flags_are_distinct(fetch):
+    mol = fetch("4ozs")
     with mol.tree:
         mol.selections.node("protein")
         mol.selections.node("protein", updating=False)
     assert len(mol.selections) == 2
 
 
-def test_selections_node_reuses_by_name():
-    mol = mn.Molecule.fetch("4ozs")
+def test_selections_node_reuses_by_name(fetch):
+    mol = fetch("4ozs")
     with mol.tree:
         mol.selections.node("protein", name="my_sel")
         mol.selections.node("a different phrase", name="my_sel")
     assert len([i for i in mol.selections.ui_items if i.name == "my_sel"]) == 1
 
 
-def test_selections_node_from_atomgroup():
-    mol = mn.Molecule.fetch("4ozs")
+def test_selections_node_from_atomgroup(fetch):
+    mol = fetch("4ozs")
     with mol.tree:
         node = mol.selections.node(mol.universe.select_atoms("resid 1:20"))
     assert node.node.inputs["Name"].default_value == mol.selections.ui_items[0].name
 
 
-def test_selections_node_requires_tree_context():
-    mol = mn.Molecule.fetch("4ozs")
+def test_selections_node_requires_tree_context(fetch):
+    mol = fetch("4ozs")
     with pytest.raises(RuntimeError, match="TreeBuilder context"):
         mol.selections.node("protein")
 
 
-def test_selections_node_in_add_style_callable():
+def test_selections_node_in_add_style_callable(fetch):
     "The motivating case: an MDA selection inside a callable style."
     from molecularnodes.nodes import geometry as g
 
-    mol = mn.Molecule.fetch("4ozs")
+    mol = fetch("4ozs")
     mol.add_style(lambda: g.StyleSpheres(selection=mol.selections.node("resid 1:20")))
     style = [
         n

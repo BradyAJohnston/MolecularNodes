@@ -14,7 +14,7 @@ DATA_DIR = join(dirname(realpath(__file__)), "data")
 
 @pytest.fixture(scope="module")
 def path_4ins():
-    return StructureDownloader().download("4INS", format="pdb")
+    return StructureDownloader(cache=DATA_DIR).download("4INS", format="pdb")
 
 
 @pytest.mark.parametrize(
