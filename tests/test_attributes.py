@@ -105,6 +105,7 @@ def test_ligands_are_not_alpha_carbon_or_backbone(format):
     is_alpha_carbon = mol.named_attribute("is_alpha_carbon")
     assert np.all(mol.named_attribute("atomic_number")[is_alpha_carbon] == 6)
     assert np.any(is_alpha_carbon & (res_name == "HIC"))
+    assert np.all(mol.named_attribute("is_peptide")[res_name == "HIC"])
     is_ace_c_o = (res_name == "ACE") & np.isin(mol.universe.atoms.names, ["C", "O"])
     assert is_ace_c_o.sum() == 2
     assert np.all(mol.named_attribute("is_backbone")[is_ace_c_o])
