@@ -285,7 +285,10 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_is_alpha_carbon(array: AtomArray):
-        return array.get_annotation("atom_name") == "CA"
+        return np.logical_and(
+            array.get_annotation("atom_name") == "CA",
+            ReaderBase._compute_is_polymer(array),
+        )
 
     @staticmethod
     def _compute_is_hetero(array):
@@ -330,9 +333,8 @@ class ReaderBase(metaclass=ABCMeta):
         is_backbone_atom = np.isin(
             array.get_annotation("atom_name"), backbone_atom_names
         )
-        is_not_solvent = np.logical_not(filter.filter_solvent(array))
 
-        return np.logical_and(is_backbone_atom, is_not_solvent)
+        return np.logical_and(is_backbone_atom, ReaderBase._compute_is_polymer(array))
 
     @staticmethod
     def _compute_is_peptide(array):
@@ -341,11 +343,23 @@ class ReaderBase(metaclass=ABCMeta):
         )
 
     @staticmethod
+    def _compute_is_polymer(array):
+        # amino acid and nucleotide residues, so that ligands and ions such as
+        # calcium (atom name CA) are not flagged as alpha carbon or backbone. The
+        # N-terminal ACE cap is not an amino acid in the CCD but is part of the chain,
+        # and MDAnalysis counts it as protein
+        return np.logical_or.reduce(
+            [
+                ReaderBase._compute_is_peptide(array),
+                filter.filter_nucleotides(array),
+                array.get_annotation("res_name") == "ACE",
+            ]
+        )
+
+    @staticmethod
     def _compute_is_side_chain(array):
         backbone = ReaderBase._compute_is_backbone(array)
-        is_polymer = np.logical_or(
-            ReaderBase._compute_is_peptide(array), filter.filter_nucleotides(array)
-        )
+        is_polymer = ReaderBase._compute_is_polymer(array)
 
         return np.logical_and(
             np.logical_or(~backbone, ReaderBase._compute_is_alpha_carbon(array)),

@@ -228,7 +228,14 @@ class GeometrySet(db.GeometrySet):
 
         parts = [f"shape={self._shape(arr.shape)}, atype={attr.atype.value}"]
 
-        if n_unique == 1:
+        if dtype_kind == "b":
+            # counts rather than the unique values, so a change in how many points
+            # are flagged shows up in the snapshot
+            n_true = int(np.count_nonzero(arr))
+            parts.append(
+                f"true={self._count(n_true)}, false={self._count(arr.size - n_true)}"
+            )
+        elif n_unique == 1:
             parts.append(f"constant={self._format_value(unique[0], dtype_kind)}")
         elif n_unique <= max_display:
             values = [self._format_value(v, dtype_kind) for v in unique]

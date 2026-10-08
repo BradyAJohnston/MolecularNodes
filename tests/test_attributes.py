@@ -89,3 +89,41 @@ def test_charge_absent_without_topology_charges():
     mol = mn.Molecule.load(GRO, XTC)
     assert not hasattr(mol.universe.atoms, "charges")
     assert "charge" not in mol.list_attributes()
+
+
+@pytest.mark.parametrize("format", formats)
+def test_ligands_are_not_alpha_carbon_or_backbone(format):
+    # 1ATN has calcium ions with the atom name `CA`, an ATP whose ribose atoms share
+    # names with the nucleic backbone, a modified residue (HIC 73) in the chain whose
+    # alpha carbon must still be flagged, and an N-terminal ACE cap that stays backbone
+    mol = mn.Molecule.fetch("1ATN", format=format)
+    res_name = mol.universe.atoms.resnames
+    is_ligand = np.isin(res_name, ["CA", "ATP"])
+    assert is_ligand.sum() == 4 + 31
+    for name in ["is_alpha_carbon", "is_backbone"]:
+        assert not np.any(mol.named_attribute(name)[is_ligand])
+    is_alpha_carbon = mol.named_attribute("is_alpha_carbon")
+    assert np.all(mol.named_attribute("atomic_number")[is_alpha_carbon] == 6)
+    assert np.any(is_alpha_carbon & (res_name == "HIC"))
+    assert np.all(mol.named_attribute("is_peptide")[res_name == "HIC"])
+    is_ace_c_o = (res_name == "ACE") & np.isin(mol.universe.atoms.names, ["C", "O"])
+    assert is_ace_c_o.sum() == 2
+    assert np.all(mol.named_attribute("is_backbone")[is_ace_c_o])
+
+
+def test_ligands_are_not_alpha_carbon_or_backbone_reader():
+    from biotite.structure import filter_amino_acids, filter_nucleotides
+    from molecularnodes.download import StructureDownloader
+    from molecularnodes.entities.molecule.reader import read_structure
+
+    path = StructureDownloader().download("1ATN", format="pdb")
+    array = read_structure(path).array
+    is_ace = array.res_name == "ACE"
+    is_ligand = ~(filter_amino_acids(array) | filter_nucleotides(array) | is_ace)
+    assert np.any(array.res_name[is_ligand] == "CA")
+    for name in ["is_alpha_carbon", "is_backbone"]:
+        assert not np.any(array.get_annotation(name)[is_ligand])
+    assert np.any(array.is_alpha_carbon & (array.res_name == "HIC"))
+    is_ace_c_o = is_ace & np.isin(array.atom_name, ["C", "O"])
+    assert is_ace_c_o.sum() == 2
+    assert np.all(array.is_backbone[is_ace_c_o])
