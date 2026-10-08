@@ -70,9 +70,16 @@ Additional data types which are not supported as Attributes but can be used in t
 
 All of the molecular attributes which are defined as strings such as `chain_id`, `res_name`, etc. are stored as integers in the geometry because Geometry Nodes does not support string attributes.
 
-For `chain_id`, `entity_id` and other dynamic attributes, the unique values are first sorted alphabetically and then assigned an integer value based on their order.
+How the integer is assigned depends on the attribute. For the dynamic ones the strings are stored as metadata on the object, so an integer can be mapped back to its string (see [Reading Attributes from Python](#reading-attributes-from-python)):
 
-For other attributes such as `res_name`, they are looked up from the dictionary and assigned an integer value.
+| Attribute    | Integer assigned from                                          | Strings stored in            |
+|--------------|----------------------------------------------------------------|------------------------------|
+| `chain_id`   | Position in the alphabetically sorted list of unique chain IDs | `mol.props.chain_ids`        |
+| `entity_id`  | Position in the `entity` category of the file, in file order   | `mol.props.entity_ids`       |
+| `segid`      | Index of the segment, in topology order                        | `mol.props.segments`         |
+| `atom_types` | Position in the sorted list of unique atom types               | `mol.props.atom_type_unique` |
+| `res_name`   | Fixed [lookup table](data_table.qmd#residue-names)             |                              |
+| `atom_name`  | Fixed [lookup table](data_table.qmd#atom-names)                |                              |
 
 ### Point Attributes
 
@@ -93,11 +100,11 @@ For other attributes such as `res_name`, they are looked up from the dictionary 
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `mass`                   | `Float::Float`         | Mass of the element                                                                                                                                                                  |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `chain_id`               | `Int::Int`             | The integer representation of the chain ID, for it's position in the sorted list of chain IDs in the structure.                                                                      |
+| `chain_id`               | `Int::Int`             | Position of the chain ID in the sorted list `mol.props.chain_ids`. For `.cif` and `.bcif` files this is the author chain ID (`auth_asym_id`), as in `.pdb` files.                    |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `segid`                  | `Int::Int`             | The index of the segment the atom belongs to, when the topology defines segments. The segment names are stored as metadata on the object.                                            |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `entity_id`              | `Int::Int`             | Multiple chains can be the same `entity`, if they are copies of the same protein that appear multiple times in the structure. Also sorted and assigned integers on import.           |
+| `entity_id`              | `Int::Int`             | Multiple chains can be the same `entity`, if they are copies of the same protein in the structure. Only `.cif` and `.bcif` files define entities. Numbered in the file's order.      |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `res_name`               | `Int::Int`             | Residues are mapped to integer values based on the [lookup table](data_table.qmd#residue-names).                                                                                     |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -117,15 +124,15 @@ For other attributes such as `res_name`, they are looked up from the dictionary 
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `is_alpha_carbon`        | `Bool::Bool`           | Whether the atom is an alpha carbon (atom name `CA`, or `BB` for coarse-grained structures) of an amino acid residue. Ions and ligands are excluded.                                 |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `is_side_chain`          | `Bool::Bool`           | Whether the atom is part of a side chain: a peptide or nucleic atom that is not part of the backbone.                                                                                |
+| `is_side_chain`          | `Bool::Bool`           | Whether the atom is part of a side chain: an atom of an amino acid or nucleotide residue that is not part of the backbone. The alpha carbon also counts as side chain.               |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `is_backbone`            | `Bool::Bool`           | Whether the atom is part of the peptide or nucleic backbone, based on its atom name, in amino acid and nucleotide residues. Ions and ligands are excluded.                           |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `is_solvent`             | `Bool::Bool`           | Whether the atom is part of a solvent molecule, based on its residue and atom names.                                                                                                 |
+| `is_solvent`             | `Bool::Bool`           | Whether the atom is part of a solvent molecule (such as water), based on its residue and atom names.                                                                                 |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `is_nucleic`             | `Bool::Bool`           | Whether the atom is part of a nucleic acid.                                                                                                                                          |
+| `is_nucleic`             | `Bool::Bool`           | Whether the atom is part of a residue MDAnalysis recognises as a nucleic acid.                                                                                                       |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `is_peptide`             | `Bool::Bool`           | Whether the atom is part of a peptide, including coarse-grained (Martini) beads.                                                                                                     |
+| `is_peptide`             | `Bool::Bool`           | Whether the atom is part of an amino acid residue, including modified residues (such as `HIC`) and coarse-grained (Martini) `BB` or `SC*` beads.                                     |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `is_lipid`               | `Bool::Bool`           | Whether the atom is part of a lipid, based on its residue name.                                                                                                                      |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -163,6 +170,53 @@ Bond types are currently the values used by [`biotite`](https://www.biotite-pyth
 +---------------------------+---------------+-----------------------------------------+
 | `AROMATIC_TRIPLE::String` | `7::Int`      | Aromatic bond with a triple formal bond |
 +---------------------------+---------------+-----------------------------------------+
+
+### Attributes by Format
+
+Which attributes are created depends on what the file provides.
+These attributes are created for every format: `position`, `atomic_number`, `atom_name`, `atom_types`, `res_name`, `res_id`, `segid`, `mass`, `vdw_radii`, `b_factor`, `occupancy`, `Color` and the `is_*` flags except `is_hetero` and `is_carb`.
+The others vary:
+
+| Attribute    | `.pdb`         | `.cif` / `.bcif` | `.sdf` / `.mol` | MD topology                 |
+|--------------|:--------------:|:----------------:|:---------------:|:---------------------------:|
+| `chain_id`   | ✓              | ✓                | ✓               |                             |
+| `entity_id`  |                | ✓                |                 |                             |
+| `ures_id`    | ✓              | ✓                | ✓               |                             |
+| `atom_id`    | ✓              | ✓                |                 | ✓                           |
+| `sec_struct` | ✓              | ✓                |                 | ✓                           |
+| `is_hetero`  | ✓              | ✓                | ✓               |                             |
+| `is_carb`    | ✓              | ✓                | ✓               |                             |
+| `bond_type`  | ✓              | ✓                | ✓               |                             |
+| `charge`     | if in the file | if in the file   | if in the file  | if the topology has charges |
+
+Simulation topologies differ in what they contain, so the MD column is for typical topologies such as `.psf` and `.gro`.
+`mol.list_attributes()` lists the attributes on a molecule, and `mol.named_attribute()` raises an error for one that was not created.
+In the node tree there is no error: reading a missing attribute gives `0::Int` (or `False::Bool`) for every atom, so selecting by `entity_id` on a `.pdb` file treats every atom as entity `0::Int`.
+
+### Reading Attributes from Python
+
+`mol.named_attribute()` returns the attribute stored on the object as a `numpy` array, one value per atom.
+The integer attributes in the table above can be mapped back to their strings with the stored metadata:
+
+```python
+import numpy as np
+import molecularnodes as mn
+
+mol = mn.Molecule.fetch("1CD3", format="cif")
+
+chain_id = mol.named_attribute("chain_id")
+chain_names = np.array(mol.props.chain_ids)[chain_id]  # e.g. "1", "2", "B"
+
+is_alpha_carbon = mol.named_attribute("is_alpha_carbon")
+print(np.unique(chain_names[is_alpha_carbon], return_counts=True))
+```
+
+`position` is in Blender units, the coordinates in Å scaled by the [world scale](#world-scale), for the current frame and before any node tree changes.
+`mol.universe.atoms.positions` has the same coordinates in Å.
+
+`mol.named_attribute(name, evaluate=True)` instead reads the geometry after the node tree is evaluated, which is not one point per atom once a style is applied.
+A cartoon is a mesh with many more vertices than there are atoms, and spheres are instances by default so the evaluated mesh is empty.
+To get atom positions, read the stored `position` or the universe instead of the evaluated geometry.
 
 ## Domains {#domains}
 
