@@ -39,6 +39,7 @@ def test_download_raises_error_on_invalid_format():
     time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 def test_fail_download_pdb_large_structure_raises():
     downloader = StructureDownloader()
     with pytest.raises(FileDownloadPDBError):
@@ -46,6 +47,7 @@ def test_fail_download_pdb_large_structure_raises():
     time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 @pytest.mark.parametrize("format", ["cif", "bcif", "pdb"])
 def test_compare_biotite(format):
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -60,6 +62,7 @@ def test_compare_biotite(format):
             time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["pdb", "cif", "bcif"])
@@ -86,6 +89,7 @@ def test_fetch_with_cache(tmpdir, code, format, database):
     time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["pdb", "cif", "bcif"])

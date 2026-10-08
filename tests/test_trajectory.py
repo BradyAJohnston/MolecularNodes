@@ -27,8 +27,8 @@ def dummy_calculation_for_pickle_test(universe):
 
 class TestMoleculeSingleStructure:
     @pytest.fixture
-    def mol(self) -> mn.Molecule:
-        return mn.Molecule.fetch("4ozs", cache=data_dir)
+    def mol(self, fetch) -> mn.Molecule:
+        return fetch("4ozs")
 
     def test_positions(self, mol: mn.Molecule):
         pos_0 = mol.position

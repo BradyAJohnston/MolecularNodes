@@ -27,6 +27,7 @@ from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...material import PresetMaterial, append_material
 from ...nodes import handlers as node_handlers
+from ...nodes._assets import link_asset_groups
 from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...nodes.geometry import AssemblyInstance
 from ...utils import _UNSET, count_value_changes, temp_override_property
@@ -39,7 +40,7 @@ from ..utilities import (
 )
 from .annotations import MoleculeAnnotationManager
 from .dssp import DSSPManager
-from .helpers import FrameManager, _ag_to_bool
+from .helpers import FrameManager, _ag_to_bool, _isin
 from .selections import SelectionManager
 
 logger = logging.getLogger(__name__)
@@ -367,7 +368,7 @@ class Molecule(MolecularEntity):
     def _compute_mass(self) -> np.ndarray:
         # units: daltons
         if hasattr(self.atoms, "masses"):
-            return np.array([x.mass for x in self.atoms])
+            return np.asarray(self.atoms.masses)
         else:
             masses = [
                 data.elements.get(element, {"standard_mass": 0}).get("standard_mass")
@@ -466,11 +467,11 @@ class Molecule(MolecularEntity):
             return np.repeat(int(-1), len(self))
 
     def _compute_is_lipid(self) -> np.ndarray:
-        return np.isin(self.atoms.resnames, data.RESNAMES_LIPID)
+        return _isin(self.atoms.resnames, data.RESNAMES_LIPID)
 
     def _compute_is_solvent(self) -> np.ndarray:
-        resname_is_solvent = np.isin(self.atoms.resnames, data.RESNAMES_SOLVENT)
-        name_is_solvent = np.isin(self.atoms.names, data.NAMES_SOLVENT)
+        resname_is_solvent = _isin(self.atoms.resnames, data.RESNAMES_SOLVENT)
+        name_is_solvent = _isin(self.atoms.names, data.NAMES_SOLVENT)
         return np.logical_or(resname_is_solvent, name_is_solvent)
 
     # atom names that make up the peptide and nucleic acid backbones. Matches the
@@ -514,7 +515,7 @@ class Molecule(MolecularEntity):
         # the CCD names cover modified residues (HIC, MSE, ...)
         from biotite.structure.info import amino_acid_names
 
-        is_ccd_amino_acid = np.isin(self.atoms.resnames, list(amino_acid_names()))
+        is_ccd_amino_acid = _isin(self.atoms.resnames, list(amino_acid_names()))
         return np.logical_or(
             is_ccd_amino_acid, self._sel_bool("protein or (name BB SC*)")
         )
@@ -524,7 +525,7 @@ class Molecule(MolecularEntity):
         # (atom name CA) are excluded without dropping modified residues from the chain
         from biotite.structure.info import nucleotide_names
 
-        is_ccd_nucleotide = np.isin(self.atoms.resnames, list(nucleotide_names()))
+        is_ccd_nucleotide = _isin(self.atoms.resnames, list(nucleotide_names()))
         return np.logical_or.reduce(
             [
                 self._compute_is_peptide(),
@@ -534,18 +535,18 @@ class Molecule(MolecularEntity):
         )
 
     def _compute_is_alpha_carbon(self) -> np.ndarray:
-        is_alpha_carbon = np.isin(self.atoms.names, ("CA", "BB"))
+        is_alpha_carbon = _isin(self.atoms.names, ("CA", "BB"))
         return np.logical_and(is_alpha_carbon, self._compute_is_polymer())
 
     def _compute_is_backbone(self) -> np.ndarray:
-        is_backbone_atom = np.isin(self.atoms.names, self._BACKBONE_ATOM_NAMES)
+        is_backbone_atom = _isin(self.atoms.names, self._BACKBONE_ATOM_NAMES)
         return np.logical_and(is_backbone_atom, self._compute_is_polymer())
 
     def _compute_is_side_chain(self) -> np.ndarray:
         # side chain = polymer atoms that are not backbone, but the alpha carbon
         # (or CG backbone bead) is counted as side chain. Mirrors the biotite reader.
         backbone = self._compute_is_backbone()
-        is_alpha_carbon = np.isin(self.atoms.names, ("CA", "BB"))
+        is_alpha_carbon = _isin(self.atoms.names, ("CA", "BB"))
         is_polymer = self._compute_is_polymer()
         return np.logical_and(np.logical_or(~backbone, is_alpha_carbon), is_polymer)
 
@@ -1150,6 +1151,19 @@ class Molecule(MolecularEntity):
             return self.selections.from_string(selection).name
         return None
 
+    @staticmethod
+    def _style_color_groups(color) -> tuple[type, ...]:
+        "Asset groups that `_style_color_input` builds for a color keyword."
+        from ...nodes import geometry as g
+
+        if not isinstance(color, str):
+            return ()
+        if color.lower() in ("common", "default"):
+            return (g.ColorElement, g.RandomColor, g.ChainID)
+        if color.lower() == "plddt":
+            return (g.ColorPLDDT,)
+        return ()
+
     def _style_color_input(self, color: str | Sequence[float] | Callable):
         """Resolve `add_style`'s color argument into the `Set Color` node input.
 
@@ -1348,6 +1362,16 @@ class Molecule(MolecularEntity):
             material = material.material
 
         material = append_material(material) if isinstance(material, str) else material
+
+        # link the asset groups this style is about to use with one library read
+        link_asset_groups(
+            [
+                None if style_is_callable else style_mapping[style],
+                g.SetColor if color is not None else None,
+                *self._style_color_groups(color),
+                g.AssemblyInstance if assembly else None,
+            ]
+        )
 
         with self.tree as tree:
             if style_is_callable:

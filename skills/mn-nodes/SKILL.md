@@ -184,7 +184,7 @@ comments. If you prefer editing in Blender: `build`, open `nodes.blend`, edit, s
 Pattern used by the symmetry tests:
 
 ```python
-mol = mn.Molecule.fetch("4ozs", cache=data_dir)  # small, cached in tests/data
+mol = fetch("4ozs")  # `fetch` fixture: loads from tests/data, never downloads
 positions = mol.named_attribute("position")  # raw mesh, world units
 with mol.tree.reset() as (atoms, join):
     (

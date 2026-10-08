@@ -5,7 +5,7 @@ description = "Toolbox for molecular animations with Blender and Geometry Nodes.
 readme = "README.md"
 license = "GPL-3.0-or-later"
 dependencies = [
-    "databpy>=0.9.0",
+    "databpy>=0.10.1",
     "mdanalysis>=2.10",
     "biotite>=1.7.1",
     "mrcfile",
@@ -155,3 +155,5 @@ typed-api = true
 add-reroutes = true
 split-inputs = true
 iterations = 100
+# uncompressed, so each read of the library (one per style added) is ~40% faster
+no-compress = true

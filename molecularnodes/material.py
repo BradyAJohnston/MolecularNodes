@@ -4,6 +4,7 @@ import bpy
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
 from nodebpy import shader as sh
+from .nodes._assets import link_asset_groups
 from .nodes.materials import (
     ambient_occlusion,
     default,
@@ -68,6 +69,13 @@ def append_material(name: str) -> bpy.types.Material:
 
 def add_all_materials() -> dict[str, bpy.types.Material]:
     "Ensure all pre-built materials exist in the file."
+    # the asset groups each missing recipe uses, linked with one library read
+    link_asset_groups(
+        value
+        for name, module in RECIPES.items()
+        if bpy.data.materials.get(name) is None
+        for value in vars(module).values()
+    )
     materials = {name: append_material(name) for name in MATERIAL_NAMES}
     # a preset that no style uses yet has zero users, so without a fake user it
     # would be dropped on save/reload or swept up by an orphan purge before the

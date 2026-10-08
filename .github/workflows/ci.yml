@@ -104,7 +104,14 @@ jobs:
         # windows runners need ~17 minutes for the full suite
         timeout-minutes: 30
         run: |
-          uv run pytest -n auto
+          uv run pytest -n auto -m "not network"
+      # tests that download from RCSB / EMDB run in one job only: every job downloading
+      # at once gets rate limited and fails
+      - name: Run network tests
+        if: matrix.os == 'ubuntu-latest'
+        timeout-minutes: 10
+        run: |
+          uv run pytest -m network
       - name: Upload image comparison failures
         if: failure()
         uses: actions/upload-artifact@v4
@@ -142,7 +149,7 @@ jobs:
       - name: Run Tests
         shell: bash
         run: |
-          blender -b -P tests/run.py -- -v
+          blender -b -P tests/run.py -- -v -m "not network"
       - name: Upload image comparison failures
         if: failure()
         uses: actions/upload-artifact@v4

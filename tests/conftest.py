@@ -11,7 +11,9 @@ os.environ.setdefault(
     "BLENDER_USER_EXTENSIONS", tempfile.mkdtemp(prefix="mn-test-extensions-")
 )
 
+import ipaddress  # noqa: E402
 import shutil  # noqa: E402
+import socket  # noqa: E402
 import sys  # noqa: E402
 from os.path import dirname, join, realpath  # noqa: E402
 from pathlib import Path  # noqa: E402
@@ -118,6 +120,83 @@ def run_around_tests(request):
     # Code that will run after your test, for example:
     # files_after = # ... do something to check the existing files
     # assert files_before == files_after
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "network: downloads from a remote server; CI runs these in a single job, "
+        "deselect with -m 'not network'",
+    )
+
+
+def _is_local(address) -> bool:
+    "Whether a socket address is a Unix socket or a loopback address (e.g. IMD tests)."
+    if not isinstance(address, tuple):
+        return True
+    host = address[0]
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+# Whether the running test may open remote connections; see `no_network`.
+_network_allowed = False
+_connect = socket.socket.connect
+
+
+def _guarded_connect(sock, address):
+    if not _network_allowed and not _is_local(address):
+        raise RuntimeError(
+            f"Tried to connect to {address[0]}. Load structures with the `fetch` "
+            "fixture (add missing files to tests/data), or mark the test with "
+            "@pytest.mark.network."
+        )
+    return _connect(sock, address)
+
+
+# patched for the whole session, so module and session scoped fixtures, which are set
+# up before any function scoped fixture, can't download either
+socket.socket.connect = _guarded_connect
+
+
+@pytest.fixture(autouse=True)
+def no_network(request):
+    """
+    Refuse remote connections unless the test is marked `network`.
+
+    Structures come from tests/data through the `fetch` fixture, so a test that tries to
+    download has a missing data file. Many CI jobs downloading at once get rate limited
+    by RCSB and EMDB and fail.
+    """
+    global _network_allowed
+    _network_allowed = request.node.get_closest_marker("network") is not None
+    yield
+    _network_allowed = False
+
+
+@pytest.fixture
+def fetch():
+    """
+    Fetch a structure from tests/data, never from the network.
+
+    Takes the same arguments as `mn.Molecule.fetch`. The file must already be in
+    tests/data under the code as spelled in the test; download it there once and commit it.
+    """
+
+    def _fetch(code: str, format: str = "bcif", **kwargs) -> mn.Molecule:
+        format = format.strip(".")
+        if not Path(DATA_DIR, f"{code}.{format}").exists():
+            raise FileNotFoundError(
+                f"{code}.{format} is not in tests/data. Download it there once and "
+                "commit it, so tests don't download it on every CI job."
+            )
+        return mn.Molecule.fetch(code, format=format, cache=DATA_DIR, **kwargs)
+
+    return _fetch
 
 
 def pytest_sessionstart(session):

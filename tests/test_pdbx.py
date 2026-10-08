@@ -11,8 +11,8 @@ def test_ss_label_to_int():
     ]
 
 
-def test_entity_parsing():
-    mn.Molecule.fetch("6VBU", format="bcif")
+def test_entity_parsing(fetch):
+    fetch("6VBU", format="bcif")
     assert True
 
 
@@ -23,6 +23,6 @@ def test_get_ss_from_mmcif(snapshot_custom: NumpySnapshotExtension):
     assert snapshot_custom == mol.named_attribute("sec_struct")[random_idx]
 
 
-def test_secondary_structure_no_helix(snapshot_custom):
-    m = mn.Molecule.fetch("7ZL4", cache=data_dir)
+def test_secondary_structure_no_helix(fetch, snapshot_custom):
+    m = fetch("7ZL4")
     assert snapshot_custom == m.named_attribute("sec_struct")

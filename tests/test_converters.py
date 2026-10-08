@@ -20,7 +20,7 @@ def _read_array(code):
 @pytest.mark.parametrize(
     "code, format", list(itertools.product(codes, ["bcif", "cif", "pdb"]))
 )
-def test_biotite_converter(code, format):
+def test_biotite_converter(fetch, code, format):
     # the biotite array is the ground truth of what was parsed and computed from the file
     path = download.StructureDownloader(cache=data_dir).download(
         code=code, format=format, database="rcsb"
@@ -31,7 +31,7 @@ def test_biotite_converter(code, format):
 
     # the unified Molecule loads that same file through the converter and computes its
     # named attributes MDAnalysis-side; the two must agree
-    mol = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    mol = fetch(code, format=format)
     mol_attrs = mol.list_attributes(drop_hidden=False)
 
     # positions (Angstrom -> Blender world units)
@@ -114,6 +114,20 @@ def test_universe_from_atoms_topology(code):
             assert np.array_equal(getattr(u.atoms, attr), array.get_annotation(name))
 
 
+def test_universe_from_atoms_types_from_elements():
+    """Types and masses come from the parsed elements, not guessed from atom names."""
+    array = read_structure(data_dir / "1f2n.bcif").array[0]
+    u = universe_from_atoms(array)
+
+    assert np.array_equal(u.atoms.types, np.char.upper(array.element.astype(str)))
+    # 1f2n has calcium ions with the atom name CA, which name-guessing made carbon
+    calcium = u.select_atoms("resname CA")
+    assert len(calcium) > 0
+    assert set(calcium.types) == {"CA"}
+    assert np.allclose(calcium.masses, 40.08)
+    assert np.allclose(u.select_atoms("protein and name CA").masses, 12.011)
+
+
 @pytest.mark.parametrize("code", multimodel_codes)
 def test_universe_from_atoms_multimodel(code):
     """A multi-model stack becomes a multi-frame universe with matching coordinates."""
@@ -193,9 +207,9 @@ def test_from_file_multimodel_frames(code):
     assert traj.universe.trajectory.n_frames == n_models
 
 
-def test_fetch_stores_source_and_assemblies():
+def test_fetch_stores_source_and_assemblies(fetch):
     """fetch records the code/database and exposes biological assemblies."""
-    traj = mn.Molecule.fetch("4ozs", format=".bcif", cache=data_dir)
+    traj = fetch("4ozs", format=".bcif")
     assert traj.props.code == "4ozs"
     assert traj.props.database == "rcsb"
     assemblies = traj.assemblies()

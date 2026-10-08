@@ -11,6 +11,8 @@ from pathlib import Path
 import bpy
 import pytest
 import molecularnodes as mn
+from molecularnodes.converters import universe_from_atoms
+from molecularnodes.entities.molecule.reader import read_structure
 from molecularnodes.nodes import geometry as mg
 
 DATA_DIR = Path(__file__).parent.parent / "tests" / "data"
@@ -35,16 +37,33 @@ def test_load_large(run):
     run(mn.Molecule.load, DATA_DIR / "1cd3.bcif")
 
 
-@pytest.mark.benchmark(group="load")
-def test_load_without_object(run):
+@pytest.mark.benchmark(group="parse")
+def test_read_structure(benchmark):
     # parsing only, to separate it from building the Blender object and node tree
-    run(mn.Molecule.load, DATA_DIR / f"{STRUCTURE}.bcif", create_object=False)
+    benchmark(read_structure, DATA_DIR / f"{STRUCTURE}.bcif")
+
+
+@pytest.mark.benchmark(group="parse")
+def test_universe_from_atoms(benchmark):
+    # converting the parsed biotite AtomArray into an MDAnalysis Universe
+    array = read_structure(DATA_DIR / f"{STRUCTURE}.bcif").array
+    benchmark(universe_from_atoms, array)
 
 
 @pytest.mark.benchmark(group="load")
 @pytest.mark.parametrize("style", STYLES)
 def test_load_with_style(run, style):
     run(mn.Molecule.load, DATA_DIR / f"{STRUCTURE}.bcif", style=style)
+
+
+@pytest.mark.benchmark(group="load")
+def test_load_with_style_color_assembly(run):
+    # a style that also adds color and assembly nodes, each from the asset library
+    def func():
+        mol = mn.Molecule.load(DATA_DIR / f"{STRUCTURE}.bcif")
+        mol.add_style("cartoon", color="common", assembly=True)
+
+    run(func)
 
 
 @pytest.mark.benchmark(group="load-trajectory")
