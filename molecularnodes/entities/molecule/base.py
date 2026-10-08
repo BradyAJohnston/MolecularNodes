@@ -509,18 +509,34 @@ class Molecule(MolecularEntity):
         """Evaluate an MDAnalysis selection string to a per-atom boolean mask."""
         return _ag_to_bool(self.universe.select_atoms(selection))
 
+    def _compute_is_polymer(self) -> np.ndarray:
+        # amino acid and nucleotide residues. MDAnalysis' selections cover force field
+        # residue names (HIE, HSD, ...) and the CCD names cover modified residues
+        # (HIC, MSE, ...), so ligands and ions such as calcium (atom name CA) are
+        # excluded without dropping modified residues from the chain
+        from biotite.structure.info import amino_acid_names, nucleotide_names
+
+        is_ccd_polymer = np.isin(
+            self.atoms.resnames, [*amino_acid_names(), *nucleotide_names()]
+        )
+        return np.logical_or(
+            is_ccd_polymer, self._sel_bool("protein or nucleic or (name BB SC*)")
+        )
+
+    def _compute_is_alpha_carbon(self) -> np.ndarray:
+        is_alpha_carbon = np.isin(self.atoms.names, ("CA", "BB"))
+        return np.logical_and(is_alpha_carbon, self._compute_is_polymer())
+
     def _compute_is_backbone(self) -> np.ndarray:
         is_backbone_atom = np.isin(self.atoms.names, self._BACKBONE_ATOM_NAMES)
-        return np.logical_and(is_backbone_atom, ~self._compute_is_solvent())
+        return np.logical_and(is_backbone_atom, self._compute_is_polymer())
 
     def _compute_is_side_chain(self) -> np.ndarray:
         # side chain = polymer atoms that are not backbone, but the alpha carbon
         # (or CG backbone bead) is counted as side chain. Mirrors the biotite reader.
         backbone = self._compute_is_backbone()
         is_alpha_carbon = np.isin(self.atoms.names, ("CA", "BB"))
-        is_polymer = np.logical_or(
-            self._sel_bool("protein or (name BB SC*)"), self._sel_bool("nucleic")
-        )
+        is_polymer = self._compute_is_polymer()
         return np.logical_and(np.logical_or(~backbone, is_alpha_carbon), is_polymer)
 
     def _compute_color(self) -> np.ndarray:
@@ -608,7 +624,7 @@ class Molecule(MolecularEntity):
             "atom_types": self._compute_atom_type_int,
             "atom_name": self._compute_atom_name_int,
             "Color": self._compute_color,
-            "is_alpha_carbon": "name CA or name BB",
+            "is_alpha_carbon": self._compute_is_alpha_carbon,
             "is_backbone": self._compute_is_backbone,
             "is_side_chain": self._compute_is_side_chain,
             "is_solvent": self._compute_is_solvent,
