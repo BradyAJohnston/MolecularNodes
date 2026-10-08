@@ -15,6 +15,7 @@ title: "Changelog"
 ## Changed
 - `Animate Action` now takes float `Start` and `Length`, can run on scene seconds, frames or a linked value, and has built-in `Stagger` and `Easing` options.
 - The `oxDNA Style Ribbon` node is renamed `oxDNA Style Classic`. Its inputs are now in Å, its defaults match other oxDNA visualisers, `Ball Radius` no longer changes the backbone radius, base stems and bases share one rotation and end at the centre of the base, a `Stem Geometry` input takes custom stem geometry, backbone ends are filled, and `End Overhang` extends strand ends for the `Curve` backbone. [#1213](https://github.com/BradyAJohnston/MolecularNodes/pull/1213)
+- Importing structures is 3-5x faster. Per-atom attributes such as `is_backbone` and `is_peptide` test each unique residue or atom name once instead of every atom, and the preset materials read the node asset library once instead of once per node group.
 - The Reload operator (`mn.session_reload_item`) relinks any entity object to the session from its recorded source files or PDB code, replacing `mn.reload_trajectory`. [#1244](https://github.com/BradyAJohnston/MolecularNodes/pull/1244)
 
 ## Fixed

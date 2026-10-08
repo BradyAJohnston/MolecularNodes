@@ -39,7 +39,7 @@ from ..utilities import (
 )
 from .annotations import MoleculeAnnotationManager
 from .dssp import DSSPManager
-from .helpers import FrameManager, _ag_to_bool
+from .helpers import FrameManager, _ag_to_bool, _isin
 from .selections import SelectionManager
 
 logger = logging.getLogger(__name__)
@@ -367,7 +367,7 @@ class Molecule(MolecularEntity):
     def _compute_mass(self) -> np.ndarray:
         # units: daltons
         if hasattr(self.atoms, "masses"):
-            return np.array([x.mass for x in self.atoms])
+            return np.asarray(self.atoms.masses)
         else:
             masses = [
                 data.elements.get(element, {"standard_mass": 0}).get("standard_mass")
@@ -466,11 +466,11 @@ class Molecule(MolecularEntity):
             return np.repeat(int(-1), len(self))
 
     def _compute_is_lipid(self) -> np.ndarray:
-        return np.isin(self.atoms.resnames, data.RESNAMES_LIPID)
+        return _isin(self.atoms.resnames, data.RESNAMES_LIPID)
 
     def _compute_is_solvent(self) -> np.ndarray:
-        resname_is_solvent = np.isin(self.atoms.resnames, data.RESNAMES_SOLVENT)
-        name_is_solvent = np.isin(self.atoms.names, data.NAMES_SOLVENT)
+        resname_is_solvent = _isin(self.atoms.resnames, data.RESNAMES_SOLVENT)
+        name_is_solvent = _isin(self.atoms.names, data.NAMES_SOLVENT)
         return np.logical_or(resname_is_solvent, name_is_solvent)
 
     # atom names that make up the peptide and nucleic acid backbones. Matches the
@@ -514,7 +514,7 @@ class Molecule(MolecularEntity):
         # the CCD names cover modified residues (HIC, MSE, ...)
         from biotite.structure.info import amino_acid_names
 
-        is_ccd_amino_acid = np.isin(self.atoms.resnames, list(amino_acid_names()))
+        is_ccd_amino_acid = _isin(self.atoms.resnames, list(amino_acid_names()))
         return np.logical_or(
             is_ccd_amino_acid, self._sel_bool("protein or (name BB SC*)")
         )
@@ -524,7 +524,7 @@ class Molecule(MolecularEntity):
         # (atom name CA) are excluded without dropping modified residues from the chain
         from biotite.structure.info import nucleotide_names
 
-        is_ccd_nucleotide = np.isin(self.atoms.resnames, list(nucleotide_names()))
+        is_ccd_nucleotide = _isin(self.atoms.resnames, list(nucleotide_names()))
         return np.logical_or.reduce(
             [
                 self._compute_is_peptide(),
@@ -534,18 +534,18 @@ class Molecule(MolecularEntity):
         )
 
     def _compute_is_alpha_carbon(self) -> np.ndarray:
-        is_alpha_carbon = np.isin(self.atoms.names, ("CA", "BB"))
+        is_alpha_carbon = _isin(self.atoms.names, ("CA", "BB"))
         return np.logical_and(is_alpha_carbon, self._compute_is_polymer())
 
     def _compute_is_backbone(self) -> np.ndarray:
-        is_backbone_atom = np.isin(self.atoms.names, self._BACKBONE_ATOM_NAMES)
+        is_backbone_atom = _isin(self.atoms.names, self._BACKBONE_ATOM_NAMES)
         return np.logical_and(is_backbone_atom, self._compute_is_polymer())
 
     def _compute_is_side_chain(self) -> np.ndarray:
         # side chain = polymer atoms that are not backbone, but the alpha carbon
         # (or CG backbone bead) is counted as side chain. Mirrors the biotite reader.
         backbone = self._compute_is_backbone()
-        is_alpha_carbon = np.isin(self.atoms.names, ("CA", "BB"))
+        is_alpha_carbon = _isin(self.atoms.names, ("CA", "BB"))
         is_polymer = self._compute_is_polymer()
         return np.logical_and(np.logical_or(~backbone, is_alpha_carbon), is_polymer)
 
