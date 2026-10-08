@@ -9,11 +9,12 @@ from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
     ClosureSocket,
+    FloatSocket,
     GeometrySocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputBoolean, InputClosure, InputGeometry
+from nodebpy.types import InputBoolean, InputClosure, InputFloat, InputGeometry
 from .geometry_to_planar import GeometryToPlanar
 
 
@@ -29,6 +30,10 @@ class EvaluateWhilePlanar(AssetGeometryGroup):
         The parts of the geometry that contribute to the planar calculation
     closure : InputClosure
         Closure
+    positive_space : InputBoolean
+        Also shift the planar geometry so that all of it has positive coordinates, starting at Padding. Grids built inside the closure then only need OpenVDB tree nodes on one side of each axis, which is faster
+    padding : InputFloat
+        Distance from the origin to the planar geometry's bounding box when Positive Space is enabled. Should cover anything the closure grows beyond the geometry, such as surface offsets
 
     Inputs
     ------
@@ -38,6 +43,10 @@ class EvaluateWhilePlanar(AssetGeometryGroup):
         The parts of the geometry that contribute to the planar calculation
     i.closure : ClosureSocket
         Closure
+    i.positive_space : BooleanSocket
+        Also shift the planar geometry so that all of it has positive coordinates, starting at Padding. Grids built inside the closure then only need OpenVDB tree nodes on one side of each axis, which is faster
+    i.padding : FloatSocket
+        Distance from the origin to the planar geometry's bounding box when Positive Space is enabled. Should cover anything the closure grows beyond the geometry, such as surface offsets
 
     Outputs
     -------
@@ -57,6 +66,10 @@ class EvaluateWhilePlanar(AssetGeometryGroup):
         """The parts of the geometry that contribute to the planar calculation"""
         closure: ClosureSocket
         """Closure"""
+        positive_space: BooleanSocket
+        """Also shift the planar geometry so that all of it has positive coordinates, starting at Padding. Grids built inside the closure then only need OpenVDB tree nodes on one side of each axis, which is faster"""
+        padding: FloatSocket
+        """Distance from the origin to the planar geometry's bounding box when Positive Space is enabled. Should cover anything the closure grows beyond the geometry, such as surface offsets"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -74,9 +87,17 @@ class EvaluateWhilePlanar(AssetGeometryGroup):
         geometry: InputGeometry = None,
         selection: InputBoolean = True,
         closure: InputClosure = None,
+        positive_space: InputBoolean = False,
+        padding: InputFloat = 1.0,
     ):
         super().__init__(
-            **{"Geometry": geometry, "Selection": selection, "Closure": closure}
+            **{
+                "Geometry": geometry,
+                "Selection": selection,
+                "Closure": closure,
+                "Positive Space": positive_space,
+                "Padding": padding,
+            }
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
@@ -88,14 +109,35 @@ class EvaluateWhilePlanar(AssetGeometryGroup):
             hide_value=True,
         )
         closure = tree.inputs.closure("Closure")
+        positive_space = tree.inputs.boolean(
+            "Positive Space",
+            False,
+            description="Also shift the planar geometry so that all of it has positive coordinates, starting at Padding. Grids built inside the closure then only need OpenVDB tree nodes on one side of each axis, which is faster",
+        )
+        padding = tree.inputs.float(
+            "Padding",
+            1.0,
+            description="Distance from the origin to the planar geometry's bounding box when Positive Space is enabled. Should cover anything the closure grows beyond the geometry, such as surface offsets",
+            min_value=0.0,
+            subtype="DISTANCE",
+        )
         geometry_1 = tree.outputs.geometry("Geometry")
 
         geometry_to_planar = GeometryToPlanar(geometry=geometry, selection=selection)
+        with g.Frame("Shift into positive space"):
+            switch = positive_space.switch.vector(
+                (0.0, 0.0, 0.0),
+                g.BoundingBox(geometry=geometry_to_planar).o.min * -1.0 + padding,
+            )
+            transform_geometry = g.TransformGeometry(
+                geometry=geometry_to_planar, translation=switch
+            )
         evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry(geometry_to_planar.o.geometry, "Geometry")
+        evaluate_closure.inputs.geometry(transform_geometry, "Geometry")
         geometry_2 = evaluate_closure.outputs.geometry("Geometry")
         (
             geometry_2.output
+            >> g.TransformGeometry(translation=switch * -1.0)
             >> g.TransformGeometry(
                 transform=geometry_to_planar.o.transform.invert(), mode="Matrix"
             )
