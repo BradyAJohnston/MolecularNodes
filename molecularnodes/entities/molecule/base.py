@@ -509,18 +509,28 @@ class Molecule(MolecularEntity):
         """Evaluate an MDAnalysis selection string to a per-atom boolean mask."""
         return _ag_to_bool(self.universe.select_atoms(selection))
 
-    def _compute_is_polymer(self) -> np.ndarray:
-        # amino acid and nucleotide residues. MDAnalysis' selections cover force field
-        # residue names (HIE, HSD, ...) and the CCD names cover modified residues
-        # (HIC, MSE, ...), so ligands and ions such as calcium (atom name CA) are
-        # excluded without dropping modified residues from the chain
-        from biotite.structure.info import amino_acid_names, nucleotide_names
+    def _compute_is_peptide(self) -> np.ndarray:
+        # MDAnalysis' selection covers force field residue names (HIE, HSD, ...) and
+        # the CCD names cover modified residues (HIC, MSE, ...)
+        from biotite.structure.info import amino_acid_names
 
-        is_ccd_polymer = np.isin(
-            self.atoms.resnames, [*amino_acid_names(), *nucleotide_names()]
-        )
+        is_ccd_amino_acid = np.isin(self.atoms.resnames, list(amino_acid_names()))
         return np.logical_or(
-            is_ccd_polymer, self._sel_bool("protein or nucleic or (name BB SC*)")
+            is_ccd_amino_acid, self._sel_bool("protein or (name BB SC*)")
+        )
+
+    def _compute_is_polymer(self) -> np.ndarray:
+        # amino acid and nucleotide residues, so that ligands and ions such as calcium
+        # (atom name CA) are excluded without dropping modified residues from the chain
+        from biotite.structure.info import nucleotide_names
+
+        is_ccd_nucleotide = np.isin(self.atoms.resnames, list(nucleotide_names()))
+        return np.logical_or.reduce(
+            [
+                self._compute_is_peptide(),
+                is_ccd_nucleotide,
+                self._sel_bool("nucleic"),
+            ]
         )
 
     def _compute_is_alpha_carbon(self) -> np.ndarray:
@@ -630,7 +640,7 @@ class Molecule(MolecularEntity):
             "is_solvent": self._compute_is_solvent,
             "is_nucleic": "nucleic",
             "is_lipid": self._compute_is_lipid,
-            "is_peptide": "protein or (name BB SC*)",
+            "is_peptide": self._compute_is_peptide,
             "is_hetero": self._compute_is_hetero,
             "is_carb": self._compute_is_carb,
             "entity_id": self._compute_entity_id,
