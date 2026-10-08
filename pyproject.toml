@@ -50,6 +50,7 @@ dev = [
     "pre-commit",
     "pytest",
     "pytest-cov",
+    "pytest-codspeed",
     "pytest-xdist",
     "rdkit",
     "ruff",
@@ -96,6 +97,10 @@ molecularnodes = ["assets/*",
                   "**/*.py",
                   "annotations/fonts/*"]
 
+
+[tool.pytest.ini_options]
+# benchmarks are run separately with `pytest benchmarks --codspeed`
+testpaths = ["tests"]
 
 [tool.ruff.lint]
 # pyflakes, pycodestyle isort and varibale naming
