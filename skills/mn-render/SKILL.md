@@ -97,8 +97,8 @@ u_mol = mn.Molecule(u)  # from an MDAnalysis Universe
 
 `fetch(code, format=".bcif", cache=download.CACHE_DIR, database="rcsb")`. `load` routes
 single files through biotite and topology plus coordinates through MDAnalysis; `style=`
-is optional and defaults to no style, leaving the tree empty. In tests use
-`cache=data_dir` so downloads land in `tests/data`.
+is optional and defaults to no style, leaving the tree empty. In tests use the `fetch`
+fixture instead, which loads from `tests/data` and never downloads.
 
 ## 6. Styles, materials, colour
 

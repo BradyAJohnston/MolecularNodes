@@ -1,5 +1,6 @@
 import gzip
 import io
+import os
 from pathlib import Path
 import requests
 from biotite.database import afdb
@@ -124,7 +125,7 @@ class StructureDownloader:
             file = None
 
         try:
-            r = requests.get(self._url(code, format, database))
+            r = requests.get(self._url(code, format, database), timeout=60)
             r.raise_for_status()
         except requests.HTTPError as e:
             raise FileDownloadPDBError(str(e))
@@ -139,8 +140,12 @@ class StructureDownloader:
 
         if file:
             mode = "wb+" if _is_binary else "w+"
-            with open(file, mode) as f:
+            # write then rename, so another process reading the cache (such as a
+            # parallel test worker) never sees a partially written file
+            partial = file.with_name(f".{file.name}.{os.getpid()}.partial")
+            with open(partial, mode) as f:
                 f.write(content)
+            os.replace(partial, file)
             return Path(file)
         else:
             if _is_binary:

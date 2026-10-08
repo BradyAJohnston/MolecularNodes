@@ -420,11 +420,11 @@ def test_compositor_reset_and_annotations(canvas):
     assert "CompositorNodeAlphaOver" in bl_idnames
 
 
-def test_clear_removes_content_but_keeps_lighting(canvas):
+def test_clear_removes_content_but_keeps_lighting(fetch, canvas):
     "clear() removes content objects, not just the Molecular Nodes entities."
     cube = bpy.data.objects.new("UserCube", bpy.data.meshes.new("UserCubeMesh"))
     bpy.context.collection.objects.link(cube)
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
 
     canvas.clear()
     remaining = {obj.name: obj.type for obj in bpy.data.objects}
@@ -438,20 +438,20 @@ def test_clear_removes_content_but_keeps_lighting(canvas):
     assert len(mn.session.get_session().entities) == 0
 
 
-def test_clear_preserves_lighting_in_the_render(canvas):
+def test_clear_preserves_lighting_in_the_render(fetch, canvas):
     "Removing the lights would silently flatten every subsequent render."
     lights_before = [o.name for o in bpy.data.objects if o.type == "LIGHT"]
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
     canvas.clear()
     assert [o.name for o in bpy.data.objects if o.type == "LIGHT"] == lights_before
 
 
-def test_clear_keeps_render_settings_and_world(canvas):
+def test_clear_keeps_render_settings_and_world(fetch, canvas):
     canvas.engine = "CYCLES"
     canvas.resolution = (400, 300)
     canvas.samples = 8
     world = canvas.scene.world
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
 
     canvas.clear()
     assert canvas.resolution == (400, 300)
@@ -461,18 +461,18 @@ def test_clear_keeps_render_settings_and_world(canvas):
     assert canvas.scene.compositing_node_group is not None
 
 
-def test_clear_does_not_leak_datablocks(canvas):
+def test_clear_does_not_leak_datablocks(fetch, canvas):
     """A style leaves >100 node groups behind, which used to accumulate.
 
     Only a recursive purge collects them, as they hang off the object's
     modifier tree rather than being directly orphaned.
     """
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
     canvas.clear()
     baseline = (len(bpy.data.node_groups), len(bpy.data.meshes))
 
     for _ in range(3):
-        mn.Molecule.fetch("4ozs").add_style("cartoon")
+        fetch("4ozs").add_style("cartoon")
         canvas.clear()
         assert (len(bpy.data.node_groups), len(bpy.data.meshes)) == baseline
 
@@ -486,18 +486,18 @@ def test_load_preset_restores_the_preset_scene(canvas):
     assert {"Camera", "Sun", "Sun.001", "Sun.002", "focal_point"} <= names
 
 
-def test_load_preset_prunes_dangling_entities(canvas):
+def test_load_preset_prunes_dangling_entities(fetch, canvas):
     "Objects do not survive the scene swap, so their entities must not either."
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
     assert len(mn.session.get_session().entities) == 1
 
     canvas.load_preset()
     assert len(mn.session.get_session().entities) == 0
 
 
-def test_clear_survives_an_externally_deleted_object(canvas):
+def test_clear_survives_an_externally_deleted_object(fetch, canvas):
     "Deleting a molecule from the outliner used to make clear() raise."
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    mol = fetch("4ozs").add_style("cartoon")
     bpy.data.objects.remove(mol.object, do_unlink=True)
     assert len(mn.session.get_session().entities) == 1
 
@@ -505,12 +505,12 @@ def test_clear_survives_an_externally_deleted_object(canvas):
     assert len(mn.session.get_session().entities) == 0
 
 
-def test_clear_leaves_other_scenes_alone(canvas):
+def test_clear_leaves_other_scenes_alone(fetch, canvas):
     "clear() empties this canvas's scene, not every scene in the file."
     other = bpy.data.scenes.new("OtherScene")
     cube = bpy.data.objects.new("OtherCube", bpy.data.meshes.new("OtherCubeMesh"))
     other.collection.objects.link(cube)
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
 
     canvas.clear()
     assert "4ozs" not in canvas.scene.objects
@@ -525,12 +525,12 @@ def test_canvas_loads_the_preset_into_an_empty_scene():
     assert {"Camera", "Sun", "Sun.001", "Sun.002", "focal_point"} <= names
 
 
-def test_canvas_rerun_does_not_wipe_the_scene(canvas):
+def test_canvas_rerun_does_not_wipe_the_scene(fetch, canvas):
     """Re-running `mn.Canvas()` used to destroy every molecule silently.
 
     A notebook cell doing exactly this re-runs on its own in marimo.
     """
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    mol = fetch("4ozs").add_style("cartoon")
     session = mn.session.get_session()
     assert session.n_items == 1
 
@@ -540,37 +540,37 @@ def test_canvas_rerun_does_not_wipe_the_scene(canvas):
     assert again.scene == canvas.scene
 
 
-def test_canvas_rerun_keeps_a_custom_compositor(canvas):
+def test_canvas_rerun_keeps_a_custom_compositor(fetch, canvas):
     "Binding must not rebuild the compositor over the top of one already set up."
     from nodebpy import compositor as c
 
     with canvas.compositor.reset() as (image, output):
         image >> c.Glare() >> output
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
 
     again = mn.Canvas()
     assert "CompositorNodeGlare" in [n.bl_idname for n in again.compositor.tree.nodes]
 
 
-def test_canvas_with_explicit_template_always_loads(canvas):
+def test_canvas_with_explicit_template_always_loads(fetch, canvas):
     "Asking for a template is asking for the scene it describes."
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+    fetch("4ozs").add_style("cartoon")
     assert mn.session.get_session().n_items == 1
 
     mn.Canvas(template="Molecular Nodes")
     assert mn.session.get_session().n_items == 0
 
 
-def test_canvas_template_none_binds_to_the_current_scene(canvas):
-    mn.Molecule.fetch("4ozs").add_style("cartoon")
+def test_canvas_template_none_binds_to_the_current_scene(fetch, canvas):
+    fetch("4ozs").add_style("cartoon")
     again = mn.Canvas(template=None)
     assert mn.session.get_session().n_items == 1
     assert again.scene == canvas.scene
 
 
-def test_canvas_ignores_dangling_entities_when_deciding(canvas):
+def test_canvas_ignores_dangling_entities_when_deciding(fetch, canvas):
     "A molecule deleted from the outliner is not work worth preserving."
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    mol = fetch("4ozs").add_style("cartoon")
     bpy.data.objects.remove(mol.object, do_unlink=True)
 
     again = mn.Canvas()
@@ -584,13 +584,13 @@ def _camera_distance(canvas, points):
     )
 
 
-def test_look_at_accepts_any_number_of_points(canvas):
+def test_look_at_accepts_any_number_of_points(fetch, canvas):
     """A target with more than 8 points used to silently empty the frame.
 
     `look_at` was annotated `list[tuple]` with no arity check, and anything but
     a bounding box put the subject a few pixels wide in the middle of nothing.
     """
-    mol = mn.Molecule.fetch("4ozs").add_style("spheres", sphere="Mesh")
+    mol = fetch("4ozs").add_style("spheres", sphere="Mesh")
     points = np.asarray(mol.get_view())
     assert len(points) > 8
 
@@ -600,9 +600,9 @@ def test_look_at_accepts_any_number_of_points(canvas):
     assert (depth > 0).all(), "the subject ended up behind the camera"
 
 
-def test_look_at_frames_what_is_drawn_not_the_whole_entity(canvas):
+def test_look_at_frames_what_is_drawn_not_the_whole_entity(fetch, canvas):
     "Styling one chain of four should frame that chain, not all four."
-    mol = mn.Molecule.fetch("8H1B").add_style("cartoon", selection="chainID A")
+    mol = fetch("8H1B").add_style("cartoon", selection="chainID A")
     canvas.look_at(mol, viewpoint="front")
     on_chain = _camera_distance(canvas, mol.get_view("chainID A"))
 
@@ -613,11 +613,11 @@ def test_look_at_frames_what_is_drawn_not_the_whole_entity(canvas):
     assert on_chain < on_everything
 
 
-def test_get_view_is_not_stale_after_adding_a_style(canvas):
+def test_get_view_is_not_stale_after_adding_a_style(fetch, canvas):
     """`bound_box` is evaluated geometry, and used to be read before the
     depsgraph had caught up - so the view depended on whether anything happened
     to have triggered an update."""
-    mol = mn.Molecule.fetch("8H1B")
+    mol = fetch("8H1B")
     mol.add_style("cartoon", selection="chainID A")
 
     before = np.asarray(mol.get_view())
@@ -627,8 +627,8 @@ def test_get_view_is_not_stale_after_adding_a_style(canvas):
     assert np.allclose(before.max(axis=0), after.max(axis=0))
 
 
-def test_look_at_margin_moves_the_camera_back(canvas):
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+def test_look_at_margin_moves_the_camera_back(fetch, canvas):
+    mol = fetch("4ozs").add_style("cartoon")
     points = mol.get_view()
 
     distances = []
@@ -638,13 +638,13 @@ def test_look_at_margin_moves_the_camera_back(canvas):
     assert distances == sorted(distances)
 
 
-def test_look_at_frames_consistently_across_viewpoints(canvas):
+def test_look_at_frames_consistently_across_viewpoints(fetch, canvas):
     """Framing an axis-aligned box projected differently from each direction.
 
     Solving on the points themselves keeps the subject filling the frame from
     any angle - it can't be tight from one direction and loose from another.
     """
-    mol = mn.Molecule.fetch("8H1B").add_style("cartoon")
+    mol = fetch("8H1B").add_style("cartoon")
     points = np.asarray(mol.get_view())
 
     filled = []
@@ -671,9 +671,9 @@ def test_look_at_rejects_targets_it_cannot_frame(canvas):
         canvas.look_at([])
 
 
-def test_look_at_extends_the_far_clip_to_reach_the_subject(canvas):
+def test_look_at_extends_the_far_clip_to_reach_the_subject(fetch, canvas):
     "A subject beyond the far clip renders as nothing at all."
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    mol = fetch("4ozs").add_style("cartoon")
     canvas.camera.clip_end = 0.1
 
     canvas.look_at(mol)
@@ -695,14 +695,14 @@ def test_look_at_extends_the_far_clip_to_reach_the_subject(canvas):
         ("surface", {}),
     ],
 )
-def test_framing_covers_every_geometry_component(canvas, style, kwargs):
+def test_framing_covers_every_geometry_component(fetch, canvas, style, kwargs):
     """A style can render components an object never exposes through `data`.
 
     Spheres evaluate to an empty mesh with the real point cloud alongside it,
     and instanced styles put the geometry in an instances component - reading
     `obj.data` alone framed an empty scene.
     """
-    mol = mn.Molecule.fetch("4ozs").add_style(style, **kwargs)
+    mol = fetch("4ozs").add_style(style, **kwargs)
     points = np.asarray(mol.get_view())
     assert len(points) > 8
 
@@ -713,9 +713,9 @@ def test_framing_covers_every_geometry_component(canvas, style, kwargs):
     assert (extent >= (bounds.max(axis=0) - bounds.min(axis=0)) - 1e-4).all()
 
 
-def test_spheres_are_framed_by_their_surface_not_their_centres(canvas):
+def test_spheres_are_framed_by_their_surface_not_their_centres(fetch, canvas):
     "Framing the centres cuts the outermost spheres in half at the frame edge."
-    mol = mn.Molecule.fetch("4ozs").add_style("spheres")
+    mol = fetch("4ozs").add_style("spheres")
     points = np.asarray(mol.get_view())
     centres = mol._world_positions(mol.atoms)
 
@@ -724,9 +724,9 @@ def test_spheres_are_framed_by_their_surface_not_their_centres(canvas):
     assert (extent > centre_extent).all()
 
 
-def test_look_at_leaves_breathing_room_by_default(canvas):
+def test_look_at_leaves_breathing_room_by_default(fetch, canvas):
     "The default margin keeps the subject off the edge of the frame."
-    mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+    mol = fetch("4ozs").add_style("cartoon")
     points = np.asarray(mol.get_view())
 
     canvas.look_at(mol, viewpoint="front")

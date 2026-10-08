@@ -17,11 +17,11 @@ def test_persistent_handlers_added():
     assert "_load" in load_handlers
 
 
-def test_entity_registered():
+def test_entity_registered(fetch):
     session = mn.session.get_session()
     assert len(session.entities) == 0
 
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
+    mol = fetch("1BNA")
 
     assert mol.uuid in session.entities
     assert isinstance(session.get(mol.uuid), mn.Molecule)
@@ -48,11 +48,11 @@ def test_reload_molecule_from_file(tmp_path):
     assert reloaded.object is obj
 
 
-def test_reload_molecule_from_code():
+def test_reload_molecule_from_code(fetch):
     from molecularnodes.entities.reload import reload_entity
 
     session = mn.session.get_session()
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
+    mol = fetch("1BNA")
     obj = mol.object
     assert obj.mn.code == "1BNA"
 
@@ -247,7 +247,7 @@ def test_entity_blender_properties(session: MNSession, universe):
     assert len(session.entities) == 0
 
 
-def test_remove_tolerates_an_already_deleted_object():
+def test_remove_tolerates_an_already_deleted_object(fetch):
     """Deleting the object from the outliner leaves the entity behind.
 
     Removing it must still drop the entity rather than raising
@@ -255,7 +255,7 @@ def test_remove_tolerates_an_already_deleted_object():
     """
     session = mn.session.get_session()
     session.clear()
-    mol = mn.Molecule.fetch("4ozs")
+    mol = fetch("4ozs")
     bpy.data.objects.remove(mol.object, do_unlink=True)
 
     session.remove(mol.uuid)
@@ -267,7 +267,7 @@ def test_remove_unknown_uuid_raises():
         mn.session.get_session().remove("not-a-uuid")
 
 
-def test_session_saves_when_an_object_was_deleted(tmp_path):
+def test_session_saves_when_an_object_was_deleted(fetch, tmp_path):
     """A molecule deleted from the outliner used to abort the session save.
 
     The .blend still wrote, so the failure was silent - every other entity in
@@ -275,8 +275,8 @@ def test_session_saves_when_an_object_was_deleted(tmp_path):
     """
     session = mn.session.get_session()
     session.clear()
-    deleted = mn.Molecule.fetch("4ozs")
-    kept = mn.Molecule.fetch("1cbs")
+    deleted = fetch("4ozs")
+    kept = fetch("1cbs")
     bpy.data.objects.remove(deleted.object, do_unlink=True)
 
     filepath = tmp_path / "deleted.blend"
@@ -289,11 +289,11 @@ def test_session_saves_when_an_object_was_deleted(tmp_path):
     assert deleted.uuid not in session.entities
 
 
-def test_opening_another_file_drops_the_previous_entities(tmp_path):
+def test_opening_another_file_drops_the_previous_entities(fetch, tmp_path):
     "Entities from a closed file used to linger and raise LinkedObjectError."
     session = mn.session.get_session()
     session.clear()
-    mn.Molecule.fetch("4ozs")
+    fetch("4ozs")
     with_molecule = tmp_path / "with_molecule.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(with_molecule))
 
