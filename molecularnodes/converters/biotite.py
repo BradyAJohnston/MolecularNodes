@@ -8,17 +8,20 @@ from MDAnalysis.core.topologyattrs import (
     AtomAttr,
     Atomids,
     Atomnames,
+    Atomtypes,
     Bonds,
     ChainIDs,
     Charges,
     Elements,
     ICodes,
+    Masses,
     Occupancies,
     Resids,
     Resnames,
     Segids,
     Tempfactors,
 )
+from MDAnalysis.guesser.default_guesser import DefaultGuesser
 from MDAnalysis.topology.base import TopologyReaderBase, change_squash
 
 
@@ -116,6 +119,14 @@ class BiotiteParser(TopologyReaderBase):
         attrs.append(ChainIDs(chainids))
         attrs.append(Atomnames(atom_array.atom_name))
         attrs.append(Elements(elements))
+        # Types and masses come from the parsed elements. Left to MDAnalysis they
+        # are guessed from the atom names, which makes a calcium ion (atom name CA)
+        # a carbon type. Masses use MDAnalysis' own lookup, once per element.
+        attrs.append(Atomtypes(np.char.upper(elements.astype(str)).astype(object)))
+        unique_elements, element_index = np.unique(elements, return_inverse=True)
+        guesser = DefaultGuesser(None)
+        unique_masses = [guesser.get_atom_mass(element) for element in unique_elements]
+        attrs.append(Masses(np.array(unique_masses, dtype=np.float64)[element_index]))
         # Residue Attr's
         residx, (resids, resnames, icodes, chainids) = change_squash(
             (resids, resnames, icodes, chainids),
@@ -255,7 +266,8 @@ def universe_from_atoms(
         A Universe wrapping the structure, with bonds, all coordinate frames, and the
         carried-over file-parsed annotations.
     """
-    universe = mda.Universe(BiotiteWrapper(structure))
+    # types and masses are set by the parser, so nothing is left to guess
+    universe = mda.Universe(BiotiteWrapper(structure), to_guess=())
 
     # Load every model of a stack as a trajectory frame. `structure.coord` has shape
     # (n_models, n_atoms, 3), exactly what MemoryReader expects.
