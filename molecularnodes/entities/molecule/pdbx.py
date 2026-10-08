@@ -294,6 +294,9 @@ class CIFAssemblyParser:
 
     def get_assemblies(self):
         assembly_dict = {}
+        # no assembly records is not an error, just a structure without assemblies
+        if "pdbx_struct_assembly" not in self._file.block:
+            return assembly_dict
         for assembly_id in self.list_assemblies():
             assembly_dict[assembly_id] = self.get_transformations(assembly_id)
 
