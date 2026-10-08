@@ -155,3 +155,5 @@ typed-api = true
 add-reroutes = true
 split-inputs = true
 iterations = 100
+# uncompressed, so each read of the library (one per style added) is ~40% faster
+no-compress = true

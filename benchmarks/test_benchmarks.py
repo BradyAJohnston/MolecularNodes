@@ -56,6 +56,16 @@ def test_load_with_style(run, style):
     run(mn.Molecule.load, DATA_DIR / f"{STRUCTURE}.bcif", style=style)
 
 
+@pytest.mark.benchmark(group="load")
+def test_load_with_style_color_assembly(run):
+    # a style that also adds color and assembly nodes, each from the asset library
+    def func():
+        mol = mn.Molecule.load(DATA_DIR / f"{STRUCTURE}.bcif")
+        mol.add_style("cartoon", color="common", assembly=True)
+
+    run(func)
+
+
 @pytest.mark.benchmark(group="load-trajectory")
 def test_load_trajectory(run):
     run(

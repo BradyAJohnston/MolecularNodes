@@ -27,6 +27,7 @@ from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...material import PresetMaterial, append_material
 from ...nodes import handlers as node_handlers
+from ...nodes._assets import link_asset_groups
 from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...nodes.geometry import AssemblyInstance
 from ...utils import _UNSET, count_value_changes, temp_override_property
@@ -1150,6 +1151,19 @@ class Molecule(MolecularEntity):
             return self.selections.from_string(selection).name
         return None
 
+    @staticmethod
+    def _style_color_groups(color) -> tuple[type, ...]:
+        "Asset groups that `_style_color_input` builds for a color keyword."
+        from ...nodes import geometry as g
+
+        if not isinstance(color, str):
+            return ()
+        if color.lower() in ("common", "default"):
+            return (g.ColorElement, g.RandomColor, g.ChainID)
+        if color.lower() == "plddt":
+            return (g.ColorPLDDT,)
+        return ()
+
     def _style_color_input(self, color: str | Sequence[float] | Callable):
         """Resolve `add_style`'s color argument into the `Set Color` node input.
 
@@ -1348,6 +1362,16 @@ class Molecule(MolecularEntity):
             material = material.material
 
         material = append_material(material) if isinstance(material, str) else material
+
+        # link the asset groups this style is about to use with one library read
+        link_asset_groups(
+            [
+                None if style_is_callable else style_mapping[style],
+                g.SetColor if color is not None else None,
+                *self._style_color_groups(color),
+                g.AssemblyInstance if assembly else None,
+            ]
+        )
 
         with self.tree as tree:
             if style_is_callable:
