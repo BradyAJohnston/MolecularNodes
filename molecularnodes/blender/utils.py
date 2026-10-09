@@ -110,6 +110,19 @@ _CUBE_CORNERS = np.array(
 )
 
 
+def _not_screen_space(attributes, count: int) -> np.ndarray:
+    """
+    Which elements to frame: all but those the Screen Space Geometry node placed.
+
+    Screen-space geometry such as labels follows the camera, so framing on it
+    would chase its own tail.
+    """
+    if "screen_space" not in attributes:
+        return np.ones(count, dtype=bool)
+    flags = db.Attribute(attributes["screen_space"]).as_array()
+    return ~np.asarray(flags, dtype=bool).reshape(-1)
+
+
 def _component_positions(data) -> np.ndarray | None:
     """
     The positions of a geometry component, if it has any.
@@ -125,11 +138,15 @@ def _component_positions(data) -> np.ndarray | None:
     if len(positions) == 0:
         return None
     positions = np.asarray(positions, dtype=np.float64).reshape(-1, 3)
+    keep = _not_screen_space(attributes, len(positions))
+    positions = positions[keep]
+    if len(positions) == 0:
+        return None
 
     if isinstance(data, bpy.types.PointCloud) and "radius" in attributes:
         radii = np.asarray(
             db.Attribute(attributes["radius"]).as_array(), dtype=np.float64
-        ).reshape(-1, 1)
+        ).reshape(-1, 1)[keep]
         if radii.any():
             offsets = _CUBE_CORNERS[None, :, :] * radii[:, :, None]
             positions = (positions[:, None, :] + offsets).reshape(-1, 3)
@@ -187,6 +204,8 @@ def _instance_points(instances, references) -> np.ndarray:
     indices = np.asarray(
         db.Attribute(instances.attributes[".reference_index"]).as_array(), dtype=int
     )
+    keep = _not_screen_space(instances.attributes, len(indices))
+    transforms, indices = transforms[keep], indices[keep]
 
     chunks = []
     for index, reference in enumerate(references):

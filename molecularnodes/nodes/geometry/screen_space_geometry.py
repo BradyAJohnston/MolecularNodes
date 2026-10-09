@@ -47,7 +47,7 @@ class ScreenSpaceGeometry(AssetGeometryGroup):
     Outputs
     -------
     o.geometry : GeometrySocket
-        Geometry placed in front of the camera
+        Geometry placed in front of the camera, with a `screen_space` boolean attribute set to True on its points and instances so camera framing can skip it
     o.aspect : FloatSocket
         Width of the camera frame divided by its height
     """
@@ -72,7 +72,7 @@ class ScreenSpaceGeometry(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry placed in front of the camera"""
+        """Geometry placed in front of the camera, with a `screen_space` boolean attribute set to True on its points and instances so camera framing can skip it"""
         aspect: FloatSocket
         """Width of the camera frame divided by its height"""
 
@@ -122,7 +122,8 @@ class ScreenSpaceGeometry(AssetGeometryGroup):
             description="Scale X by the frame height instead of the frame width, so X runs from 0 to the aspect ratio and geometry keeps its proportions",
         )
         geometry_1 = tree.outputs.geometry(
-            "Geometry", description="Geometry placed in front of the camera"
+            "Geometry",
+            description="Geometry placed in front of the camera, with a `screen_space` boolean attribute set to True on its points and instances so camera framing can skip it",
         )
         aspect = tree.outputs.float(
             "Aspect", description="Width of the camera frame divided by its height"
@@ -136,6 +137,8 @@ class ScreenSpaceGeometry(AssetGeometryGroup):
             >> g.TransformGeometry(
                 transform=screen_space_transform.o.transform, mode="Matrix"
             )
+            >> g.StoreNamedAttribute.point.boolean(name="screen_space", value=True)
+            >> g.StoreNamedAttribute.instance.boolean(name="screen_space", value=True)
             >> geometry_1
         )
 

@@ -1,4 +1,5 @@
 import bpy
+import databpy as db
 import MDAnalysis as mda
 import numpy as np
 import pytest
@@ -739,3 +740,28 @@ def test_look_at_leaves_breathing_room_by_default(fetch, canvas):
         np.max(np.abs(offsets @ basis[1]) / depth) / max(top, -bottom),
     )
     assert filled == pytest.approx(0.95, abs=1e-6)
+
+
+@pytest.mark.parametrize("realize", [True, False])
+def test_look_at_skips_screen_space_geometry(fetch, canvas, realize):
+    "Labels from Screen Space Geometry follow the camera, so framing ignores them."
+    from nodebpy import geometry as g
+    from molecularnodes.nodes.geometry import ScreenSpaceGeometry, StyleCartoon
+
+    mol = fetch("4ozs")
+    with mol.tree.reset() as (atoms, join):
+        atoms >> StyleCartoon() >> join
+    canvas.look_at(mol, viewpoint="front")
+    without_labels = np.array(canvas.camera.camera.location)
+
+    with mol.tree.reset() as (atoms, join):
+        atoms >> StyleCartoon() >> join
+        text = g.StringToCurves(string="label", size=0.1)
+        labels = text >> g.RealizeInstances() >> g.FillCurve() if realize else text
+        labels >> ScreenSpaceGeometry(distance=5.0) >> join
+    canvas.look_at(mol, viewpoint="front")
+
+    geometry = db.GeometrySet(mol.object)
+    component = geometry.mesh if realize else geometry.instances
+    assert db.Attribute(component.attributes["screen_space"]).as_array().any()
+    assert np.allclose(canvas.camera.camera.location, without_labels, atol=1e-5)

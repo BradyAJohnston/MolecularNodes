@@ -15,6 +15,7 @@ from nodebpy.builder import (
     SocketAccessor,
 )
 from nodebpy.types import InputBoolean, InputFloat, InputObject
+from ._shared.screen_to_3d_space import ScreenTo3DSpace
 
 
 class ScreenSpaceTransform(AssetGeometryGroup):
@@ -119,63 +120,50 @@ class ScreenSpaceTransform(AssetGeometryGroup):
             switch = (g.CameraInfo(camera=camera).o.focal_length > 0.0).switch.object(
                 g.ActiveCamera(), camera
             )
-        with g.Frame("Unproject frame corners"):
+        with g.Frame("Frame corners"):
             _string_1 = g.String(
-                string="The bottom left and top right corners of the frame are unprojected through the inverse projection matrix at the near and far clip planes, then interpolated along that ray to the plane at Distance in front of the camera. This works for perspective and orthographic cameras."
+                string="Blender's Screen to 3D Space places the bottom left, bottom right and top left corners of the camera frame at Distance in front of the camera, in the local space of this object."
             )
-            invert_matrix = g.CameraInfo(camera=switch).o.projection_matrix.invert()
-            project_point = g.ProjectPoint(
-                transform=invert_matrix, vector=(-1.0, -1.0, -1.0)
-            )
-            project_point_1 = g.ProjectPoint(
-                transform=invert_matrix, vector=(-1.0, -1.0, 1.0)
-            )
-            project_point_2 = g.ProjectPoint(
-                transform=invert_matrix, vector=(1.0, 1.0, -1.0)
-            )
-            project_point_3 = g.ProjectPoint(
-                transform=invert_matrix, vector=(1.0, 1.0, 1.0)
-            )
-            math_1 = (distance * -1.0 - project_point.o.vector.z) / (
-                project_point_1.o.vector.z - project_point.o.vector.z
-            )
-            math_2 = (distance * -1.0 - project_point_2.o.vector.z) / (
-                project_point_3.o.vector.z - project_point_2.o.vector.z
+            screen_to_3d_space = ScreenTo3DSpace(
+                normalized=(0.0, 0.0), depth=distance, camera=switch
             )
             vector_math = (
-                project_point.o.vector
-                + (project_point_1.o.vector - project_point) * math_1
+                ScreenTo3DSpace(
+                    normalized=(1.0, 0.0), depth=distance, camera=switch
+                ).o.vector
+                - screen_to_3d_space
             )
             vector_math_1 = (
-                project_point_2.o.vector
-                + (project_point_3.o.vector - project_point_2) * math_2
-                - vector_math
+                ScreenTo3DSpace(
+                    normalized=(0.0, 1.0), depth=distance, camera=switch
+                ).o.vector
+                - screen_to_3d_space
             )
+            vector_math_2 = vector_math.length()
+            vector_math_3 = vector_math_1.length()
         with g.Frame("Screen to object space"):
             _string_2 = g.String(
-                string="Screen space is scaled to the frame and moved to its corner in camera space, then into world space with the camera's location and rotation (ignoring its scale), then into the local space of the object this node is evaluated on."
+                string="Screen space is rotated to the frame's axes, scaled so one unit spans the frame (or the frame height in X when normalized), and moved to its bottom left corner."
             )
-            object_info = g.ObjectInfo(object=switch)
+            axes_to_rotation = g.AxesToRotation(
+                primary_axis=vector_math,
+                secondary_axis=vector_math_1,
+                primary="X",
+                secondary="Y",
+            )
             combine_xyz = g.CombineXYZ(
-                x=normalize.switch.float(vector_math_1.x, vector_math_1.y),
-                y=vector_math_1.y,
-                z=vector_math_1.y,
+                x=normalize.switch.float(vector_math_2, vector_math_3),
+                y=vector_math_3,
+                z=vector_math_3,
             )
-            multiply_matrices = g.MultiplyMatrices(
-                matrix=g.CombineTransform(
-                    translation=object_info.o.location, rotation=object_info.o.rotation
-                ),
-                matrix_001=g.CombineTransform(
-                    translation=vector_math, scale=combine_xyz
-                ),
+            combine_transform = g.CombineTransform(
+                translation=screen_to_3d_space,
+                rotation=axes_to_rotation,
+                scale=combine_xyz,
             )
-            multiply_matrices_1 = g.MultiplyMatrices(
-                matrix=g.ObjectInfo(object=g.SelfObject()).o.transform.invert(),
-                matrix_001=multiply_matrices,
-            )
-        vector_math_1.x / vector_math_1.y >> aspect
+        vector_math_2 / vector_math_3 >> aspect
 
-        multiply_matrices_1 >> transform
+        combine_transform >> transform
 
 
 ASSET = ScreenSpaceTransform
