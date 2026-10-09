@@ -11,6 +11,7 @@ title: "Changelog"
 - `Ease Value` and `Stagger Value` nodes under Animate: Penner easing curves (In / Out / In Out) for any 0..1 value or field, and a per-point stagger that gives each ID its own equal-length 0..1 transition.
 - `Symmetry Cubic` node under Ensemble: builds tetrahedral (12), octahedral (24) or icosahedral (60) assemblies from one copy, with an `Orientation` to match a deposited structure.
 - `Symmetry Helical` takes an `Axial Symmetry` input for filaments with Cn symmetry about the helix axis, such as amyloid built from two protofilaments.
+- `Screen Space Geometry` and `Screen Space Transform` nodes: place geometry such as text labels at a fixed position and size in the camera frame, in front of the camera, using the Camera Info, Object Info and Self Object nodes. Falls back to the active camera and supports orthographic cameras.
 
 ## Changed
 - `Animate Action` now takes float `Start` and `Length`, can run on scene seconds, frames or a linked value, and has built-in `Stagger` and `Easing` options.

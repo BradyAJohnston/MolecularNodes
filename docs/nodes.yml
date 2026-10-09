@@ -523,6 +523,13 @@ Split to Centred Instances:
     points are still offset and split into their instances
   videos:
     - https://imgur.com/NcHuxsz
+Screen Space Geometry:
+  description: >-
+    Place geometry laid out in screen space in front of the camera, such as text labels from String to Curves that
+    should stay fixed in the frame while remaining in the 3D scene. X and Y from 0 to 1 span the camera frame from
+    the bottom left to the top right, and one unit is the size of the frame, so a label of size 0.05 is 5% of the
+    frame. The geometry faces the camera and keeps its size on screen. See `Screen Space Transform::Node` for the
+    inputs.
 Centre on Selection:
   description: >-
     Offsets the input points so that their calculated `Centroid` is on the world origin. If the `Group ID` input
@@ -788,6 +795,15 @@ Transform Local Axis:
   description: >-
     Create a transform that is rotation around an axis in local space, with local space defined by the origin point
     which defaults to Position
+Screen Space Transform:
+  description: >-
+    Create a transform from screen space to the local space of the object the node is evaluated on. Screen space is
+    a plane `Distance::Float` in front of the camera, with (0, 0) at the bottom left of the camera frame and (1, 1)
+    at the top right. One unit spans the frame, so geometry transformed with it faces the camera and stays the same
+    size on screen however the camera moves or zooms. Turn on `Normalize::Boolean` to scale X by the frame height,
+    so X runs from 0 to the `Aspect::Float` output and shapes such as text are not stretched. When `Camera::Object`
+    is empty the scene's active camera is used. Works for perspective and orthographic cameras. Use
+    `Screen Space Geometry::Node` to apply it directly to geometry.
 Transform Accumulate:
   description: Accumulate transforms on the domain if selected
 Transform Accumulate Point:

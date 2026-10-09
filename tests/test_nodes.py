@@ -40,6 +40,7 @@ from molecularnodes.nodes.geometry import (
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
+    ScreenSpaceGeometry,
     SegmentID,
     SetColor,
     SimulateElasticNetwork,
@@ -1246,3 +1247,84 @@ def test_fade_geometry_zero_removes_geometry(fetch):
 
     evaluated = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
     assert len(evaluated.data.vertices) == 0
+
+
+@pytest.fixture
+def screen_camera():
+    scene = bpy.context.scene
+    previous = scene.camera
+    data = bpy.data.cameras.new("ScreenSpaceCamera")
+    data.shift_x, data.shift_y = 0.1, -0.05
+    camera = bpy.data.objects.new("ScreenSpaceCamera", data)
+    scene.collection.objects.link(camera)
+    camera.location = (1.0, -6.0, 2.0)
+    camera.rotation_euler = (1.2, 0.1, 0.3)
+    yield camera
+    scene.camera = previous
+    bpy.data.objects.remove(camera)
+    bpy.data.cameras.remove(data)
+
+
+def _screen_space_view(fetch, view_camera, points, **kwargs):
+    from bpy_extras.object_utils import world_to_camera_view
+    from mathutils import Vector
+
+    mol = fetch("4ozs")
+    mol.object.location = (0.3, 0.2, -0.4)
+    mol.object.rotation_euler = (0.4, -0.2, 0.9)
+    mol.object.scale = (2.0, 2.0, 2.0)
+    with mol.tree.reset() as (atoms, join):
+        (
+            MeshLine(
+                count=2, start_location=points[0], offset=np.subtract(*points[::-1])
+            )
+            >> ScreenSpaceGeometry(**kwargs)
+            >> join
+        )
+    bpy.context.view_layer.update()
+    local = mol.named_attribute("position", evaluate=True)
+    world = (
+        local @ np.array(mol.object.matrix_world)[:3, :3].T
+        + np.array(mol.object.matrix_world)[:3, 3]
+    )
+    scene = bpy.context.scene
+    return np.array(
+        [world_to_camera_view(scene, view_camera, Vector(co)) for co in world]
+    )
+
+
+@pytest.mark.parametrize("camera_type", ["PERSP", "ORTHO"])
+def test_screen_space_geometry_frame_corners(fetch, screen_camera, camera_type):
+    screen_camera.data.type = camera_type
+    view = _screen_space_view(
+        fetch,
+        screen_camera,
+        [(0.0, 0.0, 0.0), (1.0, 1.0, 0.0)],
+        camera=screen_camera,
+        distance=2.5,
+    )
+    assert np.allclose(view, [(0.0, 0.0, 2.5), (1.0, 1.0, 2.5)], atol=1e-4)
+
+
+def test_screen_space_geometry_normalize(fetch, screen_camera):
+    render = bpy.context.scene.render
+    aspect = (render.resolution_x * render.pixel_aspect_x) / (
+        render.resolution_y * render.pixel_aspect_y
+    )
+    view = _screen_space_view(
+        fetch,
+        screen_camera,
+        [(0.0, 0.0, 0.0), (aspect, 1.0, 0.0)],
+        camera=screen_camera,
+        distance=2.5,
+        normalize=True,
+    )
+    assert np.allclose(view, [(0.0, 0.0, 2.5), (1.0, 1.0, 2.5)], atol=1e-4)
+
+
+def test_screen_space_geometry_active_camera(fetch, screen_camera):
+    bpy.context.scene.camera = screen_camera
+    view = _screen_space_view(
+        fetch, screen_camera, [(0.0, 0.0, 0.0), (1.0, 1.0, 0.0)], distance=2.5
+    )
+    assert np.allclose(view, [(0.0, 0.0, 2.5), (1.0, 1.0, 2.5)], atol=1e-4)
