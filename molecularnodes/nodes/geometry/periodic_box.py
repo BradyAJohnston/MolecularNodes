@@ -137,7 +137,7 @@ class PeriodicBox(AssetGeometryGroup):
         c__1 = tree.outputs.vector("C")
 
         with g.Frame("A Vector"):
-            combine_xyz = g.CombineXYZ(x=AngstromToWorld(angstrom=a))
+            combine_xyz = g.CombineXYZ(AngstromToWorld(angstrom=a))
         with g.Frame("Angles To Radians"):
             math_1 = alpha.to_radians()
             math_2 = beta.to_radians()

@@ -77,7 +77,7 @@ class OKLabToLCh(AssetGeometryGroup):
         h = tree.outputs.float("h", subtype="ANGLE")
 
         with g.Frame("C"):
-            integer = g.Integer(integer=2)
+            integer = g.Integer(2)
             (oklab.y**integer + oklab.z**integer).sqrt() >> c_
         oklab.z.atan2(oklab.y) >> h
 

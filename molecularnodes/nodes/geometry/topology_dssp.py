@@ -289,7 +289,7 @@ class MN_topo_calc_sheet(CustomGeometryGroup):
                 target_position=BackboneO(method="Read"),
             )
             join_geometry = g.JoinGeometry(
-                geometry=(visualize_relative_atoms, visualize_relative_atoms_1)
+                (visualize_relative_atoms, visualize_relative_atoms_1)
             )
         with g.Frame("Not 100% correct but best I can do without Lists"):
             boolean_math = OffsetBoolean(

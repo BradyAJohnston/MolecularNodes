@@ -298,10 +298,10 @@ class ColorMatplotlib(AssetGeometryGroup):
         switch = reverse.switch.float(value, 1.0 - value)
         with g.Frame("viridis"):
             _string = g.String(
-                string="viridis: Perceptually uniform sequential. 13 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "viridis: Perceptually uniform sequential. 13 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.056964, 0.0, 0.084614, 1.0)),
                     (0.033127, (0.063545, 0.003412, 0.116646, 1.0)),
@@ -321,10 +321,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("plasma"):
             _string_1 = g.String(
-                string="plasma: Perceptually uniform sequential. 12 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "plasma: Perceptually uniform sequential. 12 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_1 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.002266, 0.23066, 1.0)),
                     (0.051716, (0.025273, 0.001613, 0.306928, 1.0)),
@@ -343,10 +343,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("inferno"):
             _string_2 = g.String(
-                string="inferno: Perceptually uniform sequential. 14 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "inferno: Perceptually uniform sequential. 14 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_2 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.00004, 0.000213, 1.0)),
                     (0.044799, (0.001378, 0.000747, 0.006413, 1.0)),
@@ -367,10 +367,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("magma"):
             _string_3 = g.String(
-                string="magma: Perceptually uniform sequential. 14 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.7/255 in sRGB."
+                "magma: Perceptually uniform sequential. 14 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_3 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.000033, 1.0)),
                     (0.046137, (0.00124, 0.000962, 0.006846, 1.0)),
@@ -391,10 +391,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("cividis"):
             _string_4 = g.String(
-                string="cividis: Perceptually uniform sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "cividis: Perceptually uniform sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_4 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.016467, 0.075244, 1.0)),
                     (0.030621, (0.0, 0.021184, 0.103398, 1.0)),
@@ -413,10 +413,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Greys"):
             _string_5 = g.String(
-                string="Greys: Sequential. 10 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
+                "Greys: Sequential. 10 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_5 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (1.0, 1.0, 1.0, 1.0)),
                     (0.04759, (0.956198, 0.956198, 0.956198, 1.0)),
@@ -433,10 +433,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Purples"):
             _string_6 = g.String(
-                string="Purples: Sequential. 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "Purples: Sequential. 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_6 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.993746, 0.988751, 1.0, 1.0)),
                     (0.162947, (0.827364, 0.802343, 0.877711, 1.0)),
@@ -454,10 +454,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Blues"):
             _string_7 = g.String(
-                string="Blues: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "Blues: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_7 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.928189, 0.962965, 0.999953, 1.0)),
                     (0.122139, (0.733011, 0.834867, 0.930923, 1.0)),
@@ -477,10 +477,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Greens"):
             _string_8 = g.String(
-                string="Greens: Sequential. 10 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
+                "Greens: Sequential. 10 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_8 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.966503, 0.990422, 0.95535, 1.0)),
                     (0.173472, (0.705519, 0.880287, 0.652414, 1.0)),
@@ -497,10 +497,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Oranges"):
             _string_9 = g.String(
-                string="Oranges: Sequential. 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
+                "Oranges: Sequential. 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_9 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.998162, 0.943119, 0.873575, 1.0)),
                     (0.129285, (0.994972, 0.759168, 0.570782, 1.0)),
@@ -518,10 +518,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Reds"):
             _string_10 = g.String(
-                string="Reds: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "Reds: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_10 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.998959, 0.911461, 0.868681, 1.0)),
                     (0.121783, (0.992548, 0.748993, 0.647298, 1.0)),
@@ -540,10 +540,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("YlOrBr"):
             _string_11 = g.String(
-                string="YlOrBr: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "YlOrBr: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_11 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.999187, 1.0, 0.777707, 1.0)),
                     (0.132726, (0.999995, 0.92219, 0.482126, 1.0)),
@@ -562,10 +562,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("YlOrRd"):
             _string_12 = g.String(
-                string="YlOrRd: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "YlOrRd: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_12 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.999992, 1.0, 0.597977, 1.0)),
                     (0.123328, (1.0, 0.844676, 0.349616, 1.0)),
@@ -585,10 +585,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("OrRd"):
             _string_13 = g.String(
-                string="OrRd: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "OrRd: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_13 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.999998, 0.932983, 0.834433, 1.0)),
                     (0.158205, (0.98821, 0.768783, 0.505365, 1.0)),
@@ -608,10 +608,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("PuRd"):
             _string_14 = g.String(
-                string="PuRd: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "PuRd: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_14 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.927956, 0.904336, 0.947535, 1.0)),
                     (0.121712, (0.80426, 0.754873, 0.864524, 1.0)),
@@ -630,10 +630,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("RdPu"):
             _string_15 = g.String(
-                string="RdPu: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "RdPu: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_15 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.997729, 0.931405, 0.902237, 1.0)),
                     (0.250752, (0.971298, 0.5528, 0.529357, 1.0)),
@@ -653,10 +653,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("BuPu"):
             _string_16 = g.String(
-                string="BuPu: Sequential. 12 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "BuPu: Sequential. 12 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_16 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.928649, 0.972453, 0.981656, 1.0)),
                     (0.121001, (0.749204, 0.842762, 0.90756, 1.0)),
@@ -674,10 +674,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("GnBu"):
             _string_17 = g.String(
-                string="GnBu: Sequential. 12 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "GnBu: Sequential. 12 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_17 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.928487, 0.974233, 0.87008, 1.0)),
                     (0.122831, (0.746898, 0.896191, 0.709667, 1.0)),
@@ -695,10 +695,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("PuBu"):
             _string_18 = g.String(
-                string="PuBu: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.6/255 in sRGB."
+                "PuBu: Sequential. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.6/255 in sRGB."
             )
             color_ramp_18 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.998893, 0.929372, 0.964389, 1.0)),
                     (0.12168, (0.841868, 0.801643, 0.889821, 1.0)),
@@ -718,10 +718,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("YlGnBu"):
             _string_19 = g.String(
-                string="YlGnBu: Sequential. 15 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "YlGnBu: Sequential. 15 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_19 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (1.0, 0.999615, 0.689003, 1.0)),
                     (0.122407, (0.847975, 0.940256, 0.440319, 1.0)),
@@ -742,10 +742,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("PuBuGn"):
             _string_20 = g.String(
-                string="PuBuGn: Sequential. 16 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "PuBuGn: Sequential. 16 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_20 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.99878, 0.928779, 0.964299, 1.0)),
                     (0.122791, (0.8404, 0.762045, 0.87254, 1.0)),
@@ -767,10 +767,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("BuGn"):
             _string_21 = g.String(
-                string="BuGn: Sequential. 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
+                "BuGn: Sequential. 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_21 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.954641, 0.981569, 0.980144, 1.0)),
                     (0.126833, (0.768722, 0.911847, 0.965415, 1.0)),
@@ -788,10 +788,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("YlGn"):
             _string_22 = g.String(
-                string="YlGn: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "YlGn: Sequential. 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_22 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.997362, 0.9993, 0.777902, 1.0)),
                     (0.119603, (0.936557, 0.975556, 0.491467, 1.0)),
@@ -810,10 +810,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("binary"):
             _string_23 = g.String(
-                string="binary: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "binary: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_23 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.993647, 0.993647, 0.993647, 1.0)),
                     (0.171583, (0.647458, 0.647458, 0.647458, 1.0)),
@@ -828,10 +828,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gray"):
             _string_24 = g.String(
-                string="gray: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "gray: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_24 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.075907, (0.006271, 0.006271, 0.006271, 1.0)),
@@ -846,10 +846,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("bone"):
             _string_25 = g.String(
-                string="bone: Sequential (2). 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "bone: Sequential (2). 13 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_25 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.000044, 0.000044, 0.0, 1.0)),
                     (0.05316, (0.003538, 0.003538, 0.005176, 1.0)),
@@ -868,10 +868,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("pink"):
             _string_26 = g.String(
-                string="pink: Sequential (2). 8 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "pink: Sequential (2). 8 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_26 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.012843, 0.00004, 0.000039, 1.0)),
                     (0.009317, (0.022691, 0.004683, 0.004686, 1.0)),
@@ -885,10 +885,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("spring"):
             _string_27 = g.String(
-                string="spring: Sequential (2). 10 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "spring: Sequential (2). 10 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_27 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (1.0, 0.0, 1.0, 1.0)),
                     (0.028723, (1.0, 0.0014, 0.953548, 1.0)),
@@ -905,10 +905,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("summer"):
             _string_28 = g.String(
-                string="summer: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "summer: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_28 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.213833, 0.132916, 1.0)),
                     (0.075907, (0.006271, 0.250619, 0.132873, 1.0)),
@@ -923,10 +923,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("autumn"):
             _string_29 = g.String(
-                string="autumn: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "autumn: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_29 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.999999, 0.0, 0.0, 1.0)),
                     (0.07635, (1.0, 0.006308, 0.0, 1.0)),
@@ -941,10 +941,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("winter"):
             _string_30 = g.String(
-                string="winter: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "winter: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_30 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.999715, 1.0)),
                     (0.075907, (0.0, 0.006271, 0.915532, 1.0)),
@@ -959,10 +959,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("cool"):
             _string_31 = g.String(
-                string="cool: Sequential (2). 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
+                "cool: Sequential (2). 11 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_31 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 1.0, 1.0, 1.0)),
                     (0.02798, (0.00144, 0.954881, 1.0, 1.0)),
@@ -980,10 +980,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Wistia"):
             _string_32 = g.String(
-                string="Wistia: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "Wistia: Sequential (2). 9 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_32 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.775629, 0.999837, 0.192224, 1.0)),
                     (0.080033, (0.843738, 0.935376, 0.103309, 1.0)),
@@ -998,10 +998,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("hot"):
             _string_33 = g.String(
-                string="hot: Sequential (2). 24 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "hot: Sequential (2). 24 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_33 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.052744, (0.020264, 0.0, 0.0, 1.0)),
@@ -1032,10 +1032,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("afmhot"):
             _string_34 = g.String(
-                string="afmhot: Sequential (2). 19 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "afmhot: Sequential (2). 19 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_34 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.034757, (0.005574, 0.0, 0.0, 1.0)),
@@ -1060,10 +1060,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gist_heat"):
             _string_35 = g.String(
-                string="gist_heat: Sequential (2). 24 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "gist_heat: Sequential (2). 24 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_35 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.041854, (0.004985, 0.0, 0.0, 1.0)),
@@ -1093,10 +1093,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("copper"):
             _string_36 = g.String(
-                string="copper: Sequential (2). 11 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "copper: Sequential (2). 11 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_36 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.000016, 0.000069, 0.000195, 1.0)),
                     (0.054119, (0.005372, 0.003201, 0.002053, 1.0)),
@@ -1113,10 +1113,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("PiYG"):
             _string_37 = g.String(
-                string="PiYG: Diverging. 18 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "PiYG: Diverging. 18 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_37 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.267574, 0.000171, 0.08296, 1.0)),
                     (0.067056, (0.446083, 0.005963, 0.156295, 1.0)),
@@ -1140,10 +1140,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("PRGn"):
             _string_38 = g.String(
-                string="PRGn: Diverging. 22 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "PRGn: Diverging. 22 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_38 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.050814, 0.000056, 0.069838, 1.0)),
                     (0.032991, (0.083165, 0.004182, 0.109712, 1.0)),
@@ -1171,10 +1171,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("BrBG"):
             _string_39 = g.String(
-                string="BrBG: Diverging. 22 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "BrBG: Diverging. 22 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_39 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.087617, 0.029262, 0.001456, 1.0)),
                     (0.046023, (0.153236, 0.049396, 0.002311, 1.0)),
@@ -1202,10 +1202,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("PuOr"):
             _string_40 = g.String(
-                string="PuOr: Diverging. 24 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "PuOr: Diverging. 24 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_40 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.211181, 0.043473, 0.002423, 1.0)),
                     (0.04587, (0.30684, 0.064919, 0.002158, 1.0)),
@@ -1235,10 +1235,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("RdGy"):
             _string_41 = g.String(
-                string="RdGy: Diverging. 16 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "RdGy: Diverging. 16 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_41 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.13372, 0.0001, 0.013692, 1.0)),
                     (0.045532, (0.246855, 0.003165, 0.017944, 1.0)),
@@ -1260,10 +1260,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("RdBu"):
             _string_42 = g.String(
-                string="RdBu: Diverging. 21 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "RdBu: Diverging. 21 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_42 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.133719, 0.000105, 0.013739, 1.0)),
                     (0.045555, (0.246915, 0.003158, 0.017902, 1.0)),
@@ -1290,10 +1290,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("RdYlBu"):
             _string_43 = g.String(
-                string="RdYlBu: Diverging. 22 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "RdYlBu: Diverging. 22 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_43 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.375643, 0.0, 0.019414, 1.0)),
                     (0.033718, (0.466067, 0.005045, 0.019637, 1.0)),
@@ -1321,10 +1321,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("RdYlGn"):
             _string_44 = g.String(
-                string="RdYlGn: Diverging. 26 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.6/255 in sRGB."
+                "RdYlGn: Diverging. 26 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.6/255 in sRGB."
             )
             color_ramp_44 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.375642, 0.0, 0.019413, 1.0)),
                     (0.033718, (0.466069, 0.005045, 0.019636, 1.0)),
@@ -1356,10 +1356,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Spectral"):
             _string_45 = g.String(
-                string="Spectral: Diverging. 25 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "Spectral: Diverging. 25 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_45 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.341614, 0.000319, 0.054527, 1.0)),
                     (0.022358, (0.403013, 0.004479, 0.059251, 1.0)),
@@ -1390,10 +1390,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("coolwarm"):
             _string_46 = g.String(
-                string="coolwarm: Diverging. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "coolwarm: Diverging. 14 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_46 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.042129, 0.070875, 0.527059, 1.0)),
                     (0.078944, (0.084121, 0.155124, 0.723666, 1.0)),
@@ -1413,10 +1413,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("bwr"):
             _string_47 = g.String(
-                string="bwr: Diverging. 17 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "bwr: Diverging. 17 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_47 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 1.0, 1.0)),
                     (0.037333, (0.006115, 0.006115, 1.0, 1.0)),
@@ -1439,10 +1439,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("seismic"):
             _string_48 = g.String(
-                string="seismic: Diverging. 26 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "seismic: Diverging. 26 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_48 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.072208, 1.0)),
                     (0.038257, (0.0, 0.0, 0.135449, 1.0)),
@@ -1474,10 +1474,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("berlin"):
             _string_49 = g.String(
-                string="berlin: Diverging. 17 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
+                "berlin: Diverging. 17 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_49 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.353122, 0.43412, 1.0, 1.0)),
                     (0.024332, (0.278108, 0.428053, 0.950624, 1.0)),
@@ -1501,10 +1501,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("managua"):
             _string_50 = g.String(
-                string="managua: Diverging. 14 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "managua: Diverging. 14 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_50 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (1.0, 0.633739, 0.136724, 1.0)),
                     (0.020529, (0.956538, 0.559668, 0.127423, 1.0)),
@@ -1525,10 +1525,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("vanimo"):
             _string_51 = g.String(
-                string="vanimo: Diverging. 17 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "vanimo: Diverging. 17 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_51 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (1.0, 0.619979, 0.99213, 1.0)),
                     (0.016547, (0.957121, 0.533086, 0.908091, 1.0)),
@@ -1552,10 +1552,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("twilight"):
             _string_52 = g.String(
-                string="twilight: Cyclic. 22 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
+                "twilight: Cyclic. 22 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_52 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.775403, 0.69848, 0.777396, 1.0)),
                     (0.040866, (0.663365, 0.682931, 0.708375, 1.0)),
@@ -1584,10 +1584,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("twilight_shifted"):
             _string_53 = g.String(
-                string="twilight_shifted: Cyclic. 16 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
+                "twilight_shifted: Cyclic. 16 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_53 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.023373, 0.007044, 0.030903, 1.0)),
                     (0.061843, (0.05637, 0.003628, 0.080073, 1.0)),
@@ -1610,10 +1610,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("hsv"):
             _string_54 = g.String(
-                string="hsv: Cyclic. 32 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.7/255 in sRGB."
+                "hsv: Cyclic. 32 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.7/255 in sRGB."
             )
             color_ramp_54 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (1.0, 0.0, 0.0, 1.0)),
                     (0.009057, (1.0, 0.002446, 0.0, 1.0)),
@@ -1652,10 +1652,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Pastel1"):
             _string_55 = g.String(
-                string="Pastel1: Qualitative. 9 colours copied exactly, constant interpolation."
+                "Pastel1: Qualitative. 9 colours copied exactly, constant interpolation."
             )
             color_ramp_55 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.964686, 0.456411, 0.423268, 1.0)),
                     (0.111111, (0.450786, 0.610496, 0.768151, 1.0)),
@@ -1671,10 +1671,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Pastel2"):
             _string_56 = g.String(
-                string="Pastel2: Qualitative. 8 colours copied exactly, constant interpolation."
+                "Pastel2: Qualitative. 8 colours copied exactly, constant interpolation."
             )
             color_ramp_56 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.450786, 0.760525, 0.610496, 1.0)),
                     (0.125, (0.982251, 0.610496, 0.412543, 1.0)),
@@ -1689,10 +1689,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Paired"):
             _string_57 = g.String(
-                string="Paired: Qualitative. 12 colours copied exactly, constant interpolation."
+                "Paired: Qualitative. 12 colours copied exactly, constant interpolation."
             )
             color_ramp_57 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.381326, 0.617207, 0.768151, 1.0)),
                     (0.083333, (0.013702, 0.187821, 0.456411, 1.0)),
@@ -1711,10 +1711,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Accent"):
             _string_58 = g.String(
-                string="Accent: Qualitative. 8 colours copied exactly, constant interpolation."
+                "Accent: Qualitative. 8 colours copied exactly, constant interpolation."
             )
             color_ramp_58 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.212231, 0.584078, 0.212231, 1.0)),
                     (0.125, (0.514918, 0.423268, 0.658375, 1.0)),
@@ -1729,10 +1729,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Dark2"):
             _string_59 = g.String(
-                string="Dark2: Qualitative. 8 colours copied exactly, constant interpolation."
+                "Dark2: Qualitative. 8 colours copied exactly, constant interpolation."
             )
             color_ramp_59 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.01096, 0.341914, 0.184475, 1.0)),
                     (0.125, (0.693872, 0.114435, 0.000607, 1.0)),
@@ -1747,10 +1747,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Set1"):
             _string_60 = g.String(
-                string="Set1: Qualitative. 9 colours copied exactly, constant interpolation."
+                "Set1: Qualitative. 9 colours copied exactly, constant interpolation."
             )
             color_ramp_60 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.775822, 0.01033, 0.011612, 1.0)),
                     (0.111111, (0.038204, 0.208637, 0.47932, 1.0)),
@@ -1766,10 +1766,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Set2"):
             _string_61 = g.String(
-                string="Set2: Qualitative. 8 colours copied exactly, constant interpolation."
+                "Set2: Qualitative. 8 colours copied exactly, constant interpolation."
             )
             color_ramp_61 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.132868, 0.539479, 0.376262, 1.0)),
                     (0.125, (0.973445, 0.266356, 0.122139, 1.0)),
@@ -1784,10 +1784,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("Set3"):
             _string_62 = g.String(
-                string="Set3: Qualitative. 12 colours copied exactly, constant interpolation."
+                "Set3: Qualitative. 12 colours copied exactly, constant interpolation."
             )
             color_ramp_62 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.266356, 0.651406, 0.571125, 1.0)),
                     (0.083333, (1.0, 1.0, 0.450786, 1.0)),
@@ -1806,10 +1806,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("tab10"):
             _string_63 = g.String(
-                string="tab10: Qualitative. 10 colours copied exactly, constant interpolation."
+                "tab10: Qualitative. 10 colours copied exactly, constant interpolation."
             )
             color_ramp_63 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.013702, 0.184475, 0.456411, 1.0)),
                     (0.1, (1.0, 0.212231, 0.004391, 1.0)),
@@ -1826,10 +1826,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("tab20"):
             _string_64 = g.String(
-                string="tab20: Qualitative. 20 colours copied exactly, constant interpolation."
+                "tab20: Qualitative. 20 colours copied exactly, constant interpolation."
             )
             color_ramp_64 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.013702, 0.184475, 0.456411, 1.0)),
                     (0.05, (0.423268, 0.571125, 0.806952, 1.0)),
@@ -1856,10 +1856,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("tab20b"):
             _string_65 = g.String(
-                string="tab20b: Qualitative. 20 colours copied exactly, constant interpolation."
+                "tab20b: Qualitative. 20 colours copied exactly, constant interpolation."
             )
             color_ramp_65 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.040915, 0.043735, 0.191202, 1.0)),
                     (0.05, (0.084376, 0.088656, 0.366253, 1.0)),
@@ -1886,10 +1886,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("tab20c"):
             _string_66 = g.String(
-                string="tab20c: Qualitative. 20 colours copied exactly, constant interpolation."
+                "tab20c: Qualitative. 20 colours copied exactly, constant interpolation."
             )
             color_ramp_66 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.030713, 0.223228, 0.508881, 1.0)),
                     (0.05, (0.147027, 0.423268, 0.672443, 1.0)),
@@ -1916,10 +1916,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("okabe_ito"):
             _string_67 = g.String(
-                string="okabe_ito: Qualitative. 8 colours copied exactly, constant interpolation."
+                "okabe_ito: Qualitative. 8 colours copied exactly, constant interpolation."
             )
             color_ramp_67 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.125, (0.791298, 0.346704, 0.0, 1.0)),
@@ -1934,10 +1934,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("ocean"):
             _string_68 = g.String(
-                string="ocean: Miscellaneous. 19 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "ocean: Miscellaneous. 19 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_68 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.211977, 0.0, 1.0)),
                     (0.077069, (0.0, 0.120016, 0.006371, 1.0)),
@@ -1962,10 +1962,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gist_earth"):
             _string_69 = g.String(
-                string="gist_earth: Miscellaneous. 23 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
+                "gist_earth: Miscellaneous. 23 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_69 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.003618, (0.000186, 0.0, 0.023038, 1.0)),
@@ -1994,10 +1994,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("terrain"):
             _string_70 = g.String(
-                string="terrain: Miscellaneous. 26 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "terrain: Miscellaneous. 26 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_70 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.032983, 0.032854, 0.318175, 1.0)),
                     (0.022427, (0.024518, 0.054136, 0.39179, 1.0)),
@@ -2029,10 +2029,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gist_stern"):
             _string_71 = g.String(
-                string="gist_stern: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.8/255 in sRGB."
+                "gist_stern: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.8/255 in sRGB."
             )
             color_ramp_71 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.003081, (0.003432, 0.000246, 0.000528, 1.0)),
@@ -2070,10 +2070,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gnuplot"):
             _string_72 = g.String(
-                string="gnuplot: Miscellaneous. 30 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
+                "gnuplot: Miscellaneous. 30 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.7/255 in sRGB."
             )
             color_ramp_72 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.000009, 0.0, 0.0, 1.0)),
                     (0.00405, (0.005342, 0.0, 0.002024, 1.0)),
@@ -2109,10 +2109,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gnuplot2"):
             _string_73 = g.String(
-                string="gnuplot2: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.2/255 in sRGB."
+                "gnuplot2: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.2/255 in sRGB."
             )
             color_ramp_73 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.008667, (0.0, 0.0, 0.001664, 1.0)),
@@ -2151,10 +2151,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("CMRmap"):
             _string_74 = g.String(
-                string="CMRmap: Miscellaneous. 25 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
+                "CMRmap: Miscellaneous. 25 stops fitted to matplotlib 3.11.2, linear interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_74 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.0, 1.0)),
                     (0.018299, (0.001728, 0.001733, 0.005885, 1.0)),
@@ -2185,10 +2185,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("cubehelix"):
             _string_75 = g.String(
-                string="cubehelix: Miscellaneous. 15 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
+                "cubehelix: Miscellaneous. 15 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.8/255 in sRGB."
             )
             color_ramp_75 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.000057, 0.0, 1.0)),
                     (0.01632, (0.00143, 0.000317, 0.001236, 1.0)),
@@ -2210,10 +2210,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("brg"):
             _string_76 = g.String(
-                string="brg: Miscellaneous. 20 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
+                "brg: Miscellaneous. 20 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_76 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 1.0, 1.0)),
                     (0.016283, (0.001599, 0.0, 0.947795, 1.0)),
@@ -2240,10 +2240,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gist_rainbow"):
             _string_77 = g.String(
-                string="gist_rainbow: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.9/255 in sRGB."
+                "gist_rainbow: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 1.9/255 in sRGB."
             )
             color_ramp_77 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (1.0, 0.0, 0.024755, 1.0)),
                     (0.019361, (1.0, 0.0, 0.0, 1.0)),
@@ -2282,10 +2282,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("rainbow"):
             _string_78 = g.String(
-                string="rainbow: Miscellaneous. 24 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
+                "rainbow: Miscellaneous. 24 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.0/255 in sRGB."
             )
             color_ramp_78 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.213828, 0.000033, 1.0, 1.0)),
                     (0.018301, (0.181594, 0.004459, 0.999233, 1.0)),
@@ -2315,10 +2315,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("jet"):
             _string_79 = g.String(
-                string="jet: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.5/255 in sRGB."
+                "jet: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 1.5/255 in sRGB."
             )
             color_ramp_79 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.21081, 1.0)),
                     (0.036254, (0.0, 0.0, 0.39379, 1.0)),
@@ -2356,10 +2356,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("turbo"):
             _string_80 = g.String(
-                string="turbo: Miscellaneous. 20 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
+                "turbo: Miscellaneous. 20 stops fitted to matplotlib 3.11.2, b-spline interpolation, max error 0.9/255 in sRGB."
             )
             color_ramp_80 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.028687, 0.004685, 0.032998, 1.0)),
                     (0.017026, (0.037297, 0.013856, 0.10371, 1.0)),
@@ -2386,10 +2386,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("nipy_spectral"):
             _string_81 = g.String(
-                string="nipy_spectral: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 5.0/255 in sRGB. Detail finer than the stops can hold is lost."
+                "nipy_spectral: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 5.0/255 in sRGB. Detail finer than the stops can hold is lost."
             )
             color_ramp_81 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.00011, 0.0, 0.0, 1.0)),
                     (0.010494, (0.007957, 0.000001, 0.009589, 1.0)),
@@ -2427,10 +2427,10 @@ class ColorMatplotlib(AssetGeometryGroup):
             )
         with g.Frame("gist_ncar"):
             _string_82 = g.String(
-                string="gist_ncar: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 6.4/255 in sRGB. Detail finer than the stops can hold is lost."
+                "gist_ncar: Miscellaneous. 32 stops fitted to matplotlib 3.11.2, linear interpolation, max error 6.4/255 in sRGB. Detail finer than the stops can hold is lost."
             )
             color_ramp_82 = g.ColorRamp(
-                fac=switch,
+                switch,
                 items=(
                     (0.0, (0.0, 0.0, 0.214185, 1.0)),
                     (0.015276, (0.0, 0.009725, 0.099006, 1.0)),

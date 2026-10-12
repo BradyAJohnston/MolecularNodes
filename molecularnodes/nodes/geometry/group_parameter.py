@@ -92,7 +92,7 @@ class GroupParameter(AssetGeometryGroup):
         )
         group_size = tree.outputs.integer("Group Size")
 
-        accumulate_field = g.AccumulateField.point.integer(group_index=group_id)
+        accumulate_field = g.AccumulateField.point.integer(group_id=group_id)
         boolean_math = g.BooleanMath.l_not(accumulate_field.o.trailing)
         (
             g.Compare.integer.equal(

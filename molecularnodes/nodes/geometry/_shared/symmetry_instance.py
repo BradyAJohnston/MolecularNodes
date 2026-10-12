@@ -148,7 +148,7 @@ class SymmetryInstance(CustomGeometryGroup):
                 angle=rotation_to_axis_angle.angle * animate,
             )
             _string = g.String(
-                string="Rotating about the operator's own axis by a fraction of its angle is the exact interpolation from the identity to that operator. A rotation about a centre c is R p + (c - R c), so the centre is folded into the position; at Animate 0 that is zero and every copy sits on the original."
+                "Rotating about the operator's own axis by a fraction of its angle is the exact interpolation from the identity to that operator. A rotation about a centre c is R p + (c - R c), so the centre is folded into the position; at Animate 0 that is zero and every copy sits on the original."
             )
             vector_math = (
                 centre - centre.rotate(axis_angle_to_rotation) + translation * animate

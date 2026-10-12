@@ -87,10 +87,7 @@ class EvaluateOrderedBundles(AssetGeometryGroup):
         repeat_zone = g.RepeatZone(sorted_bundle_paths.o.list.list_length())
         geometry_2 = repeat_zone.items.geometry(geometry, "Geometry")
         join_strings = g.JoinStrings(
-            (
-                sorted_bundle_paths.o.list[repeat_zone.iteration],
-                g.String(string="closure"),
-            ),
+            (sorted_bundle_paths.o.list[repeat_zone.iteration], g.String("closure")),
             delimiter="/",
         )
         evaluate_closure = g.EvaluateClosure(bundles.get.closure(join_strings))

@@ -135,9 +135,9 @@ class AmbientOcclusionInternal(AssetShaderGroup):
             exponent=exponent,
         )
         mix_shader = s.MixShader(
-            fac=mn_color.o.alpha,
+            factor=mn_color.o.alpha,
             shader=s.TransparentBSDF(),
-            shader_001=s.Emission(color=color_ao),
+            shader_001=s.Emission(color_ao),
         )
 
         mix_shader >> shader

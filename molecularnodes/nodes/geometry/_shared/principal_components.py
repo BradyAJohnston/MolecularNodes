@@ -143,7 +143,7 @@ class PrincipalComponents(CustomGeometryGroup):
         with g.Frame("SVD of Covariance to find principal components"):
             matrix_svd = combine_matrix.o.matrix.svd()
             matrix_determinant = matrix_svd.u.determinant()
-        separate_matrix = g.SeparateMatrix(matrix=matrix_svd.u)
+        separate_matrix = g.SeparateMatrix(matrix_svd.u)
         combine_xyz = g.CombineXYZ(
             x=separate_matrix.o.column_1_row_1,
             y=separate_matrix.o.column_1_row_2,

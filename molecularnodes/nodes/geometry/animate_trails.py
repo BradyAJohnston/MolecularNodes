@@ -239,14 +239,14 @@ class AnimateTrails(AssetGeometryGroup):
             },
         )
         set_spline_resolution = g.SetHandleType(
-            curve=g.SetSplineType.bezier(menu_switch)
+            g.SetSplineType.bezier(menu_switch)
         ) >> g.SetSplineResolution(resolution=trail_subdivisions)
         (
             g.MenuSwitch.geometry(
                 trail_curve_type, {"Poly": menu_switch, "Bezier": set_spline_resolution}
             )
             >> g.CurveToMesh(
-                profile_curve=g.CurveCircle(resolution=trail_resolution),
+                profile_curve=g.CurveCircle(trail_resolution),
                 scale=factor.output * (VDWRadii().o.vdw_radii * trail_radius),
                 fill_caps=True,
             )

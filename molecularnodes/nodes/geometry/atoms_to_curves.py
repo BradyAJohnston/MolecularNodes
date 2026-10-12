@@ -115,14 +115,13 @@ class AtomsToCurves(AssetGeometryGroup):
         curves = tree.outputs.geometry("Curves")
 
         chain_id = ChainID()
-        separate_components = g.SeparateComponents(geometry=atoms)
-        join_geometry = g.JoinGeometry(
-            geometry=(
-                g.CurveToMesh(curve=separate_components.o.curve),
-                separate_components.o.mesh,
-            )
+        separate_components = g.SeparateComponents(atoms)
+        mesh_to_points = g.MeshToPoints(
+            mesh=g.JoinGeometry(
+                (g.CurveToMesh(separate_components.o.curve), separate_components.o.mesh)
+            ),
+            selection=selection,
         )
-        mesh_to_points = g.MeshToPoints(mesh=join_geometry, selection=selection)
         sort_elements = g.SortElements.point(
             g.SortElements.point(mesh_to_points, sort_weight=chain_id),
             group_id=chain_id,

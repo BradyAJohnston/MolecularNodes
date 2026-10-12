@@ -21,9 +21,7 @@ class Default(CustomShaderGroup):
             subsurface_scale=0.0,
             subsurface_method="RANDOM_WALK_LEGACY",
         )
-        _material_output = s.MaterialOutput(
-            surface=principled_bsdf, is_active_output=True
-        )
+        _material_output = s.MaterialOutput(principled_bsdf)
 
 
 MATERIAL = Default

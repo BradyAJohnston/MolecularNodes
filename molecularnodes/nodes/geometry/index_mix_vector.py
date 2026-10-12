@@ -4,7 +4,6 @@
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
@@ -104,14 +103,14 @@ class IndexMixVector(AssetGeometryGroup):
         )
 
         fractionate_float = FractionateFloat(value=index)
-        mix = g.Mix.vector(
-            fractionate_float.o.fraction,
-            value.point.at(fractionate_float.o.floor),
-            value.point.at(fractionate_float.o.ceiling),
-            clamp_factor=True,
+        (
+            fractionate_float.o.fraction.mix.vector(
+                value.point.at(fractionate_float.o.floor),
+                value.point.at(fractionate_float.o.ceiling),
+            )
+            >> value_1
         )
 
-        mix.o.result_vector >> value_1
         fractionate_float.o.floor >> from_
         fractionate_float.o.ceiling >> to
 

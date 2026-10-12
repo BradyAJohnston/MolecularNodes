@@ -99,9 +99,7 @@ class FindConnected(CustomGeometryGroup):
         length = tree.outputs.integer("Length")
         index = tree.outputs.integer("Index")
 
-        shortest_edge_paths = g.ShortestEdgePaths(
-            end_vertex=g.Compare.integer.equal(value, match)
-        )
+        shortest_edge_paths = g.ShortestEdgePaths(g.Compare.integer.equal(value, match))
         compare = g.Compare.integer.equal(shortest_edge_paths.o.total_cost, 2)
         compare_1 = g.Compare.integer.equal(shortest_edge_paths.o.total_cost, 3)
         evaluate_at_index = shortest_edge_paths.o.next_vertex_index.point.at(
@@ -110,7 +108,7 @@ class FindConnected(CustomGeometryGroup):
         evaluate_at_index_1 = shortest_edge_paths.o.next_vertex_index.point.at(
             evaluate_at_index
         )
-        float_to_integer = g.FloatToInteger(float=shortest_edge_paths.o.total_cost)
+        float_to_integer = g.FloatToInteger(shortest_edge_paths.o.total_cost)
         switch = g.Compare.integer.equal(
             shortest_edge_paths.o.total_cost, 1
         ).o.result.switch.integer(-1, shortest_edge_paths.o.next_vertex_index)

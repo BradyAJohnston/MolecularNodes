@@ -89,7 +89,7 @@ class BooleanRunFill(AssetGeometryGroup):
         )
 
         accumulate_field = g.AccumulateField.point.integer(
-            group_index=g.AccumulateField.point.integer(boolean).o.leading
+            group_id=g.AccumulateField.point.integer(boolean).o.leading
         )
         (
             (

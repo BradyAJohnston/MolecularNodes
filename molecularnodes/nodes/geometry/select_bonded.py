@@ -95,7 +95,7 @@ class SelectBonded(AssetGeometryGroup):
             description="Expanded Selection that excludes the original selection",
         )
 
-        shortest_edge_paths = g.ShortestEdgePaths(end_vertex=selection)
+        shortest_edge_paths = g.ShortestEdgePaths(selection)
         compare = g.Compare.integer.less_equal(shortest_edge_paths.o.total_cost, depth)
         compare_1 = g.Compare.integer.greater_than(shortest_edge_paths.o.total_cost, 0)
         BooleanAndOr(and_=compare, or_=selection, boolean=compare_1) >> selection_1

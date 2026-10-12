@@ -97,7 +97,6 @@ class SampleNucleicBaseValues(CustomGeometryGroup):
             mix = g.Mix.vector(
                 a=ResidueMask(atom_name=55).o.position,
                 b=ResidueMask(atom_name=57).o.position,
-                clamp_factor=True,
             )
             select_nucleic_type = SelectNucleicType()
             residue_mask_1 = ResidueMask(

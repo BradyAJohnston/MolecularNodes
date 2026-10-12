@@ -217,7 +217,7 @@ class EaseValue(AssetGeometryGroup):
                 ease=ease, in_=period, out=period, in_out=period * 1.5
             )
             _string = g.String(
-                string="Each curve is built once in its ease-in form f(x). Out is 1 - f(1 - t) and In Out evaluates f(2t) / 2 for the first half and 1 - f(2 - 2t) / 2 for the second, so this block picks the argument x and the block after the curves maps f(x) back. Back and Elastic use Penner's larger overshoot and period for In Out. The Ease menu goes through the Ease Switch group because one menu socket feeding several Menu Switch nodes loses its items on a headless build."
+                "Each curve is built once in its ease-in form f(x). Out is 1 - f(1 - t) and In Out evaluates f(2t) / 2 for the first half and 1 - f(2 - 2t) / 2 for the second, so this block picks the argument x and the block after the curves maps f(x) back. Back and Elastic use Penner's larger overshoot and period for In Out. The Ease menu goes through the Ease Switch group because one menu socket feeding several Menu Switch nodes loses its items on a headless build."
             )
             compare = switch > 0.5
             ease_switch_2 = EaseSwitch(
@@ -228,7 +228,7 @@ class EaseValue(AssetGeometryGroup):
             )
         with g.Frame("Ease-in curves"):
             _string_1 = g.String(
-                string="Reference: easings.net. x is the ease argument in 0..1. Exponential and Elastic are pinned to exactly 0 at x = 0 (and Elastic to 1 at x = 1) as in the reference, since 2^-10 is not zero."
+                "Reference: easings.net. x is the ease argument in 0..1. Exponential and Elastic are pinned to exactly 0 at x = 0 (and Elastic to 1 at x = 1) as in the reference, since 2^-10 is not zero."
             )
             math_1 = 1.0 - (ease_switch_2.o.value * (math.pi / 2)).cos()
             math_2 = ease_switch_2.o.value * ease_switch_2
@@ -246,7 +246,7 @@ class EaseValue(AssetGeometryGroup):
         with g.Frame("Elastic"):
             math_8 = amplitude.max(1.0)
             _string_2 = g.String(
-                string="Penner's elastic with amplitude a (at least 1) and period p: s = p / (2 pi) * asin(1 / a), f(x) = -a * 2^(10x - 10) * sin((x - 1 - s) * 2 pi / p)."
+                "Penner's elastic with amplitude a (at least 1) and period p: s = p / (2 pi) * asin(1 / a), f(x) = -a * 2^(10x - 10) * sin((x - 1 - s) * 2 pi / p)."
             )
             math_9 = (
                 ease_switch_2.o.value
@@ -263,7 +263,7 @@ class EaseValue(AssetGeometryGroup):
             switch_3 = (ease_switch_2 <= 0.0).switch.float(switch_2)
         with g.Frame("Bounce"):
             _string_3 = g.String(
-                string="Penner defines Bounce by its ease-out form b(u) with four parabolic arcs; the ease-in form is 1 - b(1 - x)."
+                "Penner defines Bounce by its ease-out form b(u) with four parabolic arcs; the ease-in form is 1 - b(1 - x)."
             )
             math_10 = 1.0 - ease_switch_2
             math_11 = math_10 - 0.5454546

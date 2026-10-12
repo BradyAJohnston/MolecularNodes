@@ -85,18 +85,18 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
             index_a=OffsetIndex(offset=-1), index_c=OffsetIndex(offset=1)
         ).o.angle.map_range(1.6899998, 2.861593, to_max=0.25)
         set_curve_radius = g.SetCurveRadius(
-            curve=g.SetCurveNormal(curve=atoms_to_ca_curves), radius=radius
+            curve=g.SetCurveNormal(atoms_to_ca_curves), radius=radius
         )
         fillet_curve = g.FilletCurve(curve=set_curve_radius, radius=map_range)
         fillet_curve.node.mute = True
         curve_custom_profile = CurveCustomProfile(
-            curve=g.SetHandleType(curve=g.SetSplineType.bezier(fillet_curve)),
-            subdivisions=quality * g.Integer(integer=2),
+            curve=g.SetHandleType(g.SetSplineType.bezier(fillet_curve)),
+            subdivisions=quality * g.Integer(2),
             profile_type="Default Profile",
             uv_map=uv_map,
             u_component=u_component,
             socket_6=CurveRotation(),
-            profile_resolution=quality * g.Integer(integer=3),
+            profile_resolution=quality * g.Integer(3),
             socket_11=0.0,
         )
         (
@@ -447,7 +447,7 @@ class StyleRibbon(AssetGeometryGroup):
             Threshold=backbone_threshold,
         )
         join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 mn_utils_style_ribbon_peptide.o.geometry,
                 mn_utils_style_ribbon_nucleic.o.geometry,
             )
@@ -455,7 +455,7 @@ class StyleRibbon(AssetGeometryGroup):
         join_geometry >> geometry_1.input
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
         _join_geometry_1 = g.JoinGeometry(
-            geometry=(
+            (
                 mn_utils_style_ribbon_peptide.o.curve,
                 mn_utils_style_ribbon_nucleic.o.curve,
             )
