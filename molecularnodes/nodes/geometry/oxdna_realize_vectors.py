@@ -85,8 +85,8 @@ class OxDNARealizeVectors(AssetGeometryGroup):
                 2, position.output, position.output + base_normal.output * value
             )
         with g.Frame("Store attribute_ID on edge verts: 0=bbone, 1=base vec, 2=normal"):
-            string = g.String(string="attribute_ID")
-            string_1 = g.String(string="attribute_ID")
+            string = g.String("attribute_ID")
+            string_1 = g.String("attribute_ID")
             sample_nearest = g.SampleNearest.point(mesh_line, position.output)
             store_named_attribute = g.StoreNamedAttribute.point.integer(
                 mesh_line, g.Compare.integer.equal(g.Index(), sample_nearest), string
@@ -110,29 +110,29 @@ class OxDNARealizeVectors(AssetGeometryGroup):
                 2,
             )
         join_geometry = g.JoinGeometry(
-            geometry=(store_named_attribute_3, store_named_attribute_1)
+            (store_named_attribute_3, store_named_attribute_1)
         )
         with g.Frame("Transfer all attrib to new verts to retain thru Merge by Dist"):
-            integer = g.Integer(integer=0)
+            integer = g.Integer()
             transfer_attributes = g.TransferAttributes(
                 target=join_geometry,
                 target_point_id=integer,
                 source=for_each.input.o.element,
                 source_point_id=integer,
-                attribute_names=g.String(string="position,attribute_ID").o.string.split(
-                    ","
-                ),
+                attribute_names=g.String("position,attribute_ID").o.string.split(","),
                 pattern_mode="Exact",
                 exclude_names=True,
             )
         transfer_attributes >> for_each.generation.input
-        store_named_attribute_4 = (
-            for_each.output
-            >> g.StoreNamedAttribute.point.integer(name=g.String(string="attribute_ID"))
-        )
         (
             g.JoinGeometry(
-                geometry=(for_each.generation.output, store_named_attribute_4)
+                (
+                    for_each.generation.output,
+                    for_each.output
+                    >> g.StoreNamedAttribute.point.integer(
+                        name=g.String("attribute_ID")
+                    ),
+                )
             )
             >> g.MergeByDistance()
             >> geometry

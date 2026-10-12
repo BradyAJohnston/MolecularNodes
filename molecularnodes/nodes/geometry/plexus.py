@@ -105,22 +105,20 @@ class Plexus(AssetGeometryGroup):
                 points, distance, index
             ).o.value * g.SampleIndex.point.float(points, radius, index)
             points_1 = g.Points(
-                count=g.DomainSize(geometry=points).o.point_count,
+                count=g.DomainSize(points).o.point_count,
                 position=g.SampleIndex.point.vector(points, g.Position(), index),
                 radius=math_1,
             )
         with g.Frame("Create Distance Probe"):
             ico_sphere = g.IcoSphere()
             axes_to_rotation = g.AxesToRotation(
-                primary_axis=g.SampleIndex.point.vector(
+                g.SampleIndex.point.vector(
                     ico_sphere, g.Position().o.position * -1.0, g.Index()
                 )
             )
             merge_by_distance = (
                 g.InstanceOnPoints(
-                    points=ico_sphere,
-                    instance=g.MeshLine(count=2),
-                    rotation=axes_to_rotation,
+                    points=ico_sphere, instance=g.MeshLine(2), rotation=axes_to_rotation
                 )
                 >> g.RealizeInstances(realize_to_point_domain=True)
                 >> g.MergeByDistance()

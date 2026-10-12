@@ -4,7 +4,6 @@
 from typing import TYPE_CHECKING
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
@@ -60,21 +59,8 @@ class MNColor(AssetShaderGroup):
         attribute_2 = s.Attribute(
             attribute_type="INSTANCER", attribute_name="is_instanced"
         )
-        mix = g.Mix.color(
-            attribute_2.o.factor,
-            attribute.o.color,
-            attribute_1.o.color,
-            clamp_factor=True,
-        )
-        mix_1 = g.Mix.float(
-            attribute_2.o.factor,
-            attribute.o.alpha,
-            attribute_1.o.alpha,
-            clamp_factor=True,
-        )
-
-        mix.o.result_color >> color
-        mix_1 >> alpha
+        attribute_2.o.factor.mix.color(attribute.o.color, attribute_1.o.color) >> color
+        attribute_2.o.factor.mix.float(attribute.o.alpha, attribute_1.o.alpha) >> alpha
 
 
 ASSET = MNColor

@@ -127,7 +127,7 @@ class EvaluateWhilePlanar(AssetGeometryGroup):
         with g.Frame("Shift into positive space"):
             switch = positive_space.switch.vector(
                 (0.0, 0.0, 0.0),
-                g.BoundingBox(geometry=geometry_to_planar).o.min * -1.0 + padding,
+                g.BoundingBox(geometry_to_planar).o.min * -1.0 + padding,
             )
             transform_geometry = g.TransformGeometry(
                 geometry=geometry_to_planar, translation=switch

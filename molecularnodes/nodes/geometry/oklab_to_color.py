@@ -68,7 +68,7 @@ class OKLabToColor(AssetGeometryGroup):
 
         (
             g.VectorMath.power(
-                oklab.transform(OKLabMatrices().o.m2.invert()), g.Integer(integer=3)
+                oklab.transform(OKLabMatrices().o.m2.invert()), g.Integer(3)
             ).o.vector.transform(OKLabMatrices().o.m1.invert())
             >> color
         )

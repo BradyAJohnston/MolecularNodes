@@ -4,7 +4,6 @@
 from typing import TYPE_CHECKING, Literal
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
@@ -94,15 +93,12 @@ class FlatInternal(AssetShaderGroup):
         emission = tree.outputs.shader("Emission")
 
         mn_color = MNColor()
-        mix = g.Mix.color(
-            OutlineMask(threshold=threshold, thickness=thickness),
-            mn_color.o.color,
-            (0.0, 0.0, 0.0, 1.0),
-            clamp_factor=True,
+        mix = OutlineMask(threshold=threshold, thickness=thickness).o.outline.mix.color(
+            mn_color.o.color, (0.0, 0.0, 0.0, 1.0)
         )
         emission_1 = s.Emission(
-            color=s.MenuSwitch.color(
-                outline, {"Outline": mix.o.result_color, "None": mn_color.o.color}
+            s.MenuSwitch.color(
+                outline, {"Outline": mix, "None": mn_color.o.color}
             ).o.output
         )
 

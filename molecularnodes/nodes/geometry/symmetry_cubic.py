@@ -170,7 +170,7 @@ class SymmetryCubic(AssetGeometryGroup):
                 angle=index.o.index // 4 % 3 * (math.tau / 3),
             )
             _string = g.String(
-                string="Every cubic group is built from the tetrahedral group T, which is the four rotations of D2 (identity and the two-folds about X, Y and Z) followed by 0, 120 or 240 degrees about the three-fold (1, 1, 1). Copy k uses D2 element k mod 4 and three-fold power (k div 4) mod 3. Octahedral adds a quarter turn about Z and icosahedral a fifth turn about the five-fold (0, 1, phi), raised to the power k div 12. Each axis is first turned by Orientation."
+                "Every cubic group is built from the tetrahedral group T, which is the four rotations of D2 (identity and the two-folds about X, Y and Z) followed by 0, 120 or 240 degrees about the three-fold (1, 1, 1). Copy k uses D2 element k mod 4 and three-fold power (k div 4) mod 3. Octahedral adds a quarter turn about Z and icosahedral a fifth turn about the five-fold (0, 1, phi), raised to the power k div 12. Each axis is first turned by Orientation."
             )
             axis_angle_to_rotation_1 = g.AxisAngleToRotation(
                 axis=index_switch.o.output.rotate(orientation),
@@ -187,7 +187,7 @@ class SymmetryCubic(AssetGeometryGroup):
             SymmetryInstance(
                 geometry=geometry,
                 points=g.Points(
-                    count=g.IndexSwitch.integer(menu_switch.o.output, (12, 24, 60))
+                    g.IndexSwitch.integer(menu_switch.o.output, (12, 24, 60))
                 ),
                 rotation=rotate_rotation,
                 centre=centre,

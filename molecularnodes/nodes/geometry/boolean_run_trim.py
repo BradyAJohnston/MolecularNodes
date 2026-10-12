@@ -114,7 +114,7 @@ class BooleanRunTrim(AssetGeometryGroup):
         )
 
         accumulate_field = g.AccumulateField.point.integer(
-            group_index=g.AccumulateField.point.integer(~boolean).o.trailing
+            group_id=g.AccumulateField.point.integer(~boolean).o.trailing
         )
         (
             (

@@ -80,7 +80,7 @@ class EvaluateOnInstances(AssetGeometryGroup):
             instance_reference = g.InstanceReference()
             boolean_math = g.BooleanMath.l_not(
                 g.AccumulateField.instance.integer(
-                    group_index=instance_reference
+                    group_id=instance_reference
                 ).o.trailing
             )
             sort_elements = (

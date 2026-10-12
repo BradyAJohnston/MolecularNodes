@@ -155,10 +155,7 @@ class BuildElasticNetwork(AssetGeometryGroup):
         )
         merge_points = g.MenuSwitch.geometry(
             menu,
-            {
-                "Alpha Carbon": plexus,
-                "All Atom": g.JoinGeometry(geometry=(plexus, plexus_1)),
-            },
+            {"Alpha Carbon": plexus, "All Atom": g.JoinGeometry((plexus, plexus_1))},
         ) >> g.MergePoints(merge_id=g.ClusterByDistance())
         capture = g.CaptureAttribute.point(geometry=merge_points)
         index = capture.items.integer(

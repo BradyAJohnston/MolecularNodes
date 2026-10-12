@@ -145,7 +145,7 @@ class CurveVisualize(AssetGeometryGroup):
         selection_1 = capture.items.boolean(selection, "Selection")
         position_1 = capture.items.vector(position, "Position")
         normal_1 = capture.items.vector(normal, "Normal")
-        curve_handle_positions = g.CurveHandlePositions(relative=True)
+        curve_handle_positions = g.CurveHandlePositions(True)
         _curve_rotation = CurveRotation(normal=normal_1.output)
         primitive_arrow = PrimitiveArrow(
             vertices=3,
@@ -158,10 +158,10 @@ class CurveVisualize(AssetGeometryGroup):
             material=bpy.data.materials.get("Ambient Occlusion"),
         )
         set_spline_type = g.SetSplineType.bezier(
-            g.SeparateComponents(geometry=capture.o.geometry).o.curve
+            g.SeparateComponents(capture.o.geometry).o.curve
         )
         set_spline_type.node.mute = True
-        set_handle_type = g.SetHandleType(curve=set_spline_type)
+        set_handle_type = g.SetHandleType(set_spline_type)
         set_handle_type.node.mute = True
         set_color = SetColor(atoms=set_handle_type, color=(0.0, 0.0, 0.0, 1.0))
         set_position = g.SetPosition(
@@ -197,13 +197,13 @@ class CurveVisualize(AssetGeometryGroup):
             scale=combine_xyz,
         )
         join_geometry = g.JoinGeometry(
-            geometry=(
-                g.JoinGeometry(geometry=(instance_on_points_1, instance_on_points_2)),
+            (
+                g.JoinGeometry((instance_on_points_1, instance_on_points_2)),
                 instance_on_points_1,
             )
         )
         join_geometry_1 = g.JoinGeometry(
-            geometry=(
+            (
                 handles.switch.geometry(true=join_geometry),
                 instance_on_points,
                 capture.o.geometry,

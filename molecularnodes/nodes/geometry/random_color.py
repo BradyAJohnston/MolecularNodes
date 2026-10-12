@@ -152,9 +152,7 @@ class RandomColor(AssetGeometryGroup):
             oklab_chroma = tree.inputs.float("OKLab Chroma", 0.2)
         color = tree.outputs.color("Color", (0.8, 0.8, 0.8, 1.0))
 
-        random_value = g.RandomValue.float(
-            id=id, seed=color_seed + g.Integer(integer=0)
-        )
+        random_value = g.RandomValue.float(id=id, seed=color_seed + g.Integer())
         lch_to_oklab = LChToOKLab(
             l=oklab_luminance,
             c=oklab_chroma,

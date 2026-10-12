@@ -110,9 +110,9 @@ class ForceMeshCollide(AssetGeometryGroup):
 
         menu_switch = g.MenuSwitch.geometry(
             geometry_bounds,
-            {"Original": geometry, "Convex Hull": g.ConvexHull(geometry=geometry)},
+            {"Original": geometry, "Convex Hull": g.ConvexHull(geometry)},
         )
-        geometry_proximity = g.GeometryProximity(target=menu_switch)
+        geometry_proximity = g.GeometryProximity(menu_switch)
         map_range = geometry_proximity.o.distance.map_range(
             from_max=collision_distance, to_min=1.0, to_max=0.0
         )

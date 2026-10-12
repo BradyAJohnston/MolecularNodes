@@ -120,14 +120,13 @@ class SampleMixVector(AssetGeometryGroup):
         )
         vector = tree.outputs.vector("Vector", description="The final mixed vector")
 
-        mix = g.Mix.vector(
-            factor,
-            g.SampleIndex.point.vector(a, position, index),
-            g.SampleIndex.point.vector(b, position, index),
-            clamp_factor=True,
+        (
+            factor.mix.vector(
+                g.SampleIndex.point.vector(a, position, index),
+                g.SampleIndex.point.vector(b, position, index),
+            )
+            >> vector
         )
-
-        mix.o.result_vector >> vector
 
 
 ASSET = SampleMixVector

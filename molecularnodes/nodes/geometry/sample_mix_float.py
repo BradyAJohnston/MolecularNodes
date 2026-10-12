@@ -120,19 +120,13 @@ class SampleMixFloat(AssetGeometryGroup):
 
         sample_index = g.SampleIndex.point.float(a, value, index)
         sample_index_1 = g.SampleIndex.point.float(b, value, index)
-        mix = g.Mix.float(factor, sample_index, sample_index_1, clamp_factor=True)
-        vector = g.Vector(vector=(0.0, 0.0, 1.0))
-        mix_1 = g.Mix.rotation(
-            factor,
+        factor.mix.float(sample_index, sample_index_1) >> value_1
+        vector = g.Vector((0.0, 0.0, 1.0))
+        mix = factor.mix.rotation(
             g.AxisAngleToRotation(axis=vector, angle=sample_index),
             g.AxisAngleToRotation(axis=vector, angle=sample_index_1),
-            clamp_factor=True,
         )
-        _rotation_to_axis_angle = g.RotationToAxisAngle(
-            rotation=mix_1.o.result_rotation
-        )
-
-        mix >> value_1
+        _rotation_to_axis_angle = g.RotationToAxisAngle(mix)
 
 
 ASSET = SampleMixFloat

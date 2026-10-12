@@ -125,10 +125,10 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
         )
 
         with g.Frame("Clamp the offset to not exceed the points in the spline"):
-            curve_of_point = g.CurveOfPoint(point_index=point_index)
+            curve_of_point = g.CurveOfPoint(point_index)
             integer_math = -curve_of_point.o.index_in_curve
             integer_math_1 = (
-                g.PointsOfCurve(curve_index=curve_of_point.o.curve_index).o.total
+                g.PointsOfCurve(curve_of_point.o.curve_index).o.total
                 - 1
                 - curve_of_point.o.index_in_curve
             )

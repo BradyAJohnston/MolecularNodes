@@ -4,7 +4,6 @@
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -106,13 +105,7 @@ class ColorGoodsell(AssetGeometryGroup):
         switch = invert.switch.boolean(
             select_atomic_number.o.selection, select_atomic_number.o.inverted
         ).switch.float(factor)
-        (
-            ColorOKLabOffset(
-                color=color,
-                luminance=g.Mix.float(switch, b=-0.4, clamp_factor=True).o.result_float,
-            )
-            >> color_1
-        )
+        ColorOKLabOffset(color=color, luminance=switch.mix.float(0.0, -0.4)) >> color_1
 
 
 ASSET = ColorGoodsell

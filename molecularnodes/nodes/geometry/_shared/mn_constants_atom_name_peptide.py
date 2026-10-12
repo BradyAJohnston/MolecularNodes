@@ -62,11 +62,11 @@ class MN_constants_atom_name_peptide(CustomGeometryGroup):
         side_chain_upper = tree.outputs.integer("Side Chain Upper")
         alpha_carbon = tree.outputs.integer("Alpha Carbon")
 
-        integer = g.Integer(integer=5)
-        integer_1 = g.Integer(integer=49)
-        integer_2 = g.Integer(integer=4)
-        integer_3 = g.Integer()
-        integer_4 = g.Integer(integer=2)
+        integer = g.Integer(5)
+        integer_1 = g.Integer(49)
+        integer_2 = g.Integer(4)
+        integer_3 = g.Integer(1)
+        integer_4 = g.Integer(2)
 
         integer_3 >> backbone_lower
         integer_2 >> backbone_upper

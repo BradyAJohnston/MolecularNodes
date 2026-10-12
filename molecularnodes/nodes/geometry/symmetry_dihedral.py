@@ -167,7 +167,7 @@ class SymmetryDihedral(AssetGeometryGroup):
                 axis_angle_to_rotation_1, rotation_space="LOCAL"
             )
             _string = g.String(
-                string="Points 0..n-1 are the first ring, n..2n-1 the same ring flipped by a two-fold perpendicular to the axis. The two-fold is Y carried onto the plane perpendicular to the axis; Offset rotates the flipped ring about the axis, which moves that two-fold by half the offset."
+                "Points 0..n-1 are the first ring, n..2n-1 the same ring flipped by a two-fold perpendicular to the axis. The two-fold is Y carried onto the plane perpendicular to the axis; Offset rotates the flipped ring about the axis, which moves that two-fold by half the offset."
             )
             switch = (index >= order).switch.rotation(
                 g.AxisAngleToRotation(
@@ -178,7 +178,7 @@ class SymmetryDihedral(AssetGeometryGroup):
         (
             SymmetryInstance(
                 geometry=geometry,
-                points=g.Points(count=order * 2),
+                points=g.Points(order * 2),
                 rotation=switch,
                 centre=centre,
                 animate=animate,

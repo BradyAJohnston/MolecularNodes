@@ -101,7 +101,7 @@ class MN_topo_assign_backbone(CustomGeometryGroup):
         )
         join_strings = g.JoinStrings(
             (
-                g.String(string="backbone"),
+                g.String("backbone"),
                 g.IndexSwitch.string(repeat_zone.iteration, ("N", "CA", "C", "O")),
             ),
             delimiter="_",

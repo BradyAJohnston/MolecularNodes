@@ -223,9 +223,7 @@ class CurveSplitSplines(CustomGeometryGroup):
         distance_cutoff_1 = capture.items.float(distance_cutoff, "Distance Cutoff")
         rotation_2 = capture.items.rotation(rotation, "Rotation")
         index_1 = capture.items.integer(g.Index(), "Index")
-        normal = capture.items.vector(
-            g.Normal(legacy_corner_normals=True).o.normal, "Normal"
-        )
+        normal = capture.items.vector(g.Normal(True).o.normal, "Normal")
         position = capture.items.vector(g.Position(), "Position")
         trailing = capture.items.integer(
             g.AccumulateField.point.integer(~selection).o.trailing, "Trailing"
@@ -236,7 +234,7 @@ class CurveSplitSplines(CustomGeometryGroup):
                 {
                     "Poly": capture.o.geometry,
                     "Bezier": g.SetSplineResolution(
-                        geometry=capture.o.geometry, resolution=offset_resolution
+                        curve=capture.o.geometry, resolution=offset_resolution
                     ),
                 },
             ) >> g.SampleCurve.factor.quaternion(
@@ -245,7 +243,7 @@ class CurveSplitSplines(CustomGeometryGroup):
                 curve_index=curve_index.output,
             )
         set_spline_resolution = g.SetHandleType(
-            curve=g.SetSplineType.bezier(capture.o.geometry)
+            g.SetSplineType.bezier(capture.o.geometry)
         ) >> g.SetSplineResolution(resolution=1)
         capture_1 = g.CaptureAttribute.point(geometry=set_spline_resolution)
         left = capture_1.items.vector(curve_handle_positions.o.left, "Left")
@@ -296,7 +294,7 @@ class CurveSplitSplines(CustomGeometryGroup):
             >> g.SetSplineType.bezier()
         )
         (
-            g.SetHandleType(curve=set_spline_type)
+            g.SetHandleType(set_spline_type)
             >> g.SetHandlePositions(position=left.output)
             >> g.SetHandlePositions.right(position=right.output)
             >> curve_1
