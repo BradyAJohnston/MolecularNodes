@@ -65,7 +65,7 @@ class MN_constants_atom_name_peptide(CustomGeometryGroup):
         integer = g.Integer(integer=5)
         integer_1 = g.Integer(integer=49)
         integer_2 = g.Integer(integer=4)
-        integer_3 = g.Integer()
+        integer_3 = g.Integer(integer=1)
         integer_4 = g.Integer(integer=2)
 
         integer_3 >> backbone_lower
